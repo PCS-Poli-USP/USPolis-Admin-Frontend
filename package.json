@@ -1,0 +1,58 @@
+{
+  "name": "uspolis-admin",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@aws-amplify/ui-react": "3.5.4",
+    "@chakra-ui/icons": "2.0.2",
+    "@chakra-ui/react": "2.3.7",
+    "@emotion/react": "11.10.5",
+    "@emotion/styled": "11.10.5",
+    "@fullcalendar/react": "5.11.2",
+    "@fullcalendar/resource-timeline": "5.11.3",
+    "@fullcalendar/timegrid": "5.11.3",
+    "@tanstack/react-table": "8.5.13",
+    "@testing-library/jest-dom": "5.16.4",
+    "@testing-library/react": "13.2.0",
+    "@testing-library/user-event": "13.5.0",
+    "@types/jest": "27.5.1",
+    "@types/node": "16.11.36",
+    "@types/react": "18.0.9",
+    "@types/react-dom": "18.0.4",
+    "aws-amplify": "4.3.36",
+    "axios": "0.27.2",
+    "chakra-react-select": "4.2.2",
+    "framer-motion": "6.5.1",
+    "react": "18.1.0",
+    "react-dom": "18.1.0",
+    "react-icons": "4.4.0",
+    "react-router-dom": "6.3.0",
+    "react-scripts": "5.0.1",
+    "typescript": "4.6.4",
+    "web-vitals": "2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
