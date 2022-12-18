@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios';
 import Classroom, { AvailableClassroom } from 'models/classroom.model';
 import HttpService from './http.service';
 
-const USPOLIS_SERVER_URL = 'http://localhost:5000/api'; // TODO: environment variable
+const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
 export default class ClassroomsService extends HttpService {
   constructor() {
