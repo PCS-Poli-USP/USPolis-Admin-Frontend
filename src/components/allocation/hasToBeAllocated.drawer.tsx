@@ -12,6 +12,8 @@ import {
   FormControl,
   FormLabel,
   HStack,
+  ListItem,
+  OrderedList,
   Stack,
   Text,
   Tooltip,
@@ -58,15 +60,21 @@ export default function HasToBeAllocatedDrawer({ isOpen, onClose, classesList, o
   }
 
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} size='sm'>
+    <Drawer isOpen={isOpen} onClose={onClose} size='md'>
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
         <DrawerHeader>
           Alocação impossível
           <Text fontSize='md' fontWeight='normal'>
-            Não foi possível alocar todas as turmas, selecione turmas menos prioritárias que não precisam ser alocadas
-            no prédio em questão e tente novamente
+            Não foi possível alocar todas as turmas, isso pode ter ocorrido por 3 principais motivos:
+            <OrderedList>
+              <ListItem>Salas insuficientes para as preferências das turmas</ListItem>
+              <ListItem>Salas insuficientes para a quantidade de alunos das turmas</ListItem>
+              <ListItem>Salas insuficientes para os horários das turmas</ListItem>
+            </OrderedList>
+            Para o 3 caso, selecione turmas menos prioritárias que não precisam ser alocadas no prédio em questão e
+            tente novamente.
           </Text>
         </DrawerHeader>
         <DrawerBody>

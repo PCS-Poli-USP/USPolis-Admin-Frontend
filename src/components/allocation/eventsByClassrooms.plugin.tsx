@@ -36,7 +36,7 @@ function ClassroomsTables(props: any) {
         cell: ({ row }) => {
           const data = row.original;
           return (
-            <Flex as='button' textAlign='start' onClick={() => handleEventClick(row.original)}>
+            <Flex as='button' textAlign='start' minW={200} onClick={() => handleEventClick(row.original)}>
               <Box bg='uspolis.blue' color='white' paddingX={2} paddingY={1} marginRight={2}>
                 <Text fontSize='xs'>{data.startTime}</Text>
                 <Heading size='sm'>{Capitalize(data.weekday)}</Heading>
