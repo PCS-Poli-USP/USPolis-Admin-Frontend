@@ -45,7 +45,7 @@ function WeekDayInt(weekDay: string) {
   }
 }
 
-function ClassCodeText(classCode: string) {
+export function ClassCodeText(classCode: string) {
   const classCodeInt = parseInt(classCode.slice(-2));
   return `Turma ${classCodeInt}`;
 }
@@ -98,7 +98,6 @@ export function EventsByClassroomMapper(events: EventRenderRange[]) {
   const orderedByEventsCount = Array.from(mapData).sort(
     ([_classroomA, dataA], [_classroomB, dataB]) => dataB.length - dataA.length,
   );
-
   return orderedByEventsCount;
 }
 
@@ -106,4 +105,33 @@ export function ClassEventsMapper(events: EventRenderRange[], classCode: string,
   return EventsRenderRangeEventsByClassroomsMapper(events).filter(
     (it) => it.classCode === classCode && it.subjectCode === subjectCode,
   );
+}
+
+export function FirstEventDate(events: Event[]) {
+  return events.reduce((acc, cur) => {
+    const accDate = Date.parse(acc);
+    const curDate = Date.parse(cur.start_period);
+    if (accDate < curDate) return cur.start_period;
+    return acc;
+  }, new Date().toISOString());
+}
+
+export function WeekDayText(weekDay: string) {
+  switch (weekDay) {
+    default:
+    case WeekDays.Sunday:
+      return 'Domingo';
+    case WeekDays.Monday:
+      return 'Segunda';
+    case WeekDays.Tuesday:
+      return 'Terça';
+    case WeekDays.Wednesday:
+      return 'Quarta';
+    case WeekDays.Thursday:
+      return 'Quinta';
+    case WeekDays.Friday:
+      return 'Sexta';
+    case WeekDays.Saturday:
+      return 'Sábado';
+  }
 }

@@ -1,16 +1,22 @@
-import { Grid, GridItem, Skeleton, Text } from '@chakra-ui/react';
+import { Button, Grid, GridItem, Skeleton, Text } from '@chakra-ui/react';
 import { useDisclosure } from '@chakra-ui/react-use-disclosure';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import DatePickerModal from 'components/allocation/datePicker.modal';
 import EventContent from 'components/allocation/eventContent';
 import eventsByClassroomsPlugin from 'components/allocation/eventsByClassrooms.plugin';
 import Navbar from 'components/common/navbar.component';
+import ClassesPDF from 'components/pdf/classesPDF';
 import { appContext } from 'context/AppContext';
 import { useContext, useEffect, useRef, useState } from 'react';
 import AllocationService from 'services/events.service';
-import { AllocationEventsMapper, AllocationResourcesFromEventsMapper } from 'utils/mappers/allocation.mapper';
+import {
+  AllocationEventsMapper,
+  AllocationResourcesFromEventsMapper,
+  FirstEventDate,
+} from 'utils/mappers/allocation.mapper';
 
 function Allocation() {
   const [allocation, setAllocation] = useState<any[]>([]);
@@ -26,16 +32,16 @@ function Allocation() {
     Promise.all([allocationService.list()]).then((values) => {
       setAllocation(AllocationEventsMapper(values[0].data));
       setResources(AllocationResourcesFromEventsMapper(values[0].data));
+      setCalendarDate(FirstEventDate(values[0].data).slice(0, 10));
       setLoading(false);
     });
     // eslint-disable-next-line
   }, []);
 
-  function handleSelectDate(ISOdate: string) {
+  function setCalendarDate(ISOdate: string) {
     const calendarApi = calendarRef.current.getApi();
     calendarApi.gotoDate(ISOdate);
   }
-
   return (
     <>
       <Navbar />
@@ -45,12 +51,17 @@ function Allocation() {
         gridTemplateRows={'1 1fr'}
         gridTemplateColumns={'1fr'}
       >
-        <GridItem p={4} area={'header'}>
+        <GridItem p={4} area={'header'} display='flex' alignItems='center'>
           <Text fontSize='4xl'>Alocações</Text>
+          <Button ml={4} colorScheme='blue'>
+            <PDFDownloadLink document={<ClassesPDF />} fileName='disciplinas.pdf'>
+              {(params) => (params.loading ? 'Carregando PDF...' : 'Baixar alocação')}
+            </PDFDownloadLink>
+          </Button>
         </GridItem>
         <GridItem px='2' pb='2' area={'main'}>
           <Skeleton isLoaded={!loading} h='100vh' startColor='uspolis.blue'>
-            <DatePickerModal isOpen={isOpen} onClose={onClose} onSelectDate={handleSelectDate} />
+            <DatePickerModal isOpen={isOpen} onClose={onClose} onSelectDate={setCalendarDate} />
             <FullCalendar
               ref={calendarRef}
               schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
@@ -100,7 +111,7 @@ function Allocation() {
               }}
               customButtons={{
                 goToDate: {
-                  text: 'Data',
+                  text: 'Escolher data',
                   click: (_ev, _el) => onOpen(),
                 },
               }}

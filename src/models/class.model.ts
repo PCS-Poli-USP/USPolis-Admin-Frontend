@@ -14,6 +14,7 @@ export default interface Class {
   pendings: number;
   preferences: Preferences;
   has_to_be_allocated: boolean;
+  classrooms?: string[];
 }
 
 export interface Preferences {
