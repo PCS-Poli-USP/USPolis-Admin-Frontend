@@ -33,7 +33,7 @@ export default function PreferencesModal(props: PreferencesModalProps) {
   const buildingsOptions = Object.values(Buildings);
 
   const initialForm: PreferencesForm = {
-    building: Buildings.BIENIO,
+    building: '',
     has_to_be_allocated: true,
   };
 
