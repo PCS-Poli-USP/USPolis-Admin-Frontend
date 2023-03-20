@@ -1,20 +1,16 @@
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  Heading,
-  Icon,
-  Image,
-  Link,
-  SimpleGrid,
-  Stack,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Heading, Icon, Image, Link, SimpleGrid, Stack, Text } from '@chakra-ui/react';
 import Logo from 'assets/uspolis.logo.png';
 import { ReactElement } from 'react';
-import { FaChalkboard, FaPen, FaUsers, FaCalendarCheck, FaCalendarDay, FaCalendarAlt } from 'react-icons/fa';
+import {
+  FaAppStore,
+  FaCalendarAlt,
+  FaCalendarCheck,
+  FaCalendarDay,
+  FaChalkboard,
+  FaGooglePlay,
+  FaPen,
+  FaUsers,
+} from 'react-icons/fa';
 import './App.css';
 
 // TODO: uspolis page
@@ -32,30 +28,43 @@ function App() {
             </Heading>
             <Text fontSize={{ base: 'md', lg: 'lg' }}>
               Sistema centralizado para alocação e visualização de salas de aula com propósito de resolver o Problema de
-              Alocação de Aulas às Salas (PAAS) por meio de uma formulação matemática.
+              Alocação de Aulas às Salas (PAAS) por meio de uma formulação matemática. As alocações podem ser
+              visualizadas no app para Android ou IOS abaixo.
             </Text>
             <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
-              <Button
-                rounded='full'
-                colorScheme='blue'
-                _hover={{
-                  textDecoration: 'none',
-                }}
-              >
-                <Link href='/classrooms'>Área logada</Link>
-              </Button>
-              <Tooltip
+              <Link href='https://play.google.com/store/apps/details?id=uspolis.lunadros'>
+                <Button
+                  rounded='full'
+                  colorScheme='blue'
+                  _hover={{
+                    textDecoration: 'none',
+                  }}
+                  leftIcon={<FaGooglePlay />}
+                >
+                  Play Store
+                </Button>
+              </Link>
+              {/* <Tooltip
                 hasArrow
                 closeOnClick={false}
                 placement='bottom-start'
                 bg='uspolis.blue'
                 label='É necessário contatar um dos nossos administradores para ter acesso ao sistema
                 enviando um email para uspolis@usp.br'
-              >
-                <Button rounded='full'>
-                  <Link href='mailto:uspolis@usp.br'>Solicitar acesso</Link>
+              > */}
+              <Link href='https://apps.apple.com/br/app/uspolis/id1451455075'>
+                <Button
+                  rounded='full'
+                  colorScheme='blue'
+                  leftIcon={<FaAppStore />}
+                  _hover={{
+                    textDecoration: 'none',
+                  }}
+                >
+                  App Store
                 </Button>
-              </Tooltip>
+              </Link>
+              {/* </Tooltip> */}
             </Stack>
           </Stack>
         </Flex>

@@ -2,7 +2,7 @@ import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
 import Class from 'models/class.model';
 import { useEffect, useState } from 'react';
 import ClassesService from 'services/classes.service';
-import { ClassCodeText, WeekDayText } from 'utils/mappers/allocation.mapper';
+import { WeekDayText } from 'utils/mappers/allocation.mapper';
 import { ClassesBySubject } from 'utils/mappers/classes.mapper';
 
 const styles = StyleSheet.create({
