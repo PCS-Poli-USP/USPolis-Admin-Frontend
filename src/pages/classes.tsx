@@ -234,7 +234,7 @@ function Classes() {
       />
 
       <Center>
-        <Box p={4} w='8xl' overflow='auto'>
+        <Box p={4} w='80%' overflow='auto'>
           <Flex align='center'>
             <Text fontSize='4xl' mb={4}>
               Turmas
