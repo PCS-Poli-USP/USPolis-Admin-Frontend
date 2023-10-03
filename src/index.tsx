@@ -13,6 +13,7 @@ import awsConfig from 'aws-config';
 import AuthRoute from 'components/routes/auth.route';
 import AppContextProvider from 'context/AppContext';
 import theme from 'utils/chakra.theme';
+import Buildings from 'pages/buildings';
 
 Amplify.configure(awsConfig);
 
@@ -25,6 +26,7 @@ root.render(
           <Routes>
             <Route path='/' element={<Navigate to='/index' />} />
             <Route path='/index' element={<App />} />
+            <Route path='/buildings' element={<Buildings/>}/>
             {/* Private Routes */}
             <Route path='/' element={<AuthRoute />}>
               <Route path='classrooms' element={<Classrooms />} />
