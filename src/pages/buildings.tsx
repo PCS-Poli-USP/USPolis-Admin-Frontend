@@ -96,6 +96,7 @@ const Buildings = () => {
             <C.Thead>
               <C.Tr>
                 <C.Th>Nome</C.Th>
+                <C.Th>Atualizado em</C.Th>
                 <C.Th>Ações</C.Th>
               </C.Tr>
             </C.Thead>
@@ -103,6 +104,7 @@ const Buildings = () => {
               {buildings.map((building) => (
                 <C.Tr key={building.id}>
                   <C.Td>{building.name}</C.Td>
+                  <C.Td>{building.updated_at}</C.Td>
                   <C.Td>
                     <C.Flex gap={4}>
                       <C.Button onClick={() => handleEditButton(building)}>Editar</C.Button>
