@@ -47,6 +47,13 @@ function InstitutionalEvents() {
     {
       accessorKey: 'description',
       header: 'Descrição',
+      cell: ({ row }) => (
+        <Box maxWidth='450px'>
+          <Text textOverflow='ellipsis' whiteSpace='nowrap' overflow='hidden'>
+            {row.original.description}
+          </Text>
+        </Box>
+      ),
     },
     {
       accessorKey: 'category',
