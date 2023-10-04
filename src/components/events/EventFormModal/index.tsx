@@ -51,8 +51,11 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent }: EventFormMo
     resolver: yupResolver(schema),
   });
 
-  const { trigger, getValues, reset, clearErrors } = form;
+  const { trigger, getValues, reset, clearErrors, watch } = form;
+
   const toast = useToast();
+  const buildingWatcher = watch('building');
+  const locationWatcher = watch('location');
 
   const handleCreateSubmit = async () => {
     try {
@@ -127,8 +130,6 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent }: EventFormMo
     }
   }, [clearErrors, isOpen, reset, selectedEvent]);
 
-  console.log(selectedEvent);
-
   useEffect(() => {
     if (!!selectedEvent) {
       reset({ ...selectedEvent });
@@ -153,15 +154,16 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent }: EventFormMo
                   <Input label='Início' name='start_datetime' type='datetime-local' />
                   <Input label='Fim' name='end_datetime' type='datetime-local' />
                 </Flex>
-                <Input label='Localização' name='location' />
+                <Input label='Localização' name='location' disabled={!!buildingWatcher} />
                 <Text color='gray.500'>ou</Text>
                 <Flex w='100%' gap={3}>
                   <Select
                     label='Prédio'
                     name='building'
+                    disabled={!!locationWatcher}
                     options={Object.values(Buildings).map((b) => ({ label: b, value: b }))}
                   />
-                  <Input label='Sala' name='classroom' />
+                  <Input label='Sala' name='classroom' disabled={!!locationWatcher} />
                 </Flex>
                 <Flex w='100%' gap={3}>
                   <Select

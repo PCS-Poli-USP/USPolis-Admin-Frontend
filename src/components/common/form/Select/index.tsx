@@ -11,7 +11,7 @@ interface SelectProps extends FieldProps {
   options: Option[];
 }
 
-export function Select({ label, name, options }: SelectProps) {
+export function Select({ label, name, options, disabled = false }: SelectProps) {
   const {
     register,
     formState: { errors },
@@ -20,7 +20,7 @@ export function Select({ label, name, options }: SelectProps) {
   return (
     <FormControl isInvalid={!!errors[name]}>
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
-      <ChakraSelect {...register(name)}>
+      <ChakraSelect {...register(name)} disabled={disabled}>
         <option disabled selected>
           Selecione uma opção
         </option>

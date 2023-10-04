@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 
 interface InputProps extends FieldProps {}
 
-export function Textarea({ label, name }: InputProps) {
+export function Textarea({ label, name, disabled }: InputProps) {
   const {
     register,
     formState: { errors },
@@ -13,7 +13,7 @@ export function Textarea({ label, name }: InputProps) {
   return (
     <FormControl isInvalid={!!errors[name]}>
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
-      <ChakraTextarea {...register(name)} resize='vertical' />
+      <ChakraTextarea {...register(name)} resize='vertical' disabled={disabled} />
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
     </FormControl>
   );
