@@ -1,4 +1,4 @@
-import { Flex, FormLabel, Select as ChakraSelect } from '@chakra-ui/react';
+import { FormLabel, Select as ChakraSelect, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FieldProps } from 'models/interfaces';
 import { useFormContext } from 'react-hook-form';
 
@@ -12,18 +12,25 @@ interface SelectProps extends FieldProps {
 }
 
 export function Select({ label, name, options }: SelectProps) {
-  const { register } = useFormContext();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
 
   return (
-    <Flex direction='column' w='100%'>
+    <FormControl isInvalid={!!errors[name]}>
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
       <ChakraSelect {...register(name)}>
+        <option disabled selected>
+          Selecione uma opção
+        </option>
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
         ))}
       </ChakraSelect>
-    </Flex>
+      <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
+    </FormControl>
   );
 }

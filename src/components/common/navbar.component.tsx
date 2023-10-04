@@ -28,7 +28,7 @@ const Links = [
   { text: 'Salas', value: 'classrooms' },
   { text: 'Turmas', value: 'classes' },
   { text: 'Alocações', value: 'allocation' },
-  { text: 'Eventos', value: 'events' },
+  { text: 'Eventos', value: 'institutional-events' },
 ];
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (

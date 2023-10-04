@@ -1,16 +1,22 @@
-import { Flex, FormLabel, Input as ChakraInput } from '@chakra-ui/react';
+import { Flex, FormLabel, Input as ChakraInput, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FieldProps } from 'models/interfaces';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, FieldValues } from 'react-hook-form';
 
-interface InputProps extends FieldProps {}
+interface InputProps extends FieldProps {
+  type?: React.HTMLInputTypeAttribute;
+}
 
-export function Input({ label, name }: InputProps) {
-  const { register } = useFormContext();
+export function Input({ label, name, type = 'text' }: InputProps) {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
 
   return (
-    <Flex direction='column' w='100%'>
+    <FormControl isInvalid={!!errors[name]}>
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
-      <ChakraInput {...register(name)} />
-    </Flex>
+      <ChakraInput {...register(name)} type={type} />
+      <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
+    </FormControl>
   );
 }

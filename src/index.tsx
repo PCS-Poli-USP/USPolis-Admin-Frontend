@@ -2,7 +2,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import Allocation from 'pages/allocation';
 import Classes from 'pages/classes';
 import Classrooms from 'pages/classrooms';
-import Events from 'pages/events';
+import InstitutionalEvents from 'pages/institutional-events';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
@@ -24,13 +24,15 @@ root.render(
       <AppContextProvider>
         <Router>
           <Routes>
-            {/* <Route path='/' element={<Navigate to='/index' />} /> */}
-            {/* <Route path='/index' element={<App />} /> */}
+            <Route path='/' element={<Navigate to='/index' />} />
+            <Route path='/index' element={<App />} />
             {/* Private Routes */}
-            <Route path='classrooms' element={<Classrooms />} />
-            <Route path='classes' element={<Classes />} />
-            <Route path='allocation' element={<Allocation />} />
-            <Route path='events' element={<Events />} />
+            <Route path='/' element={<AuthRoute />}>
+              <Route path='classrooms' element={<Classrooms />} />
+              <Route path='classes' element={<Classes />} />
+              <Route path='allocation' element={<Allocation />} />
+              <Route path='institutional-events' element={<InstitutionalEvents />} />
+            </Route>
           </Routes>
         </Router>
       </AppContextProvider>

@@ -1,14 +1,13 @@
 export interface InstitutionalEvent {
+  _id: string;
   building: string | null;
-  category: string;
   classroom: string | null;
+  location: string | null;
+  category: string;
   created_at: string;
   description: string;
-  end_datetime?: string;
+  start_datetime: string;
+  end_datetime: string;
   external_link: string;
-  location: string;
-  start_datetime?: string;
-  start_timestamp?: string;
-  end_timestamp?: string;
   title: string;
 }
