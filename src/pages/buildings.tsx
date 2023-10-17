@@ -1,10 +1,20 @@
 import React, { useEffect } from 'react';
+import { Auth } from 'aws-amplify';
 import * as C from '@chakra-ui/react';
 import Navbar from 'components/common/navbar.component';
 import BuildingsService from 'services/buildings.service';
 import { Building, CreateBuilding, UpdateBuilding } from 'models/building.model';
 import RegisterModal from 'components/buildings/register.modal';
 import Dialog from 'components/common/dialog.component';
+
+function access_token() {
+  Auth.currentSession()
+    .then((data) => {
+      console.log(data);
+      return data.getAccessToken().getJwtToken();
+    })
+    .catch((err) => console.log(err));
+}
 
 const Buildings = () => {
   const buildingsService = new BuildingsService();

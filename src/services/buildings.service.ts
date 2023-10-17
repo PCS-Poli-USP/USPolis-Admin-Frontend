@@ -4,11 +4,9 @@ import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
-export default class BuildingsService {
-  private http: AxiosInstance;
-
+export default class BuildingsService extends HttpService {
   constructor() {
-    this.http = axios.create({ baseURL: `http://localhost:5000/api/building` });
+    super(`${USPOLIS_SERVER_URL}/building`);
   }
 
   list(): Promise<AxiosResponse<Array<Building>>> {

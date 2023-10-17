@@ -26,9 +26,9 @@ root.render(
           <Routes>
             <Route path='/' element={<Navigate to='/index' />} />
             <Route path='/index' element={<App />} />
-            <Route path='/buildings' element={<Buildings/>}/>
             {/* Private Routes */}
             <Route path='/' element={<AuthRoute />}>
+              <Route path='/buildings' element={<Buildings />} />
               <Route path='classrooms' element={<Classrooms />} />
               <Route path='classes' element={<Classes />} />
               <Route path='allocation' element={<Allocation />} />

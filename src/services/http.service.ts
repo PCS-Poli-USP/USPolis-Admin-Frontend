@@ -7,8 +7,8 @@ export default abstract class HttpService {
   constructor(protected baseURL: string, options: AxiosRequestConfig = {}) {
     this.http = axios.create({ baseURL, ...options });
     this.http.interceptors.request.use(async function (config) {
-      const { username } = await Auth.currentAuthenticatedUser();
-      config.headers = { username };
+      const access_token = (await Auth.currentSession()).getAccessToken().getJwtToken();
+      config.headers = { Authorization: `Bearer ${access_token}` };
       return config;
     });
   }
