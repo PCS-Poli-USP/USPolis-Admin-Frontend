@@ -28,7 +28,7 @@ root.render(
             <Route path='/index' element={<App />} />
             {/* Private Routes */}
             <Route path='/' element={<AuthRoute />}>
-              <Route path='/buildings' element={<Buildings />} />
+              <Route path='buildings' element={<Buildings />} />
               <Route path='classrooms' element={<Classrooms />} />
               <Route path='classes' element={<Classes />} />
               <Route path='allocation' element={<Allocation />} />

@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
 import { Auth } from 'aws-amplify';
 import * as C from '@chakra-ui/react';
+import { ColumnDef } from '@tanstack/react-table';
 import Navbar from 'components/common/navbar.component';
 import BuildingsService from 'services/buildings.service';
 import { Building, CreateBuilding, UpdateBuilding } from 'models/building.model';
 import RegisterModal from 'components/buildings/register.modal';
 import Dialog from 'components/common/dialog.component';
+import { FaEllipsisV } from 'react-icons/fa';
+import DataTable from 'components/common/dataTable.component';
 
 function access_token() {
   Auth.currentSession()
@@ -24,6 +27,30 @@ const Buildings = () => {
   const [registerModalOpen, setRegisterModalOpen] = React.useState<boolean>(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState<boolean>(false);
   const [isUpdate, setIsUpdate] = React.useState<boolean>(false);
+
+  const columns: ColumnDef<Building>[] = [
+    {
+      accessorKey: 'name',
+      header: 'Nome',
+    },
+    {
+      accessorKey: 'updated_at',
+      header: 'Atualizado em',
+    },
+    {
+      id: 'options',
+      meta: { isNumeric: true },
+      cell: ({ row }) => (
+        <C.Menu>
+          <C.MenuButton as={C.IconButton} aria-label='Options' icon={<C.Icon as={FaEllipsisV} />} variant='ghost' />
+          <C.MenuList>
+            <C.MenuItem onClick={() => handleEditButton(row.original)}>Editar</C.MenuItem>
+            <C.MenuItem onClick={() => handleDeleteButton(row.original)}>Deletar</C.MenuItem>
+          </C.MenuList>
+        </C.Menu>
+      ),
+    },
+  ];
 
   useEffect(() => {
     fetchBuildings();
@@ -101,44 +128,23 @@ const Buildings = () => {
           </C.Text>
           <C.Button onClick={handleCreateButton}>Cadastrar</C.Button>
         </C.Flex>
-        <C.TableContainer>
-          <C.Table size='lg'>
-            <C.Thead>
-              <C.Tr>
-                <C.Th>Nome</C.Th>
-                <C.Th>Atualizado em</C.Th>
-                <C.Th>Ações</C.Th>
-              </C.Tr>
-            </C.Thead>
-            <C.Tbody>
-              {buildings.map((building) => (
-                <C.Tr key={building.id}>
-                  <C.Td>{building.name}</C.Td>
-                  <C.Td>{building.updated_at}</C.Td>
-                  <C.Td>
-                    <C.Flex gap={4}>
-                      <C.Button onClick={() => handleEditButton(building)}>Editar</C.Button>
-                      <C.Button colorScheme='red' onClick={() => handleDeleteButton(building)}>
-                        Excluir
-                      </C.Button>
-                    </C.Flex>
-                  </C.Td>
-                </C.Tr>
-              ))}
-            </C.Tbody>
-          </C.Table>
-        </C.TableContainer>
+        <DataTable columns={columns} data={buildings} />
       </C.Flex>
       <RegisterModal
         isOpen={registerModalOpen}
-        onClose={() => setRegisterModalOpen(false)}
+        onClose={() => {
+          setRegisterModalOpen(false);
+          setContextBuilding(null);
+        }}
         onSave={handleRegisterSave}
         isUpdate={isUpdate}
         formData={contextBuilding ? { name: contextBuilding.name } : undefined}
       />
       <Dialog
         isOpen={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
+        onClose={() => {
+          setDeleteDialogOpen(false);
+        }}
         onConfirm={() => {
           deleteBuilding(contextBuilding?.id as string);
           setDeleteDialogOpen(false);
