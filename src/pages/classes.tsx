@@ -20,12 +20,13 @@ import HasToBeAllocatedDrawer from 'components/allocation/hasToBeAllocated.drawe
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
+import RegisterModal from 'components/classes/register.modal';
 import DataTable from 'components/common/dataTable.component';
 import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
 import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
-import Class, { EditClassEvents, HasToBeAllocatedClass, Preferences } from 'models/class.model';
+import Class, { CreateClassEvents, EditClassEvents, HasToBeAllocatedClass, Preferences } from 'models/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
@@ -42,6 +43,8 @@ function Classes() {
   const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
   const { isOpen: isOpenDrawer, onOpen: onOpenDrawer, onClose: onCloseDrawer } = useDisclosure();
   const { isOpen: isOpenAlloc, onOpen: onOpenAlloc, onClose: onCloseAlloc } = useDisclosure();
+  const { isOpen: isOpenRegister, onOpen: onOpenRegister, onClose: onCloseRegister } = useDisclosure();
+
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
@@ -122,6 +125,17 @@ function Classes() {
       setClassesList(it.data);
       setLoading(false);
     });
+  }
+
+  function handleRegisterClick() {
+    onOpenRegister();
+  }
+
+  function handleRegister(data: CreateClassEvents) {
+    classesService.createOne(data).then((it) => {
+      console.log(it.data);
+      fetchData();
+    });;
   }
 
   function handleDeleteClick(obj: Class) {
@@ -218,6 +232,7 @@ function Classes() {
         data={selectedClass}
         onSave={handleSavePreferences}
       />
+      <RegisterModal isOpen={isOpenRegister} onClose={onCloseRegister} onSave={handleRegister} />
       <EditModal isOpen={isOpenEdit} onClose={onCloseEdit} formData={selectedClass} onSave={handleEdit} />
       <HasToBeAllocatedDrawer
         isOpen={isOpenDrawer}
@@ -240,6 +255,9 @@ function Classes() {
               Turmas
             </Text>
             <Spacer />
+            <Button mr={2} colorScheme='blue' onClick={handleRegisterClick}>
+              Criar Turma
+            </Button>
             <JupiterCrawlerPopover onSave={handleCrawlerSave} />
             <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
               Alocar

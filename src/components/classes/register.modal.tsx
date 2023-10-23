@@ -33,19 +33,19 @@ interface RegisterModalProps {
 
 export default function RegisterModal(props: RegisterModalProps) {
   const initialForm: CreateClassEvents= {
-    class_code: '',
-    subject_code: '',
-    subject_name: '',
-    professor: '',
-    start_period: '',
-    end_period: '',
-    start_time: '',
-    end_time: '',
-    week_day: '',
-    class_type: '',
-    vacancies: 0,
-    subscribers: 0,
-    pendings: 0,
+    class_code: '202306',
+    subject_code: 'PCS311',
+    subject_name: 'LabO',
+    professor: 'Gabriel Di Vanna',
+    start_period: '18/10/2023',
+    end_period: '20/11/2023',
+    start_time: '13:50',
+    end_time: '17:50',
+    week_day: 'qua',
+    class_type: 'Prática',
+    vacancies: 50,
+    subscribers: 25,
+    pendings: 10,
     // preferences: Preferences,
     has_to_be_allocated: true,
   };
@@ -55,8 +55,7 @@ export default function RegisterModal(props: RegisterModalProps) {
   useEffect(() => {
     if (props.formData) setForm(props.formData);
     else setForm(initialForm);
-    // if (!props.isUpdate) setForm(initialForm);
-    console.log(form);
+
     // eslint-disable-next-line
   }, [props.formData]);
 
@@ -93,6 +92,7 @@ export default function RegisterModal(props: RegisterModalProps) {
     <Modal 
       isOpen={props.isOpen} 
       onClose={handleCloseModal} 
+      closeOnOverlayClick={false} 
       motionPreset='slideInBottom'
       size={'3xl'}
       scrollBehavior='outside'
