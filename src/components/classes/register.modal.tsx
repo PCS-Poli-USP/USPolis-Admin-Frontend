@@ -1,8 +1,11 @@
 import {
   Button,
+  Checkbox,
   FormControl,
   FormLabel,
   VStack,
+  HStack,
+  Heading,
   Input,
   Modal,
   ModalBody,
@@ -19,6 +22,8 @@ import {
   Select,
 } from '@chakra-ui/react';
 
+import { Building } from 'models/building.model';
+
 import { CreateClassEvents } from 'models/class.model';
 
 import { useEffect, useState } from 'react';
@@ -27,26 +32,32 @@ interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
   formData?: CreateClassEvents;
+  buildings?: Array<Building>;
   isUpdate?: boolean;
   onSave: (data: CreateClassEvents) => void;
 }
 
 export default function RegisterModal(props: RegisterModalProps) {
   const initialForm: CreateClassEvents= {
-    class_code: '202306',
-    subject_code: 'PCS311',
-    subject_name: 'LabO',
-    professor: 'Gabriel Di Vanna',
-    start_period: '18/10/2023',
-    end_period: '20/11/2023',
-    start_time: '13:50',
-    end_time: '17:50',
-    week_day: 'qua',
-    class_type: 'Prática',
-    vacancies: 50,
-    subscribers: 25,
-    pendings: 10,
-    // preferences: Preferences,
+    class_code: '',
+    subject_code: '',
+    subject_name: '',
+    professor: '',
+    start_period: '',
+    end_period: '',
+    start_time: '',
+    end_time: '',
+    week_day: '',
+    class_type: '',
+    vacancies: 0,
+    subscribers: 0,
+    pendings: 0,
+    preferences: {
+      building: '',
+      air_conditioning: false,
+      projector: false,
+      accessibility: false,
+    },
     has_to_be_allocated: true,
   };
 
@@ -55,7 +66,6 @@ export default function RegisterModal(props: RegisterModalProps) {
   useEffect(() => {
     if (props.formData) setForm(props.formData);
     else setForm(initialForm);
-
     // eslint-disable-next-line
   }, [props.formData]);
 
@@ -188,7 +198,7 @@ export default function RegisterModal(props: RegisterModalProps) {
               <FormLabel>Dia da semana</FormLabel>
               <Select 
                 placeholder='Escolha o dia da semana'
-                onChange={(event) => setForm((prev) => ({ ...prev, class_type: event.target.value }))}
+                onChange={(event) => setForm((prev) => ({ ...prev, week_day: event.target.value }))}
                 >
                 <option value='seg'>Segunda</option>
                 <option value='ter'>Terça</option>
@@ -219,7 +229,7 @@ export default function RegisterModal(props: RegisterModalProps) {
               <NumberInput 
                 defaultValue={0}
                 min={0} 
-                max={20} 
+                max={150} 
                 placeholder='Quantidade de alunos inscritos'
                 onChange={(valueAsString, valueAsNumber) => setForm((prev) => ({...prev, subscribers: valueAsNumber }))}>
                 <NumberInputField />
@@ -240,6 +250,51 @@ export default function RegisterModal(props: RegisterModalProps) {
                 <option value='Prática'>Prática</option>
                 <option value='Teórica'>Teórica</option>
               </Select>
+            </FormControl>
+
+            <ModalHeader>Preferências</ModalHeader>
+
+            <FormControl isInvalid={isEmpty(form.preferences.building)}>
+              <FormLabel>Prédio</FormLabel>
+              <Select
+                defaultValue={props.formData? props.formData.preferences.building : undefined}
+                placeholder='Escolha o prédio da turma'
+                value={form.preferences.building}
+                onChange={(event) => setForm((prev) => (
+                  { ...prev, preferences: {...prev.preferences, building: event.target.value} }))}
+              >
+                {props.buildings?.map((it) => (
+                  <option key={it.name} value={it.name}>
+                    {it.name}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl mt={4}>
+              <HStack>
+                <Checkbox
+                  isChecked={form.preferences.accessibility}
+                  onChange={(event) => setForm((prev) => (
+                    {...prev, preferences: {...prev.preferences, accessibility: event.target.checked }}))}
+                >
+                  Acessibilidade
+                </Checkbox>
+                <Checkbox
+                  isChecked={form.preferences.air_conditioning}
+                  onChange={(event) => setForm((prev) => (
+                    {...prev, preferences: {...prev.preferences, air_conditioning: event.target.checked }}))}
+                >
+                  Ar Condicionado
+                </Checkbox>
+                <Checkbox
+                  isChecked={form.preferences.projector}
+                  onChange={(event) => setForm((prev) => (
+                    {...prev, preferences: {...prev.preferences, projector: event.target.checked }}))}
+                >
+                  Projetor
+                </Checkbox>
+              </HStack>
             </FormControl>
 
           </VStack>

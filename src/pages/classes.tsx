@@ -32,12 +32,15 @@ import { useContext, useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ClassesService from 'services/classes.service';
+import BuildingsService from 'services/buildings.service';
 import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
 import { FilterArray, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import { Building } from 'models/building.model';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
+  const [buildingsList, setBuildingsList] = useState<Array<Building>>([]);
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
   const { isOpen: isOpenPreferences, onOpen: onOpenPreferences, onClose: onClosePreferences } = useDisclosure();
   const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
@@ -112,12 +115,20 @@ function Classes() {
   ];
 
   const classesService = new ClassesService();
+  const buildingsService = new BuildingsService();
   const eventsService = new EventsService();
 
   useEffect(() => {
     fetchData();
+    fetchBuildings();
     // eslint-disable-next-line
   }, []);
+
+  function fetchBuildings() {
+    buildingsService.list().then((it) => {
+      setBuildingsList(it.data);
+    });
+  }
 
   function fetchData() {
     setLoading(true);
@@ -194,6 +205,7 @@ function Classes() {
 
   function handleEdit(data: EditClassEvents[]) {
     if (selectedClass) {
+      console.log(selectedClass)
       classesService.edit(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
         console.log(it.data);
         fetchData();
@@ -232,7 +244,7 @@ function Classes() {
         data={selectedClass}
         onSave={handleSavePreferences}
       />
-      <RegisterModal isOpen={isOpenRegister} onClose={onCloseRegister} onSave={handleRegister} />
+      <RegisterModal isOpen={isOpenRegister} onClose={onCloseRegister} onSave={handleRegister} buildings={buildingsList} />
       <EditModal isOpen={isOpenEdit} onClose={onCloseEdit} formData={selectedClass} onSave={handleEdit} />
       <HasToBeAllocatedDrawer
         isOpen={isOpenDrawer}

@@ -38,7 +38,7 @@ export interface CreateClassEvents {
   vacancies: number;
   subscribers: number;
   pendings: number;
-  // preferences: Preferences;
+  preferences: Preferences;
   has_to_be_allocated: boolean;
 }
 
