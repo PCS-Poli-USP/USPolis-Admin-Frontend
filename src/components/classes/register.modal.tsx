@@ -3,9 +3,10 @@ import {
   Checkbox,
   FormControl,
   FormLabel,
+  FormHelperText,
+  FormErrorMessage,
   VStack,
   HStack,
-  Heading,
   Input,
   Modal,
   ModalBody,
@@ -20,34 +21,42 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Select,
+  Text,
+  List,
+  ListItem,
+  ListIcon,
 } from '@chakra-ui/react';
+
+import { BsPersonCheckFill } from 'react-icons/bs';
+import { CalendarIcon } from '@chakra-ui/icons';
 
 import { Building } from 'models/building.model';
 
-import { CreateClassEvents } from 'models/class.model';
+import Class from 'models/class.model';
 
 import { useEffect, useState } from 'react';
+import { weekDaysFormatter } from 'utils/classes.utils';
 
 interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
-  formData?: CreateClassEvents;
+  formData?: Class;
   buildings?: Array<Building>;
   isUpdate?: boolean;
-  onSave: (data: CreateClassEvents) => void;
+  onSave: (data: Class) => void;
 }
 
 export default function RegisterModal(props: RegisterModalProps) {
-  const initialForm: CreateClassEvents= {
+  const initialForm: Class = {
     class_code: '',
     subject_code: '',
     subject_name: '',
-    professor: '',
+    professors: [],
     start_period: '',
     end_period: '',
-    start_time: '',
-    end_time: '',
-    week_day: '',
+    start_time: [],
+    end_time: [],
+    week_days: [],
     class_type: '',
     vacancies: 0,
     subscribers: 0,
@@ -62,6 +71,14 @@ export default function RegisterModal(props: RegisterModalProps) {
   };
 
   const [form, setForm] = useState(initialForm);
+  const [professor, setProfessor] = useState("");
+  const [week_day, setWeekDay] = useState("");
+  const [start_time, setStartTime] = useState("");
+  const [end_time, setEndTime] = useState("");
+
+  // Errors flags for inputs:
+  const [hasTimeError, setHasTimeError] = useState(false);
+  const [hasDayError, setHasDayError] = useState(false);
 
   useEffect(() => {
     if (props.formData) setForm(props.formData);
@@ -85,8 +102,63 @@ export default function RegisterModal(props: RegisterModalProps) {
     props.onClose();
   }
 
-  function isEmpty(value: string) {
+  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    setWeekDay(event.target.value);
+    setHasDayError(false);
+  }
+
+  function handleProfessorButton() {
+    if (professor.length < 3) return;
+    const names: string[] = [...form.professors];
+    names.push(professor);
+    setForm((prev) => ({...prev, professors: names}));
+    setProfessor('');
+  }
+
+
+  function handleDateButton() {
+    if (isInvalidTime()) {
+      setHasTimeError(true);
+    }
+    if (isEmpty(week_day)) {
+      setHasDayError(true);
+    }
+
+    if (!isInvalidDate()) clearErrors();
+    else return;
+
+    setForm((prev) => (
+      {
+        ...prev, 
+        week_days: [...prev.week_days, week_day],
+        start_time: [...prev.start_time, start_time],
+        end_time: [...prev.end_time, end_time],
+      }));
+    clearInputs();
+  }
+
+  function clearInputs() {
+    setWeekDay("");
+    setStartTime("");
+    setEndTime("");
+  }
+
+  function clearErrors() {
+    setHasDayError(false);
+    setHasTimeError(false);
+  }
+
+  function isEmpty(value: string): boolean {
     return value.length <= 0;
+  }
+
+  function isInvalidTime(): boolean {
+    if (start_time.length === 0 || end_time.length === 0) return true;
+    return false
+  }
+
+  function isInvalidDate(): boolean {
+    return isInvalidTime() || isEmpty(week_day);
   }
 
   function isInvalidEndPeriod(value: string): boolean {
@@ -114,7 +186,9 @@ export default function RegisterModal(props: RegisterModalProps) {
         <ModalCloseButton />
 
         <ModalBody pb={10}>
-          <VStack spacing='20px'>
+          <Text as='b' fontSize='xl'>Informações gerais</Text>
+
+          <VStack spacing='20px' alignItems='start'>
 
             <FormControl isInvalid={isEmpty(form.subject_code)}>
               <FormLabel>Código da turma</FormLabel>
@@ -127,7 +201,7 @@ export default function RegisterModal(props: RegisterModalProps) {
             </FormControl>
 
             <FormControl isInvalid={isEmpty(form.subject_code)}>
-              <FormLabel>Código</FormLabel>
+              <FormLabel>Código da disciplina</FormLabel>
               <Input
                 placeholder='Código da disciplina'
                 value={form.subject_code}
@@ -146,98 +220,51 @@ export default function RegisterModal(props: RegisterModalProps) {
               />
             </FormControl>
 
-            <FormControl isInvalid={isEmpty(form.professor)}>
-              <FormLabel>Professor</FormLabel>
-              <Input
-                placeholder='Insira o nome dos professor'
-                type='text'
-                value={form.professor}
-                onChange={(event) => setForm((prev) => ({...prev, professor: event.target.value}))}
-              />
-            </FormControl>
-
-            <FormControl isInvalid={isEmpty(form.start_period)}>
-              <FormLabel>Data de início</FormLabel>
-              <Input
-                placeholder='Data de início da disciplina'
-                type="date"
-                value={form.start_period}
-                onChange={(event) => setForm((prev) => ({ ...prev, start_period: event.target.value }))}
-              />
-            </FormControl>
-
-            <FormControl isInvalid={isInvalidEndPeriod(form.end_period)}>
-              <FormLabel>Data de enceramento</FormLabel>
-              <Input
-                placeholder='Data de encerramento da disciplina'
-                type="date"
-                value={form.end_period}
-                onChange={(event) => setForm((prev) => ({ ...prev, end_period: event.target.value }))}
-              />
-            </FormControl>
-
             <FormControl>
-              <FormLabel>Horário de Início</FormLabel>
-              <Input
-                type='time'
-                value={form.start_time}
-                onChange={(event) => setForm((prev) => ({...prev, start_time: event.target.value }))}
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Horário de Fim</FormLabel>
-              <Input
-                type='time'
-                value={form.end_time}
-                onChange={(event) => setForm((prev) => ({...prev, end_time: event.target.value }))}
-              />
-            </FormControl>
-
-            <FormControl isInvalid={isEmpty(form.week_day)}>
-              <FormLabel>Dia da semana</FormLabel>
-              <Select 
-                placeholder='Escolha o dia da semana'
-                onChange={(event) => setForm((prev) => ({ ...prev, week_day: event.target.value }))}
-                >
-                <option value='seg'>Segunda</option>
-                <option value='ter'>Terça</option>
-                <option value='qua'>Quarta</option>
-                <option value='qui'>Quinta</option>
-                <option value='sex'>Sexta</option>
-              </Select>
-            </FormControl>
-
-            <FormControl isInvalid={form.vacancies <= 0}>
+              <FormLabel>Oferecimento da disciplina</FormLabel>
+              <HStack spacing='8px' >
               <FormLabel>Vagas</FormLabel>
-              <NumberInput 
-                defaultValue={props.isUpdate? Number(props.formData?.vacancies) : 0} 
-                min={0} 
-                max={150} 
-                placeholder='Quantidade de vagas da turma'
-                onChange={(valueAsString, valueAsNumber) => setForm((prev) => ({...prev, vacancies: valueAsNumber }))}>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
-            </FormControl>
+                <NumberInput 
+                  defaultValue={props.isUpdate? Number(props.formData?.vacancies) : 0} 
+                  min={0} 
+                  max={99999} 
+                  placeholder='Quantidade de vagas da turma'
+                  onChange={(valueAsString, valueAsNumber) => setForm((prev) => ({...prev, vacancies: valueAsNumber }))}>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
 
-            <FormControl isInvalid={form.subscribers <= 0}>
-              <FormLabel>Inscritos</FormLabel>
-              <NumberInput 
-                defaultValue={0}
-                min={0} 
-                max={150} 
-                placeholder='Quantidade de alunos inscritos'
-                onChange={(valueAsString, valueAsNumber) => setForm((prev) => ({...prev, subscribers: valueAsNumber }))}>
-                <NumberInputField />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
+                <FormLabel>Inscritos</FormLabel>
+                <NumberInput 
+                  defaultValue={0}
+                  min={0} 
+                  max={99999} 
+                  placeholder='Quantidade de alunos inscritos'
+                  onChange={(valueAsString, valueAsNumber) => setForm((prev) => ({...prev, subscribers: valueAsNumber }))}>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+
+                <FormLabel>Pendentes</FormLabel>
+                <NumberInput 
+                  defaultValue={0}
+                  min={0} 
+                  max={99999} 
+                  placeholder='Quantidade de alunos pendentes'
+                  onChange={(valueAsString, valueAsNumber) => setForm((prev) => ({...prev, pendings: valueAsNumber }))}>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </HStack>
             </FormControl>
             
             <FormControl isInvalid={isEmpty(form.class_type)}>
@@ -252,7 +279,127 @@ export default function RegisterModal(props: RegisterModalProps) {
               </Select>
             </FormControl>
 
-            <ModalHeader>Preferências</ModalHeader>
+            <FormControl isInvalid={isEmpty(professor)} isReadOnly={true}>
+              <FormLabel>Professores</FormLabel>
+                <Input
+                  placeholder='Insira os nomes dos professores'
+                  type='text'
+                  value={professor}
+                  onChange={(event) => setProfessor(event.target.value)}
+                />
+            </FormControl>
+
+            <Button onClick={handleProfessorButton}>Adicionar professor</Button>
+
+            <Text as='b' fontSize='lg'>Professores adicionados:</Text>
+            {form.professors.length > 0 ? (
+              <List spacing={3}>
+              {form.professors.map((professor, index) => (
+                <ListItem key={index}>
+                  <ListIcon as={BsPersonCheckFill} /> {professor}
+                </ListItem>
+              ))}
+            </List>
+            ) : (
+              <Text as='b' >Nenhum professor adicionado</Text>
+            )}
+            {/* {!(hasDayError) ? (undefined) 
+            : (
+              <FormErrorMessage>Nome de professor inválido</FormErrorMessage>
+            )} */}
+
+            <Text as='b' fontSize='xl'>Horários e datas da turma</Text>
+            
+            <FormControl isInvalid={isEmpty(form.start_period) || isEmpty(form.end_period)} >
+              <FormLabel>Período da disciplina</FormLabel>
+              <HStack spacing='5px'>
+                <FormLabel>Início</FormLabel>
+                <Input
+                  placeholder='Data de início da disciplina'
+                  type="date"
+                  value={form.start_period}
+                  onChange={(event) => setForm((prev) => ({ ...prev, start_period: event.target.value }))}
+                />
+                <FormLabel>Fim</FormLabel>
+                <Input
+                  placeholder='Data de encerramento da disciplina'
+                  type="date"
+                  value={form.end_period}
+                  onChange={(event) => setForm((prev) => ({ ...prev, end_period: event.target.value }))}
+                />
+              </HStack>
+            </FormControl>
+
+            <FormControl isInvalid={hasDayError}>
+              <FormLabel>Dia da semana</FormLabel>
+              <Select 
+                placeholder='Escolha o dia da semana'
+                value={week_day}
+                onChange={handleSelectChange}
+                >
+                  <option value='seg'>Segunda</option>
+                  <option value='ter'>Terça</option>
+                  <option value='qua'>Quarta</option>
+                  <option value='qui'>Quinta</option>
+                  <option value='sex'>Sexta</option>
+                  <option value='sab'>Sábado</option>
+                  <option value='dom'>Domingo</option>
+              </Select>
+              {!(hasDayError) ? (undefined) 
+              : (
+                <FormErrorMessage>Selecione um dia</FormErrorMessage>
+              )}
+            </FormControl>
+
+            <FormControl isInvalid={isEmpty(start_time) || isEmpty(end_time)} >
+              <FormLabel>Horário da aula</FormLabel>
+              <HStack spacing='5px'>
+                <FormLabel>Início</FormLabel>
+                <Input
+                  placeholder='Horario de início da disciplina'
+                  type='time'
+                  value={start_time}
+                  onChange={(event) => { 
+                    setStartTime(event.target.value);
+                    if (!(isEmpty(end_time))) setHasTimeError(false);
+                  }}
+                />
+                <FormLabel>Fim</FormLabel>
+                <Input
+                  placeholder='Horário de encerramento da disciplina'
+                  type='time'
+                  value={end_time}
+                  onChange={(event) => {
+                    setEndTime(event.target.value);
+                    if (!(isEmpty(start_time))) setHasTimeError(false);
+                  }}
+                />
+              </HStack>
+              {!(hasTimeError) ? (undefined) 
+              : (
+                <FormErrorMessage>Horários inválidos.</FormErrorMessage>
+              )}
+            </FormControl>
+            
+            <FormControl>
+              <Button type='submit' onClick={handleDateButton}>Adicionar horário</Button>
+            </FormControl>
+
+            <Text as='b' fontSize='lg'>Horários adicionados:</Text>
+            {form.week_days.length > 0 ? (
+              <List spacing={3}>
+                {form.week_days.map((week_day, index) => (
+                  <ListItem key={index}>
+                    <CalendarIcon /> 
+                    {` ${weekDaysFormatter(week_day)}, ${form.start_time[index]} às ${form.end_time[index]}`}   
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <Text as='b'>Nenhum horário adicionado</Text>
+            )}
+
+            <Text as='b' fontSize='xl'>Preferências</Text>
 
             <FormControl isInvalid={isEmpty(form.preferences.building)}>
               <FormLabel>Prédio</FormLabel>

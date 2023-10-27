@@ -13,7 +13,7 @@ export default class ClassesService extends HttpService {
     return this.http.get('');
   }
 
-  createOne(data: CreateClassEvents): Promise<AxiosResponse<any>> {
+  createOne(data: CreateClassEvents[]): Promise<AxiosResponse<any>> {
     return this.http.post("", data);
   }
 

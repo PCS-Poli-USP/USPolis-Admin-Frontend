@@ -26,7 +26,12 @@ import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
 import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
-import Class, { CreateClassEvents, EditClassEvents, HasToBeAllocatedClass, Preferences } from 'models/class.model';
+import Class, {
+  CreateClassEvents, 
+  EditClassEvents, 
+  HasToBeAllocatedClass, 
+  Preferences 
+} from 'models/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
@@ -36,6 +41,7 @@ import BuildingsService from 'services/buildings.service';
 import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
 import { FilterArray, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import { breakClassFormInEvents } from 'utils/classes.utils';
 import { Building } from 'models/building.model';
 
 function Classes() {
@@ -79,7 +85,7 @@ function Classes() {
       cell: ({ row }) => (
         <Box>
           {row.original.professors?.map((professor, index) => (
-            <Text key={professor + index}>{professor}</Text>
+            <Text key={index}>{professor}</Text>
           ))}
         </Box>
       ),
@@ -124,9 +130,15 @@ function Classes() {
     // eslint-disable-next-line
   }, []);
 
+  function sortBuilding(a: Building, b: Building) {
+    if (a.name < b.name) return -1;
+    else if (a.name > b.name) return 1;
+    return 0;
+  }
+
   function fetchBuildings() {
     buildingsService.list().then((it) => {
-      setBuildingsList(it.data);
+      setBuildingsList(it.data.sort(sortBuilding));
     });
   }
 
@@ -135,6 +147,16 @@ function Classes() {
     classesService.list().then((it) => {
       setClassesList(it.data);
       setLoading(false);
+    }).catch((error) => {
+      console.log(error);
+      setLoading(false);
+      toast({
+        title: `Erro ao carregar turmas: ${error}`,
+        position: 'top-left',
+        duration: 5000,
+        isClosable: true,
+        status: 'error',
+      });
     });
   }
 
@@ -142,11 +164,26 @@ function Classes() {
     onOpenRegister();
   }
 
-  function handleRegister(data: CreateClassEvents) {
-    classesService.createOne(data).then((it) => {
-      console.log(it.data);
+  function handleRegister(data: Class) {
+    const events: CreateClassEvents[] = breakClassFormInEvents(data);
+    classesService.createOne(events).then(() => {
       fetchData();
-    });;
+      toast({
+        title: 'Turma criada com sucesso!',
+        position: 'top-left',
+        duration: 5000,
+        isClosable: true,
+        status: 'success',
+        });
+    }).catch((error) => {
+      toast({
+        title: `Erro ao criar turma: ${error}`,
+        position: 'top-left',
+        duration: 5000,
+        isClosable: true,
+        status: 'error',
+      });
+    });
   }
 
   function handleDeleteClick(obj: Class) {
@@ -157,7 +194,6 @@ function Classes() {
   function handleDelete() {
     if (selectedClass) {
       classesService.delete(selectedClass.subject_code, selectedClass.class_code).then((it) => {
-        console.log(it.data);
         onCloseDelete();
         fetchData();
       });

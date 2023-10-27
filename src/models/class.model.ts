@@ -24,29 +24,12 @@ export interface Preferences {
   accessibility?: boolean;
 }
 
-export interface CreateClassForm {
-  class_code: string;
-  subject_code: string;
-  subject_name: string;
-  professor: string;
-  start_period: string;
-  end_period: string;
-  start_times: string[];
-  end_times: string[];
-  week_days: string[];
-  class_type: string;
-  vacancies: number;
-  subscribers: number;
-  pendings: number;
-  preferences: Preferences;
-  has_to_be_allocated: boolean;
-}
 
 export interface CreateClassEvents {
   class_code: string;
   subject_code: string;
   subject_name: string;
-  professor: string;
+  professors: string[];
   start_period: string;
   end_period: string;
   start_time: string;
@@ -58,6 +41,7 @@ export interface CreateClassEvents {
   pendings: number;
   preferences: Preferences;
   has_to_be_allocated: boolean;
+  classrom?: string;
 }
 
 export interface EditClassEvents {
