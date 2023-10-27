@@ -10,15 +10,6 @@ import Dialog from 'components/common/dialog.component';
 import { FaEllipsisV } from 'react-icons/fa';
 import DataTable from 'components/common/dataTable.component';
 
-function access_token() {
-  Auth.currentSession()
-    .then((data) => {
-      console.log(data);
-      return data.getAccessToken().getJwtToken();
-    })
-    .catch((err) => console.log(err));
-}
-
 const Buildings = () => {
   const buildingsService = new BuildingsService();
 
