@@ -151,9 +151,9 @@ function Classes() {
       console.log(error);
       setLoading(false);
       toast({
-        title: `Erro ao carregar turmas: ${error}`,
+        title: `Erro ao carregar turmas: ${error.message}`,
         position: 'top-left',
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
         status: 'error',
       });
@@ -171,7 +171,7 @@ function Classes() {
       toast({
         title: 'Turma criada com sucesso!',
         position: 'top-left',
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
         status: 'success',
         });
@@ -179,7 +179,7 @@ function Classes() {
       toast({
         title: `Erro ao criar turma: ${error}`,
         position: 'top-left',
-        duration: 5000,
+        duration: 3000,
         isClosable: true,
         status: 'error',
       });
