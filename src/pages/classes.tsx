@@ -41,7 +41,7 @@ import BuildingsService from 'services/buildings.service';
 import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
 import { FilterArray, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
-import { breakClassFormInEvents } from 'utils/classes.utils';
+import { breakClassFormInEvents } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
 
 function Classes() {
