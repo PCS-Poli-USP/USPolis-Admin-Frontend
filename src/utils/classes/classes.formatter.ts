@@ -2,10 +2,6 @@ import Class, { CreateClassEvents } from "models/class.model";
 
 export function breakClassFormInEvents(form: Class) {
   const events: CreateClassEvents[] = [];
-  const week_days = form.week_days;
-  const start_times = form.start_time;
-  const end_times = form.end_time;
-  
   for (let i = 0; i < form.week_days.length; i++) {
     const event: CreateClassEvents = {
       class_code: form.class_code,
