@@ -3,7 +3,6 @@ import {
   Checkbox,
   FormControl,
   FormLabel,
-  FormHelperText,
   FormErrorMessage,
   VStack,
   HStack,
@@ -23,8 +22,6 @@ import {
   Select,
   Text,
   List,
-  ListItem,
-  ListIcon,
 } from '@chakra-ui/react';
 
 import { BsPersonCheckFill } from 'react-icons/bs';
@@ -35,7 +32,8 @@ import { Building } from 'models/building.model';
 import Class from 'models/class.model';
 
 import { useEffect, useState } from 'react';
-import { weekDaysFormatter } from 'utils/classes.utils';
+import { weekDaysFormatter } from 'utils/classes/classes.formatter';
+import * as validator from 'utils/classes/classes.validator';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -76,9 +74,18 @@ export default function RegisterModal(props: RegisterModalProps) {
   const [start_time, setStartTime] = useState("");
   const [end_time, setEndTime] = useState("");
 
-  // Errors flags for inputs:
+  // Errors flags for inputs validation:
+  const [hasClassCodeError, setHasClassCodeError] = useState(false);
+  const [hasSubjectCodeError, setHasSubjectCodeError] = useState(false);
+  const [hasSubjectNameError, setHasSubjectNameError] = useState(false);
+  const [hasOferingError, setHasOferingError] = useState(false);
+  const [hasClassTypeError, setHasClassTypeError] = useState(false);
+  const [hasProfessorError, setHasProfessorError] = useState(false);
+  const [hasPeriodError, setHasPeriodError] = useState(false);
   const [hasTimeError, setHasTimeError] = useState(false);
   const [hasDayError, setHasDayError] = useState(false);
+  const [hasBuildingError, setHasBuildingError] = useState(false);
+  const [hasErrors, setHasErros] = useState(false);
 
   useEffect(() => {
     if (props.formData) setForm(props.formData);
@@ -87,13 +94,14 @@ export default function RegisterModal(props: RegisterModalProps) {
   }, [props.formData]);
 
   function handleSaveClick() {
-    if (!validadeInputs()) return;
-    if (isEmpty(form.subject_code)) return;
-    if (isEmpty(form.subject_name)) return;
-    if (isInvalidEndPeriod(form.end_period)) return;
+    if (isInvalidForm()) {
+      setHasErros(true);
+      return;
+    }
+    else setHasErros(false);
 
     props.onSave(form);
-    setForm(initialForm)
+    setForm(initialForm);
     props.onClose();
   }
 
@@ -108,24 +116,33 @@ export default function RegisterModal(props: RegisterModalProps) {
   }
 
   function handleProfessorButton() {
-    if (professor.length < 3) return;
+    if (validator.isInvalidProfessor(professor)) {
+      setHasProfessorError(true);
+      return;
+    }
+    else setHasProfessorError(false);
     const names: string[] = [...form.professors];
     names.push(professor);
     setForm((prev) => ({...prev, professors: names}));
     setProfessor('');
   }
 
+  function handleProfessorInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Enter') handleProfessorButton();
+  }
 
   function handleDateButton() {
-    if (isInvalidTime()) {
+    if (validator.isInvalidTime(start_time, end_time)) {
       setHasTimeError(true);
     }
-    if (isEmpty(week_day)) {
+    else setHasTimeError(false);
+
+    if (validator.isEmpty(week_day)) {
       setHasDayError(true);
     }
+    else setHasDayError(false);
 
-    if (!isInvalidDate()) clearErrors();
-    else return;
+    if (validator.isInvalidTime(start_time, end_time) || validator.isEmpty(week_day)) return;
 
     setForm((prev) => (
       {
@@ -143,31 +160,54 @@ export default function RegisterModal(props: RegisterModalProps) {
     setEndTime("");
   }
 
-  function clearErrors() {
-    setHasDayError(false);
-    setHasTimeError(false);
+  function isInvalidClass(): boolean {
+    if (validator.isInvalidClassCode(form.class_code)) {
+      setHasClassCodeError(true);
+    }
+    if (validator.isInvalidSubjectCode(form.subject_code)) {
+      setHasSubjectCodeError(true);
+    }
+    if (validator.isInvalidSubjectName(form.subject_name)) {
+      setHasSubjectNameError(true);
+    }
+    return hasClassCodeError || hasSubjectNameError || hasSubjectCodeError;
   }
 
-  function isEmpty(value: string): boolean {
-    return value.length <= 0;
-  }
+  function isInvalidForm() {
+    let hasError = false;
+    if (isInvalidClass()) {
+      hasError = true;
+    }
 
-  function isInvalidTime(): boolean {
-    if (start_time.length === 0 || end_time.length === 0) return true;
-    return false
-  }
+    if (validator.isInvalidOfering(form.pendings, form.subscribers)) {
+      setHasOferingError(true);
+      hasError = true;
+    }
 
-  function isInvalidDate(): boolean {
-    return isInvalidTime() || isEmpty(week_day);
-  }
+    if (validator.isInvalidClassType(form.class_type)) {
+      setHasClassTypeError(true);
+      hasError = true;
+    }
 
-  function isInvalidEndPeriod(value: string): boolean {
-    return value.length < 0;
-  }
+    if (validator.isInvalidPeriod(form.start_period, form.end_period)) {
+      setHasPeriodError(true);
+      hasError = true;
+    }
 
-  function validadeInputs() {
-    // TODO
-    return true;
+    if (validator.isEmpty(form.preferences.building)) {
+      setHasBuildingError(true);
+      hasError = true;
+    }
+
+    if (validator.isInvalidProfessorList(form.professors)) {
+      hasError = true;
+    }
+
+    if (validator.isInvalidTimeList(form.start_time, form.end_time)) {
+      hasError = true;
+    }
+
+    return hasError;
   }
 
   return (
@@ -190,37 +230,50 @@ export default function RegisterModal(props: RegisterModalProps) {
 
           <VStack spacing='20px' alignItems='start'>
 
-            <FormControl isInvalid={isEmpty(form.subject_code)}>
+            <FormControl isInvalid={hasClassCodeError}>
               <FormLabel>Código da turma</FormLabel>
               <Input
+                type='number'
                 placeholder='Código da turma'
                 value={form.class_code}
                 errorBorderColor='crimson'
-                onChange={(event) => setForm((prev) => ({ ...prev, class_code: event.target.value }))}
+                onChange={(event) => {
+                  setForm((prev) => ({ ...prev, class_code: event.target.value }));
+                  if (event.target.value) setHasClassCodeError(false);
+                }}
               />
+              {hasClassCodeError ? (<FormErrorMessage>Código de turma inválido.</FormErrorMessage>) : (undefined)}
             </FormControl>
 
-            <FormControl isInvalid={isEmpty(form.subject_code)}>
+            <FormControl isInvalid={hasSubjectCodeError}>
               <FormLabel>Código da disciplina</FormLabel>
               <Input
                 placeholder='Código da disciplina'
                 value={form.subject_code}
                 errorBorderColor='crimson'
-                onChange={(event) => setForm((prev) => ({ ...prev, subject_code: event.target.value }))}
+                onChange={(event) => {
+                  setForm((prev) => ({ ...prev, subject_code: event.target.value }));
+                  if (event.target.value) setHasSubjectCodeError(false);
+                }}
               />
+              {hasSubjectCodeError ? (<FormErrorMessage>Código de disciplina inválido.</FormErrorMessage>) : (undefined)}
             </FormControl>
             
-            <FormControl isInvalid={isEmpty(form.subject_name)}>
-              <FormLabel>Nome</FormLabel>
+            <FormControl isInvalid={hasSubjectNameError}>
+              <FormLabel>Nome da disciplina</FormLabel>
               <Input
                 placeholder='Nome da disciplina'
                 value={form.subject_name}
                 errorBorderColor='crimson'
-                onChange={(event) => setForm((prev) => ({ ...prev, subject_name: event.target.value }))}
+                onChange={(event) => {
+                  setForm((prev) => ({ ...prev, subject_name: event.target.value }));
+                  if (event.target.value) setHasSubjectNameError(false);
+                }}
               />
+              {hasSubjectNameError ? (<FormErrorMessage>Nome da disciplina inválido.</FormErrorMessage>) : (undefined)}
             </FormControl>
 
-            <FormControl>
+            <FormControl isInvalid={hasOferingError}>
               <FormLabel>Oferecimento da disciplina</FormLabel>
               <HStack spacing='8px' >
               <FormLabel>Vagas</FormLabel>
@@ -243,7 +296,10 @@ export default function RegisterModal(props: RegisterModalProps) {
                   min={0} 
                   max={99999} 
                   placeholder='Quantidade de alunos inscritos'
-                  onChange={(valueAsString, valueAsNumber) => setForm((prev) => ({...prev, subscribers: valueAsNumber }))}>
+                  onChange={(valueAsString, valueAsNumber) => {
+                      setForm((prev) => ({...prev, subscribers: valueAsNumber }));
+                      if(valueAsNumber) setHasOferingError(false);
+                    }}>
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -257,7 +313,10 @@ export default function RegisterModal(props: RegisterModalProps) {
                   min={0} 
                   max={99999} 
                   placeholder='Quantidade de alunos pendentes'
-                  onChange={(valueAsString, valueAsNumber) => setForm((prev) => ({...prev, pendings: valueAsNumber }))}>
+                  onChange={(valueAsString, valueAsNumber) => {
+                      setForm((prev) => ({...prev, pendings: valueAsNumber }));
+                      if(valueAsNumber) setHasOferingError(false);
+                    }}>
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -265,28 +324,38 @@ export default function RegisterModal(props: RegisterModalProps) {
                   </NumberInputStepper>
                 </NumberInput>
               </HStack>
+              {hasOferingError ? (<FormErrorMessage>Oferecimento inválido.</FormErrorMessage>) : (undefined)}
             </FormControl>
             
-            <FormControl isInvalid={isEmpty(form.class_type)}>
+            <FormControl isInvalid={hasClassTypeError}>
               <FormLabel>Tipo de turma</FormLabel>
               <Select 
                 defaultValue={props.formData? props.formData.class_type : undefined}
-                placeholder='Escolha o tipo da disciplina'
-                onChange={(event) => setForm((prev) => ({ ...prev, class_type: event.target.value }))}
+                placeholder='Escolha o tipo da turma'
+                onChange={(event) => {
+                  setForm((prev) => ({ ...prev, class_type: event.target.value }));
+                  if (event.target.value) setHasClassTypeError(false);
+                }}
                 >
                 <option value='Prática'>Prática</option>
                 <option value='Teórica'>Teórica</option>
               </Select>
+              {hasClassTypeError ? (<FormErrorMessage>Escolha um tipo de turma.</FormErrorMessage>) : (undefined)}
             </FormControl>
 
-            <FormControl isInvalid={isEmpty(professor)} isReadOnly={true}>
+            <FormControl isInvalid={hasProfessorError} >
               <FormLabel>Professores</FormLabel>
                 <Input
                   placeholder='Insira os nomes dos professores'
                   type='text'
                   value={professor}
-                  onChange={(event) => setProfessor(event.target.value)}
+                  onChange={(event) => {
+                    setProfessor(event.target.value);
+                    if (!professor) setHasProfessorError(false);
+                  }}
+                  onKeyDown={handleProfessorInputKeyDown}
                 />
+              {hasProfessorError ? (<FormErrorMessage>Nome de professor inválido.</FormErrorMessage>) : (undefined)}
             </FormControl>
 
             <Button onClick={handleProfessorButton}>Adicionar professor</Button>
@@ -295,22 +364,31 @@ export default function RegisterModal(props: RegisterModalProps) {
             {form.professors.length > 0 ? (
               <List spacing={3}>
               {form.professors.map((professor, index) => (
-                <ListItem key={index}>
-                  <ListIcon as={BsPersonCheckFill} /> {professor}
-                </ListItem>
+                <HStack key={index}>
+                  <BsPersonCheckFill />
+                  <Text>{professor}</Text>
+                  <Button  
+                    colorScheme='red' 
+                    size='xs' 
+                    variant='ghost' 
+                    onClick={() => {
+                      const newProfessors = form.professors;
+                      newProfessors.splice(index, 1);
+                      setForm((prev) => ({...prev, professors: newProfessors}));
+                    }}
+                  >
+                    Remover
+                  </Button>
+                </HStack>
               ))}
             </List>
             ) : (
-              <Text as='b' >Nenhum professor adicionado</Text>
+              <Text as='b' colorScheme='red' color='red.500'>Nenhum professor adicionado</Text>
             )}
-            {/* {!(hasDayError) ? (undefined) 
-            : (
-              <FormErrorMessage>Nome de professor inválido</FormErrorMessage>
-            )} */}
 
             <Text as='b' fontSize='xl'>Horários e datas da turma</Text>
             
-            <FormControl isInvalid={isEmpty(form.start_period) || isEmpty(form.end_period)} >
+            <FormControl isInvalid={hasPeriodError} >
               <FormLabel>Período da disciplina</FormLabel>
               <HStack spacing='5px'>
                 <FormLabel>Início</FormLabel>
@@ -318,16 +396,23 @@ export default function RegisterModal(props: RegisterModalProps) {
                   placeholder='Data de início da disciplina'
                   type="date"
                   value={form.start_period}
-                  onChange={(event) => setForm((prev) => ({ ...prev, start_period: event.target.value }))}
+                  onChange={(event) => {
+                    setForm((prev) => ({ ...prev, start_period: event.target.value }));
+                    if (event.target.value) setHasPeriodError(false);
+                  }}
                 />
                 <FormLabel>Fim</FormLabel>
                 <Input
                   placeholder='Data de encerramento da disciplina'
                   type="date"
                   value={form.end_period}
-                  onChange={(event) => setForm((prev) => ({ ...prev, end_period: event.target.value }))}
+                  onChange={(event) => {
+                    setForm((prev) => ({ ...prev, end_period: event.target.value }));
+                    if (event.target.value) setHasPeriodError(false);
+                  }}
                 />
               </HStack>
+              {hasPeriodError ? (<FormErrorMessage>Periodo inválido</FormErrorMessage>) : (undefined)}
             </FormControl>
 
             <FormControl isInvalid={hasDayError}>
@@ -345,13 +430,10 @@ export default function RegisterModal(props: RegisterModalProps) {
                   <option value='sab'>Sábado</option>
                   <option value='dom'>Domingo</option>
               </Select>
-              {!(hasDayError) ? (undefined) 
-              : (
-                <FormErrorMessage>Selecione um dia</FormErrorMessage>
-              )}
+              {hasDayError ? (<FormErrorMessage>Selecione um dia</FormErrorMessage>) : (undefined)}
             </FormControl>
 
-            <FormControl isInvalid={isEmpty(start_time) || isEmpty(end_time)} >
+            <FormControl isInvalid={hasTimeError}>
               <FormLabel>Horário da aula</FormLabel>
               <HStack spacing='5px'>
                 <FormLabel>Início</FormLabel>
@@ -361,7 +443,7 @@ export default function RegisterModal(props: RegisterModalProps) {
                   value={start_time}
                   onChange={(event) => { 
                     setStartTime(event.target.value);
-                    if (!(isEmpty(end_time))) setHasTimeError(false);
+                    if (!(validator.isEmpty(end_time))) setHasTimeError(false);
                   }}
                 />
                 <FormLabel>Fim</FormLabel>
@@ -371,14 +453,11 @@ export default function RegisterModal(props: RegisterModalProps) {
                   value={end_time}
                   onChange={(event) => {
                     setEndTime(event.target.value);
-                    if (!(isEmpty(start_time))) setHasTimeError(false);
+                    if (!(validator.isEmpty(start_time))) setHasTimeError(false);
                   }}
                 />
               </HStack>
-              {!(hasTimeError) ? (undefined) 
-              : (
-                <FormErrorMessage>Horários inválidos.</FormErrorMessage>
-              )}
+              {hasTimeError ? <FormErrorMessage>Horários inválidos.</FormErrorMessage> : (undefined)}
             </FormControl>
             
             <FormControl>
@@ -389,26 +468,40 @@ export default function RegisterModal(props: RegisterModalProps) {
             {form.week_days.length > 0 ? (
               <List spacing={3}>
                 {form.week_days.map((week_day, index) => (
-                  <ListItem key={index}>
+                  <HStack key={index}>
                     <CalendarIcon /> 
-                    {` ${weekDaysFormatter(week_day)}, ${form.start_time[index]} às ${form.end_time[index]}`}   
-                  </ListItem>
+                    <Text>{` ${weekDaysFormatter(week_day)}, ${form.start_time[index]} às ${form.end_time[index]}`} </Text>
+                    <Button  
+                      colorScheme='red' 
+                      size='xs' 
+                      variant='ghost' 
+                      onClick={() => {
+                        const newWeekDays = form.week_days;
+                        newWeekDays.splice(index, 1);
+                        setForm((prev) => ({...prev, week_days: newWeekDays}));
+                      }}
+                    >
+                      Remover
+                    </Button>
+                  </HStack>
                 ))}
               </List>
             ) : (
-              <Text as='b'>Nenhum horário adicionado</Text>
+              <Text as='b' colorScheme='red' color='red.500'>Nenhum horário adicionado</Text>
             )}
 
             <Text as='b' fontSize='xl'>Preferências</Text>
 
-            <FormControl isInvalid={isEmpty(form.preferences.building)}>
+            <FormControl isInvalid={hasBuildingError}>
               <FormLabel>Prédio</FormLabel>
               <Select
                 defaultValue={props.formData? props.formData.preferences.building : undefined}
                 placeholder='Escolha o prédio da turma'
                 value={form.preferences.building}
-                onChange={(event) => setForm((prev) => (
-                  { ...prev, preferences: {...prev.preferences, building: event.target.value} }))}
+                onChange={(event) => {
+                  setForm((prev) => ({ ...prev, preferences: {...prev.preferences, building: event.target.value} }));
+                  if (event.target.value) setHasBuildingError(false);
+                }}
               >
                 {props.buildings?.map((it) => (
                   <option key={it.name} value={it.name}>
@@ -416,6 +509,7 @@ export default function RegisterModal(props: RegisterModalProps) {
                   </option>
                 ))}
               </Select>
+              {hasBuildingError? <FormErrorMessage>Escolha um prédio.</FormErrorMessage> : (undefined)}
             </FormControl>
 
             <FormControl mt={4}>
@@ -448,10 +542,13 @@ export default function RegisterModal(props: RegisterModalProps) {
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-            Salvar
-          </Button>
-          <Button onClick={handleCloseModal}>Cancelar</Button>
+          <HStack spacing='10px'>
+            {hasErrors ? <Text colorScheme='red' color='red.900'>Fomulário inválido, corrija os campos inválidos</Text> : (undefined) }
+            <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
+              Salvar
+            </Button>
+            <Button onClick={handleCloseModal}>Cancelar</Button>
+          </HStack>
         </ModalFooter>
 
       </ModalContent>
