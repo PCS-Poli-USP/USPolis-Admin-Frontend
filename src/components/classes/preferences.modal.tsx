@@ -14,7 +14,7 @@ import {
   Select,
 } from '@chakra-ui/react';
 import Class, { Preferences } from 'models/class.model';
-import { Buildings } from 'models/enums/buildings.enum';
+import { Building } from 'models/building.model';
 
 import { useEffect, useState } from 'react';
 
@@ -26,14 +26,14 @@ interface PreferencesModalProps {
   isOpen: boolean;
   onClose: () => void;
   data?: Class; // data from database
+  buildings: Array<Building>;
   onSave: (data: PreferencesForm) => void;
 }
 
 export default function PreferencesModal(props: PreferencesModalProps) {
-  const buildingsOptions = Object.values(Buildings);
 
   const initialForm: PreferencesForm = {
-    building: '',
+    building_id: '',
     has_to_be_allocated: true,
   };
 
@@ -45,7 +45,7 @@ export default function PreferencesModal(props: PreferencesModalProps) {
   }, [props.data]);
 
   function handleSaveClick() {
-    if (isEmpty(form.building)) return;
+    if (isEmpty(form.building_id)) return;
 
     props.onSave(form);
     props.onClose();
@@ -66,16 +66,16 @@ export default function PreferencesModal(props: PreferencesModalProps) {
         <ModalHeader>Preferências</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <FormControl isInvalid={isEmpty(form.building)}>
+          <FormControl isInvalid={isEmpty(form.building_id)}>
             <FormLabel>Prédio</FormLabel>
 
             <Select
-              value={form.building}
-              onChange={(event) => setForm((prev) => ({ ...prev, building: event.target.value as Buildings }))}
+              value={form.building_id}
+              onChange={(event) => setForm((prev) => ({ ...prev, building_id: event.target.value }))}
             >
-              {buildingsOptions.map((it) => (
-                <option key={it} value={it}>
-                  {it}
+              {props.buildings.map((it, index) => (
+                <option key={index} value={it.id}>
+                  {it.name}
                 </option>
               ))}
             </Select>
