@@ -1,4 +1,4 @@
-import Class, { CreateClassEvents } from "models/class.model";
+import Class, { CreateClassEvents, EditClassEvents, EditedClass } from "models/class.model";
 
 export function breakClassFormInEvents(form: Class) {
   const events: CreateClassEvents[] = [];
@@ -24,6 +24,23 @@ export function breakClassFormInEvents(form: Class) {
   }
 
   return events;
+}
+
+export function breakEditedClassInEditedEvents(data: EditedClass): EditClassEvents[] {
+  const editedEvents: EditClassEvents[] = [];
+  for (let i = 0; i < data.week_days.length; i++) {
+    const editedEvent: EditClassEvents = {
+      week_day_id: data.week_days_id[i],
+      start_time_id: data.start_times_id[i],
+      professors: data.professors,
+      week_day: data.week_days[i],
+      start_time: data.start_time[i],
+      end_time: data.end_time[i],
+      subscribers: data.subscribers,
+    };
+    editedEvents.push(editedEvent);
+  }
+  return editedEvents;
 }
 
 export function weekDaysFormatter(week_day: string): string {
