@@ -6,9 +6,6 @@ import { Building } from 'models/building.model';
 import BuildingsService from 'services/buildings.service';
 import UsersService from 'services/users.service';
 
-const buildingsService = new BuildingsService();
-const usersService = new UsersService();
-
 interface RegisterUserFormValues {
   username: string;
   email: string;
@@ -29,6 +26,9 @@ const initialForm: RegisterUserFormValues = {
 };
 
 const RegisterUser = () => {
+  const buildingsService = new BuildingsService();
+  const usersService = new UsersService();
+
   const [form, setForm] = useState(initialForm);
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [isLoadingRegister, setIsLoadingRegister] = useState(false);

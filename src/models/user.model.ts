@@ -20,3 +20,8 @@ export interface CreateUser {
 export interface CreateUserResponse {
     id: string;
 }
+
+export interface EditUser {
+    building_ids?: Array<string>;
+    isAdmin?: boolean;
+}

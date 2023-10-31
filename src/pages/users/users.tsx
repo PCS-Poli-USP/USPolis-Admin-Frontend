@@ -1,18 +1,22 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as C from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import Navbar from 'components/common/navbar.component';
 import UsersService from 'services/users.service';
-import { User, CreateUser } from 'models/user.model';
+import { User, CreateUser, EditUser } from 'models/user.model';
 import DataTable from 'components/common/dataTable.component';
 import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { appContext } from 'context/AppContext';
+import { FaEllipsisV } from 'react-icons/fa';
+import EditUserModal from 'components/users/edit.modal';
 
 const Users = () => {
   const { setLoading } = useContext(appContext);
   const usersService = new UsersService();
 
-  const [users, setUsers] = React.useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [contextUser, setContextUser] = useState<User | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
 
   const columns: ColumnDef<User>[] = [
     {
@@ -48,15 +52,30 @@ const Users = () => {
     {
       id: 'options',
       meta: { isNumeric: true },
+      cell: ({ row }) => (
+        <C.Menu>
+          <C.MenuButton
+            as={C.IconButton}
+            aria-label='Options'
+            icon={<C.Icon as={FaEllipsisV} />}
+            variant='ghost'
+          />
+          <C.MenuList>
+            <C.MenuItem onClick={() => handleEditButton(row.original)}>
+              Editar
+            </C.MenuItem>
+          </C.MenuList>
+        </C.Menu>
+      ),
     },
   ];
 
   useEffect(() => {
-    setLoading(true);
     fetchUsers();
   }, []);
 
   async function fetchUsers() {
+    setLoading(true);
     try {
       const response = await usersService.list();
       console.log(response.data);
@@ -67,6 +86,23 @@ const Users = () => {
       setTimeout(() => {
         fetchUsers();
       }, 1000);
+    }
+  }
+
+  function handleEditButton(user: User) {
+    setContextUser(user);
+    setEditModalOpen(true);
+  }
+
+  async function editUser(data: EditUser, user_id: string) {
+    setLoading(true);
+    try {
+      await usersService.update(data, user_id);
+      fetchUsers();
+    } catch (err: any) {
+      console.error(err);
+      alert(`Erro ao editar usuário:\n${err.response.data.message}`);
+      setLoading(false);
     }
   }
 
@@ -81,6 +117,30 @@ const Users = () => {
         </C.Flex>
         <DataTable columns={columns} data={users} />
       </C.Flex>
+      <EditUserModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        formData={{
+          buildings: contextUser?.buildings.map((b) => ({
+            label: b.name,
+            value: b.id,
+          })),
+          isAdmin: contextUser?.isAdmin,
+        }}
+        otherData={{
+          email: contextUser?.email,
+          username: contextUser?.username,
+        }}
+        onSave={(form) => {
+          editUser(
+            {
+              building_ids: form.buildings?.map((b) => b.value),
+              isAdmin: form.isAdmin,
+            },
+            contextUser!.id,
+          );
+        }}
+      />
     </>
   );
 };
