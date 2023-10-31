@@ -20,4 +20,8 @@ export default class UsersService extends HttpService {
   async update(data: EditUser, user_id: string): Promise<AxiosResponse<Number>> {
     return this.http.put(`/${user_id}`, data);
   }
+
+  async delete(user_id: string): Promise<AxiosResponse<any>> {
+    return this.http.delete(`/${user_id}`);
+  }
 }

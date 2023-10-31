@@ -9,6 +9,7 @@ import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { appContext } from 'context/AppContext';
 import { FaEllipsisV } from 'react-icons/fa';
 import EditUserModal from 'components/users/edit.modal';
+import Dialog from 'components/common/dialog.component';
 
 const Users = () => {
   const { setLoading } = useContext(appContext);
@@ -17,6 +18,7 @@ const Users = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [contextUser, setContextUser] = useState<User | null>(null);
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
   const columns: ColumnDef<User>[] = [
     {
@@ -64,6 +66,9 @@ const Users = () => {
             <C.MenuItem onClick={() => handleEditButton(row.original)}>
               Editar
             </C.MenuItem>
+            <C.MenuItem onClick={() => handleDeleteButton(row.original)}>
+              Deletar
+            </C.MenuItem>
           </C.MenuList>
         </C.Menu>
       ),
@@ -94,6 +99,11 @@ const Users = () => {
     setEditModalOpen(true);
   }
 
+  function handleDeleteButton(user: User) {
+    setDeleteDialogOpen(true);
+    setContextUser(user);
+  }
+
   async function editUser(data: EditUser, user_id: string) {
     setLoading(true);
     try {
@@ -102,6 +112,18 @@ const Users = () => {
     } catch (err: any) {
       console.error(err);
       alert(`Erro ao editar usuário:\n${err.response.data.message}`);
+      setLoading(false);
+    }
+  }
+
+  async function deleteUser(user_id: string) {
+    setLoading(true);
+    try {
+      await usersService.delete(user_id);
+      fetchUsers();
+    } catch (err: any) {
+      console.error(err);
+      alert(`Erro ao deletar usuário:\n${err.response.data.message}`);
       setLoading(false);
     }
   }
@@ -140,6 +162,17 @@ const Users = () => {
             contextUser!.id,
           );
         }}
+      />
+      <Dialog
+        isOpen={deleteDialogOpen}
+        onClose={() => {
+          setDeleteDialogOpen(false);
+        }}
+        onConfirm={() => {
+          deleteUser(contextUser!.id);
+          setDeleteDialogOpen(false);
+        }}
+        title={`Deseja deletar o usuário "${contextUser?.username}"`}
       />
     </>
   );
