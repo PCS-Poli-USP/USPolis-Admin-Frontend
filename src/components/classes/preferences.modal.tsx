@@ -71,7 +71,9 @@ export default function PreferencesModal(props: PreferencesModalProps) {
 
             <Select
               value={form.building_id}
-              onChange={(event) => setForm((prev) => ({ ...prev, building_id: event.target.value }))}
+              onChange={(event) => {
+                setForm((prev) => ({ ...prev, building_id: event.target.value }))
+              }}
             >
               {props.buildings.map((it, index) => (
                 <option key={index} value={it.id}>

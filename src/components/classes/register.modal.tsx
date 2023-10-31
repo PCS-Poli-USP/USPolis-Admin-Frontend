@@ -528,16 +528,13 @@ export default function RegisterModal(props: RegisterModalProps) {
                 placeholder='Escolha o prédio da turma'
                 value={buildingName}
                 onChange={(event) => {
-                  const index = event.target.selectedIndex;
-                  let buildingID = event.target.options[index].getAttribute('itemID')
-                  if (buildingID === null) buildingID = '';
-                  setForm((prev) => ({ ...prev, preferences: {...prev.preferences, building_id: buildingID as string} }));
+                  setForm((prev) => ({ ...prev, preferences: {...prev.preferences, building_id: event.target.value} }));
                   setBuildingName(event.target.value);
                   if (event.target.value) setHasBuildingError(false);
                 }}
               >
-                {props.buildings?.map((it) => (
-                  <option key={it.id} value={it.name} itemID={it.id} >
+                {props.buildings?.map((it, index) => (
+                  <option key={index} value={it.id}>
                     {it.name}
                   </option>
                 ))}
