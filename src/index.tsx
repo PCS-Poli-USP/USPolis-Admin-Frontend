@@ -15,6 +15,7 @@ import AppContextProvider from 'context/AppContext';
 import theme from 'utils/chakra.theme';
 import Buildings from 'pages/buildings';
 import RegisterUser from 'pages/users/registerUser';
+import Users from 'pages/users/users';
 
 Amplify.configure(awsConfig);
 
@@ -29,6 +30,7 @@ root.render(
             <Route path='/index' element={<App />} />
             {/* Private Routes */}
             <Route path='/' element={<AuthRoute />}>
+              <Route path='users' element={<Users />} />
               <Route path='users/register' element={<RegisterUser />} />
               <Route path='buildings' element={<Buildings />} />
               <Route path='classrooms' element={<Classrooms />} />
