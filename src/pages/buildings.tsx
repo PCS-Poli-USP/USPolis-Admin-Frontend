@@ -59,6 +59,9 @@ const Buildings = () => {
     } catch (err) {
       console.log('err');
       console.error(err);
+      setTimeout(() => {
+        fetchBuildings();
+      }, 1000);
     }
   }
 
