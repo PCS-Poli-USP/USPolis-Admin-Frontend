@@ -6,6 +6,6 @@ export interface CreateInstitutionalEventRequest {
   description: string;
   start_datetime: string;
   end_datetime: string;
-  external_link: string;
+  external_link?: string;
   title: string;
 }

@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 import { EventForm } from '.';
 import moment from 'moment';
+import { EventTypes } from 'models/enums/eventTypes.enum';
 
 export const formFields = {
   building: {
@@ -18,7 +19,10 @@ export const formFields = {
     defaultValue: '',
   },
   category: {
-    validator: yup.string().required('Campo obrigatório'),
+    validator: yup
+      .string()
+      .required('Campo obrigatório')
+      .test('is-valid-option', 'Campo obrigatório', (value) => Object.keys(EventTypes).includes(value)),
     defaultValue: '',
   },
   description: {
@@ -26,7 +30,7 @@ export const formFields = {
     defaultValue: '',
   },
   external_link: {
-    validator: yup.string().required('Campo obrigatório').url('Link inválido'),
+    validator: yup.string().url('Link inválido'),
     defaultValue: '',
   },
   location: {

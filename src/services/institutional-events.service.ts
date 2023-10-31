@@ -8,22 +8,22 @@ const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
 export default class InstutionalEventsService extends HttpService {
   constructor() {
-    super(`${USPOLIS_SERVER_URL}/`);
+    super(`${USPOLIS_SERVER_URL}/api/institutional-events`);
   }
 
   list(): Promise<AxiosResponse<Array<InstitutionalEvent>>> {
-    return this.http.get('api/mobile/institutional-events');
+    return this.http.get('');
   }
 
   create(body: CreateInstitutionalEventRequest): Promise<AxiosResponse> {
-    return this.http.post('api/institutional-events', body);
+    return this.http.post('', body);
   }
 
   update(id: string, body: UpdateInstitutionalEventRequest): Promise<AxiosResponse> {
-    return this.http.patch(`api/institutional-events/${id}`, body);
+    return this.http.patch(`/${id}`, body);
   }
 
   delete(id: string): Promise<AxiosResponse> {
-    return this.http.delete(`api/institutional-events/${id}`);
+    return this.http.delete(`/${id}`);
   }
 }

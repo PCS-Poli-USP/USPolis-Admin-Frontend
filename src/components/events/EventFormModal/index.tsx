@@ -23,6 +23,7 @@ import { Buildings } from 'models/enums/buildings.enum';
 import { useEffect, useState } from 'react';
 import InstutionalEventsService from 'services/institutional-events.service';
 import { InstitutionalEvent } from 'models/institutionalEvent.model';
+import { EventTypes } from 'models/enums/eventTypes.enum';
 
 export type EventForm = {
   building?: string | null;
@@ -31,7 +32,7 @@ export type EventForm = {
   description: string;
   end_datetime: string;
   start_datetime: string;
-  external_link: string;
+  external_link?: string;
   location?: string | null;
   title: string;
 };
@@ -169,7 +170,7 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent }: EventFormMo
                   <Select
                     label='Categoria'
                     name='category'
-                    options={[{ label: 'Processo Seletivo de Entidade', value: 'Processo Seletivo de Entidade' }]}
+                    options={Object.keys(EventTypes).map((opt) => ({ label: opt, value: opt }))}
                   />
                   <Input label='Link externo' name='external_link' type='url' />
                 </Flex>
