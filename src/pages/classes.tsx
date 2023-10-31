@@ -197,6 +197,21 @@ function Classes() {
       classesService.delete(selectedClass.subject_code, selectedClass.class_code).then((it) => {
         onCloseDelete();
         fetchData();
+        toast({
+          title: 'Turma deletada com sucesso!',
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'success',
+          });
+      }).catch((error) => {
+        toast({
+          title: `Erro ao deletar turma: ${error}`,
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'error',
+        });
       });
     }
   }
@@ -210,8 +225,22 @@ function Classes() {
     if (selectedClass) {
       data.building_id = String(data.building_id)
       classesService.patchPreferences(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
-        console.log(it);
         fetchData();
+        toast({
+          title: 'Preferências editadas com sucesso!',
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'success',
+          });
+      }).catch((error) => {
+        toast({
+          title: `Erro ao editar preferências: ${error}`,
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'error',
+        });
       });
     }
   }
