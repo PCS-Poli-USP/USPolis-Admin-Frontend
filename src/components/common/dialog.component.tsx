@@ -24,7 +24,7 @@ export default function Dialog({ isOpen, onClose, onConfirm, title, warningText 
       <AlertDialogOverlay />
 
       <AlertDialogContent>
-        <AlertDialogHeader>{title}?</AlertDialogHeader>
+        <AlertDialogHeader>{title}</AlertDialogHeader>
         <AlertDialogBody color='red'>{warningText}</AlertDialogBody>
         <AlertDialogFooter>
           <Button ref={cancelRef} onClick={onClose} colorScheme='red' variant='outline' size='sm'>

@@ -11,12 +11,9 @@
     "@fullcalendar/react": "5.11.2",
     "@fullcalendar/resource-timeline": "5.11.3",
     "@fullcalendar/timegrid": "5.11.3",
+    "@hookform/resolvers": "^3.3.1",
     "@react-pdf/renderer": "^3.1.6",
     "@tanstack/react-table": "8.5.13",
-    "@testing-library/jest-dom": "5.16.4",
-    "@testing-library/react": "13.2.0",
-    "@testing-library/user-event": "13.5.0",
-    "@types/jest": "27.5.1",
     "@types/node": "16.11.36",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.4",
@@ -24,13 +21,15 @@
     "axios": "0.27.2",
     "chakra-react-select": "4.2.2",
     "framer-motion": "6.5.1",
+    "moment": "^2.29.4",
     "react": "18.1.0",
     "react-dom": "18.1.0",
+    "react-hook-form": "^7.46.2",
     "react-icons": "4.4.0",
     "react-router-dom": "6.3.0",
     "react-scripts": "5.0.1",
-    "typescript": "4.6.4",
-    "web-vitals": "2.1.4"
+    "web-vitals": "2.1.4",
+    "yup": "^1.3.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -56,5 +55,12 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "."
+  "homepage": ".",
+  "devDependencies": {
+    "@testing-library/jest-dom": "5.16.4",
+    "@testing-library/react": "13.2.0",
+    "@testing-library/user-event": "13.5.0",
+    "@types/jest": "27.5.1",
+    "typescript": "4.6.4"
+  }
 }

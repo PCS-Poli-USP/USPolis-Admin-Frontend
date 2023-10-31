@@ -2,6 +2,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import Allocation from 'pages/allocation';
 import Classes from 'pages/classes';
 import Classrooms from 'pages/classrooms';
+import InstitutionalEvents from 'pages/institutional-events';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
@@ -30,6 +31,7 @@ root.render(
               <Route path='classrooms' element={<Classrooms />} />
               <Route path='classes' element={<Classes />} />
               <Route path='allocation' element={<Allocation />} />
+              <Route path='institutional-events' element={<InstitutionalEvents />} />
             </Route>
           </Routes>
         </Router>

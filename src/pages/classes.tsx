@@ -229,12 +229,12 @@ function Classes() {
         isOpen={isOpenAlloc}
         onClose={onCloseAlloc}
         onConfirm={handleAlloc}
-        title='Deseja calcular alocação para as turmas e salas cadastradas'
+        title='Deseja calcular alocação para as turmas e salas cadastradas?'
         warningText='ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
       />
 
       <Center>
-        <Box p={4} w='8xl' overflow='auto'>
+        <Box p={10} w='100%' overflow='auto'>
           <Flex align='center'>
             <Text fontSize='4xl' mb={4}>
               Turmas
