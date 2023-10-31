@@ -17,8 +17,13 @@ export default interface Class {
   classrooms?: string[];
 }
 
+export interface EditedClass extends Class {
+  week_days_id: string[],
+  start_times_id: string[],
+}
+
 export interface Preferences {
-  building: string;
+  building_id: string;
   air_conditioning?: boolean;
   projector?: boolean;
   accessibility?: boolean;
@@ -46,7 +51,8 @@ export interface CreateClassEvents {
 
 export interface EditClassEvents {
   week_day_id: string;
-  professor: string;
+  start_time_id: string;
+  professors: string[];
   week_day: string;
   start_time: string;
   end_time: string;
