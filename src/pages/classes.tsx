@@ -27,7 +27,8 @@ import Loading from 'components/common/loading.component';
 import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
 import Class, {
-  CreateClassEvents, 
+  CreateClassEvents,
+  EditedClass, 
   EditClassEvents, 
   HasToBeAllocatedClass, 
   Preferences 
@@ -41,7 +42,7 @@ import BuildingsService from 'services/buildings.service';
 import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
 import { FilterArray, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
-import { breakClassFormInEvents } from 'utils/classes/classes.formatter';
+import { breakClassFormInEvents, breakEditedClassInEditedEvents } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
 
 function Classes() {
@@ -239,12 +240,28 @@ function Classes() {
     onOpenEdit();
   }
 
-  function handleEdit(data: EditClassEvents[]) {
+  function handleEdit(data: EditedClass) {
     if (selectedClass) {
-      console.log(selectedClass)
-      classesService.edit(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
+      console.log(selectedClass);
+      const events = breakEditedClassInEditedEvents(data);
+      classesService.edit(selectedClass.subject_code, selectedClass.class_code, events).then((it) => {
         console.log(it.data);
         fetchData();
+        toast({
+          title: 'Turma editada com sucesso!',
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'success',
+          });
+      }).catch((error) => {
+        toast({
+          title: `Erro ao criar turma: ${error}`,
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'error',
+        });
       });
     }
   }
@@ -278,6 +295,7 @@ function Classes() {
         isOpen={isOpenPreferences}
         onClose={onClosePreferences}
         data={selectedClass}
+        buildings={buildingsList}
         onSave={handleSavePreferences}
       />
       <RegisterModal isOpen={isOpenRegister} onClose={onCloseRegister} onSave={handleRegister} buildings={buildingsList} />
@@ -297,7 +315,7 @@ function Classes() {
       />
 
       <Center>
-        <Box p={4} w='8xl' overflow='auto'>
+        <Box p={4} w='9xl' overflow='auto'>
           <Flex align='center'>
             <Text fontSize='4xl' mb={4}>
               Turmas
