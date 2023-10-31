@@ -29,6 +29,7 @@ const Links = [
   { text: 'Turmas', value: 'classes' },
   { text: 'Alocações', value: 'allocation' },
   { text: 'Prédios', value: 'buildings' },
+  { text: 'Usuários', value: 'users' },
 ];
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
