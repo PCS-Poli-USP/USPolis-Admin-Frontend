@@ -76,6 +76,8 @@ export default function RegisterModal(props: RegisterModalProps) {
   const [week_day, setWeekDay] = useState('');
   const [start_time, setStartTime] = useState('');
   const [end_time, setEndTime] = useState('');
+  const [isEditingDate, setIsEditingDate] = useState(false);
+  const [editDateIndex, setEditDateIndex] = useState(0); 
   const [buildingName, setBuildingName] = useState('');
 
   // Errors flags for inputs validation:
@@ -141,10 +143,16 @@ export default function RegisterModal(props: RegisterModalProps) {
     if (event.key === 'Enter') handleProfessorButton();
   }
 
-  function handleEditButton(index: number) {
+  function handleEditProfessorButton(index: number) {
     setIsEditingProfessor(true);
     setEditIndex(index);
     setProfessor(form.professors[index]);
+  }
+
+  function handleDeleteProfessorButton(index: number) {
+    const newProfessors = form.professors;
+    newProfessors.splice(index, 1);
+    setForm((prev) => ({...prev, professors: newProfessors}));
   }
 
   function handleDateButton() {
@@ -160,14 +168,42 @@ export default function RegisterModal(props: RegisterModalProps) {
 
     if (validator.isInvalidTime(start_time, end_time) || validator.isEmpty(week_day)) return;
 
+    const newWeekDays = [...form.week_days];
+    const newStarTime = [...form.start_time];
+    const newEndTime = [...form.end_time];
+
+    if (isEditingDate) {
+      newWeekDays[editDateIndex] = week_day;
+      newStarTime[editDateIndex] = start_time;
+      newEndTime[editDateIndex] = end_time;
+    } else {
+      newWeekDays.push(week_day);
+      newStarTime.push(start_time);
+      newEndTime.push(end_time);
+    }
     setForm((prev) => (
       {
         ...prev, 
-        week_days: [...prev.week_days, week_day],
-        start_time: [...prev.start_time, start_time],
-        end_time: [...prev.end_time, end_time],
+        week_days: newWeekDays,
+        start_time: newStarTime,
+        end_time: newEndTime,
       }));
     clearInputs();
+    setIsEditingDate(false);
+  }
+
+  function handleEditDateButton(index: number): void {
+    setStartTime(form.start_time[index]);
+    setEndTime(form.end_time[index]);
+    setWeekDay(form.week_days[index]);
+    setEditDateIndex(index);
+    setIsEditingDate(true);
+  }
+
+  function handleDeleteDateButton(index: number): void {
+    const newWeekDays = form.week_days;
+    newWeekDays.splice(index, 1);
+    setForm((prev) => ({...prev, week_days: newWeekDays}));
   }
 
   function clearInputs() {
@@ -391,7 +427,7 @@ export default function RegisterModal(props: RegisterModalProps) {
                         colorScheme='yellow'
                         size='xs'
                         variant='ghost'
-                        onClick={() => handleEditButton(index)}
+                        onClick={() => handleEditProfessorButton(index)}
                       >
                         Editar
                       </Button>
@@ -399,11 +435,7 @@ export default function RegisterModal(props: RegisterModalProps) {
                       colorScheme='red' 
                       size='xs' 
                       variant='ghost' 
-                      onClick={() => {
-                        const newProfessors = form.professors;
-                        newProfessors.splice(index, 1);
-                        setForm((prev) => ({...prev, professors: newProfessors}));
-                      }}
+                      onClick={() => handleDeleteProfessorButton(index)}
                     >
                       Remover
                     </Button>
@@ -490,7 +522,7 @@ export default function RegisterModal(props: RegisterModalProps) {
             </FormControl>
             
             <FormControl>
-              <Button type='submit' onClick={handleDateButton}>Adicionar horário</Button>
+              <Button type='submit' onClick={handleDateButton}>{isEditingDate ? 'Editar Horário' : 'Adicionar horário'}</Button>
             </FormControl>
 
             <Text as='b' fontSize='lg'>Horários adicionados:</Text>
@@ -501,14 +533,18 @@ export default function RegisterModal(props: RegisterModalProps) {
                     <CalendarIcon /> 
                     <Text>{` ${weekDaysFormatter(week_day)}, ${form.start_time[index]} às ${form.end_time[index]}`} </Text>
                     <Button  
+                      colorScheme='yellow' 
+                      size='xs' 
+                      variant='ghost' 
+                      onClick={() => handleEditDateButton(index)}
+                    >
+                      Editar
+                    </Button>
+                    <Button  
                       colorScheme='red' 
                       size='xs' 
                       variant='ghost' 
-                      onClick={() => {
-                        const newWeekDays = form.week_days;
-                        newWeekDays.splice(index, 1);
-                        setForm((prev) => ({...prev, week_days: newWeekDays}));
-                      }}
+                      onClick={() => handleDeleteDateButton(index)}
                     >
                       Remover
                     </Button>
