@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import * as C from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import Navbar from 'components/common/navbar.component';
@@ -6,8 +6,10 @@ import UsersService from 'services/users.service';
 import { User, CreateUser } from 'models/user.model';
 import DataTable from 'components/common/dataTable.component';
 import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import { appContext } from 'context/AppContext';
 
 const Users = () => {
+  const { setLoading } = useContext(appContext);
   const usersService = new UsersService();
 
   const [users, setUsers] = React.useState<User[]>([]);
@@ -50,6 +52,7 @@ const Users = () => {
   ];
 
   useEffect(() => {
+    setLoading(true);
     fetchUsers();
   }, []);
 
@@ -58,9 +61,12 @@ const Users = () => {
       const response = await usersService.list();
       console.log(response.data);
       setUsers(response.data);
+      setLoading(false);
     } catch (err) {
-      console.log('err');
       console.error(err);
+      setTimeout(() => {
+        fetchUsers();
+      }, 1000);
     }
   }
 

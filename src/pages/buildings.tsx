@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Auth } from 'aws-amplify';
 import * as C from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
@@ -9,8 +9,10 @@ import RegisterModal from 'components/buildings/register.modal';
 import Dialog from 'components/common/dialog.component';
 import { FaEllipsisV } from 'react-icons/fa';
 import DataTable from 'components/common/dataTable.component';
+import { appContext } from 'context/AppContext';
 
 const Buildings = () => {
+  const { setLoading } = useContext(appContext);
   const buildingsService = new BuildingsService();
 
   const [buildings, setBuildings] = React.useState<Building[]>([]);
@@ -44,6 +46,7 @@ const Buildings = () => {
   ];
 
   useEffect(() => {
+    setLoading(true);
     fetchBuildings();
   }, []);
 
@@ -52,6 +55,7 @@ const Buildings = () => {
       const response = await buildingsService.list();
       console.log(response.data);
       setBuildings(response.data);
+      setLoading(false);
     } catch (err) {
       console.log('err');
       console.error(err);
