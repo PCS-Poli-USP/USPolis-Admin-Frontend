@@ -22,6 +22,7 @@ import {
   Select,
   Text,
   List,
+  ListItem,
 } from '@chakra-ui/react';
 
 import { BsPersonCheckFill } from 'react-icons/bs';
@@ -60,7 +61,7 @@ export default function RegisterModal(props: RegisterModalProps) {
     subscribers: 0,
     pendings: 0,
     preferences: {
-      building: '',
+      building_id: '',
       air_conditioning: false,
       projector: false,
       accessibility: false,
@@ -69,10 +70,13 @@ export default function RegisterModal(props: RegisterModalProps) {
   };
 
   const [form, setForm] = useState(initialForm);
-  const [professor, setProfessor] = useState("");
-  const [week_day, setWeekDay] = useState("");
-  const [start_time, setStartTime] = useState("");
-  const [end_time, setEndTime] = useState("");
+  const [professor, setProfessor] = useState('');
+  const [isEditingProfessor, setIsEditingProfessor] = useState(false);
+  const [editIndex, setEditIndex] = useState(0);
+  const [week_day, setWeekDay] = useState('');
+  const [start_time, setStartTime] = useState('');
+  const [end_time, setEndTime] = useState('');
+  const [buildingName, setBuildingName] = useState('');
 
   // Errors flags for inputs validation:
   const [hasClassCodeError, setHasClassCodeError] = useState(false);
@@ -115,20 +119,32 @@ export default function RegisterModal(props: RegisterModalProps) {
     setHasDayError(false);
   }
 
-  function handleProfessorButton() {
+  const handleProfessorButton = () => {
     if (validator.isInvalidProfessor(professor)) {
       setHasProfessorError(true);
       return;
     }
     else setHasProfessorError(false);
+
     const names: string[] = [...form.professors];
-    names.push(professor);
+    if (!isEditingProfessor) {
+      names.push(professor);
+    } else {
+      names[editIndex] = professor;
+    }
     setForm((prev) => ({...prev, professors: names}));
     setProfessor('');
+    setIsEditingProfessor(false);
   }
 
   function handleProfessorInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === 'Enter') handleProfessorButton();
+  }
+
+  function handleEditButton(index: number) {
+    setIsEditingProfessor(true);
+    setEditIndex(index);
+    setProfessor(form.professors[index]);
   }
 
   function handleDateButton() {
@@ -155,9 +171,9 @@ export default function RegisterModal(props: RegisterModalProps) {
   }
 
   function clearInputs() {
-    setWeekDay("");
-    setStartTime("");
-    setEndTime("");
+    setWeekDay('');
+    setStartTime('');
+    setEndTime('');
   }
 
   function isInvalidClass(): boolean {
@@ -194,7 +210,7 @@ export default function RegisterModal(props: RegisterModalProps) {
       hasError = true;
     }
 
-    if (validator.isEmpty(form.preferences.building)) {
+    if (validator.isEmpty(form.preferences.building_id)) {
       setHasBuildingError(true);
       hasError = true;
     }
@@ -282,7 +298,10 @@ export default function RegisterModal(props: RegisterModalProps) {
                   min={0} 
                   max={99999} 
                   placeholder='Quantidade de vagas da turma'
-                  onChange={(valueAsString, valueAsNumber) => setForm((prev) => ({...prev, vacancies: valueAsNumber }))}>
+                  onChange={(valueAsString, valueAsNumber) => {
+                      setForm((prev) => ({...prev, vacancies: valueAsNumber }));
+                      if(valueAsNumber) setHasOferingError(false);
+                    }}>
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -351,35 +370,45 @@ export default function RegisterModal(props: RegisterModalProps) {
                   value={professor}
                   onChange={(event) => {
                     setProfessor(event.target.value);
-                    if (!professor) setHasProfessorError(false);
+                    if (event.target.value) setHasProfessorError(false);
                   }}
                   onKeyDown={handleProfessorInputKeyDown}
                 />
               {hasProfessorError ? (<FormErrorMessage>Nome de professor inválido.</FormErrorMessage>) : (undefined)}
             </FormControl>
 
-            <Button onClick={handleProfessorButton}>Adicionar professor</Button>
+            <Button onClick={handleProfessorButton}>{isEditingProfessor ? 'Editar professor' : 'Adicionar professor'}</Button>
 
             <Text as='b' fontSize='lg'>Professores adicionados:</Text>
             {form.professors.length > 0 ? (
               <List spacing={3}>
               {form.professors.map((professor, index) => (
-                <HStack key={index}>
-                  <BsPersonCheckFill />
-                  <Text>{professor}</Text>
-                  <Button  
-                    colorScheme='red' 
-                    size='xs' 
-                    variant='ghost' 
-                    onClick={() => {
-                      const newProfessors = form.professors;
-                      newProfessors.splice(index, 1);
-                      setForm((prev) => ({...prev, professors: newProfessors}));
-                    }}
-                  >
-                    Remover
-                  </Button>
-                </HStack>
+                <ListItem key={index}>
+                  <HStack>
+                    <BsPersonCheckFill />
+                    <Text>{professor}</Text>
+                    <Button
+                        colorScheme='yellow'
+                        size='xs'
+                        variant='ghost'
+                        onClick={() => handleEditButton(index)}
+                      >
+                        Editar
+                      </Button>
+                    <Button  
+                      colorScheme='red' 
+                      size='xs' 
+                      variant='ghost' 
+                      onClick={() => {
+                        const newProfessors = form.professors;
+                        newProfessors.splice(index, 1);
+                        setForm((prev) => ({...prev, professors: newProfessors}));
+                      }}
+                    >
+                      Remover
+                    </Button>
+                  </HStack>
+                </ListItem>
               ))}
             </List>
             ) : (
@@ -443,7 +472,7 @@ export default function RegisterModal(props: RegisterModalProps) {
                   value={start_time}
                   onChange={(event) => { 
                     setStartTime(event.target.value);
-                    if (!(validator.isEmpty(end_time))) setHasTimeError(false);
+                    if (event.target.value) setHasTimeError(false);
                   }}
                 />
                 <FormLabel>Fim</FormLabel>
@@ -453,7 +482,7 @@ export default function RegisterModal(props: RegisterModalProps) {
                   value={end_time}
                   onChange={(event) => {
                     setEndTime(event.target.value);
-                    if (!(validator.isEmpty(start_time))) setHasTimeError(false);
+                    if (event.target.value) setHasTimeError(false);
                   }}
                 />
               </HStack>
@@ -495,16 +524,20 @@ export default function RegisterModal(props: RegisterModalProps) {
             <FormControl isInvalid={hasBuildingError}>
               <FormLabel>Prédio</FormLabel>
               <Select
-                defaultValue={props.formData? props.formData.preferences.building : undefined}
+                defaultValue={props.formData? props.formData.preferences.building_id : undefined}
                 placeholder='Escolha o prédio da turma'
-                value={form.preferences.building}
+                value={buildingName}
                 onChange={(event) => {
-                  setForm((prev) => ({ ...prev, preferences: {...prev.preferences, building: event.target.value} }));
+                  const index = event.target.selectedIndex;
+                  let buildingID = event.target.options[index].getAttribute('itemID')
+                  if (buildingID === null) buildingID = '';
+                  setForm((prev) => ({ ...prev, preferences: {...prev.preferences, building_id: buildingID as string} }));
+                  setBuildingName(event.target.value);
                   if (event.target.value) setHasBuildingError(false);
                 }}
               >
                 {props.buildings?.map((it) => (
-                  <option key={it.name} value={it.name}>
+                  <option key={it.id} value={it.name} itemID={it.id} >
                     {it.name}
                   </option>
                 ))}
