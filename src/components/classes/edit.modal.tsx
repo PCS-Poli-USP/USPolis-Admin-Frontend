@@ -82,7 +82,6 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
     if (formData) {
       setForm({...formData, week_days_id: [...formData.week_days], start_times_id: [...formData.start_time]});
       setTimeErrosMap(formData.start_time.map(() => false));
-      console.log("Recebido: ", formData);
     };
   }, [formData]);
 
