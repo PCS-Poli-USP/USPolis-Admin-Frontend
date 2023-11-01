@@ -223,7 +223,6 @@ function Classes() {
 
   function handleSavePreferences(data: Preferences) {
     if (selectedClass) {
-      data.building_id = String(data.building_id)
       classesService.patchPreferences(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
         fetchData();
         toast({
