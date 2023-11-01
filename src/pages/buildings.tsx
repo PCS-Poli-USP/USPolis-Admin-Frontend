@@ -4,7 +4,11 @@ import * as C from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import Navbar from 'components/common/navbar.component';
 import BuildingsService from 'services/buildings.service';
-import { Building, CreateBuilding, UpdateBuilding } from 'models/building.model';
+import {
+  Building,
+  CreateBuilding,
+  UpdateBuilding,
+} from 'models/building.model';
 import RegisterModal from 'components/buildings/register.modal';
 import Dialog from 'components/common/dialog.component';
 import { FaEllipsisV } from 'react-icons/fa';
@@ -16,9 +20,13 @@ const Buildings = () => {
   const buildingsService = new BuildingsService();
 
   const [buildings, setBuildings] = React.useState<Building[]>([]);
-  const [contextBuilding, setContextBuilding] = React.useState<Building | null>(null);
-  const [registerModalOpen, setRegisterModalOpen] = React.useState<boolean>(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState<boolean>(false);
+  const [contextBuilding, setContextBuilding] = React.useState<Building | null>(
+    null,
+  );
+  const [registerModalOpen, setRegisterModalOpen] =
+    React.useState<boolean>(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] =
+    React.useState<boolean>(false);
   const [isUpdate, setIsUpdate] = React.useState<boolean>(false);
 
   const columns: ColumnDef<Building>[] = [
@@ -35,10 +43,19 @@ const Buildings = () => {
       meta: { isNumeric: true },
       cell: ({ row }) => (
         <C.Menu>
-          <C.MenuButton as={C.IconButton} aria-label='Options' icon={<C.Icon as={FaEllipsisV} />} variant='ghost' />
+          <C.MenuButton
+            as={C.IconButton}
+            aria-label='Options'
+            icon={<C.Icon as={FaEllipsisV} />}
+            variant='ghost'
+          />
           <C.MenuList>
-            <C.MenuItem onClick={() => handleEditButton(row.original)}>Editar</C.MenuItem>
-            <C.MenuItem onClick={() => handleDeleteButton(row.original)}>Deletar</C.MenuItem>
+            <C.MenuItem onClick={() => handleEditButton(row.original)}>
+              Editar
+            </C.MenuItem>
+            <C.MenuItem onClick={() => handleDeleteButton(row.original)}>
+              Deletar
+            </C.MenuItem>
           </C.MenuList>
         </C.Menu>
       ),
@@ -67,28 +84,37 @@ const Buildings = () => {
 
   async function createBuilding(data: CreateBuilding) {
     try {
+      setLoading(true);
       const response = await buildingsService.create(data);
       fetchBuildings();
     } catch (err) {
       console.error(err);
+      alert('Erro ao criar prédio');
+      setLoading(false);
     }
   }
 
   async function editBuilding(id: string, data: CreateBuilding) {
     try {
-      const _ = await buildingsService.update(id, data);
+      setLoading(true);
+      await buildingsService.update(id, data);
       fetchBuildings();
     } catch (err) {
       console.error(err);
+      alert('Erro ao editar prédio');
+      setLoading(false);
     }
   }
 
   async function deleteBuilding(id: string) {
     try {
-      const _ = await buildingsService.delete(id);
+      setLoading(true);
+      await buildingsService.delete(id);
       fetchBuildings();
     } catch (err) {
       console.error(err);
+      alert('Erro ao deletar prédio');
+      setLoading(false);
     }
   }
 
@@ -147,7 +173,7 @@ const Buildings = () => {
           deleteBuilding(contextBuilding?.id as string);
           setDeleteDialogOpen(false);
         }}
-        title={'Deseja deletar o prédio?'}
+        title={`Deletar o prédio ${contextBuilding?.name}`}
       />
     </>
   );
