@@ -25,19 +25,14 @@ import BuildingsService from 'services/buildings.service';
 interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
-  formData?: EditUserFormValues;
-  otherData?: EditUserOtherData;
-  onSave: (data: EditUserFormValues) => void;
+  onSave: (data: RegisterUserFormValues) => void;
 }
 
-interface EditUserFormValues {
-  buildings?: BuildingOption[];
-  isAdmin?: boolean;
-}
-
-interface EditUserOtherData {
-  username?: string;
-  email?: string;
+export interface RegisterUserFormValues {
+  username: string;
+  email: string;
+  buildings: BuildingOption[];
+  isAdmin: boolean;
 }
 
 interface BuildingOption {
@@ -45,21 +40,19 @@ interface BuildingOption {
   label: string;
 }
 
-export default function EditUserModal(props: RegisterModalProps) {
+export default function RegisterUserModal(props: RegisterModalProps) {
   const buildingsService = new BuildingsService();
 
-  const initialForm: EditUserFormValues = {
+  const initialForm: RegisterUserFormValues = {
+    username: '',
+    email: '',
     buildings: [],
     isAdmin: false,
   };
 
   const [isLoadingBuildings, setIsLoadingBuildings] = useState(false);
   const [buildings, setBuildings] = useState<Building[]>([]);
-  const [form, setForm] = useState<EditUserFormValues>(initialForm);
-
-  useEffect(() => {
-    if (props.formData) setForm(props.formData);
-  }, [props.formData]);
+  const [form, setForm] = useState<RegisterUserFormValues>(initialForm);
 
   useEffect(() => {
     fetchBuildings();
@@ -103,16 +96,30 @@ export default function EditUserModal(props: RegisterModalProps) {
           <Flex direction={'column'} gap={4}>
             <Flex direction={'column'}>
               <FormLabel>Username</FormLabel>
-              <Input value={props.otherData?.username} disabled />
+              <Input
+                placeholder='Username'
+                value={form.username}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, username: event.target.value }))
+                }
+              />
             </Flex>
             <Flex direction={'column'}>
               <FormLabel>Email</FormLabel>
-              <Input value={props.otherData?.email} disabled />
+              <Input
+                placeholder='Email'
+                value={form.email}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, email: event.target.value }))
+                }
+              />
             </Flex>
             <FormControl>
               <Checkbox
                 isChecked={form.isAdmin}
-                onChange={(e) => setForm((prev) => ({ ...prev, isAdmin: e.target.checked }))}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, isAdmin: e.target.checked }))
+                }
               >
                 Administrador
               </Checkbox>
@@ -121,13 +128,23 @@ export default function EditUserModal(props: RegisterModalProps) {
               <FormControl>
                 <FormLabel>Prédios</FormLabel>
                 <Select
-                  placeholder={isLoadingBuildings ? 'Carregando...' : 'Selecione um ou mais'}
+                  placeholder={
+                    isLoadingBuildings
+                      ? 'Carregando...'
+                      : 'Selecione um ou mais'
+                  }
                   isLoading={isLoadingBuildings}
                   isMulti
-                  options={buildings.map((it) => ({ value: it.id, label: it.name }))}
+                  options={buildings.map((it) => ({
+                    value: it.id,
+                    label: it.name,
+                  }))}
                   onChange={(selected) => {
                     const selectedBuildings = selected as BuildingOption[];
-                    setForm((prev) => ({ ...prev, buildings: selectedBuildings }));
+                    setForm((prev) => ({
+                      ...prev,
+                      buildings: selectedBuildings,
+                    }));
                   }}
                   value={form.buildings}
                 />

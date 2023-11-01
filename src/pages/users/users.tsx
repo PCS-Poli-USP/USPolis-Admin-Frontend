@@ -10,6 +10,10 @@ import { appContext } from 'context/AppContext';
 import { FaEllipsisV } from 'react-icons/fa';
 import EditUserModal from 'components/users/edit.modal';
 import Dialog from 'components/common/dialog.component';
+import RegisterUser from './registerUser';
+import RegisterUserModal, {
+  RegisterUserFormValues,
+} from 'components/users/register.modal';
 
 const Users = () => {
   const { setLoading } = useContext(appContext);
@@ -18,6 +22,7 @@ const Users = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [contextUser, setContextUser] = useState<User | null>(null);
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [registerModalOpen, setRegisterModalOpen] = useState<boolean>(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
   const columns: ColumnDef<User>[] = [
@@ -94,6 +99,10 @@ const Users = () => {
     }
   }
 
+  function handleCreateButton() {
+    setRegisterModalOpen(true);
+  }
+
   function handleEditButton(user: User) {
     setContextUser(user);
     setEditModalOpen(true);
@@ -102,6 +111,25 @@ const Users = () => {
   function handleDeleteButton(user: User) {
     setDeleteDialogOpen(true);
     setContextUser(user);
+  }
+
+  async function registerUser(form: RegisterUserFormValues) {
+    try {
+      setLoading(true);
+      const response = await usersService.create({
+        email: form.email,
+        username: form.username,
+        isAdmin: form.isAdmin,
+        building_ids: form.isAdmin
+          ? undefined
+          : form.buildings.map((it) => it.value),
+      });
+      fetchUsers();
+    } catch (err) {
+      alert('Erro ao cadastrar usuário!');
+      console.error(err);
+      setLoading(false);
+    }
   }
 
   async function editUser(data: EditUser, user_id: string) {
@@ -136,6 +164,7 @@ const Users = () => {
           <C.Text fontSize='4xl' mb={4}>
             Usuários
           </C.Text>
+          <C.Button onClick={handleCreateButton}>Cadastrar</C.Button>
         </C.Flex>
         <DataTable columns={columns} data={users} />
       </C.Flex>
@@ -161,6 +190,13 @@ const Users = () => {
             },
             contextUser!.id,
           );
+        }}
+      />
+      <RegisterUserModal
+        isOpen={registerModalOpen}
+        onClose={() => setRegisterModalOpen(false)}
+        onSave={(form) => {
+          registerUser(form);
         }}
       />
       <Dialog
