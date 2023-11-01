@@ -27,6 +27,7 @@ import {
   Text,
   List,
   ListItem,
+  VStack,
 } from '@chakra-ui/react';
 import { BsPersonCheckFill } from 'react-icons/bs';
 import { useEffect, useState } from 'react';
@@ -180,62 +181,62 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
         <ModalCloseButton />
 
         <ModalBody>
-        <FormControl isInvalid={hasOferingError} mb={4}>
-              <FormLabel>Oferecimento da disciplina</FormLabel>
-              <HStack spacing='8px' >
-              <FormLabel>Vagas</FormLabel>
-                <NumberInput 
-                  defaultValue={formData?.vacancies ? formData?.vacancies : form.vacancies} 
-                  min={0} 
-                  max={99999} 
-                  placeholder='Quantidade de vagas da turma'
-                  onChange={(valueAsString, valueAsNumber) => {
-                      setForm((prev) => ({...prev, vacancies: valueAsNumber }));
-                      if(valueAsNumber) setHasOferingError(false);
-                    }}>
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
+          <FormControl isInvalid={hasOferingError} mb={4}>
+            <FormLabel>Oferecimento da disciplina</FormLabel>
+            <HStack spacing='8px' >
+            <FormLabel>Vagas</FormLabel>
+              <NumberInput 
+                defaultValue={formData?.vacancies ? formData?.vacancies : form.vacancies} 
+                min={0} 
+                max={99999} 
+                placeholder='Quantidade de vagas da turma'
+                onChange={(valueAsString, valueAsNumber) => {
+                    setForm((prev) => ({...prev, vacancies: valueAsNumber }));
+                    if(valueAsNumber) setHasOferingError(false);
+                  }}>
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
 
-                <FormLabel>Inscritos</FormLabel>
-                <NumberInput 
-                  defaultValue={formData?.subscribers ? formData?.subscribers : form.subscribers}
-                  min={0} 
-                  max={99999} 
-                  placeholder='Quantidade de alunos inscritos'
-                  onChange={(valueAsString, valueAsNumber) => {
-                      setForm((prev) => ({...prev, subscribers: valueAsNumber }));
-                      if(valueAsNumber) setHasOferingError(false);
-                    }}>
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
+              <FormLabel>Inscritos</FormLabel>
+              <NumberInput 
+                defaultValue={formData?.subscribers ? formData?.subscribers : form.subscribers}
+                min={0} 
+                max={99999} 
+                placeholder='Quantidade de alunos inscritos'
+                onChange={(valueAsString, valueAsNumber) => {
+                    setForm((prev) => ({...prev, subscribers: valueAsNumber }));
+                    if(valueAsNumber) setHasOferingError(false);
+                  }}>
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
 
-                <FormLabel>Pendentes</FormLabel>
-                <NumberInput 
-                  defaultValue={formData?.pendings ? formData?.pendings : form.pendings}
-                  min={0} 
-                  max={99999} 
-                  placeholder='Quantidade de alunos pendentes'
-                  onChange={(valueAsString, valueAsNumber) => {
-                      setForm((prev) => ({...prev, pendings: valueAsNumber }));
-                      if(valueAsNumber) setHasOferingError(false);
-                    }}>
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </HStack>
-              {hasOferingError ? (<FormErrorMessage>Oferecimento inválido.</FormErrorMessage>) : (undefined)}
-            </FormControl>
+              <FormLabel>Pendentes</FormLabel>
+              <NumberInput 
+                defaultValue={formData?.pendings ? formData?.pendings : form.pendings}
+                min={0} 
+                max={99999} 
+                placeholder='Quantidade de alunos pendentes'
+                onChange={(valueAsString, valueAsNumber) => {
+                    setForm((prev) => ({...prev, pendings: valueAsNumber }));
+                    if(valueAsNumber) setHasOferingError(false);
+                  }}>
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </HStack>
+            {hasOferingError ? (<FormErrorMessage>Oferecimento inválido.</FormErrorMessage>) : (undefined)}
+          </FormControl>
 
           <FormControl isInvalid={hasProfessorError} mb={4}>
               <FormLabel>Professor</FormLabel>
@@ -255,7 +256,8 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
           <Button onClick={handleProfessorButton} mb={4}>{isEditingProfessor ? 'Editar professor' : 'Adicionar professor'}</Button>
           
           <FormControl mb={4}>
-            <Text as='b' fontSize='lg'>Professores da turma:</Text>
+            <VStack alignItems='start'>
+              <Text as='b' fontSize='lg'>Professores da turma:</Text>
               {form.professors.length > 0 ? (
                 <List spacing={3} mt={4}>
                 {form.professors.map((professor, index) => (
@@ -286,6 +288,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
               ) : (
                 <Text as='b' colorScheme='red' color='red.500'>Nenhum professor adicionado</Text>
               )}
+            </VStack>
           </FormControl>
           
           <Text as='b' fontSize='lg'>Horários da turma:</Text>
