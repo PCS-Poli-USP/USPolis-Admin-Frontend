@@ -22,7 +22,7 @@ import { Building } from 'models/building.model';
 import { useEffect, useState } from 'react';
 import BuildingsService from 'services/buildings.service';
 
-interface RegisterModalProps {
+interface EditModalProps {
   isOpen: boolean;
   onClose: () => void;
   formData?: EditUserFormValues;
@@ -45,7 +45,7 @@ interface BuildingOption {
   label: string;
 }
 
-export default function EditUserModal(props: RegisterModalProps) {
+export default function EditUserModal(props: EditModalProps) {
   const buildingsService = new BuildingsService();
 
   const initialForm: EditUserFormValues = {
