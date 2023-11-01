@@ -55,6 +55,16 @@ export function isInvalidTime(start_time: string, end_time: string) {
   return true;
 }
 
-export function isInvalidTimeList(start_times: string[], end_times: string[]) {
+export function isInvalidTimeList(start_times: string[], end_times: string[]): boolean {
   return start_times.length <= 0 || end_times.length <= 0;
+}
+
+export function isInvalidEditedTimeList(start_times: string[], end_times: string[]) {
+  const indexes: number[] = [];
+  for (let i = 0; i < start_times.length; i++) {
+    if (isInvalidTime(start_times[i], end_times[i])) {
+      indexes.push(i);
+    }
+  }
+  return indexes;
 }
