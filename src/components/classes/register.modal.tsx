@@ -213,16 +213,20 @@ export default function RegisterModal(props: RegisterModalProps) {
   }
 
   function isInvalidClass(): boolean {
+    let hasError = false;
     if (validator.isInvalidClassCode(form.class_code)) {
       setHasClassCodeError(true);
+      hasError = true;
     }
     if (validator.isInvalidSubjectCode(form.subject_code)) {
       setHasSubjectCodeError(true);
+      hasError = true;
     }
     if (validator.isInvalidSubjectName(form.subject_name)) {
       setHasSubjectNameError(true);
+      hasError = true;
     }
-    return hasClassCodeError || hasSubjectNameError || hasSubjectCodeError;
+    return hasError;
   }
 
   function isInvalidForm() {
@@ -609,7 +613,7 @@ export default function RegisterModal(props: RegisterModalProps) {
 
         <ModalFooter>
           <HStack spacing='10px'>
-            {hasErrors ? <Text colorScheme='red' color='red.900'>Fomulário inválido, corrija os campos inválidos</Text> : (undefined) }
+            {hasErrors ? <Text colorScheme='red' color='red.600'>Fomulário inválido, corrija os campos inválidos</Text> : (undefined) }
             <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
               Salvar
             </Button>

@@ -20,6 +20,9 @@ import {
   ModalOverlay,
   NumberInput,
   NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
   Select,
   Text,
   List,
@@ -29,7 +32,6 @@ import { BsPersonCheckFill } from 'react-icons/bs';
 import { useEffect, useState } from 'react';
 
 import Class, { EditedClass } from 'models/class.model';
-import { WeekDays } from 'models/enums/weekDays.enum';
 import { Capitalize } from 'utils/formatters';
 import * as validator from 'utils/classes/classes.validator';
 
@@ -71,12 +73,23 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
   const [isEditingProfessor, setIsEditingProfessor] = useState(false);
   const [editIndex, setEditIndex] = useState(0);
   const [hasProfessorError, setHasProfessorError] = useState(false);
+  const [hasOferingError, setHasOferingError] = useState(false);
+  const [timeErrorsMap, setTimeErrosMap] = useState<boolean[]>([]);
+  const [hasErrors, setHasErrors] = useState(false);
 
   useEffect(() => {
-    if (formData) setForm({...formData, week_days_id: [...formData.week_days], start_times_id: [...formData.start_time]});
+    if (formData) {
+      setForm({...formData, week_days_id: [...formData.week_days], start_times_id: [...formData.start_time]});
+      setTimeErrosMap(formData.start_time.map(() => false));
+    };
   }, [formData]);
 
   function handleSaveClick() {
+    if (isInvalidForm()) {
+      setHasErrors(true);
+      return;
+    }
+
     onSave(form);
     onClose();
   }
@@ -115,10 +128,46 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
     setProfessor(form.professors[index]);
   }
 
-  return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
+  function isInvalidForm() {
+    let hasError = false;
 
+    if (validator.isInvalidOfering(form.pendings, form.subscribers)) {
+      setHasOferingError(true);
+      hasError = true;
+    }
+
+    if (validator.isInvalidProfessorList(form.professors)) {
+      hasError = true;
+    }
+
+    const indexes = validator.isInvalidEditedTimeList(form.start_time, form.end_time);
+    if (indexes.length !== 0) {
+      const newTimeErrorsMap: boolean[] = [...timeErrorsMap];
+      for(let i = 0; i < indexes.length; i++) newTimeErrorsMap[indexes[i]] = true;
+      setTimeErrosMap(newTimeErrorsMap);
+      hasError = true;
+    }
+
+    return hasError;
+  }
+
+  function cleanTimeErrorAt(index: number) {
+    const newTimeErrorsMap = [...timeErrorsMap];
+    newTimeErrorsMap[index] = false;
+    setTimeErrosMap(newTimeErrorsMap);
+  }
+
+  return (
+    <Modal 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      closeOnOverlayClick={false} 
+      motionPreset='slideInBottom'
+      size='2xl'
+      scrollBehavior='outside'
+      >
+
+      <ModalOverlay />
       <ModalContent>
 
         <ModalHeader>
@@ -131,19 +180,62 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
         <ModalCloseButton />
 
         <ModalBody>
-          <FormControl mb={4}>
-            <FormLabel>Quantidade de alunos</FormLabel>
-            <NumberInput
-              placeholder='Alunos inscritos'
-              min={0}
-              value={form.subscribers}
-              onChange={(valueAsString, valueAsNumber) => {
-                setForm((prev) => ({...prev, subscribers: valueAsNumber }));
-              }}
-            >
-              <NumberInputField />
-            </NumberInput>
-          </FormControl>
+        <FormControl isInvalid={hasOferingError} mb={4}>
+              <FormLabel>Oferecimento da disciplina</FormLabel>
+              <HStack spacing='8px' >
+              <FormLabel>Vagas</FormLabel>
+                <NumberInput 
+                  defaultValue={formData?.vacancies ? formData?.vacancies : form.vacancies} 
+                  min={0} 
+                  max={99999} 
+                  placeholder='Quantidade de vagas da turma'
+                  onChange={(valueAsString, valueAsNumber) => {
+                      setForm((prev) => ({...prev, vacancies: valueAsNumber }));
+                      if(valueAsNumber) setHasOferingError(false);
+                    }}>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+
+                <FormLabel>Inscritos</FormLabel>
+                <NumberInput 
+                  defaultValue={formData?.subscribers ? formData?.subscribers : form.subscribers}
+                  min={0} 
+                  max={99999} 
+                  placeholder='Quantidade de alunos inscritos'
+                  onChange={(valueAsString, valueAsNumber) => {
+                      setForm((prev) => ({...prev, subscribers: valueAsNumber }));
+                      if(valueAsNumber) setHasOferingError(false);
+                    }}>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+
+                <FormLabel>Pendentes</FormLabel>
+                <NumberInput 
+                  defaultValue={formData?.pendings ? formData?.pendings : form.pendings}
+                  min={0} 
+                  max={99999} 
+                  placeholder='Quantidade de alunos pendentes'
+                  onChange={(valueAsString, valueAsNumber) => {
+                      setForm((prev) => ({...prev, pendings: valueAsNumber }));
+                      if(valueAsNumber) setHasOferingError(false);
+                    }}>
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </HStack>
+              {hasOferingError ? (<FormErrorMessage>Oferecimento inválido.</FormErrorMessage>) : (undefined)}
+            </FormControl>
 
           <FormControl isInvalid={hasProfessorError} mb={4}>
               <FormLabel>Professor</FormLabel>
@@ -202,7 +294,10 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
               <AccordionItem key={index}>
                 <AccordionButton bg='uspolis.blue' _hover={{ bg: 'uspolis.blue' }} color='white'>
                   <Box flex='1' textAlign='left'>
+                    <Text color={timeErrorsMap[index] ? 'red.600' : undefined}>
                     {form.week_days[index] ? Capitalize(form.week_days[index]) : ''} - {form.start_time[index]} - {form.end_time[index]}
+                    {timeErrorsMap[index] ? ' *Horário Inválido' : ''}
+                    </Text>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -229,7 +324,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                     </Select>
                   </FormControl>
 
-                  <FormControl mt={4} display='flex' alignItems='center'>
+                  <FormControl mt={4} mb={4} display='flex' alignItems='center'>
                     <FormLabel>Início</FormLabel>
                     <Input
                       type='time'
@@ -238,9 +333,11 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                           const newStartTime = [...form.start_time];
                           newStartTime[index] = event.target.value;
                           setForm((prev) => ({...prev, start_time: newStartTime}));
+                          cleanTimeErrorAt(index);
                         }
                       }
                     />
+
                     <FormLabel ml={4}>Fim</FormLabel>
                     <Input
                       type='time'
@@ -249,10 +346,14 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                         const newEndTime = [...form.end_time];
                         newEndTime[index] = event.target.value;
                         setForm((prev) => ({...prev, end_time: newEndTime}));
+                        cleanTimeErrorAt(index);
                       }
                     }
                     />
                   </FormControl>
+                  
+                  {/* {timeErrorsMap[index] ? (<Text as='b' color='red.500' mt={4} >Horário Inválido</Text>):  (undefined)} */}
+
                 </AccordionPanel>
               </AccordionItem>
             ))}
@@ -260,10 +361,13 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-            Salvar
-          </Button>
-          <Button onClick={onClose}>Cancelar</Button>
+        <HStack spacing='10px'>
+            {hasErrors ? <Text colorScheme='red' color='red.600'>Fomulário inválido, corrija os campos inválidos</Text> : (undefined) }
+            <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
+              Salvar
+            </Button>
+            <Button onClick={onClose}>Cancelar</Button>
+          </HStack>
         </ModalFooter>
       </ModalContent>
     </Modal>

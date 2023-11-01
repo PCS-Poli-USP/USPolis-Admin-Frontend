@@ -29,7 +29,6 @@ import { appContext } from 'context/AppContext';
 import Class, {
   CreateClassEvents,
   EditedClass, 
-  EditClassEvents, 
   HasToBeAllocatedClass, 
   Preferences 
 } from 'models/class.model';
@@ -223,6 +222,7 @@ function Classes() {
 
   function handleSavePreferences(data: Preferences) {
     if (selectedClass) {
+      console.log(data);
       classesService.patchPreferences(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
         fetchData();
         toast({
@@ -271,7 +271,6 @@ function Classes() {
 
   function handleEdit(data: EditedClass) {
     if (selectedClass) {
-      console.log(selectedClass);
       const events = breakEditedClassInEditedEvents(data);
       classesService.edit(selectedClass.subject_code, selectedClass.class_code, events).then((it) => {
         console.log(it.data);
