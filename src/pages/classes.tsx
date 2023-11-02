@@ -269,11 +269,10 @@ function Classes() {
     onOpenEdit();
   }
 
-  function handleEdit(data: EditedClass) {
+  function handleEdit(data: Class) {
     if (selectedClass) {
-      const events = breakEditedClassInEditedEvents(data);
+      const events = breakClassFormInEvents(data);
       classesService.edit(selectedClass.subject_code, selectedClass.class_code, events).then((it) => {
-        console.log(it.data);
         fetchData();
         toast({
           title: 'Turma editada com sucesso!',
