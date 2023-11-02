@@ -59,6 +59,10 @@ export function isInvalidTimeList(start_times: string[], end_times: string[]): b
   return start_times.length <= 0 || end_times.length <= 0;
 }
 
+export function isInvalidWeekDayList(week_days: string[]) {
+  return week_days.length <= 0;
+}
+
 export function isInvalidEditedTimeList(start_times: string[], end_times: string[]) {
   const indexes: number[] = [];
   for (let i = 0; i < start_times.length; i++) {

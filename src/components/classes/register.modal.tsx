@@ -201,9 +201,16 @@ export default function RegisterModal(props: RegisterModalProps) {
   }
 
   function handleDeleteDateButton(index: number): void {
-    const newWeekDays = form.week_days;
+    const newWeekDays = [...form.week_days];
     newWeekDays.splice(index, 1);
-    setForm((prev) => ({...prev, week_days: newWeekDays}));
+
+    const newStartTime = [...form.start_time];
+    newStartTime.splice(index, 1);
+
+    const newEndtime = [...form.end_time];
+    newEndtime.splice(index, 1);
+
+    setForm((prev) => ({...prev, week_days: newWeekDays, start_time: newStartTime, end_time: newEndtime }));
   }
 
   function clearInputs() {
@@ -235,11 +242,6 @@ export default function RegisterModal(props: RegisterModalProps) {
       hasError = true;
     }
 
-    if (validator.isInvalidOfering(form.pendings, form.subscribers)) {
-      setHasOferingError(true);
-      hasError = true;
-    }
-
     if (validator.isInvalidClassType(form.class_type)) {
       setHasClassTypeError(true);
       hasError = true;
@@ -250,16 +252,16 @@ export default function RegisterModal(props: RegisterModalProps) {
       hasError = true;
     }
 
-    if (validator.isEmpty(form.preferences.building_id)) {
-      setHasBuildingError(true);
-      hasError = true;
-    }
-
     if (validator.isInvalidProfessorList(form.professors)) {
       hasError = true;
     }
 
     if (validator.isInvalidTimeList(form.start_time, form.end_time)) {
+      hasError = true;
+    }
+
+    if (validator.isEmpty(form.preferences.building_id)) {
+      setHasBuildingError(true);
       hasError = true;
     }
 
