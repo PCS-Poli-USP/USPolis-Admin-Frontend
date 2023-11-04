@@ -20,28 +20,39 @@ import HasToBeAllocatedDrawer from 'components/allocation/hasToBeAllocated.drawe
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
+import RegisterModal from 'components/classes/register.modal';
 import DataTable from 'components/common/dataTable.component';
 import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
 import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
-import Class, { EditClassEvents, HasToBeAllocatedClass, Preferences } from 'models/class.model';
+import Class, {
+  CreateClassEvents,
+  HasToBeAllocatedClass, 
+  Preferences 
+} from 'models/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ClassesService from 'services/classes.service';
+import BuildingsService from 'services/buildings.service';
 import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
 import { FilterArray, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import { breakClassFormInEvents } from 'utils/classes/classes.formatter';
+import { Building } from 'models/building.model';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
+  const [buildingsList, setBuildingsList] = useState<Array<Building>>([]);
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
   const { isOpen: isOpenPreferences, onOpen: onOpenPreferences, onClose: onClosePreferences } = useDisclosure();
   const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
   const { isOpen: isOpenDrawer, onOpen: onOpenDrawer, onClose: onCloseDrawer } = useDisclosure();
   const { isOpen: isOpenAlloc, onOpen: onOpenAlloc, onClose: onCloseAlloc } = useDisclosure();
+  const { isOpen: isOpenRegister, onOpen: onOpenRegister, onClose: onCloseRegister } = useDisclosure();
+
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
@@ -73,7 +84,7 @@ function Classes() {
       cell: ({ row }) => (
         <Box>
           {row.original.professors?.map((professor, index) => (
-            <Text key={professor + index}>{professor}</Text>
+            <Text key={index}>{professor}</Text>
           ))}
         </Box>
       ),
@@ -109,18 +120,68 @@ function Classes() {
   ];
 
   const classesService = new ClassesService();
+  const buildingsService = new BuildingsService();
   const eventsService = new EventsService();
 
   useEffect(() => {
     fetchData();
+    fetchBuildings();
     // eslint-disable-next-line
   }, []);
+
+  function sortBuilding(a: Building, b: Building) {
+    if (a.name < b.name) return -1;
+    else if (a.name > b.name) return 1;
+    return 0;
+  }
+
+  function fetchBuildings() {
+    buildingsService.list().then((it) => {
+      setBuildingsList(it.data.sort(sortBuilding));
+    });
+  }
 
   function fetchData() {
     setLoading(true);
     classesService.list().then((it) => {
       setClassesList(it.data);
       setLoading(false);
+    }).catch((error) => {
+      console.log(error);
+      setLoading(false);
+      toast({
+        title: `Erro ao carregar turmas: ${error.message}`,
+        position: 'top-left',
+        duration: 3000,
+        isClosable: true,
+        status: 'error',
+      });
+    });
+  }
+
+  function handleRegisterClick() {
+    onOpenRegister();
+  }
+
+  function handleRegister(data: Class) {
+    const events: CreateClassEvents[] = breakClassFormInEvents(data);
+    classesService.createOne(events).then(() => {
+      fetchData();
+      toast({
+        title: 'Turma criada com sucesso!',
+        position: 'top-left',
+        duration: 3000,
+        isClosable: true,
+        status: 'success',
+        });
+    }).catch((error) => {
+      toast({
+        title: `Erro ao criar turma: ${error}`,
+        position: 'top-left',
+        duration: 3000,
+        isClosable: true,
+        status: 'error',
+      });
     });
   }
 
@@ -132,9 +193,23 @@ function Classes() {
   function handleDelete() {
     if (selectedClass) {
       classesService.delete(selectedClass.subject_code, selectedClass.class_code).then((it) => {
-        console.log(it.data);
         onCloseDelete();
         fetchData();
+        toast({
+          title: 'Turma deletada com sucesso!',
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'success',
+          });
+      }).catch((error) => {
+        toast({
+          title: `Erro ao deletar turma: ${error}`,
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'error',
+        });
       });
     }
   }
@@ -146,9 +221,24 @@ function Classes() {
 
   function handleSavePreferences(data: Preferences) {
     if (selectedClass) {
+      console.log(data);
       classesService.patchPreferences(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
-        console.log(it);
         fetchData();
+        toast({
+          title: 'Preferências editadas com sucesso!',
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'success',
+          });
+      }).catch((error) => {
+        toast({
+          title: `Erro ao editar preferências: ${error}`,
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'error',
+        });
       });
     }
   }
@@ -178,11 +268,26 @@ function Classes() {
     onOpenEdit();
   }
 
-  function handleEdit(data: EditClassEvents[]) {
+  function handleEdit(data: Class) {
     if (selectedClass) {
-      classesService.edit(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
-        console.log(it.data);
+      const events = breakClassFormInEvents(data);
+      classesService.edit(selectedClass.subject_code, selectedClass.class_code, events).then((it) => {
         fetchData();
+        toast({
+          title: 'Turma editada com sucesso!',
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'success',
+          });
+      }).catch((error) => {
+        toast({
+          title: `Erro ao criar turma: ${error}`,
+          position: 'top-left',
+          duration: 3000,
+          isClosable: true,
+          status: 'error',
+        });
       });
     }
   }
@@ -216,8 +321,10 @@ function Classes() {
         isOpen={isOpenPreferences}
         onClose={onClosePreferences}
         data={selectedClass}
+        buildings={buildingsList}
         onSave={handleSavePreferences}
       />
+      <RegisterModal isOpen={isOpenRegister} onClose={onCloseRegister} onSave={handleRegister} buildings={buildingsList} />
       <EditModal isOpen={isOpenEdit} onClose={onCloseEdit} formData={selectedClass} onSave={handleEdit} />
       <HasToBeAllocatedDrawer
         isOpen={isOpenDrawer}
@@ -234,12 +341,15 @@ function Classes() {
       />
 
       <Center>
-        <Box p={4} w='8xl' overflow='auto'>
+        <Box p={4} w='9xl' overflow='auto'>
           <Flex align='center'>
             <Text fontSize='4xl' mb={4}>
               Turmas
             </Text>
             <Spacer />
+            <Button mr={2} colorScheme='blue' onClick={handleRegisterClick}>
+              Criar Turma
+            </Button>
             <JupiterCrawlerPopover onSave={handleCrawlerSave} />
             <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
               Alocar

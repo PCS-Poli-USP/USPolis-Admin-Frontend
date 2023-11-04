@@ -17,21 +17,34 @@ export default interface Class {
   classrooms?: string[];
 }
 
+
 export interface Preferences {
-  building: string;
+  building_id: string;
   air_conditioning?: boolean;
   projector?: boolean;
   accessibility?: boolean;
 }
 
-export interface EditClassEvents {
-  week_day_id: string;
-  professor: string;
-  week_day: string;
+
+export interface CreateClassEvents {
+  class_code: string;
+  subject_code: string;
+  subject_name: string;
+  professors: string[];
+  start_period: string;
+  end_period: string;
   start_time: string;
   end_time: string;
+  week_day: string;
+  class_type: string;
+  vacancies: number;
   subscribers: number;
+  pendings: number;
+  preferences: Preferences;
+  has_to_be_allocated: boolean;
+  classrom?: string;
 }
+
 
 export interface HasToBeAllocatedClass {
   subject_code: string;
