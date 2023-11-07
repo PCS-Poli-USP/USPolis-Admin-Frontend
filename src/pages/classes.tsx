@@ -7,7 +7,7 @@ import {
   Spacer,
   Text,
   Tooltip,
-  VStack,
+  HStack,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
@@ -106,7 +106,7 @@ function Classes() {
       id: 'options',
       header: 'Opções',
       cell: ({ row }) => (
-        <VStack spacing='0px'>
+        <HStack spacing='0px'>
           <Tooltip label='Editar'>
             <IconButton
               colorScheme='yellow'
@@ -136,7 +136,7 @@ function Classes() {
               onClick={() => handleDeleteClick(row.original)}
             />
           </Tooltip>
-        </VStack>
+        </HStack>
       ),
     },
   ];
