@@ -3,17 +3,17 @@ import {
   Button,
   Center,
   Flex,
-  Icon,
   IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Spacer,
   Text,
+  Tooltip,
+  HStack,
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
+
+import { BsClipboardCheck, BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+
 import { ColumnDef } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
 import HasToBeAllocatedDrawer from 'components/allocation/hasToBeAllocated.drawer';
@@ -33,7 +33,6 @@ import Class, {
 } from 'models/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
-import { FaEllipsisV } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import ClassesService from 'services/classes.service';
 import BuildingsService from 'services/buildings.service';
@@ -105,16 +104,39 @@ function Classes() {
     },
     {
       id: 'options',
-      meta: { isNumeric: true },
+      header: 'Opções',
       cell: ({ row }) => (
-        <Menu>
-          <MenuButton as={IconButton} aria-label='Options' icon={<Icon as={FaEllipsisV} />} variant='ghost' />
-          <MenuList>
-            <MenuItem onClick={() => handleEditClick(row.original)}>Editar</MenuItem>
-            <MenuItem onClick={() => handlePreferencesClick(row.original)}>Preferências</MenuItem>
-            <MenuItem onClick={() => handleDeleteClick(row.original)}>Deletar</MenuItem>
-          </MenuList>
-        </Menu>
+        <HStack spacing='0px'>
+          <Tooltip label='Editar'>
+            <IconButton
+              colorScheme='yellow'
+              size='xs'
+              variant='ghost'
+              aria-label='editar-turma'
+              icon={<BsFillPenFill />}
+              onClick={() => handleEditClick(row.original)}
+            />
+          </Tooltip>
+          <Tooltip label='Preferências'>
+            <IconButton
+              size='xs'
+              variant='ghost'
+              aria-label='preferências-turma'
+              icon={<BsClipboardCheck />}
+              onClick={() => handlePreferencesClick(row.original)}
+            />
+          </Tooltip>
+          <Tooltip label='Deletar'>
+            <IconButton
+              colorScheme='red'
+              size='xs'
+              variant='ghost'
+              aria-label='deletar-turma'
+              icon={<BsFillTrashFill />}
+              onClick={() => handleDeleteClick(row.original)}
+            />
+          </Tooltip>
+        </HStack>
       ),
     },
   ];
@@ -221,7 +243,6 @@ function Classes() {
 
   function handleSavePreferences(data: Preferences) {
     if (selectedClass) {
-      console.log(data);
       classesService.patchPreferences(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
         fetchData();
         toast({
