@@ -3,6 +3,7 @@ import {
   Checkbox,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   HStack,
   Input,
@@ -18,8 +19,14 @@ import {
 } from '@chakra-ui/react';
 import Select from 'react-select';
 import { Building } from 'models/building.model';
+import {
+  nameInvalid,
+  buildingsInvalid,
+  emailInvalid,
+  usernameInvalid,
+} from 'utils/users/users.validator';
 
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import BuildingsService from 'services/buildings.service';
 
 interface RegisterModalProps {
@@ -29,9 +36,18 @@ interface RegisterModalProps {
 }
 
 export interface RegisterUserFormValues {
+  name: string;
   username: string;
   email: string;
   buildings: BuildingOption[];
+  isAdmin: boolean;
+}
+
+interface RegisterUserFormErrors {
+  name: boolean;
+  username: boolean;
+  email: boolean;
+  buildings: boolean;
   isAdmin: boolean;
 }
 
@@ -44,6 +60,7 @@ export default function RegisterUserModal(props: RegisterModalProps) {
   const buildingsService = new BuildingsService();
 
   const initialForm: RegisterUserFormValues = {
+    name: '',
     username: '',
     email: '',
     buildings: [],
@@ -53,6 +70,13 @@ export default function RegisterUserModal(props: RegisterModalProps) {
   const [isLoadingBuildings, setIsLoadingBuildings] = useState(false);
   const [buildings, setBuildings] = useState<Building[]>([]);
   const [form, setForm] = useState<RegisterUserFormValues>(initialForm);
+  const [errors, setErrors] = useState<RegisterUserFormErrors>({
+    name: false,
+    username: false,
+    email: false,
+    buildings: false,
+    isAdmin: false,
+  });
 
   useEffect(() => {
     fetchBuildings();
@@ -73,6 +97,7 @@ export default function RegisterUserModal(props: RegisterModalProps) {
   }
 
   function handleSaveClick() {
+    if (checkErrors()) return;
     props.onSave(form);
     setForm(initialForm);
     props.onClose();
@@ -86,6 +111,43 @@ export default function RegisterUserModal(props: RegisterModalProps) {
     return value.length <= 0;
   }
 
+  const handleChangeUsername = (event: ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value.replace(/\s/g, '').toLowerCase();
+    setForm((prev) => ({ ...prev, username: newValue }));
+  };
+
+  const checkErrors = () => {
+    const newErrors: RegisterUserFormErrors = {
+      name: nameInvalid(form.name),
+      username: usernameInvalid(form.username),
+      email: emailInvalid(form.email),
+      buildings: buildingsInvalid(
+        form.buildings.map((b) => b.value),
+        form.isAdmin,
+      ),
+      isAdmin: false,
+    };
+
+    setErrors(newErrors);
+
+    return (
+      newErrors.name ||
+      newErrors.username ||
+      newErrors.email ||
+      newErrors.buildings
+    );
+  };
+
+  const clearErrors = () => {
+    setErrors({
+      name: false,
+      username: false,
+      email: false,
+      buildings: false,
+      isAdmin: false,
+    });
+  };
+
   return (
     <Modal isOpen={props.isOpen} onClose={handleCloseModal}>
       <ModalOverlay />
@@ -94,17 +156,27 @@ export default function RegisterUserModal(props: RegisterModalProps) {
         <ModalCloseButton />
         <ModalBody pb={6}>
           <Flex direction={'column'} gap={4}>
-            <Flex direction={'column'}>
+            <FormControl isInvalid={errors.name}>
+              <FormLabel>Nome Completo</FormLabel>
+              <Input
+                placeholder='Nome'
+                value={form.name}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, name: event.target.value }))
+                }
+              />
+              <FormErrorMessage>Nome é obrigatório</FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={errors.username}>
               <FormLabel>Username</FormLabel>
               <Input
                 placeholder='Username'
                 value={form.username}
-                onChange={(event) =>
-                  setForm((prev) => ({ ...prev, username: event.target.value }))
-                }
+                onChange={handleChangeUsername}
               />
-            </Flex>
-            <Flex direction={'column'}>
+              <FormErrorMessage>Username é obrigatório</FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={errors.email}>
               <FormLabel>Email</FormLabel>
               <Input
                 placeholder='Email'
@@ -113,7 +185,8 @@ export default function RegisterUserModal(props: RegisterModalProps) {
                   setForm((prev) => ({ ...prev, email: event.target.value }))
                 }
               />
-            </Flex>
+              <FormErrorMessage>Email é obrigatório</FormErrorMessage>
+            </FormControl>
             <FormControl>
               <Checkbox
                 isChecked={form.isAdmin}
@@ -125,7 +198,7 @@ export default function RegisterUserModal(props: RegisterModalProps) {
               </Checkbox>
             </FormControl>
             {!form.isAdmin && (
-              <FormControl>
+              <FormControl isInvalid={errors.buildings}>
                 <FormLabel>Prédios</FormLabel>
                 <Select
                   placeholder={
@@ -148,6 +221,9 @@ export default function RegisterUserModal(props: RegisterModalProps) {
                   }}
                   value={form.buildings}
                 />
+                <FormErrorMessage>
+                  Prédio é obrigatório para não administradores
+                </FormErrorMessage>
               </FormControl>
             )}
           </Flex>
@@ -156,7 +232,14 @@ export default function RegisterUserModal(props: RegisterModalProps) {
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
             Salvar
           </Button>
-          <Button onClick={props.onClose}>Cancelar</Button>
+          <Button
+            onClick={() => {
+              clearErrors();
+              props.onClose();
+            }}
+          >
+            Cancelar
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

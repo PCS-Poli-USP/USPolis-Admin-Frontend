@@ -10,7 +10,6 @@ import { appContext } from 'context/AppContext';
 import { FaEllipsisV } from 'react-icons/fa';
 import EditUserModal from 'components/users/edit.modal';
 import Dialog from 'components/common/dialog.component';
-import RegisterUser from './registerUser';
 import RegisterUserModal, {
   RegisterUserFormValues,
 } from 'components/users/register.modal';
@@ -29,6 +28,10 @@ const Users = () => {
     {
       accessorKey: 'id',
       header: 'ID',
+    },
+    {
+      accessorKey: 'name',
+      header: 'Nome',
     },
     {
       accessorKey: 'username',
@@ -117,6 +120,7 @@ const Users = () => {
     try {
       setLoading(true);
       const response = await usersService.create({
+        name: form.name,
         email: form.email,
         username: form.username,
         isAdmin: form.isAdmin,
