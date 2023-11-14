@@ -185,7 +185,7 @@ export default function RegisterUserModal(props: RegisterModalProps) {
                   setForm((prev) => ({ ...prev, email: event.target.value }))
                 }
               />
-              <FormErrorMessage>Email é obrigatório</FormErrorMessage>
+              <FormErrorMessage>Email invalido</FormErrorMessage>
             </FormControl>
             <FormControl>
               <Checkbox

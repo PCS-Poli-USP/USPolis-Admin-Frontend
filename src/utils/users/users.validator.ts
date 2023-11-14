@@ -3,7 +3,7 @@ export function nameInvalid(name: string) {
 }
 
 export function emailInvalid(email: string) {
-  return email.length <= 0 && !email.includes('@') && !email.includes('.');
+  return email.length <= 0 || !email.includes('@') || !email.includes('.');
 }
 
 export function usernameInvalid(username: string) {

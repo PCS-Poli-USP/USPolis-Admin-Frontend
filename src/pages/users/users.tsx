@@ -24,6 +24,28 @@ const Users = () => {
   const [registerModalOpen, setRegisterModalOpen] = useState<boolean>(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
+  const toast = C.useToast();
+  const toastSuccess = (message: string) => {
+    toast({
+      position: 'top-right',
+      title: 'Sucesso!',
+      description: message,
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+  const toastError = (message: string) => {
+    toast({
+      position: 'top-right',
+      title: 'Erro!',
+      description: message,
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: 'id',
@@ -128,12 +150,13 @@ const Users = () => {
           ? undefined
           : form.buildings.map((it) => it.value),
       });
-      fetchUsers();
-    } catch (err) {
-      alert('Erro ao cadastrar usuário!');
+      toastSuccess(`Usuário cadastrado!`);
+    } catch (err: any) {
+      toastError(`Erro ao cadastrar usuário:\n${err.response.data.message}`);
       console.error(err);
       setLoading(false);
     }
+    fetchUsers();
   }
 
   async function editUser(data: EditUser, user_id: string) {
