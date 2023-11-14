@@ -164,9 +164,10 @@ const Users = () => {
     try {
       await usersService.update(data, user_id);
       fetchUsers();
+      toastSuccess(`Usuário editado!`);
     } catch (err: any) {
       console.error(err);
-      alert(`Erro ao editar usuário:\n${err.response.data.message}`);
+      toastError(`Erro ao editar usuário:\n${err.response.data.message}`);
       setLoading(false);
     }
   }
@@ -176,9 +177,10 @@ const Users = () => {
     try {
       await usersService.delete(user_id);
       fetchUsers();
+      toastSuccess(`Usuário deletado!`);
     } catch (err: any) {
       console.error(err);
-      alert(`Erro ao deletar usuário:\n${err.response.data.message}`);
+      toastError(`Erro ao deletar usuário:\n${err.response.data.message}`);
       setLoading(false);
     }
   }
