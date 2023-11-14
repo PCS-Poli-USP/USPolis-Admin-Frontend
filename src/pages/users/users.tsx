@@ -163,26 +163,26 @@ const Users = () => {
     setLoading(true);
     try {
       await usersService.update(data, user_id);
-      fetchUsers();
       toastSuccess(`Usuário editado!`);
     } catch (err: any) {
       console.error(err);
       toastError(`Erro ao editar usuário:\n${err.response.data.message}`);
       setLoading(false);
     }
+    fetchUsers();
   }
 
   async function deleteUser(user_id: string) {
     setLoading(true);
     try {
       await usersService.delete(user_id);
-      fetchUsers();
       toastSuccess(`Usuário deletado!`);
     } catch (err: any) {
       console.error(err);
       toastError(`Erro ao deletar usuário:\n${err.response.data.message}`);
       setLoading(false);
     }
+    fetchUsers();
   }
 
   return (
