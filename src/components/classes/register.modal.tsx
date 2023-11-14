@@ -6,7 +6,10 @@ import {
   FormErrorMessage,
   VStack,
   HStack,
+  IconButton,
   Input,
+  List,
+  ListItem,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -21,11 +24,10 @@ import {
   NumberDecrementStepper,
   Select,
   Text,
-  List,
-  ListItem,
+  Tooltip,
 } from '@chakra-ui/react';
 
-import { BsPersonCheckFill } from 'react-icons/bs';
+import { BsPersonCheckFill, BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { CalendarIcon } from '@chakra-ui/icons';
 
 import { Building } from 'models/building.model';
@@ -72,7 +74,7 @@ export default function RegisterModal(props: RegisterModalProps) {
   const [form, setForm] = useState(initialForm);
   const [professor, setProfessor] = useState('');
   const [isEditingProfessor, setIsEditingProfessor] = useState(false);
-  const [editIndex, setEditIndex] = useState(0);
+  const [editProfessorIndex, setEditProfessorIndex] = useState(0);
   const [week_day, setWeekDay] = useState('');
   const [start_time, setStartTime] = useState('');
   const [end_time, setEndTime] = useState('');
@@ -108,11 +110,13 @@ export default function RegisterModal(props: RegisterModalProps) {
 
     props.onSave(form);
     setForm(initialForm);
+    clearForm();
     props.onClose();
   }
 
   function handleCloseModal() {
     setForm(initialForm);
+    clearForm();
     props.onClose();
   }
 
@@ -132,7 +136,7 @@ export default function RegisterModal(props: RegisterModalProps) {
     if (!isEditingProfessor) {
       names.push(professor);
     } else {
-      names[editIndex] = professor;
+      names[editProfessorIndex] = professor;
     }
     setForm((prev) => ({...prev, professors: names}));
     setProfessor('');
@@ -145,7 +149,7 @@ export default function RegisterModal(props: RegisterModalProps) {
 
   function handleEditProfessorButton(index: number) {
     setIsEditingProfessor(true);
-    setEditIndex(index);
+    setEditProfessorIndex(index);
     setProfessor(form.professors[index]);
   }
 
@@ -188,7 +192,7 @@ export default function RegisterModal(props: RegisterModalProps) {
         start_time: newStarTime,
         end_time: newEndTime,
       }));
-    clearInputs();
+    clearDateInputs();
     setIsEditingDate(false);
   }
 
@@ -213,10 +217,41 @@ export default function RegisterModal(props: RegisterModalProps) {
     setForm((prev) => ({...prev, week_days: newWeekDays, start_time: newStartTime, end_time: newEndtime }));
   }
 
-  function clearInputs() {
+  function clearForm() {
+    clearProfessorInput();
+    clearDateInputs();
+    clearBuildingInput();
+    clearErrors();
+  }
+
+  function clearProfessorInput() {
+    setProfessor('');
+    setEditProfessorIndex(0);
+  }
+
+  function clearDateInputs() {
     setWeekDay('');
     setStartTime('');
     setEndTime('');
+    setEditDateIndex(0);
+  }
+  
+  function clearBuildingInput() {
+    setBuildingName('');
+  }
+
+  function clearErrors() {
+    setHasClassCodeError(false);
+    setHasSubjectCodeError(false);
+    setHasSubjectNameError(false);
+    setHasOferingError(false);
+    setHasClassTypeError(false);
+    setHasProfessorError(false);
+    setHasPeriodError(false);
+    setHasTimeError(false);
+    setHasDayError(false);
+    setHasBuildingError(false);
+    setHasErros(false);
   }
 
   function isInvalidClass(): boolean {
@@ -429,22 +464,29 @@ export default function RegisterModal(props: RegisterModalProps) {
                   <HStack>
                     <BsPersonCheckFill />
                     <Text>{professor}</Text>
-                    <Button
+
+                    <Tooltip label='Editar'>
+                      <IconButton
                         colorScheme='yellow'
-                        size='xs'
+                        size='sm'
                         variant='ghost'
+                        aria-label='editar-professor'
+                        icon={<BsFillPenFill />}
                         onClick={() => handleEditProfessorButton(index)}
-                      >
-                        Editar
-                      </Button>
-                    <Button  
-                      colorScheme='red' 
-                      size='xs' 
-                      variant='ghost' 
-                      onClick={() => handleDeleteProfessorButton(index)}
-                    >
-                      Remover
-                    </Button>
+                      />
+                    </Tooltip>
+
+                    <Tooltip label='Remover'>
+                      <IconButton  
+                        colorScheme='red' 
+                        size='sm' 
+                        variant='ghost' 
+                        aria-label='remover-professor'
+                        icon={<BsFillTrashFill />}
+                        onClick={() => handleDeleteProfessorButton(index)}
+                      />
+                    </Tooltip>
+
                   </HStack>
                 </ListItem>
               ))}
@@ -458,6 +500,7 @@ export default function RegisterModal(props: RegisterModalProps) {
             <FormControl isInvalid={hasPeriodError} >
               <FormLabel>Período da disciplina</FormLabel>
               <HStack spacing='5px'>
+                
                 <FormLabel>Início</FormLabel>
                 <Input
                   placeholder='Data de início da disciplina'
@@ -468,6 +511,7 @@ export default function RegisterModal(props: RegisterModalProps) {
                     if (event.target.value) setHasPeriodError(false);
                   }}
                 />
+
                 <FormLabel>Fim</FormLabel>
                 <Input
                   placeholder='Data de encerramento da disciplina'
@@ -538,22 +582,27 @@ export default function RegisterModal(props: RegisterModalProps) {
                   <HStack key={index}>
                     <CalendarIcon /> 
                     <Text>{` ${weekDaysFormatter(week_day)}, ${form.start_time[index]} às ${form.end_time[index]}`} </Text>
-                    <Button  
-                      colorScheme='yellow' 
-                      size='xs' 
-                      variant='ghost' 
-                      onClick={() => handleEditDateButton(index)}
-                    >
-                      Editar
-                    </Button>
-                    <Button  
-                      colorScheme='red' 
-                      size='xs' 
-                      variant='ghost' 
-                      onClick={() => handleDeleteDateButton(index)}
-                    >
-                      Remover
-                    </Button>
+                    <Tooltip label='Editar'>
+                      <IconButton
+                        colorScheme='yellow'
+                        size='sm'
+                        variant='ghost'
+                        aria-label='editar-data'
+                        icon={<BsFillPenFill />}
+                        onClick={() => handleEditDateButton(index)}
+                      />
+                    </Tooltip>
+
+                    <Tooltip label='Remover'>
+                      <IconButton  
+                        colorScheme='red' 
+                        size='sm' 
+                        variant='ghost' 
+                        aria-label='remover-data'
+                        icon={<BsFillTrashFill />}
+                        onClick={() => handleDeleteDateButton(index)}
+                      />
+                    </Tooltip>
                   </HStack>
                 ))}
               </List>
@@ -615,7 +664,7 @@ export default function RegisterModal(props: RegisterModalProps) {
 
         <ModalFooter>
           <HStack spacing='10px'>
-            {hasErrors ? <Text colorScheme='red' color='red.600'>Fomulário inválido, corrija os campos inválidos</Text> : (undefined) }
+            {hasErrors ? <Text colorScheme='tomato' color='red.500'>Fomulário inválido, corrija os campos inválidos</Text> : (undefined) }
             <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
               Salvar
             </Button>

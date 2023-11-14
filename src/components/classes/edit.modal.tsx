@@ -1,10 +1,4 @@
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Box,
   Button,
   FormControl,
   FormLabel,
@@ -73,7 +67,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
   const [form, setForm] = useState<Class>(initialForm);
   const [professor, setProfessor] = useState('');
   const [isEditingProfessor, setIsEditingProfessor] = useState(false);
-  const [editProfessorIndex, setEditIndex] = useState(0);
+  const [editProfessorIndex, setEditProfessorIndex] = useState(0);
   const [week_day, setWeekDay] = useState('');
   const [start_time, setStartTime] = useState('');
   const [end_time, setEndTime] = useState('');
@@ -97,8 +91,13 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
       setHasErrors(true);
       return;
     }
-    setHasErrors(false);
     onSave(form);
+    clearForm();
+    onClose();
+  }
+
+  function handleCloseModal() {
+    clearForm();
     onClose();
   }
 
@@ -124,15 +123,15 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
     if (event.key === 'Enter') handleProfessorButton();
   }
 
-  function handleDeleteButton(index: number) {
+  function handleDeleteProfessorButton(index: number) {
     const newProfessors = form.professors;
     newProfessors.splice(index, 1);
     setForm((prev) => ({...prev, professors: newProfessors}));
   }
 
-  function handleEditButton(index: number) {
+  function handleEditProfessorButton(index: number) {
     setIsEditingProfessor(true);
-    setEditIndex(index);
+    setEditProfessorIndex(index);
     setProfessor(form.professors[index]);
   }
 
@@ -174,7 +173,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
         start_time: newStarTime,
         end_time: newEndTime,
       }));
-    clearInputs();
+    clearDateInputs();
     setIsEditingDate(false);
   }
 
@@ -199,12 +198,6 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
     setForm((prev) => ({...prev, week_days: newWeekDays, start_time: newStartTime, end_time: newEndtime }));
   }
 
-  function clearInputs() {
-    setWeekDay('');
-    setStartTime('');
-    setEndTime('');
-  }
-
   function isInvalidForm() {
     let hasError = false;
 
@@ -221,6 +214,32 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
     }
 
     return hasError;
+  }
+
+  function clearForm() {
+    clearProfessorInput();
+    clearDateInputs();
+    clearErrors();
+  }
+
+  function clearProfessorInput() {
+    setProfessor('');
+    setEditProfessorIndex(0);
+  }
+
+  function clearDateInputs() {
+    setWeekDay('');
+    setStartTime('');
+    setEndTime('');
+    setEditDateIndex(0);
+  }
+  
+
+  function clearErrors() {
+    setHasOferingError(false);
+    setHasProfessorError(false);
+    setHasTimeError(false);
+    setHasDayError(false);
   }
 
   return (
@@ -336,9 +355,9 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                         colorScheme='yellow'
                         size='sm'
                         variant='ghost'
-                        aria-label='editar-disciplina'
+                        aria-label='editar-professor'
                         icon={<BsFillPenFill />}
-                        onClick={() => handleEditButton(index)}
+                        onClick={() => handleEditProfessorButton(index)}
                       />
                     </Tooltip>
 
@@ -347,11 +366,12 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                         colorScheme='red' 
                         size='sm' 
                         variant='ghost' 
-                        aria-label='Remover disciplina'
+                        aria-label='remover-professor'
                         icon={<BsFillTrashFill />}
-                        onClick={() => handleDeleteButton(index)}
+                        onClick={() => handleDeleteProfessorButton(index)}
                       />
                     </Tooltip>
+
                   </HStack>
                 </ListItem>
               ))}
@@ -450,11 +470,11 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
 
         <ModalFooter>
         <HStack spacing='10px'>
-            {hasErrors ? <Text colorScheme='red' color='red.600'>Fomulário inválido, corrija os campos inválidos</Text> : (undefined) }
+            {hasErrors ? <Text colorScheme='tomato' color='red.500'>Fomulário inválido, corrija os campos inválidos</Text> : (undefined) }
             <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
               Salvar
             </Button>
-            <Button onClick={onClose}>Cancelar</Button>
+            <Button onClick={handleCloseModal}>Cancelar</Button>
           </HStack>
         </ModalFooter>
       </ModalContent>

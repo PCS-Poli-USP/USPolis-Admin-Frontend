@@ -48,10 +48,12 @@ export default function PreferencesModal(props: PreferencesModalProps) {
     if (isEmpty(form.building_id)) return;
 
     props.onSave(form);
+    setForm(initialForm);
     props.onClose();
   }
 
   function handleCloseModal() {
+    if (props.data) setForm({ ...props.data.preferences, has_to_be_allocated: props.data.has_to_be_allocated });
     props.onClose();
   }
 
@@ -120,7 +122,7 @@ export default function PreferencesModal(props: PreferencesModalProps) {
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
             Salvar
           </Button>
-          <Button onClick={props.onClose}>Cancelar</Button>
+          <Button onClick={handleCloseModal}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
