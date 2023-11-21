@@ -57,7 +57,28 @@ function Classes() {
   const [allocating, setAllocating] = useState(false);
 
   const navigate = useNavigate();
+
   const toast = useToast();
+  const toastSuccess = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Sucesso!',
+      description: message,
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+  const toastError = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Erro!',
+      description: message,
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
 
   const columns: ColumnDef<Class>[] = [
     {
@@ -189,21 +210,9 @@ function Classes() {
     const events: CreateClassEvents[] = breakClassFormInEvents(data);
     classesService.createOne(events).then(() => {
       fetchData();
-      toast({
-        title: 'Turma criada com sucesso!',
-        position: 'top-left',
-        duration: 3000,
-        isClosable: true,
-        status: 'success',
-        });
+      toastSuccess('Turma criada com sucesso!');
     }).catch((error) => {
-      toast({
-        title: `Erro ao criar turma: ${error}`,
-        position: 'top-left',
-        duration: 3000,
-        isClosable: true,
-        status: 'error',
-      });
+      toastError(`Erro ao criar turma: ${error}`);
     });
   }
 
@@ -217,21 +226,9 @@ function Classes() {
       classesService.delete(selectedClass.subject_code, selectedClass.class_code).then((it) => {
         onCloseDelete();
         fetchData();
-        toast({
-          title: 'Turma deletada com sucesso!',
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'success',
-          });
+        toastSuccess('Turma deletada com sucesso!');
       }).catch((error) => {
-        toast({
-          title: `Erro ao deletar turma: ${error}`,
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'error',
-        });
+        toastError(`Erro ao deletar turma: ${error}`);
       });
     }
   }
@@ -245,21 +242,9 @@ function Classes() {
     if (selectedClass) {
       classesService.patchPreferences(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
         fetchData();
-        toast({
-          title: 'Preferências editadas com sucesso!',
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'success',
-          });
+        toastSuccess('Preferências editadas com sucesso!');
       }).catch((error) => {
-        toast({
-          title: `Erro ao editar preferências: ${error}`,
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'error',
-        });
+        toastError(`Erro ao editar preferências: ${error}`)
       });
     }
   }
@@ -294,21 +279,9 @@ function Classes() {
       const events = breakClassFormInEvents(data);
       classesService.edit(selectedClass.subject_code, selectedClass.class_code, events).then((it) => {
         fetchData();
-        toast({
-          title: 'Turma editada com sucesso!',
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'success',
-          });
+        toastSuccess('Turma editada com sucesso!');
       }).catch((error) => {
-        toast({
-          title: `Erro ao criar turma: ${error}`,
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'error',
-        });
+        toastError(`Erro ao criar turma: ${error}`);
       });
     }
   }
@@ -326,11 +299,7 @@ function Classes() {
         fetchData();
       })
       .catch(({ response }: AxiosError<ErrorResponse>) =>
-        toast({
-          title: response?.data.message,
-          position: 'top-left',
-          status: 'error',
-        }),
+        toastError(`Erro ao buscar disciplinas: ${response?.data.message}`)
       );
   }
 

@@ -113,7 +113,7 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
         <ModalHeader>
           Editar alocação - {classData?.subjectCode}
           <Text fontSize='md' fontWeight='normal'>
-            {classData?.classCodeText} - {classData?.professor}
+            {classData?.classCodeText} - {classData?.professors.join().length > 25 ? classData?.professors[0] + '...' : classData?.professors.join()}
           </Text>
           <Alert
             status={
