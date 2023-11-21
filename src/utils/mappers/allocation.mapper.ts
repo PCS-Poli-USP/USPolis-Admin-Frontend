@@ -15,7 +15,7 @@ export function AllocationEventsMapper(allocation: Event[]) {
     extendedProps: {
       building: it.building,
       classCode: it.class_code,
-      professor: it.professor,
+      professors: it.professors,
       startTime: it.start_time,
       endTime: it.end_time,
       weekday: it.week_day,
@@ -62,7 +62,7 @@ function EventsRenderRangeEventsByClassroomsMapper(events: EventRenderRange[]): 
     classroom: resourceIds?.at(0) as string,
     building: extendedProps?.building,
     classCode: extendedProps?.classCode,
-    professor: extendedProps?.professor,
+    professors: extendedProps?.professors,
     startTime: extendedProps?.startTime,
     endTime: extendedProps?.endTime,
     weekday: extendedProps?.weekday,
@@ -134,4 +134,18 @@ export function WeekDayText(weekDay: string) {
     case WeekDays.Saturday:
       return 'Sábado';
   }
+}
+
+export function EventsByWeekDay(events: EventByClassrooms[]): EventByClassrooms[][] {
+  const eventsByWeekDay: EventByClassrooms[][] = [[], [], [], [], [], [], []];
+  for (let i = 0; i < events.length; i++) {
+    if (events[i].weekday === WeekDays.Monday) eventsByWeekDay[0].push(events[i]);
+    if (events[i].weekday === WeekDays.Tuesday) eventsByWeekDay[1].push(events[i]);
+    if (events[i].weekday === WeekDays.Wednesday) eventsByWeekDay[2].push(events[i]);
+    if (events[i].weekday === WeekDays.Thursday) eventsByWeekDay[3].push(events[i]);
+    if (events[i].weekday === WeekDays.Friday) eventsByWeekDay[4].push(events[i]);
+    if (events[i].weekday === WeekDays.Saturday) eventsByWeekDay[5].push(events[i]);
+    if (events[i].weekday === WeekDays.Sunday) eventsByWeekDay[6].push(events[i]);
+  }
+  return eventsByWeekDay;
 }
