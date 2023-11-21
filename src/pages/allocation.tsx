@@ -66,7 +66,33 @@ function Allocation() {
               ref={calendarRef}
               schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
               plugins={[timeGridPlugin, resourceTimelinePlugin, eventsByClassroomsPlugin]}
-              initialView='eventsByClassrooms'
+              initialView='resourceTimelineWeek'
+              locale='pt-br'
+              height='auto'
+              slotMinTime='06:00'
+              firstDay={1}
+
+              headerToolbar={{
+                left: 'eventsByClassrooms resourceTimelineDay resourceTimelineWeek timeGridWeek',
+                center: 'title',
+                right: 'goToDate prev,next today',
+              }}
+
+              buttonText={{
+                eventsByClassrooms: 'Salas',
+                timeGridWeek: 'Geral',
+                resourceTimelineDay: 'Sala / Dia',
+                resourceTimelineWeek: 'Sala / Semana',
+                today: 'Hoje',
+              }}
+              
+              customButtons={{
+                goToDate: {
+                  text: 'Escolher data',
+                  click: (_ev, _el) => onOpen(),
+                },
+              }}
+
               views={{
                 timeGridWeek: {
                   slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
@@ -80,47 +106,27 @@ function Allocation() {
                   titleFormat: { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' },
                 },
                 resourceTimelineWeek: {
-                  slotDuration: '01:00',
+                  duration: { weeks: 1 },
+                  eventMinWidth: 100,
+                  slotDuration: '24:00',
                   slotLabelFormat: [
-                    { weekday: 'short', day: '2-digit', month: '2-digit', omitCommas: true },
-                    { hour: '2-digit', minute: '2-digit' },
+                    { weekday: 'long', day: 'numeric', month: 'numeric', omitCommas: true},
                   ],
+                  slotLabelInterval: { hours: 24},
                   titleFormat: { year: 'numeric', month: 'long' },
-                  eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
+                  eventTimeFormat: { hour: 'numeric', minute: 'numeric' },
                 },
                 eventsByClassrooms: {
                   duration: { weeks: 1 },
                 },
               }}
-              locale='pt-br'
-              height='auto'
-              slotMinTime='06:00'
-              firstDay={1}
-              allDaySlot={false}
-              headerToolbar={{
-                left: 'eventsByClassrooms resourceTimelineDay resourceTimelineWeek timeGridWeek',
-                center: 'title',
-                right: 'goToDate prev,next today',
-              }}
-              buttonText={{
-                eventsByClassrooms: 'Salas',
-                timeGridWeek: 'Geral',
-                resourceTimelineDay: 'Sala / Dia',
-                resourceTimelineWeek: 'Sala / Semana',
-                today: 'Hoje',
-              }}
-              customButtons={{
-                goToDate: {
-                  text: 'Escolher data',
-                  click: (_ev, _el) => onOpen(),
-                },
-              }}
+              
               events={allocation}
               eventContent={EventContent}
               eventColor='#408080'
               displayEventTime
               resources={resources}
-              resourceAreaWidth='12%'
+              resourceAreaWidth='10%'
               resourceGroupField='building'
               resourceAreaHeaderContent='Salas'
             />
