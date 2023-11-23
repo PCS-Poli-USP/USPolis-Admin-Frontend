@@ -15,6 +15,8 @@ export function AllocationEventsMapper(allocation: Event[]) {
     extendedProps: {
       building: it.building,
       classCode: it.class_code,
+      subjectCode: it.subject_code,
+      classroom: it.classroom,
       professors: it.professors,
       startTime: it.start_time,
       endTime: it.end_time,
@@ -52,7 +54,7 @@ export function ClassCodeText(classCode: string) {
 
 export function AllocationResourcesFromEventsMapper(allocation: Event[]) {
   return Array.from(
-    new Set(allocation.map((it) => ({ id: it.classroom || Classrooms.UNALLOCATED, building: it.building }))),
+    new Set(allocation.map((it) => ({ building: it.building, id: it.classroom || Classrooms.UNALLOCATED }))),
   );
 }
 
