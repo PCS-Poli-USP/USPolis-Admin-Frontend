@@ -18,15 +18,13 @@ export function ClassRoomRow(props: ClassRoomRowProps) {
     if (props.events) setEventsByWeek(EventsByWeekDay(props.events));
   }, [props.events]);
 
-  console.log("Filtrado: ", eventsByWeek);
-
   return (
     <HStack w='full' alignItems='start' divider={<StackDivider borderColor='gray.200' />} >
       <Text w='full' maxW='150px'>{props.classroom}</Text>
       {eventsByWeek.map((dayEvents, index) => (
         <VStack w='full'spacing='3px' key={index} >
-          {dayEvents.map((event) => (
-            <ClassEvent classEvent={event} />
+          {dayEvents.map((event, idx) => (
+            <ClassEvent classEvent={event} key ={idx}/>
           ))}
         </VStack>
       ))}

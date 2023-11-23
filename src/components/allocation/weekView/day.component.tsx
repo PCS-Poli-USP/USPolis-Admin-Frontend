@@ -1,10 +1,8 @@
 import { Flex, Text } from "@chakra-ui/react";
-
 interface DayProps {
   weekDay: string;
   numberDay: string | number;
 }
-
 
 export function Day (props: DayProps) {
   return (
