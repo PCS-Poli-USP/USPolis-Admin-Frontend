@@ -12,7 +12,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 
-import { BsClipboardCheck, BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+import { BsClipboardCheck, BsFillPenFill, BsFillTrashFill, BsCalendarDateFill } from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
@@ -21,6 +21,7 @@ import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
 import RegisterModal from 'components/classes/register.modal';
+import EditEventModal from 'components/allocation/editEvent.modal';
 import DataTable from 'components/common/dataTable.component';
 import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
@@ -38,18 +39,21 @@ import ClassesService from 'services/classes.service';
 import BuildingsService from 'services/buildings.service';
 import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
-import { FilterArray, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
-import { breakClassFormInEvents } from 'utils/classes/classes.formatter';
+import { FilterArray, FilterClassroom, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import { ClassToEventByClassroom, breakClassFormInEvents } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
+import { EventByClassrooms } from 'models/event.model';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
   const [buildingsList, setBuildingsList] = useState<Array<Building>>([]);
+  const [selectedClassEventList, setSelectedClassEventList] = useState<Array<EventByClassrooms>>([]);
   const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
   const { isOpen: isOpenPreferences, onOpen: onOpenPreferences, onClose: onClosePreferences } = useDisclosure();
   const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
   const { isOpen: isOpenDrawer, onOpen: onOpenDrawer, onClose: onCloseDrawer } = useDisclosure();
   const { isOpen: isOpenAlloc, onOpen: onOpenAlloc, onClose: onCloseAlloc } = useDisclosure();
+  const { isOpen: isOpenAllocEdit, onOpen: onOpenAllocEdit, onClose: onCloseAllocEdit } = useDisclosure();
   const { isOpen: isOpenRegister, onOpen: onOpenRegister, onClose: onCloseRegister } = useDisclosure();
 
   const [selectedClass, setSelectedClass] = useState<Class>();
@@ -86,12 +90,22 @@ function Classes() {
       header: 'Código',
     },
     {
+      accessorKey: 'class_code',
+      header: 'Turma',
+    },
+    {
       accessorKey: 'subject_name',
       header: 'Disciplina',
     },
     {
-      accessorKey: 'class_code',
-      header: 'Turma',
+      accessorFn: (row) => (row.classrooms ? row.classrooms : ['Não alocada']),
+      filterFn: FilterClassroom,
+      header: 'Sala',
+      cell: ({ row }) => (
+        <Box>
+          <Text>{row.original.classrooms && row.original.classrooms.length > 0 ? row.original.classrooms[0] : 'Não alocada'}</Text>
+        </Box>
+      ),
     },
     {
       accessorKey: 'subscribers',
@@ -128,7 +142,7 @@ function Classes() {
       header: 'Opções',
       cell: ({ row }) => (
         <HStack spacing='0px'>
-          <Tooltip label='Editar'>
+          <Tooltip label='Editar Turma'>
             <IconButton
               colorScheme='yellow'
               size='xs'
@@ -136,6 +150,16 @@ function Classes() {
               aria-label='editar-turma'
               icon={<BsFillPenFill />}
               onClick={() => handleEditClick(row.original)}
+            />
+          </Tooltip>
+          <Tooltip label='Editar Alocação'>
+            <IconButton
+              colorScheme='teal'
+              size='xs'
+              variant='ghost'
+              aria-label='editar-alocacao'
+              icon={<BsCalendarDateFill />}
+              onClick={() => handleAllocationEditClick(row.original)}
             />
           </Tooltip>
           <Tooltip label='Preferências'>
@@ -190,15 +214,8 @@ function Classes() {
       setClassesList(it.data);
       setLoading(false);
     }).catch((error) => {
-      console.log(error);
       setLoading(false);
-      toast({
-        title: `Erro ao carregar turmas: ${error.message}`,
-        position: 'top-left',
-        duration: 3000,
-        isClosable: true,
-        status: 'error',
-      });
+      toastError(`Erro ao carregar turmas: ${error.message}`);
     });
   }
 
@@ -231,6 +248,25 @@ function Classes() {
         toastError(`Erro ao deletar turma: ${error}`);
       });
     }
+  }
+
+  function handleAllocationEditClick(obj: Class) {
+    setSelectedClass(obj);
+    const events = ClassToEventByClassroom(obj, buildingsList);
+    setSelectedClassEventList(events);
+    onOpenAllocEdit();
+  }
+
+  function handleAllocationEdit(subjectCode: string, classCode: string, weekDays: string[], newClassroom: string, building: string) {
+    eventsService
+      .edit(subjectCode, classCode, weekDays, newClassroom, building)
+      .then((it) => {
+        toastSuccess('Alocação editada com sucesso!');
+        // refetch data
+        // TODO: create AllocationContext
+      }).catch((error) => {
+        toastError(`Erro ao editar alocação: ${error}`);
+      });
   }
 
   function handlePreferencesClick(obj: Class) {
@@ -316,6 +352,7 @@ function Classes() {
       />
       <RegisterModal isOpen={isOpenRegister} onClose={onCloseRegister} onSave={handleRegister} buildings={buildingsList} />
       <EditModal isOpen={isOpenEdit} onClose={onCloseEdit} formData={selectedClass} onSave={handleEdit} />
+      <EditEventModal isOpen={isOpenAllocEdit} onClose={onCloseAllocEdit} onSave={handleAllocationEdit} classEvents={selectedClassEventList} />
       <HasToBeAllocatedDrawer
         isOpen={isOpenDrawer}
         onClose={onCloseDrawer}
@@ -341,8 +378,8 @@ function Classes() {
               Criar Turma
             </Button>
             <JupiterCrawlerPopover onSave={handleCrawlerSave} />
-            <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
-              Alocar
+            <Button ml={2} colorScheme='red' onClick={handleAllocClick}>
+              Alocação Automática
             </Button>
           </Flex>
           <Dialog
