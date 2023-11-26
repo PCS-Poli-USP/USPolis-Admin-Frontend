@@ -1,16 +1,17 @@
-import { Box, HStack, StackDivider, Text } from "@chakra-ui/react";
-import { Day } from "./day.component";
+import { Box, HStack, StackDivider, Text } from '@chakra-ui/react';
+import { Day } from './day.component';
 
 interface DaysHeaderProps {
   startNumber: number;
 }
 
-
 export function WeekDaysHeader(props: DaysHeaderProps) {
   return (
-    <HStack w='full' divider={<StackDivider borderColor='gray.200' />} >
+    <HStack w='full' divider={<StackDivider borderColor='gray.200' />}>
       <Box w='full' maxW='150px'>
-        <Text fontWeight='bold' size='xl '>Salas</Text> 
+        <Text fontWeight='bold' size='xl '>
+          Salas
+        </Text>
       </Box>
       <Day weekDay='SEG' numberDay={props.startNumber} />
       <Day weekDay='TER' numberDay={props.startNumber + 1} />

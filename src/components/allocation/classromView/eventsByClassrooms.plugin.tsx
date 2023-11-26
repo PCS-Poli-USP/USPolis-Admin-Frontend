@@ -24,14 +24,14 @@ function ClassroomsTables(props: any) {
     ([classroom, _data]) => classroom === Classrooms.UNALLOCATED,
   )?.[1];
 
-    useEffect(() => {
-      if (canShowToast) {
-        if (!errorMessage) toastSuccess('Alocação editada com sucesso!');
-        else toastError(errorMessage);
-        setCanShowToast(false);
-        setErrorMessage('');
-      }
-    }, [canShowToast, errorMessage]);
+  useEffect(() => {
+    if (canShowToast) {
+      if (!errorMessage) toastSuccess('Alocação editada com sucesso!');
+      else toastError(errorMessage);
+      setCanShowToast(false);
+      setErrorMessage('');
+    }
+  }, [canShowToast, errorMessage]);
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -61,17 +61,25 @@ function ClassroomsTables(props: any) {
     onOpen();
   }
 
-  function handleAllocationSave(subjectCode: string, classCode: string, weekDays: string[], newClassroom: string, building: string) {
+  function handleAllocationSave(
+    subjectCode: string,
+    classCode: string,
+    weekDays: string[],
+    newClassroom: string,
+    building: string,
+  ) {
     setCanShowToast(true);
-    eventsService.edit(subjectCode, classCode, weekDays, newClassroom, building)
-    .then((it) => {
-      setErrorMessage('');
-      window.location.reload();
-      // refetch data
-      // TODO: create AllocationContext
-    }).catch((error) => {
-      setErrorMessage(`Erro ao editar alocação: ${error}`);
-    });
+    eventsService
+      .edit(subjectCode, classCode, weekDays, newClassroom, building)
+      .then((it) => {
+        setErrorMessage('');
+        window.location.reload();
+        // refetch data
+        // TODO: create AllocationContext
+      })
+      .catch((error) => {
+        setErrorMessage(`Erro ao editar alocação: ${error}`);
+      });
   }
 
   function colDef(classroom: string): ColumnDef<EventByClassrooms>[] {
@@ -97,7 +105,7 @@ function ClassroomsTables(props: any) {
                 <Text>{data.classCodeText}</Text>
                 <Tooltip label='Professores'>
                   <Text>
-                    {(data.professors.join().length > 25) ? data.professors[0] + '...' : data.professors.join()}
+                    {data.professors.join().length > 25 ? data.professors[0] + '...' : data.professors.join()}
                   </Text>
                 </Tooltip>
               </Box>

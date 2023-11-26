@@ -1,23 +1,23 @@
-import { 
+import {
   Button,
   Checkbox,
-  Input, 
-  InputGroup, 
+  Input,
+  InputGroup,
   InputLeftElement,
-  Modal, 
-  ModalBody, 
-  ModalContent, 
-  ModalCloseButton, 
-  ModalFooter, 
-  ModalHeader, 
-  ModalOverlay, 
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalCloseButton,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Flex,
   HStack,
   FormLabel,
-  VStack
+  VStack,
 } from '@chakra-ui/react';
 
-import { BsSearch } from "react-icons/bs";
+import { BsSearch } from 'react-icons/bs';
 
 interface FilterEventModalProps {
   isOpen: boolean;
@@ -42,10 +42,10 @@ export function FilterEventModal(props: FilterEventModalProps) {
   }
 
   return (
-    <Modal 
-      isOpen={props.isOpen} 
-      onClose={handleCloseModal} 
-      closeOnOverlayClick={false} 
+    <Modal
+      isOpen={props.isOpen}
+      onClose={handleCloseModal}
+      closeOnOverlayClick={false}
       motionPreset='slideInBottom'
       size={'xl'}
       scrollBehavior='outside'
@@ -55,15 +55,23 @@ export function FilterEventModal(props: FilterEventModalProps) {
         <ModalHeader>Filtrar alocações</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <HStack spacing={5} >
+          <HStack spacing={5}>
             <VStack alignItems='start' spacing={0} w='full'>
               <FormLabel fontWeight='bold'>Disciplina</FormLabel>
-              <Input type='text' value={props.subjectSearchValue} onChange={(event) => props.handleSubjectChange(event.target.value)} />
+              <Input
+                type='text'
+                value={props.subjectSearchValue}
+                onChange={(event) => props.handleSubjectChange(event.target.value)}
+              />
             </VStack>
-            
+
             <VStack alignItems='start' spacing={0} w='full'>
               <FormLabel fontWeight='bold'>Sala</FormLabel>
-              <Input type='text' value={props.classroomSearchValue} onChange={(event) => props.handleClassroomChange(event.target.value)} />
+              <Input
+                type='text'
+                value={props.classroomSearchValue}
+                onChange={(event) => props.handleClassroomChange(event.target.value)}
+              />
             </VStack>
           </HStack>
         </ModalBody>
