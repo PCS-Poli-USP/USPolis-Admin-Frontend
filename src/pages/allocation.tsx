@@ -145,7 +145,7 @@ function Allocation() {
               ref={calendarRef}
               schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
               plugins={[timeGridPlugin, resourceTimelinePlugin, eventsByClassroomsPlugin, eventsByWeekPlugin]}
-              initialView='eventsByWeek'
+              initialView='eventsByClassrooms'
               locale='pt-br'
               height='auto'
               slotMinTime='06:00'
