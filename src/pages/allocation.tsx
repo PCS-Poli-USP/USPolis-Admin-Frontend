@@ -42,6 +42,7 @@ function Allocation() {
       setCalendarDate(FirstEventDate(values[0].data).slice(0, 10));
       setLoading(false);
     });
+    if (subjectSearchValue || classroomSearchValue) FilterAllocation(subjectSearchValue, classroomSearchValue);
     // eslint-disable-next-line
   }, []);
 
@@ -52,7 +53,6 @@ function Allocation() {
 
   function FilterAllocation(subjectValue: string, classroomValue: string) {
     if (subjectValue && classroomValue) {
-      console.log('aMBOS');
       setFilteredAllocation(allocation.filter((data) => {
         const subjectResult = data.extendedProps.subjectCode.toLowerCase().includes(subjectValue.toLowerCase());
         const classroomResult = data.extendedProps.classroom.toLowerCase().includes(classroomValue.toLowerCase())
@@ -61,14 +61,12 @@ function Allocation() {
     }
 
     else if (subjectValue && !classroomValue) {
-      console.log("turma")
       setFilteredAllocation(allocation.filter((data) => {
         return data.extendedProps.subjectCode.toLowerCase().includes(subjectValue.toLowerCase());
       }));
     }
 
     else if (!subjectValue && classroomValue) {
-      console.log('sala')
       setFilteredAllocation(allocation.filter((data) => {
         return data.extendedProps.classroom.toLowerCase().includes(classroomValue.toLowerCase());
       }));
