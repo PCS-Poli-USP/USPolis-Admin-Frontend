@@ -1,5 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import * as C from '@chakra-ui/react';
+
+import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+
 import { ColumnDef } from '@tanstack/react-table';
 import Navbar from 'components/common/navbar.component';
 import UsersService from 'services/users.service';
@@ -7,7 +10,6 @@ import { User, CreateUser, EditUser } from 'models/user.model';
 import DataTable from 'components/common/dataTable.component';
 import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { appContext } from 'context/AppContext';
-import { FaEllipsisV } from 'react-icons/fa';
 import EditUserModal from 'components/users/edit.modal';
 import Dialog from 'components/common/dialog.component';
 import RegisterUserModal, {
@@ -27,7 +29,7 @@ const Users = () => {
   const toast = C.useToast();
   const toastSuccess = (message: string) => {
     toast({
-      position: 'top-right',
+      position: 'top-left',
       title: 'Sucesso!',
       description: message,
       status: 'success',
@@ -37,7 +39,7 @@ const Users = () => {
   };
   const toastError = (message: string) => {
     toast({
-      position: 'top-right',
+      position: 'top-left',
       title: 'Erro!',
       description: message,
       status: 'error',
@@ -83,24 +85,31 @@ const Users = () => {
     },
     {
       id: 'options',
-      meta: { isNumeric: true },
+      header: 'Opções',
       cell: ({ row }) => (
-        <C.Menu>
-          <C.MenuButton
-            as={C.IconButton}
-            aria-label='Options'
-            icon={<C.Icon as={FaEllipsisV} />}
-            variant='ghost'
-          />
-          <C.MenuList>
-            <C.MenuItem onClick={() => handleEditButton(row.original)}>
-              Editar
-            </C.MenuItem>
-            <C.MenuItem onClick={() => handleDeleteButton(row.original)}>
-              Deletar
-            </C.MenuItem>
-          </C.MenuList>
-        </C.Menu>
+        <C.HStack spacing='0px' width='fit-content'>
+          <C.Tooltip label='Editar'>
+            <C.IconButton
+              colorScheme='yellow'
+              size='xs'
+              variant='ghost'
+              aria-label='editar-usuaio'
+              icon={<BsFillPenFill />}
+              onClick={() => handleEditButton(row.original)}
+            />
+          </C.Tooltip>
+       
+          <C.Tooltip label='Deletar'>
+            <C.IconButton
+              colorScheme='red'
+              size='xs'
+              variant='ghost'
+              aria-label='deletar-usuario'
+              icon={<BsFillTrashFill />}
+              onClick={() => handleDeleteButton(row.original)}
+            />
+          </C.Tooltip>
+        </C.HStack>
       ),
     },
   ];

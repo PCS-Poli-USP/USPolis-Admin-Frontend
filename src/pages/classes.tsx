@@ -12,7 +12,11 @@ import {
   useToast,
 } from '@chakra-ui/react';
 
-import { BsClipboardCheck, BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+import {
+  BsClipboardCheck,
+  BsFillPenFill,
+  BsFillTrashFill,
+} from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
@@ -28,8 +32,8 @@ import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
 import Class, {
   CreateClassEvents,
-  HasToBeAllocatedClass, 
-  Preferences 
+  HasToBeAllocatedClass,
+  Preferences,
 } from 'models/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
@@ -38,19 +42,46 @@ import ClassesService from 'services/classes.service';
 import BuildingsService from 'services/buildings.service';
 import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
-import { FilterArray, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import {
+  FilterArray,
+  FilterNumber,
+} from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { breakClassFormInEvents } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
   const [buildingsList, setBuildingsList] = useState<Array<Building>>([]);
-  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
-  const { isOpen: isOpenPreferences, onOpen: onOpenPreferences, onClose: onClosePreferences } = useDisclosure();
-  const { isOpen: isOpenEdit, onOpen: onOpenEdit, onClose: onCloseEdit } = useDisclosure();
-  const { isOpen: isOpenDrawer, onOpen: onOpenDrawer, onClose: onCloseDrawer } = useDisclosure();
-  const { isOpen: isOpenAlloc, onOpen: onOpenAlloc, onClose: onCloseAlloc } = useDisclosure();
-  const { isOpen: isOpenRegister, onOpen: onOpenRegister, onClose: onCloseRegister } = useDisclosure();
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenPreferences,
+    onOpen: onOpenPreferences,
+    onClose: onClosePreferences,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDrawer,
+    onOpen: onOpenDrawer,
+    onClose: onCloseDrawer,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAlloc,
+    onOpen: onOpenAlloc,
+    onClose: onCloseAlloc,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenRegister,
+    onOpen: onOpenRegister,
+    onClose: onCloseRegister,
+  } = useDisclosure();
 
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
@@ -58,6 +89,26 @@ function Classes() {
 
   const navigate = useNavigate();
   const toast = useToast();
+  const toastSuccess = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Sucesso!',
+      description: message,
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+  const toastError = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Erro!',
+      description: message,
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
 
   const columns: ColumnDef<Class>[] = [
     {
@@ -91,7 +142,12 @@ function Classes() {
     },
     {
       accessorFn: (row) =>
-        row.week_days?.map((day, index) => `${Capitalize(day)} ${row.start_time[index]} - ${row.end_time[index]}`),
+        row.week_days?.map(
+          (day, index) =>
+            `${Capitalize(day)} ${row.start_time[index]} - ${
+              row.end_time[index]
+            }`,
+        ),
       header: 'Horários',
       cell: (info) => (
         <Box>
@@ -165,20 +221,17 @@ function Classes() {
 
   function fetchData() {
     setLoading(true);
-    classesService.list().then((it) => {
-      setClassesList(it.data);
-      setLoading(false);
-    }).catch((error) => {
-      console.log(error);
-      setLoading(false);
-      toast({
-        title: `Erro ao carregar turmas: ${error.message}`,
-        position: 'top-left',
-        duration: 3000,
-        isClosable: true,
-        status: 'error',
+    classesService
+      .list()
+      .then((it) => {
+        setClassesList(it.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false);
+        toastError(`Erro ao carregar turmas: ${error.message}`);
       });
-    });
   }
 
   function handleRegisterClick() {
@@ -187,24 +240,15 @@ function Classes() {
 
   function handleRegister(data: Class) {
     const events: CreateClassEvents[] = breakClassFormInEvents(data);
-    classesService.createOne(events).then(() => {
-      fetchData();
-      toast({
-        title: 'Turma criada com sucesso!',
-        position: 'top-left',
-        duration: 3000,
-        isClosable: true,
-        status: 'success',
-        });
-    }).catch((error) => {
-      toast({
-        title: `Erro ao criar turma: ${error}`,
-        position: 'top-left',
-        duration: 3000,
-        isClosable: true,
-        status: 'error',
+    classesService
+      .createOne(events)
+      .then(() => {
+        fetchData();
+        toastSuccess('Turma criada com sucesso!');
+      })
+      .catch((error) => {
+        toastError(`Erro ao criar turma: ${error}`);
       });
-    });
   }
 
   function handleDeleteClick(obj: Class) {
@@ -214,25 +258,16 @@ function Classes() {
 
   function handleDelete() {
     if (selectedClass) {
-      classesService.delete(selectedClass.subject_code, selectedClass.class_code).then((it) => {
-        onCloseDelete();
-        fetchData();
-        toast({
-          title: 'Turma deletada com sucesso!',
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'success',
-          });
-      }).catch((error) => {
-        toast({
-          title: `Erro ao deletar turma: ${error}`,
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'error',
+      classesService
+        .delete(selectedClass.subject_code, selectedClass.class_code)
+        .then((it) => {
+          onCloseDelete();
+          fetchData();
+          toastSuccess('Turma deletada com sucesso!');
+        })
+        .catch((error) => {
+          toastError(`Erro ao deletar turma: ${error}`);
         });
-      });
     }
   }
 
@@ -243,24 +278,19 @@ function Classes() {
 
   function handleSavePreferences(data: Preferences) {
     if (selectedClass) {
-      classesService.patchPreferences(selectedClass.subject_code, selectedClass.class_code, data).then((it) => {
-        fetchData();
-        toast({
-          title: 'Preferências editadas com sucesso!',
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'success',
-          });
-      }).catch((error) => {
-        toast({
-          title: `Erro ao editar preferências: ${error}`,
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'error',
+      classesService
+        .patchPreferences(
+          selectedClass.subject_code,
+          selectedClass.class_code,
+          data,
+        )
+        .then((it) => {
+          fetchData();
+          toastSuccess('Preferências editadas com sucesso!');
+        })
+        .catch((error) => {
+          toastError(`Erro ao editar preferências: ${error}`);
         });
-      });
     }
   }
 
@@ -292,24 +322,15 @@ function Classes() {
   function handleEdit(data: Class) {
     if (selectedClass) {
       const events = breakClassFormInEvents(data);
-      classesService.edit(selectedClass.subject_code, selectedClass.class_code, events).then((it) => {
-        fetchData();
-        toast({
-          title: 'Turma editada com sucesso!',
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'success',
-          });
-      }).catch((error) => {
-        toast({
-          title: `Erro ao criar turma: ${error}`,
-          position: 'top-left',
-          duration: 3000,
-          isClosable: true,
-          status: 'error',
+      classesService
+        .edit(selectedClass.subject_code, selectedClass.class_code, events)
+        .then((it) => {
+          fetchData();
+          toastSuccess('Turma editada com sucesso!');
+        })
+        .catch((error) => {
+          toastError(`Erro ao criar turma: ${error}`);
         });
-      });
     }
   }
 
@@ -326,11 +347,7 @@ function Classes() {
         fetchData();
       })
       .catch(({ response }: AxiosError<ErrorResponse>) =>
-        toast({
-          title: response?.data.message,
-          position: 'top-left',
-          status: 'error',
-        }),
+        toastError(`Erro ao adicionar disciplina: ${response?.data.message}`),
       );
   }
 
@@ -345,8 +362,18 @@ function Classes() {
         buildings={buildingsList}
         onSave={handleSavePreferences}
       />
-      <RegisterModal isOpen={isOpenRegister} onClose={onCloseRegister} onSave={handleRegister} buildings={buildingsList} />
-      <EditModal isOpen={isOpenEdit} onClose={onCloseEdit} formData={selectedClass} onSave={handleEdit} />
+      <RegisterModal
+        isOpen={isOpenRegister}
+        onClose={onCloseRegister}
+        onSave={handleRegister}
+        buildings={buildingsList}
+      />
+      <EditModal
+        isOpen={isOpenEdit}
+        onClose={onCloseEdit}
+        formData={selectedClass}
+        onSave={handleEdit}
+      />
       <HasToBeAllocatedDrawer
         isOpen={isOpenDrawer}
         onClose={onCloseDrawer}
