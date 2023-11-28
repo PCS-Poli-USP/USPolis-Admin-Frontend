@@ -3,16 +3,16 @@ import {
   Button,
   Center,
   Flex,
-  Icon,
+  HStack,
   IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Spacer,
   Text,
+  Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
+
+import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+
 import { ColumnDef } from '@tanstack/react-table';
 import RegisterModal from 'components/classrooms/register.modal';
 import DataTable from 'components/common/dataTable.component';
@@ -21,7 +21,6 @@ import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
 import Classroom from 'models/classroom.model';
 import { useContext, useEffect, useState } from 'react';
-import { FaEllipsisV } from 'react-icons/fa';
 import ClassroomsService from 'services/classrooms.service';
 import { FilterBoolean, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
@@ -79,15 +78,31 @@ function Classrooms() {
     },
     {
       id: 'options',
-      meta: { isNumeric: true },
+      header: 'Opções',
       cell: ({ row }) => (
-        <Menu>
-          <MenuButton as={IconButton} aria-label='Options' icon={<Icon as={FaEllipsisV} />} variant='ghost' />
-          <MenuList>
-            <MenuItem onClick={() => handleEditClick(row.original)}>Editar</MenuItem>
-            <MenuItem onClick={() => handleDeleteClick(row.original)}>Deletar</MenuItem>
-          </MenuList>
-        </Menu>
+        <HStack spacing='0px' width='fit-content'>
+          <Tooltip label='Editar'>
+            <IconButton
+              colorScheme='yellow'
+              size='xs'
+              variant='ghost'
+              aria-label='editar-sala'
+              icon={<BsFillPenFill />}
+              onClick={() => handleEditClick(row.original)}
+            />
+          </Tooltip>
+       
+          <Tooltip label='Deletar'>
+            <IconButton
+              colorScheme='red'
+              size='xs'
+              variant='ghost'
+              aria-label='deletar-sala'
+              icon={<BsFillTrashFill />}
+              onClick={() => handleDeleteClick(row.original)}
+            />
+          </Tooltip>
+        </HStack>
       ),
     },
   ];
