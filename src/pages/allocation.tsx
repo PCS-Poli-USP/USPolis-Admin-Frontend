@@ -1,4 +1,4 @@
-import { Button, Checkbox, Flex, Grid, GridItem, HStack, Input, InputGroup, InputLeftElement, Skeleton, StackDivider, Text, extendTheme } from '@chakra-ui/react';
+import { Button, Grid, GridItem, HStack, Input, InputGroup, InputLeftElement, Skeleton, StackDivider, Text, extendTheme } from '@chakra-ui/react';
 import { useDisclosure } from '@chakra-ui/react-use-disclosure';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
@@ -71,14 +71,6 @@ function Allocation() {
         return data.extendedProps.classroom.toLowerCase().includes(classroomValue.toLowerCase());
       }));
     }
-  }
-
-  function handleSubjectInputChange(value: string) {
-    setSubjectSearchValue(value);
-  }
-
-  function handleClassroomInputChange(value: string) {
-    setClassroomSearchValue(value);
   }
 
   return (

@@ -262,6 +262,7 @@ function Classes() {
       .edit(subjectCode, classCode, weekDays, newClassroom, building)
       .then((it) => {
         toastSuccess('Alocação editada com sucesso!');
+        fetchData();
         // refetch data
         // TODO: create AllocationContext
       }).catch((error) => {

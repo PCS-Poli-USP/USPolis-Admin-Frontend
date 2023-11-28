@@ -16,7 +16,7 @@ export function AllocationEventsMapper(allocation: Event[]) {
       building: it.building,
       classCode: it.class_code,
       subjectCode: it.subject_code,
-      classroom: it.classroom,
+      classroom: it.classroom || Classrooms.UNALLOCATED,
       professors: it.professors,
       startTime: it.start_time,
       endTime: it.end_time,
