@@ -25,11 +25,11 @@ import { FaUser } from 'react-icons/fa';
 import Logo from 'assets/uspolis.logo.png';
 
 const Links = [
-  { text: 'Salas', value: 'classrooms', admin: false },
-  { text: 'Turmas', value: 'classes', admin: false },
-  { text: 'Alocações', value: 'allocation', admin: false },
-  { text: 'Prédios', value: 'buildings', admin: false },
-  { text: 'Usuários', value: 'users', admin: true },
+  { text: 'Salas', value: '/classrooms', admin: false },
+  { text: 'Turmas', value: '/classes', admin: false },
+  { text: 'Alocações', value: '/allocation', admin: false },
+  { text: 'Prédios', value: '/buildings', admin: false },
+  { text: 'Usuários', value: '/users', admin: true },
 ];
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
