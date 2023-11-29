@@ -13,7 +13,7 @@ export function WeekDaysHeader(props: DaysHeaderProps) {
   const daysNumber: number[] = [];
 
   for (let i = 0; i < 7; i++) {
-    daysNumber.push(currentDate.getDate());
+    daysNumber.push(currentDate.getDate() + 1);
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
