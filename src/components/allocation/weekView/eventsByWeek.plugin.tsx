@@ -5,16 +5,15 @@ import { ClassRoomRow } from './classroomRow.component';
 import { WeekDaysHeader } from './weekDaysHeader.component';
 import { EventByClassrooms } from 'models/event.model';
 
-interface CalendarWeekViewProps {}
 
 function CalendarWeekView(props: any) {
-  const startNumberDay = Number(String(props.dateProfile.activeRange.start).slice(8, 10)) + 1;
   const events = sliceEvents(props);
   const eventsByClassrooms = EventsByClassroomMapper(events).sort(sortEventsByClassrooms);
+  const startDate = new Date(props.dateProfile.activeRange.start);
 
   return (
     <VStack margin='20px' divider={<StackDivider borderColor='gray.200' />}>
-      <WeekDaysHeader startNumber={startNumberDay} />
+      <WeekDaysHeader startDate={startDate} />
 
       {eventsByClassrooms.map((eventsByClass, index) => (
         <ClassRoomRow key={index} classroom={eventsByClass[0]} events={eventsByClass[1]} />

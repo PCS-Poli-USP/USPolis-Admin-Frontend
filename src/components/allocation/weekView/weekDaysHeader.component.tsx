@@ -1,11 +1,22 @@
 import { Box, HStack, StackDivider, Text } from '@chakra-ui/react';
 import { Day } from './day.component';
+import { WeekDaysDict } from 'models/enums/weekDays.enum';
 
 interface DaysHeaderProps {
-  startNumber: number;
+  startDate: Date;
 }
 
+type WeekDaysKeyNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6
+
 export function WeekDaysHeader(props: DaysHeaderProps) {
+  const currentDate: Date = new Date(props.startDate);
+  const daysNumber: number[] = [];
+
+  for (let i = 0; i < 7; i++) {
+    daysNumber.push(currentDate.getDate());
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
   return (
     <HStack w='full' divider={<StackDivider borderColor='gray.200' />}>
       <Box w='full' maxW='150px'>
@@ -13,13 +24,9 @@ export function WeekDaysHeader(props: DaysHeaderProps) {
           Salas
         </Text>
       </Box>
-      <Day weekDay='SEG' numberDay={props.startNumber} />
-      <Day weekDay='TER' numberDay={props.startNumber + 1} />
-      <Day weekDay='QUA' numberDay={props.startNumber + 2} />
-      <Day weekDay='QUI' numberDay={props.startNumber + 3} />
-      <Day weekDay='SEX' numberDay={props.startNumber + 4} />
-      <Day weekDay='SAB' numberDay={props.startNumber + 5} />
-      <Day weekDay='DOM' numberDay={props.startNumber + 6} />
+      {daysNumber.map((value, index) => (
+        <Day weekDay={WeekDaysDict[index as WeekDaysKeyNumber ].slice(0, 3).toUpperCase()} numberDay={value} key={index} />
+      ))}
     </HStack>
   );
 }
