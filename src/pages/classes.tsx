@@ -376,7 +376,7 @@ function Classes() {
             </Text>
             <Spacer />
             <Button mr={2} colorScheme='blue' onClick={handleRegisterClick}>
-              Criar Turma
+              Adicionar Turma
             </Button>
             <JupiterCrawlerPopover onSave={handleCrawlerSave} />
             <Button ml={2} colorScheme='red' onClick={handleAllocClick}>
