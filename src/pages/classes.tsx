@@ -12,7 +12,12 @@ import {
   useToast,
 } from '@chakra-ui/react';
 
-import { BsClipboardCheck, BsFillPenFill, BsFillTrashFill, BsCalendarDateFill } from 'react-icons/bs';
+import {
+  BsCalendarDateFill,
+  BsClipboardCheck,
+  BsFillPenFill,
+  BsFillTrashFill,
+} from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
@@ -29,8 +34,8 @@ import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
 import Class, {
   CreateClassEvents,
-  HasToBeAllocatedClass, 
-  Preferences 
+  HasToBeAllocatedClass,
+  Preferences,
 } from 'models/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
@@ -126,7 +131,12 @@ function Classes() {
     },
     {
       accessorFn: (row) =>
-        row.week_days?.map((day, index) => `${Capitalize(day)} ${row.start_time[index]} - ${row.end_time[index]}`),
+        row.week_days?.map(
+          (day, index) =>
+            `${Capitalize(day)} ${row.start_time[index]} - ${
+              row.end_time[index]
+            }`,
+        ),
       header: 'Horários',
       cell: (info) => (
         <Box>

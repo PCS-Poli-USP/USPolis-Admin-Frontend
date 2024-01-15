@@ -1,23 +1,56 @@
-import React, { useEffect } from 'react';
-import { Auth } from 'aws-amplify';
+import React, { useContext, useEffect } from 'react';
 import * as C from '@chakra-ui/react';
+
+import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+
 import { ColumnDef } from '@tanstack/react-table';
 import Navbar from 'components/common/navbar.component';
 import BuildingsService from 'services/buildings.service';
-import { Building, CreateBuilding, UpdateBuilding } from 'models/building.model';
+import {
+  Building,
+  CreateBuilding,
+  UpdateBuilding,
+} from 'models/building.model';
 import RegisterModal from 'components/buildings/register.modal';
 import Dialog from 'components/common/dialog.component';
-import { FaEllipsisV } from 'react-icons/fa';
 import DataTable from 'components/common/dataTable.component';
+import { appContext } from 'context/AppContext';
 
 const Buildings = () => {
+  const { setLoading } = useContext(appContext);
   const buildingsService = new BuildingsService();
 
   const [buildings, setBuildings] = React.useState<Building[]>([]);
-  const [contextBuilding, setContextBuilding] = React.useState<Building | null>(null);
-  const [registerModalOpen, setRegisterModalOpen] = React.useState<boolean>(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState<boolean>(false);
+  const [contextBuilding, setContextBuilding] = React.useState<Building | null>(
+    null,
+  );
+  const [registerModalOpen, setRegisterModalOpen] =
+    React.useState<boolean>(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] =
+    React.useState<boolean>(false);
   const [isUpdate, setIsUpdate] = React.useState<boolean>(false);
+
+  const toast = C.useToast();
+  const toastSuccess = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Sucesso!',
+      description: message,
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+  const toastError = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Erro!',
+      description: message,
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
 
   const columns: ColumnDef<Building>[] = [
     {
@@ -30,20 +63,37 @@ const Buildings = () => {
     },
     {
       id: 'options',
-      meta: { isNumeric: true },
+      header: 'Opções',
       cell: ({ row }) => (
-        <C.Menu>
-          <C.MenuButton as={C.IconButton} aria-label='Options' icon={<C.Icon as={FaEllipsisV} />} variant='ghost' />
-          <C.MenuList>
-            <C.MenuItem onClick={() => handleEditButton(row.original)}>Editar</C.MenuItem>
-            <C.MenuItem onClick={() => handleDeleteButton(row.original)}>Deletar</C.MenuItem>
-          </C.MenuList>
-        </C.Menu>
+        <C.HStack spacing='0px' width='fit-content'>
+          <C.Tooltip label='Editar'>
+            <C.IconButton
+              colorScheme='yellow'
+              size='xs'
+              variant='ghost'
+              aria-label='editar-predio'
+              icon={<BsFillPenFill />}
+              onClick={() => handleEditButton(row.original)}
+            />
+          </C.Tooltip>
+       
+          <C.Tooltip label='Deletar'>
+            <C.IconButton
+              colorScheme='red'
+              size='xs'
+              variant='ghost'
+              aria-label='deletar-predio'
+              icon={<BsFillTrashFill />}
+              onClick={() => handleDeleteButton(row.original)}
+            />
+          </C.Tooltip>
+        </C.HStack>
       ),
     },
   ];
 
   useEffect(() => {
+    setLoading(true);
     fetchBuildings();
   }, []);
 
@@ -52,36 +102,50 @@ const Buildings = () => {
       const response = await buildingsService.list();
       console.log(response.data);
       setBuildings(response.data);
+      setLoading(false);
     } catch (err) {
       console.log('err');
       console.error(err);
+      setTimeout(() => {
+        fetchBuildings();
+      }, 1000);
     }
   }
 
   async function createBuilding(data: CreateBuilding) {
     try {
+      setLoading(true);
       const response = await buildingsService.create(data);
+      toastSuccess('Pédio criado com sucesso')
       fetchBuildings();
     } catch (err) {
       console.error(err);
+      toastError('Erro ao criar prédio')
+      setLoading(false);
     }
   }
 
   async function editBuilding(id: string, data: CreateBuilding) {
     try {
-      const _ = await buildingsService.update(id, data);
+      setLoading(true);
+      await buildingsService.update(id, data);
       fetchBuildings();
     } catch (err) {
       console.error(err);
+      toastError('Erro ao editar prédio');
+      setLoading(false);
     }
   }
 
   async function deleteBuilding(id: string) {
     try {
-      const _ = await buildingsService.delete(id);
+      setLoading(true);
+      await buildingsService.delete(id);
       fetchBuildings();
     } catch (err) {
       console.error(err);
+      toastError(`Erro ao deletar prédio`);
+      setLoading(false);
     }
   }
 
@@ -140,7 +204,7 @@ const Buildings = () => {
           deleteBuilding(contextBuilding?.id as string);
           setDeleteDialogOpen(false);
         }}
-        title={'Deseja deletar o prédio?'}
+        title={`Deletar o prédio ${contextBuilding?.name}`}
       />
     </>
   );
