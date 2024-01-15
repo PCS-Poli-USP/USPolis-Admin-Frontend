@@ -1,4 +1,18 @@
+import { Building } from "./building.model";
+
+export interface User {
+    id: string;
+    username: string;
+    name?: string;
+    isAdmin: boolean;
+    email: string;
+    updated_at: string;
+    created_by?: string;
+    buildings: Array<Building>
+}
+
 export interface CreateUser {
+    name: string;
     username: string;
     email: string;
     isAdmin: boolean;
@@ -7,4 +21,9 @@ export interface CreateUser {
 
 export interface CreateUserResponse {
     id: string;
+}
+
+export interface EditUser {
+    building_ids?: Array<string>;
+    isAdmin?: boolean;
 }

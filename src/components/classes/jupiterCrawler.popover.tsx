@@ -50,7 +50,7 @@ export default function JupiterCrawlerPopover({ subjects = [], onSave }: Jupiter
   return (
     <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} initialFocusRef={initialFocusRef}>
       <PopoverTrigger>
-        <Button colorScheme='blue'>Adicionar disciplinas</Button>
+        <Button colorScheme='blue'>Adicionar pelo JupiterWeb</Button>
       </PopoverTrigger>
       <PopoverContent>
         <PopoverCloseButton />

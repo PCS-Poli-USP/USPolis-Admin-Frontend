@@ -1,4 +1,8 @@
 import Class, { CreateClassEvents } from "models/class.model";
+import Event, { EventByClassrooms } from "models/event.model";
+import { Classrooms } from 'models/enums/clasrooms.enum';
+import { ClassCodeText } from "utils/mappers/allocation.mapper";
+import { Building } from "models/building.model";
 
 export function breakClassFormInEvents(form: Class) {
   const events: CreateClassEvents[] = [];
@@ -23,6 +27,26 @@ export function breakClassFormInEvents(form: Class) {
     events.push(event);
   }
 
+  return events;
+}
+
+export function ClassToEventByClassroom(data: Class, buildings: Building[]): EventByClassrooms[] {
+  const events: EventByClassrooms[] = [];
+  for (let i = 0; i < data.week_days.length; i++) {
+    const event: EventByClassrooms = {
+      subjectCode: data.subject_code,
+      classroom: data.classrooms ? data.classrooms[0] : Classrooms.UNALLOCATED,
+      building: buildings.filter((it) => it.id === data.preferences.building_id)[0].name || Classrooms.UNALLOCATED,
+      classCode: data.class_code,
+      professors: data.professors || [],
+      startTime: data.start_time[i],
+      endTime: data.end_time[i],
+      weekday: data.week_days[i],
+      classCodeText: ClassCodeText(data.class_code),
+      subscribers: data.subscribers,
+    };
+    events.push(event);
+  }
   return events;
 }
 

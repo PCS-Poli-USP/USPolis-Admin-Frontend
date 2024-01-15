@@ -27,10 +27,11 @@ import { Capitalize } from 'utils/formatters';
 interface EditEventModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSave: (subjectCode: string, classCode: string, weekDays: string[], newClassroom: string, building: string) => void;
   classEvents: EventByClassrooms[];
 }
 
-export default function EditEventModal({ isOpen, onClose, classEvents }: EditEventModalProps) {
+export default function EditEventModal({ isOpen, onClose, onSave, classEvents }: EditEventModalProps) {
   const [weekDays, setWeekDays] = useState<string[]>([]);
   const { value, setValue, getCheckboxProps } = useCheckboxGroup();
   const [availableClassrooms, setAvailableClassrooms] = useState<AvailableClassroom[]>([]);
@@ -95,15 +96,8 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
   }
 
   function handleSaveClick() {
-    eventsService
-      .edit(classData.subjectCode, classData.classCode, value as string[], newClassroom, selectedClassroom.building)
-      .then((it) => {
-        console.log(it.data);
-        onClose();
-        // refetch data
-        // TODO: create AllocationContext
-        window.location.reload();
-      });
+    onSave(classData.subjectCode, classData.classCode, value as string[], newClassroom, selectedClassroom.building);
+    onClose();
   }
 
   return (
@@ -113,7 +107,10 @@ export default function EditEventModal({ isOpen, onClose, classEvents }: EditEve
         <ModalHeader>
           Editar alocação - {classData?.subjectCode}
           <Text fontSize='md' fontWeight='normal'>
-            {classData?.classCodeText} - {classData?.professor}
+            {classData?.classCodeText} -{' '}
+            {classData?.professors.join(', ').length > 25
+              ? classData?.professors[0] + '...'
+              : classData?.professors.join(', ')}
           </Text>
           <Alert
             status={

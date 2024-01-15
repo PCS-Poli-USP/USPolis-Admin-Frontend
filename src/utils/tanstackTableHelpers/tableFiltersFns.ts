@@ -14,3 +14,9 @@ export function FilterArray(row: Row<any>, columnId: string, value: string) {
   const arrayValue: string[] = row.getValue(columnId);
   return arrayValue.some((it) => it.toLowerCase().includes(value.toLowerCase()));
 }
+
+export function FilterClassroom(row: Row<any>, columnId: string, value: string) {
+  const arrayValue: string[] = row.getValue(columnId);
+  if (arrayValue.length === 0 && 'Não alocada'.toLowerCase().includes(value.toLowerCase())) return true;
+  return arrayValue.some((it) => it.toLowerCase().includes(value.toLowerCase()));
+}
