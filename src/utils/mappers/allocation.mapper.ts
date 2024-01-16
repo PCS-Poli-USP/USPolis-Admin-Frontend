@@ -59,8 +59,10 @@ export function AllocationResourcesFromEventsMapper(allocation: Event[]) {
 }
 
 function EventsRenderRangeEventsByClassroomsMapper(events: EventRenderRange[]): EventByClassrooms[] {
-  return events.map(({ def: { title, extendedProps, resourceIds } }) => ({
+  return events.map(({ def: { title, extendedProps, resourceIds } }) => {
+    return {
     subjectCode: title,
+    subjectName: extendedProps?.subject_name,
     classroom: resourceIds?.at(0) as string,
     building: extendedProps?.building,
     classCode: extendedProps?.classCode,
@@ -70,7 +72,7 @@ function EventsRenderRangeEventsByClassroomsMapper(events: EventRenderRange[]): 
     weekday: extendedProps?.weekday,
     classCodeText: extendedProps?.classCodeText,
     subscribers: extendedProps?.subscribers,
-  }));
+  }});
 }
 
 export function EventsByClassroomMapper(events: EventRenderRange[]) {

@@ -1,4 +1,16 @@
-import { Button, Grid, GridItem, HStack, Input, InputGroup, InputLeftElement, Skeleton, StackDivider, Text, extendTheme } from '@chakra-ui/react';
+import {
+  Button,
+  Grid,
+  GridItem,
+  HStack,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Skeleton,
+  StackDivider,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
 import { useDisclosure } from '@chakra-ui/react-use-disclosure';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
@@ -13,13 +25,15 @@ import ClassesPDF from 'components/pdf/classesPDF';
 import { appContext } from 'context/AppContext';
 import { useContext, useEffect, useRef, useState } from 'react';
 import AllocationService from 'services/events.service';
+import EventsService from 'services/events.service';
 import {
   AllocationEventsMapper,
   AllocationResourcesFromEventsMapper,
   FirstEventDate,
 } from 'utils/mappers/allocation.mapper';
 
-import { BsSearch } from "react-icons/bs";
+import { BsSearch } from 'react-icons/bs';
+import Dialog from 'components/common/dialog.component';
 
 function Allocation() {
   const [allocation, setAllocation] = useState<any[]>([]);
@@ -28,11 +42,35 @@ function Allocation() {
   const { loading, setLoading } = useContext(appContext);
   const calendarRef = useRef<FullCalendar>(null!);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
 
   const [subjectSearchValue, setSubjectSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
 
   const allocationService = new AllocationService();
+  const eventsService = new EventsService();
+
+  const toast = useToast();
+  const toastSuccess = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Sucesso!',
+      description: message,
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+  const toastError = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Erro!',
+      description: message,
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -53,24 +91,43 @@ function Allocation() {
 
   function FilterAllocation(subjectValue: string, classroomValue: string) {
     if (subjectValue && classroomValue) {
-      setFilteredAllocation(allocation.filter((data) => {
-        const subjectResult = data.extendedProps.subjectCode.toLowerCase().includes(subjectValue.toLowerCase());
-        const classroomResult = data.extendedProps.classroom.toLowerCase().includes(classroomValue.toLowerCase())
-        return subjectResult && classroomResult;
-      }));
+      setFilteredAllocation(
+        allocation.filter((data) => {
+          const subjectResult = data.extendedProps.subjectCode.toLowerCase().includes(subjectValue.toLowerCase());
+          const classroomResult = data.extendedProps.classroom.toLowerCase().includes(classroomValue.toLowerCase());
+          return subjectResult && classroomResult;
+        }),
+      );
+    } else if (subjectValue && !classroomValue) {
+      setFilteredAllocation(
+        allocation.filter((data) => {
+          return data.extendedProps.subjectCode.toLowerCase().includes(subjectValue.toLowerCase());
+        }),
+      );
+    } else if (!subjectValue && classroomValue) {
+      setFilteredAllocation(
+        allocation.filter((data) => {
+          return data.extendedProps.classroom.toLowerCase().includes(classroomValue.toLowerCase());
+        }),
+      );
     }
+  }
 
-    else if (subjectValue && !classroomValue) {
-      setFilteredAllocation(allocation.filter((data) => {
-        return data.extendedProps.subjectCode.toLowerCase().includes(subjectValue.toLowerCase());
-      }));
-    }
+  function handleDeleteClick() {
+    onOpenDelete();
+  }
 
-    else if (!subjectValue && classroomValue) {
-      setFilteredAllocation(allocation.filter((data) => {
-        return data.extendedProps.classroom.toLowerCase().includes(classroomValue.toLowerCase());
-      }));
-    }
+  function handleDelete() {
+    console.log('Limpa');
+    eventsService
+      .deleteAllocations()
+      .then((value) => {
+        toastSuccess(`Foram removidas ${value.data} alocações!`);
+      })
+      .catch((error) => {
+        toastError(`Erro ao remover alocações: ${error}`);
+      });
+    onCloseDelete();
   }
 
   return (
@@ -89,20 +146,26 @@ function Allocation() {
               {(params) => (params.loading ? 'Carregando PDF...' : 'Baixar alocação')}
             </PDFDownloadLink>
           </Button>
+          <Button ml ={2} colorScheme='blue'>
+            Alocação Automática
+          </Button>
+          <Button ml={2} colorScheme='red' onClick={handleDeleteClick}>
+            Remover Alocações
+          </Button>
         </GridItem>
         <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
           <Skeleton isLoaded={!loading} h='100vh' startColor='uspolis.blue'>
             <DatePickerModal isOpen={isOpen} onClose={onClose} onSelectDate={setCalendarDate} />
-  
-            <HStack mb={4} divider={<StackDivider />} justifyContent='flex-end' >
+
+            <HStack mb={4} divider={<StackDivider />} justifyContent='flex-end'>
               <InputGroup w='fit-content'>
                 <InputLeftElement pointerEvents='none'>
                   <BsSearch color='gray.300' />
                 </InputLeftElement>
-                <Input 
-                  type='text' 
-                  placeholder='Filtrar disciplinas' 
-                  value={subjectSearchValue} 
+                <Input
+                  type='text'
+                  placeholder='Filtrar disciplinas'
+                  value={subjectSearchValue}
                   onChange={(event) => {
                     setSubjectSearchValue(event.target.value);
                     FilterAllocation(event.target.value, classroomSearchValue);
@@ -114,10 +177,10 @@ function Allocation() {
                 <InputLeftElement pointerEvents='none'>
                   <BsSearch color='gray.300' />
                 </InputLeftElement>
-                <Input 
-                  type='text' 
-                  placeholder='Filtrar salas' 
-                  value={classroomSearchValue} 
+                <Input
+                  type='text'
+                  placeholder='Filtrar salas'
+                  value={classroomSearchValue}
                   onChange={(event) => {
                     setClassroomSearchValue(event.target.value);
                     FilterAllocation(subjectSearchValue, event.target.value);
@@ -132,7 +195,7 @@ function Allocation() {
                   Limpar filtro
               </Button> */}
             </HStack>
-            
+
             <FullCalendar
               ref={calendarRef}
               schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
@@ -142,13 +205,11 @@ function Allocation() {
               height='auto'
               slotMinTime='06:00'
               firstDay={1}
-
               headerToolbar={{
                 left: 'eventsByClassrooms resourceTimelineDay eventsByWeek timeGridWeek',
                 center: 'title',
                 right: 'goToDate prev,next today',
               }}
-
               buttonText={{
                 eventsByClassrooms: 'Salas',
                 resourceTimelineDay: 'Sala / Dia',
@@ -156,14 +217,12 @@ function Allocation() {
                 timeGridWeek: 'Geral',
                 today: 'Hoje',
               }}
-              
               customButtons={{
                 goToDate: {
                   text: 'Escolher data',
                   click: (_ev, _el) => onOpen(),
                 },
               }}
-
               views={{
                 timeGridWeek: {
                   slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
@@ -180,10 +239,9 @@ function Allocation() {
                   duration: { weeks: 1 },
                 },
                 eventsByWeek: {
-                  duration: { weeks: 1},
+                  duration: { weeks: 1 },
                 },
               }}
-              
               events={subjectSearchValue || classroomSearchValue ? filteredAllocation : allocation}
               eventContent={EventContent}
               eventColor='#408080'
@@ -192,6 +250,14 @@ function Allocation() {
               resourceAreaWidth='10%'
               resourceGroupField='building'
               resourceAreaHeaderContent='Salas'
+            />
+
+            <Dialog
+              isOpen={isOpenDelete}
+              onClose={onCloseDelete}
+              onConfirm={handleDelete}
+              title={'Deseja remover todas alocações feitas'}
+              warningText={'ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'}
             />
           </Skeleton>
         </GridItem>
