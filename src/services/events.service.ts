@@ -24,10 +24,16 @@ export default class EventsService extends HttpService {
     classroom: string,
     building: string,
   ): Promise<AxiosResponse<number>> {
-    return this.http.patch(`edit/${subjectCode}/${classCode}`, weekDays, { params: { classroom, building } });
+    return this.http.patch(`edit/${subjectCode}/${classCode}`, weekDays, {
+      params: { classroom, building },
+    });
   }
 
-  deleteAllocations(): Promise<AxiosResponse<number>> {
-    return this.http.patch('delete-allocations')
+  deleteOneAllocation(subject_code: string, class_code: string) {
+    return this.http.delete(`${subject_code}/${class_code}`);
+  }
+
+  deleteAllAllocations(): Promise<AxiosResponse<number>> {
+    return this.http.patch('delete-allocations');
   }
 }

@@ -120,7 +120,7 @@ function Allocation() {
   function handleDelete() {
     console.log('Limpa');
     eventsService
-      .deleteAllocations()
+      .deleteAllAllocations()
       .then((value) => {
         toastSuccess(`Foram removidas ${value.data} alocações!`);
       })
