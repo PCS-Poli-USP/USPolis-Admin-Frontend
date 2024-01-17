@@ -6,13 +6,20 @@ import {
   AccordionIcon,
   Box,
   Text,
+  HStack,
+  Icon,
+  Flex,
 } from '@chakra-ui/react';
+import { CalendarIcon } from '@chakra-ui/icons';
+import { BsBookHalf, BsHouseFill } from "react-icons/bs";
 
 import Classroom from 'models/classroom.model';
 import Event from 'models/event.model';
 
 import { useEffect, useState } from 'react';
+import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 import ClassroomsService from 'services/classrooms.service';
+
 
 interface AutomaticAllocationAccordionProps {
   allocated: Event[];
@@ -63,7 +70,14 @@ export default function AutomaticAllocationAccordion({
         </AccordionButton>
         <AccordionPanel pb={4}>
           {allocated.map((value, index) => (
-            <Text key={index}>{`${value.subject_code} - ${value.class_code} com ${value.vacancies} vagas, alocada em ${value.classroom ? value.classroom : 'Erro'}`}</Text>
+            <HStack spacing={3}>
+              <BsBookHalf />
+              <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
+              <CalendarIcon />
+              <Text>{`${weekDaysFormatter(value.week_day)}, ${value.start_time} às ${value.end_time}`}</Text>
+              <BsHouseFill />
+              <Text>{`${value.classroom}`}</Text>
+            </HStack>
           ))}
         </AccordionPanel>
       </AccordionItem>
@@ -78,7 +92,12 @@ export default function AutomaticAllocationAccordion({
           </AccordionButton>
           <AccordionPanel pb={4}>
           {unallocated.map((value, index) => (
-            <Text key={index}>{`${value.subject_code} - ${value.class_code} com ${value.vacancies} vagas`}</Text>
+            <HStack spacing={3}>
+              <BsBookHalf />
+              <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
+              <CalendarIcon />
+              <Text>{`${weekDaysFormatter(value.week_day)}, ${value.start_time} às ${value.end_time}`}</Text>
+            </HStack>
           ))}
           </AccordionPanel>
         </AccordionItem>
@@ -93,7 +112,10 @@ export default function AutomaticAllocationAccordion({
         </AccordionButton>
         <AccordionPanel pb={4}>
           {classrooms.map((value, index) => (
-            <Text key={index}>{`${value.classroom_name} - ${value.capacity} de capacidade`}</Text>
+            <HStack>
+              <BsHouseFill />
+              <Text key={index}>{`${value.classroom_name} - ${value.capacity} de capacidade`}</Text>
+            </HStack>
           ))}
         </AccordionPanel>
       </AccordionItem>

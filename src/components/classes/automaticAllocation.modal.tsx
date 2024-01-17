@@ -44,7 +44,7 @@ export default function AutomaticAllocationModal({
       onClose={onClose}
       closeOnOverlayClick={false}
       motionPreset='slideInBottom'
-      size='2xl'
+      size='4xl'
       scrollBehavior='outside'
     >
       <ModalOverlay />
