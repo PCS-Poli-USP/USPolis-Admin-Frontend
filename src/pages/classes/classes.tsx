@@ -55,7 +55,7 @@ import {
   breakClassFormInEvents,
 } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
-import { EventByClassrooms } from 'models/event.model';
+import Event, { EventByClassrooms } from 'models/event.model';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -107,8 +107,8 @@ function Classes() {
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
-  const [allocatedEvents, setAllocatedEvents] = useState<Class[]>([]);
-  const [unallocatedEvents, setUnallocatedEvents] = useState<Class[]>([]);
+  const [allocatedEvents, setAllocatedEvents] = useState<Event[]>([]);
+  const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
 
   const navigate = useNavigate();
 

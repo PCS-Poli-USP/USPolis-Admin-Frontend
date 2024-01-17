@@ -8,15 +8,15 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import Class from 'models/class.model';
 import Classroom from 'models/classroom.model';
+import Event from 'models/event.model';
 
 import { useEffect, useState } from 'react';
 import ClassroomsService from 'services/classrooms.service';
 
 interface AutomaticAllocationAccordionProps {
-  allocated: Class[];
-  unallocated: Class[];
+  allocated: Event[];
+  unallocated: Event[];
 }
 
 export default function AutomaticAllocationAccordion({
@@ -43,7 +43,7 @@ export default function AutomaticAllocationAccordion({
     });
   }
 
-  function sortByClassCode(a: Class, b: Class) {
+  function sortByClassCode(a: Event, b: Event) {
     if (a.subject_code < b.subject_code) return -1;
     if (a.subject_code > b.subject_code) return 1;
     return 0;
@@ -63,7 +63,7 @@ export default function AutomaticAllocationAccordion({
         </AccordionButton>
         <AccordionPanel pb={4}>
           {allocated.map((value, index) => (
-            <Text key={index}>{`${value.subject_code} - ${value.class_code} com ${value.vacancies} vagas, alocada em ${value.classrooms ? value.classrooms[0] : 'Erro'}`}</Text>
+            <Text key={index}>{`${value.subject_code} - ${value.class_code} com ${value.vacancies} vagas, alocada em ${value.classroom ? value.classroom : 'Erro'}`}</Text>
           ))}
         </AccordionPanel>
       </AccordionItem>

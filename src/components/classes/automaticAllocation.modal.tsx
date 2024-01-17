@@ -13,18 +13,16 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import Class from 'models/class.model';
 import AutomaticAllocationAccordion from './automaticAllocation.accordion';
-
-import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Event from 'models/event.model';
 
 interface AutomaticAllocationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: () => void;
-  allocatedEvents: Class[];
-  unallocatedEvents: Class[];
+  allocatedEvents: Event[];
+  unallocatedEvents: Event[];
 }
 
 export default function AutomaticAllocationModal({

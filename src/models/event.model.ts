@@ -10,6 +10,7 @@ export default interface Event {
   building?: string;
   professors?: string[];
   subscribers: number;
+  vacancies: number;
 }
 
 export interface EventByClassrooms {
