@@ -30,7 +30,7 @@ export default class EventsService extends HttpService {
   }
 
   deleteOneAllocation(subject_code: string, class_code: string) {
-    return this.http.delete(`${subject_code}/${class_code}`);
+    return this.http.patch(`delete/${subject_code}/${class_code}`);
   }
 
   deleteAllAllocations(): Promise<AxiosResponse<number>> {
