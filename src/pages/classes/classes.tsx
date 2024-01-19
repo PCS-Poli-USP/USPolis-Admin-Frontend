@@ -17,12 +17,12 @@ import {
   BsClipboardCheck,
   BsFillPenFill,
   BsFillTrashFill,
+  BsCalendarXFill,
 } from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
-import HasToBeAllocatedDrawer from 'components/allocation/hasToBeAllocated.drawer';
-import AutomaticAllocationModal from 'components/classes/automaticAllocation.modal';
+import AutomaticAllocationModal from 'components/common/automaticAllocation.modal';
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
@@ -35,12 +35,10 @@ import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
 import Class, {
   CreateClassEvents,
-  HasToBeAllocatedClass,
   Preferences,
 } from 'models/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import ClassesService from 'services/classes.service';
 import BuildingsService from 'services/buildings.service';
 import EventsService from 'services/events.service';
@@ -64,9 +62,14 @@ function Classes() {
     Array<EventByClassrooms>
   >([]);
   const {
-    isOpen: isOpenDelete,
-    onOpen: onOpenDelete,
-    onClose: onCloseDelete,
+    isOpen: isOpenDeleteClass,
+    onOpen: onOpenDeleteClass,
+    onClose: onCloseDeleteClass,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDeleteAlloc,
+    onOpen: onOpenDeleteAlloc,
+    onClose: onCloseDeleteAlloc,
   } = useDisclosure();
   const {
     isOpen: isOpenPreferences,
@@ -79,14 +82,14 @@ function Classes() {
     onClose: onCloseEdit,
   } = useDisclosure();
   const {
-    isOpen: isOpenDrawer,
-    onOpen: onOpenDrawer,
-    onClose: onCloseDrawer,
+    isOpen: isOpenAllocDialog,
+    onOpen: onOpenAllocDialog,
+    onClose: onCloseAllocDialog,
   } = useDisclosure();
   const {
-    isOpen: isOpenAlloc,
-    onOpen: onOpenAlloc,
-    onClose: onCloseAlloc,
+    isOpen: isOpenAllocModal,
+    onOpen: onOpenAllocModal,
+    onClose: onCloseAllocModal,
   } = useDisclosure();
   const {
     isOpen: isOpenAllocEdit,
@@ -98,19 +101,12 @@ function Classes() {
     onOpen: onOpenRegister,
     onClose: onCloseRegister,
   } = useDisclosure();
-  const {
-    isOpen: isOpenTest,
-    onOpen: onOpenTest,
-    onClose: onCloseTest,
-  } = useDisclosure();
 
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
   const [allocatedEvents, setAllocatedEvents] = useState<Event[]>([]);
   const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
-
-  const navigate = useNavigate();
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -230,14 +226,25 @@ function Classes() {
               onClick={() => handlePreferencesClick(row.original)}
             />
           </Tooltip>
-          <Tooltip label='Deletar'>
+          <Tooltip label='Excluir Turma'>
             <IconButton
               colorScheme='red'
               size='xs'
               variant='ghost'
-              aria-label='deletar-turma'
+              aria-label='excluir-turma'
               icon={<BsFillTrashFill />}
-              onClick={() => handleDeleteClick(row.original)}
+              onClick={() => handleDeleteClassClick(row.original)}
+            />
+          </Tooltip>
+          <Tooltip label='Excluir Alocação'>
+            <IconButton
+              colorScheme='red'
+              size='xs'
+              variant='ghost'
+              aria-label='excluir-alocacao'
+              disabled={row.original.has_to_be_allocated ? true : false}
+              icon={<BsCalendarXFill />}
+              onClick={() => handleDeleteAllocClick(row.original)}
             />
           </Tooltip>
         </HStack>
@@ -298,22 +305,49 @@ function Classes() {
       });
   }
 
-  function handleDeleteClick(obj: Class) {
+  function handleDeleteClassClick(obj: Class) {
     setSelectedClass(obj);
-    onOpenDelete();
+    onOpenDeleteClass();
   }
 
-  function handleDelete() {
+  function handleDeleteAllocClick(obj: Class) {
+    setSelectedClass(obj);
+    onOpenDeleteAlloc();
+  }
+
+  function handleDeleteClass() {
     if (selectedClass) {
       classesService
         .delete(selectedClass.subject_code, selectedClass.class_code)
         .then((it) => {
-          onCloseDelete();
+          onCloseDeleteClass();
           fetchData();
           toastSuccess('Turma deletada com sucesso!');
         })
         .catch((error) => {
           toastError(`Erro ao deletar turma: ${error}`);
+        });
+    }
+  }
+
+  function handleDeleteAlloc() {
+    if (selectedClass) {
+      eventsService
+        .deleteOneAllocation(
+          selectedClass.subject_code,
+          selectedClass.class_code,
+        )
+        .then((it) => {
+          onCloseDeleteAlloc();
+          fetchData();
+          toastSuccess(
+            `Alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}  deletada com sucesso!`,
+          );
+        })
+        .catch((error) => {
+          toastError(
+            `Erro ao deletar alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}: ${error}`,
+          );
         });
     }
   }
@@ -369,28 +403,29 @@ function Classes() {
   }
 
   function handleAllocClick() {
-    onOpenAlloc();
+    onOpenAllocDialog();
   }
 
-  function handleAlloc() {
+  function handleAllocConfirm() {
     setAllocating(true);
+    // eventsService
     eventsService
       .allocate()
       .then((it) => {
-        console.log(it.data.allocated);
-        console.log(it.data.unallocated)
         setAllocatedEvents(it.data.allocated);
         setUnallocatedEvents(it.data.unallocated);
-        onCloseAlloc();
-        onOpenTest();
+        onCloseAllocDialog();
+        onOpenAllocModal();
       })
       .catch(({ response }: AxiosError<ErrorResponse>) => {
-        onCloseAlloc();
-        onOpenDrawer();
+        onCloseAllocModal();
+        toastError(`Erro ao alocar turmas: ${response?.data.error}`);
         console.log(response?.data.error);
       })
       .finally(() => setAllocating(false));
   }
+
+  function handleAllocSave() {}
 
   function handleEditClick(obj: Class) {
     setSelectedClass(obj);
@@ -412,11 +447,6 @@ function Classes() {
     }
   }
 
-  function handleDrawerAlloc(data: HasToBeAllocatedClass[]) {
-    setAllocating(true);
-    classesService.editHasToBeAllocated(data).then(() => handleAlloc());
-  }
-
   function handleCrawlerSave(subjectsList: string[]) {
     classesService
       .createMany(subjectsList)
@@ -428,12 +458,6 @@ function Classes() {
         toastError(`Erro ao buscar disciplinas: ${response?.data.message}`),
       );
   }
-
-  function handleTest() {
-    onOpenTest();
-  }
-
-  function handleSave() {}
 
   return (
     <>
@@ -464,23 +488,17 @@ function Classes() {
         onSave={handleAllocationEdit}
         classEvents={selectedClassEventList}
       />
-      <HasToBeAllocatedDrawer
-        isOpen={isOpenDrawer}
-        onClose={onCloseDrawer}
-        classesList={classesList}
-        onSave={handleDrawerAlloc}
-      />
       <Dialog
-        isOpen={isOpenAlloc}
-        onClose={onCloseAlloc}
-        onConfirm={handleAlloc}
+        isOpen={isOpenAllocDialog}
+        onClose={onCloseAllocDialog}
+        onConfirm={handleAllocConfirm}
         title='Deseja calcular alocação para as turmas e salas cadastradas'
         warningText='ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
       />
       <AutomaticAllocationModal
-        isOpen={isOpenTest}
-        onClose={onCloseTest}
-        onSave={handleSave}
+        isOpen={isOpenAllocModal}
+        onClose={onCloseAllocModal}
+        onSave={handleAllocSave}
         allocatedEvents={allocatedEvents}
         unallocatedEvents={unallocatedEvents}
       />
@@ -501,10 +519,17 @@ function Classes() {
             </Button>
           </Flex>
           <Dialog
-            isOpen={isOpenDelete}
-            onClose={onCloseDelete}
-            onConfirm={handleDelete}
+            isOpen={isOpenDeleteClass}
+            onClose={onCloseDeleteClass}
+            onConfirm={handleDeleteClass}
             title={`Deseja deletar ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
+          />
+          <Dialog
+            isOpen={isOpenDeleteAlloc}
+            onClose={onCloseDeleteAlloc}
+            onConfirm={handleDeleteAlloc}
+            title={`Deseja deletar a alocação de ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
+            warningText='Atenção: ao confirmar a alocação dessa turma será perdida'
           />
           <DataTable data={classesList} columns={columns} />
         </Box>
