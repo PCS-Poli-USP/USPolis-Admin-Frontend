@@ -70,3 +70,11 @@ export function weekDaysFormatter(week_day: string): string {
       return ''
   }
 }
+
+export function getClassScheduleText(data: Class): string[] {
+  const schedule: string[] = [];
+  for (let i = 0; i < data.week_days.length; i++) {
+    schedule.push(`${weekDaysFormatter(data.week_days[i])}, ${data.start_time[i]} às ${data.end_time[i]} na ${data.classrooms ? data.classrooms[i] : 'NÃO ALOCADA'}`);
+  }
+  return schedule;
+}
