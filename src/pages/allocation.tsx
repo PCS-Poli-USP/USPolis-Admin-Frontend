@@ -12,6 +12,8 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { useDisclosure } from '@chakra-ui/react-use-disclosure';
+import { AxiosError } from 'axios';
+import { ErrorResponse } from 'models/interfaces/serverResponses';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -31,9 +33,12 @@ import {
   AllocationResourcesFromEventsMapper,
   FirstEventDate,
 } from 'utils/mappers/allocation.mapper';
+import Event from 'models/event.model';
 
 import { BsSearch } from 'react-icons/bs';
 import Dialog from 'components/common/dialog.component';
+import AutomaticAllocationModal from 'components/common/automaticAllocation.modal';
+import ClassroomsService from 'services/classrooms.service';
 
 function Allocation() {
   const [allocation, setAllocation] = useState<any[]>([]);
@@ -42,10 +47,26 @@ function Allocation() {
   const { loading, setLoading } = useContext(appContext);
   const calendarRef = useRef<FullCalendar>(null!);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAllocDialog,
+    onOpen: onOpenAllocDialog,
+    onClose: onCloseAllocDialog,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAllocModal,
+    onOpen: onOpenAllocModal,
+    onClose: onCloseAllocModal,
+  } = useDisclosure();
 
   const [subjectSearchValue, setSubjectSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
+  const [allocatedEvents, setAllocatedEvents] = useState<Event[]>([]);
+  const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
 
   const allocationService = new AllocationService();
   const eventsService = new EventsService();
@@ -80,7 +101,8 @@ function Allocation() {
       setCalendarDate(FirstEventDate(values[0].data).slice(0, 10));
       setLoading(false);
     });
-    if (subjectSearchValue || classroomSearchValue) FilterAllocation(subjectSearchValue, classroomSearchValue);
+    if (subjectSearchValue || classroomSearchValue)
+      FilterAllocation(subjectSearchValue, classroomSearchValue);
     // eslint-disable-next-line
   }, []);
 
@@ -93,25 +115,57 @@ function Allocation() {
     if (subjectValue && classroomValue) {
       setFilteredAllocation(
         allocation.filter((data) => {
-          const subjectResult = data.extendedProps.subjectCode.toLowerCase().includes(subjectValue.toLowerCase());
-          const classroomResult = data.extendedProps.classroom.toLowerCase().includes(classroomValue.toLowerCase());
+          const subjectResult = data.extendedProps.subjectCode
+            .toLowerCase()
+            .includes(subjectValue.toLowerCase());
+          const classroomResult = data.extendedProps.classroom
+            .toLowerCase()
+            .includes(classroomValue.toLowerCase());
           return subjectResult && classroomResult;
         }),
       );
     } else if (subjectValue && !classroomValue) {
       setFilteredAllocation(
         allocation.filter((data) => {
-          return data.extendedProps.subjectCode.toLowerCase().includes(subjectValue.toLowerCase());
+          return data.extendedProps.subjectCode
+            .toLowerCase()
+            .includes(subjectValue.toLowerCase());
         }),
       );
     } else if (!subjectValue && classroomValue) {
       setFilteredAllocation(
         allocation.filter((data) => {
-          return data.extendedProps.classroom.toLowerCase().includes(classroomValue.toLowerCase());
+          return data.extendedProps.classroom
+            .toLowerCase()
+            .includes(classroomValue.toLowerCase());
         }),
       );
     }
   }
+
+  function handleAllocClick() {
+    onOpenAllocDialog();
+  }
+
+  function handleAllocConfirm() {
+    onCloseAllocDialog();
+    setLoading(true);
+    eventsService
+      .allocate()
+      .then((it) => {
+        setAllocatedEvents(it.data.allocated);
+        setUnallocatedEvents(it.data.unallocated);
+        onOpenAllocModal();
+      })
+      .catch(({ response }: AxiosError<ErrorResponse>) => {
+        onCloseAllocModal();
+        toastError(`Erro ao alocar turmas: ${response?.data.error}`);
+        console.log(response?.data.error);
+      })
+      .finally(() => setLoading(false));
+  }
+
+  function handleAllocSave() {}
 
   function handleDeleteClick() {
     onOpenDelete();
@@ -142,11 +196,16 @@ function Allocation() {
         <GridItem p={4} area={'header'} display='flex' alignItems='center'>
           <Text fontSize='4xl'>Alocações</Text>
           <Button ml={4} colorScheme='blue'>
-            <PDFDownloadLink document={<ClassesPDF />} fileName='disciplinas.pdf'>
-              {(params) => (params.loading ? 'Carregando PDF...' : 'Baixar alocação')}
+            <PDFDownloadLink
+              document={<ClassesPDF />}
+              fileName='disciplinas.pdf'
+            >
+              {(params) =>
+                params.loading ? 'Carregando PDF...' : 'Baixar alocação'
+              }
             </PDFDownloadLink>
           </Button>
-          <Button ml ={2} colorScheme='blue'>
+          <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
             Alocação Automática
           </Button>
           <Button ml={2} colorScheme='red' onClick={handleDeleteClick}>
@@ -155,7 +214,11 @@ function Allocation() {
         </GridItem>
         <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
           <Skeleton isLoaded={!loading} h='100vh' startColor='uspolis.blue'>
-            <DatePickerModal isOpen={isOpen} onClose={onClose} onSelectDate={setCalendarDate} />
+            <DatePickerModal
+              isOpen={isOpen}
+              onClose={onClose}
+              onSelectDate={setCalendarDate}
+            />
 
             <HStack mb={4} divider={<StackDivider />} justifyContent='flex-end'>
               <InputGroup w='fit-content'>
@@ -199,7 +262,12 @@ function Allocation() {
             <FullCalendar
               ref={calendarRef}
               schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
-              plugins={[timeGridPlugin, resourceTimelinePlugin, eventsByClassroomsPlugin, eventsByWeekPlugin]}
+              plugins={[
+                timeGridPlugin,
+                resourceTimelinePlugin,
+                eventsByClassroomsPlugin,
+                eventsByWeekPlugin,
+              ]}
               initialView='eventsByClassrooms'
               locale='pt-br'
               height='auto'
@@ -233,7 +301,12 @@ function Allocation() {
                   slotDuration: '01:00',
                   slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
                   eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
-                  titleFormat: { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' },
+                  titleFormat: {
+                    weekday: 'long',
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric',
+                  },
                 },
                 eventsByClassrooms: {
                   duration: { weeks: 1 },
@@ -242,7 +315,11 @@ function Allocation() {
                   duration: { weeks: 1 },
                 },
               }}
-              events={subjectSearchValue || classroomSearchValue ? filteredAllocation : allocation}
+              events={
+                subjectSearchValue || classroomSearchValue
+                  ? filteredAllocation
+                  : allocation
+              }
               eventContent={EventContent}
               eventColor='#408080'
               displayEventTime
@@ -257,7 +334,25 @@ function Allocation() {
               onClose={onCloseDelete}
               onConfirm={handleDelete}
               title={'Deseja remover todas alocações feitas'}
-              warningText={'ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'}
+              warningText={
+                'ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
+              }
+            />
+
+            <Dialog
+              isOpen={isOpenAllocDialog}
+              onClose={onCloseAllocDialog}
+              onConfirm={handleAllocConfirm}
+              title='Deseja calcular alocação para as turmas e salas cadastradas'
+              warningText='ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
+            />
+
+            <AutomaticAllocationModal
+              isOpen={isOpenAllocModal}
+              onClose={onCloseAllocModal}
+              onSave={handleAllocSave}
+              allocatedEvents={allocatedEvents}
+              unallocatedEvents={unallocatedEvents}
             />
           </Skeleton>
         </GridItem>
