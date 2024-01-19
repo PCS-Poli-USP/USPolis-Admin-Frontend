@@ -38,7 +38,6 @@ import Event from 'models/event.model';
 import { BsSearch } from 'react-icons/bs';
 import Dialog from 'components/common/dialog.component';
 import AutomaticAllocationModal from 'components/common/automaticAllocation.modal';
-import ClassroomsService from 'services/classrooms.service';
 
 function Allocation() {
   const [allocation, setAllocation] = useState<any[]>([]);

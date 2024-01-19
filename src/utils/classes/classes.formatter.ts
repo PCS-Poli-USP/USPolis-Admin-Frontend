@@ -1,5 +1,5 @@
 import Class, { CreateClassEvents } from "models/class.model";
-import Event, { EventByClassrooms } from "models/event.model";
+import { EventByClassrooms } from "models/event.model";
 import { Classrooms } from 'models/enums/clasrooms.enum';
 import { ClassCodeText } from "utils/mappers/allocation.mapper";
 import { Building } from "models/building.model";
