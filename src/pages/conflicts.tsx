@@ -118,6 +118,9 @@ const ConflictsPage = () => {
                       </C.Flex>
                       <C.Flex direction={'column'} flex={1}>
                         <C.Text fontSize={'md'}>
+                          Disciplina: {event.subject_name}
+                        </C.Text>
+                        <C.Text fontSize={'md'}>
                           Professores:{' '}
                           {event.professors?.map((professor, index) => (
                             <>

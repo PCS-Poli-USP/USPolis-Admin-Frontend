@@ -10,7 +10,8 @@ export default interface Event {
   building?: string;
   professors?: string[];
   subscribers: number;
-  id: string;
+  id?: string;
+  subject_name?: string;
 }
 
 export interface EventByClassrooms {
