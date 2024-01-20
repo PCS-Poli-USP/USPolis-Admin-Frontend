@@ -30,6 +30,7 @@ const Links = [
   { text: 'Alocações', value: '/allocation', admin: false },
   { text: 'Prédios', value: '/buildings', admin: false },
   { text: 'Usuários', value: '/users', admin: true },
+  { text: "Conflitos", value: "/conflicts", admin: false}
 ];
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
