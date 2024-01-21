@@ -33,10 +33,7 @@ import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
 import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
-import Class, {
-  CreateClassEvents,
-  Preferences,
-} from 'models/class.model';
+import Class, { CreateClassEvents, Preferences } from 'models/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
 import ClassesService from 'services/classes.service';
@@ -242,7 +239,6 @@ function Classes() {
               size='xs'
               variant='ghost'
               aria-label='excluir-alocacao'
-              disabled={row.original.has_to_be_allocated ? true : false}
               icon={<BsCalendarXFill />}
               onClick={() => handleDeleteAllocClick(row.original)}
             />
@@ -333,7 +329,7 @@ function Classes() {
   function handleDeleteAlloc() {
     if (selectedClass) {
       eventsService
-        .deleteOneAllocation(
+        .deleteAllocation(
           selectedClass.subject_code,
           selectedClass.class_code,
         )
@@ -376,6 +372,21 @@ function Classes() {
       })
       .catch((error) => {
         toastError(`Erro ao editar alocação: ${error}`);
+      });
+  }
+
+  function handleAllocationEditDelete(subjectCode: string, classCode: string) {
+    eventsService
+      .deleteAllocation(subjectCode, classCode)
+      .then((it) => {
+        toastSuccess(
+          `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
+        );
+      })
+      .catch((error) => {
+        toastError(
+          `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`,
+        );
       });
   }
 
@@ -486,6 +497,7 @@ function Classes() {
         isOpen={isOpenAllocEdit}
         onClose={onCloseAllocEdit}
         onSave={handleAllocationEdit}
+        onDelete={handleAllocationEditDelete}
         classEvents={selectedClassEventList}
       />
       <Dialog
@@ -522,13 +534,13 @@ function Classes() {
             isOpen={isOpenDeleteClass}
             onClose={onCloseDeleteClass}
             onConfirm={handleDeleteClass}
-            title={`Deseja deletar ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
+            title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
           />
           <Dialog
             isOpen={isOpenDeleteAlloc}
             onClose={onCloseDeleteAlloc}
             onConfirm={handleDeleteAlloc}
-            title={`Deseja deletar a alocação de ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
+            title={`Deseja remover a alocação de ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
             warningText='Atenção: ao confirmar a alocação dessa turma será perdida'
           />
           <DataTable data={classesList} columns={columns} />
