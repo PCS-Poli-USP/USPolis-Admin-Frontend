@@ -29,7 +29,11 @@ export default class EventsService extends HttpService {
     });
   }
 
-  deleteOneAllocation(subject_code: string, class_code: string) {
+  deleteOneAllocation(subject_code: string, class_code: string, week_day: string, start_time: string) {
+    return this.http.patch(`delete/${subject_code}/${class_code}/${week_day}/${start_time}`)
+  }
+
+  deleteAllocation(subject_code: string, class_code: string) {
     return this.http.patch(`delete/${subject_code}/${class_code}`);
   }
 
