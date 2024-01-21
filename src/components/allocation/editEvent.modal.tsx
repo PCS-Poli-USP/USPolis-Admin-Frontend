@@ -16,45 +16,70 @@ import {
   Stack,
   Text,
   useCheckboxGroup,
+  useDisclosure,
 } from '@chakra-ui/react';
+import Dialog from 'components/common/dialog.component';
 import { AvailableClassroom } from 'models/classroom.model';
 import { EventByClassrooms } from 'models/event.model';
 import { useEffect, useState } from 'react';
 import ClassroomsService from 'services/classrooms.service';
-import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
 
 interface EditEventModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (subjectCode: string, classCode: string, weekDays: string[], newClassroom: string, building: string) => void;
+  onSave: (
+    subjectCode: string,
+    classCode: string,
+    weekDays: string[],
+    newClassroom: string,
+    building: string,
+  ) => void;
+  onDelete: (subjectCode: string, classCode: string) => void;
   classEvents: EventByClassrooms[];
 }
 
-export default function EditEventModal({ isOpen, onClose, onSave, classEvents }: EditEventModalProps) {
+export default function EditEventModal({
+  isOpen,
+  onClose,
+  onSave,
+  onDelete,
+  classEvents,
+}: EditEventModalProps) {
+  const {
+    isOpen: isOpenDialog,
+    onOpen: onOpenDialog,
+    onClose: onCloseDialog,
+  } = useDisclosure();
+
   const [weekDays, setWeekDays] = useState<string[]>([]);
   const { value, setValue, getCheckboxProps } = useCheckboxGroup();
-  const [availableClassrooms, setAvailableClassrooms] = useState<AvailableClassroom[]>([]);
-  const [availableClassroomsByEvent, setAvailableClassroomsByEvent] = useState<Map<string, AvailableClassroom[]>>();
+  const [availableClassrooms, setAvailableClassrooms] = useState<
+    AvailableClassroom[]
+  >([]);
+  const [availableClassroomsByEvent, setAvailableClassroomsByEvent] =
+    useState<Map<string, AvailableClassroom[]>>();
   const [newClassroom, setNewClassroom] = useState('');
-  const [selectedClassroom, setSelectedClassroom] = useState<AvailableClassroom>({
-    classroom_name: '',
-    building: '',
-    capacity: 0,
-  });
+  const [selectedClassroom, setSelectedClassroom] =
+    useState<AvailableClassroom>({
+      classroom_name: '',
+      building: '',
+      capacity: 0,
+    });
 
   const classroomsService = new ClassroomsService();
-  const eventsService = new EventsService();
 
   const classData = classEvents[0];
 
   useEffect(() => {
-    const _weekDays = classEvents.map((it) => it.weekday);
+    const _weekDays = classEvents.map((it) => it.week_day);
     setValue(_weekDays);
     setWeekDays(_weekDays);
     const availableByEvent = new Map<string, AvailableClassroom[]>();
     const available: AvailableClassroom[][] = [];
-    const promises = classEvents.map((cl) => classroomsService.getAvailable(cl.weekday, cl.startTime, cl.endTime));
+    const promises = classEvents.map((cl) =>
+      classroomsService.getAvailable(cl.week_day, cl.start_time, cl.end_time),
+    );
 
     Promise.all(promises).then((values) => {
       values.forEach((it, index) => {
@@ -82,7 +107,9 @@ export default function EditEventModal({ isOpen, onClose, onSave, classEvents }:
   }, [value]);
 
   useEffect(() => {
-    const classroom = availableClassrooms?.find((it) => it.classroom_name === newClassroom);
+    const classroom = availableClassrooms?.find(
+      (it) => it.classroom_name === newClassroom,
+    );
     if (classroom) {
       setSelectedClassroom(classroom);
     }
@@ -91,23 +118,50 @@ export default function EditEventModal({ isOpen, onClose, onSave, classEvents }:
 
   function getIntersection(available: AvailableClassroom[][]) {
     return available.length
-      ? available.reduce((p, c) => p.filter((e) => c.map((it) => it.classroom_name).includes(e.classroom_name)))
+      ? available.reduce((p, c) =>
+          p.filter((e) =>
+            c.map((it) => it.classroom_name).includes(e.classroom_name),
+          ),
+        )
       : [];
   }
 
   function handleSaveClick() {
-    onSave(classData.subjectCode, classData.classCode, value as string[], newClassroom, selectedClassroom.building);
+    onSave(
+      classData.subject_code,
+      classData.class_code,
+      value as string[],
+      newClassroom,
+      selectedClassroom.building,
+    );
     onClose();
   }
 
+  function handleDeleteClick() {
+    onOpenDialog();
+  }
+
+  function handleDeleteConfirm() {
+    onCloseDialog();
+    if (classData.subject_code && classData.class_code) {
+      onDelete(classData.subject_code, classData.class_code);
+      onClose();
+    }
+  }
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered blockScrollOnMount={false}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      isCentered
+      blockScrollOnMount={false}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          Editar alocação - {classData?.subjectCode}
+          Editar alocação - {classData?.subject_code}
           <Text fontSize='md' fontWeight='normal'>
-            {classData?.classCodeText} -{' '}
+            {classData?.class_code_text} -{' '}
             {classData?.professors.join(', ').length > 25
               ? classData?.professors[0] + '...'
               : classData?.professors.join(', ')}
@@ -132,15 +186,20 @@ export default function EditEventModal({ isOpen, onClose, onSave, classEvents }:
         <ModalBody px={6}>
           <Checkbox
             isChecked={value.length === weekDays.length}
-            onChange={(e) => (e.target.checked ? setValue(weekDays) : setValue([]))}
+            onChange={(e) =>
+              e.target.checked ? setValue(weekDays) : setValue([])
+            }
           >
             Todos os horários
           </Checkbox>
           <Stack pl={6} mt={1} spacing={1}>
             {classEvents.map((it, index) => {
               return (
-                <Checkbox key={index} {...getCheckboxProps({ value: it.weekday })}>
-                  {Capitalize(it.weekday)} - {it.startTime} {it.endTime}
+                <Checkbox
+                  key={index}
+                  {...getCheckboxProps({ value: it.week_day })}
+                >
+                  {Capitalize(it.week_day)} - {it.start_time} {it.end_time}
                 </Checkbox>
               );
             })}
@@ -163,12 +222,29 @@ export default function EditEventModal({ isOpen, onClose, onSave, classEvents }:
               ))}
             </Select>
           </FormControl>
+
+          <Dialog
+            isOpen={isOpenDialog}
+            onClose={onCloseDialog}
+            onConfirm={handleDeleteConfirm}
+            title={`Deseja remover a alocação`}
+            warningText='Atenção: ao confirmar a alocação dessa turma será perdida'
+          />
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={2} onClick={handleSaveClick} isDisabled={!newClassroom}>
+          <Button
+            colorScheme='blue'
+            mr={2}
+            onClick={handleSaveClick}
+            isDisabled={!newClassroom}
+          >
             Salvar
           </Button>
+          <Button colorScheme='red' mr={2} onClick={handleDeleteClick}>
+            Remover
+          </Button>
+
           <Button onClick={onClose}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>
