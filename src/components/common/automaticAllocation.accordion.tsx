@@ -5,36 +5,43 @@ import {
   AccordionPanel,
   AccordionIcon,
   Box,
-  Text,
+  Button,
   HStack,
   Link,
+  Text,
 } from '@chakra-ui/react';
 import { CalendarIcon } from '@chakra-ui/icons';
-import { BsBookHalf, BsHouseFill } from 'react-icons/bs';
+import { BsBookHalf, BsHouseFill, BsFillPenFill } from 'react-icons/bs';
 
 import Classroom from 'models/classroom.model';
 import Event from 'models/event.model';
 
 import { useEffect, useState } from 'react';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
+import { WeekDayInt } from 'utils/mappers/allocation.mapper';
 import ClassroomsService from 'services/classrooms.service';
 
 interface AutomaticAllocationAccordionProps {
+  onEdit: (event: Event) => void;
   allocated: Event[];
   unallocated: Event[];
 }
 
 export default function AutomaticAllocationAccordion({
+  onEdit,
   allocated,
   unallocated,
 }: AutomaticAllocationAccordionProps) {
   const classroomService = new ClassroomsService();
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
+  const [allocatedEvents, setAllocatedEvents] = useState<Event[]>([]);
+  const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
 
   useEffect(() => {
     if (classrooms.length <= 0) fetchClassrooms();
-    // eslint-disable-next-line
-  }, []);
+    if (allocated) setAllocatedEvents(allocated);
+    if (unallocated) setUnallocatedEvents(unallocated);
+  }, [classrooms, allocated, unallocated]);
 
   function fetchClassrooms() {
     classroomService.list().then((it) => {
@@ -55,8 +62,16 @@ export default function AutomaticAllocationAccordion({
     return 0;
   }
 
-  allocated.sort(sortEventByClassCode);
-  unallocated.sort(sortEventByClassCode);
+  function sortEventByClassAndTime(a: Event, b: Event) {
+    const classResult = sortEventByClassCode(a, b);
+    if (classResult === 0) {
+      return WeekDayInt(a.week_day) - WeekDayInt(b.week_day);
+    }
+    return classResult;
+  }
+
+  allocatedEvents.sort(sortEventByClassAndTime);
+  unallocatedEvents.sort(sortEventByClassAndTime);
 
   return (
     <Accordion
@@ -75,7 +90,7 @@ export default function AutomaticAllocationAccordion({
           <AccordionIcon />
         </AccordionButton>
         <AccordionPanel pb={4}>
-          {allocated.map((value, index) => (
+          {allocatedEvents.map((value, index) => (
             <HStack spacing={3} key={index}>
               <BsBookHalf />
               <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
@@ -85,12 +100,20 @@ export default function AutomaticAllocationAccordion({
               } às ${value.end_time}`}</Text>
               <BsHouseFill />
               <Text>{`${value.classroom}`}</Text>
+              <Button
+                leftIcon={<BsFillPenFill />}
+                variant={'ghost'}
+                size={'sm'}
+                onClick={() => onEdit(value)}
+              >
+                Editar
+              </Button>
             </HStack>
           ))}
         </AccordionPanel>
       </AccordionItem>
 
-      {unallocated.length > 0 ? (
+      {unallocatedEvents.length > 0 ? (
         <AccordionItem>
           <AccordionButton bg={'red.500'} color={'black'} fontWeight={'bold'}>
             <Box as='span' flex='1' textAlign='left'>
@@ -99,7 +122,7 @@ export default function AutomaticAllocationAccordion({
             <AccordionIcon />
           </AccordionButton>
           <AccordionPanel pb={4}>
-            {unallocated.map((value, index) => (
+            {unallocatedEvents.map((value, index) => (
               <HStack spacing={3} key={index}>
                 <BsBookHalf />
                 <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
@@ -107,6 +130,14 @@ export default function AutomaticAllocationAccordion({
                 <Text>{`${weekDaysFormatter(value.week_day)}, ${
                   value.start_time
                 } às ${value.end_time}`}</Text>
+                <Button
+                  leftIcon={<BsFillPenFill />}
+                  variant={'ghost'}
+                  size={'sm'}
+                  onClick={() => onEdit(value)}
+                >
+                  Editar
+                </Button>
               </HStack>
             ))}
           </AccordionPanel>
@@ -133,10 +164,9 @@ export default function AutomaticAllocationAccordion({
               </HStack>
             ))
           ) : (
-            <Text>Sem salas cadastradas, ir para{' '}
-              <Link href='/classrooms'>
-                criação de salas
-              </Link>
+            <Text>
+              Sem salas cadastradas, ir para{' '}
+              <Link href='/classrooms'>criação de salas</Link>
             </Text>
           )}
         </AccordionPanel>

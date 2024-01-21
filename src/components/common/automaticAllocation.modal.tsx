@@ -1,7 +1,6 @@
 import {
   Button,
   ListItem,
-  Link,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -11,11 +10,17 @@ import {
   ModalCloseButton,
   OrderedList,
   Text,
+  useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
 
 import AutomaticAllocationAccordion from './automaticAllocation.accordion';
 import { useNavigate } from 'react-router-dom';
-import Event from 'models/event.model';
+import Event, { EventByClassrooms } from 'models/event.model';
+import EditEventModal from 'components/allocation/editEvent.modal';
+import { useEffect, useState } from 'react';
+import { EventToEventByClassroom } from 'utils/classes/classes.formatter';
+import EventsService from 'services/events.service';
 
 interface AutomaticAllocationModalProps {
   isOpen: boolean;
@@ -32,10 +37,151 @@ export default function AutomaticAllocationModal({
   allocatedEvents,
   unallocatedEvents,
 }: AutomaticAllocationModalProps) {
+  const {
+    isOpen: isOpenEditEventModal,
+    onOpen: onOpenEditEventModal,
+    onClose: onCloseEditEventModal,
+  } = useDisclosure();
+
+  const initialEvent: EventByClassrooms = {
+    subject_code: '',
+    classroom: '',
+    building: '',
+    has_to_be_allocated: true,
+    class_code: '',
+    professors: [],
+    start_time: '',
+    end_time: '',
+    week_day: '',
+    class_code_text: '',
+    subscribers: 0,
+  };
+  const [selectedEvent, setSelectedEvent] =
+    useState<EventByClassrooms>(initialEvent);
+  const [allocatedEventsList, setAllocatedEvents] = useState<Event[]>([]);
+  const [unallocatedEventsList, setUnallocatedEvents] = useState<Event[]>([]);
+
+  const eventsService = new EventsService();
   const navigate = useNavigate();
+
+  const toast = useToast();
+  const toastSuccess = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Sucesso!',
+      description: message,
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+  const toastError = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Erro!',
+      description: message,
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
+  useEffect(() => {
+    if (allocatedEvents.length > 0) setAllocatedEvents(allocatedEvents);
+    if (unallocatedEvents.length > 0) setUnallocatedEvents(unallocatedEvents);
+  }, [allocatedEvents, unallocatedEvents]);
 
   function handleAllocNavClick() {
     navigate('/allocation');
+  }
+
+  function handleEditEventClick(event: Event) {
+    setSelectedEvent(EventToEventByClassroom(event));
+    onOpenEditEventModal();
+  }
+
+  function handleEditEvent(
+    subjectCode: string,
+    classCode: string,
+    weekDays: string[],
+    newClassroom: string,
+    building: string,
+  ) {
+    if (subjectCode !== '' && selectedEvent.week_day !== '')
+      eventsService
+        .edit(subjectCode, classCode, weekDays, newClassroom, building)
+        .then((it) => {
+          let index = allocatedEventsList.findIndex(
+            (value) => (
+              value.subject_code === subjectCode,
+              value.class_code === classCode,
+              value.week_day === selectedEvent.week_day,
+              value.start_time === selectedEvent.start_time
+            ),
+          );
+
+          const newAllocatedEvents = [...allocatedEventsList];
+          if (index >= 0) {
+            newAllocatedEvents[index].classroom = newClassroom;
+          } else {
+            index = unallocatedEventsList.findIndex(
+              (value) => (
+                value.subject_code === subjectCode,
+                value.class_code === classCode,
+                value.week_day === selectedEvent.week_day,
+                value.start_time === selectedEvent.start_time
+              ),
+            );
+            const newUnallocatedEvents = [...unallocatedEventsList];
+            const event = newUnallocatedEvents.splice(index, 1);
+            newAllocatedEvents.push(event[0]);
+            setUnallocatedEvents(newUnallocatedEvents);
+          }
+          setAllocatedEvents(newAllocatedEvents);
+          toastSuccess('Alocação editada com sucesso!');
+          onCloseEditEventModal();
+          // refetch data
+        })
+        .catch((error) => {
+          toastError(`Erro ao editar alocação: ${error}`);
+          onCloseEditEventModal();
+        });
+  }
+
+  function handleDeleteEvent(subjectCode: string, classCode: string) {
+    if (subjectCode !== '' && selectedEvent.week_day !== '') {
+      eventsService
+        .deleteOneAllocation(
+          subjectCode,
+          classCode,
+          selectedEvent.week_day,
+          selectedEvent.start_time,
+        )
+        .then((it) => {
+          const newAllocatedEvents = [...allocatedEventsList];
+          const newUnallocatedEvents = [...unallocatedEventsList];
+          const index = allocatedEventsList.findIndex(
+            (value) => (
+              value.subject_code === subjectCode,
+              value.class_code === classCode,
+              value.week_day === selectedEvent.week_day,
+              value.start_time === selectedEvent.start_time
+            ),
+          );
+          const event = newAllocatedEvents.splice(index, 1);
+          newUnallocatedEvents.push(event[0]);
+          setAllocatedEvents(newAllocatedEvents);
+          setUnallocatedEvents(newUnallocatedEvents);
+          toastSuccess('Alocação removida com sucesso!');
+          onCloseEditEventModal();
+          // refetch data
+          // TODO: create AllocationContext
+        })
+        .catch((error) => {
+          toastError(`Erro ao remover alocação: ${error}`);
+          onCloseEditEventModal();
+        });
+    }
   }
 
   return (
@@ -52,7 +198,14 @@ export default function AutomaticAllocationModal({
         <ModalHeader>Alocação Automática</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {unallocatedEvents.length > 0 ? (
+          <EditEventModal
+            isOpen={isOpenEditEventModal}
+            onClose={onCloseEditEventModal}
+            onSave={handleEditEvent}
+            onDelete={handleDeleteEvent}
+            classEvents={[selectedEvent]}
+          />
+          {unallocatedEventsList.length > 0 ? (
             <Text fontSize='md' fontWeight='normal' mb={4}>
               Não foi possível alocar todas as turmas, isso pode ter ocorrido
               por 3 principais motivos:
@@ -74,8 +227,9 @@ export default function AutomaticAllocationModal({
             </Text>
           )}
           <AutomaticAllocationAccordion
-            allocated={allocatedEvents}
-            unallocated={unallocatedEvents}
+            onEdit={handleEditEventClick}
+            allocated={allocatedEventsList}
+            unallocated={unallocatedEventsList}
           />
         </ModalBody>
 
