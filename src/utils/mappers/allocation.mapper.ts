@@ -28,7 +28,7 @@ export function AllocationEventsMapper(allocation: Event[]) {
   }));
 }
 
-function WeekDayInt(weekDay: string) {
+export function WeekDayInt(weekDay: string) {
   switch (weekDay) {
     default:
     case WeekDays.Sunday:

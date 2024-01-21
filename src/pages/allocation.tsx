@@ -19,7 +19,7 @@ import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import DatePickerModal from 'components/allocation/datePicker.modal';
-import EventContent from 'components/allocation/eventContent';
+import EventContent from 'components/allocation/dayView/eventContent';
 import eventsByClassroomsPlugin from 'components/allocation/classromView/eventsByClassrooms.plugin';
 import eventsByWeekPlugin from 'components/allocation/weekView/eventsByWeek.plugin';
 import Navbar from 'components/common/navbar.component';
@@ -171,7 +171,6 @@ function Allocation() {
   }
 
   function handleDelete() {
-    console.log('Limpa');
     eventsService
       .deleteAllAllocations()
       .then((value) => {
