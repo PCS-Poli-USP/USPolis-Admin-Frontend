@@ -7,6 +7,7 @@ import { useDisclosure, useToast } from '@chakra-ui/react';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import EventsService from 'services/events.service';
 import Event from 'models/event.model';
+import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 
 const ConflictsPage = () => {
   const eventsService = new EventsService();
@@ -174,7 +175,7 @@ const ConflictsPage = () => {
                   gap={2}
                 >
                   <C.Text fontSize={'lg'} fontWeight={'bold'}>
-                    {week_day.name}
+                    {weekDaysFormatter(week_day.name)}
                   </C.Text>
                   {week_day.events.map((event) => (
                     <C.Flex
