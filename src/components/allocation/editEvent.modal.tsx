@@ -27,21 +27,36 @@ import { Capitalize } from 'utils/formatters';
 interface EditEventModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (subjectCode: string, classCode: string, weekDays: string[], newClassroom: string, building: string) => void;
+  onSave: (
+    subjectCode: string,
+    classCode: string,
+    weekDays: string[],
+    newClassroom: string,
+    building: string,
+  ) => void;
   classEvents: EventByClassrooms[];
 }
 
-export default function EditEventModal({ isOpen, onClose, onSave, classEvents }: EditEventModalProps) {
+export default function EditEventModal({
+  isOpen,
+  onClose,
+  onSave,
+  classEvents,
+}: EditEventModalProps) {
   const [weekDays, setWeekDays] = useState<string[]>([]);
   const { value, setValue, getCheckboxProps } = useCheckboxGroup();
-  const [availableClassrooms, setAvailableClassrooms] = useState<AvailableClassroom[]>([]);
-  const [availableClassroomsByEvent, setAvailableClassroomsByEvent] = useState<Map<string, AvailableClassroom[]>>();
+  const [availableClassrooms, setAvailableClassrooms] = useState<
+    AvailableClassroom[]
+  >([]);
+  const [availableClassroomsByEvent, setAvailableClassroomsByEvent] =
+    useState<Map<string, AvailableClassroom[]>>();
   const [newClassroom, setNewClassroom] = useState('');
-  const [selectedClassroom, setSelectedClassroom] = useState<AvailableClassroom>({
-    classroom_name: '',
-    building: '',
-    capacity: 0,
-  });
+  const [selectedClassroom, setSelectedClassroom] =
+    useState<AvailableClassroom>({
+      classroom_name: '',
+      building: '',
+      capacity: 0,
+    });
 
   const classroomsService = new ClassroomsService();
   const eventsService = new EventsService();
@@ -54,7 +69,9 @@ export default function EditEventModal({ isOpen, onClose, onSave, classEvents }:
     setWeekDays(_weekDays);
     const availableByEvent = new Map<string, AvailableClassroom[]>();
     const available: AvailableClassroom[][] = [];
-    const promises = classEvents.map((cl) => classroomsService.getAvailable(cl.weekday, cl.startTime, cl.endTime));
+    const promises = classEvents.map((cl) =>
+      classroomsService.getAvailable(cl.weekday, cl.startTime, cl.endTime),
+    );
 
     Promise.all(promises).then((values) => {
       values.forEach((it, index) => {
@@ -82,7 +99,9 @@ export default function EditEventModal({ isOpen, onClose, onSave, classEvents }:
   }, [value]);
 
   useEffect(() => {
-    const classroom = availableClassrooms?.find((it) => it.classroom_name === newClassroom);
+    const classroom = availableClassrooms?.find(
+      (it) => it.classroom_name === newClassroom,
+    );
     if (classroom) {
       setSelectedClassroom(classroom);
     }
@@ -91,17 +110,32 @@ export default function EditEventModal({ isOpen, onClose, onSave, classEvents }:
 
   function getIntersection(available: AvailableClassroom[][]) {
     return available.length
-      ? available.reduce((p, c) => p.filter((e) => c.map((it) => it.classroom_name).includes(e.classroom_name)))
+      ? available.reduce((p, c) =>
+          p.filter((e) =>
+            c.map((it) => it.classroom_name).includes(e.classroom_name),
+          ),
+        )
       : [];
   }
 
   function handleSaveClick() {
-    onSave(classData.subjectCode, classData.classCode, value as string[], newClassroom, selectedClassroom.building);
+    onSave(
+      classData.subjectCode,
+      classData.classCode,
+      value as string[],
+      newClassroom,
+      selectedClassroom.building,
+    );
     onClose();
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered blockScrollOnMount={false}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      isCentered
+      blockScrollOnMount={false}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
@@ -117,8 +151,8 @@ export default function EditEventModal({ isOpen, onClose, onSave, classEvents }:
               !selectedClassroom.classroom_name
                 ? 'info'
                 : classData?.subscribers > selectedClassroom.capacity
-                ? 'error'
-                : 'success'
+                  ? 'error'
+                  : 'success'
             }
             fontSize='md'
             mt={2}
@@ -132,14 +166,19 @@ export default function EditEventModal({ isOpen, onClose, onSave, classEvents }:
         <ModalBody px={6}>
           <Checkbox
             isChecked={value.length === weekDays.length}
-            onChange={(e) => (e.target.checked ? setValue(weekDays) : setValue([]))}
+            onChange={(e) =>
+              e.target.checked ? setValue(weekDays) : setValue([])
+            }
           >
             Todos os horários
           </Checkbox>
           <Stack pl={6} mt={1} spacing={1}>
             {classEvents.map((it, index) => {
               return (
-                <Checkbox key={index} {...getCheckboxProps({ value: it.weekday })}>
+                <Checkbox
+                  key={index}
+                  {...getCheckboxProps({ value: it.weekday })}
+                >
                   {Capitalize(it.weekday)} - {it.startTime} {it.endTime}
                 </Checkbox>
               );
@@ -166,7 +205,12 @@ export default function EditEventModal({ isOpen, onClose, onSave, classEvents }:
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={2} onClick={handleSaveClick} isDisabled={!newClassroom}>
+          <Button
+            colorScheme='blue'
+            mr={2}
+            onClick={handleSaveClick}
+            isDisabled={!newClassroom}
+          >
             Salvar
           </Button>
           <Button onClick={onClose}>Cancelar</Button>
