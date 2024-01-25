@@ -25,14 +25,12 @@ import EventsService from 'services/events.service';
 interface AutomaticAllocationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: () => void;
   allocatedEvents: Event[];
   unallocatedEvents: Event[];
 }
 
 export default function AutomaticAllocationModal({
   isOpen,
-  onSave,
   onClose,
   allocatedEvents,
   unallocatedEvents,
@@ -107,45 +105,54 @@ export default function AutomaticAllocationModal({
     newClassroom: string,
     building: string,
   ) {
-    if (subjectCode !== '' && selectedEvent.week_day !== '')
+    if (subjectCode !== '' && selectedEvent.week_day !== '') {
       eventsService
         .edit(subjectCode, classCode, weekDays, newClassroom, building)
         .then((it) => {
-          let index = allocatedEventsList.findIndex(
-            (value) => (
-              value.subject_code === subjectCode,
-              value.class_code === classCode,
-              value.week_day === selectedEvent.week_day,
-              value.start_time === selectedEvent.start_time
-            ),
-          );
-
-          const newAllocatedEvents = [...allocatedEventsList];
-          if (index >= 0) {
-            newAllocatedEvents[index].classroom = newClassroom;
-          } else {
-            index = unallocatedEventsList.findIndex(
-              (value) => (
-                value.subject_code === subjectCode,
-                value.class_code === classCode,
-                value.week_day === selectedEvent.week_day,
-                value.start_time === selectedEvent.start_time
-              ),
-            );
-            const newUnallocatedEvents = [...unallocatedEventsList];
-            const event = newUnallocatedEvents.splice(index, 1);
-            newAllocatedEvents.push(event[0]);
-            setUnallocatedEvents(newUnallocatedEvents);
-          }
-          setAllocatedEvents(newAllocatedEvents);
           toastSuccess('Alocação editada com sucesso!');
           onCloseEditEventModal();
-          // refetch data
         })
         .catch((error) => {
           toastError(`Erro ao editar alocação: ${error}`);
           onCloseEditEventModal();
         });
+
+      let index = allocatedEventsList.findIndex(
+        (value) => (
+          value.subject_code === subjectCode,
+          value.class_code === classCode,
+          value.week_day === selectedEvent.week_day,
+          value.start_time === selectedEvent.start_time
+        ),
+      );
+
+      const newAllocatedEvents = [...allocatedEventsList];
+      const newUnallocatedEvents = [...unallocatedEventsList];
+      if (index >= 0) {
+        newAllocatedEvents[index].classroom = newClassroom;
+      } else {
+        index = unallocatedEventsList.findIndex(
+          (value) => (
+            value.subject_code === subjectCode,
+            value.class_code === classCode,
+            value.week_day === selectedEvent.week_day,
+            value.start_time === selectedEvent.start_time
+          ),
+        );
+        const event = newUnallocatedEvents.splice(index, 1);
+        newAllocatedEvents.push(event[0]);
+        setUnallocatedEvents(newUnallocatedEvents);
+      }
+      setAllocatedEvents(newAllocatedEvents);
+      eventsService
+        .editAllocations(newAllocatedEvents, newUnallocatedEvents)
+        .then((it) => {
+          console.log('Editei a alocação!');
+        })
+        .catch((error) => {
+          toastError(`Erro ao salvar alocação: ${error}`);
+        });
+    }
   }
 
   function handleDeleteEvent(subjectCode: string, classCode: string) {
@@ -158,20 +165,6 @@ export default function AutomaticAllocationModal({
           selectedEvent.start_time,
         )
         .then((it) => {
-          const newAllocatedEvents = [...allocatedEventsList];
-          const newUnallocatedEvents = [...unallocatedEventsList];
-          const index = allocatedEventsList.findIndex(
-            (value) => (
-              value.subject_code === subjectCode,
-              value.class_code === classCode,
-              value.week_day === selectedEvent.week_day,
-              value.start_time === selectedEvent.start_time
-            ),
-          );
-          const event = newAllocatedEvents.splice(index, 1);
-          newUnallocatedEvents.push(event[0]);
-          setAllocatedEvents(newAllocatedEvents);
-          setUnallocatedEvents(newUnallocatedEvents);
           toastSuccess('Alocação removida com sucesso!');
           onCloseEditEventModal();
           // refetch data
@@ -180,6 +173,32 @@ export default function AutomaticAllocationModal({
         .catch((error) => {
           toastError(`Erro ao remover alocação: ${error}`);
           onCloseEditEventModal();
+        });
+
+      const newAllocatedEvents = [...allocatedEventsList];
+      const newUnallocatedEvents = [...unallocatedEventsList];
+      const index = allocatedEventsList.findIndex(
+        (value) => (
+          value.subject_code === subjectCode,
+          value.class_code === classCode,
+          value.week_day === selectedEvent.week_day,
+          value.start_time === selectedEvent.start_time
+        ),
+      );
+      if (index >= 0) {
+        const event = newAllocatedEvents.splice(index, 1);
+        newUnallocatedEvents.push(event[0]);
+      }
+      setAllocatedEvents(newAllocatedEvents);
+      setUnallocatedEvents(newUnallocatedEvents);
+
+      eventsService
+        .editAllocations(newAllocatedEvents, newUnallocatedEvents)
+        .then((it) => {
+          console.log('Editei a alocação!');
+        })
+        .catch((error) => {
+          toastError(`Erro ao salvar alocação: ${error}`);
         });
     }
   }

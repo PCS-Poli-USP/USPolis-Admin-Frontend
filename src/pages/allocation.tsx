@@ -38,6 +38,7 @@ import Event from 'models/event.model';
 import { BsSearch } from 'react-icons/bs';
 import Dialog from 'components/common/dialog.component';
 import AutomaticAllocationModal from 'components/common/automaticAllocation.modal';
+import AllocationOptions from 'components/common/allocationOptions.modal';
 
 function Allocation() {
   const [allocation, setAllocation] = useState<any[]>([]);
@@ -52,9 +53,9 @@ function Allocation() {
     onClose: onCloseDelete,
   } = useDisclosure();
   const {
-    isOpen: isOpenAllocDialog,
-    onOpen: onOpenAllocDialog,
-    onClose: onCloseAllocDialog,
+    isOpen: isOpenAllocOptions,
+    onOpen: onOpenAllocOptions,
+    onClose: onCloseAllocOptions,
   } = useDisclosure();
   const {
     isOpen: isOpenAllocModal,
@@ -143,11 +144,28 @@ function Allocation() {
   }
 
   function handleAllocClick() {
-    onOpenAllocDialog();
+    onOpenAllocOptions();
   }
 
-  function handleAllocConfirm() {
-    onCloseAllocDialog();
+  function handleAllocLoad() {
+    setLoading(true);
+    eventsService
+      .loadAllocations()
+      .then((it) => {
+        console.log(it);
+        setAllocatedEvents(it.data.allocated_events);
+        setUnallocatedEvents(it.data.unallocated_events);
+        toastSuccess('Alocação carregada com sucesso!');
+        onOpenAllocModal();
+        onCloseAllocOptions();
+      })
+      .catch((error) => {
+        toastError(`Erro ao carregar alocação: ${error}`);
+      })
+      .finally(() => setLoading(false));
+  }
+
+  function handleAllocNew() {
     setLoading(true);
     eventsService
       .allocate()
@@ -155,6 +173,7 @@ function Allocation() {
         setAllocatedEvents(it.data.allocated);
         setUnallocatedEvents(it.data.unallocated);
         onOpenAllocModal();
+        onCloseAllocOptions();
       })
       .catch(({ response }: AxiosError<ErrorResponse>) => {
         onCloseAllocModal();
@@ -163,8 +182,6 @@ function Allocation() {
       })
       .finally(() => setLoading(false));
   }
-
-  function handleAllocSave() {}
 
   function handleDeleteClick() {
     onOpenDelete();
@@ -337,18 +354,16 @@ function Allocation() {
               }
             />
 
-            <Dialog
-              isOpen={isOpenAllocDialog}
-              onClose={onCloseAllocDialog}
-              onConfirm={handleAllocConfirm}
-              title='Deseja calcular alocação para as turmas e salas cadastradas'
-              warningText='ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
+            <AllocationOptions
+              isOpen={isOpenAllocOptions}
+              onLoad={handleAllocLoad}
+              onNew={handleAllocNew}
+              onClose={onCloseAllocOptions}
             />
 
             <AutomaticAllocationModal
               isOpen={isOpenAllocModal}
               onClose={onCloseAllocModal}
-              onSave={handleAllocSave}
               allocatedEvents={allocatedEvents}
               unallocatedEvents={unallocatedEvents}
             />

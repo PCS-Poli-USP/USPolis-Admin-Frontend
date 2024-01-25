@@ -160,7 +160,13 @@ export default function AutomaticAllocationAccordion({
             classrooms.map((value, index) => (
               <HStack spacing={3} key={index}>
                 <BsHouseFill />
-                <Text>{`${value.classroom_name} - ${value.capacity} capacidade`}</Text>
+                {value.ignore_to_allocate ? (
+                  <Text>
+                    {`${value.classroom_name} - ${value.capacity} capacidade (Ignorada)`}
+                  </Text>
+                ) : (
+                  <Text>{`${value.classroom_name} - ${value.capacity} capacidade`}</Text>
+                )}
               </HStack>
             ))
           ) : (

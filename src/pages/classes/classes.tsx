@@ -51,6 +51,7 @@ import {
 } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
 import Event, { EventByClassrooms } from 'models/event.model';
+import AllocationOptions from 'components/common/allocationOptions.modal';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -79,9 +80,9 @@ function Classes() {
     onClose: onCloseEdit,
   } = useDisclosure();
   const {
-    isOpen: isOpenAllocDialog,
-    onOpen: onOpenAllocDialog,
-    onClose: onCloseAllocDialog,
+    isOpen: isOpenAllocOptions,
+    onOpen: onOpenAllocOptions,
+    onClose: onCloseAllocOptions,
   } = useDisclosure();
   const {
     isOpen: isOpenAllocModal,
@@ -329,7 +330,7 @@ function Classes() {
   function handleDeleteAlloc() {
     if (selectedClass) {
       eventsService
-        .deleteAllocation(
+        .deleteClassAllocation(
           selectedClass.subject_code,
           selectedClass.class_code,
         )
@@ -377,7 +378,7 @@ function Classes() {
 
   function handleAllocationEditDelete(subjectCode: string, classCode: string) {
     eventsService
-      .deleteAllocation(subjectCode, classCode)
+      .deleteClassAllocation(subjectCode, classCode)
       .then((it) => {
         toastSuccess(
           `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
@@ -414,18 +415,34 @@ function Classes() {
   }
 
   function handleAllocClick() {
-    onOpenAllocDialog();
+    onOpenAllocOptions();
   }
 
-  function handleAllocConfirm() {
+  function handleAllocLoad() {
     setAllocating(true);
-    // eventsService
+    eventsService
+      .loadAllocations()
+      .then((it) => {
+        setAllocatedEvents(it.data.allocated_events);
+        setUnallocatedEvents(it.data.unallocated_events);
+        toastSuccess('Alocação carregada com sucesso!');
+        onOpenAllocModal();
+        onCloseAllocOptions();
+      })
+      .catch((error) => {
+        toastError(`Erro ao carregar alocação: ${error}`);
+      })
+      .finally(() => setAllocating(false));
+  }
+
+  function handleAllocNew() {
+    setAllocating(true);
     eventsService
       .allocate()
       .then((it) => {
         setAllocatedEvents(it.data.allocated);
         setUnallocatedEvents(it.data.unallocated);
-        onCloseAllocDialog();
+        onCloseAllocOptions();
         onOpenAllocModal();
       })
       .catch(({ response }: AxiosError<ErrorResponse>) => {
@@ -435,8 +452,6 @@ function Classes() {
       })
       .finally(() => setAllocating(false));
   }
-
-  function handleAllocSave() {}
 
   function handleEditClick(obj: Class) {
     setSelectedClass(obj);
@@ -500,17 +515,17 @@ function Classes() {
         onDelete={handleAllocationEditDelete}
         classEvents={selectedClassEventList}
       />
-      <Dialog
-        isOpen={isOpenAllocDialog}
-        onClose={onCloseAllocDialog}
-        onConfirm={handleAllocConfirm}
-        title='Deseja calcular alocação para as turmas e salas cadastradas'
-        warningText='ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
+
+      <AllocationOptions
+        isOpen={isOpenAllocOptions}
+        onLoad={handleAllocLoad}
+        onNew={handleAllocNew}
+        onClose={onCloseAllocOptions}
       />
+
       <AutomaticAllocationModal
         isOpen={isOpenAllocModal}
         onClose={onCloseAllocModal}
-        onSave={handleAllocSave}
         allocatedEvents={allocatedEvents}
         unallocatedEvents={unallocatedEvents}
       />
@@ -526,7 +541,7 @@ function Classes() {
               Adicionar Turma
             </Button>
             <JupiterCrawlerPopover onSave={handleCrawlerSave} />
-            <Button ml={2} colorScheme='red' onClick={handleAllocClick}>
+            <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
               Alocação Automática
             </Button>
           </Flex>
