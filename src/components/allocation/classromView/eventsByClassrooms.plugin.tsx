@@ -102,7 +102,7 @@ function ClassroomsTables(props: any) {
 
   function handleAllocationDelete(subjectCode: string, classCode: string) {
     eventsService
-      .deleteAllocation(subjectCode, classCode)
+      .deleteClassAllocation(subjectCode, classCode)
       .then((it) => {
         toastSuccess(
           `Alocação de ${subjectCode} - ${classCode}  removida com sucesso!`,

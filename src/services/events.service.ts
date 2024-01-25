@@ -29,11 +29,28 @@ export default class EventsService extends HttpService {
     });
   }
 
-  deleteOneAllocation(subject_code: string, class_code: string, week_day: string, start_time: string) {
-    return this.http.patch(`delete/${subject_code}/${class_code}/${week_day}/${start_time}`)
+  loadAllocations(): Promise<AxiosResponse<any>> {
+    return this.http.get('load');
   }
 
-  deleteAllocation(subject_code: string, class_code: string) {
+  editAllocations(
+    allocated_events: Event[],
+    unallocated_events: Event[],
+  ): Promise<AxiosResponse<any>> {
+    return this.http.patch('edit-allocations', {allocated_events, unallocated_events});
+  }
+  deleteOneAllocation(
+    subject_code: string,
+    class_code: string,
+    week_day: string,
+    start_time: string,
+  ) {
+    return this.http.patch(
+      `delete/${subject_code}/${class_code}/${week_day}/${start_time}`,
+    );
+  }
+
+  deleteClassAllocation(subject_code: string, class_code: string) {
     return this.http.patch(`delete/${subject_code}/${class_code}`);
   }
 
