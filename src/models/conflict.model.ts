@@ -16,5 +16,5 @@ interface ByClassroomConflict {
 
 interface ByWeekDayConflict {
   name: string;
-  events: Event[];
+  events: Event[][];
 }

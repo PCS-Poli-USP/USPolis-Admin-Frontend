@@ -177,53 +177,67 @@ const ConflictsPage = () => {
                   <C.Text fontSize={'lg'} fontWeight={'bold'}>
                     {weekDaysFormatter(week_day.name)}
                   </C.Text>
-                  {week_day.events.map((event) => (
+                  {week_day.events.map((event_group, index) => (
                     <C.Flex
-                      key={event.id}
-                      direction={'row'}
+                      key={index}
+                      direction={'column'}
                       justifyContent={'space-between'}
+                      gap={4}
                       border={'1px solid'}
+                      boxShadow={'md'}
                       borderColor={'gray.200'}
                       borderRadius={4}
                       padding={4}
                     >
-                      <C.Flex direction={'column'} flex={1}>
-                        <C.Text fontSize={'md'}>
-                          <strong>Início: {event.start_time}</strong>
-                        </C.Text>
-                        <C.Text fontSize={'md'}>
-                          <strong>Fim: {event.end_time}</strong>
-                        </C.Text>
-                      </C.Flex>
-                      <C.Flex direction={'column'} flex={1}>
-                        <C.Text fontSize={'md'}>
-                          Disciplina: {event.subject_name}
-                        </C.Text>
-                        <C.Text fontSize={'md'}>
-                          Professores:{' '}
-                          {event.professors?.map((professor, index) => (
-                            <>
-                              {professor}
-                              {event &&
-                              event.professors &&
-                              index !== event.professors.length - 1
-                                ? ', '
-                                : ''}
-                            </>
-                          ))}
-                        </C.Text>
-                      </C.Flex>
-                      <C.Flex direction={'column'} flex={1}>
-                        <C.Text fontSize={'md'}>
-                          Código de turma: {event.class_code}
-                        </C.Text>
-                        <C.Text fontSize={'md'}>
-                          Código de disciplina: {event.subject_code}
-                        </C.Text>
-                      </C.Flex>
-                      <C.Button onClick={() => handleEditClick(event)}>
-                        Editar Alocação
-                      </C.Button>
+                      {event_group.map((event, index) => (
+                        <C.Flex
+                          key={event.id}
+                          direction={'row'}
+                          justifyContent={'space-between'}
+                          border={'1px solid'}
+                          borderColor={'gray.200'}
+                          borderRadius={4}
+                          padding={4}
+                        >
+                          <C.Flex direction={'column'} flex={1}>
+                            <C.Text fontSize={'md'}>
+                              <strong>Início: {event.start_time}</strong>
+                            </C.Text>
+                            <C.Text fontSize={'md'}>
+                              <strong>Fim: {event.end_time}</strong>
+                            </C.Text>
+                          </C.Flex>
+                          <C.Flex direction={'column'} flex={1}>
+                            <C.Text fontSize={'md'}>
+                              Disciplina: {event.subject_name}
+                            </C.Text>
+                            <C.Text fontSize={'md'}>
+                              Professores:{' '}
+                              {event.professors?.map((professor, index) => (
+                                <>
+                                  {professor}
+                                  {event &&
+                                  event.professors &&
+                                  index !== event.professors.length - 1
+                                    ? ', '
+                                    : ''}
+                                </>
+                              ))}
+                            </C.Text>
+                          </C.Flex>
+                          <C.Flex direction={'column'} flex={1}>
+                            <C.Text fontSize={'md'}>
+                              Código de turma: {event.class_code}
+                            </C.Text>
+                            <C.Text fontSize={'md'}>
+                              Código de disciplina: {event.subject_code}
+                            </C.Text>
+                          </C.Flex>
+                          <C.Button onClick={() => handleEditClick(event)}>
+                            Editar Alocação
+                          </C.Button>
+                        </C.Flex>
+                      ))}
                     </C.Flex>
                   ))}
                 </C.Flex>
