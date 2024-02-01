@@ -28,6 +28,7 @@ import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
 import RegisterModal from 'components/classes/register.modal';
 import EditEventModal from 'components/allocation/editEvent.modal';
+import AllocationOptions from 'components/common/allocationOptions.modal';
 import DataTable from 'components/common/dataTable.component';
 import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
@@ -51,7 +52,7 @@ import {
 } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
 import Event, { EventByClassrooms } from 'models/event.model';
-import AllocationOptions from 'components/common/allocationOptions.modal';
+import CrawlerService from 'services/crawler.service';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -251,6 +252,7 @@ function Classes() {
 
   const classesService = new ClassesService();
   const buildingsService = new BuildingsService();
+  const crawlerService = new CrawlerService();
   const eventsService = new EventsService();
 
   useEffect(() => {
@@ -313,6 +315,7 @@ function Classes() {
   }
 
   function handleDeleteClass() {
+
     if (selectedClass) {
       classesService
         .delete(selectedClass.subject_code, selectedClass.class_code)
@@ -473,9 +476,12 @@ function Classes() {
     }
   }
 
-  function handleCrawlerSave(subjectsList: string[]) {
-    classesService
-      .createMany(subjectsList)
+  function handleCrawlerSave(subjectsList: string[], building_id: string) {
+    crawlerService
+      .crawl({
+        building_id,
+        subject_codes_list: subjectsList,
+      })
       .then((it) => {
         console.log(it);
         fetchData();

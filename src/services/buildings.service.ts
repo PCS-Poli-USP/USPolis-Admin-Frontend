@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { Building, CreateBuilding } from 'models/building.model';
 import HttpService from './http.service';
 
