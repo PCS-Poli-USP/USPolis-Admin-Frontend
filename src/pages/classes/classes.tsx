@@ -426,8 +426,8 @@ function Classes() {
         setAllocatedEvents(it.data.allocated_events);
         setUnallocatedEvents(it.data.unallocated_events);
         toastSuccess('Alocação carregada com sucesso!');
-        onOpenAllocModal();
         onCloseAllocOptions();
+        onOpenAllocModal();
       })
       .catch((error) => {
         toastError(`Erro ao carregar alocação: ${error}`);

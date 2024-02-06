@@ -61,7 +61,7 @@ export default function AllocationOptions({
             onConfirm={handleAllocConfirm}
             title={
               isLoading
-                ? 'Deseja carregar a última alocação feita para as turmas e salas cadastradas'
+                ? 'Deseja recuperar a última alocação feita para as turmas e salas cadastradas'
                 : 'Deseja calcular uma alocação para as turmas e salas cadastradas'
             }
             warningText='ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
@@ -69,7 +69,7 @@ export default function AllocationOptions({
           <List spacing={3}>
             <ListItem>
               <ListIcon as={DownloadIcon} />
-              Carregar a última alocação
+              Recuperar a última alocação
             </ListItem>
             <ListItem>
               <ListIcon as={CalendarIcon} />
@@ -88,7 +88,7 @@ export default function AllocationOptions({
               handleAllocClick();
             }}
           >
-            Carregar
+            Recuperar
           </Button>
           <Button
             colorScheme='blue'

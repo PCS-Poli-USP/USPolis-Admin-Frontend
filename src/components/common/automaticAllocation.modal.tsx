@@ -257,7 +257,7 @@ export default function AutomaticAllocationModal({
             Ir para Alocações
           </Button>
           <Button colorScheme='blue' mr={0} onClick={onClose}>
-            Fechar
+            Salvar
           </Button>
         </ModalFooter>
       </ModalContent>

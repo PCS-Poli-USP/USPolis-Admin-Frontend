@@ -23,6 +23,7 @@ import EventContent from 'components/allocation/dayView/eventContent';
 import eventsByClassroomsPlugin from 'components/allocation/classromView/eventsByClassrooms.plugin';
 import eventsByWeekPlugin from 'components/allocation/weekView/eventsByWeek.plugin';
 import Navbar from 'components/common/navbar.component';
+import Loading from 'components/common/loading.component';
 import ClassesPDF from 'components/pdf/classesPDF';
 import { appContext } from 'context/AppContext';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -156,8 +157,8 @@ function Allocation() {
         setAllocatedEvents(it.data.allocated_events);
         setUnallocatedEvents(it.data.unallocated_events);
         toastSuccess('Alocação carregada com sucesso!');
-        onOpenAllocModal();
         onCloseAllocOptions();
+        onOpenAllocModal();
       })
       .catch((error) => {
         toastError(`Erro ao carregar alocação: ${error}`);
@@ -172,8 +173,8 @@ function Allocation() {
       .then((it) => {
         setAllocatedEvents(it.data.allocated);
         setUnallocatedEvents(it.data.unallocated);
-        onOpenAllocModal();
         onCloseAllocOptions();
+        onOpenAllocModal();
       })
       .catch(({ response }: AxiosError<ErrorResponse>) => {
         onCloseAllocModal();
@@ -202,6 +203,31 @@ function Allocation() {
   return (
     <>
       <Navbar />
+      <Loading isOpen={loading} onClose={() => setLoading(false)} />
+      <Dialog
+        isOpen={isOpenDelete}
+        onClose={onCloseDelete}
+        onConfirm={handleDelete}
+        title={'Deseja remover todas alocações feitas'}
+        warningText={
+          'ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
+        }
+      />
+
+      <AllocationOptions
+        isOpen={isOpenAllocOptions}
+        onLoad={handleAllocLoad}
+        onNew={handleAllocNew}
+        onClose={onCloseAllocOptions}
+      />
+
+      <AutomaticAllocationModal
+        isOpen={isOpenAllocModal}
+        onClose={onCloseAllocModal}
+        allocatedEvents={allocatedEvents}
+        unallocatedEvents={unallocatedEvents}
+      />
+
       <Grid
         templateAreas={`"header"
                         "main"`}
@@ -342,30 +368,6 @@ function Allocation() {
               resourceAreaWidth='10%'
               resourceGroupField='building'
               resourceAreaHeaderContent='Salas'
-            />
-
-            <Dialog
-              isOpen={isOpenDelete}
-              onClose={onCloseDelete}
-              onConfirm={handleDelete}
-              title={'Deseja remover todas alocações feitas'}
-              warningText={
-                'ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
-              }
-            />
-
-            <AllocationOptions
-              isOpen={isOpenAllocOptions}
-              onLoad={handleAllocLoad}
-              onNew={handleAllocNew}
-              onClose={onCloseAllocOptions}
-            />
-
-            <AutomaticAllocationModal
-              isOpen={isOpenAllocModal}
-              onClose={onCloseAllocModal}
-              allocatedEvents={allocatedEvents}
-              unallocatedEvents={unallocatedEvents}
             />
           </Skeleton>
         </GridItem>
