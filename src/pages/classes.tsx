@@ -146,30 +146,15 @@ function Classes() {
       header: 'Sala',
       cell: ({ row }) => (
         <Box>
-          <Text>
-            {row.original.classrooms && row.original.classrooms.length > 0
-              ? row.original.classrooms[0]
-              : 'Não alocada'}
-          </Text>
+          {row.original.classrooms ? (
+            row.original.classrooms.map((classroom, index) => (
+              <Text key={index}>{classroom}</Text>
+            ))
+          ) : (
+            <Text>Não alocada</Text>
+          )}
         </Box>
       ),
-    },
-    {
-      accessorKey: 'subscribers',
-      header: 'Nº Alunos',
-      filterFn: FilterNumber,
-    },
-    {
-      accessorKey: 'professors',
-      header: 'Professores',
-      cell: ({ row }) => (
-        <Box>
-          {row.original.professors?.map((professor, index) => (
-            <Text key={index}>{professor}</Text>
-          ))}
-        </Box>
-      ),
-      filterFn: FilterArray,
     },
     {
       accessorFn: (row) =>
@@ -184,6 +169,23 @@ function Classes() {
         <Box>
           {(info.getValue() as string[])?.map((it) => (
             <Text key={it}>{it}</Text>
+          ))}
+        </Box>
+      ),
+      filterFn: FilterArray,
+    },
+    {
+      accessorKey: 'subscribers',
+      header: 'Nº Alunos',
+      filterFn: FilterNumber,
+    },
+    {
+      accessorKey: 'professors',
+      header: 'Professores',
+      cell: ({ row }) => (
+        <Box>
+          {row.original.professors?.map((professor, index) => (
+            <Text key={index}>{professor}</Text>
           ))}
         </Box>
       ),
