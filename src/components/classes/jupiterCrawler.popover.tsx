@@ -71,6 +71,7 @@ export default function JupiterCrawlerPopover({
 
   function handleConfirmClick() {
     if (buildingIdSelection !== undefined && subjectsList.length > 0) {
+      setSubjectsList([]);
       onSave(subjectsList, buildingIdSelection);
       onClose();
     }
