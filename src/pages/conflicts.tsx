@@ -3,7 +3,7 @@ import ConflictsService from '../services/conflicts.service';
 import Navbar from 'components/common/navbar.component';
 import * as C from '@chakra-ui/react';
 import Conflict from 'models/conflict.model';
-import { useDisclosure, useToast } from '@chakra-ui/react';
+import { AccordionButton, useDisclosure, useToast } from '@chakra-ui/react';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import EventsService from 'services/events.service';
 import Event from 'models/event.model';
@@ -173,95 +173,98 @@ const ConflictsPage = () => {
           </C.Flex>
         </C.Flex>
         <C.Flex direction={'column'}>
-          {selectedBuildingName && selectedClassroomName ? (
-            conflicts?.buildings
-              .find((building) => building.name === selectedBuildingName)
-              ?.classrooms.find(
-                (classroom) => classroom.name === selectedClassroomName,
-              )
-              ?.week_days.map((week_day) => (
-                <C.Flex
-                  direction={'column'}
-                  justifyContent={'space-between'}
-                  padding={4}
-                  border={'1px solid'}
-                  borderColor={'gray.200'}
-                  boxShadow={'md'}
-                  borderRadius={4}
-                  mb={4}
-                  gap={2}
-                >
-                  <C.Text fontSize={'lg'} fontWeight={'bold'}>
-                    {weekDaysFormatter(week_day.name)}
-                  </C.Text>
-                  {week_day.events.map((event_group, index) => (
-                    <C.Flex
-                      key={index}
-                      direction={'column'}
-                      justifyContent={'space-between'}
+          <C.Accordion allowToggle>
+            {selectedBuildingName && selectedClassroomName ? (
+              conflicts?.buildings
+                .find((building) => building.name === selectedBuildingName)
+                ?.classrooms.find(
+                  (classroom) => classroom.name === selectedClassroomName,
+                )
+                ?.week_days.map((week_day) => (
+                  <C.AccordionItem>
+                    <h2>
+                      <C.AccordionButton>
+                        <C.Box flex='1' textAlign='left'>
+                          {weekDaysFormatter(week_day.name)}
+                        </C.Box>
+                        <C.AccordionIcon />
+                      </C.AccordionButton>
+                    </h2>
+                    <C.AccordionPanel
+                      display='flex'
+                      flexDirection='column'
                       gap={4}
-                      border={'1px solid'}
-                      boxShadow={'md'}
-                      borderColor={'gray.200'}
-                      borderRadius={4}
-                      padding={4}
                     >
-                      {event_group.map((event, index) => (
+                      {week_day.events.map((event_group, index) => (
                         <C.Flex
-                          key={event.id}
-                          direction={'row'}
+                          key={index}
+                          direction={'column'}
                           justifyContent={'space-between'}
+                          gap={4}
                           border={'1px solid'}
+                          boxShadow={'md'}
                           borderColor={'gray.200'}
                           borderRadius={4}
                           padding={4}
                         >
-                          <C.Flex direction={'column'} flex={1}>
-                            <C.Text fontSize={'md'}>
-                              <strong>Início: {event.start_time}</strong>
-                            </C.Text>
-                            <C.Text fontSize={'md'}>
-                              <strong>Fim: {event.end_time}</strong>
-                            </C.Text>
-                          </C.Flex>
-                          <C.Flex direction={'column'} flex={1}>
-                            <C.Text fontSize={'md'}>
-                              Disciplina: {event.subject_name}
-                            </C.Text>
-                            <C.Text fontSize={'md'}>
-                              Professores:{' '}
-                              {event.professors?.map((professor, index) => (
-                                <>
-                                  {professor}
-                                  {event &&
-                                  event.professors &&
-                                  index !== event.professors.length - 1
-                                    ? ', '
-                                    : ''}
-                                </>
-                              ))}
-                            </C.Text>
-                          </C.Flex>
-                          <C.Flex direction={'column'} flex={1}>
-                            <C.Text fontSize={'md'}>
-                              Código de turma: {event.class_code}
-                            </C.Text>
-                            <C.Text fontSize={'md'}>
-                              Código de disciplina: {event.subject_code}
-                            </C.Text>
-                          </C.Flex>
-                          <C.Button onClick={() => handleEditClick(event)}>
-                            Editar Alocação
-                          </C.Button>
+                          {event_group.map((event) => (
+                            <C.Flex
+                              key={event.id}
+                              direction={'row'}
+                              justifyContent={'space-between'}
+                              border={'1px solid'}
+                              borderColor={'gray.200'}
+                              borderRadius={4}
+                              padding={4}
+                            >
+                              <C.Flex direction={'column'} flex={1}>
+                                <C.Text fontSize={'md'}>
+                                  <strong>Início: {event.start_time}</strong>
+                                </C.Text>
+                                <C.Text fontSize={'md'}>
+                                  <strong>Fim: {event.end_time}</strong>
+                                </C.Text>
+                              </C.Flex>
+                              <C.Flex direction={'column'} flex={1}>
+                                <C.Text fontSize={'md'}>
+                                  Disciplina: {event.subject_name}
+                                </C.Text>
+                                <C.Text fontSize={'md'}>
+                                  Professores:{' '}
+                                  {event.professors?.map((professor, index) => (
+                                    <>
+                                      {professor}
+                                      {event &&
+                                      event.professors &&
+                                      index !== event.professors.length - 1
+                                        ? ', '
+                                        : ''}
+                                    </>
+                                  ))}
+                                </C.Text>
+                              </C.Flex>
+                              <C.Flex direction={'column'} flex={1}>
+                                <C.Text fontSize={'md'}>
+                                  Código de turma: {event.class_code}
+                                </C.Text>
+                                <C.Text fontSize={'md'}>
+                                  Código de disciplina: {event.subject_code}
+                                </C.Text>
+                              </C.Flex>
+                              <C.Button onClick={() => handleEditClick(event)}>
+                                Editar Alocação
+                              </C.Button>
+                            </C.Flex>
+                          ))}
                         </C.Flex>
                       ))}
-                    </C.Flex>
-                  ))}
-                </C.Flex>
-              ))
-          ) : (
-            <></>
-          )}
+                    </C.AccordionPanel>
+                  </C.AccordionItem>
+                ))
+            ) : (
+              <></>
+            )}
+          </C.Accordion>
         </C.Flex>
       </C.Flex>
       <EditEventModal

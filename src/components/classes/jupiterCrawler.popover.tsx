@@ -18,6 +18,7 @@ import {
   Select,
   UnorderedList,
   useDisclosure,
+  Spinner,
 } from '@chakra-ui/react';
 import { appContext } from 'context/AppContext';
 import { Building } from 'models/building.model';
@@ -45,6 +46,17 @@ export default function JupiterCrawlerPopover({
   const [buildingsList, setBuildingsList] = useState<Building[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const initialFocusRef = useRef(null);
+  const [buildingsLoading, setBuildingsLoading] = useState(true);
+
+  useEffect(() => {
+    if (buildingsList.length === 1) {
+      setBuildingIdSelection(buildingsList[0].id);
+    }
+  }, [buildingsList]);
+
+  useEffect(() => {
+    getBuildingsList();
+  }, [dbUser]);
 
   function handleAddClick() {
     if (subjectInput.length > 0 && !subjectsList.includes(subjectInput))
@@ -59,6 +71,7 @@ export default function JupiterCrawlerPopover({
 
   function handleConfirmClick() {
     if (buildingIdSelection !== undefined && subjectsList.length > 0) {
+      setSubjectsList([]);
       onSave(subjectsList, buildingIdSelection);
       onClose();
     }
@@ -67,18 +80,16 @@ export default function JupiterCrawlerPopover({
   function getBuildingsList() {
     if (dbUser) {
       if (dbUser.isAdmin) {
+        setBuildingsLoading(true);
         buildingsService.list().then((response) => {
           setBuildingsList(response.data);
+          setBuildingsLoading(false);
         });
       } else {
         setBuildingsList(dbUser.buildings);
       }
     }
   }
-
-  useEffect(() => {
-    getBuildingsList();
-  }, [dbUser]);
 
   return (
     <Popover
@@ -94,16 +105,19 @@ export default function JupiterCrawlerPopover({
         <PopoverCloseButton />
         <PopoverHeader>Disciplinas</PopoverHeader>
         <PopoverBody>
-          <Select
-            placeholder='selecionar prédio'
-            onChange={(event) => setBuildingIdSelection(event.target.value)}
-          >
-            {buildingsList.map((it) => (
-              <option key={it.id} value={it.id}>
-                {it.name}
-              </option>
-            ))}
-          </Select>
+          {buildingsList.length !== 1 && (
+            <Select
+              placeholder='selecionar prédio'
+              onChange={(event) => setBuildingIdSelection(event.target.value)}
+              icon={buildingsLoading ? <Spinner size='sm' /> : undefined}
+            >
+              {buildingsList.map((it) => (
+                <option key={it.id} value={it.id}>
+                  {it.name}
+                </option>
+              ))}
+            </Select>
+          )}
         </PopoverBody>
         <PopoverBody maxH='2xs' overflowY='auto'>
           <InputGroup>
