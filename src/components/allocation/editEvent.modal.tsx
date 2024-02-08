@@ -16,12 +16,13 @@ import {
   Stack,
   Text,
   useCheckboxGroup,
+  useDisclosure,
 } from '@chakra-ui/react';
+import Dialog from 'components/common/dialog.component';
 import { AvailableClassroom } from 'models/classroom.model';
 import { EventByClassrooms } from 'models/event.model';
 import { useEffect, useState } from 'react';
 import ClassroomsService from 'services/classrooms.service';
-import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
 
 interface EditEventModalProps {
@@ -34,6 +35,7 @@ interface EditEventModalProps {
     newClassroom: string,
     building: string,
   ) => void;
+  onDelete: (subjectCode: string, classCode: string) => void;
   classEvents: EventByClassrooms[];
 }
 
@@ -41,8 +43,15 @@ export default function EditEventModal({
   isOpen,
   onClose,
   onSave,
+  onDelete,
   classEvents,
 }: EditEventModalProps) {
+  const {
+    isOpen: isOpenDialog,
+    onOpen: onOpenDialog,
+    onClose: onCloseDialog,
+  } = useDisclosure();
+
   const [weekDays, setWeekDays] = useState<string[]>([]);
   const { value, setValue, getCheckboxProps } = useCheckboxGroup();
   const [availableClassrooms, setAvailableClassrooms] = useState<
@@ -59,18 +68,17 @@ export default function EditEventModal({
     });
 
   const classroomsService = new ClassroomsService();
-  const eventsService = new EventsService();
 
   const classData = classEvents[0];
 
   useEffect(() => {
-    const _weekDays = classEvents.map((it) => it.weekday);
+    const _weekDays = classEvents.map((it) => it.week_day);
     setValue(_weekDays);
     setWeekDays(_weekDays);
     const availableByEvent = new Map<string, AvailableClassroom[]>();
     const available: AvailableClassroom[][] = [];
     const promises = classEvents.map((cl) =>
-      classroomsService.getAvailable(cl.weekday, cl.startTime, cl.endTime),
+      classroomsService.getAvailable(cl.week_day, cl.start_time, cl.end_time),
     );
 
     Promise.all(promises).then((values) => {
@@ -120,13 +128,25 @@ export default function EditEventModal({
 
   function handleSaveClick() {
     onSave(
-      classData.subjectCode,
-      classData.classCode,
+      classData.subject_code,
+      classData.class_code,
       value as string[],
       newClassroom,
       selectedClassroom.building,
     );
     onClose();
+  }
+
+  function handleDeleteClick() {
+    onOpenDialog();
+  }
+
+  function handleDeleteConfirm() {
+    onCloseDialog();
+    if (classData.subject_code && classData.class_code) {
+      onDelete(classData.subject_code, classData.class_code);
+      onClose();
+    }
   }
 
   return (
@@ -139,9 +159,9 @@ export default function EditEventModal({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          Editar alocação - {classData?.subjectCode}
+          Editar alocação - {classData?.subject_code}
           <Text fontSize='md' fontWeight='normal'>
-            {classData?.classCodeText} -{' '}
+            {classData?.class_code_text} -{' '}
             {classData?.professors.join(', ').length > 25
               ? classData?.professors[0] + '...'
               : classData?.professors.join(', ')}
@@ -177,9 +197,9 @@ export default function EditEventModal({
               return (
                 <Checkbox
                   key={index}
-                  {...getCheckboxProps({ value: it.weekday })}
+                  {...getCheckboxProps({ value: it.week_day })}
                 >
-                  {Capitalize(it.weekday)} - {it.startTime} {it.endTime}
+                  {Capitalize(it.week_day)} - {it.start_time} {it.end_time}
                 </Checkbox>
               );
             })}
@@ -202,6 +222,14 @@ export default function EditEventModal({
               ))}
             </Select>
           </FormControl>
+
+          <Dialog
+            isOpen={isOpenDialog}
+            onClose={onCloseDialog}
+            onConfirm={handleDeleteConfirm}
+            title={`Deseja remover a alocação`}
+            warningText='Atenção: ao confirmar a alocação dessa turma será perdida'
+          />
         </ModalBody>
 
         <ModalFooter>
@@ -213,6 +241,10 @@ export default function EditEventModal({
           >
             Salvar
           </Button>
+          <Button colorScheme='red' mr={2} onClick={handleDeleteClick}>
+            Remover
+          </Button>
+
           <Button onClick={onClose}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>

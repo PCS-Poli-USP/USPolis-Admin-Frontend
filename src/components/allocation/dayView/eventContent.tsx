@@ -1,4 +1,11 @@
-import { Box, Heading, Tooltip, Stack, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Heading,
+  Tooltip,
+  Stack,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import { EventContentArg } from '@fullcalendar/react';
 
 export default function EventContent(eventInfo: EventContentArg) {
@@ -9,7 +16,7 @@ export default function EventContent(eventInfo: EventContentArg) {
     <Tooltip bg='white' label={ToolTipLabel(eventInfo)}>
       <Stack spacing={0}>
         {isTimeGridView && <Text noOfLines={1}>{eventInfo.timeText}</Text>}
-        <Heading size='sm'>{eventInfo.event.title}</Heading>
+        <Heading size='sm' alignContent={'center'} textColor={eventData.extendedProps?.has_to_be_allocated ? 'red.300' : 'white'} >{eventInfo.event.title}</Heading>
         {isTimeGridView && (
           <>
             <Text noOfLines={1}>{eventData.extendedProps?.professor}</Text>
@@ -29,17 +36,19 @@ function ToolTipLabel(eventInfo: EventContentArg) {
   return (
     <VStack bg='white' spacing={2} w='300px' alignItems='start'>
       <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
-        {`${eventData.extendedProps.subjectCode} - Turma ${eventData.extendedProps.classCode}`}
+        {`${eventData.extendedProps.subject_code} - Turma ${eventData.extendedProps.class_code}`}
       </Text>
       <Box>
         <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
           Professores
         </Text>
-        {(eventData.extendedProps.professors as string[]).map((professor, index) => (
-          <Text fontSize='lg' textColor='#408080' key={index}>
-            {professor}
-          </Text>
-        ))}
+        {(eventData.extendedProps.professors as string[]).map(
+          (professor, index) => (
+            <Text fontSize='lg' textColor='#408080' key={index}>
+              {professor}
+            </Text>
+          ),
+        )}
       </Box>
 
       <Box>
@@ -47,13 +56,18 @@ function ToolTipLabel(eventInfo: EventContentArg) {
           Informações
         </Text>
         <Text fontSize='lg' textColor='#408080'>{`Sala: ${
-          eventData.extendedProps.classroom ? eventData.extendedProps.classroom : 'NÃO ALOCADA'
+          eventData.extendedProps.classroom
+            ? eventData.extendedProps.classroom
+            : 'NÃO ALOCADA'
         }`}</Text>
         <Text
           fontSize='lg'
           textColor='#408080'
-        >{`Horário: ${eventData.extendedProps.startTime} - ${eventData.extendedProps.endTime}`}</Text>
-        <Text fontSize='lg' textColor='#408080'>{`Inscritos: ${eventData.extendedProps.subscribers}`}</Text>
+        >{`Horário: ${eventData.extendedProps.start_time} - ${eventData.extendedProps.end_time}`}</Text>
+        <Text
+          fontSize='lg'
+          textColor='#408080'
+        >{`Inscritos: ${eventData.extendedProps.subscribers}`}</Text>
       </Box>
     </VStack>
   );

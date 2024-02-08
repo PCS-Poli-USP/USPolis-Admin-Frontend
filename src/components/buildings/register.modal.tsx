@@ -1,9 +1,7 @@
 import {
   Button,
-  Checkbox,
   FormControl,
   FormLabel,
-  HStack,
   Input,
   Modal,
   ModalBody,
@@ -12,12 +10,9 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  NumberInput,
-  NumberInputField,
-  Select,
 } from '@chakra-ui/react';
 
-import { Building, CreateBuilding } from 'models/building.model';
+import { CreateBuilding } from 'models/building.model';
 
 import { useEffect, useState } from 'react';
 

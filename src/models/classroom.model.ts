@@ -3,6 +3,7 @@ export default interface Classroom {
   building: string;
   floor: number;
   capacity: number;
+  ignore_to_allocate: boolean;
   air_conditioning: boolean;
   projector: boolean;
   accessibility: boolean;

@@ -6,23 +6,26 @@ export default interface Event {
   week_day: string;
   start_time: string;
   end_time: string;
+  has_to_be_allocated: boolean;
   classroom?: string;
   building?: string;
   professors?: string[];
   subscribers: number;
+  vacancies: number;
   id?: string;
   subject_name?: string;
 }
 
 export interface EventByClassrooms {
-  subjectCode: string;
+  subject_code: string;
   classroom: string;
   building: string;
-  classCode: string;
+  has_to_be_allocated: boolean;
+  class_code: string;
   professors: string[];
-  startTime: string;
-  endTime: string;
-  weekday: string;
-  classCodeText: string;
+  start_time: string;
+  end_time: string;
+  week_day: string;
+  class_code_text: string;
   subscribers: number;
 }
