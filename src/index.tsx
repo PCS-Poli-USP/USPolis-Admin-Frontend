@@ -15,6 +15,7 @@ import AppContextProvider from 'context/AppContext';
 import theme from 'utils/chakra.theme';
 import Buildings from 'pages/buildings';
 import Users from 'pages/users/users';
+import ConflictsPage from 'pages/conflicts';
 
 Amplify.configure(awsConfig);
 
@@ -34,6 +35,7 @@ root.render(
               <Route path='classrooms' element={<Classrooms />} />
               <Route path='classes' element={<Classes />} />
               <Route path='allocation' element={<Allocation />} />
+              <Route path='conflicts' element={<ConflictsPage />} />
             </Route>
           </Routes>
         </Router>
