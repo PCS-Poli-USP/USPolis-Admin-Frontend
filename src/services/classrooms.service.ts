@@ -4,6 +4,18 @@ import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
+interface EventSpecification {
+  week_day: string;
+  start_time: string;
+  end_time: string;
+  id: string;
+}
+
+interface GetAvailableWithConflictIndicatorProps {
+  events: EventSpecification[];
+  building_id: string;
+}
+
 export default class ClassroomsService extends HttpService {
   constructor() {
     super(`${USPOLIS_SERVER_URL}/classrooms`);
@@ -24,7 +36,23 @@ export default class ClassroomsService extends HttpService {
   update(name: string, data: any): Promise<AxiosResponse<any>> {
     return this.http.put(name, data);
   }
-  getAvailable(week_day: string, start_time: string, end_time: string): Promise<AxiosResponse<AvailableClassroom[]>> {
-    return this.http.get('available', { params: { week_day, start_time, end_time } });
+  getAvailable(
+    week_day: string,
+    start_time: string,
+    end_time: string,
+  ): Promise<AxiosResponse<AvailableClassroom[]>> {
+    return this.http.get('available', {
+      params: { week_day, start_time, end_time },
+    });
+  }
+
+  async getAvailableWithConflictIndicator(
+    data: GetAvailableWithConflictIndicatorProps,
+  ): Promise<AxiosResponse<AvailableClassroom[]>> {
+    const response = await this.http.post(
+      'available-with-conflict-check',
+      data,
+    );
+    return response;
   }
 }

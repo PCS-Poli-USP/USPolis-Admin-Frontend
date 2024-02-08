@@ -87,7 +87,6 @@ const ConflictsPage = () => {
     conflictsService
       .list()
       .then((res) => {
-        console.log(res.data);
         setConflicts(res.data);
       })
       .catch((err) => {
@@ -266,6 +265,7 @@ const ConflictsPage = () => {
             startTime: selectedEvent.start_time,
             endTime: selectedEvent.end_time,
             classCodeText: selectedEvent.class_code,
+            id: selectedEvent.id,
           },
         ]}
       />

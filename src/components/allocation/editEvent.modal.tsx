@@ -13,13 +13,17 @@ import {
   ModalHeader,
   ModalOverlay,
   Select,
+  Spinner,
   Stack,
   Text,
   useCheckboxGroup,
 } from '@chakra-ui/react';
+import { appContext } from 'context/AppContext';
+import { Building } from 'models/building.model';
 import { AvailableClassroom } from 'models/classroom.model';
 import { EventByClassrooms } from 'models/event.model';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import BuildingsService from 'services/buildings.service';
 import ClassroomsService from 'services/classrooms.service';
 import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
@@ -43,6 +47,7 @@ export default function EditEventModal({
   onSave,
   classEvents,
 }: EditEventModalProps) {
+  const { dbUser } = useContext(appContext);
   const [weekDays, setWeekDays] = useState<string[]>([]);
   const { value, setValue, getCheckboxProps } = useCheckboxGroup();
   const [availableClassrooms, setAvailableClassrooms] = useState<
@@ -57,34 +62,58 @@ export default function EditEventModal({
       building: '',
       capacity: 0,
     });
+  const [buildingIdSelection, setBuildingIdSelection] = useState<
+    string | undefined
+  >(undefined);
+  const [buildingsList, setBuildingsList] = useState<Building[]>([]);
+  const [buildingsLoading, setBuildingsLoading] = useState(true);
+  const [classroomsLoading, setClassroomsLoading] = useState(false);
 
   const classroomsService = new ClassroomsService();
-  const eventsService = new EventsService();
+  const buildingsService = new BuildingsService();
 
   const classData = classEvents[0];
+
+  useEffect(() => {
+    if (buildingsList.length === 1) {
+      setBuildingIdSelection(buildingsList[0].id);
+    }
+  }, [buildingsList]);
+
+  useEffect(() => {
+    getBuildingsList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dbUser]);
 
   useEffect(() => {
     const _weekDays = classEvents.map((it) => it.weekday);
     setValue(_weekDays);
     setWeekDays(_weekDays);
-    const availableByEvent = new Map<string, AvailableClassroom[]>();
-    const available: AvailableClassroom[][] = [];
-    const promises = classEvents.map((cl) =>
-      classroomsService.getAvailable(cl.weekday, cl.startTime, cl.endTime),
-    );
-
-    Promise.all(promises).then((values) => {
-      values.forEach((it, index) => {
-        availableByEvent.set(_weekDays[index], it.data);
-        available.push(it.data);
-      });
-      setAvailableClassroomsByEvent(availableByEvent);
-      const intersection = getIntersection(available);
-      setAvailableClassrooms(intersection);
-    });
-
     // eslint-disable-next-line
   }, [classEvents]);
+
+  useEffect(() => {
+    if (buildingIdSelection) {
+      setNewClassroom('');
+      setClassroomsLoading(true);
+      getAvailableClassrooms();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buildingIdSelection]);
+
+  async function getAvailableClassrooms() {
+    const response = await classroomsService.getAvailableWithConflictIndicator({
+      events: classEvents.map((it) => ({
+        week_day: it.weekday,
+        start_time: it.startTime,
+        end_time: it.endTime,
+        id: it.id!,
+      })),
+      building_id: buildingIdSelection!,
+    });
+    setAndSortAvailableClassrooms(response.data);
+    setClassroomsLoading(false);
+  }
 
   useEffect(() => {
     const available: AvailableClassroom[][] = [];
@@ -108,6 +137,29 @@ export default function EditEventModal({
     // eslint-disable-next-line
   }, [newClassroom]);
 
+  function setAndSortAvailableClassrooms(value: AvailableClassroom[]) {
+    setAvailableClassrooms(
+      value.sort((a, b) => {
+        if (a.conflicted && !b.conflicted) return 1;
+        if (!a.conflicted && b.conflicted) return -1;
+        return 0;
+      }),
+    );
+  }
+
+  function getBuildingsList() {
+    if (dbUser) {
+      if (dbUser.isAdmin) {
+        setBuildingsLoading(true);
+        buildingsService.list().then((response) => {
+          setBuildingsList(response.data);
+          setBuildingsLoading(false);
+        });
+      } else {
+        setBuildingsList(dbUser.buildings);
+      }
+    }
+  }
   function getIntersection(available: AvailableClassroom[][]) {
     return available.length
       ? available.reduce((p, c) =>
@@ -185,9 +237,25 @@ export default function EditEventModal({
             })}
           </Stack>
 
-          <FormControl my={4}>
-            <FormLabel>Salas disponíveis</FormLabel>
+          <FormControl>
+            <FormLabel mt={4}>Prédio</FormLabel>
+            {buildingsList.length !== 1 && (
+              <Select
+                placeholder='selecionar prédio'
+                onChange={(event) => setBuildingIdSelection(event.target.value)}
+                icon={buildingsLoading ? <Spinner size='sm' /> : undefined}
+              >
+                {buildingsList.map((it) => (
+                  <option key={it.id} value={it.id}>
+                    {it.name}
+                  </option>
+                ))}
+              </Select>
+            )}
+            <FormLabel mt={4}>Salas disponíveis</FormLabel>
             <Select
+              icon={classroomsLoading ? <Spinner size='sm' /> : undefined}
+              disabled={classroomsLoading || !buildingIdSelection}
               placeholder='Sala - Capacidade'
               isInvalid={classData?.subscribers > selectedClassroom.capacity}
               value={newClassroom}
@@ -197,6 +265,7 @@ export default function EditEventModal({
             >
               {availableClassrooms.map((it) => (
                 <option key={it.classroom_name} value={it.classroom_name}>
+                  {it.conflicted ? '! ' : ''}
                   {it.classroom_name} - {it.capacity}
                 </option>
               ))}
