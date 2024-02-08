@@ -29,6 +29,7 @@ const Links = [
   { text: 'Turmas', value: '/classes', admin: false },
   { text: 'Alocações', value: '/allocation', admin: false },
   { text: 'Prédios', value: '/buildings', admin: false },
+  { text: 'Conflitos', value: '/conflicts', admin: false },
   { text: 'Usuários', value: '/users', admin: true },
 ];
 

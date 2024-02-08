@@ -28,6 +28,7 @@ import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
 import RegisterModal from 'components/classes/register.modal';
 import EditEventModal from 'components/allocation/editEvent.modal';
+import AllocationOptions from 'components/common/allocationOptions.modal';
 import DataTable from 'components/common/dataTable.component';
 import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
@@ -51,7 +52,7 @@ import {
 } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
 import Event, { EventByClassrooms } from 'models/event.model';
-import AllocationOptions from 'components/common/allocationOptions.modal';
+import CrawlerService from 'services/crawler.service';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -147,30 +148,15 @@ function Classes() {
       header: 'Sala',
       cell: ({ row }) => (
         <Box>
-          <Text>
-            {row.original.classrooms && row.original.classrooms.length > 0
-              ? row.original.classrooms[0]
-              : 'Não alocada'}
-          </Text>
+          {row.original.classrooms ? (
+            row.original.classrooms.map((classroom, index) => (
+              <Text key={index}>{classroom}</Text>
+            ))
+          ) : (
+            <Text>Não alocada</Text>
+          )}
         </Box>
       ),
-    },
-    {
-      accessorKey: 'subscribers',
-      header: 'Nº Alunos',
-      filterFn: FilterNumber,
-    },
-    {
-      accessorKey: 'professors',
-      header: 'Professores',
-      cell: ({ row }) => (
-        <Box>
-          {row.original.professors?.map((professor, index) => (
-            <Text key={index}>{professor}</Text>
-          ))}
-        </Box>
-      ),
-      filterFn: FilterArray,
     },
     {
       accessorFn: (row) =>
@@ -185,6 +171,23 @@ function Classes() {
         <Box>
           {(info.getValue() as string[])?.map((it) => (
             <Text key={it}>{it}</Text>
+          ))}
+        </Box>
+      ),
+      filterFn: FilterArray,
+    },
+    {
+      accessorKey: 'subscribers',
+      header: 'Nº Alunos',
+      filterFn: FilterNumber,
+    },
+    {
+      accessorKey: 'professors',
+      header: 'Professores',
+      cell: ({ row }) => (
+        <Box>
+          {row.original.professors?.map((professor, index) => (
+            <Text key={index}>{professor}</Text>
           ))}
         </Box>
       ),
@@ -251,6 +254,7 @@ function Classes() {
 
   const classesService = new ClassesService();
   const buildingsService = new BuildingsService();
+  const crawlerService = new CrawlerService();
   const eventsService = new EventsService();
 
   useEffect(() => {
@@ -313,6 +317,7 @@ function Classes() {
   }
 
   function handleDeleteClass() {
+
     if (selectedClass) {
       classesService
         .delete(selectedClass.subject_code, selectedClass.class_code)
@@ -473,9 +478,12 @@ function Classes() {
     }
   }
 
-  function handleCrawlerSave(subjectsList: string[]) {
-    classesService
-      .createMany(subjectsList)
+  function handleCrawlerSave(subjectsList: string[], building_id: string) {
+    crawlerService
+      .crawl({
+        building_id,
+        subject_codes_list: subjectsList,
+      })
       .then((it) => {
         console.log(it);
         fetchData();

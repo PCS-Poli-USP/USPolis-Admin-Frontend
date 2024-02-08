@@ -12,6 +12,8 @@ export default interface Event {
   professors?: string[];
   subscribers: number;
   vacancies: number;
+  id?: string;
+  subject_name?: string;
 }
 
 export interface EventByClassrooms {
