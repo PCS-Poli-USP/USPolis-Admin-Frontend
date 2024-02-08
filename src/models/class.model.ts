@@ -17,14 +17,12 @@ export default interface Class {
   classrooms?: string[];
 }
 
-
 export interface Preferences {
   building_id: string;
   air_conditioning?: boolean;
   projector?: boolean;
   accessibility?: boolean;
 }
-
 
 export interface CreateClassEvents {
   class_code: string;
@@ -44,7 +42,6 @@ export interface CreateClassEvents {
   has_to_be_allocated: boolean;
   classrom?: string;
 }
-
 
 export interface HasToBeAllocatedClass {
   subject_code: string;
