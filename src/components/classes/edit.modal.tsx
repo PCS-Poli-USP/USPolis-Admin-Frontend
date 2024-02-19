@@ -25,7 +25,11 @@ import {
   ListItem,
   VStack,
 } from '@chakra-ui/react';
-import { BsPersonCheckFill, BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+import {
+  BsPersonCheckFill,
+  BsFillPenFill,
+  BsFillTrashFill,
+} from 'react-icons/bs';
 import { CalendarIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 
@@ -40,7 +44,12 @@ interface EditModalProps {
   onSave: (data: Class) => void;
 }
 
-export default function EditModal({ isOpen, onClose, formData, onSave }: EditModalProps) {
+export default function EditModal({
+  isOpen,
+  onClose,
+  formData,
+  onSave,
+}: EditModalProps) {
   const initialForm: Class = {
     class_code: '',
     subject_code: '',
@@ -62,6 +71,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
       accessibility: false,
     },
     has_to_be_allocated: true,
+    events_ids: [],
   };
 
   const [form, setForm] = useState<Class>(initialForm);
@@ -71,7 +81,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
   const [week_day, setWeekDay] = useState('');
   const [start_time, setStartTime] = useState('');
   const [end_time, setEndTime] = useState('');
-  const [editDateIndex, setEditDateIndex] = useState(0); 
+  const [editDateIndex, setEditDateIndex] = useState(0);
   const [isEditingDate, setIsEditingDate] = useState(false);
 
   const [hasProfessorError, setHasProfessorError] = useState(false);
@@ -83,7 +93,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
   useEffect(() => {
     if (formData) {
       setForm(formData);
-    };
+    }
   }, [formData]);
 
   function handleSaveClick() {
@@ -105,8 +115,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
     if (validator.isInvalidProfessor(professor)) {
       setHasProfessorError(true);
       return;
-    }
-    else setHasProfessorError(false);
+    } else setHasProfessorError(false);
 
     const names: string[] = [...form.professors];
     if (!isEditingProfessor) {
@@ -114,19 +123,21 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
     } else {
       names[editProfessorIndex] = professor;
     }
-    setForm((prev) => ({...prev, professors: names}));
+    setForm((prev) => ({ ...prev, professors: names }));
     setProfessor('');
     setIsEditingProfessor(false);
-  }
+  };
 
-  function handleProfessorInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+  function handleProfessorInputKeyDown(
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) {
     if (event.key === 'Enter') handleProfessorButton();
   }
 
   function handleDeleteProfessorButton(index: number) {
     const newProfessors = form.professors;
     newProfessors.splice(index, 1);
-    setForm((prev) => ({...prev, professors: newProfessors}));
+    setForm((prev) => ({ ...prev, professors: newProfessors }));
   }
 
   function handleEditProfessorButton(index: number) {
@@ -143,15 +154,17 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
   function handleDateButton() {
     if (validator.isInvalidTime(start_time, end_time)) {
       setHasTimeError(true);
-    }
-    else setHasTimeError(false);
+    } else setHasTimeError(false);
 
     if (validator.isEmpty(week_day)) {
       setHasDayError(true);
-    }
-    else setHasDayError(false);
+    } else setHasDayError(false);
 
-    if (validator.isInvalidTime(start_time, end_time) || validator.isEmpty(week_day)) return;
+    if (
+      validator.isInvalidTime(start_time, end_time) ||
+      validator.isEmpty(week_day)
+    )
+      return;
 
     const newWeekDays = [...form.week_days];
     const newStarTime = [...form.start_time];
@@ -166,13 +179,12 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
       newStarTime.push(start_time);
       newEndTime.push(end_time);
     }
-    setForm((prev) => (
-      {
-        ...prev, 
-        week_days: newWeekDays,
-        start_time: newStarTime,
-        end_time: newEndTime,
-      }));
+    setForm((prev) => ({
+      ...prev,
+      week_days: newWeekDays,
+      start_time: newStarTime,
+      end_time: newEndTime,
+    }));
     clearDateInputs();
     setIsEditingDate(false);
   }
@@ -195,7 +207,12 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
     const newEndtime = [...form.end_time];
     newEndtime.splice(index, 1);
 
-    setForm((prev) => ({...prev, week_days: newWeekDays, start_time: newStartTime, end_time: newEndtime }));
+    setForm((prev) => ({
+      ...prev,
+      week_days: newWeekDays,
+      start_time: newStartTime,
+      end_time: newEndtime,
+    }));
   }
 
   function isInvalidForm() {
@@ -209,7 +226,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
       hasError = true;
     }
 
-    if(form.start_time.length <= 0) {
+    if (form.start_time.length <= 0) {
       hasError = true;
     }
 
@@ -233,7 +250,6 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
     setEndTime('');
     setEditDateIndex(0);
   }
-  
 
   function clearErrors() {
     setHasOferingError(false);
@@ -243,18 +259,16 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
   }
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onClose={onClose} 
-      closeOnOverlayClick={false} 
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      closeOnOverlayClick={false}
       motionPreset='slideInBottom'
       size='2xl'
       scrollBehavior='outside'
-      >
-
+    >
       <ModalOverlay />
       <ModalContent>
-
         <ModalHeader>
           {formData?.subject_code} - {formData?.class_code}
           <Text fontSize='md' fontWeight='normal'>
@@ -266,20 +280,22 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
 
         <ModalBody>
           <VStack alignItems='start' spacing='15px'>
-
             <FormControl isInvalid={hasOferingError}>
               <FormLabel>Oferecimento da disciplina</FormLabel>
-              <HStack spacing='8px' >
-              <FormLabel>Vagas</FormLabel>
-                <NumberInput 
-                  defaultValue={formData?.vacancies ? formData?.vacancies : form.vacancies} 
-                  min={0} 
-                  max={99999} 
+              <HStack spacing='8px'>
+                <FormLabel>Vagas</FormLabel>
+                <NumberInput
+                  defaultValue={
+                    formData?.vacancies ? formData?.vacancies : form.vacancies
+                  }
+                  min={0}
+                  max={99999}
                   placeholder='Quantidade de vagas da turma'
                   onChange={(valueAsString, valueAsNumber) => {
-                      setForm((prev) => ({...prev, vacancies: valueAsNumber }));
-                      if(valueAsNumber) setHasOferingError(false);
-                    }}>
+                    setForm((prev) => ({ ...prev, vacancies: valueAsNumber }));
+                    if (valueAsNumber) setHasOferingError(false);
+                  }}
+                >
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -288,15 +304,23 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                 </NumberInput>
 
                 <FormLabel>Inscritos</FormLabel>
-                <NumberInput 
-                  defaultValue={formData?.subscribers ? formData?.subscribers : form.subscribers}
-                  min={0} 
-                  max={99999} 
+                <NumberInput
+                  defaultValue={
+                    formData?.subscribers
+                      ? formData?.subscribers
+                      : form.subscribers
+                  }
+                  min={0}
+                  max={99999}
                   placeholder='Quantidade de alunos inscritos'
                   onChange={(valueAsString, valueAsNumber) => {
-                      setForm((prev) => ({...prev, subscribers: valueAsNumber }));
-                      if(valueAsNumber) setHasOferingError(false);
-                    }}>
+                    setForm((prev) => ({
+                      ...prev,
+                      subscribers: valueAsNumber,
+                    }));
+                    if (valueAsNumber) setHasOferingError(false);
+                  }}
+                >
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -305,15 +329,18 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                 </NumberInput>
 
                 <FormLabel>Pendentes</FormLabel>
-                <NumberInput 
-                  defaultValue={formData?.pendings ? formData?.pendings : form.pendings}
-                  min={0} 
-                  max={99999} 
+                <NumberInput
+                  defaultValue={
+                    formData?.pendings ? formData?.pendings : form.pendings
+                  }
+                  min={0}
+                  max={99999}
                   placeholder='Quantidade de alunos pendentes'
                   onChange={(valueAsString, valueAsNumber) => {
-                      setForm((prev) => ({...prev, pendings: valueAsNumber }));
-                      if(valueAsNumber) setHasOferingError(false);
-                    }}>
+                    setForm((prev) => ({ ...prev, pendings: valueAsNumber }));
+                    if (valueAsNumber) setHasOferingError(false);
+                  }}
+                >
                   <NumberInputField />
                   <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -321,83 +348,96 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                   </NumberInputStepper>
                 </NumberInput>
               </HStack>
-              {hasOferingError ? (<FormErrorMessage>Oferecimento inválido.</FormErrorMessage>) : (undefined)}
+              {hasOferingError ? (
+                <FormErrorMessage>Oferecimento inválido.</FormErrorMessage>
+              ) : undefined}
             </FormControl>
 
             <FormControl isInvalid={hasProfessorError}>
-                <FormLabel>Professor</FormLabel>
-                  <Input
-                    placeholder='Adicione um professor'
-                    type='text'
-                    value={professor}
-                    onChange={(event) => {
-                      setProfessor(event.target.value);
-                      if (event.target.value) setHasProfessorError(false);
-                    }}
-                    onKeyDown={handleProfessorInputKeyDown}
-                  />
-                {hasProfessorError ? (<FormErrorMessage>Nome de professor inválido.</FormErrorMessage>) : (undefined)}
+              <FormLabel>Professor</FormLabel>
+              <Input
+                placeholder='Adicione um professor'
+                type='text'
+                value={professor}
+                onChange={(event) => {
+                  setProfessor(event.target.value);
+                  if (event.target.value) setHasProfessorError(false);
+                }}
+                onKeyDown={handleProfessorInputKeyDown}
+              />
+              {hasProfessorError ? (
+                <FormErrorMessage>Nome de professor inválido.</FormErrorMessage>
+              ) : undefined}
             </FormControl>
 
-            <Button onClick={handleProfessorButton} >{isEditingProfessor ? 'Editar professor' : 'Adicionar professor'}</Button>
-            
-            <Text as='b' fontSize='lg' mt={4}>Professores da turma:</Text>
+            <Button onClick={handleProfessorButton}>
+              {isEditingProfessor ? 'Editar professor' : 'Adicionar professor'}
+            </Button>
+
+            <Text as='b' fontSize='lg' mt={4}>
+              Professores da turma:
+            </Text>
             {form.professors.length > 0 ? (
               <List spacing={3}>
-              {form.professors.map((professor, index) => (
-                <ListItem key={index}>
-                  <HStack>
-                    <BsPersonCheckFill />
-                    <Text>{professor}</Text>
+                {form.professors.map((professor, index) => (
+                  <ListItem key={index}>
+                    <HStack>
+                      <BsPersonCheckFill />
+                      <Text>{professor}</Text>
 
-                    <Tooltip label='Editar'>
-                      <IconButton
-                        colorScheme='yellow'
-                        size='sm'
-                        variant='ghost'
-                        aria-label='editar-professor'
-                        icon={<BsFillPenFill />}
-                        onClick={() => handleEditProfessorButton(index)}
-                      />
-                    </Tooltip>
+                      <Tooltip label='Editar'>
+                        <IconButton
+                          colorScheme='yellow'
+                          size='sm'
+                          variant='ghost'
+                          aria-label='editar-professor'
+                          icon={<BsFillPenFill />}
+                          onClick={() => handleEditProfessorButton(index)}
+                        />
+                      </Tooltip>
 
-                    <Tooltip label='Remover'>
-                      <IconButton  
-                        colorScheme='red' 
-                        size='sm' 
-                        variant='ghost' 
-                        aria-label='remover-professor'
-                        icon={<BsFillTrashFill />}
-                        onClick={() => handleDeleteProfessorButton(index)}
-                      />
-                    </Tooltip>
-
-                  </HStack>
-                </ListItem>
-              ))}
-            </List>
+                      <Tooltip label='Remover'>
+                        <IconButton
+                          colorScheme='red'
+                          size='sm'
+                          variant='ghost'
+                          aria-label='remover-professor'
+                          icon={<BsFillTrashFill />}
+                          onClick={() => handleDeleteProfessorButton(index)}
+                        />
+                      </Tooltip>
+                    </HStack>
+                  </ListItem>
+                ))}
+              </List>
             ) : (
-              <Text as='b' colorScheme='red' color='red.500'>Nenhum professor adicionado</Text>
+              <Text as='b' colorScheme='red' color='red.500'>
+                Nenhum professor adicionado
+              </Text>
             )}
-            
-            <Text as='b' fontSize='lg' mt={4}>Horários da turma:</Text>
+
+            <Text as='b' fontSize='lg' mt={4}>
+              Horários da turma:
+            </Text>
 
             <FormControl isInvalid={hasDayError}>
               <FormLabel>Dia da semana</FormLabel>
-              <Select 
+              <Select
                 placeholder='Escolha o dia da semana'
                 value={week_day}
                 onChange={handleSelectChange}
-                >
-                  <option value='seg'>Segunda</option>
-                  <option value='ter'>Terça</option>
-                  <option value='qua'>Quarta</option>
-                  <option value='qui'>Quinta</option>
-                  <option value='sex'>Sexta</option>
-                  <option value='sab'>Sábado</option>
-                  <option value='dom'>Domingo</option>
+              >
+                <option value='seg'>Segunda</option>
+                <option value='ter'>Terça</option>
+                <option value='qua'>Quarta</option>
+                <option value='qui'>Quinta</option>
+                <option value='sex'>Sexta</option>
+                <option value='sab'>Sábado</option>
+                <option value='dom'>Domingo</option>
               </Select>
-              {hasDayError ? (<FormErrorMessage>Selecione um dia</FormErrorMessage>) : (undefined)}
+              {hasDayError ? (
+                <FormErrorMessage>Selecione um dia</FormErrorMessage>
+              ) : undefined}
             </FormControl>
 
             <FormControl isInvalid={hasTimeError}>
@@ -408,7 +448,7 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                   placeholder='Horario de início da disciplina'
                   type='time'
                   value={start_time}
-                  onChange={(event) => { 
+                  onChange={(event) => {
                     setStartTime(event.target.value);
                     if (event.target.value) setHasTimeError(false);
                   }}
@@ -424,20 +464,30 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                   }}
                 />
               </HStack>
-              {hasTimeError ? <FormErrorMessage>Horários inválidos.</FormErrorMessage> : (undefined)}
-            </FormControl>
-            
-            <FormControl>
-              <Button type='submit' onClick={handleDateButton}>{isEditingDate ? 'Editar Horário' : 'Adicionar horário'}</Button>
+              {hasTimeError ? (
+                <FormErrorMessage>Horários inválidos.</FormErrorMessage>
+              ) : undefined}
             </FormControl>
 
-            <Text as='b' fontSize='lg'>Horários adicionados:</Text>
+            <FormControl>
+              <Button type='submit' onClick={handleDateButton}>
+                {isEditingDate ? 'Editar Horário' : 'Adicionar horário'}
+              </Button>
+            </FormControl>
+
+            <Text as='b' fontSize='lg'>
+              Horários adicionados:
+            </Text>
             {form.week_days.length > 0 ? (
               <List spacing={3}>
                 {form.week_days.map((week_day, index) => (
                   <HStack key={index}>
-                    <CalendarIcon /> 
-                    <Text>{` ${weekDaysFormatter(week_day)}, ${form.start_time[index]} às ${form.end_time[index]}`} </Text>
+                    <CalendarIcon />
+                    <Text>
+                      {` ${weekDaysFormatter(week_day)}, ${
+                        form.start_time[index]
+                      } às ${form.end_time[index]}`}{' '}
+                    </Text>
                     <Tooltip label='Editar'>
                       <IconButton
                         colorScheme='yellow'
@@ -450,10 +500,10 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                     </Tooltip>
 
                     <Tooltip label='Remover'>
-                      <IconButton  
-                        colorScheme='red' 
-                        size='sm' 
-                        variant='ghost' 
+                      <IconButton
+                        colorScheme='red'
+                        size='sm'
+                        variant='ghost'
                         aria-label='remover-data'
                         icon={<BsFillTrashFill />}
                         onClick={() => handleDeleteDateButton(index)}
@@ -463,14 +513,20 @@ export default function EditModal({ isOpen, onClose, formData, onSave }: EditMod
                 ))}
               </List>
             ) : (
-              <Text as='b' colorScheme='red' color='red.500'>Nenhum horário adicionado</Text>
+              <Text as='b' colorScheme='red' color='red.500'>
+                Nenhum horário adicionado
+              </Text>
             )}
-            </VStack>
+          </VStack>
         </ModalBody>
 
         <ModalFooter>
-        <HStack spacing='10px'>
-            {hasErrors ? <Text colorScheme='tomato' color='red.500'>Fomulário inválido, corrija os campos inválidos</Text> : (undefined) }
+          <HStack spacing='10px'>
+            {hasErrors ? (
+              <Text colorScheme='tomato' color='red.500'>
+                Fomulário inválido, corrija os campos inválidos
+              </Text>
+            ) : undefined}
             <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
               Salvar
             </Button>

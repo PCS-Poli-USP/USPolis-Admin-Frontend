@@ -42,6 +42,7 @@ export function ClassToEventByClassroom(data: Class, buildings: Building[]): Eve
       startTime: data.start_time[i],
       endTime: data.end_time[i],
       weekday: data.week_days[i],
+      id: data.events_ids[i],
       classCodeText: ClassCodeText(data.class_code),
       subscribers: data.subscribers,
     };

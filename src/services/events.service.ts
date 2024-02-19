@@ -4,9 +4,15 @@ import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
+interface EditManyAllocationsDTO {
+  events_ids: string[];
+  building_id: string;
+  classroom: string;
+}
+
 export default class EventsService extends HttpService {
   constructor() {
-    super(`${USPOLIS_SERVER_URL}/events`);
+    super(`${USPOLIS_SERVER_URL}`);
   }
 
   list(): Promise<AxiosResponse<Array<Event>>> {
@@ -14,7 +20,7 @@ export default class EventsService extends HttpService {
   }
 
   allocate(): Promise<AxiosResponse<any>> {
-    return this.http.patch('allocate');
+    return this.http.patch('/events/allocate');
   }
 
   edit(
@@ -24,6 +30,11 @@ export default class EventsService extends HttpService {
     classroom: string,
     building: string,
   ): Promise<AxiosResponse<number>> {
-    return this.http.patch(`edit/${subjectCode}/${classCode}`, weekDays, { params: { classroom, building } });
+    return this.http.patch(`/events/edit/${subjectCode}/${classCode}`, weekDays, { params: { classroom, building } });
+  }
+
+  editManyAllocations(data: EditManyAllocationsDTO
+  ): Promise<AxiosResponse<any>> {
+    return this.http.put('/allocations/update-many', data);
   }
 }

@@ -1,4 +1,14 @@
-import { Box, Flex, Heading, Text, Tooltip, useDisclosure, Wrap, WrapItem, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Tooltip,
+  useDisclosure,
+  Wrap,
+  WrapItem,
+  useToast,
+} from '@chakra-ui/react';
 import { createPlugin, sliceEvents } from '@fullcalendar/react';
 import { ColumnDef } from '@tanstack/react-table';
 import DataTable from 'components/common/dataTable.component';
@@ -6,7 +16,10 @@ import { Classrooms } from 'models/enums/clasrooms.enum';
 import { EventByClassrooms } from 'models/event.model';
 import { useEffect, useState } from 'react';
 import { Capitalize } from 'utils/formatters';
-import { ClassEventsMapper, EventsByClassroomMapper } from 'utils/mappers/allocation.mapper';
+import {
+  ClassEventsMapper,
+  EventsByClassroomMapper,
+} from 'utils/mappers/allocation.mapper';
 import EditEventModal from '../editEvent.modal';
 import EventsService from 'services/events.service';
 
@@ -56,21 +69,27 @@ function ClassroomsTables(props: any) {
   };
 
   function handleEventClick(data: EventByClassrooms) {
-    const classEvents = ClassEventsMapper(events, data.classCode, data.subjectCode);
+    const classEvents = ClassEventsMapper(
+      events,
+      data.classCode,
+      data.subjectCode,
+    );
     setselectedClass(classEvents);
     onOpen();
   }
 
   function handleAllocationSave(
-    subjectCode: string,
-    classCode: string,
-    weekDays: string[],
+    events_ids: string[],
     newClassroom: string,
-    building: string,
+    building_id: string,
   ) {
     setCanShowToast(true);
     eventsService
-      .edit(subjectCode, classCode, weekDays, newClassroom, building)
+      .editManyAllocations({
+        events_ids,
+        classroom: newClassroom,
+        building_id,
+      })
       .then((it) => {
         setErrorMessage('');
         window.location.reload();
@@ -92,8 +111,19 @@ function ClassroomsTables(props: any) {
         cell: ({ row }) => {
           const data = row.original;
           return (
-            <Flex as='button' textAlign='start' minW={200} onClick={() => handleEventClick(row.original)}>
-              <Box bg='uspolis.blue' color='white' paddingX={2} paddingY={1} marginRight={2}>
+            <Flex
+              as='button'
+              textAlign='start'
+              minW={200}
+              onClick={() => handleEventClick(row.original)}
+            >
+              <Box
+                bg='uspolis.blue'
+                color='white'
+                paddingX={2}
+                paddingY={1}
+                marginRight={2}
+              >
                 <Text fontSize='xs'>{data.startTime}</Text>
                 <Heading size='sm'>{Capitalize(data.weekday)}</Heading>
                 <Text fontSize='xs'>{data.endTime}</Text>
@@ -105,7 +135,9 @@ function ClassroomsTables(props: any) {
                 <Text>{data.classCodeText}</Text>
                 <Tooltip label='Professores'>
                   <Text>
-                    {data.professors.join().length > 25 ? data.professors[0] + '...' : data.professors.join()}
+                    {data.professors.join().length > 25
+                      ? data.professors[0] + '...'
+                      : data.professors.join()}
                   </Text>
                 </Tooltip>
               </Box>
@@ -120,11 +152,19 @@ function ClassroomsTables(props: any) {
     <>
       {unallocatedClassroomData && (
         <Flex>
-          <DataTable data={unallocatedClassroomData} columns={colDef(Classrooms.UNALLOCATED)} />
+          <DataTable
+            data={unallocatedClassroomData}
+            columns={colDef(Classrooms.UNALLOCATED)}
+          />
         </Flex>
       )}
       <Wrap py={4}>
-        <EditEventModal isOpen={isOpen} onClose={onClose} onSave={handleAllocationSave} classEvents={selectedClass} />
+        <EditEventModal
+          isOpen={isOpen}
+          onClose={onClose}
+          onSave={handleAllocationSave}
+          classEvents={selectedClass}
+        />
         {eventsByClassrooms
           .filter(([classroom, _data]) => classroom !== Classrooms.UNALLOCATED)
           .map(([classroom, data]) => {

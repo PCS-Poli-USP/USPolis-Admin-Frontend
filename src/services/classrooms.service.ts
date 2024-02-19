@@ -4,15 +4,8 @@ import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
-interface EventSpecification {
-  week_day: string;
-  start_time: string;
-  end_time: string;
-  id: string;
-}
-
 interface GetAvailableWithConflictIndicatorProps {
-  events: EventSpecification[];
+  events_ids: string[];
   building_id: string;
 }
 

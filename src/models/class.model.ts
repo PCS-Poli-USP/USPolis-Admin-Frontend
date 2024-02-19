@@ -15,6 +15,7 @@ export default interface Class {
   preferences: Preferences;
   has_to_be_allocated: boolean;
   classrooms?: string[];
+  events_ids: string[];
 }
 
 export interface Preferences {
