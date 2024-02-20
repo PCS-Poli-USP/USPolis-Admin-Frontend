@@ -55,9 +55,7 @@ export default function EditEventModal({
       building: '',
       capacity: 0,
     });
-  const [buildingIdSelection, setBuildingIdSelection] = useState<
-    string | undefined
-  >(undefined);
+  const [selectedBuilding, setSelectedBuilding] = useState<Building>();
   const [buildingsList, setBuildingsList] = useState<Building[]>([]);
   const [buildingsLoading, setBuildingsLoading] = useState(true);
   const [classroomsLoading, setClassroomsLoading] = useState(false);
@@ -73,7 +71,7 @@ export default function EditEventModal({
 
   useEffect(() => {
     if (buildingsList.length === 1) {
-      setBuildingIdSelection(buildingsList[0].id);
+      setSelectedBuilding(buildingsList[0]);
     }
   }, [buildingsList]);
 
@@ -83,22 +81,14 @@ export default function EditEventModal({
   }, [dbUser]);
 
   useEffect(() => {
-    if (buildingIdSelection) {
-      setNewClassroom('');
-      setClassroomsLoading(true);
-      getAvailableClassrooms();
-    }
+    getAvailableClassrooms();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buildingIdSelection]);
+  }, [selectedBuilding]);
 
-  async function getAvailableClassrooms() {
-    const response = await classroomsService.getAvailableWithConflictIndicator({
-      events_ids: classEvents.map((it) => it.id!),
-      building_id: buildingIdSelection!,
-    });
-    setAndSortAvailableClassrooms(response.data);
-    setClassroomsLoading(false);
-  }
+  useEffect(() => {
+    resetClassroomsDropdown();
+    getAvailableClassrooms();
+  }, [checkedEvents]);
 
   useEffect(() => {
     setCheckedEvents(classEvents.map((it) => it.id ?? ''));
@@ -113,6 +103,27 @@ export default function EditEventModal({
     }
     // eslint-disable-next-line
   }, [newClassroom]);
+
+  async function getAvailableClassrooms() {
+    if (!selectedBuilding) return;
+    if (checkedEvents.length < 1) return;
+    try {
+      setClassroomsLoading(true);
+      await tryGetAvailableClassrooms();
+    } finally {
+      setClassroomsLoading(false);
+    }
+  }
+
+  async function tryGetAvailableClassrooms() {
+    setNewClassroom('');
+    const response = await classroomsService.getAvailableWithConflictIndicator({
+      events_ids: classEvents.map((it) => it.id!),
+      building_id: selectedBuilding?.id!,
+    });
+    setAndSortAvailableClassrooms(response.data);
+    setClassroomsLoading(false);
+  }
 
   function setAndSortAvailableClassrooms(value: AvailableClassroom[]) {
     setAvailableClassrooms(
@@ -138,8 +149,12 @@ export default function EditEventModal({
     }
   }
 
+  function resetClassroomsDropdown() {
+    setAvailableClassrooms([]);
+  }
+
   function handleSaveClick() {
-    onSave(checkedEvents as string[], newClassroom, buildingIdSelection!);
+    onSave(checkedEvents as string[], newClassroom, selectedBuilding?.id!);
     onClose();
   }
 
@@ -204,10 +219,12 @@ export default function EditEventModal({
               })}
             </Stack>
           ) : (
-            <Text>
-              {Capitalize(classEvents[0].weekday)} - {classEvents[0].startTime}{' '}
-              {classEvents[0].endTime}
-            </Text>
+            classEvents[0] && (
+              <Text>
+                {Capitalize(classEvents[0].weekday)} -{' '}
+                {classEvents[0].startTime} {classEvents[0].endTime}
+              </Text>
+            )
           )}
 
           <FormControl>
@@ -215,8 +232,13 @@ export default function EditEventModal({
             {buildingsList.length !== 1 && (
               <Select
                 placeholder='selecionar prédio'
-                onChange={(event) => setBuildingIdSelection(event.target.value)}
+                onChange={(event) => {
+                  setSelectedBuilding(
+                    buildingsList.find((it) => it.id === event.target.value),
+                  );
+                }}
                 icon={buildingsLoading ? <Spinner size='sm' /> : undefined}
+                value={selectedBuilding?.id}
               >
                 {buildingsList.map((it) => (
                   <option key={it.id} value={it.id}>
@@ -228,7 +250,11 @@ export default function EditEventModal({
             <FormLabel mt={4}>Salas disponíveis</FormLabel>
             <Select
               icon={classroomsLoading ? <Spinner size='sm' /> : undefined}
-              disabled={classroomsLoading || !buildingIdSelection}
+              disabled={
+                classroomsLoading ||
+                !selectedBuilding ||
+                availableClassrooms.length < 1
+              }
               placeholder='Sala - Capacidade'
               isInvalid={classData?.subscribers > selectedClassroom.capacity}
               value={newClassroom}
@@ -238,7 +264,7 @@ export default function EditEventModal({
             >
               {availableClassrooms.map((it) => (
                 <option key={it.classroom_name} value={it.classroom_name}>
-                  {it.conflicted ? <strong>! </strong> : ''}
+                  {it.conflicted ? '! ' : ''}
                   {it.classroom_name} - {it.capacity}
                 </option>
               ))}
