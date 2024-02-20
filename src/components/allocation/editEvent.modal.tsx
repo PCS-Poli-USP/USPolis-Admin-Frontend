@@ -48,13 +48,8 @@ export default function EditEventModal({
   const [availableClassrooms, setAvailableClassrooms] = useState<
     AvailableClassroom[]
   >([]);
-  const [newClassroom, setNewClassroom] = useState('');
   const [selectedClassroom, setSelectedClassroom] =
-    useState<AvailableClassroom>({
-      classroom_name: '',
-      building: '',
-      capacity: 0,
-    });
+    useState<AvailableClassroom>();
   const [selectedBuilding, setSelectedBuilding] = useState<Building>();
   const [buildingsList, setBuildingsList] = useState<Building[]>([]);
   const [buildingsLoading, setBuildingsLoading] = useState(true);
@@ -94,16 +89,6 @@ export default function EditEventModal({
     setCheckedEvents(classEvents.map((it) => it.id ?? ''));
   }, [classEvents]);
 
-  useEffect(() => {
-    const classroom = availableClassrooms?.find(
-      (it) => it.classroom_name === newClassroom,
-    );
-    if (classroom) {
-      setSelectedClassroom(classroom);
-    }
-    // eslint-disable-next-line
-  }, [newClassroom]);
-
   async function getAvailableClassrooms() {
     if (!selectedBuilding) return;
     if (checkedEvents.length < 1) return;
@@ -116,7 +101,7 @@ export default function EditEventModal({
   }
 
   async function tryGetAvailableClassrooms() {
-    setNewClassroom('');
+    setSelectedClassroom(undefined);
     const response = await classroomsService.getAvailableWithConflictIndicator({
       events_ids: classEvents.map((it) => it.id!),
       building_id: selectedBuilding?.id!,
@@ -154,7 +139,11 @@ export default function EditEventModal({
   }
 
   function handleSaveClick() {
-    onSave(checkedEvents as string[], newClassroom, selectedBuilding?.id!);
+    onSave(
+      checkedEvents as string[],
+      selectedClassroom?.classroom_name!,
+      selectedBuilding?.id!,
+    );
     onClose();
   }
 
@@ -177,7 +166,7 @@ export default function EditEventModal({
           </Text>
           <Alert
             status={
-              !selectedClassroom.classroom_name
+              !selectedClassroom?.classroom_name
                 ? 'info'
                 : classData?.subscribers > selectedClassroom.capacity
                 ? 'error'
@@ -248,6 +237,12 @@ export default function EditEventModal({
               </Select>
             )}
             <FormLabel mt={4}>Salas disponíveis</FormLabel>
+            {selectedClassroom?.conflicted && (
+              <Alert status='warning' fontSize='sm' mb={4}>
+                <AlertIcon />
+                Esta alocação gerará conflitos
+              </Alert>
+            )}
             <Select
               icon={classroomsLoading ? <Spinner size='sm' /> : undefined}
               disabled={
@@ -256,18 +251,30 @@ export default function EditEventModal({
                 availableClassrooms.length < 1
               }
               placeholder='Sala - Capacidade'
-              isInvalid={classData?.subscribers > selectedClassroom.capacity}
-              value={newClassroom}
+              isInvalid={
+                selectedClassroom &&
+                classData?.subscribers > selectedClassroom.capacity
+              }
+              value={selectedClassroom?.classroom_name}
               onChange={(event) => {
-                setNewClassroom(event.target.value);
+                setSelectedClassroom(
+                  availableClassrooms.find(
+                    (it) => event.target.value === it.classroom_name,
+                  ),
+                );
               }}
             >
-              {availableClassrooms.map((it) => (
-                <option key={it.classroom_name} value={it.classroom_name}>
-                  {it.conflicted ? '! ' : ''}
-                  {it.classroom_name} - {it.capacity}
-                </option>
-              ))}
+              {availableClassrooms.map((it) =>
+                it.conflicted ? (
+                  <option key={it.classroom_name} value={it.classroom_name}>
+                    ⚠️ {it.classroom_name} - {it.capacity}
+                  </option>
+                ) : (
+                  <option key={it.classroom_name} value={it.classroom_name}>
+                    {it.classroom_name} - {it.capacity}
+                  </option>
+                ),
+              )}
             </Select>
           </FormControl>
         </ModalBody>
@@ -277,7 +284,7 @@ export default function EditEventModal({
             colorScheme='blue'
             mr={2}
             onClick={handleSaveClick}
-            isDisabled={!newClassroom}
+            isDisabled={!selectedClassroom || checkedEvents.length < 1}
           >
             Salvar
           </Button>
