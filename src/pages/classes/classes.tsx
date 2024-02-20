@@ -317,7 +317,6 @@ function Classes() {
   }
 
   function handleDeleteClass() {
-
     if (selectedClass) {
       classesService
         .delete(selectedClass.subject_code, selectedClass.class_code)
@@ -390,6 +389,7 @@ function Classes() {
         toastSuccess(
           `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
         );
+        fetchData();
       })
       .catch((error) => {
         toastError(

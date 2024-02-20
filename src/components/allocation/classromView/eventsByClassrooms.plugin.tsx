@@ -194,12 +194,6 @@ function ClassroomsTables(props: any) {
           isOpen={isOpen}
           onClose={onClose}
           onSave={handleAllocationSave}
-          classEvents={selectedClass}
-        />
-        <EditEventModal
-          isOpen={isOpen}
-          onClose={onClose}
-          onSave={handleAllocationSave}
           onDelete={handleAllocationDelete}
           classEvents={selectedClass}
         />
