@@ -17,7 +17,9 @@ import {
   Stack,
   Text,
   useCheckboxGroup,
+  useDisclosure,
 } from '@chakra-ui/react';
+import Dialog from 'components/common/dialog.component';
 import { appContext } from 'context/AppContext';
 import { Building } from 'models/building.model';
 import { AvailableClassroom } from 'models/classroom.model';
@@ -35,6 +37,7 @@ interface EditEventModalProps {
     newClassroom: string,
     building_id: string,
   ) => void;
+  onDelete: (subjectCode: string, classCode: string) => void;
   classEvents: EventByClassrooms[];
 }
 
@@ -42,8 +45,14 @@ export default function EditEventModal({
   isOpen,
   onClose,
   onSave,
+  onDelete,
   classEvents,
 }: EditEventModalProps) {
+  const {
+    isOpen: isOpenDialog,
+    onOpen: onOpenDialog,
+    onClose: onCloseDialog,
+  } = useDisclosure();
   const { dbUser } = useContext(appContext);
   const [availableClassrooms, setAvailableClassrooms] = useState<
     AvailableClassroom[]
@@ -147,6 +156,18 @@ export default function EditEventModal({
     onClose();
   }
 
+  function handleDeleteClick() {
+    onOpenDialog();
+  }
+
+  function handleDeleteConfirm() {
+    onCloseDialog();
+    if (classData.subject_code && classData.class_code) {
+      onDelete(classData.subject_code, classData.class_code);
+      onClose();
+    }
+  }
+
   return (
     <Modal
       isOpen={isOpen}
@@ -157,9 +178,9 @@ export default function EditEventModal({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          Editar alocação - {classData?.subjectCode}
+          Editar alocação - {classData?.subject_code}
           <Text fontSize='md' fontWeight='normal'>
-            {classData?.classCodeText} -{' '}
+            {classData?.class_code_text} -{' '}
             {classData?.professors.join(', ').length > 25
               ? classData?.professors[0] + '...'
               : classData?.professors.join(', ')}
@@ -201,7 +222,7 @@ export default function EditEventModal({
                       key={it.id}
                       {...getCheckboxProps({ value: it.id })}
                     >
-                      {Capitalize(it.weekday)} - {it.startTime} {it.endTime}
+                      {Capitalize(it.week_day)} - {it.start_time} {it.end_time}
                     </Checkbox>
                   </Stack>
                 );
@@ -210,8 +231,8 @@ export default function EditEventModal({
           ) : (
             classEvents[0] && (
               <Text>
-                {Capitalize(classEvents[0].weekday)} -{' '}
-                {classEvents[0].startTime} {classEvents[0].endTime}
+                {Capitalize(classEvents[0].week_day)} -{' '}
+                {classEvents[0].start_time} {classEvents[0].end_time}
               </Text>
             )
           )}
@@ -277,6 +298,14 @@ export default function EditEventModal({
               )}
             </Select>
           </FormControl>
+
+          <Dialog
+            isOpen={isOpenDialog}
+            onClose={onCloseDialog}
+            onConfirm={handleDeleteConfirm}
+            title={`Deseja remover a alocação`}
+            warningText='Atenção: ao confirmar a alocação dessa turma será perdida'
+          />
         </ModalBody>
 
         <ModalFooter>
@@ -288,6 +317,10 @@ export default function EditEventModal({
           >
             Salvar
           </Button>
+          <Button colorScheme='red' mr={2} onClick={handleDeleteClick}>
+            Remover
+          </Button>
+
           <Button onClick={onClose}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>

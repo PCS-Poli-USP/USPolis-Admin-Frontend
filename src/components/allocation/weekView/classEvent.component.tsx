@@ -21,8 +21,8 @@ export function ClassEvent(props: ClassEventProps) {
   return (
     <Popover>
       <PopoverTrigger>
-        <Button bg='#408080' textColor='white' w='full'>
-          {props.classEvent.subjectCode}
+        <Button bg={'#408080'} textColor={props.classEvent.has_to_be_allocated ? 'red.300' : 'white'} w='full'>
+          {props.classEvent.subject_code}
         </Button>
       </PopoverTrigger>
 
@@ -31,7 +31,7 @@ export function ClassEvent(props: ClassEventProps) {
         <PopoverHeader
           fontSize='xl'
           fontWeight='bold'
-        >{`${props.classEvent.subjectCode} - Turma ${props.classEvent.classCode}`}</PopoverHeader>
+        >{`${props.classEvent.subject_code} - Turma ${props.classEvent.class_code}`}</PopoverHeader>
         <PopoverCloseButton size='xl' />
 
         <PopoverBody>
@@ -54,7 +54,7 @@ export function ClassEvent(props: ClassEventProps) {
               <Text fontSize='lg'>{`Sala: ${
                 props.classEvent.classroom ? props.classEvent.classroom : 'NÃO ALOCADA'
               }`}</Text>
-              <Text fontSize='lg'>{`Horário: ${props.classEvent.startTime} - ${props.classEvent.endTime}`}</Text>
+              <Text fontSize='lg'>{`Horário: ${props.classEvent.start_time} - ${props.classEvent.end_time}`}</Text>
               <Text fontSize='lg'>{`Inscritos: ${props.classEvent.subscribers}`}</Text>
             </Box>
           </VStack>

@@ -38,6 +38,7 @@ export default function RegisterModal(props: RegisterModalProps) {
     building: Buildings.BIENIO,
     floor: 0,
     capacity: 0,
+    ignore_to_allocate: false,
     air_conditioning: false,
     projector: false,
     accessibility: false,
@@ -51,7 +52,6 @@ export default function RegisterModal(props: RegisterModalProps) {
 
   function handleSaveClick() {
     if (isEmpty(form.classroom_name)) return;
-
     props.onSave(form);
     props.onClose();
   }
@@ -119,6 +119,7 @@ export default function RegisterModal(props: RegisterModalProps) {
           </FormControl>
 
           <FormControl mt={4}>
+            <FormLabel>Recursos</FormLabel>
             <HStack>
               <Checkbox
                 isChecked={form.air_conditioning}
@@ -139,6 +140,17 @@ export default function RegisterModal(props: RegisterModalProps) {
                 Acessibilidade
               </Checkbox>
             </HStack>
+          </FormControl>
+
+          <FormControl mt={4}>
+          <FormLabel>Alocação</FormLabel>
+              <Checkbox
+                isChecked={form.ignore_to_allocate}
+                onChange={(event) => setForm((prev) => ({ ...prev, ignore_to_allocate: event.target.checked }))}
+              >
+                Ignorar para alocar
+              </Checkbox>
+             
           </FormControl>
         </ModalBody>
 

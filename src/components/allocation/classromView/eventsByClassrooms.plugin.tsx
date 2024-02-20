@@ -44,6 +44,7 @@ function ClassroomsTables(props: any) {
       setCanShowToast(false);
       setErrorMessage('');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canShowToast, errorMessage]);
 
   const toast = useToast();
@@ -71,8 +72,8 @@ function ClassroomsTables(props: any) {
   function handleEventClick(data: EventByClassrooms) {
     const classEvents = ClassEventsMapper(
       events,
-      data.classCode,
-      data.subjectCode,
+      data.class_code,
+      data.subject_code,
     );
     setselectedClass(classEvents);
     onOpen();
@@ -101,6 +102,21 @@ function ClassroomsTables(props: any) {
       });
   }
 
+  function handleAllocationDelete(subjectCode: string, classCode: string) {
+    eventsService
+      .deleteClassAllocation(subjectCode, classCode)
+      .then((it) => {
+        toastSuccess(
+          `Alocação de ${subjectCode} - ${classCode}  removida com sucesso!`,
+        );
+      })
+      .catch((error) => {
+        toastError(
+          `Erro ao remover alocação de ${subjectCode} - ${classCode}: ${error}`,
+        );
+      });
+  }
+
   function colDef(classroom: string): ColumnDef<EventByClassrooms>[] {
     return [
       {
@@ -118,23 +134,34 @@ function ClassroomsTables(props: any) {
               onClick={() => handleEventClick(row.original)}
             >
               <Box
-                bg='uspolis.blue'
+                bg={'uspolis.blue'}
                 color='white'
                 paddingX={2}
                 paddingY={1}
                 marginRight={2}
               >
-                <Text fontSize='xs'>{data.startTime}</Text>
-                <Heading size='sm'>{Capitalize(data.weekday)}</Heading>
-                <Text fontSize='xs'>{data.endTime}</Text>
+                <Text fontSize='xs'>{data.start_time}</Text>
+                <Heading size='sm'>{Capitalize(data.week_day)}</Heading>
+                <Text fontSize='xs'>{data.end_time}</Text>
               </Box>
               <Box paddingY={1}>
-                <Heading size='sm' noOfLines={1}>
-                  {data.subjectCode}
+                <Heading
+                  size='sm'
+                  noOfLines={1}
+                  textColor={
+                    row.original.has_to_be_allocated
+                      ? 'red.300'
+                      : 'uspolis.blue'
+                  }
+                >
+                  {data.subject_code}
                 </Heading>
-                <Text>{data.classCodeText}</Text>
+                <Text>{data.class_code_text}</Text>
                 <Tooltip label='Professores'>
                   <Text>
+                    {data.professors.join().length > 25
+                      ? data.professors[0] + '...'
+                      : data.professors.join()}
                     {data.professors.join().length > 25
                       ? data.professors[0] + '...'
                       : data.professors.join()}
@@ -156,6 +183,10 @@ function ClassroomsTables(props: any) {
             data={unallocatedClassroomData}
             columns={colDef(Classrooms.UNALLOCATED)}
           />
+          <DataTable
+            data={unallocatedClassroomData}
+            columns={colDef(Classrooms.UNALLOCATED)}
+          />
         </Flex>
       )}
       <Wrap py={4}>
@@ -163,6 +194,13 @@ function ClassroomsTables(props: any) {
           isOpen={isOpen}
           onClose={onClose}
           onSave={handleAllocationSave}
+          classEvents={selectedClass}
+        />
+        <EditEventModal
+          isOpen={isOpen}
+          onClose={onClose}
+          onSave={handleAllocationSave}
+          onDelete={handleAllocationDelete}
           classEvents={selectedClass}
         />
         {eventsByClassrooms

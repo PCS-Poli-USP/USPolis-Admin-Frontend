@@ -1,6 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import Allocation from 'pages/allocation';
-import Classes from 'pages/classes';
+import Classes from 'pages/classes/classes';
 import Classrooms from 'pages/classrooms';
 import React from 'react';
 import ReactDOM from 'react-dom/client';

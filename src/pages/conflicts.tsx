@@ -28,6 +28,8 @@ const ConflictsPage = () => {
     end_time: '',
     week_day: '',
     subject_name: '',
+    has_to_be_allocated: false,
+    vacancies: 0,
     professors: [],
     classroom: '',
     building: '',
@@ -112,6 +114,21 @@ const ConflictsPage = () => {
       })
       .catch((error) => {
         toastError(`Erro ao editar alocação: ${error}`);
+      });
+  }
+
+  function handleAllocationDelete(subjectCode: string, classCode: string) {
+    eventsService
+      .deleteClassAllocation(subjectCode, classCode)
+      .then((it) => {
+        toastSuccess(
+          `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
+        );
+      })
+      .catch((error) => {
+        toastError(
+          `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`,
+        );
       });
   }
 
@@ -255,18 +272,20 @@ const ConflictsPage = () => {
         isOpen={isOpenAllocEdit}
         onClose={onCloseAllocEdit}
         onSave={handleAllocationEdit}
+        onDelete={handleAllocationDelete}
         classEvents={[
           {
-            subjectCode: selectedEvent.subject_code,
+            subject_code: selectedEvent.subject_code,
             classroom: selectedEvent.classroom || '',
             building: selectedEvent.building || '',
-            classCode: selectedEvent.class_code,
+            class_code: selectedEvent.class_code,
             professors: selectedEvent.professors || [''],
             subscribers: selectedEvent.subscribers,
-            weekday: selectedEvent.week_day,
-            startTime: selectedEvent.start_time,
-            endTime: selectedEvent.end_time,
-            classCodeText: selectedEvent.class_code,
+            has_to_be_allocated: selectedEvent.has_to_be_allocated,
+            week_day: selectedEvent.week_day,
+            start_time: selectedEvent.start_time,
+            end_time: selectedEvent.end_time,
+            class_code_text: selectedEvent.class_code,
             id: selectedEvent.id,
           },
         ]}

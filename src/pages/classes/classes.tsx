@@ -17,29 +17,26 @@ import {
   BsClipboardCheck,
   BsFillPenFill,
   BsFillTrashFill,
+  BsCalendarXFill,
 } from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
-import HasToBeAllocatedDrawer from 'components/allocation/hasToBeAllocated.drawer';
+import AutomaticAllocationModal from 'components/common/automaticAllocation.modal';
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
 import RegisterModal from 'components/classes/register.modal';
 import EditEventModal from 'components/allocation/editEvent.modal';
+import AllocationOptions from 'components/common/allocationOptions.modal';
 import DataTable from 'components/common/dataTable.component';
 import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
 import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
-import Class, {
-  CreateClassEvents,
-  HasToBeAllocatedClass,
-  Preferences,
-} from 'models/class.model';
+import Class, { CreateClassEvents, Preferences } from 'models/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import ClassesService from 'services/classes.service';
 import BuildingsService from 'services/buildings.service';
 import EventsService from 'services/events.service';
@@ -54,7 +51,7 @@ import {
   breakClassFormInEvents,
 } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
-import { EventByClassrooms } from 'models/event.model';
+import Event, { EventByClassrooms } from 'models/event.model';
 import CrawlerService from 'services/crawler.service';
 
 function Classes() {
@@ -64,9 +61,14 @@ function Classes() {
     Array<EventByClassrooms>
   >([]);
   const {
-    isOpen: isOpenDelete,
-    onOpen: onOpenDelete,
-    onClose: onCloseDelete,
+    isOpen: isOpenDeleteClass,
+    onOpen: onOpenDeleteClass,
+    onClose: onCloseDeleteClass,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDeleteAlloc,
+    onOpen: onOpenDeleteAlloc,
+    onClose: onCloseDeleteAlloc,
   } = useDisclosure();
   const {
     isOpen: isOpenPreferences,
@@ -79,14 +81,14 @@ function Classes() {
     onClose: onCloseEdit,
   } = useDisclosure();
   const {
-    isOpen: isOpenDrawer,
-    onOpen: onOpenDrawer,
-    onClose: onCloseDrawer,
+    isOpen: isOpenAllocOptions,
+    onOpen: onOpenAllocOptions,
+    onClose: onCloseAllocOptions,
   } = useDisclosure();
   const {
-    isOpen: isOpenAlloc,
-    onOpen: onOpenAlloc,
-    onClose: onCloseAlloc,
+    isOpen: isOpenAllocModal,
+    onOpen: onOpenAllocModal,
+    onClose: onCloseAllocModal,
   } = useDisclosure();
   const {
     isOpen: isOpenAllocEdit,
@@ -102,8 +104,8 @@ function Classes() {
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
-
-  const navigate = useNavigate();
+  const [allocatedEvents, setAllocatedEvents] = useState<Event[]>([]);
+  const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -225,14 +227,24 @@ function Classes() {
               onClick={() => handlePreferencesClick(row.original)}
             />
           </Tooltip>
-          <Tooltip label='Deletar'>
+          <Tooltip label='Excluir Turma'>
             <IconButton
               colorScheme='red'
               size='xs'
               variant='ghost'
-              aria-label='deletar-turma'
+              aria-label='excluir-turma'
               icon={<BsFillTrashFill />}
-              onClick={() => handleDeleteClick(row.original)}
+              onClick={() => handleDeleteClassClick(row.original)}
+            />
+          </Tooltip>
+          <Tooltip label='Excluir Alocação'>
+            <IconButton
+              colorScheme='red'
+              size='xs'
+              variant='ghost'
+              aria-label='excluir-alocacao'
+              icon={<BsCalendarXFill />}
+              onClick={() => handleDeleteAllocClick(row.original)}
             />
           </Tooltip>
         </HStack>
@@ -294,22 +306,50 @@ function Classes() {
       });
   }
 
-  function handleDeleteClick(obj: Class) {
+  function handleDeleteClassClick(obj: Class) {
     setSelectedClass(obj);
-    onOpenDelete();
+    onOpenDeleteClass();
   }
 
-  function handleDelete() {
+  function handleDeleteAllocClick(obj: Class) {
+    setSelectedClass(obj);
+    onOpenDeleteAlloc();
+  }
+
+  function handleDeleteClass() {
+
     if (selectedClass) {
       classesService
         .delete(selectedClass.subject_code, selectedClass.class_code)
         .then((it) => {
-          onCloseDelete();
+          onCloseDeleteClass();
           fetchData();
           toastSuccess('Turma deletada com sucesso!');
         })
         .catch((error) => {
           toastError(`Erro ao deletar turma: ${error}`);
+        });
+    }
+  }
+
+  function handleDeleteAlloc() {
+    if (selectedClass) {
+      eventsService
+        .deleteClassAllocation(
+          selectedClass.subject_code,
+          selectedClass.class_code,
+        )
+        .then((it) => {
+          onCloseDeleteAlloc();
+          fetchData();
+          toastSuccess(
+            `Alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}  deletada com sucesso!`,
+          );
+        })
+        .catch((error) => {
+          toastError(
+            `Erro ao deletar alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}: ${error}`,
+          );
         });
     }
   }
@@ -343,6 +383,21 @@ function Classes() {
       });
   }
 
+  function handleAllocationEditDelete(subjectCode: string, classCode: string) {
+    eventsService
+      .deleteClassAllocation(subjectCode, classCode)
+      .then((it) => {
+        toastSuccess(
+          `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
+        );
+      })
+      .catch((error) => {
+        toastError(
+          `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`,
+        );
+      });
+  }
+
   function handlePreferencesClick(obj: Class) {
     setSelectedClass(obj);
     onOpenPreferences();
@@ -367,20 +422,39 @@ function Classes() {
   }
 
   function handleAllocClick() {
-    onOpenAlloc();
+    onOpenAllocOptions();
   }
 
-  function handleAlloc() {
+  function handleAllocLoad() {
+    setAllocating(true);
+    eventsService
+      .loadAllocations()
+      .then((it) => {
+        setAllocatedEvents(it.data.allocated_events);
+        setUnallocatedEvents(it.data.unallocated_events);
+        toastSuccess('Alocação carregada com sucesso!');
+        onCloseAllocOptions();
+        onOpenAllocModal();
+      })
+      .catch((error) => {
+        toastError(`Erro ao carregar alocação: ${error}`);
+      })
+      .finally(() => setAllocating(false));
+  }
+
+  function handleAllocNew() {
     setAllocating(true);
     eventsService
       .allocate()
       .then((it) => {
-        console.log(it.statusText);
-        navigate('/allocation');
+        setAllocatedEvents(it.data.allocated);
+        setUnallocatedEvents(it.data.unallocated);
+        onCloseAllocOptions();
+        onOpenAllocModal();
       })
       .catch(({ response }: AxiosError<ErrorResponse>) => {
-        onCloseAlloc();
-        onOpenDrawer();
+        onCloseAllocModal();
+        toastError(`Erro ao alocar turmas: ${response?.data.error}`);
         console.log(response?.data.error);
       })
       .finally(() => setAllocating(false));
@@ -406,11 +480,6 @@ function Classes() {
     }
   }
 
-  function handleDrawerAlloc(data: HasToBeAllocatedClass[]) {
-    setAllocating(true);
-    classesService.editHasToBeAllocated(data).then(() => handleAlloc());
-  }
-
   function handleCrawlerSave(subjectsList: string[], building_id: string) {
     crawlerService
       .crawl({
@@ -421,9 +490,9 @@ function Classes() {
         console.log(it);
         fetchData();
       })
-      .catch((error) => {
-        toastError(`Erro ao buscar disciplinas: ${error}`);
-      });
+      .catch(({ response }: AxiosError<ErrorResponse>) =>
+        toastError(`Erro ao buscar disciplinas: ${response?.data.message}`),
+      );
   }
 
   return (
@@ -453,20 +522,22 @@ function Classes() {
         isOpen={isOpenAllocEdit}
         onClose={onCloseAllocEdit}
         onSave={handleAllocationEdit}
+        onDelete={handleAllocationEditDelete}
         classEvents={selectedClassEventList}
       />
-      <HasToBeAllocatedDrawer
-        isOpen={isOpenDrawer}
-        onClose={onCloseDrawer}
-        classesList={classesList}
-        onSave={handleDrawerAlloc}
+
+      <AllocationOptions
+        isOpen={isOpenAllocOptions}
+        onLoad={handleAllocLoad}
+        onNew={handleAllocNew}
+        onClose={onCloseAllocOptions}
       />
-      <Dialog
-        isOpen={isOpenAlloc}
-        onClose={onCloseAlloc}
-        onConfirm={handleAlloc}
-        title='Deseja calcular alocação para as turmas e salas cadastradas'
-        warningText='ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
+
+      <AutomaticAllocationModal
+        isOpen={isOpenAllocModal}
+        onClose={onCloseAllocModal}
+        allocatedEvents={allocatedEvents}
+        unallocatedEvents={unallocatedEvents}
       />
 
       <Center>
@@ -480,15 +551,22 @@ function Classes() {
               Adicionar Turma
             </Button>
             <JupiterCrawlerPopover onSave={handleCrawlerSave} />
-            <Button ml={2} colorScheme='red' onClick={handleAllocClick}>
+            <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
               Alocação Automática
             </Button>
           </Flex>
           <Dialog
-            isOpen={isOpenDelete}
-            onClose={onCloseDelete}
-            onConfirm={handleDelete}
-            title={`Deseja deletar ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
+            isOpen={isOpenDeleteClass}
+            onClose={onCloseDeleteClass}
+            onConfirm={handleDeleteClass}
+            title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
+          />
+          <Dialog
+            isOpen={isOpenDeleteAlloc}
+            onClose={onCloseDeleteAlloc}
+            onConfirm={handleDeleteAlloc}
+            title={`Deseja remover a alocação de ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
+            warningText='Atenção: ao confirmar a alocação dessa turma será perdida'
           />
           <DataTable data={classesList} columns={columns} />
         </Box>

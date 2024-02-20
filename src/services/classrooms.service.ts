@@ -48,4 +48,7 @@ export default class ClassroomsService extends HttpService {
     );
     return response;
   }
+  getAllSchedules() {
+    return this.http.get('schedules');
+  }
 }
