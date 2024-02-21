@@ -317,7 +317,6 @@ function Classes() {
   }
 
   function handleDeleteClass() {
-
     if (selectedClass) {
       classesService
         .delete(selectedClass.subject_code, selectedClass.class_code)
@@ -362,14 +361,16 @@ function Classes() {
   }
 
   function handleAllocationEdit(
-    subjectCode: string,
-    classCode: string,
-    weekDays: string[],
+    events_ids: string[],
     newClassroom: string,
-    building: string,
+    building_id: string,
   ) {
     eventsService
-      .edit(subjectCode, classCode, weekDays, newClassroom, building)
+      .editManyAllocations({
+        events_ids,
+        classroom: newClassroom,
+        building_id,
+      })
       .then((it) => {
         toastSuccess('Alocação editada com sucesso!');
         fetchData();
@@ -388,6 +389,7 @@ function Classes() {
         toastSuccess(
           `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
         );
+        fetchData();
       })
       .catch((error) => {
         toastError(

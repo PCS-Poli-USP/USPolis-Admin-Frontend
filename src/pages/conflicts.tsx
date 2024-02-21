@@ -89,7 +89,6 @@ const ConflictsPage = () => {
     conflictsService
       .list()
       .then((res) => {
-        console.log(res.data);
         setConflicts(res.data);
       })
       .catch((err) => {
@@ -99,14 +98,16 @@ const ConflictsPage = () => {
   }
 
   function handleAllocationEdit(
-    subjectCode: string,
-    classCode: string,
-    weekDays: string[],
+    events_ids: string[],
     newClassroom: string,
-    building: string,
+    building_id: string,
   ) {
     eventsService
-      .edit(subjectCode, classCode, weekDays, newClassroom, building)
+      .editManyAllocations({
+        events_ids,
+        building_id,
+        classroom: newClassroom,
+      })
       .then(() => {
         toastSuccess('Alocação editada com sucesso!');
         fetchData();
@@ -285,6 +286,7 @@ const ConflictsPage = () => {
             start_time: selectedEvent.start_time,
             end_time: selectedEvent.end_time,
             class_code_text: selectedEvent.class_code,
+            id: selectedEvent.id,
           },
         ]}
       />

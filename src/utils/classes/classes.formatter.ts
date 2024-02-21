@@ -65,6 +65,7 @@ export function ClassToEventByClassroom(
       start_time: data.start_time[i],
       end_time: data.end_time[i],
       week_day: data.week_days[i],
+      id: data.events_ids[i],
       class_code_text: ClassCodeText(data.class_code),
       subscribers: data.subscribers,
     };

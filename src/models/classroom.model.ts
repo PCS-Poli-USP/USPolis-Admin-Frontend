@@ -14,4 +14,5 @@ export interface AvailableClassroom {
   classroom_name: string;
   building: string;
   capacity: number;
+  conflicted?: boolean;
 }

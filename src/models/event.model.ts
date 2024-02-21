@@ -17,6 +17,7 @@ export default interface Event {
 }
 
 export interface EventByClassrooms {
+  id?: string;
   subject_code: string;
   classroom: string;
   building: string;

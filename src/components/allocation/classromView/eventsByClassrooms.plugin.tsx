@@ -44,7 +44,7 @@ function ClassroomsTables(props: any) {
       setCanShowToast(false);
       setErrorMessage('');
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canShowToast, errorMessage]);
 
   const toast = useToast();
@@ -80,15 +80,17 @@ function ClassroomsTables(props: any) {
   }
 
   function handleAllocationSave(
-    subjectCode: string,
-    classCode: string,
-    weekDays: string[],
+    events_ids: string[],
     newClassroom: string,
-    building: string,
+    building_id: string,
   ) {
     setCanShowToast(true);
     eventsService
-      .edit(subjectCode, classCode, weekDays, newClassroom, building)
+      .editManyAllocations({
+        events_ids,
+        classroom: newClassroom,
+        building_id,
+      })
       .then((it) => {
         setErrorMessage('');
         window.location.reload();
@@ -143,12 +145,23 @@ function ClassroomsTables(props: any) {
                 <Text fontSize='xs'>{data.end_time}</Text>
               </Box>
               <Box paddingY={1}>
-                <Heading size='sm' noOfLines={1} textColor={row.original.has_to_be_allocated ? 'red.300' : 'uspolis.blue'}>
+                <Heading
+                  size='sm'
+                  noOfLines={1}
+                  textColor={
+                    row.original.has_to_be_allocated
+                      ? 'red.300'
+                      : 'uspolis.blue'
+                  }
+                >
                   {data.subject_code}
                 </Heading>
                 <Text>{data.class_code_text}</Text>
                 <Tooltip label='Professores'>
                   <Text>
+                    {data.professors.join().length > 25
+                      ? data.professors[0] + '...'
+                      : data.professors.join()}
                     {data.professors.join().length > 25
                       ? data.professors[0] + '...'
                       : data.professors.join()}
@@ -166,6 +179,10 @@ function ClassroomsTables(props: any) {
     <>
       {unallocatedClassroomData && (
         <Flex>
+          <DataTable
+            data={unallocatedClassroomData}
+            columns={colDef(Classrooms.UNALLOCATED)}
+          />
           <DataTable
             data={unallocatedClassroomData}
             columns={colDef(Classrooms.UNALLOCATED)}
