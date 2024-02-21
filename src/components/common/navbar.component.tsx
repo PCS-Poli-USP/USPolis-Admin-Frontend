@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { Auth } from 'aws-amplify';
 import { appContext } from 'context/AppContext';
-import { ReactNode, useContext, useEffect } from 'react';
+import { ReactNode, useContext } from 'react';
 import { FaUser } from 'react-icons/fa';
 import Logo from 'assets/uspolis.logo.png';
 
@@ -31,6 +31,7 @@ const Links = [
   { text: 'Prédios', value: '/buildings', admin: false },
   { text: 'Conflitos', value: '/conflicts', admin: false },
   { text: 'Usuários', value: '/users', admin: true },
+  { text: 'Eventos', value: 'institutional-events', admin: false },
 ];
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
@@ -41,7 +42,6 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
     py={1}
     rounded='md'
     _hover={{
-      // textDecoration: 'none',
       bg: 'uspolis.grey',
     }}
     href={to}
@@ -58,8 +58,6 @@ export default function Navbar() {
   function handleClickLogout() {
     Auth.signOut();
   }
-
-  useEffect(() => {}, [username]);
 
   return (
     <>
@@ -116,13 +114,13 @@ export default function Navbar() {
               <MenuList>
                 {/* <MenuItem>Perfil</MenuItem>
                 <MenuDivider /> */}
-                <MenuItem onClick={handleClickLogout} color='black'>
-                  Sair
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </Flex>
+              <MenuItem onClick={handleClickLogout} color='black'>
+                Sair
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </Flex>
+      </Flex>
 
         {isOpen ? (
           <Box pb={4} display={{ md: 'none' }}>

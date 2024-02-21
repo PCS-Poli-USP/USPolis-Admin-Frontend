@@ -225,7 +225,7 @@ function Classrooms() {
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
         onConfirm={handleDelete}
-        title={`Deseja deletar ${selectedClassroom?.classroom_name}`}
+        title={`Deseja deletar ${selectedClassroom?.classroom_name}?`}
       />
       <Center>
         <Box p={4} w='8xl' overflowX='auto'>
