@@ -14,18 +14,21 @@ export function AllocationEventsMapper(allocation: Event[]) {
     resourceId: it.classroom || Classrooms.UNALLOCATED,
     extendedProps: {
       building: it.building,
-      classCode: it.class_code,
-      professor: it.professor,
-      startTime: it.start_time,
-      endTime: it.end_time,
-      weekday: it.week_day,
-      classCodeText: ClassCodeText(it.class_code),
+      class_code: it.class_code,
+      subject_code: it.subject_code,
+      classroom: it.classroom || Classrooms.UNALLOCATED,
+      has_to_be_allocated: it.has_to_be_allocated,
+      professors: it.professors,
+      start_time: it.start_time,
+      end_time: it.end_time,
+      week_day: it.week_day,
+      class_code_text: ClassCodeText(it.class_code),
       subscribers: it.subscribers,
     },
   }));
 }
 
-function WeekDayInt(weekDay: string) {
+export function WeekDayInt(weekDay: string) {
   switch (weekDay) {
     default:
     case WeekDays.Sunday:
@@ -52,23 +55,26 @@ export function ClassCodeText(classCode: string) {
 
 export function AllocationResourcesFromEventsMapper(allocation: Event[]) {
   return Array.from(
-    new Set(allocation.map((it) => ({ id: it.classroom || Classrooms.UNALLOCATED, building: it.building }))),
+    new Set(allocation.map((it) => ({ building: it.building, id: it.classroom || Classrooms.UNALLOCATED }))),
   );
 }
 
 function EventsRenderRangeEventsByClassroomsMapper(events: EventRenderRange[]): EventByClassrooms[] {
-  return events.map(({ def: { title, extendedProps, resourceIds } }) => ({
-    subjectCode: title,
+  return events.map(({ def: { title, extendedProps, resourceIds } }) => {
+    return {
+    subject_code: title,
+    subject_name: extendedProps?.subject_name,
     classroom: resourceIds?.at(0) as string,
     building: extendedProps?.building,
-    classCode: extendedProps?.classCode,
-    professor: extendedProps?.professor,
-    startTime: extendedProps?.startTime,
-    endTime: extendedProps?.endTime,
-    weekday: extendedProps?.weekday,
-    classCodeText: extendedProps?.classCodeText,
+    has_to_be_allocated: extendedProps?.has_to_be_allocated,
+    class_code: extendedProps?.class_code,
+    professors: extendedProps?.professors,
+    start_time: extendedProps?.start_time,
+    end_time: extendedProps?.end_time,
+    week_day: extendedProps?.week_day,
+    class_code_text: extendedProps?.class_code_text,
     subscribers: extendedProps?.subscribers,
-  }));
+  }});
 }
 
 export function EventsByClassroomMapper(events: EventRenderRange[]) {
@@ -86,11 +92,11 @@ export function EventsByClassroomMapper(events: EventRenderRange[]) {
   // order events by day/time
   mapData.forEach((value) =>
     value.sort((a, b) => {
-      const firstMinusSecond = WeekDayInt(a.weekday) - WeekDayInt(b.weekday);
+      const firstMinusSecond = WeekDayInt(a.week_day) - WeekDayInt(b.week_day);
       if (firstMinusSecond > 0) {
         return 1;
       } else if (firstMinusSecond === 0) {
-        return a.startTime > b.endTime ? 1 : -1;
+        return a.start_time > b.end_time ? 1 : -1;
       } else return -1; // firstMinusSecond < 0
     }),
   );
@@ -103,7 +109,7 @@ export function EventsByClassroomMapper(events: EventRenderRange[]) {
 
 export function ClassEventsMapper(events: EventRenderRange[], classCode: string, subjectCode: string) {
   return EventsRenderRangeEventsByClassroomsMapper(events).filter(
-    (it) => it.classCode === classCode && it.subjectCode === subjectCode,
+    (it) => it.class_code === classCode && it.subject_code === subjectCode,
   );
 }
 
@@ -134,4 +140,18 @@ export function WeekDayText(weekDay: string) {
     case WeekDays.Saturday:
       return 'Sábado';
   }
+}
+
+export function EventsByWeekDay(events: EventByClassrooms[]): EventByClassrooms[][] {
+  const eventsByWeekDay: EventByClassrooms[][] = [[], [], [], [], [], [], []];
+  for (let i = 0; i < events.length; i++) {
+    if (events[i].week_day === WeekDays.Monday) eventsByWeekDay[0].push(events[i]);
+    if (events[i].week_day === WeekDays.Tuesday) eventsByWeekDay[1].push(events[i]);
+    if (events[i].week_day=== WeekDays.Wednesday) eventsByWeekDay[2].push(events[i]);
+    if (events[i].week_day === WeekDays.Thursday) eventsByWeekDay[3].push(events[i]);
+    if (events[i].week_day === WeekDays.Friday) eventsByWeekDay[4].push(events[i]);
+    if (events[i].week_day === WeekDays.Saturday) eventsByWeekDay[5].push(events[i]);
+    if (events[i].week_day === WeekDays.Sunday) eventsByWeekDay[6].push(events[i]);
+  }
+  return eventsByWeekDay;
 }

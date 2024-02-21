@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import Class, { EditClassEvents, HasToBeAllocatedClass, Preferences } from 'models/class.model';
+import Class, { CreateClassEvents, HasToBeAllocatedClass, Preferences } from 'models/class.model';
 import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
@@ -11,6 +11,10 @@ export default class ClassesService extends HttpService {
 
   list(): Promise<AxiosResponse<Array<Class>>> {
     return this.http.get('');
+  }
+
+  createOne(data: CreateClassEvents[]): Promise<AxiosResponse<any>> {
+    return this.http.post("", data);
   }
 
   createMany(data: string[]): Promise<AxiosResponse<any>> {
@@ -25,7 +29,7 @@ export default class ClassesService extends HttpService {
     return this.http.patch(`preferences/${subjectCode}/${classCode}`, data);
   }
 
-  edit(subjectCode: string, classCode: string, data: EditClassEvents[]) {
+  edit(subjectCode: string, classCode: string, data: CreateClassEvents[]) {
     return this.http.patch(`${subjectCode}/${classCode}`, data);
   }
 

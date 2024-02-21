@@ -3,16 +3,17 @@ import {
   Button,
   Center,
   Flex,
-  Icon,
+  HStack,
   IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Spacer,
   Text,
+  Tooltip,
   useDisclosure,
+  useToast,
 } from '@chakra-ui/react';
+
+import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+
 import { ColumnDef } from '@tanstack/react-table';
 import RegisterModal from 'components/classrooms/register.modal';
 import DataTable from 'components/common/dataTable.component';
@@ -21,14 +22,24 @@ import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
 import Classroom from 'models/classroom.model';
 import { useContext, useEffect, useState } from 'react';
-import { FaEllipsisV } from 'react-icons/fa';
 import ClassroomsService from 'services/classrooms.service';
-import { FilterBoolean, FilterNumber } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import {
+  FilterBoolean,
+  FilterNumber,
+} from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 function Classrooms() {
   const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);
-  const { isOpen: isOpenRegister, onOpen: onOpenRegister, onClose: onCloseRegister } = useDisclosure();
-  const { isOpen: isOpenDelete, onOpen: onOpenDelete, onClose: onCloseDelete } = useDisclosure();
+  const {
+    isOpen: isOpenRegister,
+    onOpen: onOpenRegister,
+    onClose: onCloseRegister,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom>();
   const [isUpdate, setIsUpdate] = useState(false);
   const { setLoading } = useContext(appContext);
@@ -56,6 +67,12 @@ function Classrooms() {
       filterFn: FilterNumber,
     },
     {
+      accessorKey: 'ignore_to_allocate',
+      header: 'Ignorar',
+      meta: { isBoolean: true, isSelectable: true },
+      filterFn: FilterBoolean,
+    },
+    {
       accessorKey: 'air_conditioning',
       header: 'Ar condicionado',
       meta: { isBoolean: true, isSelectable: true },
@@ -79,20 +96,57 @@ function Classrooms() {
     },
     {
       id: 'options',
-      meta: { isNumeric: true },
+      header: 'Opções',
       cell: ({ row }) => (
-        <Menu>
-          <MenuButton as={IconButton} aria-label='Options' icon={<Icon as={FaEllipsisV} />} variant='ghost' />
-          <MenuList>
-            <MenuItem onClick={() => handleEditClick(row.original)}>Editar</MenuItem>
-            <MenuItem onClick={() => handleDeleteClick(row.original)}>Deletar</MenuItem>
-          </MenuList>
-        </Menu>
+        <HStack spacing='0px'>
+          <Tooltip label='Editar'>
+            <IconButton
+              colorScheme='yellow'
+              size='xs'
+              variant='ghost'
+              aria-label='editar-sala'
+              icon={<BsFillPenFill />}
+              onClick={() => handleEditClick(row.original)}
+            />
+          </Tooltip>
+
+          <Tooltip label='Deletar'>
+            <IconButton
+              colorScheme='red'
+              size='xs'
+              variant='ghost'
+              aria-label='deletar-sala'
+              icon={<BsFillTrashFill />}
+              onClick={() => handleDeleteClick(row.original)}
+            />
+          </Tooltip>
+        </HStack>
       ),
     },
   ];
 
   const classroomService = new ClassroomsService();
+  const toast = useToast();
+  const toastSuccess = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Sucesso!',
+      description: message,
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+  const toastError = (message: string) => {
+    toast({
+      position: 'top-left',
+      title: 'Erro!',
+      description: message,
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
 
   useEffect(() => {
     fetchData();
@@ -125,11 +179,17 @@ function Classrooms() {
 
   function handleDelete() {
     if (selectedClassroom) {
-      classroomService.delete(selectedClassroom.classroom_name).then((it) => {
-        console.log(it.data);
-        onCloseDelete();
-        fetchData();
-      });
+      classroomService
+        .delete(selectedClassroom.classroom_name)
+        .then((it) => {
+          console.log(it.data);
+          toastSuccess('Sala deletada com sucesso!');
+          onCloseDelete();
+          fetchData();
+        })
+        .catch((error) => {
+          toastError(`Erro ao remover sala: ${error}`);
+        });
     }
   }
 
@@ -137,10 +197,18 @@ function Classrooms() {
     const request = isUpdate
       ? classroomService.update(formData.classroom_name, formData)
       : classroomService.create(formData);
-    Promise.resolve(request).then((it) => {
-      console.log(it.data);
-      fetchData();
-    });
+    Promise.resolve(request)
+      .then((it) => {
+        console.log(it.data);
+        if (isUpdate) toastSuccess('Sala editada com sucesso!');
+        else toastSuccess('Sala criada com sucesso!');
+        fetchData();
+      })
+      .catch((error) => {
+        console.log(error);
+        if (isUpdate) toastError(`Erro ao editar turma: ${error}`);
+        else toastError(`Erro ao criar sala: ${error}`);
+      });
   }
 
   return (
@@ -160,7 +228,7 @@ function Classrooms() {
         title={`Deseja deletar ${selectedClassroom?.classroom_name}?`}
       />
       <Center>
-        <Box p={4} w='80%' overflowX='auto'>
+        <Box p={4} w='8xl' overflowX='auto'>
           <Flex align='center'>
             <Text fontSize='4xl' mb={4}>
               Salas de aula

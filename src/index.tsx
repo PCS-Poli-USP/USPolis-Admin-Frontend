@@ -1,6 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import Allocation from 'pages/allocation';
-import Classes from 'pages/classes';
+import Classes from 'pages/classes/classes';
 import Classrooms from 'pages/classrooms';
 import InstitutionalEvents from 'pages/institutional-events';
 import React from 'react';
@@ -14,6 +14,9 @@ import awsConfig from 'aws-config';
 import AuthRoute from 'components/routes/auth.route';
 import AppContextProvider from 'context/AppContext';
 import theme from 'utils/chakra.theme';
+import Buildings from 'pages/buildings';
+import Users from 'pages/users/users';
+import ConflictsPage from 'pages/conflicts';
 
 Amplify.configure(awsConfig);
 
@@ -28,9 +31,12 @@ root.render(
             <Route path='/index' element={<App />} />
             {/* Private Routes */}
             <Route path='/' element={<AuthRoute />}>
+              <Route path='users' element={<Users />} />
+              <Route path='buildings' element={<Buildings />} />
               <Route path='classrooms' element={<Classrooms />} />
               <Route path='classes' element={<Classes />} />
               <Route path='allocation' element={<Allocation />} />
+              <Route path='conflicts' element={<ConflictsPage />} />
               <Route path='institutional-events' element={<InstitutionalEvents />} />
             </Route>
           </Routes>
