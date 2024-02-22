@@ -162,9 +162,6 @@ function ClassroomsTables(props: any) {
                     {data.professors.join().length > 25
                       ? data.professors[0] + '...'
                       : data.professors.join()}
-                    {data.professors.join().length > 25
-                      ? data.professors[0] + '...'
-                      : data.professors.join()}
                   </Text>
                 </Tooltip>
               </Box>
