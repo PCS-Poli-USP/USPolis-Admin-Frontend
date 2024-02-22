@@ -117,8 +117,8 @@ export default function AutomaticAllocationModal({
       });
     let index = allocatedEventsList.findIndex(
       (value) => (
-        value.id === events_ids[0],
-        value.week_day === selectedEvent.week_day,
+        value.id === events_ids[0] &&
+        value.week_day === selectedEvent.week_day &&
         value.start_time === selectedEvent.start_time
       ),
     );
@@ -130,8 +130,8 @@ export default function AutomaticAllocationModal({
     } else {
       index = unallocatedEventsList.findIndex(
         (value) => (
-          value.id === events_ids[0],
-          value.week_day === selectedEvent.week_day,
+          value.id === events_ids[0] &&
+          value.week_day === selectedEvent.week_day &&
           value.start_time === selectedEvent.start_time
         ),
       );
@@ -174,9 +174,9 @@ export default function AutomaticAllocationModal({
       const newUnallocatedEvents = [...unallocatedEventsList];
       const index = allocatedEventsList.findIndex(
         (value) => (
-          value.subject_code === subjectCode,
-          value.class_code === classCode,
-          value.week_day === selectedEvent.week_day,
+          value.subject_code === subjectCode &&
+          value.class_code === classCode &&
+          value.week_day === selectedEvent.week_day &&
           value.start_time === selectedEvent.start_time
         ),
       );
