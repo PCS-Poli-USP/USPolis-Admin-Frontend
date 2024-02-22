@@ -24,13 +24,17 @@ export function breakClassFormInEvents(form: Class) {
       preferences: form.preferences,
       has_to_be_allocated: form.has_to_be_allocated,
     };
+
+    if (form.classrooms) {
+      event.classroom = form.classrooms[i];
+    }
     events.push(event);
   }
 
   return events;
 }
 
-export function EventToEventByClassroom(data: Event) : EventByClassrooms {
+export function EventToEventByClassroom(data: Event): EventByClassrooms {
   const event: EventByClassrooms = {
     subject_code: data.subject_code,
     class_code: data.class_code,

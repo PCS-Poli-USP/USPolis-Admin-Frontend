@@ -41,7 +41,7 @@ export interface CreateClassEvents {
   pendings: number;
   preferences: Preferences;
   has_to_be_allocated: boolean;
-  classrom?: string;
+  classroom?: string;
 }
 
 export interface HasToBeAllocatedClass {
