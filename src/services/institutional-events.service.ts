@@ -8,7 +8,7 @@ const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
 export default class InstutionalEventsService extends HttpService {
   constructor() {
-    super(`${USPOLIS_SERVER_URL}/api/institutional-events`);
+    super(`${USPOLIS_SERVER_URL}/institutional-events`);
   }
 
   list(): Promise<AxiosResponse<Array<InstitutionalEvent>>> {
