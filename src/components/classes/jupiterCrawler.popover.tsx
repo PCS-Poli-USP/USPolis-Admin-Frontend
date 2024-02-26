@@ -1,5 +1,7 @@
 import { AddIcon } from '@chakra-ui/icons';
 import {
+  Alert,
+  AlertIcon,
   Button,
   Flex,
   IconButton,
@@ -19,6 +21,8 @@ import {
   UnorderedList,
   useDisclosure,
   Spinner,
+  VStack,
+  Text,
 } from '@chakra-ui/react';
 import { appContext } from 'context/AppContext';
 import { Building } from 'models/building.model';
@@ -40,6 +44,7 @@ export default function JupiterCrawlerPopover({
 
   const [subjectsList, setSubjectsList] = useState(subjects);
   const [subjectInput, setSubjectInput] = useState('');
+  const [multSubjectInput, setMultSubjectInput] = useState('');
   const [buildingIdSelection, setBuildingIdSelection] = useState<
     string | undefined
   >(undefined);
@@ -59,10 +64,18 @@ export default function JupiterCrawlerPopover({
   }, [dbUser]);
 
   function handleAddClick() {
-    if (subjectInput.length > 0 && !subjectsList.includes(subjectInput))
+    if (subjectInput.length > 6 && !subjectsList.includes(subjectInput)) {
       setSubjectsList((prev) => [...prev, subjectInput]);
-
-    setSubjectInput('');
+      setSubjectInput('');
+    }
+    if (multSubjectInput.length > 6) {
+      const formatedInput = multSubjectInput.replace(' ', '');
+      const subjects = formatedInput
+        .split(',')
+        .filter((value) => value.length === 7);
+      setSubjectsList((prev) => prev.concat(subjects));
+      setMultSubjectInput('');
+    }
   }
 
   function handleCleanClick() {
@@ -107,7 +120,7 @@ export default function JupiterCrawlerPopover({
         <PopoverBody>
           {buildingsList.length !== 1 && (
             <Select
-              placeholder='selecionar prédio'
+              placeholder='Selecionar prédio'
               onChange={(event) => setBuildingIdSelection(event.target.value)}
               icon={buildingsLoading ? <Spinner size='sm' /> : undefined}
             >
@@ -119,7 +132,8 @@ export default function JupiterCrawlerPopover({
             </Select>
           )}
         </PopoverBody>
-        <PopoverBody maxH='2xs' overflowY='auto'>
+        <PopoverBody maxH='xl' overflowY='auto'>
+          <Text mb={2}>Adicionar manualmente:</Text>
           <InputGroup>
             <Input
               value={subjectInput}
@@ -142,6 +156,32 @@ export default function JupiterCrawlerPopover({
               />
             </InputRightElement>
           </InputGroup>
+
+          <Text mt={4}>Adicionar uma lista:</Text>
+          <InputGroup>
+            <Input
+              value={multSubjectInput}
+              onChange={(event) =>
+                setMultSubjectInput(event.target.value.toUpperCase())
+              }
+              placeholder='Códigos das disciplinas'
+              onKeyDownCapture={(e) => {
+                if (e.key === 'Enter') handleAddClick();
+              }}
+            />
+            <InputRightElement>
+              <IconButton
+                aria-label='Add subbject'
+                size='sm'
+                colorScheme='blue'
+                icon={<AddIcon />}
+                onClick={handleAddClick}
+              />
+            </InputRightElement>
+          </InputGroup>
+          <Text as={'b'} fontSize={'sm'} noOfLines={1} mt={2}>*Separe os códigos usando vírgula</Text>
+          <Text as={'b'} fontSize={'sm'} noOfLines={1}>*Não se preocupe com espaços</Text>
+
           <UnorderedList p={2}>
             {subjectsList.map((it) => (
               <ListItem key={it}>{it}</ListItem>
