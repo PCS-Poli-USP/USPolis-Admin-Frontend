@@ -68,6 +68,7 @@ function Allocation() {
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
   const [allocatedEvents, setAllocatedEvents] = useState<Event[]>([]);
   const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
+  const [hasNoAllocation, setHasNoAllocation] = useState(false);
 
   const allocationService = new AllocationService();
   const eventsService = new EventsService();
@@ -153,7 +154,13 @@ function Allocation() {
     eventsService
       .loadAllocations()
       .then((it) => {
-        console.log(it);
+        if (
+          it.data.allocated_events.length === 0 &&
+          it.data.unallocated_events.length === 0
+        ) {
+          setHasNoAllocation(true);
+          return;
+        }
         setAllocatedEvents(it.data.allocated_events);
         setUnallocatedEvents(it.data.unallocated_events);
         toastSuccess('Alocação carregada com sucesso!');
@@ -173,6 +180,7 @@ function Allocation() {
       .then((it) => {
         setAllocatedEvents(it.data.allocated);
         setUnallocatedEvents(it.data.unallocated);
+        setHasNoAllocation(false);
         onCloseAllocOptions();
         onOpenAllocModal();
       })
@@ -216,6 +224,7 @@ function Allocation() {
 
       <AllocationOptions
         isOpen={isOpenAllocOptions}
+        hasError={hasNoAllocation}
         onLoad={handleAllocLoad}
         onNew={handleAllocNew}
         onClose={onCloseAllocOptions}

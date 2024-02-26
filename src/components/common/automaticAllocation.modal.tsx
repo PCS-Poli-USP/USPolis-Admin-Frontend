@@ -89,10 +89,6 @@ export default function AutomaticAllocationModal({
     if (unallocatedEvents.length > 0) setUnallocatedEvents(unallocatedEvents);
   }, [allocatedEvents, unallocatedEvents]);
 
-  function handleAllocNavClick() {
-    navigate('/allocation');
-  }
-
   function handleEditEventClick(event: Event) {
     setSelectedEvent(EventToEventByClassroom(event));
     onOpenEditEventModal();
@@ -248,11 +244,8 @@ export default function AutomaticAllocationModal({
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={handleAllocNavClick}>
-            Ir para Alocações
-          </Button>
           <Button colorScheme='blue' mr={0} onClick={onClose}>
-            Salvar
+            Fechar
           </Button>
         </ModalFooter>
       </ModalContent>
