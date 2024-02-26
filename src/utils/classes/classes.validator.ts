@@ -30,7 +30,7 @@ export function isInvalidProfessor(professor: string) {
 }
 
 export function isInvalidProfessorList(professors: string[]) {
-  return true;
+  return false;
 }
 
 export function isInvalidPeriod(start: string, end: string) {

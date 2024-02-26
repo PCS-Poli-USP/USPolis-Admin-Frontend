@@ -32,7 +32,7 @@ import {
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
-import { CalendarIcon, CloseIcon, DownloadIcon } from '@chakra-ui/icons';
+import { CalendarIcon, CloseIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 
 import Class from 'models/class.model';
@@ -361,7 +361,6 @@ export default function EditModal({
               )?.name
             }
           </Text>
-        
           <Button
             size={'xs'}
             rightIcon={<BsFillPenFill />}
@@ -418,7 +417,8 @@ export default function EditModal({
                   />
                   {hasSubjectCodeError ? (
                     <FormErrorMessage>
-                      Código de disciplina inválido, tamanho mínimo de 7 caracteres.
+                      Código de disciplina inválido, tamanho mínimo de 7
+                      caracteres.
                     </FormErrorMessage>
                   ) : undefined}
                 </FormControl>
@@ -498,10 +498,10 @@ export default function EditModal({
                 <HStack>
                   <Button
                     variant={'outline'}
-                    rightIcon={<DownloadIcon />}
+                    rightIcon={<BsFillPenFill />}
                     onClick={handleSaveClassInfo}
                   >
-                    Salvar
+                    Editar
                   </Button>
                   <Button
                     colorScheme={'red'}
@@ -605,7 +605,9 @@ export default function EditModal({
                 onKeyDown={handleProfessorInputKeyDown}
               />
               {hasProfessorError ? (
-                <FormErrorMessage>Nome de professor inválido, tamanho mínimo de 3 letras.</FormErrorMessage>
+                <FormErrorMessage>
+                  Nome de professor inválido, tamanho mínimo de 3 letras.
+                </FormErrorMessage>
               ) : undefined}
             </FormControl>
 
@@ -773,7 +775,7 @@ export default function EditModal({
             {isEditingClassInfo ? (
               <Alert status='warning' fontSize='sm'>
                 <AlertIcon />
-                Você não salvou as informações da turma
+                Você não editou as informações da turma
               </Alert>
             ) : undefined}
 
