@@ -53,7 +53,7 @@ import {
 import { Building } from 'models/building.model';
 import Event, { EventByClassrooms } from 'models/event.model';
 import CrawlerService from 'services/crawler.service';
-import { sortBuilding, sortClasses } from 'utils/sorter';
+import { sortBuildings, sortClasses } from 'utils/sorter';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -266,7 +266,7 @@ function Classes() {
 
   function fetchBuildings() {
     buildingsService.list().then((it) => {
-      setBuildingsList(it.data.sort(sortBuilding));
+      setBuildingsList(it.data.sort(sortBuildings));
     });
   }
 
