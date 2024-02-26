@@ -53,6 +53,7 @@ import { Building } from 'models/building.model';
 import { EventByClassrooms } from 'models/event.model';
 import CrawlerService from 'services/crawler.service';
 import { sortBuildings, sortClasses } from 'utils/sorter';
+import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -90,10 +91,17 @@ function Classes() {
     onOpen: onOpenRegister,
     onClose: onCloseRegister,
   } = useDisclosure();
+  const {
+    isOpen: isOpenJupiterModal,
+    onOpen: onOpenJupiterModal,
+    onClose: onCloseJupiterModal,
+  } = useDisclosure();
 
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
+  const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
+  const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -436,7 +444,11 @@ function Classes() {
         subject_codes_list: subjectsList,
       })
       .then((it) => {
-        console.log(it);
+        const success: string[] = it.data.inserted;
+        success.concat(it.data.updated);
+        setSuccessSubjects(success);
+        setFailedSubjects(it.data.failed);
+        onOpenJupiterModal();
         fetchData();
       })
       .catch(({ response }: AxiosError<ErrorResponse>) =>
@@ -474,6 +486,12 @@ function Classes() {
         onSave={handleAllocationEdit}
         onDelete={handleAllocationEditDelete}
         classEvents={selectedClassEventList}
+      />
+      <JupiterCrawlerModal
+        isOpen={isOpenJupiterModal}
+        onClose={onCloseJupiterModal}
+        successSubjects={successSubjects}
+        failedSubjects={failedSubjects}
       />
 
       <Center>
