@@ -43,7 +43,7 @@ export default function JupiterCrawlerAccordion({
           fontWeight={'bold'}
         >
           <Box as='span' flex='1' textAlign='left'>
-            Disciplinas Carregadas
+            Disciplinas Carregadas ({successSubjects.length})
           </Box>
           <AccordionIcon />
         </AccordionButton>
@@ -60,7 +60,7 @@ export default function JupiterCrawlerAccordion({
         <AccordionItem>
           <AccordionButton bg={'red.500'} color={'black'} fontWeight={'bold'}>
             <Box as='span' flex='1' textAlign='left'>
-              Disciplinas Não Carregadas
+              Disciplinas Não Carregadas ({failedSubjects.length})
             </Box>
             <AccordionIcon />
           </AccordionButton>

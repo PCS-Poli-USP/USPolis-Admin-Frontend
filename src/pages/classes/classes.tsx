@@ -438,22 +438,25 @@ function Classes() {
   }
 
   function handleCrawlerSave(subjectsList: string[], building_id: string) {
+    setLoading(true);
     crawlerService
       .crawl({
         building_id,
         subject_codes_list: subjectsList,
       })
       .then((it) => {
-        const success: string[] = it.data.inserted;
-        success.concat(it.data.updated);
-        setSuccessSubjects(success);
+        setSuccessSubjects(it.data.sucess);
         setFailedSubjects(it.data.failed);
         onOpenJupiterModal();
         fetchData();
+        toastSuccess('Disciplinas foram carregadas com sucesso!');
       })
       .catch(({ response }: AxiosError<ErrorResponse>) =>
         toastError(`Erro ao buscar disciplinas: ${response?.data.message}`),
-      );
+      )
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
   return (

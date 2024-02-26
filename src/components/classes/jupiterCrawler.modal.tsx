@@ -10,7 +10,6 @@ import {
   ModalCloseButton,
   OrderedList,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 
 import { useEffect, useState } from 'react';
@@ -33,31 +32,9 @@ export default function JupiterCrawlerModal({
   const [successSubjectsList, setSuccessSubjectsList] = useState<string[]>([]);
   const [failedSubjectsList, setFailedSubjectsList] = useState<string[]>([]);
 
-  const toast = useToast();
-  const toastSuccess = (message: string) => {
-    toast({
-      position: 'top-left',
-      title: 'Sucesso!',
-      description: message,
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-  const toastError = (message: string) => {
-    toast({
-      position: 'top-left',
-      title: 'Erro!',
-      description: message,
-      status: 'error',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-
   useEffect(() => {
-    if (successSubjects.length > 0) setSuccessSubjectsList(successSubjects);
-    if (failedSubjects.length > 0) setFailedSubjectsList(failedSubjects);
+    if (successSubjects && successSubjects.length > 0) setSuccessSubjectsList(successSubjects);
+    if (failedSubjects && failedSubjects.length > 0) setFailedSubjectsList(failedSubjects);
   }, [successSubjects, failedSubjects]);
 
 

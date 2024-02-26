@@ -3,7 +3,6 @@ import {
   Alert,
   AlertIcon,
   Button,
-  Flex,
   IconButton,
   Input,
   InputGroup,
@@ -21,8 +20,9 @@ import {
   UnorderedList,
   useDisclosure,
   Spinner,
-  VStack,
   Text,
+  VStack,
+  HStack,
 } from '@chakra-ui/react';
 import { appContext } from 'context/AppContext';
 import { Building } from 'models/building.model';
@@ -179,9 +179,14 @@ export default function JupiterCrawlerPopover({
               />
             </InputRightElement>
           </InputGroup>
-          <Text as={'b'} fontSize={'sm'} noOfLines={1} mt={2}>*Separe os códigos usando vírgula</Text>
-          <Text as={'b'} fontSize={'sm'} noOfLines={1}>*Não se preocupe com espaços</Text>
+          <Text as={'b'} fontSize={'sm'} noOfLines={1} mt={2}>
+            *Separe os códigos usando vírgula
+          </Text>
+          <Text as={'b'} fontSize={'sm'} noOfLines={1}>
+            *Não se preocupe com espaços
+          </Text>
 
+          <Text mt={4}>Lista de disciplinas: ({subjectsList.length})</Text>
           <UnorderedList p={2}>
             {subjectsList.map((it) => (
               <ListItem key={it}>{it}</ListItem>
@@ -192,24 +197,32 @@ export default function JupiterCrawlerPopover({
           buildingIdSelection !== undefined &&
           buildingIdSelection !== '' && (
             <PopoverFooter>
-              <Flex>
-                <Button
-                  colorScheme='yellow'
-                  size='sm'
-                  variant='outline'
-                  onClick={handleCleanClick}
-                >
-                  Limpar
-                </Button>
-                <Spacer />
-                <Button
-                  colorScheme='blue'
-                  size='sm'
-                  onClick={handleConfirmClick}
-                >
-                  Confirmar
-                </Button>
-              </Flex>
+              <VStack>
+                {subjectsList.length > 10 ? (
+                  <Alert status={'warning'} fontSize={'sm'}>
+                    <AlertIcon />
+                    Isso pode levar algum tempo
+                  </Alert>
+                ) : undefined}
+                <HStack alignSelf={'flex-end'}>
+                  <Button
+                    colorScheme='yellow'
+                    size='sm'
+                    variant='outline'
+                    onClick={handleCleanClick}
+                  >
+                    Limpar
+                  </Button>
+                  <Spacer />
+                  <Button
+                    colorScheme='blue'
+                    size='sm'
+                    onClick={handleConfirmClick}
+                  >
+                    Confirmar
+                  </Button>
+                </HStack>
+              </VStack>
             </PopoverFooter>
           )}
       </PopoverContent>
