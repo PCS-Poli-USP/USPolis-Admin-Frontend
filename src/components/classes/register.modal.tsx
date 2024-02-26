@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Button,
   Checkbox,
   FormControl,
@@ -336,12 +338,15 @@ export default function RegisterModal(props: RegisterModalProps) {
           <VStack spacing='20px' alignItems='start'>
             <FormControl isInvalid={hasClassCodeError}>
               <FormLabel>Código da turma</FormLabel>
-              <Input
-                type='number'
+              <Input //Input do tipo number está aceitando um 'e' ou 'E'
                 placeholder='Código da turma'
                 value={form.class_code}
                 errorBorderColor='crimson'
                 onChange={(event) => {
+                  const charValue = event.target.value.charCodeAt(
+                    event.target.value.length - 1,
+                  );
+                  if (charValue < 48 || charValue > 57) return;
                   setForm((prev) => ({
                     ...prev,
                     class_code: event.target.value,
@@ -544,9 +549,10 @@ export default function RegisterModal(props: RegisterModalProps) {
                 ))}
               </List>
             ) : (
-              <Text as='b' colorScheme='red' color='red.500'>
+              <Alert status='warning' fontSize='sm' mb={4}>
+                <AlertIcon />
                 Nenhum professor adicionado
-              </Text>
+              </Alert>
             )}
 
             <Text as='b' fontSize='xl'>
@@ -682,9 +688,10 @@ export default function RegisterModal(props: RegisterModalProps) {
                 ))}
               </List>
             ) : (
-              <Text as='b' colorScheme='red' color='red.500'>
+              <Alert status='error' fontSize='sm' mb={4}>
+                <AlertIcon />
                 Nenhum horário adicionado
-              </Text>
+              </Alert>
             )}
 
             <Text as='b' fontSize='xl'>
@@ -774,17 +781,20 @@ export default function RegisterModal(props: RegisterModalProps) {
         </ModalBody>
 
         <ModalFooter>
-          <HStack spacing='10px'>
+          <VStack width={'full'}>
             {hasErrors ? (
-              <Text colorScheme='tomato' color='red.500'>
+              <Alert status='error' fontSize='sm'>
+                <AlertIcon />
                 Fomulário inválido, corrija os campos inválidos
-              </Text>
+              </Alert>
             ) : undefined}
-            <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-              Salvar
-            </Button>
-            <Button onClick={handleCloseModal}>Cancelar</Button>
-          </HStack>
+            <HStack spacing='10px' alignSelf={'flex-end'}>
+              <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
+                Salvar
+              </Button>
+              <Button onClick={handleCloseModal}>Cancelar</Button>
+            </HStack>
+          </VStack>
         </ModalFooter>
       </ModalContent>
     </Modal>

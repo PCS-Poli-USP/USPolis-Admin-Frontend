@@ -30,7 +30,7 @@ export function isInvalidProfessor(professor: string) {
 }
 
 export function isInvalidProfessorList(professors: string[]) { 
-  return professors.length <= 0;
+  return true;
 }
 
 export function isInvalidPeriod(start: string, end: string) {
@@ -38,7 +38,7 @@ export function isInvalidPeriod(start: string, end: string) {
   const startPeriodObj = new Date(start);
   const endPeriodObj = new Date(end);
 
-  if (startPeriodObj < endPeriodObj) {
+  if (startPeriodObj <= endPeriodObj) {
       return false;
   }
   return true;
