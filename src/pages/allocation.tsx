@@ -116,7 +116,7 @@ function Allocation() {
     if (subjectValue && classroomValue) {
       setFilteredAllocation(
         allocation.filter((data) => {
-          const subjectResult = data.extendedProps.subjectCode
+          const subjectResult = data.extendedProps.subject_code
             .toLowerCase()
             .includes(subjectValue.toLowerCase());
           const classroomResult = data.extendedProps.classroom
@@ -128,7 +128,7 @@ function Allocation() {
     } else if (subjectValue && !classroomValue) {
       setFilteredAllocation(
         allocation.filter((data) => {
-          return data.extendedProps.subjectCode
+          return data.extendedProps.subject_code
             .toLowerCase()
             .includes(subjectValue.toLowerCase());
         }),
