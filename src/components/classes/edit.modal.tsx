@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Button,
   FormControl,
   FormLabel,
@@ -30,18 +32,21 @@ import {
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
-import { CalendarIcon } from '@chakra-ui/icons';
+import { CalendarIcon, CloseIcon, DownloadIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 
 import Class from 'models/class.model';
+import { Building } from 'models/building.model';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 import * as validator from 'utils/classes/classes.validator';
+import { FormatData } from 'utils/formatters';
 
 interface EditModalProps {
   isOpen: boolean;
   onClose: () => void;
   formData?: Class;
   onSave: (data: Class) => void;
+  buildings?: Array<Building>;
 }
 
 export default function EditModal({
@@ -49,6 +54,7 @@ export default function EditModal({
   onClose,
   formData,
   onSave,
+  buildings,
 }: EditModalProps) {
   const initialForm: Class = {
     class_code: '',
@@ -75,6 +81,17 @@ export default function EditModal({
   };
 
   const [form, setForm] = useState<Class>(initialForm);
+
+  // ClassInfo variables
+  const [isEditingClassInfo, setIsEditingClassInfo] = useState(false);
+  const [classCode, setClassCode] = useState('');
+  const [subjectCode, setSubjectCode] = useState('');
+  const [subjectName, setSubjectName] = useState('');
+  const [startPeriod, setStartPeriod] = useState('');
+  const [endPeriod, setEndPeriod] = useState('');
+  const [buildingID, setBuildingID] = useState('');
+
+  // Allocation variables
   const [professor, setProfessor] = useState('');
   const [isEditingProfessor, setIsEditingProfessor] = useState(false);
   const [editProfessorIndex, setEditProfessorIndex] = useState(0);
@@ -84,17 +101,32 @@ export default function EditModal({
   const [editDateIndex, setEditDateIndex] = useState(0);
   const [isEditingDate, setIsEditingDate] = useState(false);
 
+  const [hasClassCodeError, setHasClassCodeError] = useState(false);
+  const [hasSubjectCodeError, setHasSubjectCodeError] = useState(false);
+  const [hasSubjectNameError, setHasSubjectNameError] = useState(false);
+  const [hasPeriodError, setHasPeriodError] = useState(false);
   const [hasProfessorError, setHasProfessorError] = useState(false);
   const [hasOferingError, setHasOferingError] = useState(false);
   const [hasTimeError, setHasTimeError] = useState(false);
   const [hasDayError, setHasDayError] = useState(false);
+  const [hasBuildingError, setHasBuildingError] = useState(false);
   const [hasErrors, setHasErrors] = useState(false);
 
   useEffect(() => {
     if (formData) {
       setForm(formData);
+      setClassInfo(formData);
     }
   }, [formData]);
+
+  function setClassInfo(form: Class) {
+    setClassCode(form.class_code);
+    setSubjectCode(form.subject_code);
+    setSubjectName(form.subject_name);
+    setStartPeriod(form.start_period);
+    setEndPeriod(form.end_period);
+    setBuildingID(form.preferences.building_id);
+  }
 
   function handleSaveClick() {
     if (isInvalidForm()) {
@@ -109,6 +141,28 @@ export default function EditModal({
   function handleCloseModal() {
     clearForm();
     onClose();
+  }
+
+  function handleEditClassInfo() {
+    setIsEditingClassInfo(true);
+  }
+
+  function handleSaveClassInfo() {
+    if (isInvalidClassInfo()) return;
+    setForm((prev) => ({
+      ...prev,
+      class_code: classCode,
+      subject_code: subjectCode,
+      subject_name: subjectName,
+      start_period: startPeriod,
+      end_period: endPeriod,
+      preferences: { ...prev.preferences, building_id: buildingID },
+    }));
+    setIsEditingClassInfo(false);
+  }
+
+  function handleCancelClassInfo() {
+    setIsEditingClassInfo(false);
   }
 
   const handleProfessorButton = () => {
@@ -215,6 +269,31 @@ export default function EditModal({
     }));
   }
 
+  function isInvalidClassInfo(): boolean {
+    let hasError = false;
+    if (validator.isInvalidClassCode(classCode)) {
+      setHasClassCodeError(true);
+      hasError = true;
+    }
+    if (validator.isInvalidSubjectCode(subjectCode)) {
+      setHasSubjectCodeError(true);
+      hasError = true;
+    }
+    if (validator.isInvalidSubjectName(subjectName)) {
+      setHasSubjectNameError(true);
+      hasError = true;
+    }
+    if (validator.isInvalidPeriod(startPeriod, endPeriod)) {
+      setHasPeriodError(true);
+      hasError = true;
+    }
+    if (validator.isEmpty(buildingID)) {
+      setHasBuildingError(true);
+      hasError = true;
+    }
+    return hasError;
+  }
+
   function isInvalidForm() {
     let hasError = false;
 
@@ -223,10 +302,6 @@ export default function EditModal({
     }
 
     if (validator.isInvalidTimeList(form.start_time, form.end_time)) {
-      hasError = true;
-    }
-
-    if (form.start_time.length <= 0) {
       hasError = true;
     }
 
@@ -270,16 +345,180 @@ export default function EditModal({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          {formData?.subject_code} - {formData?.class_code}
-          <Text fontSize='md' fontWeight='normal'>
-            {formData?.subject_name}
+          {form.subject_code} - {form.class_code}
+          <Text fontSize={'md'} fontWeight={'normal'}>
+            {form.subject_name}
           </Text>
+          <Text fontSize={'md'} fontWeight={'normal'}>
+            Período: {FormatData(form.start_period)} até{' '}
+            {FormatData(form.end_period)}
+          </Text>
+          <Text fontSize={'md'} fontWeight={'normal'}>
+            Prédio:{' '}
+            {
+              buildings?.find(
+                (build) => build.id === form.preferences.building_id,
+              )?.name
+            }
+          </Text>
+        
+          <Button
+            size={'xs'}
+            rightIcon={<BsFillPenFill />}
+            onClick={handleEditClassInfo}
+            colorScheme={'yellow'}
+            variant={'outline'}
+          >
+            Editar
+          </Button>
         </ModalHeader>
 
         <ModalCloseButton />
 
         <ModalBody>
           <VStack alignItems='start' spacing='15px'>
+            {isEditingClassInfo ? (
+              <>
+                <Text as='b' fontSize={'xl'}>
+                  Informações da turma:
+                </Text>
+
+                <FormControl isInvalid={hasClassCodeError}>
+                  <FormLabel>Código da turma</FormLabel>
+                  <Input //Input do tipo number está aceitando um 'e' ou 'E'
+                    placeholder='Código da turma'
+                    value={classCode}
+                    errorBorderColor='crimson'
+                    onChange={(event) => {
+                      const charValue = event.target.value.charCodeAt(
+                        event.target.value.length - 1,
+                      );
+                      if (charValue < 48 || charValue > 57) return;
+                      setClassCode(event.target.value);
+                      if (event.target.value) setHasClassCodeError(false);
+                    }}
+                  />
+                  {hasClassCodeError ? (
+                    <FormErrorMessage>
+                      Código de turma inválido, tamanho mínimo de 7 números.
+                    </FormErrorMessage>
+                  ) : undefined}
+                </FormControl>
+
+                <FormControl isInvalid={hasSubjectCodeError}>
+                  <FormLabel>Código da disciplina</FormLabel>
+                  <Input
+                    placeholder='Código da disciplina'
+                    value={subjectCode}
+                    errorBorderColor='crimson'
+                    onChange={(event) => {
+                      setSubjectCode(event.target.value);
+                      if (event.target.value) setHasSubjectCodeError(false);
+                    }}
+                  />
+                  {hasSubjectCodeError ? (
+                    <FormErrorMessage>
+                      Código de disciplina inválido, tamanho mínimo de 7 caracteres.
+                    </FormErrorMessage>
+                  ) : undefined}
+                </FormControl>
+
+                <FormControl isInvalid={hasSubjectNameError}>
+                  <FormLabel>Nome da disciplina</FormLabel>
+                  <Input
+                    placeholder='Nome da disciplina'
+                    value={subjectName}
+                    errorBorderColor='crimson'
+                    onChange={(event) => {
+                      setSubjectName(event.target.value);
+                      if (event.target.value) setHasSubjectNameError(false);
+                    }}
+                  />
+                  {hasSubjectNameError ? (
+                    <FormErrorMessage>
+                      Nome da disciplina inválido.
+                    </FormErrorMessage>
+                  ) : undefined}
+                </FormControl>
+
+                <FormControl isInvalid={hasPeriodError}>
+                  <FormLabel>Período da disciplina</FormLabel>
+                  <HStack spacing='5px'>
+                    <FormLabel>Início</FormLabel>
+                    <Input
+                      placeholder='Data de início da disciplina'
+                      type='date'
+                      value={startPeriod}
+                      onChange={(event) => {
+                        setStartPeriod(event.target.value);
+                        if (event.target.value) setHasPeriodError(false);
+                      }}
+                    />
+
+                    <FormLabel>Fim</FormLabel>
+                    <Input
+                      placeholder='Data de encerramento da disciplina'
+                      type='date'
+                      value={endPeriod}
+                      onChange={(event) => {
+                        setEndPeriod(event.target.value);
+                        if (event.target.value) setHasPeriodError(false);
+                      }}
+                    />
+                  </HStack>
+                  {hasPeriodError ? (
+                    <FormErrorMessage>Periodo inválido</FormErrorMessage>
+                  ) : undefined}
+                </FormControl>
+
+                <FormControl isInvalid={hasBuildingError}>
+                  <FormLabel>Prédio</FormLabel>
+                  <Select
+                    defaultValue={
+                      formData ? formData.preferences.building_id : undefined
+                    }
+                    placeholder='Escolha o prédio da turma'
+                    value={buildingID}
+                    onChange={(event) => {
+                      setBuildingID(event.target.value);
+                      if (event.target.value) setHasBuildingError(false);
+                    }}
+                  >
+                    {buildings?.map((it, index) => (
+                      <option key={index} value={it.id}>
+                        {it.name}
+                      </option>
+                    ))}
+                  </Select>
+                  {hasBuildingError ? (
+                    <FormErrorMessage>Escolha um prédio.</FormErrorMessage>
+                  ) : undefined}
+                </FormControl>
+
+                <HStack>
+                  <Button
+                    variant={'outline'}
+                    rightIcon={<DownloadIcon />}
+                    onClick={handleSaveClassInfo}
+                  >
+                    Salvar
+                  </Button>
+                  <Button
+                    colorScheme={'red'}
+                    variant={'outline'}
+                    rightIcon={<CloseIcon />}
+                    onClick={handleCancelClassInfo}
+                  >
+                    Cancelar
+                  </Button>
+                </HStack>
+              </>
+            ) : undefined}
+
+            <Text as='b' fontSize={'xl'}>
+              Oferecimento e horários:
+            </Text>
+
             <FormControl isInvalid={hasOferingError}>
               <FormLabel>Oferecimento da disciplina</FormLabel>
               <HStack spacing='8px'>
@@ -366,7 +605,7 @@ export default function EditModal({
                 onKeyDown={handleProfessorInputKeyDown}
               />
               {hasProfessorError ? (
-                <FormErrorMessage>Nome de professor inválido.</FormErrorMessage>
+                <FormErrorMessage>Nome de professor inválido, tamanho mínimo de 3 letras.</FormErrorMessage>
               ) : undefined}
             </FormControl>
 
@@ -411,9 +650,10 @@ export default function EditModal({
                 ))}
               </List>
             ) : (
-              <Text as='b' colorScheme='red' color='red.500'>
+              <Alert status='warning' fontSize='sm' mb={4}>
+                <AlertIcon />
                 Nenhum professor adicionado
-              </Text>
+              </Alert>
             )}
 
             <Text as='b' fontSize='lg' mt={4}>
@@ -513,25 +753,37 @@ export default function EditModal({
                 ))}
               </List>
             ) : (
-              <Text as='b' colorScheme='red' color='red.500'>
+              <Alert status='error' fontSize='sm' mb={4}>
+                <AlertIcon />
                 Nenhum horário adicionado
-              </Text>
+              </Alert>
             )}
           </VStack>
         </ModalBody>
 
         <ModalFooter>
-          <HStack spacing='10px'>
+          <VStack width={'full'}>
             {hasErrors ? (
-              <Text colorScheme='tomato' color='red.500'>
+              <Alert status='error' fontSize='sm'>
+                <AlertIcon />
                 Fomulário inválido, corrija os campos inválidos
-              </Text>
+              </Alert>
             ) : undefined}
-            <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-              Salvar
-            </Button>
-            <Button onClick={handleCloseModal}>Cancelar</Button>
-          </HStack>
+
+            {isEditingClassInfo ? (
+              <Alert status='warning' fontSize='sm'>
+                <AlertIcon />
+                Você não salvou as informações da turma
+              </Alert>
+            ) : undefined}
+
+            <HStack spacing='10px' alignSelf={'flex-end'}>
+              <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
+                Salvar
+              </Button>
+              <Button onClick={handleCloseModal}>Cancelar</Button>
+            </HStack>
+          </VStack>
         </ModalFooter>
       </ModalContent>
     </Modal>
