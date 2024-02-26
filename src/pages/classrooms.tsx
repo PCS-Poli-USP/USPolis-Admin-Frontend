@@ -27,10 +27,13 @@ import {
   FilterBoolean,
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
-import { sortClassrooms } from 'utils/sorter';
+import { sortBuildings, sortClassrooms } from 'utils/sorter';
+import { Building } from 'models/building.model';
+import BuildingsService from 'services/buildings.service';
 
 function Classrooms() {
   const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);
+  const [buildingsList, setBuildingsList] = useState<Array<Building>>([]);
   const {
     isOpen: isOpenRegister,
     onOpen: onOpenRegister,
@@ -127,6 +130,7 @@ function Classrooms() {
   ];
 
   const classroomService = new ClassroomsService();
+  const buildingsService = new BuildingsService();
   const toast = useToast();
   const toastSuccess = (message: string) => {
     toast({
@@ -151,6 +155,7 @@ function Classrooms() {
 
   useEffect(() => {
     fetchData();
+    fetchBuildings();
     // eslint-disable-next-line
   }, []);
 
@@ -159,6 +164,12 @@ function Classrooms() {
     classroomService.list().then((it) => {
       setClassroomsList(it.data.sort(sortClassrooms));
       setLoading(false);
+    });
+  }
+
+  function fetchBuildings() {
+    buildingsService.list().then((it) => {
+      setBuildingsList(it.data.sort(sortBuildings));
     });
   }
 
@@ -219,6 +230,7 @@ function Classrooms() {
         isOpen={isOpenRegister}
         onClose={onCloseRegister}
         formData={selectedClassroom}
+        buildingsOptions={buildingsList}
         isUpdate={isUpdate}
         onSave={handleSave}
       />
