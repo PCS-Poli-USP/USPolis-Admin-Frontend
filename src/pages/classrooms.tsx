@@ -27,6 +27,7 @@ import {
   FilterBoolean,
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import { sortClassrooms } from 'utils/sorter';
 
 function Classrooms() {
   const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);
@@ -156,7 +157,7 @@ function Classrooms() {
   function fetchData() {
     setLoading(true);
     classroomService.list().then((it) => {
-      setClassroomsList(it.data);
+      setClassroomsList(it.data.sort(sortClassrooms));
       setLoading(false);
     });
   }
