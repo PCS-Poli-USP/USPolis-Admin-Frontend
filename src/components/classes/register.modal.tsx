@@ -355,7 +355,9 @@ export default function RegisterModal(props: RegisterModalProps) {
                 }}
               />
               {hasClassCodeError ? (
-                <FormErrorMessage>Código de turma inválido.</FormErrorMessage>
+                <FormErrorMessage>
+                  Código de turma inválido, tamanho mínimo de 7 números.
+                </FormErrorMessage>
               ) : undefined}
             </FormControl>
 
@@ -375,7 +377,7 @@ export default function RegisterModal(props: RegisterModalProps) {
               />
               {hasSubjectCodeError ? (
                 <FormErrorMessage>
-                  Código de disciplina inválido.
+                  Código de disciplina inválido, tamanho mínimo de 7 caracteres.
                 </FormErrorMessage>
               ) : undefined}
             </FormControl>
@@ -485,6 +487,7 @@ export default function RegisterModal(props: RegisterModalProps) {
               >
                 <option value='Prática'>Prática</option>
                 <option value='Teórica'>Teórica</option>
+                <option value='Outro'>Outro</option>
               </Select>
               {hasClassTypeError ? (
                 <FormErrorMessage>Escolha um tipo de turma.</FormErrorMessage>
@@ -504,7 +507,7 @@ export default function RegisterModal(props: RegisterModalProps) {
                 onKeyDown={handleProfessorInputKeyDown}
               />
               {hasProfessorError ? (
-                <FormErrorMessage>Nome de professor inválido.</FormErrorMessage>
+                <FormErrorMessage>Nome de professor inválido, tamanho mínimo de 3 letras.</FormErrorMessage>
               ) : undefined}
             </FormControl>
 
