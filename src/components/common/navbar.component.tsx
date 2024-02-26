@@ -28,10 +28,10 @@ const Links = [
   { text: 'Salas', value: '/classrooms', admin: false },
   { text: 'Turmas', value: '/classes', admin: false },
   { text: 'Alocações', value: '/allocation', admin: false },
-  { text: 'Prédios', value: '/buildings', admin: false },
   { text: 'Conflitos', value: '/conflicts', admin: false },
-  { text: 'Usuários', value: '/users', admin: true },
   { text: 'Eventos', value: '/institutional-events', admin: false },
+  { text: 'Prédios', value: '/buildings', admin: true },
+  { text: 'Usuários', value: '/users', admin: true },
 ];
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
