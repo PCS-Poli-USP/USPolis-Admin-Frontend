@@ -53,11 +53,16 @@ export default function RegisterModal(props: RegisterModalProps) {
   function handleSaveClick() {
     if (isEmpty(form.classroom_name)) return;
     props.onSave(form);
+    clearForm();
     props.onClose();
   }
 
   function handleCloseModal() {
     props.onClose();
+  }
+
+  function clearForm() {
+    setForm(initialForm);
   }
 
   function isEmpty(value: string) {
