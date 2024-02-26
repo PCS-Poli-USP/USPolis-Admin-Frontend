@@ -77,6 +77,7 @@ export default function EditModal({
       accessibility: false,
     },
     has_to_be_allocated: true,
+    ignore_to_allocate: false,
     events_ids: [],
   };
 

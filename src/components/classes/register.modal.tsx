@@ -75,6 +75,7 @@ export default function RegisterModal(props: RegisterModalProps) {
       accessibility: false,
     },
     has_to_be_allocated: true,
+    ignore_to_allocate: false,
     events_ids: [],
   };
 
@@ -507,7 +508,9 @@ export default function RegisterModal(props: RegisterModalProps) {
                 onKeyDown={handleProfessorInputKeyDown}
               />
               {hasProfessorError ? (
-                <FormErrorMessage>Nome de professor inválido, tamanho mínimo de 3 letras.</FormErrorMessage>
+                <FormErrorMessage>
+                  Nome de professor inválido, tamanho mínimo de 3 letras.
+                </FormErrorMessage>
               ) : undefined}
             </FormControl>
 
@@ -779,6 +782,20 @@ export default function RegisterModal(props: RegisterModalProps) {
                   Projetor
                 </Checkbox>
               </HStack>
+            </FormControl>
+
+            <FormControl mt={4}>
+              <Checkbox
+                isChecked={form.ignore_to_allocate}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    ignore_to_allocate: event.target.checked,
+                  }))
+                }
+              >
+                Ignorar para alocação automática
+              </Checkbox>
             </FormControl>
           </VStack>
         </ModalBody>
