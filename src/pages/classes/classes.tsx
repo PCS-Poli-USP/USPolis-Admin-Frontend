@@ -53,6 +53,7 @@ import {
 import { Building } from 'models/building.model';
 import Event, { EventByClassrooms } from 'models/event.model';
 import CrawlerService from 'services/crawler.service';
+import { sortBuilding, sortClasses } from 'utils/sorter';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -263,12 +264,6 @@ function Classes() {
     // eslint-disable-next-line
   }, []);
 
-  function sortBuilding(a: Building, b: Building) {
-    if (a.name < b.name) return -1;
-    else if (a.name > b.name) return 1;
-    return 0;
-  }
-
   function fetchBuildings() {
     buildingsService.list().then((it) => {
       setBuildingsList(it.data.sort(sortBuilding));
@@ -280,7 +275,7 @@ function Classes() {
     classesService
       .list()
       .then((it) => {
-        setClassesList(it.data);
+        setClassesList(it.data.sort(sortClasses));
         setLoading(false);
       })
       .catch((error) => {
@@ -517,6 +512,7 @@ function Classes() {
         onClose={onCloseEdit}
         formData={selectedClass}
         onSave={handleEdit}
+        buildings={buildingsList}
       />
       <EditEventModal
         isOpen={isOpenAllocEdit}
