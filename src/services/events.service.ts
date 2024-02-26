@@ -12,15 +12,15 @@ interface EditManyAllocationsDTO {
 
 export default class EventsService extends HttpService {
   constructor() {
-    super(`${USPOLIS_SERVER_URL}`);
+    super(`${USPOLIS_SERVER_URL}/events`);
   }
 
   list(): Promise<AxiosResponse<Array<Event>>> {
-    return this.http.get('/events');
+    return this.http.get('');
   }
 
   allocate(): Promise<AxiosResponse<any>> {
-    return this.http.patch('/events/allocate');
+    return this.http.patch('allocate');
   }
 
   edit(
@@ -59,15 +59,15 @@ export default class EventsService extends HttpService {
     );
   }
   deleteClassAllocation(subject_code: string, class_code: string) {
-    return this.http.patch(`/events/delete/${subject_code}/${class_code}`);
+    return this.http.patch(`delete/${subject_code}/${class_code}`);
   }
 
   deleteAllAllocations(): Promise<AxiosResponse<number>> {
-    return this.http.patch('/events/delete-allocations');
+    return this.http.patch('delete-allocations');
   }
   editManyAllocations(
     data: EditManyAllocationsDTO,
   ): Promise<AxiosResponse<any>> {
-    return this.http.put('/allocations/update-many', data);
+    return this.http.put('allocations/update-many', data);
   }
 }
