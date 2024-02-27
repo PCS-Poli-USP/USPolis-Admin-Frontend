@@ -29,7 +29,7 @@ const Links = [
   { text: 'Turmas', value: '/classes', admin: false },
   { text: 'Alocações', value: '/allocation', admin: false },
   { text: 'Conflitos', value: '/conflicts', admin: false },
-  { text: 'Eventos', value: '/institutional-events', admin: false },
+  { text: 'Eventos', value: '/institutional-events', admin: true },
   { text: 'Prédios', value: '/buildings', admin: true },
   { text: 'Usuários', value: '/users', admin: true },
 ];
