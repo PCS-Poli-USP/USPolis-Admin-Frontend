@@ -12,15 +12,15 @@ interface EditManyAllocationsDTO {
 
 export default class EventsService extends HttpService {
   constructor() {
-    super(`${USPOLIS_SERVER_URL}/events`);
+    super(`${USPOLIS_SERVER_URL}`);
   }
 
   list(): Promise<AxiosResponse<Array<Event>>> {
-    return this.http.get('');
+    return this.http.get('/events');
   }
 
   allocate(): Promise<AxiosResponse<any>> {
-    return this.http.patch('allocate');
+    return this.http.patch('/events/allocate');
   }
 
   edit(
@@ -30,20 +30,20 @@ export default class EventsService extends HttpService {
     classroom: string,
     building: string,
   ): Promise<AxiosResponse<number>> {
-    return this.http.patch(`edit/${subjectCode}/${classCode}`, weekDays, {
+    return this.http.patch(`/events/edit/${subjectCode}/${classCode}`, weekDays, {
       params: { classroom, building },
     });
   }
 
   loadAllocations(): Promise<AxiosResponse<any>> {
-    return this.http.get('load');
+    return this.http.get('/events/load');
   }
 
   editAllocations(
     allocated_events: Event[],
     unallocated_events: Event[],
   ): Promise<AxiosResponse<any>> {
-    return this.http.patch('edit-allocations', {
+    return this.http.patch('/events/edit-allocations', {
       allocated_events,
       unallocated_events,
     });
@@ -59,15 +59,15 @@ export default class EventsService extends HttpService {
     );
   }
   deleteClassAllocation(subject_code: string, class_code: string) {
-    return this.http.patch(`delete/${subject_code}/${class_code}`);
+    return this.http.patch(`/events/delete/${subject_code}/${class_code}`);
   }
 
   deleteAllAllocations(): Promise<AxiosResponse<number>> {
-    return this.http.patch('delete-allocations');
+    return this.http.patch('/events/delete-allocations');
   }
   editManyAllocations(
     data: EditManyAllocationsDTO,
   ): Promise<AxiosResponse<any>> {
-    return this.http.put('allocations/update-many', data);
+    return this.http.put('/allocations/update-many', data);
   }
 }
