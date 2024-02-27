@@ -209,7 +209,7 @@ export default function RegisterModal(props: RegisterModalProps) {
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
             Salvar
           </Button>
-          <Button onClick={props.onClose}>Cancelar</Button>
+          <Button onClick={() => handleCloseModal()}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
