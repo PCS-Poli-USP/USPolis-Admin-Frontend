@@ -58,6 +58,7 @@ export default function RegisterModal(props: RegisterModalProps) {
   }
 
   function handleCloseModal() {
+    clearForm();
     props.onClose();
   }
 
@@ -100,16 +101,16 @@ export default function RegisterModal(props: RegisterModalProps) {
           >
             <FormLabel>Prédio</FormLabel>
             <Select
-              value={form.building}
-              onChange={(event) =>
+              placeholder={'Escolha um prédio'}
+              onChange={(event) => {
                 setForm((prev) => ({
                   ...prev,
-                  building: event.target.value as Buildings,
-                }))
-              }
+                  building: event.target.value,
+                }));
+              }}
             >
               {props.buildingsOptions.map((it, index) => (
-                <option key={index} value={it.id}>
+                <option key={index} value={it.name}>
                   {it.name}
                 </option>
               ))}
