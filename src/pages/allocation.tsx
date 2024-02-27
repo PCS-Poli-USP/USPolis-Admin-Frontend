@@ -95,7 +95,7 @@ function Allocation() {
     });
   };
 
-  useEffect(() => {
+  function fetchData() {
     setLoading(true);
     Promise.all([allocationService.list()]).then((values) => {
       setAllocation(AllocationEventsMapper(values[0].data));
@@ -105,6 +105,10 @@ function Allocation() {
     });
     if (subjectSearchValue || classroomSearchValue)
       FilterAllocation(subjectSearchValue, classroomSearchValue);
+  }
+
+  useEffect(() => {
+    fetchData()
     // eslint-disable-next-line
   }, []);
 
@@ -201,6 +205,7 @@ function Allocation() {
       .deleteAllAllocations()
       .then((value) => {
         toastSuccess(`Foram removidas ${value.data} alocações!`);
+        fetchData();
       })
       .catch((error) => {
         toastError(`Erro ao remover alocações: ${error}`);
