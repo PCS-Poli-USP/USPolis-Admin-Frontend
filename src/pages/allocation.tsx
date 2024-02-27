@@ -38,8 +38,8 @@ import Event from 'models/event.model';
 
 import { BsSearch } from 'react-icons/bs';
 import Dialog from 'components/common/dialog.component';
-import AutomaticAllocationModal from 'components/common/automaticAllocation.modal';
-import AllocationOptions from 'components/common/allocationOptions.modal';
+import AutomaticAllocationModal from 'components/allocation/automaticAllocation.modal';
+import AllocationOptions from 'components/allocation/allocationOptions.modal';
 
 function Allocation() {
   const [allocation, setAllocation] = useState<any[]>([]);
@@ -68,6 +68,7 @@ function Allocation() {
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
   const [allocatedEvents, setAllocatedEvents] = useState<Event[]>([]);
   const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
+  const [hasNoAllocation, setHasNoAllocation] = useState(false);
 
   const allocationService = new AllocationService();
   const eventsService = new EventsService();
@@ -94,7 +95,7 @@ function Allocation() {
     });
   };
 
-  useEffect(() => {
+  function fetchData() {
     setLoading(true);
     Promise.all([allocationService.list()]).then((values) => {
       setAllocation(AllocationEventsMapper(values[0].data));
@@ -104,6 +105,10 @@ function Allocation() {
     });
     if (subjectSearchValue || classroomSearchValue)
       FilterAllocation(subjectSearchValue, classroomSearchValue);
+  }
+
+  useEffect(() => {
+    fetchData();
     // eslint-disable-next-line
   }, []);
 
@@ -116,7 +121,7 @@ function Allocation() {
     if (subjectValue && classroomValue) {
       setFilteredAllocation(
         allocation.filter((data) => {
-          const subjectResult = data.extendedProps.subjectCode
+          const subjectResult = data.extendedProps.subject_code
             .toLowerCase()
             .includes(subjectValue.toLowerCase());
           const classroomResult = data.extendedProps.classroom
@@ -128,7 +133,7 @@ function Allocation() {
     } else if (subjectValue && !classroomValue) {
       setFilteredAllocation(
         allocation.filter((data) => {
-          return data.extendedProps.subjectCode
+          return data.extendedProps.subject_code
             .toLowerCase()
             .includes(subjectValue.toLowerCase());
         }),
@@ -153,12 +158,19 @@ function Allocation() {
     eventsService
       .loadAllocations()
       .then((it) => {
-        console.log(it);
+        if (
+          it.data.allocated_events.length === 0 &&
+          it.data.unallocated_events.length === 0
+        ) {
+          setHasNoAllocation(true);
+          return;
+        }
         setAllocatedEvents(it.data.allocated_events);
         setUnallocatedEvents(it.data.unallocated_events);
         toastSuccess('Alocação carregada com sucesso!');
         onCloseAllocOptions();
         onOpenAllocModal();
+        fetchData();
       })
       .catch((error) => {
         toastError(`Erro ao carregar alocação: ${error}`);
@@ -173,8 +185,10 @@ function Allocation() {
       .then((it) => {
         setAllocatedEvents(it.data.allocated);
         setUnallocatedEvents(it.data.unallocated);
+        setHasNoAllocation(false);
         onCloseAllocOptions();
         onOpenAllocModal();
+        fetchData();
       })
       .catch(({ response }: AxiosError<ErrorResponse>) => {
         onCloseAllocModal();
@@ -193,6 +207,7 @@ function Allocation() {
       .deleteAllAllocations()
       .then((value) => {
         toastSuccess(`Foram removidas ${value.data} alocações!`);
+        fetchData();
       })
       .catch((error) => {
         toastError(`Erro ao remover alocações: ${error}`);
@@ -216,6 +231,7 @@ function Allocation() {
 
       <AllocationOptions
         isOpen={isOpenAllocOptions}
+        hasError={hasNoAllocation}
         onLoad={handleAllocLoad}
         onNew={handleAllocNew}
         onClose={onCloseAllocOptions}

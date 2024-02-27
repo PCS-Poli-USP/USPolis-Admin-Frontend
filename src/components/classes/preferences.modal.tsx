@@ -19,7 +19,7 @@ import { Building } from 'models/building.model';
 import { useEffect, useState } from 'react';
 
 interface PreferencesForm extends Preferences {
-  has_to_be_allocated: boolean;
+  ignore_to_allocate: boolean;
 }
 
 interface PreferencesModalProps {
@@ -34,14 +34,14 @@ export default function PreferencesModal(props: PreferencesModalProps) {
 
   const initialForm: PreferencesForm = {
     building_id: '',
-    has_to_be_allocated: true,
+    ignore_to_allocate: true,
   };
 
   const [form, setForm] = useState(initialForm);
 
   useEffect(() => {
     // set data from database
-    if (props.data) setForm({ ...props.data.preferences, has_to_be_allocated: props.data.has_to_be_allocated });
+    if (props.data) setForm({ ...props.data.preferences, ignore_to_allocate: props.data.ignore_to_allocate });
   }, [props.data]);
 
   function handleSaveClick() {
@@ -53,7 +53,7 @@ export default function PreferencesModal(props: PreferencesModalProps) {
   }
 
   function handleCloseModal() {
-    if (props.data) setForm({ ...props.data.preferences, has_to_be_allocated: props.data.has_to_be_allocated });
+    if (props.data) setForm({ ...props.data.preferences, ignore_to_allocate: props.data.ignore_to_allocate });
     props.onClose();
   }
 
@@ -110,10 +110,10 @@ export default function PreferencesModal(props: PreferencesModalProps) {
 
           <FormControl mt={4}>
             <Checkbox
-              isChecked={form.has_to_be_allocated}
-              onChange={(event) => setForm((prev) => ({ ...prev, has_to_be_allocated: event.target.checked }))}
+              isChecked={form.ignore_to_allocate}
+              onChange={(event) => setForm((prev) => ({ ...prev, ignore_to_allocate: event.target.checked }))}
             >
-              Turma deve ser alocada obrigatoriamente
+              Ignorar para alocação automática
             </Checkbox>
           </FormControl>
         </ModalBody>

@@ -120,7 +120,7 @@ function ClassroomsTables(props: any) {
   function colDef(classroom: string): ColumnDef<EventByClassrooms>[] {
     return [
       {
-        accessorKey: 'subjectCode',
+        accessorKey: 'subject_code',
         header: classroom,
         enableColumnFilter: false,
         enableSorting: false,
@@ -176,10 +176,6 @@ function ClassroomsTables(props: any) {
     <>
       {unallocatedClassroomData && (
         <Flex>
-          <DataTable
-            data={unallocatedClassroomData}
-            columns={colDef(Classrooms.UNALLOCATED)}
-          />
           <DataTable
             data={unallocatedClassroomData}
             columns={colDef(Classrooms.UNALLOCATED)}

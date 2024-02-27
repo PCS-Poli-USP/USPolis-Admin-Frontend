@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/react';
 
 import AutomaticAllocationAccordion from './automaticAllocation.accordion';
-import { useNavigate } from 'react-router-dom';
 import Event, { EventByClassrooms } from 'models/event.model';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import { useEffect, useState } from 'react';
@@ -60,7 +59,6 @@ export default function AutomaticAllocationModal({
   const [unallocatedEventsList, setUnallocatedEvents] = useState<Event[]>([]);
 
   const eventsService = new EventsService();
-  const navigate = useNavigate();
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -88,10 +86,6 @@ export default function AutomaticAllocationModal({
     if (allocatedEvents.length > 0) setAllocatedEvents(allocatedEvents);
     if (unallocatedEvents.length > 0) setUnallocatedEvents(unallocatedEvents);
   }, [allocatedEvents, unallocatedEvents]);
-
-  function handleAllocNavClick() {
-    navigate('/allocation');
-  }
 
   function handleEditEventClick(event: Event) {
     setSelectedEvent(EventToEventByClassroom(event));
@@ -248,11 +242,8 @@ export default function AutomaticAllocationModal({
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={handleAllocNavClick}>
-            Ir para Alocações
-          </Button>
           <Button colorScheme='blue' mr={0} onClick={onClose}>
-            Salvar
+            Fechar
           </Button>
         </ModalFooter>
       </ModalContent>

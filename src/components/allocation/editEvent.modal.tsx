@@ -238,24 +238,26 @@ export default function EditEventModal({
           )}
 
           <FormControl>
-            <FormLabel mt={4}>Prédio</FormLabel>
             {buildingsList.length !== 1 && (
-              <Select
-                placeholder='selecionar prédio'
-                onChange={(event) => {
-                  setSelectedBuilding(
-                    buildingsList.find((it) => it.id === event.target.value),
-                  );
-                }}
-                icon={buildingsLoading ? <Spinner size='sm' /> : undefined}
-                value={selectedBuilding?.id}
-              >
-                {buildingsList.map((it) => (
-                  <option key={it.id} value={it.id}>
-                    {it.name}
-                  </option>
-                ))}
-              </Select>
+              <>
+                <FormLabel mt={4}>Prédio</FormLabel>
+                <Select
+                  placeholder='Selecionar prédio'
+                  onChange={(event) => {
+                    setSelectedBuilding(
+                      buildingsList.find((it) => it.id === event.target.value),
+                    );
+                  }}
+                  icon={buildingsLoading ? <Spinner size='sm' /> : undefined}
+                  value={selectedBuilding?.id}
+                >
+                  {buildingsList.map((it) => (
+                    <option key={it.id} value={it.id}>
+                      {it.name}
+                    </option>
+                  ))}
+                </Select>
+              </>
             )}
             <FormLabel mt={4}>Salas disponíveis</FormLabel>
             {selectedClassroom?.conflicted && (

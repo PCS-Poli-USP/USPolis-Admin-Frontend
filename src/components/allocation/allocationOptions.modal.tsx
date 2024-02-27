@@ -11,14 +11,17 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/react';
 
 import { DownloadIcon, CalendarIcon } from '@chakra-ui/icons';
-import Dialog from './dialog.component';
+import Dialog from '../common/dialog.component';
 import { useState } from 'react';
 
 interface AllocationOptionsProps {
   isOpen: boolean;
+  hasError: boolean;
   onLoad: () => void;
   onNew: () => void;
   onClose: () => void;
@@ -26,6 +29,7 @@ interface AllocationOptionsProps {
 
 export default function AllocationOptions({
   isOpen,
+  hasError,
   onLoad,
   onNew,
   onClose,
@@ -76,6 +80,12 @@ export default function AllocationOptions({
               Fazer uma nova alocação
             </ListItem>
           </List>
+          {hasError ? (
+            <Alert status={'error'} mt={4}>
+              <AlertIcon />
+              Não há alocação para recuperar, faça uma alocação antes!
+            </Alert>
+          ) : undefined}
         </ModalBody>
 
         <ModalFooter>
@@ -94,7 +104,10 @@ export default function AllocationOptions({
             colorScheme='blue'
             mr={3}
             leftIcon={<CalendarIcon />}
-            onClick={handleAllocClick}
+            onClick={() => {
+              setIsLoading(false);
+              handleAllocClick();
+            }}
           >
             Fazer
           </Button>

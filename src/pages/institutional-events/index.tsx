@@ -25,20 +25,36 @@ import { FaEllipsisV } from 'react-icons/fa';
 import { GoSync } from 'react-icons/go';
 import { useEvents } from './hook';
 import { useEffect, useState } from 'react';
+import { Building } from 'models/building.model';
+import BuildingsService from 'services/buildings.service';
+import { sortBuildings } from 'utils/sorter';
 
 function InstitutionalEvents() {
-  const { isOpen: isOpenEventForm, onClose: onCloseEventForm, onOpen: onOpenEventForm } = useDisclosure();
-  const { isOpen: isOpenDelete, onClose: onCloseDelete, onOpen: onOpenDelete } = useDisclosure();
+  const {
+    isOpen: isOpenEventForm,
+    onClose: onCloseEventForm,
+    onOpen: onOpenEventForm,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDelete,
+    onClose: onCloseDelete,
+    onOpen: onOpenDelete,
+  } = useDisclosure();
 
-  const [selectedEvent, setSelectedEvent] = useState<InstitutionalEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<InstitutionalEvent | null>(
+    null,
+  );
+  const [buildings, setBuildings] = useState<Array<Building>>([]);
 
   const { events, loading, getEvents, deleteEvent } = useEvents();
+  const buildingsService = new BuildingsService();
 
   const columns: ColumnDef<InstitutionalEvent>[] = [
     {
       accessorKey: 'created_at',
       header: 'Criado em',
-      cell: ({ row }) => moment(row.original.created_at).format('DD/MM/YYYY HH:mm'),
+      cell: ({ row }) =>
+        moment(row.original.created_at).format('DD/MM/YYYY HH:mm'),
     },
     {
       accessorKey: 'title',
@@ -62,20 +78,27 @@ function InstitutionalEvents() {
     {
       header: 'Local',
       cell: ({ row }) =>
-        row.original.building ? `${row.original.building} - ${row.original.classroom}` : row.original.location,
+        row.original.building
+          ? `${row.original.building} - ${row.original.classroom}`
+          : row.original.location,
     },
     {
       header: 'Período',
       cell: ({ row }) =>
-        `${moment(row.original.start_datetime).format('DD/MM/YYYY HH:mm')} ~ ${moment(row.original.end_datetime).format(
+        `${moment(row.original.start_datetime).format(
           'DD/MM/YYYY HH:mm',
-        )}`,
+        )} ~ ${moment(row.original.end_datetime).format('DD/MM/YYYY HH:mm')}`,
     },
     {
       id: 'options',
       cell: ({ row }) => (
         <Menu>
-          <MenuButton as={IconButton} aria-label='Options' icon={<Icon as={FaEllipsisV} />} variant='ghost' />
+          <MenuButton
+            as={IconButton}
+            aria-label='Options'
+            icon={<Icon as={FaEllipsisV} />}
+            variant='ghost'
+          />
           <MenuList>
             <MenuItem
               onClick={() => {
@@ -100,12 +123,22 @@ function InstitutionalEvents() {
   ];
 
   useEffect(() => {
+    fetchBuildings();
+  }, []);
+
+  useEffect(() => {
     if (!isOpenEventForm) setSelectedEvent(null);
   }, [isOpenEventForm]);
 
   useEffect(() => {
     if (!isOpenDelete) setSelectedEvent(null);
   }, [isOpenDelete]);
+
+  function fetchBuildings() {
+    buildingsService.list().then((it) => {
+      setBuildings(it.data.sort(sortBuildings));
+    });
+  }
 
   return (
     <>
@@ -116,6 +149,7 @@ function InstitutionalEvents() {
         children={null}
         refetch={getEvents}
         selectedEvent={selectedEvent}
+        buildings={buildings}
       />
       <Dialog
         isOpen={isOpenDelete}
@@ -147,7 +181,12 @@ function InstitutionalEvents() {
               Eventos
             </Text>
             <HStack gap={1}>
-              <IconButton colorScheme='blue' icon={<GoSync />} aria-label='Get events' onClick={getEvents} />
+              <IconButton
+                colorScheme='blue'
+                icon={<GoSync />}
+                aria-label='Get events'
+                onClick={getEvents}
+              />
               <Button colorScheme='blue' onClick={onOpenEventForm}>
                 Cadastrar evento
               </Button>

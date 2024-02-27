@@ -30,20 +30,20 @@ export default class EventsService extends HttpService {
     classroom: string,
     building: string,
   ): Promise<AxiosResponse<number>> {
-    return this.http.patch(`edit/${subjectCode}/${classCode}`, weekDays, {
+    return this.http.patch(`/events/edit/${subjectCode}/${classCode}`, weekDays, {
       params: { classroom, building },
     });
   }
 
   loadAllocations(): Promise<AxiosResponse<any>> {
-    return this.http.get('load');
+    return this.http.get('/events/load');
   }
 
   editAllocations(
     allocated_events: Event[],
     unallocated_events: Event[],
   ): Promise<AxiosResponse<any>> {
-    return this.http.patch('edit-allocations', {
+    return this.http.patch('/events/edit-allocations', {
       allocated_events,
       unallocated_events,
     });

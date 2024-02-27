@@ -15,6 +15,7 @@ import RegisterModal from 'components/buildings/register.modal';
 import Dialog from 'components/common/dialog.component';
 import DataTable from 'components/common/dataTable.component';
 import { appContext } from 'context/AppContext';
+import { sortBuildings } from 'utils/sorter';
 
 const Buildings = () => {
   const { setLoading } = useContext(appContext);
@@ -101,7 +102,7 @@ const Buildings = () => {
     try {
       const response = await buildingsService.list();
       console.log(response.data);
-      setBuildings(response.data);
+      setBuildings(response.data.sort(sortBuildings));
       setLoading(false);
     } catch (err) {
       console.log('err');

@@ -23,6 +23,7 @@ export function breakClassFormInEvents(form: Class) {
       pendings: form.pendings,
       preferences: form.preferences,
       has_to_be_allocated: form.has_to_be_allocated,
+      ignore_to_allocate: form.ignore_to_allocate,
     };
 
     if (form.classrooms) {
