@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/react';
 
 import AutomaticAllocationAccordion from './automaticAllocation.accordion';
-import { useNavigate } from 'react-router-dom';
 import Event, { EventByClassrooms } from 'models/event.model';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import { useEffect, useState } from 'react';
@@ -60,7 +59,6 @@ export default function AutomaticAllocationModal({
   const [unallocatedEventsList, setUnallocatedEvents] = useState<Event[]>([]);
 
   const eventsService = new EventsService();
-  const navigate = useNavigate();
 
   const toast = useToast();
   const toastSuccess = (message: string) => {

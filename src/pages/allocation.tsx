@@ -38,8 +38,8 @@ import Event from 'models/event.model';
 
 import { BsSearch } from 'react-icons/bs';
 import Dialog from 'components/common/dialog.component';
-import AutomaticAllocationModal from 'components/common/automaticAllocation.modal';
-import AllocationOptions from 'components/common/allocationOptions.modal';
+import AutomaticAllocationModal from 'components/allocation/automaticAllocation.modal';
+import AllocationOptions from 'components/allocation/allocationOptions.modal';
 
 function Allocation() {
   const [allocation, setAllocation] = useState<any[]>([]);
@@ -108,7 +108,7 @@ function Allocation() {
   }
 
   useEffect(() => {
-    fetchData()
+    fetchData();
     // eslint-disable-next-line
   }, []);
 
@@ -170,6 +170,7 @@ function Allocation() {
         toastSuccess('Alocação carregada com sucesso!');
         onCloseAllocOptions();
         onOpenAllocModal();
+        fetchData();
       })
       .catch((error) => {
         toastError(`Erro ao carregar alocação: ${error}`);
@@ -187,6 +188,7 @@ function Allocation() {
         setHasNoAllocation(false);
         onCloseAllocOptions();
         onOpenAllocModal();
+        fetchData();
       })
       .catch(({ response }: AxiosError<ErrorResponse>) => {
         onCloseAllocModal();

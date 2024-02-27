@@ -18,8 +18,8 @@ import Event from 'models/event.model';
 
 import { useEffect, useState } from 'react';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
-import { WeekDayInt } from 'utils/mappers/allocation.mapper';
 import ClassroomsService from 'services/classrooms.service';
+import { sortClassrooms, sortEventsByClassroomAndTime } from 'utils/sorter';
 
 interface AutomaticAllocationAccordionProps {
   onEdit: (event: Event) => void;
@@ -45,33 +45,13 @@ export default function AutomaticAllocationAccordion({
 
   function fetchClassrooms() {
     classroomService.list().then((it) => {
-      it.data.sort(sortClassroomByName);
+      it.data.sort(sortClassrooms);
       setClassrooms(it.data);
     });
   }
 
-  function sortClassroomByName(a: Classroom, b: Classroom) {
-    if (a.classroom_name < b.classroom_name) return -1;
-    if (a.classroom_name > b.classroom_name) return 1;
-    return 0;
-  }
-
-  function sortEventByClassCode(a: Event, b: Event) {
-    if (a.subject_code < b.subject_code) return -1;
-    if (a.subject_code > b.subject_code) return 1;
-    return 0;
-  }
-
-  function sortEventByClassAndTime(a: Event, b: Event) {
-    const classResult = sortEventByClassCode(a, b);
-    if (classResult === 0) {
-      return WeekDayInt(a.week_day) - WeekDayInt(b.week_day);
-    }
-    return classResult;
-  }
-
-  allocatedEvents.sort(sortEventByClassAndTime);
-  unallocatedEvents.sort(sortEventByClassAndTime);
+  allocatedEvents.sort(sortEventsByClassroomAndTime);
+  unallocatedEvents.sort(sortEventsByClassroomAndTime);
 
   return (
     <Accordion
