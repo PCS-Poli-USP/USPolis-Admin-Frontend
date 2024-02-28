@@ -37,11 +37,15 @@ export default function JupiterCrawlerModal({
     if (failedSubjects && failedSubjects.length > 0) setFailedSubjectsList(failedSubjects);
   }, [successSubjects, failedSubjects]);
 
-
+  function handleClose() {
+    setFailedSubjectsList([]);
+    setSuccessSubjectsList([]);
+    onClose();
+  }
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       closeOnOverlayClick={false}
       motionPreset='slideInBottom'
       size='4xl'
@@ -80,7 +84,7 @@ export default function JupiterCrawlerModal({
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={0} onClick={onClose}>
+          <Button colorScheme='blue' mr={0} onClick={handleClose}>
             Fechar
           </Button>
         </ModalFooter>
