@@ -1,4 +1,9 @@
-import { CheckIcon, CloseIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
+import {
+  CheckIcon,
+  CloseIcon,
+  TriangleDownIcon,
+  TriangleUpIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
   chakra,
@@ -34,7 +39,10 @@ export type DataTableProps<Data extends object> = {
   columns: ColumnDef<Data, any>[];
 };
 
-export default function DataTable<Data extends object>({ data, columns }: DataTableProps<Data>) {
+export default function DataTable<Data extends object>({
+  data,
+  columns,
+}: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -75,12 +83,21 @@ export default function DataTable<Data extends object>({ data, columns }: DataTa
                 // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
                 const meta: any = header.column.columnDef.meta;
                 return (
-                  <Th key={header.id} colSpan={header.colSpan} isNumeric={meta?.isNumeric} pb='2' color='uspolis.blue'>
+                  <Th
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    isNumeric={meta?.isNumeric}
+                    pb='2'
+                    color='uspolis.blue'
+                  >
                     <Box
                       onClick={header.column.getToggleSortingHandler()}
                       cursor={header.column.getCanSort() ? 'pointer' : ''}
                     >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
 
                       <chakra.span pl='2'>
                         {header.column.getIsSorted() ? (
@@ -93,7 +110,9 @@ export default function DataTable<Data extends object>({ data, columns }: DataTa
                       </chakra.span>
                     </Box>
 
-                    {header.column.getCanFilter() ? <Filter column={header.column} /> : null}
+                    {header.column.getCanFilter() ? (
+                      <Filter column={header.column} />
+                    ) : null}
                   </Th>
                 );
               })}
@@ -107,7 +126,7 @@ export default function DataTable<Data extends object>({ data, columns }: DataTa
                 // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
                 const meta: any = cell.column.columnDef.meta;
                 return (
-                  <Td key={cell.id} isNumeric={meta?.isNumeric}>
+                  <Td key={cell.id} isNumeric={meta?.isNumeric} maxW={400} overflowX={'hidden'} textOverflow={'ellipsis'}>
                     {meta?.isBoolean ? (
                       cell.getValue() ? (
                         <CheckIcon />
