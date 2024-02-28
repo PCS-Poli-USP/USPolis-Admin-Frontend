@@ -189,7 +189,7 @@ function Classes() {
       cell: ({ row }) => (
         <Box>
           {row.original.professors?.map((professor, index) => (
-            <Text key={index}>{professor}</Text>
+            <Text maxW={425} overflowX={'hidden'} textOverflow={'ellipsis'} key={index}>{professor}</Text>
           ))}
         </Box>
       ),
