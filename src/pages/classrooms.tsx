@@ -27,6 +27,7 @@ import {
   FilterBoolean,
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
+
 import { sortBuildings, sortClassrooms } from 'utils/sorter';
 import { Building } from 'models/building.model';
 import BuildingsService from 'services/buildings.service';
@@ -131,6 +132,7 @@ function Classrooms() {
 
   const classroomService = new ClassroomsService();
   const buildingsService = new BuildingsService();
+
   const toast = useToast();
   const toastSuccess = (message: string) => {
     toast({

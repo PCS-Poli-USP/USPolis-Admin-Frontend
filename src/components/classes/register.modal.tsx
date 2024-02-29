@@ -348,6 +348,7 @@ export default function RegisterModal(props: RegisterModalProps) {
                     event.target.value.length - 1,
                   );
                   if (charValue < 48 || charValue > 57) return;
+
                   setForm((prev) => ({
                     ...prev,
                     class_code: event.target.value,
@@ -783,7 +784,6 @@ export default function RegisterModal(props: RegisterModalProps) {
                 </Checkbox>
               </HStack>
             </FormControl>
-
             <FormControl mt={4}>
               <Checkbox
                 isChecked={form.ignore_to_allocate}

@@ -32,6 +32,7 @@ import {
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
+
 import { CalendarIcon, CloseIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 
@@ -46,7 +47,9 @@ interface EditModalProps {
   onClose: () => void;
   formData?: Class;
   onSave: (data: Class) => void;
+
   buildings?: Array<Building>;
+
 }
 
 export default function EditModal({
@@ -55,6 +58,7 @@ export default function EditModal({
   formData,
   onSave,
   buildings,
+
 }: EditModalProps) {
   const initialForm: Class = {
     class_code: '',
@@ -111,6 +115,7 @@ export default function EditModal({
   const [hasTimeError, setHasTimeError] = useState(false);
   const [hasDayError, setHasDayError] = useState(false);
   const [hasBuildingError, setHasBuildingError] = useState(false);
+
   const [hasErrors, setHasErrors] = useState(false);
 
   useEffect(() => {
@@ -305,7 +310,6 @@ export default function EditModal({
     if (validator.isInvalidTimeList(form.start_time, form.end_time)) {
       hasError = true;
     }
-
     return hasError;
   }
 

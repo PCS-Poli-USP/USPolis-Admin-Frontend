@@ -40,6 +40,7 @@ export function isInvalidPeriod(start: string, end: string) {
 
   if (startPeriodObj <= endPeriodObj) {
     return false;
+
   }
   return true;
 }

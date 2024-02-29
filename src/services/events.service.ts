@@ -37,6 +37,7 @@ export default class EventsService extends HttpService {
 
   loadAllocations(): Promise<AxiosResponse<any>> {
     return this.http.get('/events/load');
+
   }
 
   editAllocations(
