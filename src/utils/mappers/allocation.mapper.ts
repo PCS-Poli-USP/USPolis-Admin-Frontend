@@ -13,9 +13,11 @@ export function AllocationEventsMapper(allocation: Event[]) {
     endRecur: it.end_period,
     resourceId: it.classroom || Classrooms.UNALLOCATED,
     extendedProps: {
+      id: it.id,
       building: it.building,
       class_code: it.class_code,
       subject_code: it.subject_code,
+      subject_name: it.subject_name,
       classroom: it.classroom || Classrooms.UNALLOCATED,
       has_to_be_allocated: it.has_to_be_allocated,
       professors: it.professors,
@@ -55,26 +57,35 @@ export function ClassCodeText(classCode: string) {
 
 export function AllocationResourcesFromEventsMapper(allocation: Event[]) {
   return Array.from(
-    new Set(allocation.map((it) => ({ building: it.building, id: it.classroom || Classrooms.UNALLOCATED }))),
+    new Set(
+      allocation.map((it) => ({
+        building: it.building,
+        id: it.classroom || Classrooms.UNALLOCATED,
+      })),
+    ),
   );
 }
 
-function EventsRenderRangeEventsByClassroomsMapper(events: EventRenderRange[]): EventByClassrooms[] {
+function EventsRenderRangeEventsByClassroomsMapper(
+  events: EventRenderRange[],
+): EventByClassrooms[] {
   return events.map(({ def: { title, extendedProps, resourceIds } }) => {
     return {
-    subject_code: title,
-    subject_name: extendedProps?.subject_name,
-    classroom: resourceIds?.at(0) as string,
-    building: extendedProps?.building,
-    has_to_be_allocated: extendedProps?.has_to_be_allocated,
-    class_code: extendedProps?.class_code,
-    professors: extendedProps?.professors,
-    start_time: extendedProps?.start_time,
-    end_time: extendedProps?.end_time,
-    week_day: extendedProps?.week_day,
-    class_code_text: extendedProps?.class_code_text,
-    subscribers: extendedProps?.subscribers,
-  }});
+      subject_code: title,
+      id: extendedProps?.id,
+      subject_name: extendedProps?.subject_name,
+      classroom: resourceIds?.at(0) as string,
+      building: extendedProps?.building,
+      has_to_be_allocated: extendedProps?.has_to_be_allocated,
+      class_code: extendedProps?.class_code,
+      professors: extendedProps?.professors,
+      start_time: extendedProps?.start_time,
+      end_time: extendedProps?.end_time,
+      week_day: extendedProps?.week_day,
+      class_code_text: extendedProps?.class_code_text,
+      subscribers: extendedProps?.subscribers,
+    };
+  });
 }
 
 export function EventsByClassroomMapper(events: EventRenderRange[]) {
@@ -82,7 +93,9 @@ export function EventsByClassroomMapper(events: EventRenderRange[]) {
     (group: Map<string, EventByClassrooms[]>, event) => {
       const { classroom } = event;
       const classroomClasses = group.get(classroom);
-      classroomClasses ? group.set(classroom, classroomClasses.concat(event)) : group.set(classroom, [event]);
+      classroomClasses
+        ? group.set(classroom, classroomClasses.concat(event))
+        : group.set(classroom, [event]);
 
       return group;
     },
@@ -107,7 +120,11 @@ export function EventsByClassroomMapper(events: EventRenderRange[]) {
   return orderedByEventsCount;
 }
 
-export function ClassEventsMapper(events: EventRenderRange[], classCode: string, subjectCode: string) {
+export function ClassEventsMapper(
+  events: EventRenderRange[],
+  classCode: string,
+  subjectCode: string,
+) {
   return EventsRenderRangeEventsByClassroomsMapper(events).filter(
     (it) => it.class_code === classCode && it.subject_code === subjectCode,
   );
@@ -142,16 +159,25 @@ export function WeekDayText(weekDay: string) {
   }
 }
 
-export function EventsByWeekDay(events: EventByClassrooms[]): EventByClassrooms[][] {
+export function EventsByWeekDay(
+  events: EventByClassrooms[],
+): EventByClassrooms[][] {
   const eventsByWeekDay: EventByClassrooms[][] = [[], [], [], [], [], [], []];
   for (let i = 0; i < events.length; i++) {
-    if (events[i].week_day === WeekDays.Monday) eventsByWeekDay[0].push(events[i]);
-    if (events[i].week_day === WeekDays.Tuesday) eventsByWeekDay[1].push(events[i]);
-    if (events[i].week_day=== WeekDays.Wednesday) eventsByWeekDay[2].push(events[i]);
-    if (events[i].week_day === WeekDays.Thursday) eventsByWeekDay[3].push(events[i]);
-    if (events[i].week_day === WeekDays.Friday) eventsByWeekDay[4].push(events[i]);
-    if (events[i].week_day === WeekDays.Saturday) eventsByWeekDay[5].push(events[i]);
-    if (events[i].week_day === WeekDays.Sunday) eventsByWeekDay[6].push(events[i]);
+    if (events[i].week_day === WeekDays.Monday)
+      eventsByWeekDay[0].push(events[i]);
+    if (events[i].week_day === WeekDays.Tuesday)
+      eventsByWeekDay[1].push(events[i]);
+    if (events[i].week_day === WeekDays.Wednesday)
+      eventsByWeekDay[2].push(events[i]);
+    if (events[i].week_day === WeekDays.Thursday)
+      eventsByWeekDay[3].push(events[i]);
+    if (events[i].week_day === WeekDays.Friday)
+      eventsByWeekDay[4].push(events[i]);
+    if (events[i].week_day === WeekDays.Saturday)
+      eventsByWeekDay[5].push(events[i]);
+    if (events[i].week_day === WeekDays.Sunday)
+      eventsByWeekDay[6].push(events[i]);
   }
   return eventsByWeekDay;
 }

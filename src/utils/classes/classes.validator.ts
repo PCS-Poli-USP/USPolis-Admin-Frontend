@@ -29,8 +29,8 @@ export function isInvalidProfessor(professor: string) {
   return professor.length < 3;
 }
 
-export function isInvalidProfessorList(professors: string[]) { 
-  return professors.length <= 0;
+export function isInvalidProfessorList(professors: string[]) {
+  return false;
 }
 
 export function isInvalidPeriod(start: string, end: string) {
@@ -38,8 +38,9 @@ export function isInvalidPeriod(start: string, end: string) {
   const startPeriodObj = new Date(start);
   const endPeriodObj = new Date(end);
 
-  if (startPeriodObj < endPeriodObj) {
-      return false;
+  if (startPeriodObj <= endPeriodObj) {
+    return false;
+
   }
   return true;
 }
@@ -49,13 +50,19 @@ export function isInvalidTime(start_time: string, end_time: string) {
   const [startHour, startMinute] = start_time.split(':').map(Number);
   const [endHour, endMinute] = end_time.split(':').map(Number);
 
-  if (startHour < endHour || (startHour === endHour && startMinute < endMinute)) {
-      return false;
+  if (
+    startHour < endHour ||
+    (startHour === endHour && startMinute < endMinute)
+  ) {
+    return false;
   }
   return true;
 }
 
-export function isInvalidTimeList(start_times: string[], end_times: string[]): boolean {
+export function isInvalidTimeList(
+  start_times: string[],
+  end_times: string[],
+): boolean {
   return start_times.length <= 0 || end_times.length <= 0;
 }
 
@@ -63,7 +70,10 @@ export function isInvalidWeekDayList(week_days: string[]) {
   return week_days.length <= 0;
 }
 
-export function isInvalidEditedTimeList(start_times: string[], end_times: string[]) {
+export function isInvalidEditedTimeList(
+  start_times: string[],
+  end_times: string[],
+) {
   const indexes: number[] = [];
   for (let i = 0; i < start_times.length; i++) {
     if (isInvalidTime(start_times[i], end_times[i])) {

@@ -14,6 +14,7 @@ export default interface Class {
   pendings: number;
   preferences: Preferences;
   has_to_be_allocated: boolean;
+  ignore_to_allocate: boolean;
   classrooms?: string[];
   events_ids: string[];
 }
@@ -41,7 +42,8 @@ export interface CreateClassEvents {
   pendings: number;
   preferences: Preferences;
   has_to_be_allocated: boolean;
-  classrom?: string;
+  ignore_to_allocate: boolean;
+  classroom?: string;
 }
 
 export interface HasToBeAllocatedClass {

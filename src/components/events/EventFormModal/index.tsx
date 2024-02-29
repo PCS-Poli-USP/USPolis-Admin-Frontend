@@ -19,11 +19,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './form';
 import { Input, Select, Textarea } from 'components/common';
-import { Buildings } from 'models/enums/buildings.enum';
 import { useEffect, useState } from 'react';
 import InstutionalEventsService from 'services/institutional-events.service';
 import { InstitutionalEvent } from 'models/institutionalEvent.model';
 import { EventTypes } from 'models/enums/eventTypes.enum';
+import { Building } from 'models/building.model';
 
 export type EventForm = {
   building?: string | null;
@@ -40,11 +40,12 @@ export type EventForm = {
 interface EventFormModalProps extends ModalProps {
   selectedEvent: InstitutionalEvent | null;
   refetch: () => Promise<void>;
+  buildings: Building[];
 }
 
 const service = new InstutionalEventsService();
 
-function EventFormModal({ isOpen, onClose, refetch, selectedEvent }: EventFormModalProps) {
+function EventFormModal({ isOpen, onClose, refetch, selectedEvent, buildings }: EventFormModalProps) {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<EventForm>({
@@ -162,7 +163,7 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent }: EventFormMo
                     label='Prédio'
                     name='building'
                     disabled={!!locationWatcher}
-                    options={Object.values(Buildings).map((b) => ({ label: b, value: b }))}
+                    options={buildings.map((b) => ({ label: b.name, value: b.name }))}
                   />
                   <Input label='Sala' name='classroom' disabled={!!locationWatcher} />
                 </Flex>

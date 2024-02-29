@@ -22,13 +22,11 @@ import {
 
 import { ColumnDef } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
-import AutomaticAllocationModal from 'components/common/automaticAllocation.modal';
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
 import RegisterModal from 'components/classes/register.modal';
 import EditEventModal from 'components/allocation/editEvent.modal';
-import AllocationOptions from 'components/common/allocationOptions.modal';
 import DataTable from 'components/common/dataTable.component';
 import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
@@ -43,6 +41,7 @@ import EventsService from 'services/events.service';
 import { Capitalize } from 'utils/formatters';
 import {
   FilterArray,
+  FilterBoolean,
   FilterClassroom,
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
@@ -51,8 +50,10 @@ import {
   breakClassFormInEvents,
 } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
-import Event, { EventByClassrooms } from 'models/event.model';
+import { EventByClassrooms } from 'models/event.model';
 import CrawlerService from 'services/crawler.service';
+import { sortBuildings, sortClasses } from 'utils/sorter';
+import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -81,16 +82,6 @@ function Classes() {
     onClose: onCloseEdit,
   } = useDisclosure();
   const {
-    isOpen: isOpenAllocOptions,
-    onOpen: onOpenAllocOptions,
-    onClose: onCloseAllocOptions,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenAllocModal,
-    onOpen: onOpenAllocModal,
-    onClose: onCloseAllocModal,
-  } = useDisclosure();
-  const {
     isOpen: isOpenAllocEdit,
     onOpen: onOpenAllocEdit,
     onClose: onCloseAllocEdit,
@@ -100,12 +91,17 @@ function Classes() {
     onOpen: onOpenRegister,
     onClose: onCloseRegister,
   } = useDisclosure();
+  const {
+    isOpen: isOpenJupiterModal,
+    onOpen: onOpenJupiterModal,
+    onClose: onCloseJupiterModal,
+  } = useDisclosure();
 
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
-  const [allocatedEvents, setAllocatedEvents] = useState<Event[]>([]);
-  const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
+  const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
+  const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -141,6 +137,12 @@ function Classes() {
     {
       accessorKey: 'subject_name',
       header: 'Disciplina',
+    },
+    {
+      accessorKey: 'ignore_to_allocate',
+      header: 'Ignorar',
+      meta: { isBoolean: true, isSelectable: true },
+      filterFn: FilterBoolean,
     },
     {
       accessorFn: (row) => (row.classrooms ? row.classrooms : ['Não alocada']),
@@ -187,7 +189,7 @@ function Classes() {
       cell: ({ row }) => (
         <Box>
           {row.original.professors?.map((professor, index) => (
-            <Text key={index}>{professor}</Text>
+            <Text maxW={425} overflowX={'hidden'} textOverflow={'ellipsis'} key={index}>{professor}</Text>
           ))}
         </Box>
       ),
@@ -263,15 +265,9 @@ function Classes() {
     // eslint-disable-next-line
   }, []);
 
-  function sortBuilding(a: Building, b: Building) {
-    if (a.name < b.name) return -1;
-    else if (a.name > b.name) return 1;
-    return 0;
-  }
-
   function fetchBuildings() {
     buildingsService.list().then((it) => {
-      setBuildingsList(it.data.sort(sortBuilding));
+      setBuildingsList(it.data.sort(sortBuildings));
     });
   }
 
@@ -280,7 +276,7 @@ function Classes() {
     classesService
       .list()
       .then((it) => {
-        setClassesList(it.data);
+        setClassesList(it.data.sort(sortClasses));
         setLoading(false);
       })
       .catch((error) => {
@@ -421,45 +417,6 @@ function Classes() {
     }
   }
 
-  function handleAllocClick() {
-    onOpenAllocOptions();
-  }
-
-  function handleAllocLoad() {
-    setAllocating(true);
-    eventsService
-      .loadAllocations()
-      .then((it) => {
-        setAllocatedEvents(it.data.allocated_events);
-        setUnallocatedEvents(it.data.unallocated_events);
-        toastSuccess('Alocação carregada com sucesso!');
-        onCloseAllocOptions();
-        onOpenAllocModal();
-      })
-      .catch((error) => {
-        toastError(`Erro ao carregar alocação: ${error}`);
-      })
-      .finally(() => setAllocating(false));
-  }
-
-  function handleAllocNew() {
-    setAllocating(true);
-    eventsService
-      .allocate()
-      .then((it) => {
-        setAllocatedEvents(it.data.allocated);
-        setUnallocatedEvents(it.data.unallocated);
-        onCloseAllocOptions();
-        onOpenAllocModal();
-      })
-      .catch(({ response }: AxiosError<ErrorResponse>) => {
-        onCloseAllocModal();
-        toastError(`Erro ao alocar turmas: ${response?.data.error}`);
-        console.log(response?.data.error);
-      })
-      .finally(() => setAllocating(false));
-  }
-
   function handleEditClick(obj: Class) {
     setSelectedClass(obj);
     onOpenEdit();
@@ -481,18 +438,25 @@ function Classes() {
   }
 
   function handleCrawlerSave(subjectsList: string[], building_id: string) {
+    setLoading(true);
     crawlerService
       .crawl({
         building_id,
         subject_codes_list: subjectsList,
       })
       .then((it) => {
-        console.log(it);
+        setSuccessSubjects(it.data.sucess);
+        setFailedSubjects(it.data.failed);
+        onOpenJupiterModal();
         fetchData();
+        toastSuccess('Disciplinas foram carregadas com sucesso!');
       })
       .catch(({ response }: AxiosError<ErrorResponse>) =>
         toastError(`Erro ao buscar disciplinas: ${response?.data.message}`),
-      );
+      )
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
   return (
@@ -517,6 +481,7 @@ function Classes() {
         onClose={onCloseEdit}
         formData={selectedClass}
         onSave={handleEdit}
+        buildings={buildingsList}
       />
       <EditEventModal
         isOpen={isOpenAllocEdit}
@@ -525,19 +490,11 @@ function Classes() {
         onDelete={handleAllocationEditDelete}
         classEvents={selectedClassEventList}
       />
-
-      <AllocationOptions
-        isOpen={isOpenAllocOptions}
-        onLoad={handleAllocLoad}
-        onNew={handleAllocNew}
-        onClose={onCloseAllocOptions}
-      />
-
-      <AutomaticAllocationModal
-        isOpen={isOpenAllocModal}
-        onClose={onCloseAllocModal}
-        allocatedEvents={allocatedEvents}
-        unallocatedEvents={unallocatedEvents}
+      <JupiterCrawlerModal
+        isOpen={isOpenJupiterModal}
+        onClose={onCloseJupiterModal}
+        successSubjects={successSubjects}
+        failedSubjects={failedSubjects}
       />
 
       <Center>
@@ -551,8 +508,12 @@ function Classes() {
               Adicionar Turma
             </Button>
             <JupiterCrawlerPopover onSave={handleCrawlerSave} />
-            <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
-              Alocação Automática
+            <Button
+              ml={2}
+              colorScheme={'red'}
+              onClick={() => console.log('Remover tudo')}
+            >
+              Remover turmas
             </Button>
           </Flex>
           <Dialog

@@ -120,7 +120,7 @@ function ClassroomsTables(props: any) {
   function colDef(classroom: string): ColumnDef<EventByClassrooms>[] {
     return [
       {
-        accessorKey: 'subjectCode',
+        accessorKey: 'subject_code',
         header: classroom,
         enableColumnFilter: false,
         enableSorting: false,
@@ -162,9 +162,6 @@ function ClassroomsTables(props: any) {
                     {data.professors.join().length > 25
                       ? data.professors[0] + '...'
                       : data.professors.join()}
-                    {data.professors.join().length > 25
-                      ? data.professors[0] + '...'
-                      : data.professors.join()}
                   </Text>
                 </Tooltip>
               </Box>
@@ -179,10 +176,6 @@ function ClassroomsTables(props: any) {
     <>
       {unallocatedClassroomData && (
         <Flex>
-          <DataTable
-            data={unallocatedClassroomData}
-            columns={colDef(Classrooms.UNALLOCATED)}
-          />
           <DataTable
             data={unallocatedClassroomData}
             columns={colDef(Classrooms.UNALLOCATED)}

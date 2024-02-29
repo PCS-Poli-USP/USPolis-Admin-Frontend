@@ -10,8 +10,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    fontSize: 12,
-    // fontWeight: 'bold', ??
+    color: 'red',
+    fontSize: 36,
+    fontWeight: 'bold',
+    marginHorizontal: 'auto',
+    marginVertical: 6,
+  },
+  subheader: {
+    fontSize: 24,
+    fontWeight: 'bold',
     marginHorizontal: 'auto',
     marginVertical: 12,
   },
@@ -75,7 +82,9 @@ const styles = StyleSheet.create({
 });
 
 const ClassesPDF = () => {
-  const [classesGroupBySubject, setClassesGroupBySubject] = useState<[string, Class[]][]>([]);
+  const [classesGroupBySubject, setClassesGroupBySubject] = useState<
+    [string, Class[]][]
+  >([]);
   const classesService = new ClassesService();
 
   useEffect(() => {
@@ -84,7 +93,9 @@ const ClassesPDF = () => {
   }, []);
 
   function fetchData() {
-    classesService.list().then((it) => setClassesGroupBySubject(ClassesBySubject(it.data)));
+    classesService
+      .list()
+      .then((it) => setClassesGroupBySubject(ClassesBySubject(it.data)));
   }
 
   return (
@@ -95,7 +106,10 @@ const ClassesPDF = () => {
             <View style={styles.tableRow}>
               <View style={styles.tableColHeader}>
                 <Text style={styles.header}>
-                  Disciplina {subjectCode} - {classesList.at(0)?.subject_name}
+                  {subjectCode} {'\n'}
+                </Text>
+                <Text style={styles.subheader}>
+                  {classesList.at(0)?.subject_name}
                 </Text>
               </View>
             </View>
@@ -124,7 +138,9 @@ const ClassesPDF = () => {
                   </Text>
                 </View> */}
                 <View style={styles.tableColClass}>
-                  <Text style={styles.tableCell}>{parseInt(cl.class_code.slice(-2))}</Text>
+                  <Text style={styles.tableCell}>
+                    {parseInt(cl.class_code.slice(-2))}
+                  </Text>
                 </View>
                 <View style={styles.tableColClassroom}>
                   {cl.classrooms?.map((cl, index) => (
@@ -136,7 +152,8 @@ const ClassesPDF = () => {
                 <View style={styles.tableColTime}>
                   {cl.week_days.map((w, index) => (
                     <Text style={styles.tableCell} key={index}>
-                      {WeekDayText(w)} {cl.start_time.at(index)} às {cl.end_time.at(index)}
+                      {WeekDayText(w)} {cl.start_time.at(index)} às{' '}
+                      {cl.end_time.at(index)}
                     </Text>
                   ))}
                 </View>

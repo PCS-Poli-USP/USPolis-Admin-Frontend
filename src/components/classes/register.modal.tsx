@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Button,
   Checkbox,
   FormControl,
@@ -73,6 +75,7 @@ export default function RegisterModal(props: RegisterModalProps) {
       accessibility: false,
     },
     has_to_be_allocated: true,
+    ignore_to_allocate: false,
     events_ids: [],
   };
 
@@ -336,12 +339,16 @@ export default function RegisterModal(props: RegisterModalProps) {
           <VStack spacing='20px' alignItems='start'>
             <FormControl isInvalid={hasClassCodeError}>
               <FormLabel>Código da turma</FormLabel>
-              <Input
-                type='number'
+              <Input //Input do tipo number está aceitando um 'e' ou 'E'
                 placeholder='Código da turma'
                 value={form.class_code}
                 errorBorderColor='crimson'
                 onChange={(event) => {
+                  const charValue = event.target.value.charCodeAt(
+                    event.target.value.length - 1,
+                  );
+                  if (charValue < 48 || charValue > 57) return;
+
                   setForm((prev) => ({
                     ...prev,
                     class_code: event.target.value,
@@ -350,7 +357,9 @@ export default function RegisterModal(props: RegisterModalProps) {
                 }}
               />
               {hasClassCodeError ? (
-                <FormErrorMessage>Código de turma inválido.</FormErrorMessage>
+                <FormErrorMessage>
+                  Código de turma inválido, tamanho mínimo de 7 números.
+                </FormErrorMessage>
               ) : undefined}
             </FormControl>
 
@@ -370,7 +379,7 @@ export default function RegisterModal(props: RegisterModalProps) {
               />
               {hasSubjectCodeError ? (
                 <FormErrorMessage>
-                  Código de disciplina inválido.
+                  Código de disciplina inválido, tamanho mínimo de 7 caracteres.
                 </FormErrorMessage>
               ) : undefined}
             </FormControl>
@@ -480,6 +489,7 @@ export default function RegisterModal(props: RegisterModalProps) {
               >
                 <option value='Prática'>Prática</option>
                 <option value='Teórica'>Teórica</option>
+                <option value='Outro'>Outro</option>
               </Select>
               {hasClassTypeError ? (
                 <FormErrorMessage>Escolha um tipo de turma.</FormErrorMessage>
@@ -499,7 +509,9 @@ export default function RegisterModal(props: RegisterModalProps) {
                 onKeyDown={handleProfessorInputKeyDown}
               />
               {hasProfessorError ? (
-                <FormErrorMessage>Nome de professor inválido.</FormErrorMessage>
+                <FormErrorMessage>
+                  Nome de professor inválido, tamanho mínimo de 3 letras.
+                </FormErrorMessage>
               ) : undefined}
             </FormControl>
 
@@ -544,9 +556,10 @@ export default function RegisterModal(props: RegisterModalProps) {
                 ))}
               </List>
             ) : (
-              <Text as='b' colorScheme='red' color='red.500'>
+              <Alert status='warning' fontSize='sm' mb={4}>
+                <AlertIcon />
                 Nenhum professor adicionado
-              </Text>
+              </Alert>
             )}
 
             <Text as='b' fontSize='xl'>
@@ -682,9 +695,10 @@ export default function RegisterModal(props: RegisterModalProps) {
                 ))}
               </List>
             ) : (
-              <Text as='b' colorScheme='red' color='red.500'>
+              <Alert status='error' fontSize='sm' mb={4}>
+                <AlertIcon />
                 Nenhum horário adicionado
-              </Text>
+              </Alert>
             )}
 
             <Text as='b' fontSize='xl'>
@@ -770,21 +784,37 @@ export default function RegisterModal(props: RegisterModalProps) {
                 </Checkbox>
               </HStack>
             </FormControl>
+            <FormControl mt={4}>
+              <Checkbox
+                isChecked={form.ignore_to_allocate}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    ignore_to_allocate: event.target.checked,
+                  }))
+                }
+              >
+                Ignorar para alocação automática
+              </Checkbox>
+            </FormControl>
           </VStack>
         </ModalBody>
 
         <ModalFooter>
-          <HStack spacing='10px'>
+          <VStack width={'full'}>
             {hasErrors ? (
-              <Text colorScheme='tomato' color='red.500'>
+              <Alert status='error' fontSize='sm'>
+                <AlertIcon />
                 Fomulário inválido, corrija os campos inválidos
-              </Text>
+              </Alert>
             ) : undefined}
-            <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-              Salvar
-            </Button>
-            <Button onClick={handleCloseModal}>Cancelar</Button>
-          </HStack>
+            <HStack spacing='10px' alignSelf={'flex-end'}>
+              <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
+                Salvar
+              </Button>
+              <Button onClick={handleCloseModal}>Cancelar</Button>
+            </HStack>
+          </VStack>
         </ModalFooter>
       </ModalContent>
     </Modal>
