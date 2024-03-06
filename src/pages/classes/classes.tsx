@@ -67,6 +67,11 @@ function Classes() {
     onClose: onCloseDeleteClass,
   } = useDisclosure();
   const {
+    isOpen: isOpenDeleteAllClasses,
+    onOpen: onOpenDeleteAllClasses,
+    onClose: onCloseDeleteAllClasses,
+  } = useDisclosure();
+  const {
     isOpen: isOpenDeleteAlloc,
     onOpen: onOpenDeleteAlloc,
     onClose: onCloseDeleteAlloc,
@@ -189,7 +194,14 @@ function Classes() {
       cell: ({ row }) => (
         <Box>
           {row.original.professors?.map((professor, index) => (
-            <Text maxW={425} overflowX={'hidden'} textOverflow={'ellipsis'} key={index}>{professor}</Text>
+            <Text
+              maxW={425}
+              overflowX={'hidden'}
+              textOverflow={'ellipsis'}
+              key={index}
+            >
+              {professor}
+            </Text>
           ))}
         </Box>
       ),
@@ -459,6 +471,24 @@ function Classes() {
       });
   }
 
+  function handleDeleteAllClassesClick() {
+    onOpenDeleteAllClasses();
+  }
+
+  function handleDeleteAllClasses() {
+    eventsService
+      .deleteAllEvents()
+      .then((it) => {
+        console.log(it);
+        toastSuccess(`Foram removidos ${it.data} eventos`);
+        fetchData();
+      })
+      .catch((error) => {
+        toastError(`Erro ao remover turmas: ${error.message}`);
+      });
+    onCloseDeleteAllClasses();
+  }
+
   return (
     <>
       <Navbar />
@@ -511,7 +541,7 @@ function Classes() {
             <Button
               ml={2}
               colorScheme={'red'}
-              onClick={() => console.log('Remover tudo')}
+              onClick={handleDeleteAllClassesClick}
             >
               Remover turmas
             </Button>
@@ -521,6 +551,13 @@ function Classes() {
             onClose={onCloseDeleteClass}
             onConfirm={handleDeleteClass}
             title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
+          />
+          <Dialog
+            isOpen={isOpenDeleteAllClasses}
+            onClose={onCloseDeleteAllClasses}
+            onConfirm={handleDeleteAllClasses}
+            title={`Deseja remover todas as turmas`}
+            warningText='ATENÇÃO: QUALQUER TURMA SALVA SERÁ PERDIDA!'
           />
           <Dialog
             isOpen={isOpenDeleteAlloc}
