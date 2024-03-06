@@ -64,7 +64,7 @@ export default function JupiterCrawlerPopover({
   }, [dbUser]);
 
   function handleAddClick() {
-    if (subjectInput.length > 6 && !subjectsList.includes(subjectInput)) {
+    if (subjectInput.length === 7 && !subjectsList.includes(subjectInput)) {
       setSubjectsList((prev) => [...prev, subjectInput.replace(' ', '')]);
       setSubjectInput('');
     }
