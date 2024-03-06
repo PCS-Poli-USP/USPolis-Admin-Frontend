@@ -5,7 +5,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  HStack,
   Input,
   Modal,
   ModalBody,
@@ -14,8 +13,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  NumberInput,
-  NumberInputField,
 } from '@chakra-ui/react';
 import Select from 'react-select';
 import { Building } from 'models/building.model';
