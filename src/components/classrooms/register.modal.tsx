@@ -16,12 +16,12 @@ import {
   NumberInputField,
   Select,
 } from '@chakra-ui/react';
+import { appContext } from 'context/AppContext';
 import { Building } from 'models/building.model';
 import Classroom from 'models/classroom.model';
 
-import { Buildings } from 'models/enums/buildings.enum';
-
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import BuildingsService from 'services/buildings.service';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -33,9 +33,13 @@ interface RegisterModalProps {
 }
 
 export default function RegisterModal(props: RegisterModalProps) {
+  const { dbUser } = useContext(appContext);
+  const buildingsService = new BuildingsService();
+  const [buildingsList, setBuildingsList] = useState<Building[]>([]);
+
   const initialForm: Classroom = {
     classroom_name: '',
-    building: Buildings.BIENIO,
+    building: '',
     floor: 0,
     capacity: 0,
     ignore_to_allocate: false,
@@ -49,6 +53,23 @@ export default function RegisterModal(props: RegisterModalProps) {
   useEffect(() => {
     if (props.formData) setForm(props.formData);
   }, [props.formData]);
+
+  useEffect(() => {
+    getBuildingsList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dbUser]);
+
+  function getBuildingsList() {
+    if (dbUser) {
+      if (dbUser.isAdmin) {
+        buildingsService.list().then((response) => {
+          setBuildingsList(response.data);
+        });
+      } else {
+        setBuildingsList(dbUser.buildings);
+      }
+    }
+  }
 
   function handleSaveClick() {
     if (isEmpty(form.classroom_name)) return;
@@ -109,8 +130,8 @@ export default function RegisterModal(props: RegisterModalProps) {
                 }));
               }}
             >
-              {props.buildingsOptions.map((it, index) => (
-                <option key={index} value={it.name}>
+              {buildingsList.map((it) => (
+                <option key={it.id} value={it.name}>
                   {it.name}
                 </option>
               ))}
