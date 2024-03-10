@@ -45,7 +45,13 @@ interface EventFormModalProps extends ModalProps {
 
 const service = new InstutionalEventsService();
 
-function EventFormModal({ isOpen, onClose, refetch, selectedEvent, buildings }: EventFormModalProps) {
+function EventFormModal({
+  isOpen,
+  onClose,
+  refetch,
+  selectedEvent,
+  buildings,
+}: EventFormModalProps) {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<EventForm>({
@@ -139,10 +145,18 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent, buildings }: 
   }, [reset, selectedEvent]);
 
   return (
-    <Modal onClose={onClose} isOpen={isOpen} closeOnOverlayClick={false} size='3xl' isCentered>
+    <Modal
+      onClose={onClose}
+      isOpen={isOpen}
+      closeOnOverlayClick={false}
+      size='3xl'
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{!!selectedEvent ? 'Atualizar evento' : 'Cadastrar de evento'}</ModalHeader>
+        <ModalHeader>
+          {!!selectedEvent ? 'Atualizar evento' : 'Cadastrar de evento'}
+        </ModalHeader>
         <ModalCloseButton />
         <FormProvider {...form}>
           <form>
@@ -153,25 +167,47 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent, buildings }: 
                 </Box>
                 <Textarea label='Descrição' name='description' />
                 <Flex w='100%' gap={3}>
-                  <Input label='Início' name='start_datetime' type='datetime-local' />
-                  <Input label='Fim' name='end_datetime' type='datetime-local' />
+                  <Input
+                    label='Início'
+                    name='start_datetime'
+                    type='datetime-local'
+                  />
+                  <Input
+                    label='Fim'
+                    name='end_datetime'
+                    type='datetime-local'
+                  />
                 </Flex>
-                <Input label='Localização' name='location' disabled={!!buildingWatcher} />
+                <Input
+                  label='Localização'
+                  name='location'
+                  disabled={!!buildingWatcher}
+                />
                 <Text color='gray.500'>ou</Text>
                 <Flex w='100%' gap={3}>
                   <Select
                     label='Prédio'
                     name='building'
                     disabled={!!locationWatcher}
-                    options={buildings.map((b) => ({ label: b.name, value: b.name }))}
+                    options={buildings.map((b) => ({
+                      label: b.name,
+                      value: b.name,
+                    }))}
                   />
-                  <Input label='Sala' name='classroom' disabled={!!locationWatcher} />
+                  <Input
+                    label='Sala'
+                    name='classroom'
+                    disabled={!!locationWatcher}
+                  />
                 </Flex>
                 <Flex w='100%' gap={3}>
                   <Select
                     label='Categoria'
                     name='category'
-                    options={Object.keys(EventTypes).map((opt) => ({ label: opt, value: opt }))}
+                    options={Object.keys(EventTypes).map((opt) => ({
+                      label: opt,
+                      value: opt,
+                    }))}
                   />
                   <Input label='Link externo' name='external_link' type='url' />
                 </Flex>
@@ -182,7 +218,12 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent, buildings }: 
                 <Button onClick={onClose} variant='outline'>
                   Fechar
                 </Button>
-                <Button onClick={!!selectedEvent ? handleUpdateSubmit : handleCreateSubmit} isLoading={loading}>
+                <Button
+                  onClick={
+                    !!selectedEvent ? handleUpdateSubmit : handleCreateSubmit
+                  }
+                  isLoading={loading}
+                >
                   Confirmar
                 </Button>
               </HStack>

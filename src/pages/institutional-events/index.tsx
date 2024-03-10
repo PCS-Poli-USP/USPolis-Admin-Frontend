@@ -28,6 +28,7 @@ import { useEffect, useState } from 'react';
 import { Building } from 'models/building.model';
 import BuildingsService from 'services/buildings.service';
 import { sortBuildings } from 'utils/sorter';
+import { periodFormatter } from './formatters';
 
 function InstitutionalEvents() {
   const {
@@ -84,10 +85,7 @@ function InstitutionalEvents() {
     },
     {
       header: 'Período',
-      cell: ({ row }) =>
-        `${moment(row.original.start_datetime).format(
-          'DD/MM/YYYY HH:mm',
-        )} ~ ${moment(row.original.end_datetime).format('DD/MM/YYYY HH:mm')}`,
+      cell: ({ row }) => periodFormatter(row),
     },
     {
       id: 'options',
