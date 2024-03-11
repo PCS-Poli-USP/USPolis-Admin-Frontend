@@ -10,6 +10,10 @@ interface EditManyAllocationsDTO {
   classroom: string;
 }
 
+interface DeleteManyAllocationsDTO {
+  events_ids: string[];
+}
+
 export default class EventsService extends HttpService {
   constructor() {
     super(`${USPOLIS_SERVER_URL}`);
@@ -74,9 +78,21 @@ export default class EventsService extends HttpService {
     return this.http.delete('/events/delete-all-events');
   }
 
+  deleteManyEvents(
+    data: DeleteManyAllocationsDTO,
+  ): Promise<AxiosResponse<number>> {
+    return this.http.delete('/events/delete-many', { data });
+  }
+
   editManyAllocations(
     data: EditManyAllocationsDTO,
   ): Promise<AxiosResponse<any>> {
     return this.http.put('/allocations/update-many', data);
+  }
+
+  deleteManyAllocations(
+    data: DeleteManyAllocationsDTO,
+  ): Promise<AxiosResponse<number>> {
+    return this.http.delete('/allocations/delete-many', { data });
   }
 }
