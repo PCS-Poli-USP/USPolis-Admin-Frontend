@@ -54,6 +54,8 @@ import { EventByClassrooms } from 'models/event.model';
 import CrawlerService from 'services/crawler.service';
 import { sortBuildings, sortClasses } from 'utils/sorter';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
+import { SClassesBySubject } from 'utils/mappers/classes.mapper';
+import MultipleEditModal from 'components/classes/multipleEdit.modal';
 
 function Classes() {
   const [classesList, setClassesList] = useState<Array<Class>>([]);
@@ -100,6 +102,11 @@ function Classes() {
     isOpen: isOpenJupiterModal,
     onOpen: onOpenJupiterModal,
     onClose: onCloseJupiterModal,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenMultipleEdit,
+    onOpen: onOpenMultipleEdit,
+    onClose: onCloseMultipleEdit,
   } = useDisclosure();
 
   const [selectedClass, setSelectedClass] = useState<Class>();
@@ -479,7 +486,6 @@ function Classes() {
     eventsService
       .deleteAllEvents()
       .then((it) => {
-        console.log(it);
         toastSuccess(`Foram removidos ${it.data} eventos`);
         fetchData();
       })
@@ -526,24 +532,38 @@ function Classes() {
         successSubjects={successSubjects}
         failedSubjects={failedSubjects}
       />
+      <MultipleEditModal
+        isOpen={isOpenMultipleEdit}
+        onClose={onCloseMultipleEdit}
+        subjectsMap={SClassesBySubject(classesList)}
+      />
 
       <Center>
-        <Box p={4} w='9xl' overflow='auto'>
+        <Box p={4} w={'95%'} overflow='auto'>
           <Flex align='center'>
             <Text fontSize='4xl' mb={4}>
               Turmas
             </Text>
             <Spacer />
-            <Button mr={2} colorScheme='blue' onClick={handleRegisterClick}>
+            <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
               Adicionar Turma
             </Button>
             <JupiterCrawlerPopover onSave={handleCrawlerSave} />
             <Button
               ml={2}
+              colorScheme={'blue'}
+              onClick={() => {
+                onOpenMultipleEdit();
+              }}
+            >
+              Editar vários
+            </Button>
+            <Button
+              ml={2}
               colorScheme={'red'}
               onClick={handleDeleteAllClassesClick}
             >
-              Remover turmas
+              Remover todas turmas
             </Button>
           </Flex>
           <Dialog
