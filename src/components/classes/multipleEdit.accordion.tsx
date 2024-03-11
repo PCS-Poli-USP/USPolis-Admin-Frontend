@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Accordion,
   AccordionItem,
   AccordionButton,
@@ -11,7 +13,7 @@ import {
   Checkbox,
 } from '@chakra-ui/react';
 import { SClass } from 'models/class.model';
-import { getClassScheduleShortText} from 'utils/classes/classes.formatter';
+import { getClassScheduleShortText } from 'utils/classes/classes.formatter';
 
 interface MultipleEditAccordionProps {
   subjectsMap: [string, SClass[]][];
@@ -26,6 +28,13 @@ export default function MultipleEditAccordion({
 }: MultipleEditAccordionProps) {
   return (
     <Accordion allowMultiple={true}>
+      {subjectsMap.length === 0 ? (
+        <Alert status='warning' fontSize='sm' mb={4}>
+          <AlertIcon />
+          Nenhuma turma cadastrada
+        </Alert>
+      ) : undefined}
+      
       {subjectsMap.map((subjectMap, index) => (
         <AccordionItem key={index}>
           <AccordionButton>
@@ -46,7 +55,7 @@ export default function MultipleEditAccordion({
                 handleSelectAllCheckBox(subjectMap[0], true);
               }}
             >
-              Selecionar tudo
+              Marcar tudo
             </Button>
 
             <Button
@@ -58,7 +67,7 @@ export default function MultipleEditAccordion({
                 handleSelectAllCheckBox(subjectMap[0], false);
               }}
             >
-              Remover tudo
+              Desmarcar tudo
             </Button>
             <Text fontWeight={'bold'}>Turmas:</Text>
             {subjectMap[1].map((value, index) => (
@@ -69,11 +78,17 @@ export default function MultipleEditAccordion({
                     handleClickCheckBox(value.subject_code, value.class_code);
                   }}
                 />
-                <Text>{`${value.subject_code} - Turma ${value.class_code.slice(
-                  -2,
-                )}, ${value.vacancies} vagas`} - {getClassScheduleShortText(value)}</Text>
+                <Text>
+                  {`${value.subject_code} - Turma ${value.class_code.slice(
+                    -2,
+                  )}, ${value.vacancies} vagas`}{' '}
+                  - {getClassScheduleShortText(value)}
+                </Text>
               </HStack>
             ))}
+            <Text mt={2} fontWeight={'bold'}>
+              *NA = Não alocada
+            </Text>
           </AccordionPanel>
         </AccordionItem>
       ))}

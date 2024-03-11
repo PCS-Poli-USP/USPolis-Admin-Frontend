@@ -536,6 +536,7 @@ function Classes() {
         isOpen={isOpenMultipleEdit}
         onClose={onCloseMultipleEdit}
         subjectsMap={SClassesBySubject(classesList)}
+        onRefresh={() => fetchData()}
       />
 
       <Center>

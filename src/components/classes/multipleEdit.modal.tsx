@@ -8,7 +8,6 @@ import {
   ModalBody,
   ModalCloseButton,
   HStack,
-  StackDivider,
   useToast,
   useDisclosure,
   Input,
@@ -21,21 +20,22 @@ import { SClass } from 'models/class.model';
 import MultipleEditAccordion from './multipleEdit.accordion';
 import { useEffect, useState } from 'react';
 import { CalendarIcon, DeleteIcon } from '@chakra-ui/icons';
-import Classroom from 'models/classroom.model';
-import ClassroomsService from 'services/classrooms.service';
 import MultipleEditAllocationModal from './multipleEdit.allocation.modal';
-import { sortClassrooms } from 'utils/sorter';
 import { BsSearch } from 'react-icons/bs';
+import EventsService from 'services/events.service';
+import Dialog from 'components/common/dialog.component';
 
 interface MultipleEditModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onRefresh: () => void;
   subjectsMap: [string, SClass[]][];
 }
 
 export default function MultipleEditModal({
   isOpen,
   onClose,
+  onRefresh,
   subjectsMap,
 }: MultipleEditModalProps) {
   const {
@@ -43,14 +43,18 @@ export default function MultipleEditModal({
     onOpen: onOpenMultipleAllocEdit,
     onClose: onCloseMultipleAllocEdit,
   } = useDisclosure();
+  const {
+    isOpen: isOpenDeleteDialog,
+    onOpen: onOpenDeleteDialog,
+    onClose: onCloseDeleteDialog,
+  } = useDisclosure();
 
   const [subjectSearchValue, setSubjectSearchValue] = useState('');
-  const [classroomSearchValue, setClassroomSearchValue] = useState('');
-  const [classroomsList, SetClassroomsList] = useState<Classroom[]>([]);
   const [map, SetMap] = useState<[string, SClass[]][]>([]);
   const [filteredMap, SetFilteredMap] = useState<[string, SClass[]][]>([]);
 
-  const classroomsService = new ClassroomsService();
+  const eventsService = new EventsService();
+
   const toast = useToast();
   const toastSuccess = (message: string) => {
     toast({
@@ -76,21 +80,8 @@ export default function MultipleEditModal({
   useEffect(() => {
     if (subjectsMap.length > 0) {
       SetMap(subjectsMap);
-    }
+    } else SetMap([]);
   }, [subjectsMap]);
-
-  useEffect(() => {
-    if (classroomsList.length === 0) {
-      classroomsService
-        .list()
-        .then((it) => {
-          SetClassroomsList(it.data.sort(sortClassrooms));
-        })
-        .catch((error) => {
-          toastError(`Erro ao carregar salas: ${error}`);
-        });
-    }
-  }, [classroomsList]);
 
   function getSelectedClasses() {
     const selectedMap: [string, SClass[]][] = [];
@@ -104,6 +95,18 @@ export default function MultipleEditModal({
       }
     });
     return selectedMap;
+  }
+
+  function getSelectedEventsIds() {
+    const events_ids: string[] = [];
+    map.forEach((value) =>
+      value[1].forEach((cl) => {
+        if (cl.selected) {
+          events_ids.push(...cl.events_ids);
+        }
+      }),
+    );
+    return events_ids;
   }
 
   function handleSelectAll(selected: boolean) {
@@ -143,7 +146,72 @@ export default function MultipleEditModal({
     onOpenMultipleAllocEdit();
   }
 
-  function handleMultipleAlloc(classroom: string) {}
+  function handleMultipleAlloc(
+    events_ids: string[],
+    newClassroom: string,
+    building_id: string,
+  ) {
+    eventsService
+      .editManyAllocations({
+        events_ids,
+        classroom: newClassroom,
+        building_id,
+      })
+      .then((it) => {
+        toastSuccess('Alocação editada com sucesso!');
+        // refetch data
+        // TODO: create AllocationContext
+      })
+      .catch((error) => {
+        toastError(`Erro ao editar alocação: ${error}`);
+      })
+      .finally(() => {
+        onRefresh();
+      });
+  }
+
+  function handleDeleteEventsClick() {
+    onOpenDeleteDialog();
+  }
+
+  function handleDeleteEventsConfirm() {
+    onCloseDeleteDialog();
+    const events_ids = getSelectedEventsIds();
+    eventsService
+      .deleteManyEvents({ events_ids })
+      .then((it) => {
+        toastSuccess('Turmas removidas com sucesso!');
+      })
+      .catch((error) => {
+        toastError(`Erro ao remover turmas: ${error}`);
+      })
+      .finally(() => {
+        onRefresh();
+      });
+  }
+
+  function handleMultipleAllocDelete(events_ids: string[]) {
+    eventsService
+      .deleteManyAllocations({
+        events_ids,
+      })
+      .then((it) => {
+        toastSuccess('Alocações removidas com sucesso!');
+        // refetch data
+        // TODO: create AllocationContext
+      })
+      .catch((error) => {
+        toastError(`Erro ao remover alocações: ${error}`);
+      })
+      .finally(() => {
+        onRefresh();
+      });
+  }
+
+  function handleCloseClick() {
+    SetMap([]);
+    onClose();
+  }
 
   function FilterSubjects(subjectValue: string) {
     if (subjectValue) {
@@ -153,7 +221,7 @@ export default function MultipleEditModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={'4xl'}>
+    <Modal isOpen={isOpen} onClose={handleCloseClick} size={'5xl'}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Edição Múltipla</ModalHeader>
@@ -177,10 +245,10 @@ export default function MultipleEditModal({
                 />
               </InputGroup>
               <Button variant={'solid'} onClick={() => handleSelectAll(true)}>
-                Selecionar todas disciplinas
+                Marcar todas disciplinas
               </Button>
               <Button variant={'solid'} onClick={() => handleSelectAll(false)}>
-                Remover todas disciplinas
+                Desmarcar todas disciplinas
               </Button>
             </HStack>
           </VStack>
@@ -194,8 +262,16 @@ export default function MultipleEditModal({
             isOpen={isOpenMultipleAllocEdit}
             onClose={onCloseMultipleAllocEdit}
             onSave={handleMultipleAlloc}
-            classrooms={classroomsList}
+            onDelete={handleMultipleAllocDelete}
             seletecSubjects={getSelectedClasses()}
+          />
+
+          <Dialog
+            isOpen={isOpenDeleteDialog}
+            onClose={onCloseDeleteDialog}
+            onConfirm={handleDeleteEventsConfirm}
+            title={'Deseja remover as turmas selecioandas'}
+            warningText={'Atenção: ao confirmar essas turmas serão excluídas'}
           />
         </ModalBody>
 
@@ -205,13 +281,19 @@ export default function MultipleEditModal({
               colorScheme={'yellow'}
               leftIcon={<CalendarIcon />}
               onClick={handleAllocationClick}
+              disabled={map.length === 0}
             >
               Alocar selecionados
             </Button>
-            <Button colorScheme={'red'} leftIcon={<DeleteIcon />}>
+            <Button
+              colorScheme={'red'}
+              leftIcon={<DeleteIcon />}
+              onClick={handleDeleteEventsClick}
+              disabled={map.length === 0}
+            >
               Excluir selecionados
             </Button>
-            <Button colorScheme={'blue'} mr={3} onClick={onClose}>
+            <Button colorScheme={'blue'} mr={3} onClick={handleCloseClick}>
               Fechar
             </Button>
           </HStack>
