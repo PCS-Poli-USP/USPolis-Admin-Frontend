@@ -114,10 +114,13 @@ export function getClassScheduleText(data: Class): string[] {
 }
 
 export function getClassScheduleShortText(data: Class): string {
+  console.log('Dados: ', data);
   let text = '';
   for (let i = 0; i < data.week_days.length; i++) {
-    text += `${Capitalize(data.week_days[i])} - ${
-      data.classrooms ? data.classrooms[i] : 'Não alocado'
+    text += `${Capitalize(data.week_days[i])} (${data.start_time[i]} - ${
+      data.end_time[i]
+    }) - ${
+      !data.has_to_be_allocated && data.classrooms ? data.classrooms[i] : 'NA'
     }, `;
   }
   return text.replace(/,\s*$/, '');
