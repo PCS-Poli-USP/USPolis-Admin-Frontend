@@ -3,6 +3,7 @@ import Event, { EventByClassrooms } from 'models/event.model';
 import { Classrooms } from 'models/enums/clasrooms.enum';
 import { ClassCodeText } from 'utils/mappers/allocation.mapper';
 import { Building } from 'models/building.model';
+import { Capitalize } from 'utils/formatters';
 
 export function breakClassFormInEvents(form: Class) {
   const events: CreateClassEvents[] = [];
@@ -110,4 +111,14 @@ export function getClassScheduleText(data: Class): string[] {
     );
   }
   return schedule;
+}
+
+export function getClassScheduleShortText(data: Class): string {
+  let text = '';
+  for (let i = 0; i < data.week_days.length; i++) {
+    text += `${Capitalize(data.week_days[i])} - ${
+      data.classrooms ? data.classrooms[i] : 'Não alocado'
+    }, `;
+  }
+  return text.replace(/,\s*$/, '');
 }
