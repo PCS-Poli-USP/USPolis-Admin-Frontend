@@ -98,10 +98,12 @@ export default function EditEventModal({
   useEffect(() => {
     resetClassroomsDropdown();
     getAvailableClassrooms();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedEvents]);
 
   useEffect(() => {
     setCheckedEvents(classEvents.map((it) => it.id ?? ''));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classEvents]);
 
   async function getAvailableClassrooms() {
