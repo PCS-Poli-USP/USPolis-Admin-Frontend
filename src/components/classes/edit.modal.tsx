@@ -416,7 +416,7 @@ export default function EditModal({
                     value={subjectCode}
                     errorBorderColor='crimson'
                     onChange={(event) => {
-                      setSubjectCode(event.target.value);
+                      setSubjectCode(event.target.value.toUpperCase());
                       if (event.target.value) setHasSubjectCodeError(false);
                     }}
                   />
