@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   Center,
   Flex,
   IconButton,
@@ -54,7 +55,6 @@ import { EventByClassrooms } from 'models/event.model';
 import CrawlerService from 'services/crawler.service';
 import { sortBuildings, sortClasses } from 'utils/sorter';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
-import { SClassesBySubject } from 'utils/mappers/classes.mapper';
 import MultipleEditModal from 'components/classes/multipleEdit.modal';
 
 function Classes() {
@@ -114,6 +114,8 @@ function Classes() {
   const [allocating, setAllocating] = useState(false);
   const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
   const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
+  const [checkedClasses, setCheckedClasses] = useState<Class[]>([]);
+  const [checkedMap, setCheckedMap] = useState<boolean[]>([]);
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -138,6 +140,40 @@ function Classes() {
   };
 
   const columns: ColumnDef<Class>[] = [
+    {
+      header: 'Marcar',
+      cell: ({ row }) => (
+        <Box>
+          <Checkbox
+            isChecked={checkedMap[row.index]}
+            ml={5}
+            onChange={(event) => {
+              const index = row.index;
+              const newCheckedMap = [...checkedMap];
+              newCheckedMap[index] = event.target.checked;
+              setCheckedMap(newCheckedMap);
+
+              if (event.target.checked) {
+                const newCheckedClasses = [...checkedClasses];
+                newCheckedClasses.push(row.original);
+                setCheckedClasses(newCheckedClasses);
+              } else {
+                const newCheckedClasses: Class[] = [];
+                checkedClasses.forEach((cl) => {
+                  if (
+                    cl.subject_code !== row.original.subject_code ||
+                    cl.class_code !== row.original.class_code
+                  ) {
+                    newCheckedClasses.push(cl);
+                  }
+                });
+                setCheckedClasses(newCheckedClasses);
+              }
+            }}
+          />
+        </Box>
+      ),
+    },
     {
       accessorKey: 'subject_code',
       header: 'Código',
@@ -296,6 +332,9 @@ function Classes() {
       .list()
       .then((it) => {
         setClassesList(it.data.sort(sortClasses));
+        const newCheckedMap: boolean[] = [];
+        for (let i = 0; i < it.data.length; i++) newCheckedMap.push(false);
+        setCheckedMap(newCheckedMap);
         setLoading(false);
       })
       .catch((error) => {
@@ -535,12 +574,12 @@ function Classes() {
       <MultipleEditModal
         isOpen={isOpenMultipleEdit}
         onClose={onCloseMultipleEdit}
-        subjectsMap={SClassesBySubject(classesList)}
+        classes={checkedClasses}
         onRefresh={() => fetchData()}
       />
 
       <Center>
-        <Box p={4} w={'95%'} overflow='auto'>
+        <Box p={4} w={'100%'} overflow='auto'>
           <Flex align='center'>
             <Text fontSize='4xl' mb={4}>
               Turmas
@@ -557,7 +596,7 @@ function Classes() {
                 onOpenMultipleEdit();
               }}
             >
-              Editar vários
+              Editar selecionados
             </Button>
             <Button
               ml={2}

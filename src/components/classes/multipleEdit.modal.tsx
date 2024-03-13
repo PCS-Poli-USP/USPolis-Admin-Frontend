@@ -16,7 +16,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { SClass } from 'models/class.model';
+import Class from 'models/class.model';
 import MultipleEditAccordion from './multipleEdit.accordion';
 import { useEffect, useState } from 'react';
 import { CalendarIcon, DeleteIcon } from '@chakra-ui/icons';
@@ -24,19 +24,20 @@ import MultipleEditAllocationModal from './multipleEdit.allocation.modal';
 import { BsSearch } from 'react-icons/bs';
 import EventsService from 'services/events.service';
 import Dialog from 'components/common/dialog.component';
+import { ClassesBySubject } from 'utils/mappers/classes.mapper';
 
 interface MultipleEditModalProps {
   isOpen: boolean;
   onClose: () => void;
   onRefresh: () => void;
-  subjectsMap: [string, SClass[]][];
+  classes: Class[];
 }
 
 export default function MultipleEditModal({
   isOpen,
   onClose,
   onRefresh,
-  subjectsMap,
+  classes,
 }: MultipleEditModalProps) {
   const {
     isOpen: isOpenMultipleAllocEdit,
@@ -50,8 +51,9 @@ export default function MultipleEditModal({
   } = useDisclosure();
 
   const [subjectSearchValue, setSubjectSearchValue] = useState('');
-  const [map, SetMap] = useState<[string, SClass[]][]>([]);
-  const [filteredMap, SetFilteredMap] = useState<[string, SClass[]][]>([]);
+  const [map, setMap] = useState<[string, Class[]][]>([]);
+  const [filteredMap, setFilteredMap] = useState<[string, Class[]][]>([]);
+  const [filteredClasses, setFilteredClasses] = useState<Class[]>([]);
 
   const eventsService = new EventsService();
 
@@ -78,69 +80,32 @@ export default function MultipleEditModal({
   };
 
   useEffect(() => {
-    if (subjectsMap.length > 0) {
-      SetMap(subjectsMap);
-    } else SetMap([]);
-  }, [subjectsMap]);
+    if (classes.length > 0) {
+      if (filteredClasses.length > 0) setMap(ClassesBySubject(filteredClasses));
+      else setMap(ClassesBySubject(classes));
+    } else setMap([]);
+  }, [classes, filteredClasses]);
 
-  function getSelectedClasses() {
-    const selectedMap: [string, SClass[]][] = [];
-    map.forEach((value) => {
-      const selectedClasses: SClass[] = [];
-      value[1].forEach((cl) => {
-        if (cl.selected) selectedClasses.push(cl);
-      });
-      if (selectedClasses.length > 0) {
-        selectedMap.push([value[0], selectedClasses]);
-      }
-    });
-    return selectedMap;
-  }
+  // function getSelectedClasses() {
+  //   const selectedMap: [string, SClass[]][] = [];
+  //   map.forEach((value) => {
+  //     const selectedClasses: SClass[] = [];
+  //     value[1].forEach((cl) => {
+  //       if (cl.selected) selectedClasses.push(cl);
+  //     });
+  //     if (selectedClasses.length > 0) {
+  //       selectedMap.push([value[0], selectedClasses]);
+  //     }
+  //   });
+  //   return selectedMap;
+  // }
 
   function getSelectedEventsIds() {
     const events_ids: string[] = [];
-    map.forEach((value) =>
-      value[1].forEach((cl) => {
-        if (cl.selected) {
-          events_ids.push(...cl.events_ids);
-        }
-      }),
-    );
+    classes.forEach((cl) => events_ids.push(...cl.events_ids));
     return events_ids;
   }
 
-  function handleSelectAll(selected: boolean) {
-    const newMap = [...map];
-    newMap.forEach((value) => {
-      value[1].forEach((sclass) => (sclass.selected = selected));
-    });
-    SetMap(newMap);
-  }
-
-  function handleClickOne(subjectCode: string, classCode: string) {
-    const newMap = [...map];
-    const mapIndex = newMap.findIndex((value) => value[0] === subjectCode);
-    if (mapIndex >= 0) {
-      const classIndex = newMap[mapIndex][1].findIndex(
-        (value) => value.class_code === classCode,
-      );
-
-      if (classIndex >= 0) {
-        newMap[mapIndex][1][classIndex].selected =
-          !newMap[mapIndex][1][classIndex].selected;
-      }
-    }
-    SetMap(newMap);
-  }
-
-  function handleClickAll(subjectCode: string, selected: boolean) {
-    const newMap = [...map];
-    const mapIndex = newMap.findIndex((value) => value[0] === subjectCode);
-    if (mapIndex >= 0) {
-      newMap[mapIndex][1].forEach((value) => (value.selected = selected));
-    }
-    SetMap(newMap);
-  }
 
   function handleAllocationClick() {
     onOpenMultipleAllocEdit();
@@ -209,14 +174,16 @@ export default function MultipleEditModal({
   }
 
   function handleCloseClick() {
-    SetMap([]);
+    setMap([]);
     onClose();
   }
 
   function FilterSubjects(subjectValue: string) {
     if (subjectValue) {
-      const newMap = map.filter((value) => value[0].includes(subjectValue));
-      SetFilteredMap(newMap);
+      const filtered = classes.filter((cl) =>
+        cl.subject_code.includes(subjectValue),
+      );
+      setFilteredClasses(filtered);
     }
   }
 
@@ -224,7 +191,7 @@ export default function MultipleEditModal({
     <Modal isOpen={isOpen} onClose={handleCloseClick} size={'5xl'}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Edição Múltipla</ModalHeader>
+        <ModalHeader>Edição de Turmas Selecionadas</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack spacing={2} mb={4} alignItems={'flex-start'}>
@@ -244,27 +211,21 @@ export default function MultipleEditModal({
                   }}
                 />
               </InputGroup>
-              <Button variant={'solid'} onClick={() => handleSelectAll(true)}>
-                Marcar todas disciplinas
-              </Button>
-              <Button variant={'solid'} onClick={() => handleSelectAll(false)}>
-                Desmarcar todas disciplinas
-              </Button>
             </HStack>
           </VStack>
 
           <MultipleEditAccordion
-            subjectsMap={subjectSearchValue ? filteredMap : map}
-            handleClickCheckBox={handleClickOne}
-            handleSelectAllCheckBox={handleClickAll}
+            subjectsMap={map}
+            // handleClickCheckBox={handleClickOne}
+            // handleSelectAllCheckBox={handleClickAll}
           />
-          <MultipleEditAllocationModal
+          {/* <MultipleEditAllocationModal
             isOpen={isOpenMultipleAllocEdit}
             onClose={onCloseMultipleAllocEdit}
             onSave={handleMultipleAlloc}
             onDelete={handleMultipleAllocDelete}
             seletecSubjects={getSelectedClasses()}
-          />
+          /> */}
 
           <Dialog
             isOpen={isOpenDeleteDialog}
