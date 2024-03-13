@@ -114,7 +114,6 @@ export function getClassScheduleText(data: Class): string[] {
 }
 
 export function getClassScheduleShortText(data: Class): string {
-  console.log('Dados: ', data);
   let text = '';
   for (let i = 0; i < data.week_days.length; i++) {
     text += `${Capitalize(data.week_days[i])} (${data.start_time[i]} - ${
