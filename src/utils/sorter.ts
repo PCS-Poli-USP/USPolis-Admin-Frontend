@@ -16,6 +16,14 @@ export function sortEventsBySubjectCode(a: Event, b: Event) {
   return 0;
 }
 
+export function sortEventsBySubjectAndClass(a: Event, b: Event) {
+  if (a.subject_code < b.subject_code) return -1;
+  if (a.subject_code > b.subject_code) return 1;
+  if (a.class_code < b.class_code) return -1;
+  else if (a.class_code === b.class_code) return 0;
+  else return sortEventsByClassroomAndTime(a, b);
+}
+
 export function sortEventsByTime(a: Event, b: Event) {
   const weekDayResult = WeekDayInt(a.week_day) - WeekDayInt(b.week_day);
   if (weekDayResult === 0) {
