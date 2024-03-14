@@ -10,21 +10,23 @@ import {
   HStack,
   useToast,
   useDisclosure,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Text,
   VStack,
   Alert,
   AlertIcon,
-  Radio,
-  RadioGroup,
 } from '@chakra-ui/react';
 import Class from 'models/class.model';
 import MultipleEditAccordion from './multipleEdit.accordion';
 import { useEffect, useState } from 'react';
 import { CalendarIcon, DeleteIcon } from '@chakra-ui/icons';
+import { BsSearch } from 'react-icons/bs';
 import EventsService from 'services/events.service';
 import Dialog from 'components/common/dialog.component';
 import { ClassesBySubject } from 'utils/mappers/classes.mapper';
-import { sortClassMapByClassAmount, sortClassMapBySubject } from 'utils/sorter';
+import { sortClassMapBySubject } from 'utils/sorter';
 
 interface MultipleEditModalProps {
   isOpen: boolean;
@@ -51,7 +53,10 @@ export default function MultipleEditModal({
     onClose: onCloseDeleteDialog,
   } = useDisclosure();
 
+  const [subjectSearchValue, setSubjectSearchValue] = useState('');
   const [map, setMap] = useState<[string, Class[]][]>([]);
+  const [filteredMap, setFilteredMap] = useState<[string, Class[]][]>([]);
+  const [filteredClasses, setFilteredClasses] = useState<Class[]>([]);
   const [allocationMap, setAllocationMap] = useState<Allocation[]>([]);
   const [hasMissingData, setHasMissingData] = useState(false);
 
@@ -88,9 +93,13 @@ export default function MultipleEditModal({
         });
       });
       setAllocationMap(newAllocationMap);
-      setMap(ClassesBySubject(classes));
+      if (filteredClasses.length > 0)
+        setFilteredMap(
+          ClassesBySubject(filteredClasses).sort(sortClassMapBySubject),
+        );
+      else setMap(ClassesBySubject(classes));
     } else setMap([]);
-  }, [classes]);
+  }, [classes, filteredClasses]);
 
   function getSelectedEventsIds() {
     const events_ids: string[] = [];
@@ -186,6 +195,16 @@ export default function MultipleEditModal({
     onClose();
   }
 
+  function FilterSubjects(subjectValue: string) {
+    if (subjectValue) {
+      const filtered = classes.filter((cl) =>
+        cl.subject_code.includes(subjectValue),
+      );
+      setFilteredClasses(filtered);
+      setFilteredMap(ClassesBySubject(filteredClasses));
+    }
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={handleCloseClick} size={'5xl'}>
       <ModalOverlay />
@@ -195,40 +214,26 @@ export default function MultipleEditModal({
         <ModalBody>
           <VStack spacing={2} mb={4} alignItems={'flex-start'}>
             <Text as={'b'}>Opções:</Text>
-            <RadioGroup defaultValue={'1'}>
-              <HStack spacing={2}>
-                <Radio
-                  size='sm'
-                  value={'1'}
+            <HStack spacing={2}>
+              <InputGroup w='fit-content'>
+                <InputLeftElement pointerEvents='none'>
+                  <BsSearch color='gray.300' />
+                </InputLeftElement>
+                <Input
+                  type='text'
+                  placeholder='Filtrar disciplinas'
+                  value={subjectSearchValue}
                   onChange={(event) => {
-                    if (event.target.checked) {
-                      const newMap = [...map];
-                      newMap.sort(sortClassMapBySubject);
-                      setMap(newMap);
-                    }
+                    setSubjectSearchValue(event.target.value.toUpperCase());
+                    FilterSubjects(event.target.value.toUpperCase());
                   }}
-                >
-                  Ordernar por Código da Disciplina
-                </Radio>
-                <Radio
-                  size='sm'
-                  value={'2'}
-                  onChange={(event) => {
-                    if (event.target.checked) {
-                      const newMap = [...map];
-                      newMap.sort(sortClassMapByClassAmount);
-                      setMap(newMap);
-                    }
-                  }}
-                >
-                  Ordernar por Quantidade de Turmas
-                </Radio>
-              </HStack>
-            </RadioGroup>
+                />
+              </InputGroup>
+            </HStack>
           </VStack>
 
           <MultipleEditAccordion
-            subjectsMap={map}
+            subjectsMap={subjectSearchValue ? filteredMap : map}
             handleSelectBuilding={handleSelectBuilding}
             handleSelectClassroom={handleSelectClassroom}
           />
@@ -247,7 +252,13 @@ export default function MultipleEditModal({
             {hasMissingData ? (
               <Alert status={'error'}>
                 <AlertIcon />
-                Selecione alocações para todas as turmas
+                Todas turmas selecionadas devem ser alocadas
+              </Alert>
+            ) : undefined}
+            {hasMissingData && subjectSearchValue ? (
+              <Alert status={'warning'}>
+                <AlertIcon />
+                Cuidado, o filtro está ativo
               </Alert>
             ) : undefined}
             <HStack spacing={2}>

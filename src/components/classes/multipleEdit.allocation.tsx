@@ -91,7 +91,7 @@ export function MultipleEditAllocation({
   }
 
   return (
-    <HStack w={'full'} spacing={10}>
+    <HStack w={'full'} spacing={10} mb={4}>
       <Text w={'fit-content'} noOfLines={1} as={'b'}>{`${Capitalize(
         weekDay,
       )} - ${startTime} às ${endTime}: `}</Text>

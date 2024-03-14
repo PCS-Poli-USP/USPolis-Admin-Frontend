@@ -10,6 +10,7 @@ import {
   Text,
   VStack,
   Skeleton,
+  StackDivider,
 } from '@chakra-ui/react';
 import Class from 'models/class.model';
 import BuildingsService from 'services/buildings.service';
@@ -79,8 +80,7 @@ MultipleEditAccordionProps) {
               <AccordionIcon />
             </AccordionButton>
             <AccordionPanel pb={4}>
-              {/* <Text fontWeight={'bold'}>Turmas:</Text> */}
-              <VStack>
+              <VStack divider={<StackDivider borderColor='blackAlpha.500' />}>
                 {subjectMap[1].map((cl, idx) => (
                   <VStack
                     spacing={3}
@@ -88,13 +88,13 @@ MultipleEditAccordionProps) {
                     alignSelf={'flex-start'}
                     alignItems={'flex-start'}
                   >
-                    <Text as={'b'}>
+                    <Text as={'b'} mt={4}>
                       {`Turma ${cl.class_code.slice(-2)} - ${
                         cl.vacancies
                       } vagas: `}
                     </Text>
 
-                    <VStack>
+                    <VStack divider={<StackDivider borderColor='gray.200' />}>
                       {cl.week_days.map((day, i) => (
                         <MultipleEditAllocation
                           key={i}
