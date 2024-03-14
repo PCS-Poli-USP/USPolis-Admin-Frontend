@@ -15,12 +15,13 @@ import {
   InputLeftElement,
   Text,
   VStack,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/react';
 import Class from 'models/class.model';
 import MultipleEditAccordion from './multipleEdit.accordion';
 import { useEffect, useState } from 'react';
 import { CalendarIcon, DeleteIcon } from '@chakra-ui/icons';
-import MultipleEditAllocationModal from './multipleEdit.allocation.modal';
 import { BsSearch } from 'react-icons/bs';
 import EventsService from 'services/events.service';
 import Dialog from 'components/common/dialog.component';
@@ -33,17 +34,18 @@ interface MultipleEditModalProps {
   classes: Class[];
 }
 
+interface Allocation {
+  event_id: string;
+  classroom?: string;
+  building_id?: string;
+}
+
 export default function MultipleEditModal({
   isOpen,
   onClose,
   onRefresh,
   classes,
 }: MultipleEditModalProps) {
-  const {
-    isOpen: isOpenMultipleAllocEdit,
-    onOpen: onOpenMultipleAllocEdit,
-    onClose: onCloseMultipleAllocEdit,
-  } = useDisclosure();
   const {
     isOpen: isOpenDeleteDialog,
     onOpen: onOpenDeleteDialog,
@@ -54,6 +56,8 @@ export default function MultipleEditModal({
   const [map, setMap] = useState<[string, Class[]][]>([]);
   const [filteredMap, setFilteredMap] = useState<[string, Class[]][]>([]);
   const [filteredClasses, setFilteredClasses] = useState<Class[]>([]);
+  const [allocationMap, setAllocationMap] = useState<Allocation[]>([]);
+  const [hasMissingData, setHasMissingData] = useState(false);
 
   const eventsService = new EventsService();
 
@@ -81,24 +85,18 @@ export default function MultipleEditModal({
 
   useEffect(() => {
     if (classes.length > 0) {
-      if (filteredClasses.length > 0) setMap(ClassesBySubject(filteredClasses));
+      const newAllocationMap: Allocation[] = [];
+      classes.forEach((cl) => {
+        cl.events_ids.forEach((id) => {
+          newAllocationMap.push({ event_id: id });
+        });
+      });
+      setAllocationMap(newAllocationMap);
+      if (filteredClasses.length > 0)
+        setFilteredMap(ClassesBySubject(filteredClasses));
       else setMap(ClassesBySubject(classes));
     } else setMap([]);
   }, [classes, filteredClasses]);
-
-  // function getSelectedClasses() {
-  //   const selectedMap: [string, SClass[]][] = [];
-  //   map.forEach((value) => {
-  //     const selectedClasses: SClass[] = [];
-  //     value[1].forEach((cl) => {
-  //       if (cl.selected) selectedClasses.push(cl);
-  //     });
-  //     if (selectedClasses.length > 0) {
-  //       selectedMap.push([value[0], selectedClasses]);
-  //     }
-  //   });
-  //   return selectedMap;
-  // }
 
   function getSelectedEventsIds() {
     const events_ids: string[] = [];
@@ -106,33 +104,52 @@ export default function MultipleEditModal({
     return events_ids;
   }
 
-
-  function handleAllocationClick() {
-    onOpenMultipleAllocEdit();
+  function handleSelectBuilding(building_id: string, event_id: string) {
+    setHasMissingData(false);
+    const newAllocationMap = [...allocationMap];
+    newAllocationMap.forEach((alloc) => {
+      if (alloc.event_id === event_id) {
+        alloc.building_id = building_id;
+      }
+    });
+    setAllocationMap(newAllocationMap);
   }
 
-  function handleMultipleAlloc(
-    events_ids: string[],
-    newClassroom: string,
-    building_id: string,
-  ) {
-    eventsService
-      .editManyAllocations({
-        events_ids,
-        classroom: newClassroom,
-        building_id,
-      })
-      .then((it) => {
-        toastSuccess('Alocação editada com sucesso!');
-        // refetch data
-        // TODO: create AllocationContext
-      })
-      .catch((error) => {
-        toastError(`Erro ao editar alocação: ${error}`);
-      })
-      .finally(() => {
-        onRefresh();
-      });
+  function handleSelectClassroom(classroom: string, event_id: string) {
+    setHasMissingData(false);
+    const newAllocationMap = [...allocationMap];
+    newAllocationMap.forEach((alloc) => {
+      if (alloc.event_id === event_id) {
+        alloc.classroom = classroom;
+      }
+    });
+    setAllocationMap(newAllocationMap);
+  }
+
+  function handleAllocationClick() {
+    const data = getAllocationData();
+    if (
+      data.events_ids.length === data.classrooms.length &&
+      data.events_ids.length === data.buildings_ids.length
+    ) {
+      eventsService
+        .editManyAllocationsInManyBuildings(data)
+        .then((it) => {
+          toastSuccess('Alocações editadas com sucesso!');
+          // refetch data
+          // TODO: create AllocationContext
+        })
+        .catch((error) => {
+          toastError(`Erro ao editar alocações: ${error}`);
+        })
+        .finally(() => {
+          onRefresh();
+          onClose();
+        });
+    } else {
+      setHasMissingData(true);
+      return;
+    }
   }
 
   function handleDeleteEventsClick() {
@@ -152,29 +169,26 @@ export default function MultipleEditModal({
       })
       .finally(() => {
         onRefresh();
+        onClose();
       });
   }
 
-  function handleMultipleAllocDelete(events_ids: string[]) {
-    eventsService
-      .deleteManyAllocations({
-        events_ids,
-      })
-      .then((it) => {
-        toastSuccess('Alocações removidas com sucesso!');
-        // refetch data
-        // TODO: create AllocationContext
-      })
-      .catch((error) => {
-        toastError(`Erro ao remover alocações: ${error}`);
-      })
-      .finally(() => {
-        onRefresh();
-      });
+  function getAllocationData() {
+    const events_ids: string[] = [];
+    const classrooms: string[] = [];
+    const buildings_ids: string[] = [];
+    allocationMap.forEach((alloc) => {
+      events_ids.push(alloc.event_id);
+      if (alloc.classroom) classrooms.push(alloc.classroom);
+      if (alloc.building_id) buildings_ids.push(alloc.building_id);
+    });
+    return { events_ids, classrooms, buildings_ids };
   }
 
   function handleCloseClick() {
     setMap([]);
+    setAllocationMap([]);
+    setHasMissingData(false);
     onClose();
   }
 
@@ -184,6 +198,7 @@ export default function MultipleEditModal({
         cl.subject_code.includes(subjectValue),
       );
       setFilteredClasses(filtered);
+      setFilteredMap(ClassesBySubject(filteredClasses));
     }
   }
 
@@ -215,17 +230,10 @@ export default function MultipleEditModal({
           </VStack>
 
           <MultipleEditAccordion
-            subjectsMap={map}
-            // handleClickCheckBox={handleClickOne}
-            // handleSelectAllCheckBox={handleClickAll}
+            subjectsMap={subjectSearchValue ? filteredMap : map}
+            handleSelectBuilding={handleSelectBuilding}
+            handleSelectClassroom={handleSelectClassroom}
           />
-          {/* <MultipleEditAllocationModal
-            isOpen={isOpenMultipleAllocEdit}
-            onClose={onCloseMultipleAllocEdit}
-            onSave={handleMultipleAlloc}
-            onDelete={handleMultipleAllocDelete}
-            seletecSubjects={getSelectedClasses()}
-          /> */}
 
           <Dialog
             isOpen={isOpenDeleteDialog}
@@ -237,27 +245,35 @@ export default function MultipleEditModal({
         </ModalBody>
 
         <ModalFooter>
-          <HStack spacing={2}>
-            <Button
-              colorScheme={'yellow'}
-              leftIcon={<CalendarIcon />}
-              onClick={handleAllocationClick}
-              disabled={map.length === 0}
-            >
-              Alocar selecionados
-            </Button>
-            <Button
-              colorScheme={'red'}
-              leftIcon={<DeleteIcon />}
-              onClick={handleDeleteEventsClick}
-              disabled={map.length === 0}
-            >
-              Excluir selecionados
-            </Button>
-            <Button colorScheme={'blue'} mr={3} onClick={handleCloseClick}>
-              Fechar
-            </Button>
-          </HStack>
+          <VStack>
+            {hasMissingData ? (
+              <Alert status={'error'}>
+                <AlertIcon />
+                Selecione alocações para todas as turmas
+              </Alert>
+            ) : undefined}
+            <HStack spacing={2}>
+              <Button
+                colorScheme={'yellow'}
+                leftIcon={<CalendarIcon />}
+                onClick={handleAllocationClick}
+                disabled={map.length === 0 || hasMissingData}
+              >
+                Alocar selecionados
+              </Button>
+              <Button
+                colorScheme={'red'}
+                leftIcon={<DeleteIcon />}
+                onClick={handleDeleteEventsClick}
+                disabled={map.length === 0}
+              >
+                Excluir selecionados
+              </Button>
+              <Button colorScheme={'blue'} mr={3} onClick={handleCloseClick}>
+                Fechar
+              </Button>
+            </HStack>
+          </VStack>
         </ModalFooter>
       </ModalContent>
     </Modal>
