@@ -10,6 +10,12 @@ interface EditManyAllocationsDTO {
   classroom: string;
 }
 
+interface EditManyAllocationsInManyBuildingsDTO {
+  events_ids: string[];
+  buildings_ids: string[];
+  classrooms: string[];
+}
+
 interface DeleteManyAllocationsDTO {
   events_ids: string[];
 }
@@ -88,6 +94,12 @@ export default class EventsService extends HttpService {
     data: EditManyAllocationsDTO,
   ): Promise<AxiosResponse<any>> {
     return this.http.put('/allocations/update-many', data);
+  }
+
+  editManyAllocationsInManyBuildings(
+    data: EditManyAllocationsInManyBuildingsDTO,
+  ): Promise<AxiosResponse<any>> {
+    return this.http.put('/allocations/update-many-in-many-buildings', data);
   }
 
   deleteManyAllocations(
