@@ -126,6 +126,7 @@ export function MultipleEditAllocation({
       <Box>
         <Text>Salas disponíveis</Text>
         <Select
+          menuPosition={'fixed'}
           placeholder={'Sala - Capacidade'}
           isLoading={classroomsLoading}
           options={availableClassrooms.map((it) =>

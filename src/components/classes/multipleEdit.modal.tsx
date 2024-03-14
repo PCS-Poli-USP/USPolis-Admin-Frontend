@@ -189,8 +189,6 @@ export default function MultipleEditModal({
   }
 
   function handleCloseClick() {
-    setMap([]);
-    setAllocationMap([]);
     setHasMissingData(false);
     onClose();
   }
