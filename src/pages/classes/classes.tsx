@@ -142,6 +142,11 @@ function Classes() {
   const columns: ColumnDef<Class>[] = [
     {
       header: 'Marcar',
+      meta: {
+        isCheckBox: true,
+        markAllClickFn: handleMarkAllClick,
+        dismarkAllClickFn: handleDismarkAllClick,
+      },
       cell: ({ row }) => (
         <Box>
           <Checkbox
@@ -532,6 +537,20 @@ function Classes() {
         toastError(`Erro ao remover turmas: ${error.message}`);
       });
     onCloseDeleteAllClasses();
+  }
+
+  function handleMarkAllClick() {
+    const newCheckedMap = [];
+    for (let i = 0; i < checkedMap.length; i++) newCheckedMap.push(true);
+    setCheckedMap(newCheckedMap);
+    setCheckedClasses([...classesList]);
+  }
+
+  function handleDismarkAllClick() {
+    const newCheckedMap = [];
+    for (let i = 0; i < checkedMap.length; i++) newCheckedMap.push(false);
+    setCheckedMap(newCheckedMap);
+    setCheckedClasses([]);
   }
 
   return (

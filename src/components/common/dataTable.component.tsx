@@ -1,12 +1,17 @@
 import {
+  AddIcon,
   CheckIcon,
   CloseIcon,
+  MinusIcon,
   TriangleDownIcon,
   TriangleUpIcon,
 } from '@chakra-ui/icons';
 import {
   Box,
+  Button,
   chakra,
+  HStack,
+  IconButton,
   Input,
   Progress,
   Select,
@@ -16,6 +21,7 @@ import {
   Td,
   Th,
   Thead,
+  Tooltip,
   Tr,
 } from '@chakra-ui/react';
 import {
@@ -113,6 +119,31 @@ export default function DataTable<Data extends object>({
                     {header.column.getCanFilter() ? (
                       <Filter column={header.column} />
                     ) : null}
+
+                    {meta?.isCheckBox ? (
+                      <Box mt={3}>
+                        <Tooltip label='Marcar tudo'>
+                          <IconButton
+                            colorScheme='green'
+                            size='xs'
+                            variant='ghost'
+                            aria-label='marcar-tudo'
+                            icon={<CheckIcon />}
+                            onClick={() => meta.markAllClickFn()}
+                          />
+                        </Tooltip>
+                        <Tooltip label='Desmarcar tudo'>
+                          <IconButton
+                            colorScheme='red'
+                            size='xs'
+                            variant='ghost'
+                            aria-label='desmarcar-tduo'
+                            icon={<CloseIcon />}
+                            onClick={() => meta.dismarkAllClickFn()}
+                          />
+                        </Tooltip>
+                      </Box>
+                    ) : null}
                   </Th>
                 );
               })}
@@ -126,7 +157,13 @@ export default function DataTable<Data extends object>({
                 // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
                 const meta: any = cell.column.columnDef.meta;
                 return (
-                  <Td key={cell.id} isNumeric={meta?.isNumeric} maxW={150} overflowX={'hidden'} textOverflow={'ellipsis'}>
+                  <Td
+                    key={cell.id}
+                    isNumeric={meta?.isNumeric}
+                    maxW={150}
+                    overflowX={'hidden'}
+                    textOverflow={'ellipsis'}
+                  >
                     {meta?.isBoolean ? (
                       cell.getValue() ? (
                         <CheckIcon />
