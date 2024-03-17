@@ -19,9 +19,11 @@ import {
 import { appContext } from 'context/AppContext';
 import { Building } from 'models/building.model';
 import Classroom from 'models/classroom.model';
+import { User } from 'models/user.model';
 
 import { useContext, useEffect, useState } from 'react';
 import BuildingsService from 'services/buildings.service';
+import UsersService from 'services/users.service';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -33,8 +35,10 @@ interface RegisterModalProps {
 }
 
 export default function RegisterModal(props: RegisterModalProps) {
-  const { dbUser } = useContext(appContext);
+  const { dbUser, isAdmin } = useContext(appContext);
   const buildingsService = new BuildingsService();
+  const usersService = new UsersService();
+  const [usersList, setUsersList] = useState<User[]>([]);
   const [buildingsList, setBuildingsList] = useState<Building[]>([]);
 
   const initialForm: Classroom = {
@@ -46,6 +50,7 @@ export default function RegisterModal(props: RegisterModalProps) {
     air_conditioning: false,
     projector: false,
     accessibility: false,
+    created_by: undefined,
   };
 
   const [form, setForm] = useState(initialForm);
@@ -58,6 +63,14 @@ export default function RegisterModal(props: RegisterModalProps) {
     getBuildingsList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dbUser]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      usersService.list().then((response) => {
+        setUsersList(response.data.map((it) => it));
+      });
+    }
+  }, [isAdmin]);
 
   function getBuildingsList() {
     if (dbUser) {
@@ -224,6 +237,28 @@ export default function RegisterModal(props: RegisterModalProps) {
               Ignorar para alocar
             </Checkbox>
           </FormControl>
+
+          {isAdmin && (
+            <FormControl mt={4}>
+              <FormLabel>Criado por</FormLabel>
+              <Select
+                placeholder={'Escolha um usuário'}
+                value={form.created_by}
+                onChange={(event) => {
+                  setForm((prev) => ({
+                    ...prev,
+                    created_by: event.target.value,
+                  }));
+                }}
+              >
+                {usersList.map((it) => (
+                  <option key={it.id} value={it.username}>
+                    {it.username}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          )}
         </ModalBody>
 
         <ModalFooter>

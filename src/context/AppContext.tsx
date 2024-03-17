@@ -8,6 +8,7 @@ export interface AppContext {
   setLoading: (value: boolean) => void;
   username: string;
   dbUser: User | null;
+  isAdmin: boolean;
 }
 
 const DEFAULT_VALUE = {
@@ -15,6 +16,7 @@ const DEFAULT_VALUE = {
   setLoading: () => {},
   username: '',
   dbUser: null,
+  isAdmin: false,
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -25,6 +27,7 @@ export default function AppContextProvider({
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [dbUser, setDbUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const selfService = new SelfService();
 
@@ -42,8 +45,14 @@ export default function AppContextProvider({
     getSelf();
   }, []);
 
+  useEffect(() => {
+    if (dbUser) setIsAdmin(dbUser.isAdmin);
+  }, [dbUser]);
+
   return (
-    <appContext.Provider value={{ loading, setLoading, username, dbUser }}>
+    <appContext.Provider
+      value={{ loading, setLoading, username, dbUser, isAdmin }}
+    >
       {children}
     </appContext.Provider>
   );

@@ -31,6 +31,9 @@ import {
 import { sortBuildings, sortClassrooms } from 'utils/sorter';
 import { Building } from 'models/building.model';
 import BuildingsService from 'services/buildings.service';
+import AdminClassroomService, {
+  AdminUpdateClassroom,
+} from 'services/admin.classrooms.service';
 
 function Classrooms() {
   const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);
@@ -47,7 +50,7 @@ function Classrooms() {
   } = useDisclosure();
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom>();
   const [isUpdate, setIsUpdate] = useState(false);
-  const { setLoading } = useContext(appContext);
+  const { setLoading, isAdmin } = useContext(appContext);
 
   const columns: ColumnDef<Classroom>[] = [
     {
@@ -131,6 +134,7 @@ function Classrooms() {
   ];
 
   const classroomService = new ClassroomsService();
+  const adminClassroomService = new AdminClassroomService();
   const buildingsService = new BuildingsService();
 
   const toast = useToast();
@@ -159,14 +163,21 @@ function Classrooms() {
     fetchData();
     fetchBuildings();
     // eslint-disable-next-line
-  }, []);
+  }, [isAdmin]);
 
   function fetchData() {
     setLoading(true);
-    classroomService.list().then((it) => {
-      setClassroomsList(it.data.sort(sortClassrooms));
-      setLoading(false);
-    });
+    if (!isAdmin) {
+      classroomService.list().then((it) => {
+        setClassroomsList(it.data.sort(sortClassrooms));
+        setLoading(false);
+      });
+    } else {
+      adminClassroomService.list().then((it) => {
+        setClassroomsList(it.data.sort(sortClassrooms));
+        setLoading(false);
+      });
+    }
   }
 
   function fetchBuildings() {
@@ -208,9 +219,15 @@ function Classrooms() {
   }
 
   function handleSave(formData: Classroom) {
+    const { id, ...formDataWithoutId } = formData;
     const request = isUpdate
-      ? classroomService.update(formData.classroom_name, formData)
-      : classroomService.create(formData);
+      ? isAdmin
+        ? adminClassroomService.update(id, formDataWithoutId)
+        : classroomService.update(
+            formDataWithoutId.classroom_name,
+            formDataWithoutId,
+          )
+      : classroomService.create(formDataWithoutId);
     Promise.resolve(request)
       .then((it) => {
         console.log(it.data);
