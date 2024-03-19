@@ -340,6 +340,7 @@ function Classes() {
         const newCheckedMap: boolean[] = [];
         for (let i = 0; i < it.data.length; i++) newCheckedMap.push(false);
         setCheckedMap(newCheckedMap);
+        setCheckedClasses([]);
         setLoading(false);
       })
       .catch((error) => {
@@ -592,7 +593,9 @@ function Classes() {
       />
       <MultipleEditModal
         isOpen={isOpenMultipleEdit}
-        onClose={onCloseMultipleEdit}
+        onClose={() => {
+          onCloseMultipleEdit();
+        }}
         classes={checkedClasses}
         onRefresh={() => fetchData()}
       />

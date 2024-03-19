@@ -17,6 +17,7 @@ import {
   VStack,
   Alert,
   AlertIcon,
+  Skeleton,
 } from '@chakra-ui/react';
 import Class from 'models/class.model';
 import MultipleEditAccordion from './multipleEdit.accordion';
@@ -59,6 +60,7 @@ export default function MultipleEditModal({
   const [filteredClasses, setFilteredClasses] = useState<Class[]>([]);
   const [allocationMap, setAllocationMap] = useState<Allocation[]>([]);
   const [hasMissingData, setHasMissingData] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const eventsService = new EventsService();
 
@@ -135,6 +137,7 @@ export default function MultipleEditModal({
       data.events_ids.length === data.classrooms.length &&
       data.events_ids.length === data.buildings_ids.length
     ) {
+      setIsLoading(true);
       eventsService
         .editManyAllocationsInManyBuildings(data)
         .then((it) => {
@@ -146,6 +149,7 @@ export default function MultipleEditModal({
           toastError(`Erro ao editar alocações: ${error}`);
         })
         .finally(() => {
+          setIsLoading(false);
           onRefresh();
           onClose();
         });
@@ -160,6 +164,7 @@ export default function MultipleEditModal({
   }
 
   function handleDeleteEventsConfirm() {
+    setIsLoading(true);
     onCloseDeleteDialog();
     const events_ids = getSelectedEventsIds();
     eventsService
@@ -171,6 +176,7 @@ export default function MultipleEditModal({
         toastError(`Erro ao remover turmas: ${error}`);
       })
       .finally(() => {
+        setIsLoading(false);
         onRefresh();
         onClose();
       });
@@ -230,11 +236,13 @@ export default function MultipleEditModal({
             </HStack>
           </VStack>
 
-          <MultipleEditAccordion
-            subjectsMap={subjectSearchValue ? filteredMap : map}
-            handleSelectBuilding={handleSelectBuilding}
-            handleSelectClassroom={handleSelectClassroom}
-          />
+          <Skeleton isLoaded={!isLoading}>
+            <MultipleEditAccordion
+              subjectsMap={subjectSearchValue ? filteredMap : map}
+              handleSelectBuilding={handleSelectBuilding}
+              handleSelectClassroom={handleSelectClassroom}
+            />
+          </Skeleton>
 
           <Dialog
             isOpen={isOpenDeleteDialog}
