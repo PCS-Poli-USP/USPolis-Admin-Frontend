@@ -52,7 +52,7 @@ function Classrooms() {
   const [isUpdate, setIsUpdate] = useState(false);
   const { setLoading, isAdmin } = useContext(appContext);
 
-  const columns: ColumnDef<Classroom>[] = [
+  const [columns, setColumns] = useState<ColumnDef<Classroom>[]>([
     {
       accessorKey: 'classroom_name',
       header: 'Nome',
@@ -131,7 +131,7 @@ function Classrooms() {
         </HStack>
       ),
     },
-  ];
+  ]);
 
   const classroomService = new ClassroomsService();
   const adminClassroomService = new AdminClassroomService();
@@ -162,6 +162,14 @@ function Classrooms() {
   useEffect(() => {
     fetchData();
     fetchBuildings();
+    if (isAdmin)
+      setColumns([
+        {
+          accessorKey: 'created_by',
+          header: 'Usuário',
+        },
+        ...columns,
+      ]);
     // eslint-disable-next-line
   }, [isAdmin]);
 
