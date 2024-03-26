@@ -14,6 +14,7 @@ import {
   VStack,
   Text,
   useToast,
+  Checkbox,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -53,6 +54,7 @@ function EventFormModal({
   buildings,
 }: EventFormModalProps) {
   const [loading, setLoading] = useState(false);
+  const [fullDayEvent, setFullDayEvent] = useState(false);
 
   const form = useForm<EventForm>({
     defaultValues: defaultValues,
@@ -166,18 +168,30 @@ function EventFormModal({
                   <Input label='Título' name='title' />
                 </Box>
                 <Textarea label='Descrição' name='description' />
-                <Flex w='100%' gap={3}>
-                  <Input
-                    label='Início'
-                    name='start_datetime'
-                    type='datetime-local'
-                  />
-                  <Input
-                    label='Fim'
-                    name='end_datetime'
-                    type='datetime-local'
-                  />
-                </Flex>
+                <Box alignSelf='flex-start'>
+                  <Checkbox
+                    isChecked={fullDayEvent}
+                    onChange={(e) => setFullDayEvent(e.target.checked)}
+                  >
+                    Evento de dia inteiro
+                  </Checkbox>
+                </Box>
+                {fullDayEvent ? (
+                  <Input label='Data' name='start_datetime' type='date' />
+                ) : (
+                  <Flex w='100%' gap={3}>
+                    <Input
+                      label='Início'
+                      name='start_datetime'
+                      type='datetime-local'
+                    />
+                    <Input
+                      label='Fim'
+                      name='end_datetime'
+                      type='datetime-local'
+                    />
+                  </Flex>
+                )}
                 <Input
                   label='Localização'
                   name='location'
