@@ -43,6 +43,7 @@ import { Capitalize } from 'utils/formatters';
 import {
   FilterArray,
   FilterBoolean,
+  FilterBuilding,
   FilterClassroom,
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
@@ -69,9 +70,9 @@ function Classes() {
     onClose: onCloseDeleteClass,
   } = useDisclosure();
   const {
-    isOpen: isOpenDeleteAllClasses,
-    onOpen: onOpenDeleteAllClasses,
-    onClose: onCloseDeleteAllClasses,
+    isOpen: isOpenDeleteSelectedClasses,
+    onOpen: onOpenDeleteSelectedClasses,
+    onClose: onCloseDeleteSelectedClasses,
   } = useDisclosure();
   const {
     isOpen: isOpenDeleteAlloc,
@@ -142,6 +143,7 @@ function Classes() {
   const columns: ColumnDef<Class>[] = [
     {
       header: 'Marcar',
+      maxSize: 70,
       meta: {
         isCheckBox: true,
         markAllClickFn: handleMarkAllClick,
@@ -182,10 +184,12 @@ function Classes() {
     {
       accessorKey: 'subject_code',
       header: 'Código',
+      maxSize: 120,
     },
     {
       accessorKey: 'class_code',
       header: 'Turma',
+      maxSize: 120,
     },
     {
       accessorKey: 'subject_name',
@@ -194,13 +198,32 @@ function Classes() {
     {
       accessorKey: 'ignore_to_allocate',
       header: 'Ignorar',
+      maxSize: 75,
       meta: { isBoolean: true, isSelectable: true },
       filterFn: FilterBoolean,
+    },
+    {
+      accessorFn: (row) => (row.buildings ? row.buildings : ['Não alocada']),
+      filterFn: FilterBuilding,
+      header: 'Prédio',
+      maxSize: 120,
+      cell: ({ row }) => (
+        <Box>
+          {row.original.buildings ? (
+            row.original.buildings.map((build, index) => (
+              <Text key={index}>{build}</Text>
+            ))
+          ) : (
+            <Text>Não alocada</Text>
+          )}
+        </Box>
+      ),
     },
     {
       accessorFn: (row) => (row.classrooms ? row.classrooms : ['Não alocada']),
       filterFn: FilterClassroom,
       header: 'Sala',
+      maxSize: 120,
       cell: ({ row }) => (
         <Box>
           {row.original.classrooms ? (
@@ -234,6 +257,7 @@ function Classes() {
     {
       accessorKey: 'subscribers',
       header: 'Nº Alunos',
+      maxSize: 100,
       filterFn: FilterNumber,
     },
     {
@@ -523,21 +547,32 @@ function Classes() {
       });
   }
 
-  function handleDeleteAllClassesClick() {
-    onOpenDeleteAllClasses();
+  function handleDeleteSelectedClassesClick() {
+    onOpenDeleteSelectedClasses();
   }
 
-  function handleDeleteAllClasses() {
+  function getSelectedEventsIds() {
+    const events_ids: string[] = [];
+    checkedClasses.forEach((cl) => events_ids.push(...cl.events_ids));
+    return events_ids;
+  }
+
+  function handleDeleteSelectedClasses() {
+    const events_ids = getSelectedEventsIds();
+    setLoading(true);
     eventsService
-      .deleteAllEvents()
+      .deleteManyEvents({ events_ids })
       .then((it) => {
-        toastSuccess(`Foram removidos ${it.data} eventos`);
-        fetchData();
+        toastSuccess('Turmas removidas com sucesso!');
       })
       .catch((error) => {
-        toastError(`Erro ao remover turmas: ${error.message}`);
+        toastError(`Erro ao remover turmas: ${error}`);
+      })
+      .finally(() => {
+        fetchData();
+        setLoading(false);
       });
-    onCloseDeleteAllClasses();
+    onCloseDeleteSelectedClasses();
   }
 
   function handleMarkAllClick() {
@@ -623,9 +658,9 @@ function Classes() {
             <Button
               ml={2}
               colorScheme={'red'}
-              onClick={handleDeleteAllClassesClick}
+              onClick={handleDeleteSelectedClassesClick}
             >
-              Remover todas turmas
+              Remover selecioandos
             </Button>
           </Flex>
           <Dialog
@@ -635,11 +670,11 @@ function Classes() {
             title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
           />
           <Dialog
-            isOpen={isOpenDeleteAllClasses}
-            onClose={onCloseDeleteAllClasses}
-            onConfirm={handleDeleteAllClasses}
-            title={`Deseja remover todas as turmas`}
-            warningText='ATENÇÃO: QUALQUER TURMA SALVA SERÁ PERDIDA!'
+            isOpen={isOpenDeleteSelectedClasses}
+            onClose={onCloseDeleteSelectedClasses}
+            onConfirm={handleDeleteSelectedClasses}
+            title={`Deseja remover todas as turmas selecionadas`}
+            warningText='ATENÇÃO: QUALQUER TURMA SELECIONADA SERÁ PERDIDA!'
           />
           <Dialog
             isOpen={isOpenDeleteAlloc}
