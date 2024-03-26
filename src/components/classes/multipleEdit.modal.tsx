@@ -9,7 +9,6 @@ import {
   ModalCloseButton,
   HStack,
   useToast,
-  useDisclosure,
   Input,
   InputGroup,
   InputLeftElement,
@@ -22,10 +21,9 @@ import {
 import Class from 'models/class.model';
 import MultipleEditAccordion from './multipleEdit.accordion';
 import { useEffect, useState } from 'react';
-import { CalendarIcon, DeleteIcon } from '@chakra-ui/icons';
+import { CalendarIcon } from '@chakra-ui/icons';
 import { BsSearch } from 'react-icons/bs';
 import EventsService from 'services/events.service';
-import Dialog from 'components/common/dialog.component';
 import { ClassesBySubject } from 'utils/mappers/classes.mapper';
 import { sortClassMapBySubject } from 'utils/sorter';
 
@@ -48,12 +46,6 @@ export default function MultipleEditModal({
   onRefresh,
   classes,
 }: MultipleEditModalProps) {
-  const {
-    isOpen: isOpenDeleteDialog,
-    onOpen: onOpenDeleteDialog,
-    onClose: onCloseDeleteDialog,
-  } = useDisclosure();
-
   const [subjectSearchValue, setSubjectSearchValue] = useState('');
   const [map, setMap] = useState<[string, Class[]][]>([]);
   const [filteredMap, setFilteredMap] = useState<[string, Class[]][]>([]);
@@ -103,12 +95,6 @@ export default function MultipleEditModal({
     } else setMap([]);
   }, [classes, filteredClasses]);
 
-  function getSelectedEventsIds() {
-    const events_ids: string[] = [];
-    classes.forEach((cl) => events_ids.push(...cl.events_ids));
-    return events_ids;
-  }
-
   function handleSelectBuilding(building_id: string, event_id: string) {
     setHasMissingData(false);
     const newAllocationMap = [...allocationMap];
@@ -157,29 +143,6 @@ export default function MultipleEditModal({
       setHasMissingData(true);
       return;
     }
-  }
-
-  function handleDeleteEventsClick() {
-    onOpenDeleteDialog();
-  }
-
-  function handleDeleteEventsConfirm() {
-    setIsLoading(true);
-    onCloseDeleteDialog();
-    const events_ids = getSelectedEventsIds();
-    eventsService
-      .deleteManyEvents({ events_ids })
-      .then((it) => {
-        toastSuccess('Turmas removidas com sucesso!');
-      })
-      .catch((error) => {
-        toastError(`Erro ao remover turmas: ${error}`);
-      })
-      .finally(() => {
-        setIsLoading(false);
-        onRefresh();
-        onClose();
-      });
   }
 
   function getAllocationData() {
@@ -243,14 +206,6 @@ export default function MultipleEditModal({
               handleSelectClassroom={handleSelectClassroom}
             />
           </Skeleton>
-
-          <Dialog
-            isOpen={isOpenDeleteDialog}
-            onClose={onCloseDeleteDialog}
-            onConfirm={handleDeleteEventsConfirm}
-            title={'Deseja remover as turmas selecioandas'}
-            warningText={'Atenção: ao confirmar essas turmas serão excluídas'}
-          />
         </ModalBody>
 
         <ModalFooter>
@@ -276,14 +231,7 @@ export default function MultipleEditModal({
               >
                 Alocar selecionados
               </Button>
-              <Button
-                colorScheme={'red'}
-                leftIcon={<DeleteIcon />}
-                onClick={handleDeleteEventsClick}
-                disabled={map.length === 0}
-              >
-                Excluir selecionados
-              </Button>
+
               <Button colorScheme={'blue'} mr={3} onClick={handleCloseClick}>
                 Fechar
               </Button>

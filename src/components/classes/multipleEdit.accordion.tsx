@@ -103,6 +103,8 @@ MultipleEditAccordionProps) {
                           startTime={cl.start_time[i]}
                           endTime={cl.end_time[i]}
                           buildingsList={buildingsList}
+                          building={cl.buildings ? cl.buildings[i] : undefined}
+                          classroom={cl.classrooms ? cl.classrooms[i] : undefined}
                           onSelectClassroom={handleSelectClassroom}
                           onSelectBuilding={handleSelectBuilding}
                         />

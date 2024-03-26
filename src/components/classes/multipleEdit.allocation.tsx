@@ -1,8 +1,4 @@
-import {
-  HStack,
-  Text,
-  Box,
-} from '@chakra-ui/react';
+import { HStack, Text, Box } from '@chakra-ui/react';
 import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
 import { Building } from 'models/building.model';
@@ -10,6 +6,7 @@ import { Capitalize } from 'utils/formatters';
 import { AvailableClassroom } from 'models/classroom.model';
 import { useEffect, useState } from 'react';
 import ClassroomsService from 'services/classrooms.service';
+import { sortAvailableClassrooms } from 'utils/sorter';
 
 interface MultipleEditAllocationProps {
   eventID: string;
@@ -17,6 +14,8 @@ interface MultipleEditAllocationProps {
   startTime: string;
   endTime: string;
   buildingsList: Building[];
+  building?: string;
+  classroom?: string;
   onSelectClassroom: (classroom: string, event_id: string) => void;
   onSelectBuilding: (building_id: string, event_id: string) => void;
 }
@@ -32,6 +31,8 @@ export function MultipleEditAllocation({
   startTime,
   endTime,
   buildingsList,
+  building,
+  classroom,
   onSelectClassroom,
   onSelectBuilding,
 }: MultipleEditAllocationProps) {
@@ -58,11 +59,51 @@ export function MultipleEditAllocation({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBuilding]);
 
+  async function setCurrentAllocation() {
+    if (building && !selectedBuilding) {
+      const currentBuilding = buildingsList.find(
+        (build) => build.name === building,
+      );
+      if (currentBuilding) {
+        setSelectedBuilding(currentBuilding);
+        onSelectBuilding(currentBuilding?.id, eventID);
+
+        if (classroom && !selectedClassroom) {
+          try {
+            const response =
+              await classroomsService.getAvailableWithConflictIndicator({
+                events_ids: [eventID],
+                building_id: currentBuilding.id,
+              });
+            setAndSortAvailableClassrooms(response.data);
+            setClassroomsLoading(false);
+
+            if (response.data) {
+              const currentClassroom = response.data.find(
+                (cl) => cl.classroom_name === classroom,
+              );
+              if (currentClassroom) {
+                setSelectedClassroom(currentClassroom);
+                onSelectClassroom(classroom, eventID);
+              }
+            }
+          } finally {
+            setClassroomsLoading(false);
+          }
+        }
+      }
+    }
+  }
+
   async function getAvailableClassrooms() {
-    if (!selectedBuilding) return;
     try {
-      setClassroomsLoading(true);
-      await tryGetAvailableClassrooms();
+      if (selectedBuilding) {
+        setClassroomsLoading(true);
+        await tryGetAvailableClassrooms();
+      } else if (building && classroom) {
+        await setCurrentAllocation();
+        setClassroomsLoading(true);
+      } else return;
     } finally {
       setClassroomsLoading(false);
     }
@@ -79,15 +120,13 @@ export function MultipleEditAllocation({
   }
 
   function setAndSortAvailableClassrooms(value: AvailableClassroom[]) {
-    setAvailableClassrooms(
-      value.sort((a, b) => {
-        if (a.conflicted && !b.conflicted) return 1;
-        if (!a.conflicted && b.conflicted) return -1;
-        if (a.classroom_name < b.classroom_name) return -1;
-        if (a.classroom_name > b.classroom_name) return 1;
-        return 0;
-      }),
-    );
+    setAvailableClassrooms(value.sort(sortAvailableClassrooms));
+  }
+
+  function hasConflict() {
+    if (selectedClassroom && classroom && selectedClassroom.classroom_name === classroom) return false;
+    if (selectedClassroom) return selectedClassroom.conflicted;
+    return false;
   }
 
   return (
@@ -129,6 +168,19 @@ export function MultipleEditAllocation({
           menuPosition={'fixed'}
           placeholder={'Sala - Capacidade'}
           isLoading={classroomsLoading}
+          value={
+            selectedClassroom
+              ? hasConflict()
+                ? {
+                    value: selectedClassroom.classroom_name,
+                    label: `⚠️ ${selectedClassroom.classroom_name} - ${selectedClassroom.capacity}`,
+                  }
+                : {
+                    value: selectedClassroom.classroom_name,
+                    label: `${selectedClassroom.classroom_name} - ${selectedClassroom.capacity}`,
+                  }
+              : undefined
+          }
           options={availableClassrooms.map((it) =>
             it.conflicted
               ? {
@@ -157,8 +209,8 @@ export function MultipleEditAllocation({
         )}
       </Box>
 
-      {selectedClassroom?.conflicted && (
-        <Text colorScheme={'yellow'} fontSize='sm' ml={4}>
+      {hasConflict() && (
+        <Text as={'b'} color={'yellow.500'} fontSize='sm' ml={2}>
           Esta alocação gerará conflitos
         </Text>
       )}
