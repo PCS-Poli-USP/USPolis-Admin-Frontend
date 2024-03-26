@@ -1,6 +1,6 @@
 import Class from 'models/class.model';
 import { Building } from 'models/building.model';
-import Classroom from 'models/classroom.model';
+import Classroom, { AvailableClassroom } from 'models/classroom.model';
 import Event from 'models/event.model';
 import { WeekDayInt } from 'utils/mappers/allocation.mapper';
 
@@ -85,4 +85,12 @@ export function sortSubjects(a: string, b: string) {
   if (a < b) return -1;
   if (a === b) return 0;
   return 1;
+}
+
+export function sortAvailableClassrooms(a: AvailableClassroom, b: AvailableClassroom) {
+  if (a.conflicted && !b.conflicted) return 1;
+  if (!a.conflicted && b.conflicted) return -1;
+  if (a.classroom_name < b.classroom_name) return -1;
+  if (a.classroom_name > b.classroom_name) return 1;
+  return 0;
 }
