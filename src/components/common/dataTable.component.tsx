@@ -95,6 +95,7 @@ export default function DataTable<Data extends object>({
                     isNumeric={meta?.isNumeric}
                     pb='2'
                     color='uspolis.blue'
+                    maxW={header.column.columnDef.maxSize}
                   >
                     <Box
                       onClick={header.column.getToggleSortingHandler()}
@@ -160,7 +161,7 @@ export default function DataTable<Data extends object>({
                   <Td
                     key={cell.id}
                     isNumeric={meta?.isNumeric}
-                    maxW={150}
+                    maxW={cell.column.columnDef.maxSize ? cell.column.columnDef.maxSize : 'auto'}
                     overflowX={'hidden'}
                     textOverflow={'ellipsis'}
                   >
