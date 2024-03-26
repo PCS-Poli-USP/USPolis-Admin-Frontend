@@ -16,6 +16,7 @@ export default interface Class {
   has_to_be_allocated: boolean;
   ignore_to_allocate: boolean;
   classrooms?: string[];
+  buildings?: string[];
   events_ids: string[];
 }
 

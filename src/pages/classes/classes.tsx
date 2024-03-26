@@ -161,6 +161,21 @@ function Classes() {
       ),
     },
     {
+      accessorFn: (row) => (row.buildings ? row.buildings : ['Não alocada']),
+      header: 'Prédio',
+      cell: ({ row }) => (
+        <Box>
+          {row.original.buildings ? (
+            row.original.buildings.map((building, index) => (
+              <Text key={index}>{building}</Text>
+            ))
+          ) : (
+            <Text>Não alocada</Text>
+          )}
+        </Box>
+      ),
+    },
+    {
       accessorFn: (row) =>
         row.week_days?.map(
           (day, index) =>
@@ -189,7 +204,14 @@ function Classes() {
       cell: ({ row }) => (
         <Box>
           {row.original.professors?.map((professor, index) => (
-            <Text maxW={425} overflowX={'hidden'} textOverflow={'ellipsis'} key={index}>{professor}</Text>
+            <Text
+              maxW={425}
+              overflowX={'hidden'}
+              textOverflow={'ellipsis'}
+              key={index}
+            >
+              {professor}
+            </Text>
           ))}
         </Box>
       ),
