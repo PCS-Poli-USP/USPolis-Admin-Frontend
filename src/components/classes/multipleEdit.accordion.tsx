@@ -18,26 +18,40 @@ import { useContext, useEffect, useState } from 'react';
 import { Building } from 'models/building.model';
 import { appContext } from 'context/AppContext';
 import { MultipleEditAllocation } from './multipleEdit.allocation';
+import Classroom, { ClassroomSchedule } from 'models/classroom.model';
+import { ConflictCalculator } from 'utils/conflict.calculator';
 
 interface MultipleEditAccordionProps {
   subjectsMap: [string, Class[]][];
-  handleSelectBuilding: (building_id: string, event_id: string) => void;
-  handleSelectClassroom: (classroom: string, event_id: string) => void;
+  schedulesMap: [string, string, ClassroomSchedule][];
+  handleSelectBuilding: (
+    building_id: string,
+    building_name: string,
+    event_id: string,
+    classrooms: Classroom[],
+  ) => void;
+  handleSelectClassroom: (
+    new_classroom: Classroom,
+    old_classroom: Classroom,
+    event_id: string,
+    week_day?: string,
+    start_time?: string,
+    end_time?: string,
+  ) => void;
 }
 
 export default function MultipleEditAccordion({
   subjectsMap,
+  schedulesMap,
   handleSelectBuilding,
   handleSelectClassroom,
-}: 
-MultipleEditAccordionProps) {
+}: MultipleEditAccordionProps) {
   const { dbUser } = useContext(appContext);
 
   const [buildingsList, setBuildingsList] = useState<Building[]>([]);
   const [buildingsLoading, setBuildingsLoading] = useState(true);
 
   const buildingsService = new BuildingsService();
-
 
   useEffect(() => {
     getBuildingsList();
@@ -56,6 +70,14 @@ MultipleEditAccordionProps) {
         setBuildingsList(dbUser.buildings);
       }
     }
+  }
+
+  function getClassroomSchedule(classroom: string, building: string) {
+    const schedule = schedulesMap.find((map) => {
+      if ((map[0] === classroom, map[1] === building)) return true;
+    });
+    if (schedule) return schedule[2];
+    return ConflictCalculator.defaultSchedule();
   }
 
   return (
@@ -95,6 +117,7 @@ MultipleEditAccordionProps) {
                     </Text>
 
                     <VStack divider={<StackDivider borderColor='gray.200' />}>
+                      -
                       {cl.week_days.map((day, i) => (
                         <MultipleEditAllocation
                           key={i}
@@ -104,7 +127,17 @@ MultipleEditAccordionProps) {
                           endTime={cl.end_time[i]}
                           buildingsList={buildingsList}
                           building={cl.buildings ? cl.buildings[i] : undefined}
-                          classroom={cl.classrooms ? cl.classrooms[i] : undefined}
+                          classroom={
+                            cl.classrooms ? cl.classrooms[i] : undefined
+                          }
+                          schedule={
+                            cl.classrooms && cl.buildings
+                              ? getClassroomSchedule(
+                                  cl.classrooms[i],
+                                  cl.buildings[i],
+                                )
+                              : ConflictCalculator.defaultSchedule()
+                          }
                           onSelectClassroom={handleSelectClassroom}
                           onSelectBuilding={handleSelectBuilding}
                         />
@@ -113,7 +146,6 @@ MultipleEditAccordionProps) {
                   </VStack>
                 ))}
               </VStack>
-            
             </AccordionPanel>
           </AccordionItem>
         ))}

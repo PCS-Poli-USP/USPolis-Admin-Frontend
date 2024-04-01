@@ -3,10 +3,10 @@ import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
 import { Building } from 'models/building.model';
 import { Capitalize } from 'utils/formatters';
-import { AvailableClassroom } from 'models/classroom.model';
+import Classroom, { ClassroomSchedule } from 'models/classroom.model';
 import { useEffect, useState } from 'react';
 import ClassroomsService from 'services/classrooms.service';
-import { sortAvailableClassrooms } from 'utils/sorter';
+import { sortClassrooms } from 'utils/sorter';
 
 interface MultipleEditAllocationProps {
   eventID: string;
@@ -14,10 +14,23 @@ interface MultipleEditAllocationProps {
   startTime: string;
   endTime: string;
   buildingsList: Building[];
+  schedule: ClassroomSchedule;
   building?: string;
   classroom?: string;
-  onSelectClassroom: (classroom: string, event_id: string) => void;
-  onSelectBuilding: (building_id: string, event_id: string) => void;
+  onSelectClassroom: (
+    new_classroom: Classroom,
+    old_classroom: Classroom,
+    event_id: string,
+    week_day?: string,
+    start_time?: string,
+    end_time?: string,
+  ) => void;
+  onSelectBuilding: (
+    building_id: string,
+    building_name: string,
+    event_id: string,
+    classrooms: Classroom[],
+  ) => void;
 }
 
 interface ClassroomOption {
@@ -33,31 +46,82 @@ export function MultipleEditAllocation({
   buildingsList,
   building,
   classroom,
+  schedule,
   onSelectClassroom,
   onSelectBuilding,
 }: MultipleEditAllocationProps) {
-  const [availableClassrooms, setAvailableClassrooms] = useState<
-    AvailableClassroom[]
-  >([]);
-  const [selectedClassroom, setSelectedClassroom] =
-    useState<AvailableClassroom>();
+  const [availableClassrooms, setAvailableClassrooms] = useState<Classroom[]>(
+    [],
+  );
+  const [selectedClassroom, setSelectedClassroom] = useState<Classroom>();
   const [classroomsLoading, setClassroomsLoading] = useState(false);
+  const [allocationLoading, setAllocationLoading] = useState(false);
 
   const [selectedBuilding, setSelectedBuilding] = useState<Building>();
 
   const classroomsService = new ClassroomsService();
 
   useEffect(() => {
-    if (buildingsList.length === 1) {
-      setSelectedBuilding(buildingsList[0]);
-      onSelectBuilding(buildingsList[0].id, eventID);
+    if (buildingsList.length === 1 && !selectedBuilding) {
+      console.log('Carregando para o caso COMUM');
+      const newBuilding = buildingsList[0];
+      setSelectedBuilding(newBuilding);
+      async function fetchBuilding() {
+        setClassroomsLoading(true);
+        const response = await classroomsService.getClassroomsByBuilding(
+          newBuilding.name,
+        );
+        setAndSortBuildingClassrooms(response.data);
+        setClassroomsLoading(false);
+        onSelectBuilding(
+          newBuilding.id,
+          newBuilding.name,
+          eventID,
+          response.data,
+        );
+      }
+      fetchBuilding();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buildingsList, eventID, onSelectBuilding]);
 
+  // useEffect(() => {
+  //   fetchData();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [selectedBuilding]);
+
   useEffect(() => {
-    getAvailableClassrooms();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (selectedBuilding && !classroomsLoading) {
+      console.log('Caso de construção selecionada');
+      setClassroomsLoading(true);
+      setBuildingClassrooms(selectedBuilding.name);
+    }
+    // eslint-disable-next-line
   }, [selectedBuilding]);
+
+  useEffect(() => {
+    if ((classroom || building) && !selectedBuilding && !allocationLoading) {
+      console.log('Caso de alocação definida');
+      setClassroomsLoading(true);
+      setAllocationLoading(true);
+      setCurrentAllocation();
+    }
+    // eslint-disable-next-line
+  }, [selectedBuilding]);
+
+  // async function fetchData() {
+  //   console.log('Chamando fetch Data');
+  //   if (selectedBuilding) {
+  //     console.log('Caso de construção selecionada');
+  //     setClassroomsLoading(true);
+  //     setBuildingClassrooms(selectedBuilding.name);
+  //   } else if ((classroom || building) && !allocationLoading) {
+  //     console.log('Caso de alocação definida');
+  //     setClassroomsLoading(true);
+  //     setAllocationLoading(true);
+  //     setCurrentAllocation();
+  //   }
+  // }
 
   async function setCurrentAllocation() {
     if (building && !selectedBuilding) {
@@ -65,67 +129,65 @@ export function MultipleEditAllocation({
         (build) => build.name === building,
       );
       if (currentBuilding) {
+        console.log('FAZENDO QUERY DAS SAALAS De', currentBuilding.name);
         setSelectedBuilding(currentBuilding);
-        onSelectBuilding(currentBuilding?.id, eventID);
-
-        if (classroom && !selectedClassroom) {
-          try {
-            const response =
-              await classroomsService.getAvailableWithConflictIndicator({
-                events_ids: [eventID],
-                building_id: currentBuilding.id,
-              });
-            setAndSortAvailableClassrooms(response.data);
+        classroomsService
+          .getClassroomsByBuilding(building)
+          .then((response) => {
+            setAndSortBuildingClassrooms(response.data);
             setClassroomsLoading(false);
+            onSelectBuilding(
+              currentBuilding.id,
+              currentBuilding.name,
+              eventID,
+              response.data,
+            );
 
-            if (response.data) {
+            if (classroom && !selectedClassroom) {
               const currentClassroom = response.data.find(
                 (cl) => cl.classroom_name === classroom,
               );
+
               if (currentClassroom) {
                 setSelectedClassroom(currentClassroom);
-                onSelectClassroom(classroom, eventID);
+                onSelectClassroom(currentClassroom, currentClassroom, eventID);
               }
             }
-          } finally {
-            setClassroomsLoading(false);
-          }
-        }
+          })
+          .finally(() => setAllocationLoading(false));
       }
     }
   }
 
-  async function getAvailableClassrooms() {
-    try {
-      if (selectedBuilding) {
-        setClassroomsLoading(true);
-        await tryGetAvailableClassrooms();
-      } else if (building && classroom) {
-        await setCurrentAllocation();
-        setClassroomsLoading(true);
-      } else return;
-    } finally {
-      setClassroomsLoading(false);
-    }
-  }
-
-  async function tryGetAvailableClassrooms() {
-    setSelectedClassroom(undefined);
-    const response = await classroomsService.getAvailableWithConflictIndicator({
-      events_ids: [eventID],
-      building_id: selectedBuilding?.id!,
-    });
-    setAndSortAvailableClassrooms(response.data);
+  async function handleSelectBuilding(building: Building) {
+    setSelectedBuilding(building);
+    setClassroomsLoading(true);
+    const response = await classroomsService.getClassroomsByBuilding(
+      building.name,
+    );
+    setAndSortBuildingClassrooms(response.data);
     setClassroomsLoading(false);
+    onSelectBuilding(building.id, building.name, eventID, response.data);
   }
 
-  function setAndSortAvailableClassrooms(value: AvailableClassroom[]) {
-    setAvailableClassrooms(value.sort(sortAvailableClassrooms));
+  async function setBuildingClassrooms(building: string) {
+    const response = await classroomsService
+      .getClassroomsByBuilding(building)
+      .finally(() => setClassroomsLoading(false));
+    setAndSortBuildingClassrooms(response.data);
+  }
+
+  function setAndSortBuildingClassrooms(value: Classroom[]) {
+    setAvailableClassrooms(value.sort(sortClassrooms));
   }
 
   function hasConflict() {
-    if (selectedClassroom && classroom && selectedClassroom.classroom_name === classroom) return false;
-    if (selectedClassroom) return selectedClassroom.conflicted;
+    if (
+      selectedClassroom &&
+      classroom &&
+      selectedClassroom.classroom_name === classroom
+    )
+      return false;
     return false;
   }
 
@@ -141,10 +203,10 @@ export function MultipleEditAllocation({
             w={'fit-content'}
             placeholder='Selecionar prédio'
             onChange={(event) => {
-              onSelectBuilding(event.target.value, eventID);
-              setSelectedBuilding(
-                buildingsList.find((it) => it.id === event.target.value),
+              const newBuilding = buildingsList.find(
+                (it) => it.id === event.target.value,
               );
+              if (newBuilding) handleSelectBuilding(newBuilding);
             }}
             value={selectedBuilding?.id}
           >
@@ -182,7 +244,7 @@ export function MultipleEditAllocation({
               : undefined
           }
           options={availableClassrooms.map((it) =>
-            it.conflicted
+            true
               ? {
                   value: it.classroom_name,
                   label: `⚠️ ${it.classroom_name} - ${it.capacity}`,
@@ -193,13 +255,21 @@ export function MultipleEditAllocation({
                 },
           )}
           onChange={(selected) => {
-            const selectedClassroom = selected as ClassroomOption;
-            setSelectedClassroom(
-              availableClassrooms.find(
-                (it) => selectedClassroom.value === it.classroom_name,
-              ),
+            const selectedClassroomOp = selected as ClassroomOption;
+            const classroom = availableClassrooms.find(
+              (it) => selectedClassroomOp.value === it.classroom_name,
             );
-            onSelectClassroom(selectedClassroom.value, eventID);
+            if (classroom) {
+              onSelectClassroom(
+                classroom,
+                selectedClassroom ? selectedClassroom : classroom,
+                eventID,
+                weekDay,
+                startTime,
+                endTime,
+              );
+              setSelectedClassroom(classroom);
+            }
           }}
         />
         {!selectedClassroom && (

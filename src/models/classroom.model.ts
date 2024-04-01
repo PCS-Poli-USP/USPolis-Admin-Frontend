@@ -16,3 +16,17 @@ export interface AvailableClassroom {
   capacity: number;
   conflicted?: boolean;
 }
+
+export interface ClassroomSchedule {
+  seg: [string, string][];
+  ter: [string, string][];
+  qua: [string, string][];
+  qui: [string, string][];
+  sex: [string, string][];
+  sab: [string, string][];
+  dom: [string, string][];
+  has_conflict: boolean;
+  classroom_name: string;
+  capacity: number;
+  
+}
