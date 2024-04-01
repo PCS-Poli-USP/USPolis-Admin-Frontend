@@ -1,4 +1,4 @@
-import Class, { CreateClassEvents } from 'models/class.model';
+import Class, { CreateClassEvents, SClass } from 'models/class.model';
 import Event, { EventByClassrooms } from 'models/event.model';
 import { Classrooms } from 'models/enums/clasrooms.enum';
 import { ClassCodeText } from 'utils/mappers/allocation.mapper';
@@ -78,6 +78,15 @@ export function ClassToEventByClassroom(
     events.push(event);
   }
   return events;
+}
+
+export function ClassToSClass(data: Class[]): SClass[] {
+  const formatedData: SClass[] = [];
+  for (let cl of data) {
+    const formatedClass: SClass = { ...cl, selected: false };
+    formatedData.push(formatedClass);
+  }
+  return formatedData;
 }
 
 export function weekDaysFormatter(week_day: string): string {

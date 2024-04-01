@@ -1,16 +1,12 @@
 import {
-  AddIcon,
   CheckIcon,
   CloseIcon,
-  MinusIcon,
   TriangleDownIcon,
   TriangleUpIcon,
 } from '@chakra-ui/icons';
 import {
   Box,
-  Button,
   chakra,
-  HStack,
   IconButton,
   Input,
   Progress,
@@ -43,6 +39,7 @@ import { Textify } from 'utils/formatters';
 export type DataTableProps<Data extends object> = {
   data: Data[];
   columns: ColumnDef<Data, any>[];
+  filteredData?: (filteredData: Data[]) => void;
 };
 
 export default function DataTable<Data extends object>({
@@ -77,6 +74,11 @@ export default function DataTable<Data extends object>({
     }
     // eslint-disable-next-line
   }, [table.getState().columnFilters[0]?.id]);
+
+  function getFilteredData() {
+    const filteredData = table.getFilteredRowModel().rows;
+    return filteredData;
+  }
 
   return (
     <TableContainer border='1px' borderRadius='lg' borderColor='uspolis.blue'>
@@ -130,7 +132,9 @@ export default function DataTable<Data extends object>({
                             variant='ghost'
                             aria-label='marcar-tudo'
                             icon={<CheckIcon />}
-                            onClick={() => meta.markAllClickFn()}
+                            onClick={() =>
+                              meta.markAllClickFn(getFilteredData(), true)
+                            }
                           />
                         </Tooltip>
                         <Tooltip label='Desmarcar tudo'>
@@ -140,7 +144,9 @@ export default function DataTable<Data extends object>({
                             variant='ghost'
                             aria-label='desmarcar-tduo'
                             icon={<CloseIcon />}
-                            onClick={() => meta.dismarkAllClickFn()}
+                            onClick={() =>
+                              meta.dismarkAllClickFn(getFilteredData(), false)
+                            }
                           />
                         </Tooltip>
                       </Box>
@@ -161,7 +167,11 @@ export default function DataTable<Data extends object>({
                   <Td
                     key={cell.id}
                     isNumeric={meta?.isNumeric}
-                    maxW={cell.column.columnDef.maxSize ? cell.column.columnDef.maxSize : 'auto'}
+                    maxW={
+                      cell.column.columnDef.maxSize
+                        ? cell.column.columnDef.maxSize
+                        : 'auto'
+                    }
                     overflowX={'hidden'}
                     textOverflow={'ellipsis'}
                   >

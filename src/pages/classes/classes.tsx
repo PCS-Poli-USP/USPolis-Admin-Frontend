@@ -21,7 +21,7 @@ import {
   BsCalendarXFill,
 } from 'react-icons/bs';
 
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
@@ -33,7 +33,11 @@ import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
 import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
-import Class, { CreateClassEvents, Preferences } from 'models/class.model';
+import Class, {
+  CreateClassEvents,
+  Preferences,
+  SClass,
+} from 'models/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
 import ClassesService from 'services/classes.service';
@@ -49,6 +53,7 @@ import {
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import {
   ClassToEventByClassroom,
+  ClassToSClass,
   breakClassFormInEvents,
 } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
@@ -59,11 +64,6 @@ import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
 import MultipleEditModal from 'components/classes/multipleEdit.modal';
 
 function Classes() {
-  const [classesList, setClassesList] = useState<Array<Class>>([]);
-  const [buildingsList, setBuildingsList] = useState<Array<Building>>([]);
-  const [selectedClassEventList, setSelectedClassEventList] = useState<
-    Array<EventByClassrooms>
-  >([]);
   const {
     isOpen: isOpenDeleteClass,
     onOpen: onOpenDeleteClass,
@@ -110,13 +110,16 @@ function Classes() {
     onClose: onCloseMultipleEdit,
   } = useDisclosure();
 
+  const [classesList, setClassesList] = useState<Array<SClass>>([]);
+  const [buildingsList, setBuildingsList] = useState<Array<Building>>([]);
+  const [selectedClassEventList, setSelectedClassEventList] = useState<
+    Array<EventByClassrooms>
+  >([]);
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
   const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
   const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
-  const [checkedClasses, setCheckedClasses] = useState<Class[]>([]);
-  const [checkedMap, setCheckedMap] = useState<boolean[]>([]);
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -140,42 +143,33 @@ function Classes() {
     });
   };
 
-  const columns: ColumnDef<Class>[] = [
+  const columns: ColumnDef<SClass>[] = [
     {
       header: 'Marcar',
       maxSize: 70,
       meta: {
         isCheckBox: true,
-        markAllClickFn: handleMarkAllClick,
-        dismarkAllClickFn: handleDismarkAllClick,
+        markAllClickFn: handleCheckAllClick,
+        dismarkAllClickFn: handleCheckAllClick,
       },
       cell: ({ row }) => (
         <Box>
           <Checkbox
-            isChecked={checkedMap[row.index]}
+            isChecked={row.original.selected}
             ml={5}
             onChange={(event) => {
-              const index = row.index;
-              const newCheckedMap = [...checkedMap];
-              newCheckedMap[index] = event.target.checked;
-              setCheckedMap(newCheckedMap);
-
-              if (event.target.checked) {
-                const newCheckedClasses = [...checkedClasses];
-                newCheckedClasses.push(row.original);
-                setCheckedClasses(newCheckedClasses);
-              } else {
-                const newCheckedClasses: Class[] = [];
-                checkedClasses.forEach((cl) => {
-                  if (
-                    cl.subject_code !== row.original.subject_code ||
-                    cl.class_code !== row.original.class_code
-                  ) {
-                    newCheckedClasses.push(cl);
-                  }
-                });
-                setCheckedClasses(newCheckedClasses);
+              const subjectCode = row.original.subject_code;
+              const classCode = row.original.class_code;
+              const newClassesList = [];
+              for (let cl of classesList) {
+                if (
+                  cl.subject_code === subjectCode &&
+                  cl.class_code === classCode
+                )
+                  cl.selected = event.target.checked;
+                newClassesList.push(cl);
               }
+              setClassesList(newClassesList);
             }}
           />
         </Box>
@@ -360,11 +354,8 @@ function Classes() {
     classesService
       .list()
       .then((it) => {
-        setClassesList(it.data.sort(sortClasses));
-        const newCheckedMap: boolean[] = [];
-        for (let i = 0; i < it.data.length; i++) newCheckedMap.push(false);
-        setCheckedMap(newCheckedMap);
-        setCheckedClasses([]);
+        const classes = ClassToSClass(it.data.sort(sortClasses));
+        setClassesList(classes);
         setLoading(false);
       })
       .catch((error) => {
@@ -553,6 +544,7 @@ function Classes() {
 
   function getSelectedEventsIds() {
     const events_ids: string[] = [];
+    const checkedClasses = getCheckedClasses();
     checkedClasses.forEach((cl) => events_ids.push(...cl.events_ids));
     return events_ids;
   }
@@ -575,18 +567,37 @@ function Classes() {
     onCloseDeleteSelectedClasses();
   }
 
-  function handleMarkAllClick() {
-    const newCheckedMap = [];
-    for (let i = 0; i < checkedMap.length; i++) newCheckedMap.push(true);
-    setCheckedMap(newCheckedMap);
-    setCheckedClasses([...classesList]);
+  function getCheckedClasses() {
+    const checkedClasses: SClass[] = [];
+    classesList.forEach((cl) => {
+      if (cl.selected) checkedClasses.push(cl);
+    });
+    return checkedClasses;
   }
 
-  function handleDismarkAllClick() {
-    const newCheckedMap = [];
-    for (let i = 0; i < checkedMap.length; i++) newCheckedMap.push(false);
-    setCheckedMap(newCheckedMap);
-    setCheckedClasses([]);
+  function handleCheckAllClick(data: Row<SClass>[], value: boolean) {
+    const newClasses: SClass[] = [];
+
+    if (data.length !== classesList.length) {
+      for (let cl of classesList) {
+        const newCl = { ...cl };
+        data.forEach((row) => {
+          if (
+            row.original.class_code === cl.class_code &&
+            row.original.subject_code === cl.subject_code
+          ) {
+            newCl.selected = value;
+          }
+        });
+        newClasses.push(newCl);
+      }
+    } else {
+      for (let i = 0; i < data.length; i++) {
+        const newClass = { ...data[i].original, selected: value };
+        newClasses.push(newClass);
+      }
+    }
+    setClassesList(newClasses);
   }
 
   return (
@@ -631,7 +642,7 @@ function Classes() {
         onClose={() => {
           onCloseMultipleEdit();
         }}
-        classes={checkedClasses}
+        classes={getCheckedClasses()}
         onRefresh={() => fetchData()}
       />
 
