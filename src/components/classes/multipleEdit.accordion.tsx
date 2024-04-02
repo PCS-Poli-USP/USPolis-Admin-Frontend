@@ -18,8 +18,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Building } from 'models/building.model';
 import { appContext } from 'context/AppContext';
 import { MultipleEditAllocation } from './multipleEdit.allocation';
-import Classroom, { ClassroomSchedule } from 'models/classroom.model';
-import { ConflictCalculator } from 'utils/conflict.calculator';
+import { ClassroomSchedule } from 'models/classroom.model';
 
 interface MultipleEditAccordionProps {
   subjectsMap: [string, Class[]][];
@@ -28,15 +27,16 @@ interface MultipleEditAccordionProps {
     building_id: string,
     building_name: string,
     event_id: string,
-    classrooms: Classroom[],
   ) => void;
   handleSelectClassroom: (
-    new_classroom: Classroom,
-    old_classroom: Classroom,
+    new_classroom: string,
+    new_building: string,
     event_id: string,
-    week_day?: string,
-    start_time?: string,
-    end_time?: string,
+    week_day: string,
+    start_time: string,
+    end_time: string,
+    old_classroom?: string,
+    old_building?: string,
   ) => void;
 }
 
@@ -72,12 +72,12 @@ export default function MultipleEditAccordion({
     }
   }
 
-  function getClassroomSchedule(classroom: string, building: string) {
-    const schedule = schedulesMap.find((map) => {
-      if ((map[0] === classroom, map[1] === building)) return true;
+  function getClassroomsSchedulesList() {
+    const list: ClassroomSchedule[] = [];
+    schedulesMap.forEach((map) => {
+      list.push(map[2]);
     });
-    if (schedule) return schedule[2];
-    return ConflictCalculator.defaultSchedule();
+    return list;
   }
 
   return (
@@ -130,14 +130,7 @@ export default function MultipleEditAccordion({
                           classroom={
                             cl.classrooms ? cl.classrooms[i] : undefined
                           }
-                          schedule={
-                            cl.classrooms && cl.buildings
-                              ? getClassroomSchedule(
-                                  cl.classrooms[i],
-                                  cl.buildings[i],
-                                )
-                              : ConflictCalculator.defaultSchedule()
-                          }
+                          scheduleList={getClassroomsSchedulesList()}
                           onSelectClassroom={handleSelectClassroom}
                           onSelectBuilding={handleSelectBuilding}
                         />

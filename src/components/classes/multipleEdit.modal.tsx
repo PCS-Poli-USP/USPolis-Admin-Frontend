@@ -25,11 +25,9 @@ import { CalendarIcon } from '@chakra-ui/icons';
 import { BsSearch } from 'react-icons/bs';
 import EventsService from 'services/events.service';
 import { ClassesBySubject } from 'utils/mappers/classes.mapper';
-import { sortClassMapBySubject } from 'utils/sorter';
+import { sortClassMapBySubject, sortClassroomScheduleMap } from 'utils/sorter';
 import { ConflictCalculator } from 'utils/conflict.calculator';
-import Classroom, {
-  ClassroomSchedule,
-} from 'models/classroom.model';
+import { ClassroomSchedule } from 'models/classroom.model';
 import ClassroomsService from 'services/classrooms.service';
 
 interface MultipleEditModalProps {
@@ -108,7 +106,6 @@ export default function MultipleEditModal({
     building_id: string,
     building_name: string,
     event_id: string,
-    classrooms: Classroom[],
   ) {
     setHasMissingData(false);
     const newAllocationMap = [...allocationMap];
@@ -119,94 +116,101 @@ export default function MultipleEditModal({
     });
     setAllocationMap(newAllocationMap);
 
+    // Já adicionou os calendários daquele prédio
     if (classroomSchedulesMap.find((map) => map[1] === building_name)) return;
 
+    // O front verifica os conflitos
     classroomsService
       .getClassroomsSchedulesByBuilding(building_name)
       .then((it) => {
         const newScheduleMap = [...classroomSchedulesMap];
         it.data.forEach((schedule) => {
-          schedule.has_conflict =
-            ConflictCalculator.classroomHasTimeConflict(schedule);
+          ConflictCalculator.classroomHasTimeConflict(schedule);
           newScheduleMap.push([
             schedule.classroom_name,
             building_name,
             schedule,
           ]);
         });
-        setClassroomSchedulesMap(newScheduleMap);
-        console.log('Novo mapeamento de horários: ', newScheduleMap);
+        setClassroomSchedulesMap(newScheduleMap.sort(sortClassroomScheduleMap));
       });
   }
 
   function handleSelectClassroom(
-    new_classroom: Classroom,
-    old_classroom: Classroom,
+    new_classroom: string,
+    new_building: string,
     event_id: string,
-    week_day?: string,
-    start_time?: string,
-    end_time?: string,
+    week_day: string,
+    start_time: string,
+    end_time: string,
+    old_classroom?: string,
+    old_building?: string,
   ) {
-    console.log('Mudei a sala de', old_classroom, 'para', new_classroom);
     setHasMissingData(false);
     const newAllocationMap = [...allocationMap];
     newAllocationMap.forEach((alloc) => {
       if (alloc.event_id === event_id) {
-        alloc.classroom = new_classroom.classroom_name;
+        alloc.classroom = new_classroom;
       }
     });
     setAllocationMap(newAllocationMap);
 
-    if (
-      week_day &&
-      new_classroom.classroom_name === old_classroom.classroom_name &&
-      new_classroom.building === old_classroom.building
-    )
+    // Caso em que ele seleciona a mesma sala
+    if (new_classroom === old_classroom && new_building === old_building) {
       return;
+    }
 
     const newClassroomSchedulesMap = [...classroomSchedulesMap];
-    let oldScheduleIndex = -1;
-    let newScheduleIndex = -1;
-    classroomSchedulesMap.forEach((map, index) => {
-      if (
-        map[0] === old_classroom.classroom_name &&
-        map[1] === old_classroom.building
-      ) {
-        oldScheduleIndex = index;
-      }
+    console.log('Maepamento antes das mudanças: ', newClassroomSchedulesMap);
 
-      if (
-        map[0] === new_classroom.classroom_name &&
-        map[1] === new_classroom.building
-      ) {
+    // Tem que remover o antigo horário e validar ele
+    if (old_classroom && old_building) {
+      let oldScheduleIndex = -1;
+      newClassroomSchedulesMap.forEach((map, index) => {
+        if (map[0] === old_classroom && map[1] === old_building) {
+          oldScheduleIndex = index;
+        }
+      });
+      const oldSchedule = {...newClassroomSchedulesMap[oldScheduleIndex]};
+
+      oldSchedule[2] = ConflictCalculator.removeTimeInClassroomSchedule(
+        oldSchedule[2],
+        week_day,
+        start_time,
+        end_time,
+      );
+      newClassroomSchedulesMap[oldScheduleIndex] = oldSchedule;
+    } else {
+      console.log('Não tinha horário antigo');
+    }
+
+    // Atualizar o calendário da sala que foi selecionada
+    let newScheduleIndex = -1;
+    newClassroomSchedulesMap.forEach((map, index) => {
+      if (map[0] === new_classroom && map[1] === new_building) {
         newScheduleIndex = index;
       }
     });
 
-    const oldSchedule = classroomSchedulesMap[oldScheduleIndex];
-    const newSchedule = classroomSchedulesMap[newScheduleIndex];
+    if (newScheduleIndex >= 0) {
+      const newSchedule = {...newClassroomSchedulesMap[newScheduleIndex]};
+      console.log('Enviando calendário...: ', newSchedule[2]);
+      newSchedule[2] = ConflictCalculator.addTimeInClassroomSchedule(
+        newSchedule[2],
+        week_day,
+        start_time,
+        end_time,
+      );
+      newClassroomSchedulesMap[newScheduleIndex] = newSchedule;
+    }
 
-    if (oldSchedule) {
-      if (week_day && start_time && end_time) {
-        oldSchedule[2] = ConflictCalculator.removeTimeInClassroomSchedule(
-          oldSchedule[2],
-          week_day,
-          start_time,
-          end_time,
-        );
-        newClassroomSchedulesMap[oldScheduleIndex] = oldSchedule;
-
-        newSchedule[2] = ConflictCalculator.addTimeInClassroomSchedule(
-          newSchedule[2],
-          week_day,
-          start_time,
-          end_time,
-        );
-        newClassroomSchedulesMap[newScheduleIndex] = newSchedule;
-      }
-    } 
-    setClassroomSchedulesMap(newClassroomSchedulesMap);
-    console.log('Mudei a sala - Novo mapeamento: ', newClassroomSchedulesMap);
+    setClassroomSchedulesMap(
+      newClassroomSchedulesMap.sort(sortClassroomScheduleMap),
+    );
+    console.log(
+      'Novo mapeamento: ',
+      newClassroomSchedulesMap.sort(sortClassroomScheduleMap),
+    );
   }
 
   function handleAllocationClick() {

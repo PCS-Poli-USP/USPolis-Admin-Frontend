@@ -17,6 +17,16 @@ export interface AvailableClassroom {
   conflicted?: boolean;
 }
 
+export interface ClassroomConflictMap {
+  'seg' : boolean,
+  'ter' : boolean,
+  'qua' : boolean,
+  'qui' : boolean,
+  'sex' : boolean,
+  'sab' : boolean,
+  'dom' : boolean,
+}
+
 export interface ClassroomSchedule {
   seg: [string, string][];
   ter: [string, string][];
@@ -25,7 +35,8 @@ export interface ClassroomSchedule {
   sex: [string, string][];
   sab: [string, string][];
   dom: [string, string][];
-  has_conflict: boolean;
+  conflict_map: ClassroomConflictMap;
+  building: string;
   classroom_name: string;
   capacity: number;
   

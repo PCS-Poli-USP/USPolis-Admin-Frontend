@@ -3,10 +3,9 @@ import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
 import { Building } from 'models/building.model';
 import { Capitalize } from 'utils/formatters';
-import Classroom, { ClassroomSchedule } from 'models/classroom.model';
+import { ClassroomSchedule } from 'models/classroom.model';
 import { useEffect, useState } from 'react';
-import ClassroomsService from 'services/classrooms.service';
-import { sortClassrooms } from 'utils/sorter';
+import { WeekDaysShortText } from 'models/enums/weekDays.enum';
 
 interface MultipleEditAllocationProps {
   eventID: string;
@@ -14,22 +13,23 @@ interface MultipleEditAllocationProps {
   startTime: string;
   endTime: string;
   buildingsList: Building[];
-  schedule: ClassroomSchedule;
+  scheduleList: ClassroomSchedule[];
   building?: string;
   classroom?: string;
   onSelectClassroom: (
-    new_classroom: Classroom,
-    old_classroom: Classroom,
+    new_classroom: string,
+    new_building: string,
     event_id: string,
-    week_day?: string,
-    start_time?: string,
-    end_time?: string,
+    week_day: string,
+    start_time: string,
+    end_time: string,
+    old_classroom?: string,
+    old_building?: string,
   ) => void;
   onSelectBuilding: (
     building_id: string,
     building_name: string,
     event_id: string,
-    classrooms: Classroom[],
   ) => void;
 }
 
@@ -44,64 +44,72 @@ export function MultipleEditAllocation({
   startTime,
   endTime,
   buildingsList,
+  scheduleList,
   building,
   classroom,
-  schedule,
   onSelectClassroom,
   onSelectBuilding,
 }: MultipleEditAllocationProps) {
-  const [availableClassrooms, setAvailableClassrooms] = useState<Classroom[]>(
-    [],
-  );
-  const [selectedClassroom, setSelectedClassroom] = useState<Classroom>();
+  const [selectedSchedule, setSelectedSchedule] = useState<ClassroomSchedule>();
+  const [filteredSchedules, setFilteredSchedules] =
+    useState<ClassroomSchedule[]>();
+
   const [classroomsLoading, setClassroomsLoading] = useState(false);
   const [allocationLoading, setAllocationLoading] = useState(false);
 
   const [selectedBuilding, setSelectedBuilding] = useState<Building>();
+  const [lastBuildingName, setLastBuildingName] = useState('');
 
-  const classroomsService = new ClassroomsService();
+  useEffect(() => {
+    if (scheduleList.length > 0 && building && !selectedBuilding) {
+      const list: ClassroomSchedule[] = [];
+      scheduleList.forEach((it) => {
+        if (it.building === building) list.push(it);
+      });
+      setFilteredSchedules(list);
+    }
+
+    if (scheduleList.length > 0 && selectedBuilding) {
+      const list: ClassroomSchedule[] = [];
+      scheduleList.forEach((it) => {
+        if (it.building === selectedBuilding.name) list.push(it);
+      });
+      setFilteredSchedules(list);
+    }
+
+    if (scheduleList.length > 0 && classroom && !selectedSchedule) {
+      const newSchedule = scheduleList.find(
+        (schedule) => schedule.classroom_name === classroom,
+      );
+      setSelectedSchedule(newSchedule);
+    }
+
+    if (scheduleList.length > 0 && selectedSchedule) {
+      const newSchedule = scheduleList.find(
+        (schedule) =>
+          schedule.classroom_name === selectedSchedule.classroom_name,
+      );
+      setSelectedSchedule(newSchedule);
+    }
+  }, [scheduleList, building, classroom, selectedBuilding, selectedSchedule]);
 
   useEffect(() => {
     if (buildingsList.length === 1 && !selectedBuilding) {
-      console.log('Carregando para o caso COMUM');
       const newBuilding = buildingsList[0];
-      setSelectedBuilding(newBuilding);
       async function fetchBuilding() {
         setClassroomsLoading(true);
-        const response = await classroomsService.getClassroomsByBuilding(
-          newBuilding.name,
-        );
-        setAndSortBuildingClassrooms(response.data);
+        setSelectedBuilding(newBuilding);
+        setLastBuildingName(newBuilding.name);
+        onSelectBuilding(newBuilding.id, newBuilding.name, eventID);
         setClassroomsLoading(false);
-        onSelectBuilding(
-          newBuilding.id,
-          newBuilding.name,
-          eventID,
-          response.data,
-        );
       }
       fetchBuilding();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buildingsList, eventID, onSelectBuilding]);
 
-  // useEffect(() => {
-  //   fetchData();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [selectedBuilding]);
-
-  useEffect(() => {
-    if (selectedBuilding && !classroomsLoading) {
-      console.log('Caso de construção selecionada');
-      setClassroomsLoading(true);
-      setBuildingClassrooms(selectedBuilding.name);
-    }
-    // eslint-disable-next-line
-  }, [selectedBuilding]);
-
   useEffect(() => {
     if ((classroom || building) && !selectedBuilding && !allocationLoading) {
-      console.log('Caso de alocação definida');
       setClassroomsLoading(true);
       setAllocationLoading(true);
       setCurrentAllocation();
@@ -109,86 +117,26 @@ export function MultipleEditAllocation({
     // eslint-disable-next-line
   }, [selectedBuilding]);
 
-  // async function fetchData() {
-  //   console.log('Chamando fetch Data');
-  //   if (selectedBuilding) {
-  //     console.log('Caso de construção selecionada');
-  //     setClassroomsLoading(true);
-  //     setBuildingClassrooms(selectedBuilding.name);
-  //   } else if ((classroom || building) && !allocationLoading) {
-  //     console.log('Caso de alocação definida');
-  //     setClassroomsLoading(true);
-  //     setAllocationLoading(true);
-  //     setCurrentAllocation();
-  //   }
-  // }
-
   async function setCurrentAllocation() {
     if (building && !selectedBuilding) {
       const currentBuilding = buildingsList.find(
         (build) => build.name === building,
       );
       if (currentBuilding) {
-        console.log('FAZENDO QUERY DAS SAALAS De', currentBuilding.name);
         setSelectedBuilding(currentBuilding);
-        classroomsService
-          .getClassroomsByBuilding(building)
-          .then((response) => {
-            setAndSortBuildingClassrooms(response.data);
-            setClassroomsLoading(false);
-            onSelectBuilding(
-              currentBuilding.id,
-              currentBuilding.name,
-              eventID,
-              response.data,
-            );
-
-            if (classroom && !selectedClassroom) {
-              const currentClassroom = response.data.find(
-                (cl) => cl.classroom_name === classroom,
-              );
-
-              if (currentClassroom) {
-                setSelectedClassroom(currentClassroom);
-                onSelectClassroom(currentClassroom, currentClassroom, eventID);
-              }
-            }
-          })
-          .finally(() => setAllocationLoading(false));
+        setLastBuildingName(currentBuilding.name);
+        onSelectBuilding(currentBuilding.id, currentBuilding.name, eventID);
+        setClassroomsLoading(false);
       }
     }
   }
 
   async function handleSelectBuilding(building: Building) {
+    if (selectedBuilding) setLastBuildingName(selectedBuilding.name);
     setSelectedBuilding(building);
     setClassroomsLoading(true);
-    const response = await classroomsService.getClassroomsByBuilding(
-      building.name,
-    );
-    setAndSortBuildingClassrooms(response.data);
+    onSelectBuilding(building.id, building.name, eventID);
     setClassroomsLoading(false);
-    onSelectBuilding(building.id, building.name, eventID, response.data);
-  }
-
-  async function setBuildingClassrooms(building: string) {
-    const response = await classroomsService
-      .getClassroomsByBuilding(building)
-      .finally(() => setClassroomsLoading(false));
-    setAndSortBuildingClassrooms(response.data);
-  }
-
-  function setAndSortBuildingClassrooms(value: Classroom[]) {
-    setAvailableClassrooms(value.sort(sortClassrooms));
-  }
-
-  function hasConflict() {
-    if (
-      selectedClassroom &&
-      classroom &&
-      selectedClassroom.classroom_name === classroom
-    )
-      return false;
-    return false;
   }
 
   return (
@@ -231,59 +179,71 @@ export function MultipleEditAllocation({
           placeholder={'Sala - Capacidade'}
           isLoading={classroomsLoading}
           value={
-            selectedClassroom
-              ? hasConflict()
+            selectedSchedule
+              ? selectedSchedule.conflict_map[weekDay as WeekDaysShortText]
                 ? {
-                    value: selectedClassroom.classroom_name,
-                    label: `⚠️ ${selectedClassroom.classroom_name} - ${selectedClassroom.capacity}`,
+                    value: selectedSchedule.classroom_name,
+                    label: `⚠️ ${selectedSchedule.classroom_name} - ${selectedSchedule.capacity}`,
                   }
                 : {
-                    value: selectedClassroom.classroom_name,
-                    label: `${selectedClassroom.classroom_name} - ${selectedClassroom.capacity}`,
+                    value: selectedSchedule.classroom_name,
+                    label: `${selectedSchedule.classroom_name} - ${selectedSchedule.capacity}`,
                   }
               : undefined
           }
-          options={availableClassrooms.map((it) =>
-            true
-              ? {
-                  value: it.classroom_name,
-                  label: `⚠️ ${it.classroom_name} - ${it.capacity}`,
-                }
-              : {
-                  value: it.classroom_name,
-                  label: `${it.classroom_name} - ${it.capacity}`,
-                },
-          )}
+          options={
+            filteredSchedules
+              ? filteredSchedules.map((it) =>
+                  it.conflict_map[weekDay as WeekDaysShortText]
+                    ? {
+                        value: it.classroom_name,
+                        label: `⚠️ ${it.classroom_name} - ${it.capacity}`,
+                      }
+                    : {
+                        value: it.classroom_name,
+                        label: `${it.classroom_name} - ${it.capacity}`,
+                      },
+                )
+              : undefined
+          }
           onChange={(selected) => {
             const selectedClassroomOp = selected as ClassroomOption;
-            const classroom = availableClassrooms.find(
-              (it) => selectedClassroomOp.value === it.classroom_name,
-            );
-            if (classroom) {
+
+            const classroomSchedule = filteredSchedules
+              ? filteredSchedules.find(
+                  (it) => selectedClassroomOp.value === it.classroom_name,
+                )
+              : undefined;
+
+            if (classroomSchedule && selectedBuilding) {
               onSelectClassroom(
-                classroom,
-                selectedClassroom ? selectedClassroom : classroom,
+                classroomSchedule.classroom_name,
+                selectedBuilding.name,
                 eventID,
                 weekDay,
                 startTime,
                 endTime,
+                selectedSchedule ? selectedSchedule.classroom_name : undefined,
+                lastBuildingName ? lastBuildingName : undefined,
               );
-              setSelectedClassroom(classroom);
+              setSelectedSchedule(classroomSchedule);
+              console.log('Finalmente: ', classroomSchedule);
             }
           }}
         />
-        {!selectedClassroom && (
+        {!selectedSchedule && (
           <Text color={'red'} fontSize={'sm'}>
             Selecione uma sala
           </Text>
         )}
       </Box>
 
-      {hasConflict() && (
-        <Text as={'b'} color={'yellow.500'} fontSize='sm' ml={2}>
-          Esta alocação gerará conflitos
-        </Text>
-      )}
+      {selectedSchedule &&
+        selectedSchedule.conflict_map[weekDay as WeekDaysShortText] && (
+          <Text as={'b'} color={'yellow.500'} fontSize='sm' ml={2}>
+            Esta alocação gerará conflitos
+          </Text>
+        )}
     </HStack>
   );
 }
