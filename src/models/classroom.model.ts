@@ -17,27 +17,28 @@ export interface AvailableClassroom {
   conflicted?: boolean;
 }
 
+export type TimeTuple = [string, string];
+
 export interface ClassroomConflictMap {
-  'seg' : boolean,
-  'ter' : boolean,
-  'qua' : boolean,
-  'qui' : boolean,
-  'sex' : boolean,
-  'sab' : boolean,
-  'dom' : boolean,
+  seg: TimeTuple[];
+  ter: TimeTuple[];
+  qua: TimeTuple[];
+  qui: TimeTuple[];
+  sex: TimeTuple[];
+  sab: TimeTuple[];
+  dom: TimeTuple[];
 }
 
 export interface ClassroomSchedule {
-  seg: [string, string][];
-  ter: [string, string][];
-  qua: [string, string][];
-  qui: [string, string][];
-  sex: [string, string][];
-  sab: [string, string][];
-  dom: [string, string][];
+  seg: TimeTuple[];
+  ter: TimeTuple[];
+  qua: TimeTuple[];
+  qui: TimeTuple[];
+  sex: TimeTuple[];
+  sab: TimeTuple[];
+  dom: TimeTuple[];
   conflict_map: ClassroomConflictMap;
   building: string;
   classroom_name: string;
   capacity: number;
-  
 }

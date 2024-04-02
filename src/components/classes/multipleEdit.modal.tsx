@@ -193,15 +193,17 @@ export default function MultipleEditModal({
     });
 
     if (newScheduleIndex >= 0) {
-      const newSchedule = {...newClassroomSchedulesMap[newScheduleIndex]};
-      console.log('Enviando calendário...: ', newSchedule[2]);
-      newSchedule[2] = ConflictCalculator.addTimeInClassroomSchedule(
-        newSchedule[2],
+      const newScheduleMap = newClassroomSchedulesMap[newScheduleIndex];
+      let newSchedule = {...newScheduleMap[2]};
+      console.log('Selecionei o map: ', newScheduleMap);
+      console.log('Enviando calendário...: ', newSchedule);
+      newSchedule = ConflictCalculator.addTimeInClassroomSchedule(
+        newSchedule,
         week_day,
         start_time,
         end_time,
       );
-      newClassroomSchedulesMap[newScheduleIndex] = newSchedule;
+      newClassroomSchedulesMap[newScheduleIndex] = [newScheduleMap[0], newScheduleMap[1], newSchedule];
     }
 
     setClassroomSchedulesMap(

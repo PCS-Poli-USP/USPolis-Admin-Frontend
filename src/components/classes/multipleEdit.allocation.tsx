@@ -6,6 +6,7 @@ import { Capitalize } from 'utils/formatters';
 import { ClassroomSchedule } from 'models/classroom.model';
 import { useEffect, useState } from 'react';
 import { WeekDaysShortText } from 'models/enums/weekDays.enum';
+import { ConflictCalculator } from 'utils/conflict.calculator';
 
 interface MultipleEditAllocationProps {
   eventID: string;
@@ -60,6 +61,8 @@ export function MultipleEditAllocation({
   const [selectedBuilding, setSelectedBuilding] = useState<Building>();
   const [lastBuildingName, setLastBuildingName] = useState('');
 
+  const [hasConflict, setHasConflict] = useState(false);
+
   useEffect(() => {
     if (scheduleList.length > 0 && building && !selectedBuilding) {
       const list: ClassroomSchedule[] = [];
@@ -78,10 +81,16 @@ export function MultipleEditAllocation({
     }
 
     if (scheduleList.length > 0 && classroom && !selectedSchedule) {
+      console.log('Sem calendário selecionado');
+      console.log('Lista de calendários: ', scheduleList);
+      console.log('Procurando por: ', classroom);
       const newSchedule = scheduleList.find(
         (schedule) => schedule.classroom_name === classroom,
       );
       setSelectedSchedule(newSchedule);
+      console.log('Então ficou: ', newSchedule);
+      const conflict = verifyConflict(newSchedule);
+      setHasConflict(conflict);
     }
 
     if (scheduleList.length > 0 && selectedSchedule) {
@@ -90,8 +99,20 @@ export function MultipleEditAllocation({
           schedule.classroom_name === selectedSchedule.classroom_name,
       );
       setSelectedSchedule(newSchedule);
+      console.log('Tinha calendário foi de ', selectedSchedule);
+      console.log('Para: ', newSchedule);
+      const conflict = verifyConflict(newSchedule);
+      setHasConflict(conflict);
     }
-  }, [scheduleList, building, classroom, selectedBuilding, selectedSchedule]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    scheduleList,
+    building,
+    classroom,
+    selectedBuilding,
+    selectedSchedule,
+    hasConflict,
+  ]);
 
   useEffect(() => {
     if (buildingsList.length === 1 && !selectedBuilding) {
@@ -139,6 +160,18 @@ export function MultipleEditAllocation({
     setClassroomsLoading(false);
   }
 
+  function verifyConflict(schedule: ClassroomSchedule | undefined) {
+    if (schedule) {
+      const times = schedule.conflict_map[weekDay as WeekDaysShortText];
+      return ConflictCalculator.isTimeInTimeTupleArray(
+        times,
+        startTime,
+        endTime,
+      );
+    }
+    return false;
+  }
+
   return (
     <HStack w={'full'} spacing={10} mb={4}>
       <Text w={'fit-content'} noOfLines={1} as={'b'}>{`${Capitalize(
@@ -180,7 +213,7 @@ export function MultipleEditAllocation({
           isLoading={classroomsLoading}
           value={
             selectedSchedule
-              ? selectedSchedule.conflict_map[weekDay as WeekDaysShortText]
+              ? hasConflict
                 ? {
                     value: selectedSchedule.classroom_name,
                     label: `⚠️ ${selectedSchedule.classroom_name} - ${selectedSchedule.capacity}`,
@@ -194,7 +227,7 @@ export function MultipleEditAllocation({
           options={
             filteredSchedules
               ? filteredSchedules.map((it) =>
-                  it.conflict_map[weekDay as WeekDaysShortText]
+                  verifyConflict(it)
                     ? {
                         value: it.classroom_name,
                         label: `⚠️ ${it.classroom_name} - ${it.capacity}`,
@@ -238,12 +271,11 @@ export function MultipleEditAllocation({
         )}
       </Box>
 
-      {selectedSchedule &&
-        selectedSchedule.conflict_map[weekDay as WeekDaysShortText] && (
-          <Text as={'b'} color={'yellow.500'} fontSize='sm' ml={2}>
-            Esta alocação gerará conflitos
-          </Text>
-        )}
+      {selectedSchedule && hasConflict && (
+        <Text as={'b'} color={'yellow.500'} fontSize='sm' ml={2}>
+          Esta alocação gerará conflitos
+        </Text>
+      )}
     </HStack>
   );
 }
