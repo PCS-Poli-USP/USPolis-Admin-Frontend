@@ -8,6 +8,7 @@ interface AppContext {
   setLoading: (value: boolean) => void;
   username: string;
   loggedUser: User | null;
+  logout: () => void;
 }
 
 const DEFAULT_VALUE = {
@@ -15,6 +16,7 @@ const DEFAULT_VALUE = {
   setLoading: () => {},
   username: '',
   loggedUser: null,
+  logout: async () => {},
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -49,15 +51,18 @@ export default function AppContextProvider({
     }
   }
 
+  async function logout() {
+    Auth.signOut();
+    localStorage.removeItem('user');
+  }
+
   useEffect(() => {
     Auth.currentUserInfo().then((it) => setUsername(it?.username));
     getSelf();
   }, []);
 
   return (
-    <appContext.Provider
-      value={{ loading, setLoading, username, loggedUser }}
-    >
+    <appContext.Provider value={{ loading, setLoading, username, loggedUser, logout }}>
       {children}
     </appContext.Provider>
   );

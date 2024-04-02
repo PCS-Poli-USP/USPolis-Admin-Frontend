@@ -52,10 +52,10 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { loggedUser } = useContext(appContext);
+  const { loggedUser, logout } = useContext(appContext);
 
   function handleClickLogout() {
-    Auth.signOut();
+    logout();
   }
 
   return (
