@@ -50,7 +50,7 @@ function Classrooms() {
   } = useDisclosure();
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom>();
   const [isUpdate, setIsUpdate] = useState(false);
-  const { setLoading, isAdmin } = useContext(appContext);
+  const { setLoading, loggedUser } = useContext(appContext);
 
   const [columns, setColumns] = useState<ColumnDef<Classroom>[]>([
     {
@@ -162,7 +162,7 @@ function Classrooms() {
   useEffect(() => {
     fetchData();
     fetchBuildings();
-    if (isAdmin)
+    if (loggedUser?.isAdmin)
       setColumns([
         {
           accessorKey: 'created_by',
@@ -171,20 +171,22 @@ function Classrooms() {
         ...columns,
       ]);
     // eslint-disable-next-line
-  }, [isAdmin]);
+  }, [loggedUser?.isAdmin]);
 
   function fetchData() {
     setLoading(true);
-    if (!isAdmin) {
-      classroomService.list().then((it) => {
-        setClassroomsList(it.data.sort(sortClassrooms));
-        setLoading(false);
-      });
-    } else {
-      adminClassroomService.list().then((it) => {
-        setClassroomsList(it.data.sort(sortClassrooms));
-        setLoading(false);
-      });
+    if (!!loggedUser) {
+      if (!loggedUser.isAdmin) {
+        classroomService.list().then((it) => {
+          setClassroomsList(it.data.sort(sortClassrooms));
+          setLoading(false);
+        });
+      } else {
+        adminClassroomService.list().then((it) => {
+          setClassroomsList(it.data.sort(sortClassrooms));
+          setLoading(false);
+        });
+      }
     }
   }
 
@@ -229,7 +231,7 @@ function Classrooms() {
   function handleSave(formData: Classroom) {
     const { id, ...formDataWithoutId } = formData;
     const request = isUpdate
-      ? isAdmin
+      ? loggedUser?.isAdmin
         ? adminClassroomService.update(id, formDataWithoutId)
         : classroomService.update(
             formDataWithoutId.classroom_name,

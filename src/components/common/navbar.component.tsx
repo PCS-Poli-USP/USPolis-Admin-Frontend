@@ -19,10 +19,10 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { Auth } from 'aws-amplify';
-import { appContext } from 'context/AppContext';
 import { ReactNode, useContext } from 'react';
 import { FaUser } from 'react-icons/fa';
 import Logo from 'assets/uspolis.logo.png';
+import { appContext } from 'context/AppContext';
 
 const Links = [
   { text: 'Salas', value: '/classrooms', admin: false },
@@ -52,8 +52,7 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { username } = useContext(appContext);
-  const { dbUser } = useContext(appContext);
+  const { loggedUser } = useContext(appContext);
 
   function handleClickLogout() {
     Auth.signOut();
@@ -88,7 +87,7 @@ export default function Navbar() {
             >
               {Links.map(
                 (link) =>
-                  (!link.admin || (link.admin && dbUser?.isAdmin)) && (
+                  (!link.admin || (link.admin && loggedUser?.isAdmin)) && (
                     <NavLink key={link.value} to={link.value}>
                       {link.text}
                     </NavLink>
@@ -107,27 +106,27 @@ export default function Navbar() {
                 colorScheme='dark'
               >
                 <Flex alignItems={'center'} gap='1'>
-                  <Text>{dbUser?.name}</Text>
+                  <Text>{loggedUser?.name}</Text>
                   <Icon as={FaUser} />
                 </Flex>
               </MenuButton>
               <MenuList>
                 {/* <MenuItem>Perfil</MenuItem>
                 <MenuDivider /> */}
-              <MenuItem onClick={handleClickLogout} color='black'>
-                Sair
-              </MenuItem>
-            </MenuList>
-          </Menu>
+                <MenuItem onClick={handleClickLogout} color='black'>
+                  Sair
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Flex>
         </Flex>
-      </Flex>
 
         {isOpen ? (
           <Box pb={4} display={{ md: 'none' }}>
             <Stack as={'nav'} spacing={4}>
               {Links.map(
                 (link) =>
-                  (!link.admin || (link.admin && dbUser?.isAdmin)) && (
+                  (!link.admin || (link.admin && loggedUser?.isAdmin)) && (
                     <NavLink key={link.value} to={link.value}>
                       {link.text}
                     </NavLink>

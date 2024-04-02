@@ -38,7 +38,7 @@ export default function JupiterCrawlerPopover({
   subjects = [],
   onSave,
 }: JupiterCrawlerPopoverPrpos) {
-  const { dbUser } = useContext(appContext);
+  const { loggedUser } = useContext(appContext);
 
   const buildingsService = new BuildingsService();
 
@@ -61,7 +61,7 @@ export default function JupiterCrawlerPopover({
 
   useEffect(() => {
     getBuildingsList();
-  }, [dbUser]);
+  }, [loggedUser]);
 
   function handleAddClick() {
     if (subjectInput.length > 6 && !subjectsList.includes(subjectInput)) {
@@ -91,15 +91,15 @@ export default function JupiterCrawlerPopover({
   }
 
   function getBuildingsList() {
-    if (dbUser) {
-      if (dbUser.isAdmin) {
+    if (loggedUser) {
+      if (loggedUser.isAdmin) {
         setBuildingsLoading(true);
         buildingsService.list().then((response) => {
           setBuildingsList(response.data);
           setBuildingsLoading(false);
         });
       } else {
-        setBuildingsList(dbUser.buildings);
+        setBuildingsList(loggedUser.buildings);
       }
     }
   }

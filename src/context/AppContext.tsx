@@ -3,20 +3,18 @@ import { User } from 'models/user.model';
 import React, { createContext, useEffect, useState } from 'react';
 import SelfService from 'services/self.service';
 
-export interface AppContext {
+interface AppContext {
   loading: boolean;
   setLoading: (value: boolean) => void;
   username: string;
-  dbUser: User | null;
-  isAdmin: boolean;
+  loggedUser: User | null;
 }
 
 const DEFAULT_VALUE = {
   loading: false,
   setLoading: () => {},
   username: '',
-  dbUser: null,
-  isAdmin: false,
+  loggedUser: null,
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -26,17 +24,28 @@ export default function AppContextProvider({
 }: React.PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
-  const [dbUser, setDbUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [loggedUser, setLoggedUser] = useState<User | null>(null);
 
   const selfService = new SelfService();
 
-  async function getSelf() {
+  async function getSelfFromBackend() {
     try {
+      await Auth.currentUserInfo();
       const self = await selfService.getSelf();
-      setDbUser(self.data);
+      setLoggedUser(self.data);
+      localStorage.setItem('user', JSON.stringify(self.data));
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  async function getSelf() {
+    const userFromStorage = localStorage.getItem('user');
+    if (!userFromStorage) {
+      await getSelfFromBackend();
+    } else {
+      const parsedUser: User = JSON.parse(userFromStorage) as User;
+      setLoggedUser(parsedUser);
     }
   }
 
@@ -45,13 +54,9 @@ export default function AppContextProvider({
     getSelf();
   }, []);
 
-  useEffect(() => {
-    if (dbUser) setIsAdmin(dbUser.isAdmin);
-  }, [dbUser]);
-
   return (
     <appContext.Provider
-      value={{ loading, setLoading, username, dbUser, isAdmin }}
+      value={{ loading, setLoading, username, loggedUser }}
     >
       {children}
     </appContext.Provider>

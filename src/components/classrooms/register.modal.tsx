@@ -35,7 +35,7 @@ interface RegisterModalProps {
 }
 
 export default function RegisterModal(props: RegisterModalProps) {
-  const { dbUser, isAdmin } = useContext(appContext);
+  const { loggedUser } = useContext(appContext);
   const buildingsService = new BuildingsService();
   const usersService = new UsersService();
   const [usersList, setUsersList] = useState<User[]>([]);
@@ -62,24 +62,24 @@ export default function RegisterModal(props: RegisterModalProps) {
   useEffect(() => {
     getBuildingsList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dbUser]);
+  }, [loggedUser]);
 
   useEffect(() => {
-    if (isAdmin) {
+    if (loggedUser?.isAdmin) {
       usersService.list().then((response) => {
         setUsersList(response.data.map((it) => it));
       });
     }
-  }, [isAdmin]);
+  }, [loggedUser]);
 
   function getBuildingsList() {
-    if (dbUser) {
-      if (dbUser.isAdmin) {
+    if (loggedUser) {
+      if (loggedUser.isAdmin) {
         buildingsService.list().then((response) => {
           setBuildingsList(response.data);
         });
       } else {
-        setBuildingsList(dbUser.buildings);
+        setBuildingsList(loggedUser.buildings);
       }
     }
   }
@@ -238,7 +238,7 @@ export default function RegisterModal(props: RegisterModalProps) {
             </Checkbox>
           </FormControl>
 
-          {isAdmin && (
+          {loggedUser?.isAdmin && (
             <FormControl mt={4}>
               <FormLabel>Criado por</FormLabel>
               <Select
