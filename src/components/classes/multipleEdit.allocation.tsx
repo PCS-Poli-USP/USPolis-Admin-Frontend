@@ -81,14 +81,10 @@ export function MultipleEditAllocation({
     }
 
     if (scheduleList.length > 0 && classroom && !selectedSchedule) {
-      console.log('Sem calendário selecionado');
-      console.log('Lista de calendários: ', scheduleList);
-      console.log('Procurando por: ', classroom);
       const newSchedule = scheduleList.find(
         (schedule) => schedule.classroom_name === classroom,
       );
       setSelectedSchedule(newSchedule);
-      console.log('Então ficou: ', newSchedule);
       const conflict = verifyConflict(newSchedule);
       setHasConflict(conflict);
     }
@@ -99,8 +95,6 @@ export function MultipleEditAllocation({
           schedule.classroom_name === selectedSchedule.classroom_name,
       );
       setSelectedSchedule(newSchedule);
-      console.log('Tinha calendário foi de ', selectedSchedule);
-      console.log('Para: ', newSchedule);
       const conflict = verifyConflict(newSchedule);
       setHasConflict(conflict);
     }
@@ -260,7 +254,6 @@ export function MultipleEditAllocation({
                 lastBuildingName ? lastBuildingName : undefined,
               );
               setSelectedSchedule(classroomSchedule);
-              console.log('Finalmente: ', classroomSchedule);
             }
           }}
         />

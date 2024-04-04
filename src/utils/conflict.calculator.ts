@@ -63,7 +63,7 @@ export class ConflictCalculator {
     const start_B = this.timeParse(time_B[0]);
     const end_B = this.timeParse(time_B[1]);
 
-    if (start_A <= start_B && end_A <= end_B) {
+    if (start_A <= start_B && end_A >= start_B) {
       return true;
     }
     if (start_A >= start_B && end_A <= end_B) {
@@ -145,15 +145,11 @@ export class ConflictCalculator {
     start_time: string,
     end_time: string,
   ) {
-    console.log('Calendario atual: ', schedule);
-    console.log('Horário a adicionar: ', start_time, end_time, week_day);
-    let a = this.weekDayWillHaveTimesConflict(
+    return this.weekDayWillHaveTimesConflict(
       schedule[week_day as WeekDaysShortText],
       start_time,
       end_time,
     );
-    console.log('Resultado: ', a);
-    return a;
   }
 
   static verifyClassroomWeekDayTimeConflict(
@@ -210,8 +206,6 @@ export class ConflictCalculator {
     start_time: string,
     end_time: string,
   ): ClassroomSchedule {
-    console.log('Adicionado', week_day, start_time, end_time, 'em: ', schedule);
-
     const day = week_day as WeekDaysShortText;
     const newSchedule = { ...schedule };
     const newTimes = [...schedule[day]];
@@ -225,8 +219,6 @@ export class ConflictCalculator {
     );
 
     newSchedule.conflict_map = newConflictMap;
-
-    console.log('Resultado: ', newSchedule, 'Times', newTimes);
     return newSchedule;
   }
 
@@ -236,34 +228,25 @@ export class ConflictCalculator {
     start_time: string,
     end_time: string,
   ) {
+    const day = week_day as WeekDaysShortText;
     const updatedSchedule = { ...schedule };
-    console.log(
-      'Antigos horários: ',
-      updatedSchedule[week_day as WeekDaysShortText],
-    );
-
-    const findIndex = updatedSchedule[week_day as WeekDaysShortText].findIndex(
+    const findIndex = updatedSchedule[day].findIndex(
       (time) => time[0] === start_time && time[1] === end_time,
     );
 
     if (findIndex !== -1) {
-      const newTimes = updatedSchedule[week_day as WeekDaysShortText].splice(
-        findIndex,
-        1,
+      const newTimes = [...updatedSchedule[day]];
+      newTimes.splice(findIndex, 1);
+      updatedSchedule[day] = newTimes;
+
+      const newConflictMap = { ...schedule.conflict_map };
+      newConflictMap[day] = this.verifyClassroomWeekDayTimeConflict(
+        updatedSchedule,
+        week_day,
       );
-      console.log('Novos horários:', newTimes);
-      updatedSchedule[week_day as WeekDaysShortText] = newTimes;
-      updatedSchedule.conflict_map[week_day as WeekDaysShortText] =
-        this.verifyClassroomWeekDayTimeConflict(updatedSchedule, week_day);
+      updatedSchedule.conflict_map = newConflictMap;
     }
-    console.log(
-      'aPOS REMOVER ',
-      start_time,
-      end_time,
-      week_day,
-      'temos conflito = ',
-      updatedSchedule.conflict_map,
-    );
+
     return updatedSchedule;
   }
 }

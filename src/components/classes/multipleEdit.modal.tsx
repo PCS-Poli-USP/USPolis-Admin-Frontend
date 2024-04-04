@@ -161,7 +161,6 @@ export default function MultipleEditModal({
     }
 
     const newClassroomSchedulesMap = [...classroomSchedulesMap];
-    console.log('Maepamento antes das mudanças: ', newClassroomSchedulesMap);
 
     // Tem que remover o antigo horário e validar ele
     if (old_classroom && old_building) {
@@ -171,7 +170,7 @@ export default function MultipleEditModal({
           oldScheduleIndex = index;
         }
       });
-      const oldSchedule = {...newClassroomSchedulesMap[oldScheduleIndex]};
+      const oldSchedule = { ...newClassroomSchedulesMap[oldScheduleIndex] };
 
       oldSchedule[2] = ConflictCalculator.removeTimeInClassroomSchedule(
         oldSchedule[2],
@@ -193,26 +192,24 @@ export default function MultipleEditModal({
     });
 
     if (newScheduleIndex >= 0) {
-      const newScheduleMap = newClassroomSchedulesMap[newScheduleIndex];
-      let newSchedule = {...newScheduleMap[2]};
-      console.log('Selecionei o map: ', newScheduleMap);
-      console.log('Enviando calendário...: ', newSchedule);
+      const newScheduleMap = classroomSchedulesMap[newScheduleIndex];
+      let newSchedule = { ...newScheduleMap[2] };
       newSchedule = ConflictCalculator.addTimeInClassroomSchedule(
         newSchedule,
         week_day,
         start_time,
         end_time,
       );
-      newClassroomSchedulesMap[newScheduleIndex] = [newScheduleMap[0], newScheduleMap[1], newSchedule];
-    }
+      newClassroomSchedulesMap[newScheduleIndex] = [
+        newScheduleMap[0],
+        newScheduleMap[1],
+        newSchedule,
+      ];
 
-    setClassroomSchedulesMap(
-      newClassroomSchedulesMap.sort(sortClassroomScheduleMap),
-    );
-    console.log(
-      'Novo mapeamento: ',
-      newClassroomSchedulesMap.sort(sortClassroomScheduleMap),
-    );
+      setClassroomSchedulesMap(
+        newClassroomSchedulesMap.sort(sortClassroomScheduleMap),
+      );
+    }
   }
 
   function handleAllocationClick() {
@@ -257,6 +254,11 @@ export default function MultipleEditModal({
 
   function handleCloseClick() {
     setHasMissingData(false);
+    setMap([]);
+    setFilteredMap([]);
+    setFilteredClasses([]);
+    setAllocationMap([]);
+    setClassroomSchedulesMap([]);
     onClose();
   }
 
