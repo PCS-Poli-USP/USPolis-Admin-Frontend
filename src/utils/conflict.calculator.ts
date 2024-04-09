@@ -164,8 +164,14 @@ export class ConflictCalculator {
     for (let i = 0; i < times.length - 1; i++) {
       for (let j = i + 1; j < times.length; j++) {
         if (this.timeOverlapVerify(times[i], times[j])) {
-          if (!added_indexes[i]) conflited_times.push(times[i]);
-          if (!added_indexes[j]) conflited_times.push(times[j]);
+          if (!added_indexes[i]) {
+            conflited_times.push(times[i]);
+            added_indexes[i] = true;
+          }
+          if (!added_indexes[j]) {
+            added_indexes[j] = true;
+            conflited_times.push(times[j]);
+          }
         }
       }
     }
