@@ -23,6 +23,8 @@ import { ClassroomSchedule } from 'models/classroom.model';
 interface MultipleEditAccordionProps {
   subjectsMap: [string, Class[]][];
   schedulesMap: [string, string, ClassroomSchedule][];
+  isLoadingSchedules: boolean;
+  isUpdatingSchedules: boolean;
   handleSelectBuilding: (
     building_id: string,
     building_name: string,
@@ -43,6 +45,8 @@ interface MultipleEditAccordionProps {
 export default function MultipleEditAccordion({
   subjectsMap,
   schedulesMap,
+  isLoadingSchedules,
+  isUpdatingSchedules,
   handleSelectBuilding,
   handleSelectClassroom,
 }: MultipleEditAccordionProps) {
@@ -131,6 +135,8 @@ export default function MultipleEditAccordion({
                             cl.classrooms ? cl.classrooms[i] : undefined
                           }
                           scheduleList={getClassroomsSchedulesList()}
+                          isLoadingSchedules={isLoadingSchedules}
+                          isUpdatingSchedules={isUpdatingSchedules}
                           onSelectClassroom={handleSelectClassroom}
                           onSelectBuilding={handleSelectBuilding}
                         />

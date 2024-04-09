@@ -15,6 +15,8 @@ interface MultipleEditAllocationProps {
   endTime: string;
   buildingsList: Building[];
   scheduleList: ClassroomSchedule[];
+  isLoadingSchedules: boolean;
+  isUpdatingSchedules: boolean;
   building?: string;
   classroom?: string;
   onSelectClassroom: (
@@ -48,15 +50,14 @@ export function MultipleEditAllocation({
   scheduleList,
   building,
   classroom,
+  isLoadingSchedules,
+  isUpdatingSchedules,
   onSelectClassroom,
   onSelectBuilding,
 }: MultipleEditAllocationProps) {
   const [selectedSchedule, setSelectedSchedule] = useState<ClassroomSchedule>();
   const [filteredSchedules, setFilteredSchedules] =
     useState<ClassroomSchedule[]>();
-
-  const [classroomsLoading, setClassroomsLoading] = useState(false);
-  const [allocationLoading, setAllocationLoading] = useState(false);
 
   const [selectedBuilding, setSelectedBuilding] = useState<Building>();
   const [lastBuildingName, setLastBuildingName] = useState('');
@@ -112,11 +113,9 @@ export function MultipleEditAllocation({
     if (buildingsList.length === 1 && !selectedBuilding) {
       const newBuilding = buildingsList[0];
       async function fetchBuilding() {
-        setClassroomsLoading(true);
         setSelectedBuilding(newBuilding);
         setLastBuildingName(newBuilding.name);
         onSelectBuilding(newBuilding.id, newBuilding.name, eventID);
-        setClassroomsLoading(false);
       }
       fetchBuilding();
     }
@@ -124,9 +123,7 @@ export function MultipleEditAllocation({
   }, [buildingsList, eventID, onSelectBuilding]);
 
   useEffect(() => {
-    if ((classroom || building) && !selectedBuilding && !allocationLoading) {
-      setClassroomsLoading(true);
-      setAllocationLoading(true);
+    if ((classroom || building) && !selectedBuilding) {
       setCurrentAllocation();
     }
     // eslint-disable-next-line
@@ -141,17 +138,13 @@ export function MultipleEditAllocation({
         setSelectedBuilding(currentBuilding);
         setLastBuildingName(currentBuilding.name);
         onSelectBuilding(currentBuilding.id, currentBuilding.name, eventID);
-        setClassroomsLoading(false);
       }
     }
   }
 
   async function handleSelectBuilding(building: Building) {
-    if (selectedBuilding) setLastBuildingName(selectedBuilding.name);
     setSelectedBuilding(building);
-    setClassroomsLoading(true);
     onSelectBuilding(building.id, building.name, eventID);
-    setClassroomsLoading(false);
   }
 
   function verifyConflict(schedule: ClassroomSchedule | undefined) {
@@ -176,12 +169,20 @@ export function MultipleEditAllocation({
           <Text>Prédio</Text>
           <CSelect
             w={'fit-content'}
+            disabled={isLoadingSchedules}
             placeholder='Selecionar prédio'
             onChange={(event) => {
+              setSelectedSchedule(undefined);
               const newBuilding = buildingsList.find(
                 (it) => it.id === event.target.value,
               );
-              if (newBuilding) handleSelectBuilding(newBuilding);
+              if (newBuilding) {
+                if (selectedBuilding)
+                  setLastBuildingName(selectedBuilding?.name);
+                else setLastBuildingName(newBuilding.name);
+
+                handleSelectBuilding(newBuilding);
+              }
             }}
             value={selectedBuilding?.id}
           >
@@ -204,7 +205,10 @@ export function MultipleEditAllocation({
         <Select
           menuPosition={'fixed'}
           placeholder={'Sala - Capacidade'}
-          isLoading={classroomsLoading}
+          isLoading={isUpdatingSchedules}
+          isDisabled={
+            isUpdatingSchedules || isLoadingSchedules || !selectedBuilding
+          }
           value={
             selectedSchedule
               ? hasConflict
@@ -216,7 +220,7 @@ export function MultipleEditAllocation({
                     value: selectedSchedule.classroom_name,
                     label: `${selectedSchedule.classroom_name} - ${selectedSchedule.capacity}`,
                   }
-              : undefined
+              : null
           }
           options={
             filteredSchedules

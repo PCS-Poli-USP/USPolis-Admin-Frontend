@@ -59,6 +59,8 @@ export default function MultipleEditModal({
   >([]);
   const [hasMissingData, setHasMissingData] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingSchedules, setIsLoadingSchedules] = useState(false);
+  const [isUpdatingSchedules, setIsUpdatingSchedules] = useState(false);
 
   const eventsService = new EventsService();
   const classroomsService = new ClassroomsService();
@@ -102,12 +104,7 @@ export default function MultipleEditModal({
     } else setMap([]);
   }, [classes, filteredClasses]);
 
-  function handleSelectBuilding(
-    building_id: string,
-    building_name: string,
-    event_id: string,
-  ) {
-    setHasMissingData(false);
+  function addBuildingInAllocMap(event_id: string, building_id: string) {
     const newAllocationMap = [...allocationMap];
     newAllocationMap.forEach((alloc) => {
       if (alloc.event_id === event_id) {
@@ -115,10 +112,30 @@ export default function MultipleEditModal({
       }
     });
     setAllocationMap(newAllocationMap);
+  }
+
+  function addClassroomInAllocMap(event_id: string, new_classroom: string) {
+    const newAllocationMap = [...allocationMap];
+    newAllocationMap.forEach((alloc) => {
+      if (alloc.event_id === event_id) {
+        alloc.classroom = new_classroom;
+      }
+    });
+    setAllocationMap(newAllocationMap);
+  }
+
+  function handleSelectBuilding(
+    building_id: string,
+    building_name: string,
+    event_id: string,
+  ) {
+    setHasMissingData(false);
+    addBuildingInAllocMap(event_id, building_id);
 
     // Já adicionou os calendários daquele prédio
     if (classroomSchedulesMap.find((map) => map[1] === building_name)) return;
 
+    setIsLoadingSchedules(true);
     // O front verifica os conflitos
     classroomsService
       .getClassroomsSchedulesByBuilding(building_name)
@@ -133,7 +150,8 @@ export default function MultipleEditModal({
           ]);
         });
         setClassroomSchedulesMap(newScheduleMap.sort(sortClassroomScheduleMap));
-      });
+      })
+      .finally(() => setIsLoadingSchedules(false));
   }
 
   function handleSelectClassroom(
@@ -147,21 +165,14 @@ export default function MultipleEditModal({
     old_building?: string,
   ) {
     setHasMissingData(false);
-    const newAllocationMap = [...allocationMap];
-    newAllocationMap.forEach((alloc) => {
-      if (alloc.event_id === event_id) {
-        alloc.classroom = new_classroom;
-      }
-    });
-    setAllocationMap(newAllocationMap);
-
     // Caso em que ele seleciona a mesma sala
     if (new_classroom === old_classroom && new_building === old_building) {
       return;
     }
+    setIsUpdatingSchedules(true);
+    addClassroomInAllocMap(event_id, new_classroom);
 
     const newClassroomSchedulesMap = [...classroomSchedulesMap];
-
     // Tem que remover o antigo horário e validar ele
     if (old_classroom && old_building) {
       let oldScheduleIndex = -1;
@@ -170,17 +181,16 @@ export default function MultipleEditModal({
           oldScheduleIndex = index;
         }
       });
-      const oldSchedule = { ...newClassroomSchedulesMap[oldScheduleIndex] };
-
-      oldSchedule[2] = ConflictCalculator.removeTimeInClassroomSchedule(
-        oldSchedule[2],
-        week_day,
-        start_time,
-        end_time,
-      );
-      newClassroomSchedulesMap[oldScheduleIndex] = oldSchedule;
-    } else {
-      console.log('Não tinha horário antigo');
+      if (oldScheduleIndex >= 0) {
+        const oldSchedule = { ...newClassroomSchedulesMap[oldScheduleIndex] };
+        oldSchedule[2] = ConflictCalculator.removeTimeInClassroomSchedule(
+          oldSchedule[2],
+          week_day,
+          start_time,
+          end_time,
+        );
+        newClassroomSchedulesMap[oldScheduleIndex] = oldSchedule;
+      }
     }
 
     // Atualizar o calendário da sala que foi selecionada
@@ -210,6 +220,7 @@ export default function MultipleEditModal({
         newClassroomSchedulesMap.sort(sortClassroomScheduleMap),
       );
     }
+    setIsUpdatingSchedules(false);
   }
 
   function handleAllocationClick() {
@@ -303,6 +314,8 @@ export default function MultipleEditModal({
             <MultipleEditAccordion
               subjectsMap={subjectSearchValue ? filteredMap : map}
               schedulesMap={classroomSchedulesMap}
+              isLoadingSchedules={isLoadingSchedules}
+              isUpdatingSchedules={isUpdatingSchedules}
               handleSelectBuilding={handleSelectBuilding}
               handleSelectClassroom={handleSelectClassroom}
             />
