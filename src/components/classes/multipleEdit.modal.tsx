@@ -124,6 +124,15 @@ export default function MultipleEditModal({
     setAllocationMap(newAllocationMap);
   }
 
+  function removeClassroomInAllocMap(event_id: string) {
+    const newAllocationMap = [...allocationMap];
+    const alloc = newAllocationMap.find((alloc) => alloc.event_id === event_id);
+    if (alloc) {
+      delete alloc.classroom;
+      setAllocationMap(newAllocationMap);
+    }
+  }
+
   function handleSelectBuilding(
     building_id: string,
     building_name: string,
@@ -162,11 +171,10 @@ export default function MultipleEditModal({
     start_time: string,
     end_time: string,
     old_classroom?: string,
-    old_building?: string,
   ) {
     setHasMissingData(false);
     // Caso em que ele seleciona a mesma sala
-    if (new_classroom === old_classroom && new_building === old_building) {
+    if (new_classroom === old_classroom) {
       return;
     }
     setIsUpdatingSchedules(true);
@@ -174,10 +182,10 @@ export default function MultipleEditModal({
 
     const newClassroomSchedulesMap = [...classroomSchedulesMap];
     // Tem que remover o antigo horário e validar ele
-    if (old_classroom && old_building) {
+    if (old_classroom) {
       let oldScheduleIndex = -1;
       newClassroomSchedulesMap.forEach((map, index) => {
-        if (map[0] === old_classroom && map[1] === old_building) {
+        if (map[0] === old_classroom) {
           oldScheduleIndex = index;
         }
       });
@@ -221,6 +229,43 @@ export default function MultipleEditModal({
       );
     }
     setIsUpdatingSchedules(false);
+  }
+
+  function handleRemoveClassroom(
+    classroom: string,
+    building: string,
+    event_id: string,
+    week_day: string,
+    start_time: string,
+    end_time: string,
+  ) {
+    setHasMissingData(false);
+    // Tem que remover o antigo horário e validar ele
+    if (classroom && building) {
+      setIsUpdatingSchedules(true);
+      removeClassroomInAllocMap(event_id);
+      const newClassroomSchedulesMap = [...classroomSchedulesMap];
+      let oldScheduleIndex = -1;
+      newClassroomSchedulesMap.forEach((map, index) => {
+        if (map[0] === classroom && map[1] === building) {
+          oldScheduleIndex = index;
+        }
+      });
+      if (oldScheduleIndex >= 0) {
+        const oldSchedule = { ...newClassroomSchedulesMap[oldScheduleIndex] };
+        oldSchedule[2] = ConflictCalculator.removeTimeInClassroomSchedule(
+          oldSchedule[2],
+          week_day,
+          start_time,
+          end_time,
+        );
+        newClassroomSchedulesMap[oldScheduleIndex] = oldSchedule;
+        setClassroomSchedulesMap(
+          newClassroomSchedulesMap.sort(sortClassroomScheduleMap),
+        );
+      }
+      setIsUpdatingSchedules(false);
+    }
   }
 
   function handleAllocationClick() {
@@ -318,6 +363,7 @@ export default function MultipleEditModal({
               isUpdatingSchedules={isUpdatingSchedules}
               handleSelectBuilding={handleSelectBuilding}
               handleSelectClassroom={handleSelectClassroom}
+              handleRemoveClassroom={handleRemoveClassroom}
             />
           </Skeleton>
         </ModalBody>

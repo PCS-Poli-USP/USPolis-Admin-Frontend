@@ -27,7 +27,14 @@ interface MultipleEditAllocationProps {
     start_time: string,
     end_time: string,
     old_classroom?: string,
-    old_building?: string,
+  ) => void;
+  onRemoveClassroom: (
+    classroom: string,
+    building: string,
+    event_id: string,
+    week_day: string,
+    start_time: string,
+    end_time: string,
   ) => void;
   onSelectBuilding: (
     building_id: string,
@@ -53,6 +60,7 @@ export function MultipleEditAllocation({
   isLoadingSchedules,
   isUpdatingSchedules,
   onSelectClassroom,
+  onRemoveClassroom,
   onSelectBuilding,
 }: MultipleEditAllocationProps) {
   const [selectedSchedule, setSelectedSchedule] = useState<ClassroomSchedule>();
@@ -60,7 +68,6 @@ export function MultipleEditAllocation({
     useState<ClassroomSchedule[]>();
 
   const [selectedBuilding, setSelectedBuilding] = useState<Building>();
-  const [lastBuildingName, setLastBuildingName] = useState('');
 
   const [hasConflict, setHasConflict] = useState(false);
 
@@ -114,7 +121,6 @@ export function MultipleEditAllocation({
       const newBuilding = buildingsList[0];
       async function fetchBuilding() {
         setSelectedBuilding(newBuilding);
-        setLastBuildingName(newBuilding.name);
         onSelectBuilding(newBuilding.id, newBuilding.name, eventID);
       }
       fetchBuilding();
@@ -136,7 +142,6 @@ export function MultipleEditAllocation({
       );
       if (currentBuilding) {
         setSelectedBuilding(currentBuilding);
-        setLastBuildingName(currentBuilding.name);
         onSelectBuilding(currentBuilding.id, currentBuilding.name, eventID);
       }
     }
@@ -172,16 +177,23 @@ export function MultipleEditAllocation({
             disabled={isLoadingSchedules}
             placeholder='Selecionar prédio'
             onChange={(event) => {
-              setSelectedSchedule(undefined);
               const newBuilding = buildingsList.find(
                 (it) => it.id === event.target.value,
               );
               if (newBuilding) {
-                if (selectedBuilding)
-                  setLastBuildingName(selectedBuilding?.name);
-                else setLastBuildingName(newBuilding.name);
-
+                // Já estava alocado agora tem que remover do calendário antigo
                 handleSelectBuilding(newBuilding);
+                if (selectedBuilding && selectedSchedule)
+                  onRemoveClassroom(
+                    selectedSchedule.classroom_name,
+                    selectedBuilding.name,
+                    eventID,
+                    weekDay,
+                    startTime,
+                    endTime,
+                  );
+
+                setSelectedSchedule(undefined);
               }
             }}
             value={selectedBuilding?.id}
@@ -255,7 +267,6 @@ export function MultipleEditAllocation({
                 startTime,
                 endTime,
                 selectedSchedule ? selectedSchedule.classroom_name : undefined,
-                lastBuildingName ? lastBuildingName : undefined,
               );
               setSelectedSchedule(classroomSchedule);
             }

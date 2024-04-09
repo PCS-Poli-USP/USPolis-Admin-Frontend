@@ -38,7 +38,14 @@ interface MultipleEditAccordionProps {
     start_time: string,
     end_time: string,
     old_classroom?: string,
-    old_building?: string,
+  ) => void;
+  handleRemoveClassroom: (
+    classroom: string,
+    building: string,
+    event_id: string,
+    week_day: string,
+    start_time: string,
+    end_time: string,
   ) => void;
 }
 
@@ -49,6 +56,7 @@ export default function MultipleEditAccordion({
   isUpdatingSchedules,
   handleSelectBuilding,
   handleSelectClassroom,
+  handleRemoveClassroom,
 }: MultipleEditAccordionProps) {
   const { dbUser } = useContext(appContext);
 
@@ -139,6 +147,7 @@ export default function MultipleEditAccordion({
                           isUpdatingSchedules={isUpdatingSchedules}
                           onSelectClassroom={handleSelectClassroom}
                           onSelectBuilding={handleSelectBuilding}
+                          onRemoveClassroom={handleRemoveClassroom}
                         />
                       ))}
                     </VStack>
