@@ -58,7 +58,7 @@ export default function MultipleEditAccordion({
   handleSelectClassroom,
   handleRemoveClassroom,
 }: MultipleEditAccordionProps) {
-  const { dbUser } = useContext(appContext);
+  const { loggedUser } = useContext(appContext);
 
   const [buildingsList, setBuildingsList] = useState<Building[]>([]);
   const [buildingsLoading, setBuildingsLoading] = useState(true);
@@ -68,18 +68,18 @@ export default function MultipleEditAccordion({
   useEffect(() => {
     getBuildingsList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dbUser]);
+  }, [loggedUser]);
 
   function getBuildingsList() {
-    if (dbUser) {
-      if (dbUser.isAdmin) {
+    if (loggedUser) {
+      if (loggedUser.isAdmin) {
         setBuildingsLoading(true);
         buildingsService.list().then((response) => {
           setBuildingsList(response.data);
           setBuildingsLoading(false);
         });
       } else {
-        setBuildingsList(dbUser.buildings);
+        setBuildingsList(loggedUser.buildings);
       }
     }
   }
