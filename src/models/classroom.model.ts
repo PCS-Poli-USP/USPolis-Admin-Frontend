@@ -1,4 +1,5 @@
 export default interface Classroom {
+  id?: string;
   classroom_name: string;
   building: string;
   floor: number;
@@ -8,6 +9,7 @@ export default interface Classroom {
   projector: boolean;
   accessibility: boolean;
   updated_at?: string;
+  created_by?: string;
 }
 
 export interface AvailableClassroom {
