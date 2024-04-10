@@ -1,4 +1,4 @@
-import { Auth } from 'aws-amplify';
+import { Auth, Hub } from 'aws-amplify';
 import { User } from 'models/user.model';
 import React, { createContext, useEffect, useState } from 'react';
 import SelfService from 'services/self.service';
@@ -35,6 +35,8 @@ export default function AppContextProvider({
       await Auth.currentUserInfo();
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
+      console.log('Usuário logado:');
+      console.log(self.data);
       localStorage.setItem('user', JSON.stringify(self.data));
     } catch (error) {
       console.error(error);
@@ -48,6 +50,8 @@ export default function AppContextProvider({
     } else {
       const parsedUser: User = JSON.parse(userFromStorage) as User;
       setLoggedUser(parsedUser);
+      console.log('Usuário logado (storage):');
+      console.log(parsedUser);
     }
   }
 
@@ -61,8 +65,20 @@ export default function AppContextProvider({
     getSelf();
   }, []);
 
+  useEffect(() => {
+    Hub.listen('auth', (data) => {
+      getSelf();
+      console.log(
+        'A new auth event has happened: ',
+        data.payload.data.username + ' has ' + data.payload.event,
+      );
+    });
+  }, []);
+
   return (
-    <appContext.Provider value={{ loading, setLoading, username, loggedUser, logout }}>
+    <appContext.Provider
+      value={{ loading, setLoading, username, loggedUser, logout }}
+    >
       {children}
     </appContext.Provider>
   );

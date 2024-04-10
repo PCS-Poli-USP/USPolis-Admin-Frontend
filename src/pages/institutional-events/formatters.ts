@@ -7,7 +7,7 @@ export const periodFormatter = (row: Row<InstitutionalEvent>) => {
   const end = row.original.end_datetime;
   const startFormatted = moment(start).format('DD/MM/YYYY HH:mm');
 
-  if (!end) {
+  if (end === start) {
     return moment(start).format('DD/MM/YYYY');
   } else {
     const endFormatted = moment(end).format('DD/MM/YYYY HH:mm');

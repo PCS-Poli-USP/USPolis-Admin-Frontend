@@ -56,6 +56,17 @@ function EventFormModal({
   const [loading, setLoading] = useState(false);
   const [fullDayEvent, setFullDayEvent] = useState(false);
 
+  useEffect(() => {
+    if (
+      selectedEvent &&
+      selectedEvent.end_datetime === selectedEvent.start_datetime
+    ) {
+      setFullDayEvent(true);
+    } else {
+      setFullDayEvent(false);
+    }
+  }, [selectedEvent]);
+
   const form = useForm<EventForm>({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
@@ -76,6 +87,10 @@ function EventFormModal({
       setLoading(true);
 
       const values = getValues();
+
+      if (fullDayEvent) {
+        values['end_datetime'] = values['start_datetime'];
+      }
 
       await service.create(values);
 
@@ -109,6 +124,10 @@ function EventFormModal({
       setLoading(true);
 
       const values = getValues();
+
+      if (fullDayEvent) {
+        values['end_datetime'] = values['start_datetime'];
+      }
 
       await service.update(selectedEvent._id, values);
 
@@ -171,7 +190,11 @@ function EventFormModal({
                 <Box alignSelf='flex-start'>
                   <Checkbox
                     isChecked={fullDayEvent}
-                    onChange={(e) => setFullDayEvent(e.target.checked)}
+                    onChange={(e) => {
+                      setFullDayEvent(e.target.checked);
+                      form.setValue('end_datetime', '');
+                      form.setValue('start_datetime', '');
+                    }}
                   >
                     Evento de dia inteiro
                   </Checkbox>
