@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   Center,
   Flex,
   IconButton,
@@ -20,7 +21,7 @@ import {
   BsCalendarXFill,
 } from 'react-icons/bs';
 
-import { ColumnDef } from '@tanstack/react-table';
+import { ColumnDef, Row } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
@@ -32,7 +33,11 @@ import Dialog from 'components/common/dialog.component';
 import Loading from 'components/common/loading.component';
 import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
-import Class, { CreateClassEvents, Preferences } from 'models/class.model';
+import Class, {
+  CreateClassEvents,
+  Preferences,
+  SClass,
+} from 'models/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
 import ClassesService from 'services/classes.service';
@@ -42,11 +47,13 @@ import { Capitalize } from 'utils/formatters';
 import {
   FilterArray,
   FilterBoolean,
+  FilterBuilding,
   FilterClassroom,
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import {
   ClassToEventByClassroom,
+  ClassToSClass,
   breakClassFormInEvents,
 } from 'utils/classes/classes.formatter';
 import { Building } from 'models/building.model';
@@ -54,17 +61,18 @@ import { EventByClassrooms } from 'models/event.model';
 import CrawlerService from 'services/crawler.service';
 import { sortBuildings, sortClasses } from 'utils/sorter';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
+import MultipleEditModal from 'components/classes/multipleEdit.modal';
 
 function Classes() {
-  const [classesList, setClassesList] = useState<Array<Class>>([]);
-  const [buildingsList, setBuildingsList] = useState<Array<Building>>([]);
-  const [selectedClassEventList, setSelectedClassEventList] = useState<
-    Array<EventByClassrooms>
-  >([]);
   const {
     isOpen: isOpenDeleteClass,
     onOpen: onOpenDeleteClass,
     onClose: onCloseDeleteClass,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDeleteSelectedClasses,
+    onOpen: onOpenDeleteSelectedClasses,
+    onClose: onCloseDeleteSelectedClasses,
   } = useDisclosure();
   const {
     isOpen: isOpenDeleteAlloc,
@@ -96,7 +104,17 @@ function Classes() {
     onOpen: onOpenJupiterModal,
     onClose: onCloseJupiterModal,
   } = useDisclosure();
+  const {
+    isOpen: isOpenMultipleEdit,
+    onOpen: onOpenMultipleEdit,
+    onClose: onCloseMultipleEdit,
+  } = useDisclosure();
 
+  const [classesList, setClassesList] = useState<Array<SClass>>([]);
+  const [buildingsList, setBuildingsList] = useState<Array<Building>>([]);
+  const [selectedClassEventList, setSelectedClassEventList] = useState<
+    Array<EventByClassrooms>
+  >([]);
   const [selectedClass, setSelectedClass] = useState<Class>();
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
@@ -125,14 +143,47 @@ function Classes() {
     });
   };
 
-  const columns: ColumnDef<Class>[] = [
+  const columns: ColumnDef<SClass>[] = [
+    {
+      header: 'Marcar',
+      maxSize: 70,
+      meta: {
+        isCheckBox: true,
+        markAllClickFn: handleCheckAllClick,
+        dismarkAllClickFn: handleCheckAllClick,
+      },
+      cell: ({ row }) => (
+        <Box>
+          <Checkbox
+            isChecked={row.original.selected}
+            ml={5}
+            onChange={(event) => {
+              const subjectCode = row.original.subject_code;
+              const classCode = row.original.class_code;
+              const newClassesList = [];
+              for (let cl of classesList) {
+                if (
+                  cl.subject_code === subjectCode &&
+                  cl.class_code === classCode
+                )
+                  cl.selected = event.target.checked;
+                newClassesList.push(cl);
+              }
+              setClassesList(newClassesList);
+            }}
+          />
+        </Box>
+      ),
+    },
     {
       accessorKey: 'subject_code',
       header: 'Código',
+      maxSize: 120,
     },
     {
       accessorKey: 'class_code',
       header: 'Turma',
+      maxSize: 120,
     },
     {
       accessorKey: 'subject_name',
@@ -141,13 +192,32 @@ function Classes() {
     {
       accessorKey: 'ignore_to_allocate',
       header: 'Ignorar',
+      maxSize: 75,
       meta: { isBoolean: true, isSelectable: true },
       filterFn: FilterBoolean,
+    },
+    {
+      accessorFn: (row) => (row.buildings ? row.buildings : ['Não alocada']),
+      filterFn: FilterBuilding,
+      header: 'Prédio',
+      maxSize: 120,
+      cell: ({ row }) => (
+        <Box>
+          {row.original.buildings ? (
+            row.original.buildings.map((build, index) => (
+              <Text key={index}>{build}</Text>
+            ))
+          ) : (
+            <Text>Não alocada</Text>
+          )}
+        </Box>
+      ),
     },
     {
       accessorFn: (row) => (row.classrooms ? row.classrooms : ['Não alocada']),
       filterFn: FilterClassroom,
       header: 'Sala',
+      maxSize: 120,
       cell: ({ row }) => (
         <Box>
           {row.original.classrooms ? (
@@ -196,6 +266,7 @@ function Classes() {
     {
       accessorKey: 'subscribers',
       header: 'Nº Alunos',
+      maxSize: 100,
       filterFn: FilterNumber,
     },
     {
@@ -298,7 +369,8 @@ function Classes() {
     classesService
       .list()
       .then((it) => {
-        setClassesList(it.data.sort(sortClasses));
+        const classes = ClassToSClass(it.data.sort(sortClasses));
+        setClassesList(classes);
         setLoading(false);
       })
       .catch((error) => {
@@ -481,6 +553,68 @@ function Classes() {
       });
   }
 
+  function handleDeleteSelectedClassesClick() {
+    onOpenDeleteSelectedClasses();
+  }
+
+  function getSelectedEventsIds() {
+    const events_ids: string[] = [];
+    const checkedClasses = getCheckedClasses();
+    checkedClasses.forEach((cl) => events_ids.push(...cl.events_ids));
+    return events_ids;
+  }
+
+  function handleDeleteSelectedClasses() {
+    const events_ids = getSelectedEventsIds();
+    setLoading(true);
+    eventsService
+      .deleteManyEvents({ events_ids })
+      .then((it) => {
+        toastSuccess('Turmas removidas com sucesso!');
+      })
+      .catch((error) => {
+        toastError(`Erro ao remover turmas: ${error}`);
+      })
+      .finally(() => {
+        fetchData();
+        setLoading(false);
+      });
+    onCloseDeleteSelectedClasses();
+  }
+
+  function getCheckedClasses() {
+    const checkedClasses: SClass[] = [];
+    classesList.forEach((cl) => {
+      if (cl.selected) checkedClasses.push(cl);
+    });
+    return checkedClasses;
+  }
+
+  function handleCheckAllClick(data: Row<SClass>[], value: boolean) {
+    const newClasses: SClass[] = [];
+
+    if (data.length !== classesList.length) {
+      for (let cl of classesList) {
+        const newCl = { ...cl };
+        data.forEach((row) => {
+          if (
+            row.original.class_code === cl.class_code &&
+            row.original.subject_code === cl.subject_code
+          ) {
+            newCl.selected = value;
+          }
+        });
+        newClasses.push(newCl);
+      }
+    } else {
+      for (let i = 0; i < data.length; i++) {
+        const newClass = { ...data[i].original, selected: value };
+        newClasses.push(newClass);
+      }
+    }
+    setClassesList(newClasses);
+  }
+
   return (
     <>
       <Navbar />
@@ -518,24 +652,41 @@ function Classes() {
         successSubjects={successSubjects}
         failedSubjects={failedSubjects}
       />
+      <MultipleEditModal
+        isOpen={isOpenMultipleEdit}
+        onClose={() => {
+          onCloseMultipleEdit();
+        }}
+        classes={getCheckedClasses()}
+        onRefresh={() => fetchData()}
+      />
 
       <Center>
-        <Box p={4} w='9xl' overflow='auto'>
+        <Box p={4} w={'100%'} overflow='auto'>
           <Flex align='center'>
             <Text fontSize='4xl' mb={4}>
               Turmas
             </Text>
             <Spacer />
-            <Button mr={2} colorScheme='blue' onClick={handleRegisterClick}>
+            <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
               Adicionar Turma
             </Button>
             <JupiterCrawlerPopover onSave={handleCrawlerSave} />
             <Button
               ml={2}
-              colorScheme={'red'}
-              onClick={() => console.log('Remover tudo')}
+              colorScheme={'blue'}
+              onClick={() => {
+                onOpenMultipleEdit();
+              }}
             >
-              Remover turmas
+              Editar selecionados
+            </Button>
+            <Button
+              ml={2}
+              colorScheme={'red'}
+              onClick={handleDeleteSelectedClassesClick}
+            >
+              Remover selecioandos
             </Button>
           </Flex>
           <Dialog
@@ -543,6 +694,13 @@ function Classes() {
             onClose={onCloseDeleteClass}
             onConfirm={handleDeleteClass}
             title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
+          />
+          <Dialog
+            isOpen={isOpenDeleteSelectedClasses}
+            onClose={onCloseDeleteSelectedClasses}
+            onConfirm={handleDeleteSelectedClasses}
+            title={`Deseja remover todas as turmas selecionadas`}
+            warningText='ATENÇÃO: QUALQUER TURMA SELECIONADA SERÁ PERDIDA!'
           />
           <Dialog
             isOpen={isOpenDeleteAlloc}

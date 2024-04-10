@@ -20,6 +20,10 @@ export default interface Class {
   events_ids: string[];
 }
 
+export interface SClass extends Class {
+  selected: boolean;
+}
+
 export interface Preferences {
   building_id: string;
   air_conditioning?: boolean;

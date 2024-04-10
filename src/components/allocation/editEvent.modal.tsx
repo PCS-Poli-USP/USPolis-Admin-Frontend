@@ -12,13 +12,14 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Select,
   Spinner,
   Stack,
   Text,
   useCheckboxGroup,
   useDisclosure,
 } from '@chakra-ui/react';
+import { Select as CSelect } from '@chakra-ui/react';
+import Select from 'react-select';
 import Dialog from 'components/common/dialog.component';
 import { appContext } from 'context/AppContext';
 import { Building } from 'models/building.model';
@@ -28,6 +29,11 @@ import { useContext, useEffect, useState } from 'react';
 import BuildingsService from 'services/buildings.service';
 import ClassroomsService from 'services/classrooms.service';
 import { Capitalize } from 'utils/formatters';
+
+interface ClassroomOption {
+  value: string;
+  label: string;
+}
 
 interface EditEventModalProps {
   isOpen: boolean;
@@ -92,10 +98,12 @@ export default function EditEventModal({
   useEffect(() => {
     resetClassroomsDropdown();
     getAvailableClassrooms();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedEvents]);
 
   useEffect(() => {
     setCheckedEvents(classEvents.map((it) => it.id ?? ''));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classEvents]);
 
   async function getAvailableClassrooms() {
@@ -124,6 +132,8 @@ export default function EditEventModal({
       value.sort((a, b) => {
         if (a.conflicted && !b.conflicted) return 1;
         if (!a.conflicted && b.conflicted) return -1;
+        if (a.classroom_name < b.classroom_name) return -1;
+        if (a.classroom_name > b.classroom_name) return 1;
         return 0;
       }),
     );
@@ -241,7 +251,7 @@ export default function EditEventModal({
             {buildingsList.length !== 1 && (
               <>
                 <FormLabel mt={4}>Prédio</FormLabel>
-                <Select
+                <CSelect
                   placeholder='Selecionar prédio'
                   onChange={(event) => {
                     setSelectedBuilding(
@@ -256,7 +266,7 @@ export default function EditEventModal({
                       {it.name}
                     </option>
                   ))}
-                </Select>
+                </CSelect>
               </>
             )}
             <FormLabel mt={4}>Salas disponíveis</FormLabel>
@@ -267,38 +277,28 @@ export default function EditEventModal({
               </Alert>
             )}
             <Select
-              icon={classroomsLoading ? <Spinner size='sm' /> : undefined}
-              disabled={
-                classroomsLoading ||
-                !selectedBuilding ||
-                availableClassrooms.length < 1
-              }
-              placeholder='Sala - Capacidade'
-              isInvalid={
-                selectedClassroom &&
-                classData?.subscribers > selectedClassroom.capacity
-              }
-              value={selectedClassroom?.classroom_name}
-              onChange={(event) => {
+              placeholder={'Sala - Capacidade'}
+              isLoading={classroomsLoading}
+              options={availableClassrooms.map((it) =>
+                it.conflicted
+                  ? {
+                      value: it.classroom_name,
+                      label: `⚠️ ${it.classroom_name} - ${it.capacity}`,
+                    }
+                  : {
+                      value: it.classroom_name,
+                      label: `${it.classroom_name} - ${it.capacity}`,
+                    },
+              )}
+              onChange={(selected) => {
+                const selectedClassroom = selected as ClassroomOption;
                 setSelectedClassroom(
                   availableClassrooms.find(
-                    (it) => event.target.value === it.classroom_name,
+                    (it) => selectedClassroom.value === it.classroom_name,
                   ),
                 );
               }}
-            >
-              {availableClassrooms.map((it) =>
-                it.conflicted ? (
-                  <option key={it.classroom_name} value={it.classroom_name}>
-                    ⚠️ {it.classroom_name} - {it.capacity}
-                  </option>
-                ) : (
-                  <option key={it.classroom_name} value={it.classroom_name}>
-                    {it.classroom_name} - {it.capacity}
-                  </option>
-                ),
-              )}
-            </Select>
+            />
           </FormControl>
 
           <Dialog

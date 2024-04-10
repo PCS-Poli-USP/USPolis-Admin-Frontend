@@ -64,15 +64,13 @@ export default function JupiterCrawlerPopover({
   }, [loggedUser]);
 
   function handleAddClick() {
-    if (subjectInput.length > 6 && !subjectsList.includes(subjectInput)) {
+    if (subjectInput.length === 7 && !subjectsList.includes(subjectInput)) {
       setSubjectsList((prev) => [...prev, subjectInput.replace(' ', '')]);
       setSubjectInput('');
     }
     if (multSubjectInput.length > 6) {
-      const formatedInput = multSubjectInput.replace(' ', '');
-      const subjects = formatedInput
-        .split(',')
-        .filter((value) => value.length === 7);
+      const formatedInput = multSubjectInput.replaceAll(' ', '');
+      const subjects = formatedInput.split(',').filter((value) => (value.length === 7 && !subjectsList.includes(value)));
       setSubjectsList((prev) => prev.concat(subjects));
       setMultSubjectInput('');
     }
