@@ -59,7 +59,7 @@ export default function EditEventModal({
     onOpen: onOpenDialog,
     onClose: onCloseDialog,
   } = useDisclosure();
-  const { dbUser } = useContext(appContext);
+  const { loggedUser } = useContext(appContext);
   const [availableClassrooms, setAvailableClassrooms] = useState<
     AvailableClassroom[]
   >([]);
@@ -88,7 +88,7 @@ export default function EditEventModal({
   useEffect(() => {
     getBuildingsList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dbUser]);
+  }, [loggedUser]);
 
   useEffect(() => {
     getAvailableClassrooms();
@@ -140,15 +140,15 @@ export default function EditEventModal({
   }
 
   function getBuildingsList() {
-    if (dbUser) {
-      if (dbUser.isAdmin) {
+    if (loggedUser) {
+      if (loggedUser.isAdmin) {
         setBuildingsLoading(true);
         buildingsService.list().then((response) => {
           setBuildingsList(response.data);
           setBuildingsLoading(false);
         });
       } else {
-        setBuildingsList(dbUser.buildings);
+        setBuildingsList(loggedUser.buildings);
       }
     }
   }

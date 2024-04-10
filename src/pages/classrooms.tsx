@@ -31,6 +31,9 @@ import {
 import { sortBuildings, sortClassrooms } from 'utils/sorter';
 import { Building } from 'models/building.model';
 import BuildingsService from 'services/buildings.service';
+import AdminClassroomService, {
+  AdminUpdateClassroom,
+} from 'services/admin.classrooms.service';
 
 function Classrooms() {
   const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);
@@ -47,9 +50,9 @@ function Classrooms() {
   } = useDisclosure();
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom>();
   const [isUpdate, setIsUpdate] = useState(false);
-  const { setLoading } = useContext(appContext);
+  const { setLoading, loggedUser } = useContext(appContext);
 
-  const columns: ColumnDef<Classroom>[] = [
+  const [columns, setColumns] = useState<ColumnDef<Classroom>[]>([
     {
       accessorKey: 'classroom_name',
       header: 'Nome',
@@ -128,9 +131,10 @@ function Classrooms() {
         </HStack>
       ),
     },
-  ];
+  ]);
 
   const classroomService = new ClassroomsService();
+  const adminClassroomService = new AdminClassroomService();
   const buildingsService = new BuildingsService();
 
   const toast = useToast();
@@ -158,15 +162,32 @@ function Classrooms() {
   useEffect(() => {
     fetchData();
     fetchBuildings();
+    if (loggedUser?.isAdmin)
+      setColumns([
+        {
+          accessorKey: 'created_by',
+          header: 'Usuário',
+        },
+        ...columns,
+      ]);
     // eslint-disable-next-line
-  }, []);
+  }, [loggedUser?.isAdmin]);
 
   function fetchData() {
     setLoading(true);
-    classroomService.list().then((it) => {
-      setClassroomsList(it.data.sort(sortClassrooms));
-      setLoading(false);
-    });
+    if (!!loggedUser) {
+      if (!loggedUser.isAdmin) {
+        classroomService.list().then((it) => {
+          setClassroomsList(it.data.sort(sortClassrooms));
+          setLoading(false);
+        });
+      } else {
+        adminClassroomService.list().then((it) => {
+          setClassroomsList(it.data.sort(sortClassrooms));
+          setLoading(false);
+        });
+      }
+    }
   }
 
   function fetchBuildings() {
@@ -208,9 +229,15 @@ function Classrooms() {
   }
 
   function handleSave(formData: Classroom) {
+    const { id, ...formDataWithoutId } = formData;
     const request = isUpdate
-      ? classroomService.update(formData.classroom_name, formData)
-      : classroomService.create(formData);
+      ? loggedUser?.isAdmin
+        ? adminClassroomService.update(id, formDataWithoutId)
+        : classroomService.update(
+            formDataWithoutId.classroom_name,
+            formDataWithoutId,
+          )
+      : classroomService.create(formDataWithoutId);
     Promise.resolve(request)
       .then((it) => {
         console.log(it.data);

@@ -1,20 +1,22 @@
-import { Auth } from 'aws-amplify';
+import { Auth, Hub } from 'aws-amplify';
 import { User } from 'models/user.model';
 import React, { createContext, useEffect, useState } from 'react';
 import SelfService from 'services/self.service';
 
-export interface AppContext {
+interface AppContext {
   loading: boolean;
   setLoading: (value: boolean) => void;
   username: string;
-  dbUser: User | null;
+  loggedUser: User | null;
+  logout: () => void;
 }
 
 const DEFAULT_VALUE = {
   loading: false,
   setLoading: () => {},
   username: '',
-  dbUser: null,
+  loggedUser: null,
+  logout: async () => {},
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -24,17 +26,38 @@ export default function AppContextProvider({
 }: React.PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
-  const [dbUser, setDbUser] = useState<User | null>(null);
+  const [loggedUser, setLoggedUser] = useState<User | null>(null);
 
   const selfService = new SelfService();
 
-  async function getSelf() {
+  async function getSelfFromBackend() {
     try {
+      await Auth.currentUserInfo();
       const self = await selfService.getSelf();
-      setDbUser(self.data);
+      setLoggedUser(self.data);
+      console.log('Usuário logado:');
+      console.log(self.data);
+      localStorage.setItem('user', JSON.stringify(self.data));
     } catch (error) {
       console.error(error);
     }
+  }
+
+  async function getSelf() {
+    const userFromStorage = localStorage.getItem('user');
+    if (!userFromStorage) {
+      await getSelfFromBackend();
+    } else {
+      const parsedUser: User = JSON.parse(userFromStorage) as User;
+      setLoggedUser(parsedUser);
+      console.log('Usuário logado (storage):');
+      console.log(parsedUser);
+    }
+  }
+
+  async function logout() {
+    Auth.signOut();
+    localStorage.removeItem('user');
   }
 
   useEffect(() => {
@@ -42,8 +65,20 @@ export default function AppContextProvider({
     getSelf();
   }, []);
 
+  useEffect(() => {
+    Hub.listen('auth', (data) => {
+      getSelf();
+      console.log(
+        'A new auth event has happened: ',
+        data.payload.data.username + ' has ' + data.payload.event,
+      );
+    });
+  }, []);
+
   return (
-    <appContext.Provider value={{ loading, setLoading, username, dbUser }}>
+    <appContext.Provider
+      value={{ loading, setLoading, username, loggedUser, logout }}
+    >
       {children}
     </appContext.Provider>
   );

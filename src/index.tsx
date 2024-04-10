@@ -5,7 +5,12 @@ import Classrooms from 'pages/classrooms';
 import InstitutionalEvents from 'pages/institutional-events';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes,
+} from 'react-router-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -20,7 +25,9 @@ import ConflictsPage from 'pages/conflicts';
 
 Amplify.configure(awsConfig);
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement,
+);
 root.render(
   // <React.StrictMode>
     <ChakraProvider theme={theme}>
@@ -37,7 +44,10 @@ root.render(
               <Route path='classes' element={<Classes />} />
               <Route path='allocation' element={<Allocation />} />
               <Route path='conflicts' element={<ConflictsPage />} />
-              <Route path='institutional-events' element={<InstitutionalEvents />} />
+              <Route
+                path='institutional-events'
+                element={<InstitutionalEvents />}
+              />
             </Route>
           </Routes>
         </Router>

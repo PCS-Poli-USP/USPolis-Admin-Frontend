@@ -14,6 +14,7 @@ import {
   VStack,
   Text,
   useToast,
+  Checkbox,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -45,8 +46,26 @@ interface EventFormModalProps extends ModalProps {
 
 const service = new InstutionalEventsService();
 
-function EventFormModal({ isOpen, onClose, refetch, selectedEvent, buildings }: EventFormModalProps) {
+function EventFormModal({
+  isOpen,
+  onClose,
+  refetch,
+  selectedEvent,
+  buildings,
+}: EventFormModalProps) {
   const [loading, setLoading] = useState(false);
+  const [fullDayEvent, setFullDayEvent] = useState(false);
+
+  useEffect(() => {
+    if (
+      selectedEvent &&
+      selectedEvent.end_datetime === selectedEvent.start_datetime
+    ) {
+      setFullDayEvent(true);
+    } else {
+      setFullDayEvent(false);
+    }
+  }, [selectedEvent]);
 
   const form = useForm<EventForm>({
     defaultValues: defaultValues,
@@ -68,6 +87,10 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent, buildings }: 
       setLoading(true);
 
       const values = getValues();
+
+      if (fullDayEvent) {
+        values['end_datetime'] = values['start_datetime'];
+      }
 
       await service.create(values);
 
@@ -101,6 +124,10 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent, buildings }: 
       setLoading(true);
 
       const values = getValues();
+
+      if (fullDayEvent) {
+        values['end_datetime'] = values['start_datetime'];
+      }
 
       await service.update(selectedEvent._id, values);
 
@@ -139,10 +166,18 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent, buildings }: 
   }, [reset, selectedEvent]);
 
   return (
-    <Modal onClose={onClose} isOpen={isOpen} closeOnOverlayClick={false} size='3xl' isCentered>
+    <Modal
+      onClose={onClose}
+      isOpen={isOpen}
+      closeOnOverlayClick={false}
+      size='3xl'
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{!!selectedEvent ? 'Atualizar evento' : 'Cadastrar de evento'}</ModalHeader>
+        <ModalHeader>
+          {!!selectedEvent ? 'Atualizar evento' : 'Cadastrar de evento'}
+        </ModalHeader>
         <ModalCloseButton />
         <FormProvider {...form}>
           <form>
@@ -152,26 +187,64 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent, buildings }: 
                   <Input label='Título' name='title' />
                 </Box>
                 <Textarea label='Descrição' name='description' />
-                <Flex w='100%' gap={3}>
-                  <Input label='Início' name='start_datetime' type='datetime-local' />
-                  <Input label='Fim' name='end_datetime' type='datetime-local' />
-                </Flex>
-                <Input label='Localização' name='location' disabled={!!buildingWatcher} />
+                <Box alignSelf='flex-start'>
+                  <Checkbox
+                    isChecked={fullDayEvent}
+                    onChange={(e) => {
+                      setFullDayEvent(e.target.checked);
+                      form.setValue('end_datetime', '');
+                      form.setValue('start_datetime', '');
+                    }}
+                  >
+                    Evento de dia inteiro
+                  </Checkbox>
+                </Box>
+                {fullDayEvent ? (
+                  <Input label='Data' name='start_datetime' type='date' />
+                ) : (
+                  <Flex w='100%' gap={3}>
+                    <Input
+                      label='Início'
+                      name='start_datetime'
+                      type='datetime-local'
+                    />
+                    <Input
+                      label='Fim'
+                      name='end_datetime'
+                      type='datetime-local'
+                    />
+                  </Flex>
+                )}
+                <Input
+                  label='Localização'
+                  name='location'
+                  disabled={!!buildingWatcher}
+                />
                 <Text color='gray.500'>ou</Text>
                 <Flex w='100%' gap={3}>
                   <Select
                     label='Prédio'
                     name='building'
                     disabled={!!locationWatcher}
-                    options={buildings.map((b) => ({ label: b.name, value: b.name }))}
+                    options={buildings.map((b) => ({
+                      label: b.name,
+                      value: b.name,
+                    }))}
                   />
-                  <Input label='Sala' name='classroom' disabled={!!locationWatcher} />
+                  <Input
+                    label='Sala'
+                    name='classroom'
+                    disabled={!!locationWatcher}
+                  />
                 </Flex>
                 <Flex w='100%' gap={3}>
                   <Select
                     label='Categoria'
                     name='category'
-                    options={Object.keys(EventTypes).map((opt) => ({ label: opt, value: opt }))}
+                    options={Object.keys(EventTypes).map((opt) => ({
+                      label: opt,
+                      value: opt,
+                    }))}
                   />
                   <Input label='Link externo' name='external_link' type='url' />
                 </Flex>
@@ -182,7 +255,12 @@ function EventFormModal({ isOpen, onClose, refetch, selectedEvent, buildings }: 
                 <Button onClick={onClose} variant='outline'>
                   Fechar
                 </Button>
-                <Button onClick={!!selectedEvent ? handleUpdateSubmit : handleCreateSubmit} isLoading={loading}>
+                <Button
+                  onClick={
+                    !!selectedEvent ? handleUpdateSubmit : handleCreateSubmit
+                  }
+                  isLoading={loading}
+                >
                   Confirmar
                 </Button>
               </HStack>
