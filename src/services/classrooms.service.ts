@@ -1,5 +1,8 @@
 import { AxiosResponse } from 'axios';
-import Classroom, { AvailableClassroom } from 'models/classroom.model';
+import Classroom, {
+  AvailableClassroom,
+  ClassroomSchedule,
+} from 'models/classroom.model';
 import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
@@ -7,6 +10,11 @@ const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 interface GetAvailableWithConflictIndicatorProps {
   events_ids: string[];
   building_id: string;
+}
+
+interface GetClassroomsSchedulesProps {
+  classrooms: string[];
+  buildings: string[];
 }
 
 export default class ClassroomsService extends HttpService {
@@ -48,7 +56,38 @@ export default class ClassroomsService extends HttpService {
     );
     return response;
   }
+
+  getClassroomsByBuilding(
+    building: string,
+  ): Promise<AxiosResponse<Classroom[]>> {
+    return this.http.get(`/${building}`);
+  }
+
   getAllSchedules() {
     return this.http.get('schedules');
+  }
+
+  getClassroomSchedule(
+    classroom: string,
+    building: string,
+  ): Promise<AxiosResponse<ClassroomSchedule>> {
+    return this.http.get('/classroom-schedule', {
+      params: { classroom, building },
+    });
+  }
+
+  getClassroomsSchedulesByBuilding(
+    building: string,
+  ): Promise<AxiosResponse<ClassroomSchedule[]>> {
+    return this.http.get(`/${building}/classrooms-schedules`);
+  }
+
+  async getManyClassroomsSchedules(
+    data: GetClassroomsSchedulesProps,
+  ): Promise<AxiosResponse<ClassroomSchedule[]>> {
+    const response = await this.http.get('/many-classrooms-schedules', {
+      params: { classrooms: data.classrooms, buildings: data.buildings },
+    });
+    return response;
   }
 }

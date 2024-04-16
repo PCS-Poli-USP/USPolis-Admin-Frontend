@@ -17,3 +17,16 @@ export const WeekDaysDict = {
   5: 'Sábado',
   6: 'Domingo',
 };
+
+export const WeekDaysShortDict = {
+  0: 'seg',
+  1: 'ter',
+  2: 'qua',
+  3: 'qui',
+  4: 'sex',
+  5: 'sab',
+  6: 'dom',
+};
+
+export type WeekDaysKeyNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export type WeekDaysShortText = 'seg' | 'ter' | 'qua' | 'qui' | 'sex' | 'sab' | 'dom';

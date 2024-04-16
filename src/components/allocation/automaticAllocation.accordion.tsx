@@ -19,7 +19,7 @@ import Event from 'models/event.model';
 import { useEffect, useState } from 'react';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 import ClassroomsService from 'services/classrooms.service';
-import { sortClassrooms, sortEventsByClassroomAndTime } from 'utils/sorter';
+import { sortClassrooms, sortEventsBySubjectAndClass } from 'utils/sorter';
 
 interface AutomaticAllocationAccordionProps {
   onEdit: (event: Event) => void;
@@ -50,8 +50,8 @@ export default function AutomaticAllocationAccordion({
     });
   }
 
-  allocatedEvents.sort(sortEventsByClassroomAndTime);
-  unallocatedEvents.sort(sortEventsByClassroomAndTime);
+  allocatedEvents.sort(sortEventsBySubjectAndClass);
+  unallocatedEvents.sort(sortEventsBySubjectAndClass);
 
   return (
     <Accordion

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import * as C from '@chakra-ui/react';
 
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
@@ -6,7 +6,7 @@ import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { ColumnDef } from '@tanstack/react-table';
 import Navbar from 'components/common/navbar.component';
 import UsersService from 'services/users.service';
-import { User, CreateUser, EditUser } from 'models/user.model';
+import { User, EditUser } from 'models/user.model';
 import DataTable from 'components/common/dataTable.component';
 import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { appContext } from 'context/AppContext';

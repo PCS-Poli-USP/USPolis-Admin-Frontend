@@ -109,6 +109,7 @@ function ClassroomsTables(props: any) {
         toastSuccess(
           `Alocação de ${subjectCode} - ${classCode}  removida com sucesso!`,
         );
+        window.location.reload();
       })
       .catch((error) => {
         toastError(

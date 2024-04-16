@@ -16,7 +16,12 @@ export default interface Class {
   has_to_be_allocated: boolean;
   ignore_to_allocate: boolean;
   classrooms?: string[];
+  buildings?: string[];
   events_ids: string[];
+}
+
+export interface SClass extends Class {
+  selected: boolean;
 }
 
 export interface Preferences {

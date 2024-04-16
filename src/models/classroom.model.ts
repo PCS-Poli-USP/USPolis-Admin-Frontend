@@ -1,4 +1,5 @@
 export default interface Classroom {
+  id?: string;
   classroom_name: string;
   building: string;
   floor: number;
@@ -8,6 +9,7 @@ export default interface Classroom {
   projector: boolean;
   accessibility: boolean;
   updated_at?: string;
+  created_by?: string;
 }
 
 export interface AvailableClassroom {
@@ -15,4 +17,30 @@ export interface AvailableClassroom {
   building: string;
   capacity: number;
   conflicted?: boolean;
+}
+
+export type TimeTuple = [string, string];
+
+export interface ClassroomConflictMap {
+  seg: TimeTuple[];
+  ter: TimeTuple[];
+  qua: TimeTuple[];
+  qui: TimeTuple[];
+  sex: TimeTuple[];
+  sab: TimeTuple[];
+  dom: TimeTuple[];
+}
+
+export interface ClassroomSchedule {
+  seg: TimeTuple[];
+  ter: TimeTuple[];
+  qua: TimeTuple[];
+  qui: TimeTuple[];
+  sex: TimeTuple[];
+  sab: TimeTuple[];
+  dom: TimeTuple[];
+  conflict_map: ClassroomConflictMap;
+  building: string;
+  classroom_name: string;
+  capacity: number;
 }

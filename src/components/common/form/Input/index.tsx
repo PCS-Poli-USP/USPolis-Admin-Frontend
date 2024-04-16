@@ -1,12 +1,23 @@
-import { FormLabel, Input as ChakraInput, FormControl, FormErrorMessage } from '@chakra-ui/react';
+import {
+  FormLabel,
+  Input as ChakraInput,
+  FormControl,
+  FormErrorMessage,
+} from '@chakra-ui/react';
 import { FieldProps } from 'models/interfaces';
+import React from 'react';
 import { useFormContext } from 'react-hook-form';
 
 interface InputProps extends FieldProps {
   type?: React.HTMLInputTypeAttribute;
 }
 
-export function Input({ label, name, type = 'text', disabled = false }: InputProps) {
+export function Input({
+  label,
+  name,
+  type = 'text',
+  disabled = false,
+}: InputProps) {
   const {
     register,
     formState: { errors },

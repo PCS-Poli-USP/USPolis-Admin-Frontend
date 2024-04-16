@@ -38,7 +38,7 @@ export default function JupiterCrawlerPopover({
   subjects = [],
   onSave,
 }: JupiterCrawlerPopoverPrpos) {
-  const { dbUser } = useContext(appContext);
+  const { loggedUser } = useContext(appContext);
 
   const buildingsService = new BuildingsService();
 
@@ -61,18 +61,16 @@ export default function JupiterCrawlerPopover({
 
   useEffect(() => {
     getBuildingsList();
-  }, [dbUser]);
+  }, [loggedUser]);
 
   function handleAddClick() {
-    if (subjectInput.length > 6 && !subjectsList.includes(subjectInput)) {
+    if (subjectInput.length === 7 && !subjectsList.includes(subjectInput)) {
       setSubjectsList((prev) => [...prev, subjectInput.replace(' ', '')]);
       setSubjectInput('');
     }
     if (multSubjectInput.length > 6) {
-      const formatedInput = multSubjectInput.replace(' ', '');
-      const subjects = formatedInput
-        .split(',')
-        .filter((value) => value.length === 7);
+      const formatedInput = multSubjectInput.replaceAll(' ', '');
+      const subjects = formatedInput.split(',').filter((value) => (value.length === 7 && !subjectsList.includes(value)));
       setSubjectsList((prev) => prev.concat(subjects));
       setMultSubjectInput('');
     }
@@ -91,15 +89,15 @@ export default function JupiterCrawlerPopover({
   }
 
   function getBuildingsList() {
-    if (dbUser) {
-      if (dbUser.isAdmin) {
+    if (loggedUser) {
+      if (loggedUser.isAdmin) {
         setBuildingsLoading(true);
         buildingsService.list().then((response) => {
           setBuildingsList(response.data);
           setBuildingsLoading(false);
         });
       } else {
-        setBuildingsList(dbUser.buildings);
+        setBuildingsList(loggedUser.buildings);
       }
     }
   }

@@ -372,7 +372,7 @@ export default function RegisterModal(props: RegisterModalProps) {
                 onChange={(event) => {
                   setForm((prev) => ({
                     ...prev,
-                    subject_code: event.target.value,
+                    subject_code: event.target.value.toUpperCase(),
                   }));
                   if (event.target.value) setHasSubjectCodeError(false);
                 }}

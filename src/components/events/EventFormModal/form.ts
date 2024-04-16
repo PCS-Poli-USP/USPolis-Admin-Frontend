@@ -8,21 +8,27 @@ export const formFields = {
     validator: yup
       .string()
       .nullable()
-      .when('location', ([location], s) => (!location ? s.required('Necessário informar local do evento') : s)),
+      .when('location', ([location], s) =>
+        !location ? s.required('Necessário informar local do evento') : s,
+      ),
     defaultValue: '',
   },
   classroom: {
     validator: yup
       .string()
       .nullable()
-      .when('location', ([location], s) => (!location ? s.required('Necessário informar local do evento') : s)),
+      .when('location', ([location], s) =>
+        !location ? s.required('Necessário informar local do evento') : s,
+      ),
     defaultValue: '',
   },
   category: {
     validator: yup
       .string()
       .required('Campo obrigatório')
-      .test('is-valid-option', 'Campo obrigatório', (value) => Object.keys(EventTypes).includes(value)),
+      .test('is-valid-option', 'Campo obrigatório', (value) =>
+        Object.keys(EventTypes).includes(value),
+      ),
     defaultValue: '',
   },
   description: {
@@ -37,7 +43,9 @@ export const formFields = {
     validator: yup
       .string()
       .nullable()
-      .when('building', ([building], s) => (!building ? s.required('Necessário informar local do evento') : s)),
+      .when('building', ([building], s) =>
+        !building ? s.required('Necessário informar local do evento') : s,
+      ),
     defaultValue: '',
   },
   title: {
@@ -54,10 +62,17 @@ export const formFields = {
   end_datetime: {
     validator: yup
       .string()
-      .required('Campo obrigatório')
-      .test('is-valid', 'Data inválida', (value) => moment(value).isValid())
-      .test('is-after-start', 'Data precisa ser posterior a data de início', (value, context) =>
-        moment(value).isAfter(moment(context.parent['start_datetime'])),
+      .test(
+        'is-valid',
+        'Data inválida',
+        (value) => !value || moment(value).isValid(),
+      )
+      .test(
+        'is-after-start',
+        'Data precisa ser posterior a data de início',
+        (value, context) =>
+          !value ||
+          moment(value).isAfter(moment(context.parent['start_datetime'])),
       ),
     defaultValue: '',
   },
