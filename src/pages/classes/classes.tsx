@@ -188,6 +188,7 @@ function Classes() {
     {
       accessorKey: 'subject_name',
       header: 'Disciplina',
+      maxSize: 300,
     },
     {
       accessorKey: 'ignore_to_allocate',
