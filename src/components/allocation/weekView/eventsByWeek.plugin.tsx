@@ -3,12 +3,13 @@ import { createPlugin, sliceEvents } from '@fullcalendar/react';
 import { EventsByClassroomMapper } from 'utils/mappers/allocation.mapper';
 import { ClassRoomRow } from './classroomRow.component';
 import { WeekDaysHeader } from './weekDaysHeader.component';
-import { EventByClassrooms } from 'models/event.model';
-
+import { EventByClassrooms } from 'models/database/event.model';
 
 function CalendarWeekView(props: any) {
   const events = sliceEvents(props);
-  const eventsByClassrooms = EventsByClassroomMapper(events).sort(sortEventsByClassrooms);
+  const eventsByClassrooms = EventsByClassroomMapper(events).sort(
+    sortEventsByClassrooms,
+  );
   const startDate = new Date(props.dateProfile.activeRange.start);
 
   return (
@@ -16,13 +17,20 @@ function CalendarWeekView(props: any) {
       <WeekDaysHeader startDate={startDate} />
 
       {eventsByClassrooms.map((eventsByClass, index) => (
-        <ClassRoomRow key={index} classroom={eventsByClass[0]} events={eventsByClass[1]} />
+        <ClassRoomRow
+          key={index}
+          classroom={eventsByClass[0]}
+          events={eventsByClass[1]}
+        />
       ))}
     </VStack>
   );
 }
 
-function sortEventsByClassrooms(A: [string, EventByClassrooms[]], B: [string, EventByClassrooms[]]) {
+function sortEventsByClassrooms(
+  A: [string, EventByClassrooms[]],
+  B: [string, EventByClassrooms[]],
+) {
   if (A[0] < B[0]) return -1;
   else if (A[0] > B[0]) return 1;
   return 0;

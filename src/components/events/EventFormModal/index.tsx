@@ -22,9 +22,9 @@ import { defaultValues, schema } from './form';
 import { Input, Select, Textarea } from 'components/common';
 import { useEffect, useState } from 'react';
 import InstutionalEventsService from 'services/institutional-events.service';
-import { InstitutionalEvent } from 'models/institutionalEvent.model';
+import { InstitutionalEvent } from 'models/database/institutionalEvent.model';
 import { EventTypes } from 'models/enums/eventTypes.enum';
-import { Building } from 'models/building.model';
+import { Building } from 'models/database/building.model';
 
 export type EventForm = {
   building?: string | null;

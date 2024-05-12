@@ -18,7 +18,7 @@ import {
   AlertIcon,
   Skeleton,
 } from '@chakra-ui/react';
-import Class from 'models/class.model';
+import Class from 'models/database/class.model';
 import MultipleEditAccordion from './multipleEdit.accordion';
 import { useEffect, useState } from 'react';
 import { CalendarIcon } from '@chakra-ui/icons';
@@ -27,7 +27,7 @@ import EventsService from 'services/events.service';
 import { ClassesBySubject } from 'utils/mappers/classes.mapper';
 import { sortClassMapBySubject, sortClassroomScheduleMap } from 'utils/sorter';
 import { ConflictCalculator } from 'utils/conflict.calculator';
-import { ClassroomSchedule } from 'models/classroom.model';
+import { ClassroomSchedule } from 'models/database/classroom.model';
 import ClassroomsService from 'services/classrooms.service';
 
 interface MultipleEditModalProps {

@@ -18,7 +18,7 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import Class, { HasToBeAllocatedClass } from 'models/class.model';
+import Class, { HasToBeAllocatedClass } from 'models/database/class.model';
 import { useEffect, useState } from 'react';
 import { FaGraduationCap } from 'react-icons/fa';
 
@@ -29,29 +29,46 @@ interface HasToBeAllocatedDrawerProps {
   onSave: (data: HasToBeAllocatedClass[]) => void;
 }
 
-export default function HasToBeAllocatedDrawer({ isOpen, onClose, classesList, onSave }: HasToBeAllocatedDrawerProps) {
-  const [hasToBeAllocatedClasses, setHasToBeAllocatedClasses] = useState<HasToBeAllocatedClass[]>();
+export default function HasToBeAllocatedDrawer({
+  isOpen,
+  onClose,
+  classesList,
+  onSave,
+}: HasToBeAllocatedDrawerProps) {
+  const [hasToBeAllocatedClasses, setHasToBeAllocatedClasses] =
+    useState<HasToBeAllocatedClass[]>();
 
   useEffect(() => {
     if (classesList) {
       setHasToBeAllocatedClasses(
         classesList
-          .map(({ class_code, subject_code, has_to_be_allocated, professors }) => ({
-            subject_code,
-            class_code,
-            has_to_be_allocated,
-            professors: [...new Set(professors)],
-          }))
+          .map(
+            ({
+              class_code,
+              subject_code,
+              has_to_be_allocated,
+              professors,
+            }) => ({
+              subject_code,
+              class_code,
+              has_to_be_allocated,
+              professors: [...new Set(professors)],
+            }),
+          )
           .sort(sortBySobjectAndClassCode),
       );
     }
   }, [classesList]);
 
-  function sortBySobjectAndClassCode(a: HasToBeAllocatedClass, b: HasToBeAllocatedClass) {
+  function sortBySobjectAndClassCode(
+    a: HasToBeAllocatedClass,
+    b: HasToBeAllocatedClass,
+  ) {
     const compareSubjectCode = a.subject_code.localeCompare(b.subject_code);
 
     // same class code
-    if (compareSubjectCode === 0) return a.class_code.localeCompare(b.class_code);
+    if (compareSubjectCode === 0)
+      return a.class_code.localeCompare(b.class_code);
     return compareSubjectCode;
   }
 
@@ -67,14 +84,21 @@ export default function HasToBeAllocatedDrawer({ isOpen, onClose, classesList, o
         <DrawerHeader>
           Alocação impossível
           <Text fontSize='md' fontWeight='normal'>
-            Não foi possível alocar todas as turmas, isso pode ter ocorrido por 3 principais motivos:
+            Não foi possível alocar todas as turmas, isso pode ter ocorrido por
+            3 principais motivos:
             <OrderedList>
-              <ListItem>Salas insuficientes para as preferências das turmas</ListItem>
-              <ListItem>Salas insuficientes para a quantidade de alunos das turmas</ListItem>
-              <ListItem>Salas insuficientes para os horários das turmas</ListItem>
+              <ListItem>
+                Salas insuficientes para as preferências das turmas
+              </ListItem>
+              <ListItem>
+                Salas insuficientes para a quantidade de alunos das turmas
+              </ListItem>
+              <ListItem>
+                Salas insuficientes para os horários das turmas
+              </ListItem>
             </OrderedList>
-            Para o 3 caso, selecione turmas menos prioritárias que não precisam ser alocadas no prédio em questão e
-            tente novamente.
+            Para o 3 caso, selecione turmas menos prioritárias que não precisam
+            ser alocadas no prédio em questão e tente novamente.
           </Text>
         </DrawerHeader>
         <DrawerBody>
@@ -88,14 +112,25 @@ export default function HasToBeAllocatedDrawer({ isOpen, onClose, classesList, o
                     onChange={(event) =>
                       setHasToBeAllocatedClasses(
                         hasToBeAllocatedClasses
-                          .map((cl, idx) => (index === idx ? { ...cl, has_to_be_allocated: event.target.checked } : cl))
+                          .map((cl, idx) =>
+                            index === idx
+                              ? {
+                                  ...cl,
+                                  has_to_be_allocated: event.target.checked,
+                                }
+                              : cl,
+                          )
                           .sort(sortBySobjectAndClassCode),
                       )
                     }
                   >
                     {cls.subject_code} - {cls.class_code}
                   </Checkbox>
-                  <Tooltip label={cls.professors?.toString()} placement='bottom-end' hasArrow>
+                  <Tooltip
+                    label={cls.professors?.toString()}
+                    placement='bottom-end'
+                    hasArrow
+                  >
                     <chakra.span>
                       <FaGraduationCap />
                     </chakra.span>

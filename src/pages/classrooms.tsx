@@ -20,7 +20,7 @@ import DataTable from 'components/common/dataTable.component';
 import Dialog from 'components/common/dialog.component';
 import Navbar from 'components/common/navbar.component';
 import { appContext } from 'context/AppContext';
-import Classroom from 'models/classroom.model';
+import Classroom from 'models/database/classroom.model';
 import { useContext, useEffect, useState } from 'react';
 import ClassroomsService from 'services/classrooms.service';
 import {
@@ -29,7 +29,7 @@ import {
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 import { sortBuildings, sortClassrooms } from 'utils/sorter';
-import { Building } from 'models/building.model';
+import { Building } from 'models/database/building.model';
 import BuildingsService from 'services/buildings.service';
 import AdminClassroomService, {
   AdminUpdateClassroom,

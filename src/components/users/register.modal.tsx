@@ -15,7 +15,7 @@ import {
   ModalOverlay,
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import { Building } from 'models/building.model';
+import { Building } from 'models/database/building.model';
 import {
   nameInvalid,
   buildingsInvalid,

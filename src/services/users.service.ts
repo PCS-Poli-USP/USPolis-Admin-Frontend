@@ -1,4 +1,9 @@
-import { CreateUser, CreateUserResponse, EditUser, User } from 'models/user.model';
+import {
+  CreateUser,
+  CreateUserResponse,
+  EditUser,
+  User,
+} from 'models/database/user.model';
 import HttpService from './http.service';
 import { AxiosResponse } from 'axios';
 
@@ -17,7 +22,10 @@ export default class UsersService extends HttpService {
     return this.http.get('');
   }
 
-  async update(data: EditUser, user_id: string): Promise<AxiosResponse<Number>> {
+  async update(
+    data: EditUser,
+    user_id: string,
+  ): Promise<AxiosResponse<Number>> {
     return this.http.put(`/${user_id}`, data);
   }
 

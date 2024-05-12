@@ -34,7 +34,7 @@ import {
   AllocationResourcesFromEventsMapper,
   FirstEventDate,
 } from 'utils/mappers/allocation.mapper';
-import Event from 'models/event.model';
+import Event from 'models/database/event.model';
 
 import { BsSearch } from 'react-icons/bs';
 import Dialog from 'components/common/dialog.component';

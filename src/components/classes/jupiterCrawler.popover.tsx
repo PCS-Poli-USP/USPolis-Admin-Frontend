@@ -25,7 +25,7 @@ import {
   HStack,
 } from '@chakra-ui/react';
 import { appContext } from 'context/AppContext';
-import { Building } from 'models/building.model';
+import { Building } from 'models/database/building.model';
 import { useContext, useEffect, useRef, useState } from 'react';
 import BuildingsService from 'services/buildings.service';
 
@@ -70,7 +70,9 @@ export default function JupiterCrawlerPopover({
     }
     if (multSubjectInput.length > 6) {
       const formatedInput = multSubjectInput.replaceAll(' ', '');
-      const subjects = formatedInput.split(',').filter((value) => (value.length === 7 && !subjectsList.includes(value)));
+      const subjects = formatedInput
+        .split(',')
+        .filter((value) => value.length === 7 && !subjectsList.includes(value));
       setSubjectsList((prev) => prev.concat(subjects));
       setMultSubjectInput('');
     }

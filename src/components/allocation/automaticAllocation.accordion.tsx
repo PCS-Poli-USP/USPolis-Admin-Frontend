@@ -13,8 +13,8 @@ import {
 import { CalendarIcon } from '@chakra-ui/icons';
 import { BsBookHalf, BsHouseFill, BsFillPenFill } from 'react-icons/bs';
 
-import Classroom from 'models/classroom.model';
-import Event from 'models/event.model';
+import Classroom from 'models/database/classroom.model';
+import Event from 'models/database/event.model';
 
 import { useEffect, useState } from 'react';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';

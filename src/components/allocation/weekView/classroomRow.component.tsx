@@ -1,6 +1,6 @@
 import { HStack, Text, StackDivider, VStack } from '@chakra-ui/react';
 import { ClassEvent } from './classEvent.component';
-import { EventByClassrooms } from '../../../models/event.model';
+import { EventByClassrooms } from '../../../models/database/event.model';
 import { EventsByWeekDay } from 'utils/mappers/allocation.mapper';
 import { useEffect, useState } from 'react';
 
@@ -18,7 +18,11 @@ export function ClassRoomRow(props: ClassRoomRowProps) {
   }, [props.events]);
 
   return (
-    <HStack w='full' alignItems='start' divider={<StackDivider borderColor='gray.200' />}>
+    <HStack
+      w='full'
+      alignItems='start'
+      divider={<StackDivider borderColor='gray.200' />}
+    >
       <Text w='full' maxW='150px'>
         {props.classroom}
       </Text>

@@ -1,9 +1,9 @@
 import { HStack, Text, Box } from '@chakra-ui/react';
 import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
-import { Building } from 'models/building.model';
+import { Building } from 'models/database/building.model';
 import { Capitalize } from 'utils/formatters';
-import { ClassroomSchedule } from 'models/classroom.model';
+import { ClassroomSchedule } from 'models/database/classroom.model';
 import { useEffect, useState } from 'react';
 import { WeekDaysShortText } from 'models/enums/weekDays.enum';
 import { ConflictCalculator } from 'utils/conflict.calculator';

@@ -1,3 +1,8 @@
+export interface BuildingRef {
+  id: string,
+  collection: string,
+}
+
 export interface Building {
   id: string;
   name: string;

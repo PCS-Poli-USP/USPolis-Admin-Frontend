@@ -1,4 +1,4 @@
-import Class, { SClass } from 'models/class.model';
+import Class, { SClass } from 'models/database/class.model';
 
 export function ClassesBySubject(classes: Class[]) {
   const mapData = classes.reduce((group: Map<string, Class[]>, cl) => {
@@ -26,8 +26,11 @@ export function SClassesBySubject(classes: Class[]) {
     const { subject_code } = cl;
     const classroomClasses = group.get(subject_code);
     classroomClasses
-      ? group.set(subject_code, classroomClasses.concat({...cl, selected: false}))
-      : group.set(subject_code, [{...cl, selected: false}]);
+      ? group.set(
+          subject_code,
+          classroomClasses.concat({ ...cl, selected: false }),
+        )
+      : group.set(subject_code, [{ ...cl, selected: false }]);
 
     return group;
   }, new Map());
