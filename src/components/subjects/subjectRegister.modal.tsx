@@ -241,9 +241,9 @@ export default function SubjectRegisterModal(props: SubjectRegisterModalProps) {
                   if (event.target.value) setHasSubjectTypeError(false);
                 }}
               >
-                <option value='Prática'>Prática</option>
-                <option value='Teórica'>Teórica</option>
-                <option value='Outro'>Outro</option>
+                <option value='biannual'>Semestral</option>
+                <option value='four_monthly'>Quadrimestral</option>
+                <option value='other'>Outro</option>
               </Select>
               {hasSubjectTypeError ? (
                 <FormErrorMessage>
