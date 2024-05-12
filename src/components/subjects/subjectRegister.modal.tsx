@@ -36,6 +36,7 @@ import {
   BsFillTrashFill,
   BsPersonCheckFill,
 } from 'react-icons/bs';
+import { SubjectsTypes } from 'models/enums/subjects.enum';
 
 interface SubjectRegisterModalProps {
   isOpen: boolean;
@@ -79,7 +80,7 @@ export default function SubjectRegisterModal(props: SubjectRegisterModalProps) {
 
   function handleSaveClick() {
     if (isInvalidForm()) return;
-   
+
     props.onSave(form);
     setForm(initialForm);
     clearForm();
@@ -241,9 +242,11 @@ export default function SubjectRegisterModal(props: SubjectRegisterModalProps) {
                   if (event.target.value) setHasSubjectTypeError(false);
                 }}
               >
-                <option value='biannual'>Semestral</option>
-                <option value='four_monthly'>Quadrimestral</option>
-                <option value='other'>Outro</option>
+                <option value={SubjectsTypes.BIANNUAL}>Semestral</option>
+                <option value={SubjectsTypes.FOUR_MONTHLY}>
+                  Quadrimestral
+                </option>
+                <option value={SubjectsTypes.OTHER}>Outro</option>
               </Select>
               {hasSubjectTypeError ? (
                 <FormErrorMessage>
