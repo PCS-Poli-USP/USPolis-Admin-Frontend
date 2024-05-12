@@ -25,7 +25,10 @@ import Dialog from 'components/common/dialog.component';
 import { appContext } from 'context/AppContext';
 import SubjectsService from 'services/subjects.service';
 import { sortSubjects } from 'utils/subjects/subjects.sorter';
-import { datetimeFormatter } from 'utils/subjects/subjects.formatter';
+import {
+  datetimeFormatter,
+  typeFormatter,
+} from 'utils/subjects/subjects.formatter';
 import { SubjectsResponseCode } from 'models/enums/subjects.enum';
 
 function Subjects() {
@@ -37,6 +40,7 @@ function Subjects() {
     {
       accessorKey: 'name',
       header: 'Nome',
+      maxSize: 300,
     },
     {
       accessorKey: 'professors',
@@ -57,8 +61,24 @@ function Subjects() {
       ),
     },
     {
+      accessorFn: (row) => (row.buildings ? row.buildings : ['Não alocada']),
+      header: 'Prédios',
+      cell: ({ row }) => (
+        <Box>
+          {row.original.buildings ? (
+            row.original.buildings.map((ref, index) => (
+              <Text key={index}>{ref.id}</Text>
+            ))
+          ) : (
+            <Text>Não alocada</Text>
+          )}
+        </Box>
+      ),
+    },
+    {
       accessorKey: 'type',
       header: 'Tipo',
+      cell: ({ row }) => typeFormatter(row),
     },
     {
       accessorKey: 'class_credit',
