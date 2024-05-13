@@ -24,6 +24,4 @@ export interface CreateSubject {
   desactivation?: string;
 }
 
-export interface UpdateSubject extends CreateSubject {
-  id: string;
-}
+export interface UpdateSubject extends CreateSubject {}
