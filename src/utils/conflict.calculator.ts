@@ -2,7 +2,7 @@ import {
   ClassroomConflictMap,
   ClassroomSchedule,
   TimeTuple,
-} from 'models/classroom.model';
+} from 'models/database/classroom.model';
 import {
   WeekDaysKeyNumber,
   WeekDaysShortDict,

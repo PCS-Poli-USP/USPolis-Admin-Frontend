@@ -16,7 +16,7 @@ import {
 
 import AutomaticAllocationAccordion from './automaticAllocation.accordion';
 import { useNavigate } from 'react-router-dom';
-import Event, { EventByClassrooms } from 'models/event.model';
+import Event, { EventByClassrooms } from 'models/database/event.model';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import { useEffect, useState } from 'react';
 import { EventToEventByClassroom } from 'utils/classes/classes.formatter';

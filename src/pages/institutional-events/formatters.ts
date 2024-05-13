@@ -1,5 +1,5 @@
 import { Row } from '@tanstack/react-table';
-import { InstitutionalEvent } from 'models/institutionalEvent.model';
+import { InstitutionalEvent } from 'models/database/institutionalEvent.model';
 import moment from 'moment';
 
 export const periodFormatter = (row: Row<InstitutionalEvent>) => {

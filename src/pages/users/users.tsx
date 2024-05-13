@@ -6,7 +6,7 @@ import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { ColumnDef } from '@tanstack/react-table';
 import Navbar from 'components/common/navbar.component';
 import UsersService from 'services/users.service';
-import { User, EditUser } from 'models/user.model';
+import { User, EditUser } from 'models/database/user.model';
 import DataTable from 'components/common/dataTable.component';
 import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { appContext } from 'context/AppContext';
@@ -98,7 +98,7 @@ const Users = () => {
               onClick={() => handleEditButton(row.original)}
             />
           </C.Tooltip>
-       
+
           <C.Tooltip label='Deletar'>
             <C.IconButton
               colorScheme='red'

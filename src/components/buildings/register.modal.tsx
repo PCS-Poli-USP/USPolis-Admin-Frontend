@@ -12,7 +12,7 @@ import {
   ModalOverlay,
 } from '@chakra-ui/react';
 
-import { CreateBuilding } from 'models/building.model';
+import { CreateBuilding } from 'models/database/building.model';
 
 import { useEffect, useState } from 'react';
 
@@ -39,7 +39,7 @@ export default function RegisterModal(props: RegisterModalProps) {
     if (isEmpty(form.name)) return;
 
     props.onSave(form);
-    setForm(initialForm)
+    setForm(initialForm);
     props.onClose();
   }
 
@@ -55,7 +55,11 @@ export default function RegisterModal(props: RegisterModalProps) {
     <Modal isOpen={props.isOpen} onClose={handleCloseModal}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{props.isUpdate ? 'Editar informações do prédio' : 'Cadastrar um prédio'}</ModalHeader>
+        <ModalHeader>
+          {props.isUpdate
+            ? 'Editar informações do prédio'
+            : 'Cadastrar um prédio'}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <FormControl isInvalid={isEmpty(form.name)}>
@@ -63,7 +67,9 @@ export default function RegisterModal(props: RegisterModalProps) {
             <Input
               placeholder='Nome'
               value={form.name}
-              onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, name: event.target.value }))
+              }
             />
           </FormControl>
         </ModalBody>

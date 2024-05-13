@@ -13,8 +13,8 @@ import {
   ModalOverlay,
   Select,
 } from '@chakra-ui/react';
-import Class, { Preferences } from 'models/class.model';
-import { Building } from 'models/building.model';
+import Class, { Preferences } from 'models/database/class.model';
+import { Building } from 'models/database/building.model';
 
 import { useEffect, useState } from 'react';
 
@@ -31,7 +31,6 @@ interface PreferencesModalProps {
 }
 
 export default function PreferencesModal(props: PreferencesModalProps) {
-
   const initialForm: PreferencesForm = {
     building_id: '',
     ignore_to_allocate: true,
@@ -41,7 +40,11 @@ export default function PreferencesModal(props: PreferencesModalProps) {
 
   useEffect(() => {
     // set data from database
-    if (props.data) setForm({ ...props.data.preferences, ignore_to_allocate: props.data.ignore_to_allocate });
+    if (props.data)
+      setForm({
+        ...props.data.preferences,
+        ignore_to_allocate: props.data.ignore_to_allocate,
+      });
   }, [props.data]);
 
   function handleSaveClick() {
@@ -53,7 +56,11 @@ export default function PreferencesModal(props: PreferencesModalProps) {
   }
 
   function handleCloseModal() {
-    if (props.data) setForm({ ...props.data.preferences, ignore_to_allocate: props.data.ignore_to_allocate });
+    if (props.data)
+      setForm({
+        ...props.data.preferences,
+        ignore_to_allocate: props.data.ignore_to_allocate,
+      });
     props.onClose();
   }
 
@@ -74,7 +81,10 @@ export default function PreferencesModal(props: PreferencesModalProps) {
             <Select
               value={form.building_id}
               onChange={(event) => {
-                setForm((prev) => ({ ...prev, building_id: event.target.value }))
+                setForm((prev) => ({
+                  ...prev,
+                  building_id: event.target.value,
+                }));
               }}
             >
               {props.buildings.map((it, index) => (
@@ -89,19 +99,34 @@ export default function PreferencesModal(props: PreferencesModalProps) {
             <HStack>
               <Checkbox
                 isChecked={form.accessibility}
-                onChange={(event) => setForm((prev) => ({ ...prev, accessibility: event.target.checked }))}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    accessibility: event.target.checked,
+                  }))
+                }
               >
                 Acessibilidade
               </Checkbox>
               <Checkbox
                 isChecked={form.air_conditioning}
-                onChange={(event) => setForm((prev) => ({ ...prev, air_conditioning: event.target.checked }))}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    air_conditioning: event.target.checked,
+                  }))
+                }
               >
                 Ar Condicionado
               </Checkbox>
               <Checkbox
                 isChecked={form.projector}
-                onChange={(event) => setForm((prev) => ({ ...prev, projector: event.target.checked }))}
+                onChange={(event) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    projector: event.target.checked,
+                  }))
+                }
               >
                 Projetor
               </Checkbox>
@@ -111,7 +136,12 @@ export default function PreferencesModal(props: PreferencesModalProps) {
           <FormControl mt={4}>
             <Checkbox
               isChecked={form.ignore_to_allocate}
-              onChange={(event) => setForm((prev) => ({ ...prev, ignore_to_allocate: event.target.checked }))}
+              onChange={(event) =>
+                setForm((prev) => ({
+                  ...prev,
+                  ignore_to_allocate: event.target.checked,
+                }))
+              }
             >
               Ignorar para alocação automática
             </Checkbox>

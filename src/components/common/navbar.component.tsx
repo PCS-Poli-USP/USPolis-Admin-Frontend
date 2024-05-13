@@ -25,6 +25,7 @@ import Logo from 'assets/uspolis.logo.png';
 import { appContext } from 'context/AppContext';
 
 const Links = [
+  { text: 'Disciplinas', value: '/subjects', admin: false},
   { text: 'Salas', value: '/classrooms', admin: false },
   { text: 'Turmas', value: '/classes', admin: false },
   { text: 'Alocações', value: '/allocation', admin: false },

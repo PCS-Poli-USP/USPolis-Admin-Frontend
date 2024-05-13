@@ -1,5 +1,5 @@
 import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
-import Class from 'models/class.model';
+import Class from 'models/database/class.model';
 import { useEffect, useState } from 'react';
 import ClassesService from 'services/classes.service';
 import { WeekDayText } from 'utils/mappers/allocation.mapper';

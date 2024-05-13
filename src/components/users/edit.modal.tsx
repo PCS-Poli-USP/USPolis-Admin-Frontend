@@ -17,7 +17,7 @@ import {
   NumberInputField,
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import { Building } from 'models/building.model';
+import { Building } from 'models/database/building.model';
 
 import { useEffect, useState } from 'react';
 import BuildingsService from 'services/buildings.service';
@@ -112,7 +112,9 @@ export default function EditUserModal(props: EditModalProps) {
             <FormControl>
               <Checkbox
                 isChecked={form.isAdmin}
-                onChange={(e) => setForm((prev) => ({ ...prev, isAdmin: e.target.checked }))}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, isAdmin: e.target.checked }))
+                }
               >
                 Administrador
               </Checkbox>
@@ -121,13 +123,23 @@ export default function EditUserModal(props: EditModalProps) {
               <FormControl>
                 <FormLabel>Prédios</FormLabel>
                 <Select
-                  placeholder={isLoadingBuildings ? 'Carregando...' : 'Selecione um ou mais'}
+                  placeholder={
+                    isLoadingBuildings
+                      ? 'Carregando...'
+                      : 'Selecione um ou mais'
+                  }
                   isLoading={isLoadingBuildings}
                   isMulti
-                  options={buildings.map((it) => ({ value: it.id, label: it.name }))}
+                  options={buildings.map((it) => ({
+                    value: it.id,
+                    label: it.name,
+                  }))}
                   onChange={(selected) => {
                     const selectedBuildings = selected as BuildingOption[];
-                    setForm((prev) => ({ ...prev, buildings: selectedBuildings }));
+                    setForm((prev) => ({
+                      ...prev,
+                      buildings: selectedBuildings,
+                    }));
                   }}
                   value={form.buildings}
                 />

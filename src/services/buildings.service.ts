@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { Building, CreateBuilding } from 'models/building.model';
+import { Building, CreateBuilding } from 'models/database/building.model';
 import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;

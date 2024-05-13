@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import HttpService from './http.service';
-import { InstitutionalEvent } from 'models/institutionalEvent.model';
+import { InstitutionalEvent } from 'models/database/institutionalEvent.model';
 import { CreateInstitutionalEventRequest } from 'models/interfaces/requests/createInstitutionalEvent.request';
 import { UpdateInstitutionalEventRequest } from 'models/interfaces/requests/updateInstitutionalEvent.request';
 
@@ -19,7 +19,10 @@ export default class InstutionalEventsService extends HttpService {
     return this.http.post('', body);
   }
 
-  update(id: string, body: UpdateInstitutionalEventRequest): Promise<AxiosResponse> {
+  update(
+    id: string,
+    body: UpdateInstitutionalEventRequest,
+  ): Promise<AxiosResponse> {
     return this.http.patch(`/${id}`, body);
   }
 

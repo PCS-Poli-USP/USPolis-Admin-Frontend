@@ -1,5 +1,5 @@
 import { Auth, Hub } from 'aws-amplify';
-import { User } from 'models/user.model';
+import { User } from 'models/database/user.model';
 import React, { createContext, useEffect, useState } from 'react';
 import SelfService from 'services/self.service';
 

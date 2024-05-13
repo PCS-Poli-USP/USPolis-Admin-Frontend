@@ -37,7 +37,7 @@ import Class, {
   CreateClassEvents,
   Preferences,
   SClass,
-} from 'models/class.model';
+} from 'models/database/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
 import ClassesService from 'services/classes.service';
@@ -56,8 +56,8 @@ import {
   ClassToSClass,
   breakClassFormInEvents,
 } from 'utils/classes/classes.formatter';
-import { Building } from 'models/building.model';
-import { EventByClassrooms } from 'models/event.model';
+import { Building } from 'models/database/building.model';
+import { EventByClassrooms } from 'models/database/event.model';
 import CrawlerService from 'services/crawler.service';
 import { sortBuildings, sortClasses } from 'utils/sorter';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';

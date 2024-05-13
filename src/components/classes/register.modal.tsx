@@ -36,9 +36,9 @@ import {
 } from 'react-icons/bs';
 import { CalendarIcon } from '@chakra-ui/icons';
 
-import { Building } from 'models/building.model';
+import { Building } from 'models/database/building.model';
 
-import Class from 'models/class.model';
+import Class from 'models/database/class.model';
 
 import { useEffect, useState } from 'react';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';

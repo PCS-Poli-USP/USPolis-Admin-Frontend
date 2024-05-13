@@ -13,7 +13,7 @@ import { createPlugin, sliceEvents } from '@fullcalendar/react';
 import { ColumnDef } from '@tanstack/react-table';
 import DataTable from 'components/common/dataTable.component';
 import { Classrooms } from 'models/enums/clasrooms.enum';
-import { EventByClassrooms } from 'models/event.model';
+import { EventByClassrooms } from 'models/database/event.model';
 import { useEffect, useState } from 'react';
 import { Capitalize } from 'utils/formatters';
 import {

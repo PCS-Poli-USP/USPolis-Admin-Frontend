@@ -36,8 +36,8 @@ import {
 import { CalendarIcon, CloseIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 
-import Class from 'models/class.model';
-import { Building } from 'models/building.model';
+import Class from 'models/database/class.model';
+import { Building } from 'models/database/building.model';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 import * as validator from 'utils/classes/classes.validator';
 import { FormatData } from 'utils/formatters';
@@ -49,7 +49,6 @@ interface EditModalProps {
   onSave: (data: Class) => void;
 
   buildings?: Array<Building>;
-
 }
 
 export default function EditModal({
@@ -58,7 +57,6 @@ export default function EditModal({
   formData,
   onSave,
   buildings,
-
 }: EditModalProps) {
   const initialForm: Class = {
     class_code: '',

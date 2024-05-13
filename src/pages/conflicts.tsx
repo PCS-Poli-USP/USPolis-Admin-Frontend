@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import ConflictsService from '../services/conflicts.service';
 import Navbar from 'components/common/navbar.component';
 import * as C from '@chakra-ui/react';
-import Conflict from 'models/conflict.model';
+import Conflict from 'models/database/conflict.model';
 import { AccordionButton, useDisclosure, useToast } from '@chakra-ui/react';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import EventsService from 'services/events.service';
-import Event from 'models/event.model';
+import Event from 'models/database/event.model';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 
 const ConflictsPage = () => {

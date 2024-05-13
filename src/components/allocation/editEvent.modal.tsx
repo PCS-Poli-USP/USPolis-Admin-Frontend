@@ -22,9 +22,9 @@ import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
 import Dialog from 'components/common/dialog.component';
 import { appContext } from 'context/AppContext';
-import { Building } from 'models/building.model';
-import { AvailableClassroom } from 'models/classroom.model';
-import { EventByClassrooms } from 'models/event.model';
+import { Building } from 'models/database/building.model';
+import { AvailableClassroom } from 'models/database/classroom.model';
+import { EventByClassrooms } from 'models/database/event.model';
 import { useContext, useEffect, useState } from 'react';
 import BuildingsService from 'services/buildings.service';
 import ClassroomsService from 'services/classrooms.service';
@@ -98,12 +98,12 @@ export default function EditEventModal({
   useEffect(() => {
     resetClassroomsDropdown();
     getAvailableClassrooms();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedEvents]);
 
   useEffect(() => {
     setCheckedEvents(classEvents.map((it) => it.id ?? ''));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classEvents]);
 
   async function getAvailableClassrooms() {

@@ -10,7 +10,7 @@ import {
   Building,
   CreateBuilding,
   UpdateBuilding,
-} from 'models/building.model';
+} from 'models/database/building.model';
 import RegisterModal from 'components/buildings/register.modal';
 import Dialog from 'components/common/dialog.component';
 import DataTable from 'components/common/dataTable.component';
@@ -77,7 +77,7 @@ const Buildings = () => {
               onClick={() => handleEditButton(row.original)}
             />
           </C.Tooltip>
-       
+
           <C.Tooltip label='Deletar'>
             <C.IconButton
               colorScheme='red'
@@ -117,11 +117,11 @@ const Buildings = () => {
     try {
       setLoading(true);
       const response = await buildingsService.create(data);
-      toastSuccess('Pédio criado com sucesso')
+      toastSuccess('Pédio criado com sucesso');
       fetchBuildings();
     } catch (err) {
       console.error(err);
-      toastError('Erro ao criar prédio')
+      toastError('Erro ao criar prédio');
       setLoading(false);
     }
   }
