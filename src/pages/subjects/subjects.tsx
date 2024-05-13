@@ -208,8 +208,8 @@ function Subjects() {
   async function handleRegisterSubjectSave(
     data: CreateSubject | UpdateSubject,
   ) {
-    if (isUpdateSubject) {
-      editSubject(data as UpdateSubject);
+    if (isUpdateSubject && selectedSubject) {
+      editSubject(selectedSubject?.id, data as UpdateSubject);
     } else {
       createSubject(data as CreateSubject);
     }
@@ -238,9 +238,9 @@ function Subjects() {
       });
   }
 
-  async function editSubject(data: UpdateSubject) {
+  async function editSubject(id: string, data: UpdateSubject) {
     await subjectsService
-      .update(data.id, data)
+      .update(id, data)
       .then((response) => {
         toastSuccess(`Disciplina ${data.code} atualizada com sucesso!`);
       })
@@ -301,7 +301,10 @@ function Subjects() {
         <DataTable data={subjects} columns={columns} />
         <SubjectRegisterModal
           isOpen={isOpenRegisterSubjectModal}
-          onClose={onCloseRegisterSubjectModal}
+          onClose={() => {
+            setSelectedSubject(undefined);
+            onCloseRegisterSubjectModal();
+          }}
           onSave={handleRegisterSubjectSave}
           formData={selectedSubject ? selectedSubject : undefined}
           isUpdate={isUpdateSubject}
@@ -312,7 +315,10 @@ function Subjects() {
             'Essa mudança é irreversível e irá apagar todas as turmas dessa disciplina, juntamente com suas alocações!'
           }
           isOpen={isOpenDeleteSubjectDialog}
-          onClose={onCloseDeleteSubjectDialog}
+          onClose={() => {
+            setSelectedSubject(undefined);
+            onCloseDeleteSubjectDialog();
+          }}
           onConfirm={handleDeleteSubject}
         />
       </Flex>
