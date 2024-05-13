@@ -301,7 +301,10 @@ function Subjects() {
         <DataTable data={subjects} columns={columns} />
         <SubjectRegisterModal
           isOpen={isOpenRegisterSubjectModal}
-          onClose={onCloseRegisterSubjectModal}
+          onClose={() => {
+            setSelectedSubject(undefined);
+            onCloseRegisterSubjectModal();
+          }}
           onSave={handleRegisterSubjectSave}
           formData={selectedSubject ? selectedSubject : undefined}
           isUpdate={isUpdateSubject}
@@ -312,7 +315,10 @@ function Subjects() {
             'Essa mudança é irreversível e irá apagar todas as turmas dessa disciplina, juntamente com suas alocações!'
           }
           isOpen={isOpenDeleteSubjectDialog}
-          onClose={onCloseDeleteSubjectDialog}
+          onClose={() => {
+            setSelectedSubject(undefined);
+            onCloseDeleteSubjectDialog();
+          }}
           onConfirm={handleDeleteSubject}
         />
       </Flex>

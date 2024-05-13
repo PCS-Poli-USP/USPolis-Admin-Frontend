@@ -88,8 +88,7 @@ export default function SubjectRegisterModal(props: SubjectRegisterModalProps) {
     if (isInvalidForm()) return;
 
     props.onSave(form);
-    clearForm();
-    props.onClose();
+    handleCloseModal();
   }
 
   function handleCloseModal() {
@@ -245,7 +244,7 @@ export default function SubjectRegisterModal(props: SubjectRegisterModalProps) {
             <FormControl isInvalid={hasSubjectTypeError}>
               <FormLabel>Tipo de turma</FormLabel>
               <Select
-                defaultValue={props.formData ? props.formData.type : undefined}
+                defaultValue={props.formData ? props.formData.type : ''}
                 placeholder='Escolha o tipo da disciplina'
                 onChange={(event) => {
                   setForm((prev) => ({
