@@ -72,7 +72,7 @@ export default function MultipleEditAccordion({
 
   function getBuildingsList() {
     if (loggedUser) {
-      if (loggedUser.isAdmin) {
+      if (loggedUser.is_admin) {
         setBuildingsLoading(true);
         buildingsService.list().then((response) => {
           setBuildingsList(response.data);
