@@ -43,7 +43,7 @@ interface SubjectRegisterModalProps {
   onClose: () => void;
   formData?: CreateSubject | UpdateSubject;
   isUpdate?: boolean;
-  onSave: (data: CreateSubject) => void;
+  onSave: (data: CreateSubject | UpdateSubject) => void;
 }
 
 export default function SubjectRegisterModal(props: SubjectRegisterModalProps) {
@@ -74,6 +74,12 @@ export default function SubjectRegisterModal(props: SubjectRegisterModalProps) {
   useEffect(() => {
     if (props.formData) {
       props.formData.activation = props.formData.activation.substring(0, 19); // Remove Fuso horário
+      if (props.formData.desactivation) {
+        props.formData.desactivation = props.formData.desactivation.substring(
+          0,
+          19,
+        );
+      }
       setForm(props.formData);
     }
   }, [props.formData]);
@@ -82,7 +88,6 @@ export default function SubjectRegisterModal(props: SubjectRegisterModalProps) {
     if (isInvalidForm()) return;
 
     props.onSave(form);
-    setForm(initialForm);
     clearForm();
     props.onClose();
   }
@@ -146,12 +151,19 @@ export default function SubjectRegisterModal(props: SubjectRegisterModalProps) {
     }
 
     if (SubjectValidator.isInvalidCredit(form.class_credit, form.work_credit)) {
-      console.log('Aqui');
       setHasSubjectCreditError(true);
       hasError = true;
     }
 
     if (SubjectValidator.isInvalidDate(form.activation)) {
+      setHasActivationError(true);
+      hasError = true;
+    }
+
+    if (
+      form.desactivation &&
+      SubjectValidator.isInvalidDate(form.desactivation)
+    ) {
       setHasActivationError(true);
       hasError = true;
     }
@@ -166,6 +178,7 @@ export default function SubjectRegisterModal(props: SubjectRegisterModalProps) {
   function clearForm() {
     clearProfessorInput();
     clearErrors();
+    setForm(initialForm);
   }
 
   function clearProfessorInput() {
@@ -414,7 +427,7 @@ export default function SubjectRegisterModal(props: SubjectRegisterModalProps) {
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
             {props.isUpdate ? 'Salvar' : 'Cadastrar'}
           </Button>
-          <Button onClick={props.onClose}>Cancelar</Button>
+          <Button onClick={handleCloseModal}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
