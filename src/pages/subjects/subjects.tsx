@@ -227,7 +227,7 @@ function Subjects() {
         if (status === SubjectsResponseCode.ALREADY_EXISTS) {
           toastError(`Disciplina ${data.code} já existe!`);
         }
-        if (status === SubjectsResponseCode.NOT_FOUND) {
+        else if (status === SubjectsResponseCode.NOT_FOUND) {
           toastError(`Disciplina ${data.code} não encontrada`);
         } else {
           toastError(`Erro ao criar disciplina ${data.code}`);
@@ -249,7 +249,7 @@ function Subjects() {
         if (status === SubjectsResponseCode.ALREADY_EXISTS) {
           toastError(`Disciplina ${data.code} já existe!`);
         }
-        if (status === SubjectsResponseCode.METHOD_NOT_ALLOWED) {
+        else if (status === SubjectsResponseCode.METHOD_NOT_ALLOWED) {
           toastError(
             `Erro ao editar disciplina ${data.code}, método não autorizado`,
           );
