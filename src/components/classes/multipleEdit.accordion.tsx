@@ -79,7 +79,7 @@ export default function MultipleEditAccordion({
           setBuildingsLoading(false);
         });
       } else {
-        setBuildingsList(loggedUser.buildings);
+        setBuildingsList(loggedUser.buildings || []);
       }
     }
   }

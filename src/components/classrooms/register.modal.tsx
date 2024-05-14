@@ -79,7 +79,7 @@ export default function RegisterModal(props: RegisterModalProps) {
           setBuildingsList(response.data);
         });
       } else {
-        setBuildingsList(loggedUser.buildings);
+        setBuildingsList(loggedUser.buildings || []);
       }
     }
   }

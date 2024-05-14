@@ -80,7 +80,7 @@ const Users = () => {
       header: 'Criado por',
     },
     {
-      accessorFn: (row) => row.buildings.map((b) => b.name).join(', '),
+      accessorFn: (row) => row.buildings?.map((b) => b.name).join(', '),
       header: 'Prédios',
     },
     {
@@ -210,7 +210,7 @@ const Users = () => {
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         formData={{
-          buildings: contextUser?.buildings.map((b) => ({
+          buildings: contextUser?.buildings?.map((b) => ({
             label: b.name,
             value: b.id,
           })),

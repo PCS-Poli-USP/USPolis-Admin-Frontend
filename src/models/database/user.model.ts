@@ -8,7 +8,7 @@ export interface User {
     email: string;
     updated_at: string;
     created_by?: string;
-    buildings: Array<Building>
+    buildings?: Array<Building>
 }
 
 export interface CreateUser {

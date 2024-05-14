@@ -99,7 +99,7 @@ export default function JupiterCrawlerPopover({
           setBuildingsLoading(false);
         });
       } else {
-        setBuildingsList(loggedUser.buildings);
+        setBuildingsList(loggedUser.buildings || []);
       }
     }
   }

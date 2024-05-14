@@ -148,7 +148,7 @@ export default function EditEventModal({
           setBuildingsLoading(false);
         });
       } else {
-        setBuildingsList(loggedUser.buildings);
+        setBuildingsList(loggedUser.buildings || []);
       }
     }
   }
