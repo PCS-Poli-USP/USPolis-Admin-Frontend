@@ -65,7 +65,7 @@ export default function RegisterModal(props: RegisterModalProps) {
   }, [loggedUser]);
 
   useEffect(() => {
-    if (loggedUser?.isAdmin) {
+    if (loggedUser?.is_admin) {
       usersService.list().then((response) => {
         setUsersList(response.data.map((it) => it));
       });
@@ -74,12 +74,12 @@ export default function RegisterModal(props: RegisterModalProps) {
 
   function getBuildingsList() {
     if (loggedUser) {
-      if (loggedUser.isAdmin) {
+      if (loggedUser.is_admin) {
         buildingsService.list().then((response) => {
           setBuildingsList(response.data);
         });
       } else {
-        setBuildingsList(loggedUser.buildings);
+        setBuildingsList(loggedUser.buildings || []);
       }
     }
   }
@@ -238,7 +238,7 @@ export default function RegisterModal(props: RegisterModalProps) {
             </Checkbox>
           </FormControl>
 
-          {loggedUser?.isAdmin && (
+          {loggedUser?.is_admin && (
             <FormControl mt={4}>
               <FormLabel>Criado por</FormLabel>
               <Select

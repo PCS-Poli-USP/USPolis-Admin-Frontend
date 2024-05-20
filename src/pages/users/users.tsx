@@ -66,7 +66,7 @@ const Users = () => {
       header: 'Email',
     },
     {
-      accessorKey: 'isAdmin',
+      accessorKey: 'is_admin',
       header: 'Admin',
       meta: { isBoolean: true },
       filterFn: FilterBoolean,
@@ -80,7 +80,7 @@ const Users = () => {
       header: 'Criado por',
     },
     {
-      accessorFn: (row) => row.buildings.map((b) => b.name).join(', '),
+      accessorFn: (row) => row.buildings?.map((b) => b.name).join(', '),
       header: 'Prédios',
     },
     {
@@ -154,8 +154,8 @@ const Users = () => {
         name: form.name,
         email: form.email,
         username: form.username,
-        isAdmin: form.isAdmin,
-        building_ids: form.isAdmin
+        is_admin: form.is_admin,
+        building_ids: form.is_admin
           ? undefined
           : form.buildings.map((it) => it.value),
       });
@@ -210,11 +210,11 @@ const Users = () => {
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         formData={{
-          buildings: contextUser?.buildings.map((b) => ({
+          buildings: contextUser?.buildings?.map((b) => ({
             label: b.name,
             value: b.id,
           })),
-          isAdmin: contextUser?.isAdmin,
+          is_admin: contextUser?.is_admin,
         }}
         otherData={{
           email: contextUser?.email,
@@ -224,7 +224,7 @@ const Users = () => {
           editUser(
             {
               building_ids: form.buildings?.map((b) => b.value),
-              isAdmin: form.isAdmin,
+              is_admin: form.is_admin,
             },
             contextUser!.id,
           );

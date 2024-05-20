@@ -92,14 +92,14 @@ export default function JupiterCrawlerPopover({
 
   function getBuildingsList() {
     if (loggedUser) {
-      if (loggedUser.isAdmin) {
+      if (loggedUser.is_admin) {
         setBuildingsLoading(true);
         buildingsService.list().then((response) => {
           setBuildingsList(response.data);
           setBuildingsLoading(false);
         });
       } else {
-        setBuildingsList(loggedUser.buildings);
+        setBuildingsList(loggedUser.buildings || []);
       }
     }
   }

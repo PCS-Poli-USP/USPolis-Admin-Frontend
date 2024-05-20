@@ -32,7 +32,7 @@ interface EditModalProps {
 
 interface EditUserFormValues {
   buildings?: BuildingOption[];
-  isAdmin?: boolean;
+  is_admin?: boolean;
 }
 
 interface EditUserOtherData {
@@ -50,7 +50,7 @@ export default function EditUserModal(props: EditModalProps) {
 
   const initialForm: EditUserFormValues = {
     buildings: [],
-    isAdmin: false,
+    is_admin: false,
   };
 
   const [isLoadingBuildings, setIsLoadingBuildings] = useState(false);
@@ -111,15 +111,15 @@ export default function EditUserModal(props: EditModalProps) {
             </Flex>
             <FormControl>
               <Checkbox
-                isChecked={form.isAdmin}
+                isChecked={form.is_admin}
                 onChange={(e) =>
-                  setForm((prev) => ({ ...prev, isAdmin: e.target.checked }))
+                  setForm((prev) => ({ ...prev, is_admin: e.target.checked }))
                 }
               >
                 Administrador
               </Checkbox>
             </FormControl>
-            {!form.isAdmin && (
+            {!form.is_admin && (
               <FormControl>
                 <FormLabel>Prédios</FormLabel>
                 <Select

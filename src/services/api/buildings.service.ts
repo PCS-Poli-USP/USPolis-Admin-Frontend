@@ -6,7 +6,7 @@ const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
 export default class BuildingsService extends HttpService {
   constructor() {
-    super(`${USPOLIS_SERVER_URL}/building`);
+    super(`${USPOLIS_SERVER_URL}/buildings`);
   }
 
   list(): Promise<AxiosResponse<Array<Building>>> {

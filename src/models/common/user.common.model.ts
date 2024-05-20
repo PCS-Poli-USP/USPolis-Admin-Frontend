@@ -4,18 +4,18 @@ export interface User {
     id: string;
     username: string;
     name?: string;
-    isAdmin: boolean;
+    is_admin: boolean;
     email: string;
     updated_at: string;
     created_by?: string;
-    buildings: Array<Building>
+    buildings?: Array<Building>
 }
 
 export interface CreateUser {
     name: string;
     username: string;
     email: string;
-    isAdmin: boolean;
+    is_admin: boolean;
     building_ids?: Array<string>;
 }
 
@@ -25,5 +25,5 @@ export interface CreateUserResponse {
 
 export interface EditUser {
     building_ids?: Array<string>;
-    isAdmin?: boolean;
+    is_admin?: boolean;
 }
