@@ -162,7 +162,7 @@ function Classrooms() {
   useEffect(() => {
     fetchData();
     fetchBuildings();
-    if (loggedUser?.isAdmin)
+    if (loggedUser?.is_admin)
       setColumns([
         {
           accessorKey: 'created_by',
@@ -171,12 +171,12 @@ function Classrooms() {
         ...columns,
       ]);
     // eslint-disable-next-line
-  }, [loggedUser?.isAdmin]);
+  }, [loggedUser?.is_admin]);
 
   function fetchData() {
     setLoading(true);
     if (!!loggedUser) {
-      if (!loggedUser.isAdmin) {
+      if (!loggedUser.is_admin) {
         classroomService.list().then((it) => {
           setClassroomsList(it.data.sort(sortClassrooms));
           setLoading(false);
@@ -231,7 +231,7 @@ function Classrooms() {
   function handleSave(formData: Classroom) {
     const { id, ...formDataWithoutId } = formData;
     const request = isUpdate
-      ? loggedUser?.isAdmin
+      ? loggedUser?.is_admin
         ? adminClassroomService.update(id, formDataWithoutId)
         : classroomService.update(
             formDataWithoutId.classroom_name,

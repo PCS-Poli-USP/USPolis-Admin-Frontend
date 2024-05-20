@@ -37,7 +37,7 @@ export interface RegisterUserFormValues {
   username: string;
   email: string;
   buildings: BuildingOption[];
-  isAdmin: boolean;
+  is_admin: boolean;
 }
 
 interface RegisterUserFormErrors {
@@ -45,7 +45,7 @@ interface RegisterUserFormErrors {
   username: boolean;
   email: boolean;
   buildings: boolean;
-  isAdmin: boolean;
+  is_admin: boolean;
 }
 
 interface BuildingOption {
@@ -61,7 +61,7 @@ export default function RegisterUserModal(props: RegisterModalProps) {
     username: '',
     email: '',
     buildings: [],
-    isAdmin: false,
+    is_admin: false,
   };
 
   const [isLoadingBuildings, setIsLoadingBuildings] = useState(false);
@@ -72,7 +72,7 @@ export default function RegisterUserModal(props: RegisterModalProps) {
     username: false,
     email: false,
     buildings: false,
-    isAdmin: false,
+    is_admin: false,
   });
 
   useEffect(() => {
@@ -120,9 +120,9 @@ export default function RegisterUserModal(props: RegisterModalProps) {
       email: emailInvalid(form.email),
       buildings: buildingsInvalid(
         form.buildings.map((b) => b.value),
-        form.isAdmin,
+        form.is_admin,
       ),
-      isAdmin: false,
+      is_admin: false,
     };
 
     setErrors(newErrors);
@@ -141,7 +141,7 @@ export default function RegisterUserModal(props: RegisterModalProps) {
       username: false,
       email: false,
       buildings: false,
-      isAdmin: false,
+      is_admin: false,
     });
   };
 
@@ -186,15 +186,15 @@ export default function RegisterUserModal(props: RegisterModalProps) {
             </FormControl>
             <FormControl>
               <Checkbox
-                isChecked={form.isAdmin}
+                isChecked={form.is_admin}
                 onChange={(e) =>
-                  setForm((prev) => ({ ...prev, isAdmin: e.target.checked }))
+                  setForm((prev) => ({ ...prev, is_admin: e.target.checked }))
                 }
               >
                 Administrador
               </Checkbox>
             </FormControl>
-            {!form.isAdmin && (
+            {!form.is_admin && (
               <FormControl isInvalid={errors.buildings}>
                 <FormLabel>Prédios</FormLabel>
                 <Select

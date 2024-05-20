@@ -88,7 +88,7 @@ export default function Navbar() {
             >
               {Links.map(
                 (link) =>
-                  (!link.admin || (link.admin && loggedUser?.isAdmin)) && (
+                  (!link.admin || (link.admin && loggedUser?.is_admin)) && (
                     <NavLink key={link.value} to={link.value}>
                       {link.text}
                     </NavLink>
@@ -127,7 +127,7 @@ export default function Navbar() {
             <Stack as={'nav'} spacing={4}>
               {Links.map(
                 (link) =>
-                  (!link.admin || (link.admin && loggedUser?.isAdmin)) && (
+                  (!link.admin || (link.admin && loggedUser?.is_admin)) && (
                     <NavLink key={link.value} to={link.value}>
                       {link.text}
                     </NavLink>

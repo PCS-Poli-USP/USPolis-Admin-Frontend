@@ -10,6 +10,6 @@ export function usernameInvalid(username: string) {
   return username.length <= 0 || username.includes(' ');
 }
 
-export function buildingsInvalid(buildings: string[], isAdmin: boolean) {
-  return buildings.length <= 0 && !isAdmin;
+export function buildingsInvalid(buildings: string[], is_admin: boolean) {
+  return buildings.length <= 0 && !is_admin;
 }
