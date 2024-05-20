@@ -3,7 +3,7 @@ import { createPlugin, sliceEvents } from '@fullcalendar/react';
 import { EventsByClassroomMapper } from 'utils/mappers/allocation.mapper';
 import { ClassRoomRow } from './classroomRow.component';
 import { WeekDaysHeader } from './weekDaysHeader.component';
-import { EventByClassrooms } from 'models/database/event.model';
+import { EventByClassrooms } from 'models/common/event.model';
 
 function CalendarWeekView(props: any) {
   const events = sliceEvents(props);

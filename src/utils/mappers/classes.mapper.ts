@@ -1,4 +1,4 @@
-import Class, { SClass } from 'models/database/class.model';
+import Class, { SClass } from 'models/common/class.model';
 
 export function ClassesBySubject(classes: Class[]) {
   const mapData = classes.reduce((group: Map<string, Class[]>, cl) => {

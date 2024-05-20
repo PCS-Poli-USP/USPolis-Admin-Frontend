@@ -27,7 +27,6 @@ import {
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
-import { CreateSubject, UpdateSubject } from 'models/database/subject.models';
 import SubjectValidator from 'utils/subjects/subjects.validator';
 
 import { useEffect, useState } from 'react';
@@ -36,7 +35,8 @@ import {
   BsFillTrashFill,
   BsPersonCheckFill,
 } from 'react-icons/bs';
-import { SubjectsTypes } from 'models/enums/subjects.enum';
+import { SubjectsTypes } from 'utils/enums/subjects.enum';
+import { CreateSubject, UpdateSubject } from 'models/http/requests/subject.request.models';
 
 interface SubjectRegisterModalProps {
   isOpen: boolean;

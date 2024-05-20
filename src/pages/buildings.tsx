@@ -4,16 +4,16 @@ import * as C from '@chakra-ui/react';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
-import Navbar from 'components/common/navbar.component';
-import BuildingsService from 'services/buildings.service';
+import Navbar from 'components/common/NavBar/navbar.component';
+import BuildingsService from 'services/api/buildings.service';
 import {
   Building,
   CreateBuilding,
   UpdateBuilding,
-} from 'models/database/building.model';
+} from 'models/common/building.model';
 import RegisterModal from 'components/buildings/register.modal';
-import Dialog from 'components/common/dialog.component';
-import DataTable from 'components/common/dataTable.component';
+import Dialog from 'components/common/Dialog/dialog.component';
+import DataTable from 'components/common/DataTable/dataTable.component';
 import { appContext } from 'context/AppContext';
 import { sortBuildings } from 'utils/sorter';
 

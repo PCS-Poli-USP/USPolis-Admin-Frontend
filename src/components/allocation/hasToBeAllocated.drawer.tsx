@@ -18,7 +18,7 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import Class, { HasToBeAllocatedClass } from 'models/database/class.model';
+import Class, { HasToBeAllocatedClass } from 'models/common/class.model';
 import { useEffect, useState } from 'react';
 import { FaGraduationCap } from 'react-icons/fa';
 

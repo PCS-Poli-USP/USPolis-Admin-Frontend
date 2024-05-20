@@ -1,8 +1,8 @@
-import Class, { CreateClassEvents, SClass } from 'models/database/class.model';
-import Event, { EventByClassrooms } from 'models/database/event.model';
-import { Classrooms } from 'models/enums/clasrooms.enum';
+import Class, { CreateClassEvents, SClass } from 'models/common/class.model';
+import Event, { EventByClassrooms } from 'models/common/event.model';
+import { Classrooms } from 'utils/enums/clasrooms.enum';
 import { ClassCodeText } from 'utils/mappers/allocation.mapper';
-import { Building } from 'models/database/building.model';
+import { Building } from 'models/common/building.model';
 import { Capitalize } from 'utils/formatters';
 
 export function breakClassFormInEvents(form: Class) {

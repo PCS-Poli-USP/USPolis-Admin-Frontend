@@ -21,10 +21,10 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './form';
 import { Input, Select, Textarea } from 'components/common';
 import { useEffect, useState } from 'react';
-import InstutionalEventsService from 'services/institutional-events.service';
-import { InstitutionalEvent } from 'models/database/institutionalEvent.model';
-import { EventTypes } from 'models/enums/eventTypes.enum';
-import { Building } from 'models/database/building.model';
+import InstutionalEventsService from 'services/api/institutional-events.service';
+import { InstitutionalEvent } from 'models/common/institutionalEvent.model';
+import { EventTypes } from 'utils/enums/eventTypes.enum';
+import { Building } from 'models/common/building.model';
 
 export type EventForm = {
   building?: string | null;

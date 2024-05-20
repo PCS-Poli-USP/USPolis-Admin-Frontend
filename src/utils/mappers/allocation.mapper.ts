@@ -1,7 +1,7 @@
 import { EventRenderRange } from '@fullcalendar/react';
-import { Classrooms } from 'models/enums/clasrooms.enum';
-import { WeekDays } from 'models/enums/weekDays.enum';
-import Event, { EventByClassrooms } from 'models/database/event.model';
+import { Classrooms } from 'utils/enums/clasrooms.enum';
+import { WeekDays } from 'utils/enums/weekDays.enum';
+import Event, { EventByClassrooms } from 'models/common/event.model';
 
 export function AllocationEventsMapper(allocation: Event[]) {
   return allocation.map((it) => ({

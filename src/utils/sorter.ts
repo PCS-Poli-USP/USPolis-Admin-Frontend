@@ -1,10 +1,10 @@
-import Class from 'models/database/class.model';
-import { Building } from 'models/database/building.model';
+import Class from 'models/common/class.model';
+import { Building } from 'models/common/building.model';
 import Classroom, {
   AvailableClassroom,
   ClassroomSchedule,
-} from 'models/database/classroom.model';
-import Event from 'models/database/event.model';
+} from 'models/common/classroom.model';
+import Event from 'models/common/event.model';
 import { WeekDayInt } from 'utils/mappers/allocation.mapper';
 
 export function sortEventsByClassroom(a: Event, b: Event) {

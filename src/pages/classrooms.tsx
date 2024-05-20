@@ -16,24 +16,24 @@ import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
 import RegisterModal from 'components/classrooms/register.modal';
-import DataTable from 'components/common/dataTable.component';
-import Dialog from 'components/common/dialog.component';
-import Navbar from 'components/common/navbar.component';
+import DataTable from 'components/common/DataTable/dataTable.component';
+import Dialog from 'components/common/Dialog/dialog.component';
+import Navbar from 'components/common/NavBar/navbar.component';
 import { appContext } from 'context/AppContext';
-import Classroom from 'models/database/classroom.model';
+import Classroom from 'models/common/classroom.model';
 import { useContext, useEffect, useState } from 'react';
-import ClassroomsService from 'services/classrooms.service';
+import ClassroomsService from 'services/api/classrooms.service';
 import {
   FilterBoolean,
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 import { sortBuildings, sortClassrooms } from 'utils/sorter';
-import { Building } from 'models/database/building.model';
-import BuildingsService from 'services/buildings.service';
+import { Building } from 'models/common/building.model';
+import BuildingsService from 'services/api/buildings.service';
 import AdminClassroomService, {
   AdminUpdateClassroom,
-} from 'services/admin.classrooms.service';
+} from 'services/api/admin.classrooms.service';
 
 function Classrooms() {
   const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);

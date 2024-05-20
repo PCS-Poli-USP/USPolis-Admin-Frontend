@@ -1,7 +1,7 @@
 import { Document, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
-import Class from 'models/database/class.model';
+import Class from 'models/common/class.model';
 import { useEffect, useState } from 'react';
-import ClassesService from 'services/classes.service';
+import ClassesService from 'services/api/classes.service';
 import { WeekDayText } from 'utils/mappers/allocation.mapper';
 import { ClassesBySubject } from 'utils/mappers/classes.mapper';
 

@@ -15,18 +15,18 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import DataTable from 'components/common/dataTable.component';
-import Dialog from 'components/common/dialog.component';
-import Navbar from 'components/common/navbar.component';
+import DataTable from 'components/common/DataTable/dataTable.component';
+import Dialog from 'components/common/Dialog/dialog.component';
+import Navbar from 'components/common/NavBar/navbar.component';
 import EventFormModal from 'components/events/EventFormModal';
-import { InstitutionalEvent } from 'models/database/institutionalEvent.model';
+import { InstitutionalEvent } from 'models/common/institutionalEvent.model';
 import moment from 'moment';
 import { FaEllipsisV } from 'react-icons/fa';
 import { GoSync } from 'react-icons/go';
 import { useEvents } from './hook';
 import { useEffect, useState } from 'react';
-import { Building } from 'models/database/building.model';
-import BuildingsService from 'services/buildings.service';
+import { Building } from 'models/common/building.model';
+import BuildingsService from 'services/api/buildings.service';
 import { sortBuildings } from 'utils/sorter';
 import { periodFormatter } from './formatters';
 

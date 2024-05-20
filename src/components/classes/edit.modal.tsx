@@ -36,8 +36,8 @@ import {
 import { CalendarIcon, CloseIcon } from '@chakra-ui/icons';
 import { useEffect, useState } from 'react';
 
-import Class from 'models/database/class.model';
-import { Building } from 'models/database/building.model';
+import Class from 'models/common/class.model';
+import { Building } from 'models/common/building.model';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 import * as validator from 'utils/classes/classes.validator';
 import { FormatData } from 'utils/formatters';

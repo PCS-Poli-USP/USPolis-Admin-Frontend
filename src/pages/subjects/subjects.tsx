@@ -1,11 +1,6 @@
-import Navbar from 'components/common/navbar.component';
-import DataTable from 'components/common/dataTable.component';
+import Navbar from 'components/common/NavBar/navbar.component';
+import DataTable from 'components/common/DataTable/dataTable.component';
 import { ColumnDef } from '@tanstack/react-table';
-import {
-  CreateSubject,
-  Subject,
-  UpdateSubject,
-} from 'models/database/subject.models';
 
 import {
   Box,
@@ -21,18 +16,23 @@ import {
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { useContext, useEffect, useState } from 'react';
 import SubjectRegisterModal from 'components/subjects/subjectRegister.modal';
-import Dialog from 'components/common/dialog.component';
+import Dialog from 'components/common/Dialog/dialog.component';
 import { appContext } from 'context/AppContext';
-import SubjectsService from 'services/subjects.service';
-import { sortSubjects } from 'utils/subjects/subjects.sorter';
+import SubjectsService from 'services/api/subjects.service';
+import { sortSubjectsResponse } from 'utils/subjects/subjects.sorter';
 import {
   datetimeFormatter,
-  typeFormatter,
+  subjectTypeFormatter,
 } from 'utils/subjects/subjects.formatter';
-import { SubjectsResponseCode } from 'models/enums/subjects.enum';
+import { SubjectsResponseCode } from 'utils/enums/subjects.enum';
+import {
+  CreateSubject,
+  UpdateSubject,
+} from 'models/http/requests/subject.request.models';
+import { SubjectResponse } from 'models/http/responses/subject.response.models';
 
 function Subjects() {
-  const columns: ColumnDef<Subject>[] = [
+  const columns: ColumnDef<SubjectResponse>[] = [
     {
       accessorKey: 'code',
       header: 'Código',
@@ -78,7 +78,7 @@ function Subjects() {
     {
       accessorKey: 'type',
       header: 'Tipo',
-      cell: ({ row }) => typeFormatter(row),
+      cell: ({ row }) => subjectTypeFormatter(row.original.type),
     },
     {
       accessorKey: 'class_credit',
@@ -138,12 +138,12 @@ function Subjects() {
   const { setLoading } = useContext(appContext);
   const subjectsService = new SubjectsService();
 
-  const [subjects, setSubjects] = useState<Array<Subject>>([]);
+  const [subjects, setSubjects] = useState<Array<SubjectResponse>>([]);
 
   const [isUpdateSubject, setIsUpdateSubject] = useState<boolean>(false);
-  const [selectedSubject, setSelectedSubject] = useState<Subject | undefined>(
-    undefined,
-  );
+  const [selectedSubject, setSelectedSubject] = useState<
+    SubjectResponse | undefined
+  >(undefined);
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -178,7 +178,7 @@ function Subjects() {
     await subjectsService
       .list()
       .then((response) => {
-        setSubjects(response.data.sort(sortSubjects));
+        setSubjects(response.data.sort(sortSubjectsResponse));
       })
       .catch((error) => {
         toastError(`Erro ao carregar disciplinas: ${error}`);
@@ -194,13 +194,13 @@ function Subjects() {
     onOpenRegisterSubjectModal();
   }
 
-  function handleEditSubjectButton(data: Subject) {
+  function handleEditSubjectButton(data: SubjectResponse) {
     setIsUpdateSubject(true);
     setSelectedSubject(data);
     onOpenRegisterSubjectModal();
   }
 
-  function handleDeleteSubjectButton(data: Subject) {
+  function handleDeleteSubjectButton(data: SubjectResponse) {
     onOpenDeleteSubjectDialog();
     setSelectedSubject(data);
   }
@@ -226,8 +226,7 @@ function Subjects() {
         const status = error.response.status;
         if (status === SubjectsResponseCode.ALREADY_EXISTS) {
           toastError(`Disciplina ${data.code} já existe!`);
-        }
-        else if (status === SubjectsResponseCode.NOT_FOUND) {
+        } else if (status === SubjectsResponseCode.NOT_FOUND) {
           toastError(`Disciplina ${data.code} não encontrada`);
         } else {
           toastError(`Erro ao criar disciplina ${data.code}`);
@@ -248,8 +247,7 @@ function Subjects() {
         const status = error.response.status;
         if (status === SubjectsResponseCode.ALREADY_EXISTS) {
           toastError(`Disciplina ${data.code} já existe!`);
-        }
-        else if (status === SubjectsResponseCode.METHOD_NOT_ALLOWED) {
+        } else if (status === SubjectsResponseCode.METHOD_NOT_ALLOWED) {
           toastError(
             `Erro ao editar disciplina ${data.code}, método não autorizado`,
           );
