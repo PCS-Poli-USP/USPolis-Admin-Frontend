@@ -28,10 +28,10 @@ import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from 'components/classes/preferences.modal';
 import RegisterModal from 'components/classes/register.modal';
 import EditEventModal from 'components/allocation/editEvent.modal';
-import DataTable from 'components/common/dataTable.component';
-import Dialog from 'components/common/dialog.component';
-import Loading from 'components/common/loading.component';
-import Navbar from 'components/common/navbar.component';
+import DataTable from 'components/common/DataTable/dataTable.component';
+import Dialog from 'components/common/Dialog/dialog.component';
+import Loading from 'components/common/Loading/loading.component';
+import Navbar from 'components/common/NavBar/navbar.component';
 import { appContext } from 'context/AppContext';
 import Class, {
   CreateClassEvents,

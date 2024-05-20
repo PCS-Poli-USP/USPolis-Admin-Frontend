@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import ConflictsService from '../services/api/conflicts.service';
-import Navbar from 'components/common/navbar.component';
+import Navbar from 'components/common/NavBar/navbar.component';
 import * as C from '@chakra-ui/react';
 import Conflict from 'models/common/conflict.model';
 import { AccordionButton, useDisclosure, useToast } from '@chakra-ui/react';

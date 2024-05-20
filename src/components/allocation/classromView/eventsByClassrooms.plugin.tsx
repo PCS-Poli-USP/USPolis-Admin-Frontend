@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { createPlugin, sliceEvents } from '@fullcalendar/react';
 import { ColumnDef } from '@tanstack/react-table';
-import DataTable from 'components/common/dataTable.component';
+import DataTable from 'components/common/DataTable/dataTable.component';
 import { Classrooms } from 'utils/enums/clasrooms.enum';
 import { EventByClassrooms } from 'models/common/event.model';
 import { useEffect, useState } from 'react';

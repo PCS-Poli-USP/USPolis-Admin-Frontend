@@ -4,14 +4,14 @@ import * as C from '@chakra-ui/react';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
-import Navbar from 'components/common/navbar.component';
+import Navbar from 'components/common/NavBar/navbar.component';
 import UsersService from 'services/api/users.service';
 import { User, EditUser } from 'models/common/user.common.model';
-import DataTable from 'components/common/dataTable.component';
+import DataTable from 'components/common/DataTable/dataTable.component';
 import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { appContext } from 'context/AppContext';
 import EditUserModal from 'components/users/edit.modal';
-import Dialog from 'components/common/dialog.component';
+import Dialog from 'components/common/Dialog/dialog.component';
 import RegisterUserModal, {
   RegisterUserFormValues,
 } from 'components/users/register.modal';

@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react';
 
 import { DownloadIcon, CalendarIcon } from '@chakra-ui/icons';
-import Dialog from './dialog.component';
+import Dialog from '../Dialog/dialog.component';
 import { useState } from 'react';
 
 interface AllocationOptionsProps {

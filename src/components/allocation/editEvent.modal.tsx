@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
-import Dialog from 'components/common/dialog.component';
+import Dialog from 'components/common/Dialog/dialog.component';
 import { appContext } from 'context/AppContext';
 import { Building } from 'models/common/building.model';
 import { AvailableClassroom } from 'models/common/classroom.model';

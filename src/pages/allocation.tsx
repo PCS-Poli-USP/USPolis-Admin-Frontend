@@ -22,8 +22,8 @@ import DatePickerModal from 'components/allocation/datePicker.modal';
 import EventContent from 'components/allocation/dayView/eventContent';
 import eventsByClassroomsPlugin from 'components/allocation/classromView/eventsByClassrooms.plugin';
 import eventsByWeekPlugin from 'components/allocation/weekView/eventsByWeek.plugin';
-import Navbar from 'components/common/navbar.component';
-import Loading from 'components/common/loading.component';
+import Navbar from 'components/common/NavBar/navbar.component';
+import Loading from 'components/common/Loading/loading.component';
 import ClassesPDF from 'components/pdf/classesPDF';
 import { appContext } from 'context/AppContext';
 import { useContext, useEffect, useRef, useState } from 'react';
@@ -37,7 +37,7 @@ import {
 import Event from 'models/common/event.model';
 
 import { BsSearch } from 'react-icons/bs';
-import Dialog from 'components/common/dialog.component';
+import Dialog from 'components/common/Dialog/dialog.component';
 import AutomaticAllocationModal from 'components/allocation/automaticAllocation.modal';
 import AllocationOptions from 'components/allocation/allocationOptions.modal';
 

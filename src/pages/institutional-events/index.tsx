@@ -15,9 +15,9 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import DataTable from 'components/common/dataTable.component';
-import Dialog from 'components/common/dialog.component';
-import Navbar from 'components/common/navbar.component';
+import DataTable from 'components/common/DataTable/dataTable.component';
+import Dialog from 'components/common/Dialog/dialog.component';
+import Navbar from 'components/common/NavBar/navbar.component';
 import EventFormModal from 'components/events/EventFormModal';
 import { InstitutionalEvent } from 'models/common/institutionalEvent.model';
 import moment from 'moment';

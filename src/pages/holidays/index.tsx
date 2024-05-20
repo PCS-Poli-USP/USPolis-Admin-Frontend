@@ -6,8 +6,8 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import DataTable from 'components/common/dataTable.component';
-import Navbar from 'components/common/navbar.component';
+import DataTable from 'components/common/DataTable/dataTable.component';
+import Navbar from 'components/common/NavBar/navbar.component';
 import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
 import { useContext, useEffect, useState } from 'react';
 import HolidaysCategoriesService from 'services/api/holidayCategory.service';
@@ -27,7 +27,7 @@ import HolidaysService from 'services/api/holiday.service';
 import { appContext } from 'context/AppContext';
 import useCustomToast from 'hooks/useCustomToast';
 import { sortHolidaysCategoriesResponse } from 'utils/holidaysCategories/holidaysCategories.sorter';
-import Dialog from 'components/common/dialog.component';
+import Dialog from 'components/common/Dialog/dialog.component';
 import { sortHolidaysResponse } from 'utils/holidays/holidays.sorter';
 import { datetimeToDate } from 'utils/formatters';
 
@@ -56,7 +56,9 @@ function Holidays() {
   const { setLoading } = useContext(appContext);
   const [isShowingCategories, setIsShowingCategories] = useState(true);
   const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
-  const [holidaysCategories, setHolidaysCategories] = useState<HolidayCategoryResponse[]>([]);
+  const [holidaysCategories, setHolidaysCategories] = useState<
+    HolidayCategoryResponse[]
+  >([]);
   const [selectedHolidayCategory, setSelectedHolidayCategory] = useState<
     HolidayCategoryResponse | undefined
   >(undefined);
