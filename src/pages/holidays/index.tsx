@@ -11,7 +11,6 @@ import Navbar from 'components/common/NavBar/navbar.component';
 import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
 import { useContext, useEffect, useState } from 'react';
 import HolidaysCategoriesService from 'services/api/holidayCategory.service';
-import { getHolidaysCategoryColumns, getHolidaysColumns } from './tables';
 import { HolidayResponse } from 'models/http/responses/holiday.response.models';
 import {
   CreateHolidayCategory,
@@ -30,6 +29,8 @@ import { sortHolidaysCategoriesResponse } from 'utils/holidaysCategories/holiday
 import Dialog from 'components/common/Dialog/dialog.component';
 import { sortHolidaysResponse } from 'utils/holidays/holidays.sorter';
 import { datetimeToDate } from 'utils/formatters';
+import { getHolidaysCategoryColumns } from './Tables/holidayCategory.table';
+import { getHolidaysColumns } from './Tables/holiday.table';
 
 function Holidays() {
   const {
