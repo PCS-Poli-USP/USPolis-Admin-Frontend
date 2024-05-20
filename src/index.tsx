@@ -23,6 +23,7 @@ import Buildings from 'pages/buildings';
 import Users from 'pages/users/users';
 import ConflictsPage from 'pages/conflicts';
 import Subjects from 'pages/subjects/subjects';
+import Holidays from 'pages/holidays';
 
 Amplify.configure(awsConfig);
 
@@ -39,9 +40,10 @@ root.render(
             <Route path='/index' element={<App />} />
             {/* Private Routes */}
             <Route path='/' element={<AuthRoute />}>
-              <Route path='subjects' element={<Subjects />}/>
               <Route path='users' element={<Users />} />
               <Route path='buildings' element={<Buildings />} />
+              <Route path='subjects' element={<Subjects />}/>
+              <Route path='holidays' element={<Holidays />}/>
               <Route path='classrooms' element={<Classrooms />} />
               <Route path='classes' element={<Classes />} />
               <Route path='allocation' element={<Allocation />} />
