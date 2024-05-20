@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export function Capitalize(text: string) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
@@ -15,4 +17,8 @@ export function FormatData(data: string) {
   const times = data.split('-');
   const reverseTimes = times.reverse();
   return reverseTimes.join('-');
+}
+
+export function datetimeToDate(date: string) {
+  return moment(date).format('DD/MM/YYYY');
 }

@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import HttpService from './http.service';
-import { InstitutionalEvent } from 'models/database/institutionalEvent.model';
+import { InstitutionalEvent } from 'models/common/institutionalEvent.model';
 import { CreateInstitutionalEventRequest } from 'models/interfaces/requests/createInstitutionalEvent.request';
 import { UpdateInstitutionalEventRequest } from 'models/interfaces/requests/updateInstitutionalEvent.request';
 

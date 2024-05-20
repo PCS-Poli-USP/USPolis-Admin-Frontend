@@ -1,7 +1,7 @@
 import { Auth, Hub } from 'aws-amplify';
-import { User } from 'models/database/user.model';
+import { User } from 'models/common/user.common.model';
 import React, { createContext, useEffect, useState } from 'react';
-import SelfService from 'services/self.service';
+import SelfService from 'services/api/self.service';
 
 interface AppContext {
   loading: boolean;

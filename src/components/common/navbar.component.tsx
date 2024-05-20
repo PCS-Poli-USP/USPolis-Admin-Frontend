@@ -28,6 +28,7 @@ const Links = [
   { text: 'Disciplinas', value: '/subjects', admin: false},
   { text: 'Salas', value: '/classrooms', admin: false },
   { text: 'Turmas', value: '/classes', admin: false },
+  { text: 'Feriados', value: '/holidays', admin: false },
   { text: 'Alocações', value: '/allocation', admin: false },
   { text: 'Conflitos', value: '/conflicts', admin: false },
   { text: 'Eventos', value: '/institutional-events', admin: true },

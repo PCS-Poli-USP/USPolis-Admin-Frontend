@@ -40,11 +40,13 @@ export type DataTableProps<Data extends object> = {
   data: Data[];
   columns: ColumnDef<Data, any>[];
   filteredData?: (filteredData: Data[]) => void;
+  hidden?: boolean;
 };
 
 export default function DataTable<Data extends object>({
   data,
   columns,
+  hidden,
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -81,7 +83,7 @@ export default function DataTable<Data extends object>({
   }
 
   return (
-    <TableContainer border='1px' borderRadius='lg' borderColor='uspolis.blue'>
+    <TableContainer border='1px' borderRadius='lg' borderColor='uspolis.blue' hidden={hidden}>
       {loading && <Progress size='xs' isIndeterminate />}
       <Table>
         <Thead>

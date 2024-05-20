@@ -37,12 +37,12 @@ import Class, {
   CreateClassEvents,
   Preferences,
   SClass,
-} from 'models/database/class.model';
+} from 'models/common/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
-import ClassesService from 'services/classes.service';
-import BuildingsService from 'services/buildings.service';
-import EventsService from 'services/events.service';
+import ClassesService from 'services/api/classes.service';
+import BuildingsService from 'services/api/buildings.service';
+import EventsService from 'services/api/events.service';
 import { Capitalize } from 'utils/formatters';
 import {
   FilterArray,
@@ -56,9 +56,9 @@ import {
   ClassToSClass,
   breakClassFormInEvents,
 } from 'utils/classes/classes.formatter';
-import { Building } from 'models/database/building.model';
-import { EventByClassrooms } from 'models/database/event.model';
-import CrawlerService from 'services/crawler.service';
+import { Building } from 'models/common/building.model';
+import { EventByClassrooms } from 'models/common/event.model';
+import CrawlerService from 'services/api/crawler.service';
 import { sortBuildings, sortClasses } from 'utils/sorter';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
 import MultipleEditModal from 'components/classes/multipleEdit.modal';

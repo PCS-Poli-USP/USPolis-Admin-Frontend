@@ -2,12 +2,12 @@ import {
   ClassroomConflictMap,
   ClassroomSchedule,
   TimeTuple,
-} from 'models/database/classroom.model';
+} from 'models/common/classroom.model';
 import {
   WeekDaysKeyNumber,
   WeekDaysShortDict,
   WeekDaysShortText,
-} from 'models/enums/weekDays.enum';
+} from 'utils/enums/weekDays.enum';
 
 export class ConflictCalculator {
   /**

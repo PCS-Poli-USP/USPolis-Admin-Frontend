@@ -17,6 +17,7 @@ export function Input({
   name,
   type = 'text',
   disabled = false,
+  placeholder = undefined,
 }: InputProps) {
   const {
     register,
@@ -26,7 +27,7 @@ export function Input({
   return (
     <FormControl isInvalid={!!errors[name]}>
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
-      <ChakraInput {...register(name)} type={type} disabled={disabled} />
+      <ChakraInput {...register(name)} type={type} disabled={disabled} placeholder={placeholder}/>
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
     </FormControl>
   );

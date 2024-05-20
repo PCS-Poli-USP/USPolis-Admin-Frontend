@@ -15,7 +15,7 @@ import {
   ModalOverlay,
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import { Building } from 'models/database/building.model';
+import { Building } from 'models/common/building.model';
 import {
   nameInvalid,
   buildingsInvalid,
@@ -24,7 +24,7 @@ import {
 } from 'utils/users/users.validator';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import BuildingsService from 'services/buildings.service';
+import BuildingsService from 'services/api/buildings.service';
 
 interface RegisterModalProps {
   isOpen: boolean;

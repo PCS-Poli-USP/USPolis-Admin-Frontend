@@ -11,7 +11,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { EventByClassrooms } from 'models/database/event.model';
+import { EventByClassrooms } from 'models/common/event.model';
 
 interface ClassEventProps {
   classEvent: EventByClassrooms;

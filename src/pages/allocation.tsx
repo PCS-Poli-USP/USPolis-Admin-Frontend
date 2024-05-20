@@ -27,14 +27,14 @@ import Loading from 'components/common/loading.component';
 import ClassesPDF from 'components/pdf/classesPDF';
 import { appContext } from 'context/AppContext';
 import { useContext, useEffect, useRef, useState } from 'react';
-import AllocationService from 'services/events.service';
-import EventsService from 'services/events.service';
+import AllocationService from 'services/api/events.service';
+import EventsService from 'services/api/events.service';
 import {
   AllocationEventsMapper,
   AllocationResourcesFromEventsMapper,
   FirstEventDate,
 } from 'utils/mappers/allocation.mapper';
-import Event from 'models/database/event.model';
+import Event from 'models/common/event.model';
 
 import { BsSearch } from 'react-icons/bs';
 import Dialog from 'components/common/dialog.component';

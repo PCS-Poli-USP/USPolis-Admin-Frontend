@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 import { EventForm } from '.';
 import moment from 'moment';
-import { EventTypes } from 'models/enums/eventTypes.enum';
+import { EventTypes } from 'utils/enums/eventTypes.enum';
 
 export const formFields = {
   building: {

@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios';
 import Classroom, {
   AvailableClassroom,
   ClassroomSchedule,
-} from 'models/database/classroom.model';
+} from 'models/common/classroom.model';
 import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;

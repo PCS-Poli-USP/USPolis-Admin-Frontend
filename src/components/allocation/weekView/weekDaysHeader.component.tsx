@@ -1,12 +1,12 @@
 import { Box, HStack, StackDivider, Text } from '@chakra-ui/react';
 import { Day } from './day.component';
-import { WeekDaysDict } from 'models/enums/weekDays.enum';
+import { WeekDaysDict } from 'utils/enums/weekDays.enum';
 
 interface DaysHeaderProps {
   startDate: Date;
 }
 
-type WeekDaysKeyNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6
+type WeekDaysKeyNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export function WeekDaysHeader(props: DaysHeaderProps) {
   const currentDate: Date = new Date(props.startDate);
@@ -25,7 +25,13 @@ export function WeekDaysHeader(props: DaysHeaderProps) {
         </Text>
       </Box>
       {daysNumber.map((value, index) => (
-        <Day weekDay={WeekDaysDict[index as WeekDaysKeyNumber ].slice(0, 3).toUpperCase()} numberDay={value} key={index} />
+        <Day
+          weekDay={WeekDaysDict[index as WeekDaysKeyNumber]
+            .slice(0, 3)
+            .toUpperCase()}
+          numberDay={value}
+          key={index}
+        />
       ))}
     </HStack>
   );

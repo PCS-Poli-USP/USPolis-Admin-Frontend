@@ -13,12 +13,12 @@ import {
 import { CalendarIcon } from '@chakra-ui/icons';
 import { BsBookHalf, BsHouseFill, BsFillPenFill } from 'react-icons/bs';
 
-import Classroom from 'models/database/classroom.model';
-import Event from 'models/database/event.model';
+import Classroom from 'models/common/classroom.model';
+import Event from 'models/common/event.model';
 
 import { useEffect, useState } from 'react';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
-import ClassroomsService from 'services/classrooms.service';
+import ClassroomsService from 'services/api/classrooms.service';
 import { sortClassrooms, sortEventsBySubjectAndClass } from 'utils/sorter';
 
 interface AutomaticAllocationAccordionProps {

@@ -3,7 +3,7 @@ import Class, {
   CreateClassEvents,
   HasToBeAllocatedClass,
   Preferences,
-} from 'models/database/class.model';
+} from 'models/common/class.model';
 import HttpService from './http.service';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;

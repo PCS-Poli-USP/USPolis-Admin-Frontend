@@ -1,4 +1,4 @@
-import Conflict from 'models/database/conflict.model';
+import Conflict from 'models/common/conflict.model';
 import HttpService from './http.service';
 import { AxiosResponse } from 'axios';
 

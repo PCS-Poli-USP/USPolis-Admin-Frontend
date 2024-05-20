@@ -1,4 +1,4 @@
-import { User } from 'models/database/user.model';
+import { User } from 'models/common/user.common.model';
 import HttpService from './http.service';
 import { AxiosResponse } from 'axios';
 

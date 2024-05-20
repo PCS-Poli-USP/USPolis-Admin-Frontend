@@ -5,8 +5,8 @@ import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
 import Navbar from 'components/common/navbar.component';
-import UsersService from 'services/users.service';
-import { User, EditUser } from 'models/database/user.model';
+import UsersService from 'services/api/users.service';
+import { User, EditUser } from 'models/common/user.common.model';
 import DataTable from 'components/common/dataTable.component';
 import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { appContext } from 'context/AppContext';

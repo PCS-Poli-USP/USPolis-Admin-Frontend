@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import HttpService from './http.service';
-import Crawl from 'models/database/crawler.model';
+import Crawl from 'models/common/crawler.model';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 

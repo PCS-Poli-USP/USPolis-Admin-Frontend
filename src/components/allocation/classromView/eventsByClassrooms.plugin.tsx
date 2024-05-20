@@ -12,8 +12,8 @@ import {
 import { createPlugin, sliceEvents } from '@fullcalendar/react';
 import { ColumnDef } from '@tanstack/react-table';
 import DataTable from 'components/common/dataTable.component';
-import { Classrooms } from 'models/enums/clasrooms.enum';
-import { EventByClassrooms } from 'models/database/event.model';
+import { Classrooms } from 'utils/enums/clasrooms.enum';
+import { EventByClassrooms } from 'models/common/event.model';
 import { useEffect, useState } from 'react';
 import { Capitalize } from 'utils/formatters';
 import {
@@ -21,7 +21,7 @@ import {
   EventsByClassroomMapper,
 } from 'utils/mappers/allocation.mapper';
 import EditEventModal from '../editEvent.modal';
-import EventsService from 'services/events.service';
+import EventsService from 'services/api/events.service';
 
 function ClassroomsTables(props: any) {
   const eventsService = new EventsService();

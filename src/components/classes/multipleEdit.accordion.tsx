@@ -12,13 +12,13 @@ import {
   Skeleton,
   StackDivider,
 } from '@chakra-ui/react';
-import Class from 'models/database/class.model';
-import BuildingsService from 'services/buildings.service';
+import Class from 'models/common/class.model';
+import BuildingsService from 'services/api/buildings.service';
 import { useContext, useEffect, useState } from 'react';
-import { Building } from 'models/database/building.model';
+import { Building } from 'models/common/building.model';
 import { appContext } from 'context/AppContext';
 import { MultipleEditAllocation } from './multipleEdit.allocation';
-import { ClassroomSchedule } from 'models/database/classroom.model';
+import { ClassroomSchedule } from 'models/common/classroom.model';
 
 interface MultipleEditAccordionProps {
   subjectsMap: [string, Class[]][];

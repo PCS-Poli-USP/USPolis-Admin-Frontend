@@ -22,12 +22,12 @@ import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
 import Dialog from 'components/common/dialog.component';
 import { appContext } from 'context/AppContext';
-import { Building } from 'models/database/building.model';
-import { AvailableClassroom } from 'models/database/classroom.model';
-import { EventByClassrooms } from 'models/database/event.model';
+import { Building } from 'models/common/building.model';
+import { AvailableClassroom } from 'models/common/classroom.model';
+import { EventByClassrooms } from 'models/common/event.model';
 import { useContext, useEffect, useState } from 'react';
-import BuildingsService from 'services/buildings.service';
-import ClassroomsService from 'services/classrooms.service';
+import BuildingsService from 'services/api/buildings.service';
+import ClassroomsService from 'services/api/classrooms.service';
 import { Capitalize } from 'utils/formatters';
 
 interface ClassroomOption {

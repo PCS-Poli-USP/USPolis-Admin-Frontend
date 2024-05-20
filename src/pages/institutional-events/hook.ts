@@ -1,7 +1,7 @@
 import { useToast } from '@chakra-ui/react';
-import { InstitutionalEvent } from 'models/database/institutionalEvent.model';
+import { InstitutionalEvent } from 'models/common/institutionalEvent.model';
 import { useCallback, useEffect, useState } from 'react';
-import InstutionalEventsService from 'services/institutional-events.service';
+import InstutionalEventsService from 'services/api/institutional-events.service';
 
 const service = new InstutionalEventsService();
 

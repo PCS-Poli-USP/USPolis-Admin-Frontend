@@ -25,9 +25,9 @@ import {
   HStack,
 } from '@chakra-ui/react';
 import { appContext } from 'context/AppContext';
-import { Building } from 'models/database/building.model';
+import { Building } from 'models/common/building.model';
 import { useContext, useEffect, useRef, useState } from 'react';
-import BuildingsService from 'services/buildings.service';
+import BuildingsService from 'services/api/buildings.service';
 
 interface JupiterCrawlerPopoverPrpos {
   subjects?: string[];

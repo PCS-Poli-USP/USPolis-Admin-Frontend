@@ -17,13 +17,13 @@ import {
   Select,
 } from '@chakra-ui/react';
 import { appContext } from 'context/AppContext';
-import { Building } from 'models/database/building.model';
-import Classroom from 'models/database/classroom.model';
-import { User } from 'models/database/user.model';
+import { Building } from 'models/common/building.model';
+import Classroom from 'models/common/classroom.model';
+import { User } from 'models/common/user.common.model';
 
 import { useContext, useEffect, useState } from 'react';
-import BuildingsService from 'services/buildings.service';
-import UsersService from 'services/users.service';
+import BuildingsService from 'services/api/buildings.service';
+import UsersService from 'services/api/users.service';
 
 interface RegisterModalProps {
   isOpen: boolean;

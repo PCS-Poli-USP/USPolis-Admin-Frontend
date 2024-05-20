@@ -13,8 +13,8 @@ import {
   ModalOverlay,
   Select,
 } from '@chakra-ui/react';
-import Class, { Preferences } from 'models/database/class.model';
-import { Building } from 'models/database/building.model';
+import Class, { Preferences } from 'models/common/class.model';
+import { Building } from 'models/common/building.model';
 
 import { useEffect, useState } from 'react';
 

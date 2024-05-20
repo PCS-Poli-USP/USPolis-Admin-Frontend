@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
-import { CreateSubject, Subject, UpdateSubject } from 'models/database/subject.models';
 import HttpService from './http.service';
+import { CreateSubject, UpdateSubject } from 'models/http/requests/subject.request.models';
+import { SubjectResponse } from 'models/http/responses/subject.response.models';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
@@ -9,7 +10,7 @@ export default class SubjectsService extends HttpService {
     super(`${USPOLIS_SERVER_URL}/subjects`);
   }
 
-  list(): Promise<AxiosResponse<Array<Subject>>> {
+  list(): Promise<AxiosResponse<Array<SubjectResponse>>> {
     return this.http.get('');
   }
 
