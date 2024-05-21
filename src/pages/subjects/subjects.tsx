@@ -301,6 +301,7 @@ function Subjects() {
           isOpen={isOpenRegisterSubjectModal}
           onClose={() => {
             setSelectedSubject(undefined);
+            setIsUpdateSubject(false);
             onCloseRegisterSubjectModal();
           }}
           onSave={handleRegisterSubjectSave}
