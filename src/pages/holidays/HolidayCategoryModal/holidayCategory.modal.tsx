@@ -100,7 +100,7 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
                 {props.isUpdate ? 'Atualizar' : 'Cadastrar'}
               </Button>
               <Button colorScheme='blue' onClick={handleCloseModal}>
-                Close
+                Fechar
               </Button>
             </ModalFooter>
           </form>
