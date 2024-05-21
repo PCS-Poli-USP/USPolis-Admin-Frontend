@@ -335,7 +335,11 @@ function Holidays() {
         <HolidayCategoryModal
           isUpdate={isUpdateHolidayCategory}
           isOpen={isOpenHolidayCategoryModal}
-          onClose={onCloseHolidayCategoryModal}
+          onClose={() => {
+            setSelectedHolidayCategory(undefined);
+            setIsUpdateHolidayCategory(false);
+            onCloseHolidayCategoryModal();
+          }}
           onCreate={createHolidayCategory}
           onUpdate={updateHolidayCategory}
           selectedHolidayCategory={selectedHolidayCategory}
@@ -344,7 +348,11 @@ function Holidays() {
           isUpdate={isUpdateHoliday}
           categories={holidaysCategories}
           isOpen={isOpenHolidayModal}
-          onClose={onCloseHolidayModal}
+          onClose={() => {
+            setSelectedHoliday(undefined);
+            setIsUpdateHoliday(false);
+            onCloseHolidayModal();
+          }}
           onCreate={createHoliday}
           onUpdate={updateHoliday}
           selectedHoliday={selectedHoliday}
