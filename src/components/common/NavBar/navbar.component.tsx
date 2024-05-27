@@ -18,14 +18,13 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Auth } from 'aws-amplify';
 import { ReactNode, useContext } from 'react';
 import { FaUser } from 'react-icons/fa';
 import Logo from 'assets/uspolis.logo.png';
 import { appContext } from 'context/AppContext';
 
 const Links = [
-  { text: 'Disciplinas', value: '/subjects', admin: false},
+  { text: 'Disciplinas', value: '/subjects', admin: false },
   { text: 'Salas', value: '/classrooms', admin: false },
   { text: 'Turmas', value: '/classes', admin: false },
   { text: 'Feriados', value: '/holidays', admin: false },
