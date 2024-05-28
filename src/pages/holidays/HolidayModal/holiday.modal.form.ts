@@ -5,12 +5,12 @@ import { HolidayValidator } from 'utils/holidays/holidays.validator';
 export const formFields = {
   category_id: {
     validator: yup
-      .string()
+      .number()
       .required('Campo obrigatório')
       .test(
         'is-valid-option',
         'Campo obrigatório',
-        (value) => !HolidayValidator.isInvalidCategoryId(Number(value)),
+        (value) => !HolidayValidator.isInvalidCategoryId(value),
       ),
     defaultValue: 0,
   },
