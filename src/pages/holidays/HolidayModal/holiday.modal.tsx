@@ -15,14 +15,12 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './holiday.modal.form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input, Select } from 'components/common';
-import { HolidaysTypes } from 'utils/enums/holidays.enums';
 import {
   CreateHoliday,
   UpdateHoliday,
 } from 'models/http/requests/holiday.request.models';
 import { useEffect } from 'react';
 import { HolidayResponse } from 'models/http/responses/holiday.response.models';
-import { holidaysTypeFormatter } from 'utils/holidays/holidays.formatter';
 
 function HolidayModal(props: HolidayModalProps) {
   const form = useForm<HolidayForm>({
@@ -44,7 +42,6 @@ function HolidayModal(props: HolidayModalProps) {
     const formated_data: UpdateHoliday = {
       category_id: data.category_id,
       date: data.date,
-      type: data.type,
     };
     return formated_data;
   }
@@ -70,9 +67,8 @@ function HolidayModal(props: HolidayModalProps) {
       (value) => value.name === data.category,
     )?.id;
     const formated: HolidayForm = {
-      category_id: category_id ? category_id : '',
+      category_id: category_id ? category_id : 0,
       date: data.date.substring(0, 10),
-      type: data.type,
     };
     return formated;
   }
@@ -81,6 +77,7 @@ function HolidayModal(props: HolidayModalProps) {
     if (props.selectedHoliday) {
       reset(formatSelectedHoliday(props.selectedHoliday));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reset, props]);
 
   return (
@@ -100,7 +97,7 @@ function HolidayModal(props: HolidayModalProps) {
                   name={'category_id'}
                   options={props.categories.map((category) => ({
                     label: category.name,
-                    value: category.id,
+                    value: category.id.toString(),
                   }))}
                 />
                 <Input
@@ -108,14 +105,6 @@ function HolidayModal(props: HolidayModalProps) {
                   name={'date'}
                   placeholder={'Selecione uma data'}
                   type={'date'}
-                />
-                <Select
-                  label={'Tipo de feriado'}
-                  name={'type'}
-                  options={Object.keys(HolidaysTypes).map((opt) => ({
-                    label: holidaysTypeFormatter(opt.toLowerCase()),
-                    value: HolidaysTypes[opt as keyof typeof HolidaysTypes],
-                  }))}
                 />
               </VStack>
             </ModalBody>

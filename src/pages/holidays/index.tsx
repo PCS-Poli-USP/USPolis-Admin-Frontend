@@ -111,6 +111,7 @@ function Holidays() {
     await holidaysCategoriesService
       .list()
       .then((response) => {
+        console.log(response.data);
         setHolidaysCategories(
           response.data.sort(sortHolidaysCategoriesResponse),
         );
@@ -161,7 +162,7 @@ function Holidays() {
   }
 
   async function updateHolidayCategory(
-    id: string,
+    id: number,
     data: UpdateHolidayCategory,
   ) {
     setLoading(true);
@@ -231,7 +232,7 @@ function Holidays() {
       });
   }
 
-  async function updateHoliday(id: string, data: UpdateHoliday) {
+  async function updateHoliday(id: number, data: UpdateHoliday) {
     setLoading(true);
     await holidaysService
       .update(id, data)

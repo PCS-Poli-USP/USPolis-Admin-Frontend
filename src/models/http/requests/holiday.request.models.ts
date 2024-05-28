@@ -1,7 +1,6 @@
 export interface CreateHoliday {
-  category_id: string;
+  category_id: number;
   date: string;
-  type: string;
 }
 
 export interface UpdateHoliday extends CreateHoliday {}

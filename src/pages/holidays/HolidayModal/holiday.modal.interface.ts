@@ -10,12 +10,11 @@ export interface HolidayModalProps extends ModalProps {
   categories: HolidayCategoryResponse[];
   isUpdate: boolean;
   onCreate: (data: CreateHoliday) => void;
-  onUpdate: (id: string, data: UpdateHoliday) => void;
+  onUpdate: (id: number, data: UpdateHoliday) => void;
   selectedHoliday?: HolidayResponse;
 }
 
 export interface HolidayForm {
-  category_id: string;
+  category_id: number;
   date: string;
-  type: string;
 }
