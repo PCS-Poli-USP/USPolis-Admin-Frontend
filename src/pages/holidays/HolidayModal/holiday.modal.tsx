@@ -20,7 +20,7 @@ import {
   UpdateHoliday,
 } from 'models/http/requests/holiday.request.models';
 import { useEffect } from 'react';
-import { HolidayResponse } from 'models/http/responses/holiday.response.models';
+import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
 
 function HolidayModal(props: HolidayModalProps) {
   const form = useForm<HolidayForm>({
@@ -40,7 +40,7 @@ function HolidayModal(props: HolidayModalProps) {
 
   function formatUpdateData(data: HolidayForm): UpdateHoliday {
     const formated_data: UpdateHoliday = {
-      category_id: data.category_id,
+      category_id: props.category ? props.category.id : 0,
       date: data.date,
     };
     return formated_data;
@@ -62,18 +62,18 @@ function HolidayModal(props: HolidayModalProps) {
     props.onClose();
   }
 
-  function formatSelectedHoliday(data: HolidayResponse): HolidayForm {
-    const category_id = props.categories.find(
-      (value) => value.name === data.category,
-    )?.id;
+  function formatSelectedHoliday(data: HolidayUnfetchResponse): HolidayForm {
     const formated: HolidayForm = {
-      category_id: category_id ? category_id : 0,
+      category_id: data.category_id,
       date: data.date.substring(0, 10),
     };
     return formated;
   }
 
   useEffect(() => {
+    if (props.category) {
+      reset({ category_id: props.category.id, date: '' });
+    }
     if (props.selectedHoliday) {
       reset(formatSelectedHoliday(props.selectedHoliday));
     }
@@ -93,11 +93,14 @@ function HolidayModal(props: HolidayModalProps) {
             <ModalBody>
               <VStack spacing={4} alignItems={'flex-start'}>
                 <Select
-                  label={'Categoria de feriado'}
+                  disabled={true}
+                  label={'Categoria do feriado'}
                   name={'category_id'}
+                  placeholder={'Selecione uma opção'}
+                  value={props.category ? props.category.id : undefined}
                   options={props.categories.map((category) => ({
                     label: category.name,
-                    value: category.id.toString(),
+                    value: category.id,
                   }))}
                 />
                 <Input
