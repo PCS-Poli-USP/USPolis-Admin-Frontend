@@ -2,44 +2,51 @@ import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import {
   Accordion,
   AccordionButton,
-  AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  Alert,
+  AlertIcon,
   Box,
+  Button,
+  Divider,
+  HStack,
+  Spacer,
+  StackDivider,
+  Text,
+  VStack,
 } from '@chakra-ui/react';
 import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
+import HolidayCategoryAccordionItem from './holidayCategory.accordion.item';
+import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
 
 interface HolidayCategoryAccordionProps {
   categories: HolidayCategoryResponse[];
+  onHolidayCategoryUpdate: (data: HolidayCategoryResponse) => void;
+  onHolidayCategoryDelete: (data: HolidayCategoryResponse) => void;
+  onHolidayCreate: (category: HolidayCategoryResponse) => void;
+  onHolidayUpdate: (data: HolidayUnfetchResponse) => void;
+  onHolidayDelete: (data: HolidayUnfetchResponse) => void;
 }
 
 export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
   return (
-    <Accordion allowMultiple>
-      <AccordionItem>
-        <h2>
-          <AccordionButton>
-            <Box as='span' flex='1' textAlign='left'>
-              Section 1 title
-            </Box>
-            <AccordionIcon />
-          </AccordionButton>
-        </h2>
-        <AccordionPanel pb={4}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat.
-        </AccordionPanel>
-      </AccordionItem>
-
-      <AccordionItem>
-        {({ isExpanded }) => (
-          <>
-            <h2>
+    <Accordion allowMultiple borderColor={'blackAlpha.900'}>
+      {props.categories.length === 0 ? (
+        <Alert status={'warning'} fontSize={'sm'} mb={4}>
+          <AlertIcon />
+          Nenhuma categoria de feriado adicionado
+        </Alert>
+      ) : undefined}
+      {props.categories.map((category, index) => (
+        <AccordionItem key={index}>
+          {({ isExpanded }) => (
+            <>
               <AccordionButton>
                 <Box as='span' flex='1' textAlign='left'>
-                  Section 2 title
+                  <Text
+                    as={'b'}
+                  >{`Categoria de Feriado - ${category.name}`}</Text>
                 </Box>
                 {isExpanded ? (
                   <MinusIcon fontSize='12px' />
@@ -47,16 +54,55 @@ export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
                   <AddIcon fontSize='12px' />
                 )}
               </AccordionButton>
-            </h2>
-            <AccordionPanel pb={4}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
-            </AccordionPanel>
-          </>
-        )}
-      </AccordionItem>
+
+              <AccordionPanel>
+                <Divider mb={2} borderColor={'blackAlpha.500'} />
+                <HStack mb={4}>
+                  <Spacer />
+                  <Button
+                    leftIcon={<BsFillPenFill />}
+                    colorScheme={'yellow'}
+                    size={'sm'}
+                    variant={'ghost'}
+                    onClick={() => props.onHolidayCategoryUpdate(category)}
+                  >
+                    Atualizar Categoria
+                  </Button>
+                  <Button
+                    leftIcon={<BsFillTrashFill />}
+                    colorScheme={'red'}
+                    size={'sm'}
+                    variant={'ghost'}
+                    onClick={() => props.onHolidayCategoryDelete(category)}
+                  >
+                    Deletar Categoria
+                  </Button>
+                  <Button leftIcon={<AddIcon />} size={'sm'} variant={'ghost'} onClick={() => props.onHolidayCreate(category)}>
+                    Cadastrar Feriado
+                  </Button>
+                </HStack>
+                <Divider mb={2} borderColor={'blackAlpha.500'} />
+                <VStack divider={<StackDivider borderColor='blackAlpha.500' />}>
+                  {category.holidays.length === 0 ? (
+                    <Alert status={'warning'} fontSize={'sm'} mb={4}>
+                      <AlertIcon />
+                      Nenhum feriado adicionado a essa categoria
+                    </Alert>
+                  ) : undefined}
+                  {category.holidays.map((holiday, idx) => (
+                    <HolidayCategoryAccordionItem
+                      key={idx}
+                      holiday={holiday}
+                      onHolidayUpdate={props.onHolidayUpdate}
+                      onHolidayDelete={props.onHolidayDelete}
+                    />
+                  ))}
+                </VStack>
+              </AccordionPanel>
+            </>
+          )}
+        </AccordionItem>
+      ))}
     </Accordion>
   );
 }
