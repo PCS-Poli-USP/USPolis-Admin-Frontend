@@ -19,6 +19,8 @@ import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.r
 import HolidayCategoryAccordionItem from './holidayCategory.accordion.item';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
+import { useEffect } from 'react';
+import { sortAllHolidaysFromHolidaysCategories } from 'utils/holidaysCategories/holidaysCategories.sorter';
 
 interface HolidayCategoryAccordionProps {
   categories: HolidayCategoryResponse[];
@@ -30,6 +32,10 @@ interface HolidayCategoryAccordionProps {
 }
 
 export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
+  useEffect(() => {
+    sortAllHolidaysFromHolidaysCategories(props.categories);
+  }, [props.categories]);
+
   return (
     <Accordion allowMultiple borderColor={'blackAlpha.900'}>
       {props.categories.length === 0 ? (
@@ -77,7 +83,12 @@ export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
                   >
                     Deletar Categoria
                   </Button>
-                  <Button leftIcon={<AddIcon />} size={'sm'} variant={'ghost'} onClick={() => props.onHolidayCreate(category)}>
+                  <Button
+                    leftIcon={<AddIcon />}
+                    size={'sm'}
+                    variant={'ghost'}
+                    onClick={() => props.onHolidayCreate(category)}
+                  >
                     Cadastrar Feriado
                   </Button>
                 </HStack>
