@@ -31,6 +31,7 @@ const Links = [
   { text: 'Alocações', value: '/allocation', admin: false },
   { text: 'Conflitos', value: '/conflicts', admin: false },
   { text: 'Eventos', value: '/institutional-events', admin: true },
+  { text: 'Departamentos', value: '/departments', admin: true },
   { text: 'Prédios', value: '/buildings', admin: true },
   { text: 'Usuários', value: '/users', admin: true },
 ];
