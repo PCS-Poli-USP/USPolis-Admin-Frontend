@@ -1,5 +1,6 @@
 import {
   CreateHoliday,
+  CreateManyHolidays,
   UpdateHoliday,
 } from 'models/http/requests/holiday.request.models';
 import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
@@ -11,6 +12,7 @@ export interface HolidayModalProps extends ModalProps {
   category?: HolidayCategoryResponse;
   isUpdate: boolean;
   onCreate: (data: CreateHoliday) => void;
+  onCreateMany: (data: CreateManyHolidays) => void;
   onUpdate: (id: number, data: UpdateHoliday) => void;
   selectedHoliday?: HolidayUnfetchResponse;
 }
