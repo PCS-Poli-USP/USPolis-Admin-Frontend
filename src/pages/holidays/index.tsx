@@ -12,6 +12,7 @@ import HolidayModal from './HolidayModal/holiday.modal';
 import HolidayCategoryModal from './HolidayCategoryModal';
 import {
   CreateHoliday,
+  CreateManyHolidays,
   UpdateHoliday,
 } from 'models/http/requests/holiday.request.models';
 import HolidaysService from 'services/api/holiday.service';
@@ -64,7 +65,7 @@ function Holidays() {
 
   useEffect(() => {
     fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchData() {
@@ -196,6 +197,26 @@ function Holidays() {
       });
   }
 
+  async function createManyHolidays(data: CreateManyHolidays) {
+    setLoading(true);
+    await holidaysService
+      .createMany(data)
+      .then((response) => {
+        showToast(
+          'Sucesso',
+          `${response.data.length} feriados criados com sucesso!`,
+          'success',
+        );
+        fetchHolidaysCategories();
+      })
+      .catch((error) => {
+        showToast('Erro', `Erro ao criar feriados: ${error}`, 'error');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
   async function updateHoliday(id: number, data: UpdateHoliday) {
     setLoading(true);
     await holidaysService
@@ -312,6 +333,7 @@ function Holidays() {
             onCloseHolidayModal();
           }}
           onCreate={createHoliday}
+          onCreateMany={createManyHolidays}
           onUpdate={updateHoliday}
           selectedHoliday={selectedHoliday}
         />

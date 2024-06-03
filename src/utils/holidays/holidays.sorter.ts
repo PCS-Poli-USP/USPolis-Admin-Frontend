@@ -21,3 +21,11 @@ export function sortHolidaysUnfetchResponse(
   if (A_DATE > B_DATE) return 1;
   return 0;
 }
+
+export function sortDates(A: string, B: string) {
+  const A_DATE = new Date(A);
+  const B_DATE = new Date(B);
+  if (A_DATE < B_DATE) return -1;
+  if (A_DATE > B_DATE) return 1;
+  return 0;
+}
