@@ -12,6 +12,19 @@ export default interface Classroom {
   created_by?: string;
 }
 
+export interface UnfetchClassroom {
+  id: number;
+  name: string;
+  capacity: number;
+  floor: number;
+  ignore_to_allocate: boolean;
+  accessibility: boolean;
+  air_conditioning: boolean;
+  updated_at: string;
+  created_by_id: number;
+  building_id: number;
+}
+
 export interface AvailableClassroom {
   classroom_name: string;
   building: string;
