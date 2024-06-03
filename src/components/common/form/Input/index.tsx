@@ -18,6 +18,7 @@ export function Input({
   name,
   type = 'text',
   disabled = false,
+  hidden = false,
   placeholder = undefined,
   value = undefined,
 }: InputProps) {
@@ -27,7 +28,7 @@ export function Input({
   } = useFormContext();
 
   return (
-    <FormControl isInvalid={!!errors[name]}>
+    <FormControl isInvalid={!!errors[name]} hidden={hidden}>
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
       <ChakraInput
         {...register(name)}
@@ -35,6 +36,7 @@ export function Input({
         disabled={disabled}
         placeholder={placeholder}
         value={value}
+        hidden={hidden}
       />
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
     </FormControl>
