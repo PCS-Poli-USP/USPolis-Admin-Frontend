@@ -1,8 +1,5 @@
 import {
   Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -12,22 +9,17 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from 'components/common';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { CalendarForm, CalendarModalProps } from './calendar.modal.interface';
 import { defaultValues, schema } from './calendar.modal.form';
 import {
   CreateCalendar,
   UpdateCalendar,
 } from 'models/http/requests/calendar.request.models';
-import Select from 'react-select';
-
-type OptionType = {
-  value: number;
-  label: string;
-};
+import { MultiSelect } from 'components/common/form/MultiSelect';
 
 function CalendarModal(props: CalendarModalProps) {
   const form = useForm<CalendarForm>({
@@ -35,23 +27,15 @@ function CalendarModal(props: CalendarModalProps) {
     resolver: yupResolver(schema),
   });
 
-  const {
-    control,
-    trigger,
-    getValues,
-    reset,
-    clearErrors,
-    formState: { errors },
-  } = form;
+  const { trigger, getValues, reset, clearErrors } = form;
 
   async function handleCreateSubmit() {
-    console.log('Criando');
     const isValid = await trigger();
     if (!isValid) return;
 
-    // const values = getValues();
-    // props.onCreate(values as CreateCalendar);
-    // handleCloseModal();
+    const values = getValues();
+    props.onCreate(values as CreateCalendar);
+    handleCloseModal();
   }
 
   function formatUpdateData(data: CalendarForm): UpdateCalendar {
@@ -63,14 +47,13 @@ function CalendarModal(props: CalendarModalProps) {
   }
 
   async function handleUpdateSubmit() {
-    console.log('Enviando');
-    // const isValid = await trigger();
-    // if (!isValid) return;
+    const isValid = await trigger();
+    if (!isValid) return;
 
-    // const values = getValues();
-    // if (!props.selectedCalendar) return;
-    // props.onUpdate(props.selectedCalendar.id, formatUpdateData(values));
-    // handleCloseModal();
+    const values = getValues();
+    if (!props.selectedCalendar) return;
+    props.onUpdate(props.selectedCalendar.id, formatUpdateData(values));
+    handleCloseModal();
   }
 
   function handleCloseModal() {
@@ -85,21 +68,8 @@ function CalendarModal(props: CalendarModalProps) {
     }
   }, [reset, props]);
 
-  const categoriesOptions = props.categories.map((category) => ({
-    value: category.id,
-    label: category.name,
-  }));
-
-  const [selectedOption, setSelectedOption] = useState<OptionType>(
-    categoriesOptions[0],
-  );
-
-  const handleChange = (option: OptionType) => {
-    setSelectedOption(option);
-  };
-
   return (
-    <Modal isOpen={props.isOpen} onClose={handleCloseModal}>
+    <Modal isOpen={props.isOpen} closeOnOverlayClick={false} onClose={handleCloseModal}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
@@ -116,32 +86,13 @@ function CalendarModal(props: CalendarModalProps) {
                   type={'text'}
                   placeholder={'Nome do calendário'}
                 />
-                <Controller
-                  control={control}
+                <MultiSelect
+                  label={'Categorias'}
                   name={'categories_ids'}
-                  render={({ field }) => (
-                    <FormControl isInvalid={!!errors.categories_ids}>
-                      <FormLabel>Categorias</FormLabel>
-                      <Select
-                        isMulti={true}
-                        onChange={(selectedOption) => {
-                          const values = selectedOption.map(
-                            (option: OptionType) => option.value,
-                          );
-                          field.onChange(values);
-                          console.log(selectedOption);
-                          return;
-                        }}
-                        options={props.categories.map((category) => ({
-                          value: category.id,
-                          label: category.name,
-                        }))}
-                      />
-                      <FormErrorMessage>
-                        {errors.categories_ids?.message?.toString()}
-                      </FormErrorMessage>
-                    </FormControl>
-                  )}
+                  options={props.categories.map((category) => ({
+                    value: category.id,
+                    label: category.name,
+                  }))}
                 />
               </VStack>
             </ModalBody>

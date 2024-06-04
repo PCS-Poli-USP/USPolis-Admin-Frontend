@@ -70,7 +70,7 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
   }, [reset, props]);
 
   return (
-    <Modal isOpen={props.isOpen} onClose={handleCloseModal}>
+    <Modal isOpen={props.isOpen} onClose={handleCloseModal} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
