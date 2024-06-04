@@ -1,6 +1,7 @@
 import { extendTheme } from '@chakra-ui/react';
+import { createTheme } from '@mui/material';
 
-const theme = extendTheme({
+const chakraTheme = extendTheme({
   colors: {
     uspolis: {
       blue: '#408080',
@@ -22,4 +23,6 @@ const theme = extendTheme({
   },
 });
 
-export default theme;
+const muiTheme = createTheme({})
+
+export { chakraTheme, muiTheme };

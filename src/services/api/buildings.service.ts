@@ -6,22 +6,22 @@ const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
 export default class BuildingsService extends HttpService {
   constructor() {
-    super(`${USPOLIS_SERVER_URL}/buildings`);
+    super(`${USPOLIS_SERVER_URL}`);
   }
 
   list(): Promise<AxiosResponse<Array<Building>>> {
-    return this.http.get('');
+    return this.http.get('/buildings');
   }
 
   create(data: CreateBuilding): Promise<AxiosResponse<any>> {
-    return this.http.post('', data);
+    return this.http.post('/admin/buildings', data);
   }
 
   delete(id: string): Promise<AxiosResponse<any>> {
-    return this.http.delete(id);
+    return this.http.delete(`/admin/buildings/${id}`);
   }
 
   update(id: string, data: any): Promise<AxiosResponse<any>> {
-    return this.http.put(id, data);
+    return this.http.put(`/admin/buildings/${id}`, data);
   }
 }

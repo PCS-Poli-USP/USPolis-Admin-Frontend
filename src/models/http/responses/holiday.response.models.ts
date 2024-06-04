@@ -1,10 +1,15 @@
-import { HolidaysTypes } from "utils/enums/holidays.enums";
-
 export interface HolidayResponse {
-  id: string;
+  id: number;
   category: string;
   date: string;
-  type: HolidaysTypes;
   updated_at: string;
   created_by: string;
+}
+
+export interface HolidayUnfetchResponse {
+  id: number;
+  date: string;
+  update_at: string;
+  category_id: number;
+  created_by_id: number;
 }

@@ -8,12 +8,12 @@ import { ModalProps } from 'models/interfaces';
 export interface HolidayCategoryModalProps extends ModalProps {
   isUpdate: boolean;
   onCreate: (data: CreateHolidayCategory) => void;
-  onUpdate: (id: string, data: UpdateHolidayCategory) => void;
+  onUpdate: (id: number, data: UpdateHolidayCategory) => void;
   selectedHolidayCategory?: HolidayCategoryResponse;
 }
 
 export interface HolidayCategoryForm {
   name: string;
-  id?: string;
+  id?: number;
   created_by?: string;
 }

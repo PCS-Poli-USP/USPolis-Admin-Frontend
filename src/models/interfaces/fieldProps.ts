@@ -3,4 +3,5 @@ export interface FieldProps {
   label: string;
   placeholder?: string;
   disabled?: boolean;
+  hidden?: boolean;
 }

@@ -10,6 +10,7 @@ import { useFormContext } from 'react-hook-form';
 
 interface InputProps extends FieldProps {
   type?: React.HTMLInputTypeAttribute;
+  value?: string | number | readonly string[] | undefined;
 }
 
 export function Input({
@@ -17,7 +18,9 @@ export function Input({
   name,
   type = 'text',
   disabled = false,
+  hidden = false,
   placeholder = undefined,
+  value = undefined,
 }: InputProps) {
   const {
     register,
@@ -25,9 +28,16 @@ export function Input({
   } = useFormContext();
 
   return (
-    <FormControl isInvalid={!!errors[name]}>
+    <FormControl isInvalid={!!errors[name]} hidden={hidden}>
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
-      <ChakraInput {...register(name)} type={type} disabled={disabled} placeholder={placeholder}/>
+      <ChakraInput
+        {...register(name)}
+        type={type}
+        disabled={disabled}
+        placeholder={placeholder}
+        value={value}
+        hidden={hidden}
+      />
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
     </FormControl>
   );

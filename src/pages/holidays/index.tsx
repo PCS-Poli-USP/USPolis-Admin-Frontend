@@ -1,17 +1,9 @@
-import {
-  Button,
-  Checkbox,
-  Flex,
-  Spacer,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
-import DataTable from 'components/common/DataTable/dataTable.component';
+import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 import Navbar from 'components/common/NavBar/navbar.component';
 import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
 import { useContext, useEffect, useState } from 'react';
 import HolidaysCategoriesService from 'services/api/holidayCategory.service';
-import { HolidayResponse } from 'models/http/responses/holiday.response.models';
+import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
 import {
   CreateHolidayCategory,
   UpdateHolidayCategory,
@@ -20,6 +12,7 @@ import HolidayModal from './HolidayModal/holiday.modal';
 import HolidayCategoryModal from './HolidayCategoryModal';
 import {
   CreateHoliday,
+  CreateManyHolidays,
   UpdateHoliday,
 } from 'models/http/requests/holiday.request.models';
 import HolidaysService from 'services/api/holiday.service';
@@ -27,10 +20,9 @@ import { appContext } from 'context/AppContext';
 import useCustomToast from 'hooks/useCustomToast';
 import { sortHolidaysCategoriesResponse } from 'utils/holidaysCategories/holidaysCategories.sorter';
 import Dialog from 'components/common/Dialog/dialog.component';
-import { sortHolidaysResponse } from 'utils/holidays/holidays.sorter';
 import { datetimeToDate } from 'utils/formatters';
-import { getHolidaysCategoryColumns } from './Tables/holidayCategory.table';
-import { getHolidaysColumns } from './Tables/holiday.table';
+import HolidayCategoryAccordion from './HolidayCategoryAccordion/holidayCategory.accordion';
+import { AddIcon } from '@chakra-ui/icons';
 
 function Holidays() {
   const {
@@ -55,8 +47,6 @@ function Holidays() {
   } = useDisclosure();
 
   const { setLoading } = useContext(appContext);
-  const [isShowingCategories, setIsShowingCategories] = useState(true);
-  const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
   const [holidaysCategories, setHolidaysCategories] = useState<
     HolidayCategoryResponse[]
   >([]);
@@ -64,7 +54,7 @@ function Holidays() {
     HolidayCategoryResponse | undefined
   >(undefined);
   const [selectedHoliday, setSelectedHoliday] = useState<
-    HolidayResponse | undefined
+    HolidayUnfetchResponse | undefined
   >(undefined);
   const [isUpdateHolidayCategory, setIsUpdateHolidayCategory] = useState(false);
   const [isUpdateHoliday, setIsUpdateHoliday] = useState(false);
@@ -73,38 +63,13 @@ function Holidays() {
   const holidaysCategoriesService = new HolidaysCategoriesService();
   const holidaysService = new HolidaysService();
 
-  const holidayCategoryColumns = getHolidaysCategoryColumns({
-    handleEditButton: handleEditHolidayCategoryButton,
-    handleDeleteButton: handleDeleteHolidayCategoryButton,
-  });
-
-  const holidaysColumns = getHolidaysColumns({
-    handleEditButton: handleEditHolidayButton,
-    handleDeleteButton: handleDeleteHolidayButton,
-  });
-
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchData() {
-    await fetchHolidays();
     await fetchHolidaysCategories();
-  }
-
-  async function fetchHolidays() {
-    setLoading(true);
-    await holidaysService
-      .list()
-      .then((response) => {
-        setHolidays(response.data.sort(sortHolidaysResponse));
-      })
-      .catch((error) => {
-        showToast('Erro', `Erro ao carregar feriados: ${error}`, 'error');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
   }
 
   async function fetchHolidaysCategories() {
@@ -121,12 +86,8 @@ function Holidays() {
       .finally();
   }
 
-  function handleCreateButton() {
-    if (isShowingCategories) {
-      onOpenHolidayCategoryModal();
-    } else {
-      onOpenHolidayModal();
-    }
+  function handleCreateHolidayCategoryButton() {
+    onOpenHolidayCategoryModal();
   }
 
   function handleEditHolidayCategoryButton(data: HolidayCategoryResponse) {
@@ -161,7 +122,7 @@ function Holidays() {
   }
 
   async function updateHolidayCategory(
-    id: string,
+    id: number,
     data: UpdateHolidayCategory,
   ) {
     setLoading(true);
@@ -200,13 +161,18 @@ function Holidays() {
       });
   }
 
-  function handleEditHolidayButton(data: HolidayResponse) {
+  function handleCreateHolidayButton(category: HolidayCategoryResponse) {
+    setSelectedHolidayCategory(category);
+    onOpenHolidayModal();
+  }
+
+  function handleEditHolidayButton(data: HolidayUnfetchResponse) {
     setSelectedHoliday(data);
     setIsUpdateHoliday(true);
     onOpenHolidayModal();
   }
 
-  function handleDeleteHolidayButton(data: HolidayResponse) {
+  function handleDeleteHolidayButton(data: HolidayUnfetchResponse) {
     setSelectedHoliday(data);
     onOpenDeleteHolidayDialog();
   }
@@ -221,7 +187,7 @@ function Holidays() {
           `Feriado do dia ${data.date} criado com sucesso!`,
           'success',
         );
-        fetchHolidays();
+        fetchHolidaysCategories();
       })
       .catch((error) => {
         showToast('Erro', `Erro ao criar feriado: ${error}`, 'error');
@@ -231,13 +197,33 @@ function Holidays() {
       });
   }
 
-  async function updateHoliday(id: string, data: UpdateHoliday) {
+  async function createManyHolidays(data: CreateManyHolidays) {
+    setLoading(true);
+    await holidaysService
+      .createMany(data)
+      .then((response) => {
+        showToast(
+          'Sucesso',
+          `${response.data.length} feriados criados com sucesso!`,
+          'success',
+        );
+        fetchHolidaysCategories();
+      })
+      .catch((error) => {
+        showToast('Erro', `Erro ao criar feriados: ${error}`, 'error');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  async function updateHoliday(id: number, data: UpdateHoliday) {
     setLoading(true);
     await holidaysService
       .update(id, data)
       .then((response) => {
         showToast('Sucesso', `Feriado atualizado com sucesso!`, 'success');
-        fetchHolidays();
+        fetchHolidaysCategories();
       })
       .catch((error) => {
         showToast(
@@ -258,7 +244,7 @@ function Holidays() {
       .delete(selectedHoliday.id)
       .then((response) => {
         showToast('Sucesso', 'Feriado removido com sucesso', 'success');
-        fetchHolidays();
+        fetchHolidaysCategories();
       })
       .catch((error) => {
         showToast('Erro', `Erro ao remover feriado: ${error}`, 'error');
@@ -271,34 +257,26 @@ function Holidays() {
   return (
     <>
       <Navbar />
-      <Flex paddingX={4} direction={'column'}>
+      <Flex paddingX={10} paddingY={5} direction={'column'}>
         <Flex align={'center'}>
           <Text fontSize={'4xl'} mb={4}>
-            {isShowingCategories ? 'Categorias de Feriados' : 'Feriados'}
+            Feriados e Categorias
           </Text>
           <Spacer />
-          <Checkbox
-            fontWeight={'bold'}
-            mr={4}
-            onChange={(event) => setIsShowingCategories(!event.target.checked)}
+          <Button
+            onClick={handleCreateHolidayCategoryButton}
+            leftIcon={<AddIcon />}
           >
-            {isShowingCategories
-              ? 'Trocar para feriados'
-              : 'Trocar para categorias'}
-          </Checkbox>
-          <Button onClick={handleCreateButton}>
-            {isShowingCategories ? 'Adicionar categoria' : 'Adicionar feriado'}
+            Adicionar categoria
           </Button>
         </Flex>
-        <DataTable
-          hidden={!isShowingCategories}
-          data={holidaysCategories}
-          columns={holidayCategoryColumns}
-        />
-        <DataTable
-          hidden={isShowingCategories}
-          data={holidays}
-          columns={holidaysColumns}
+        <HolidayCategoryAccordion
+          categories={holidaysCategories}
+          onHolidayCategoryUpdate={handleEditHolidayCategoryButton}
+          onHolidayCategoryDelete={handleDeleteHolidayCategoryButton}
+          onHolidayCreate={handleCreateHolidayButton}
+          onHolidayUpdate={handleEditHolidayButton}
+          onHolidayDelete={handleDeleteHolidayButton}
         />
         <Dialog
           title={`Deletar categoria ${selectedHolidayCategory?.name}`}
@@ -318,7 +296,7 @@ function Holidays() {
         <Dialog
           title={`Deletar o feriado ${datetimeToDate(
             selectedHoliday ? selectedHoliday.date : '',
-          )} da categoria ${selectedHoliday?.category}`}
+          )}`}
           warningText={
             'Essa mudança é irreversível e irá permitir alocações nesse dia!'
           }
@@ -345,8 +323,9 @@ function Holidays() {
           selectedHolidayCategory={selectedHolidayCategory}
         />
         <HolidayModal
-          isUpdate={isUpdateHoliday}
           categories={holidaysCategories}
+          category={selectedHolidayCategory}
+          isUpdate={isUpdateHoliday}
           isOpen={isOpenHolidayModal}
           onClose={() => {
             setSelectedHoliday(undefined);
@@ -354,6 +333,7 @@ function Holidays() {
             onCloseHolidayModal();
           }}
           onCreate={createHoliday}
+          onCreateMany={createManyHolidays}
           onUpdate={updateHoliday}
           selectedHoliday={selectedHoliday}
         />

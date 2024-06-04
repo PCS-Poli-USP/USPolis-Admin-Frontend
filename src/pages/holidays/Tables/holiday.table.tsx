@@ -3,7 +3,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { HolidayResponse } from "models/http/responses/holiday.response.models";
 import { BsFillPenFill, BsFillTrashFill } from "react-icons/bs";
 import { datetimeToDate } from "utils/formatters";
-import { holidaysTypeFormatter } from "utils/holidays/holidays.formatter";
 
 interface HolidaysColumnsProps {
   handleEditButton: (data: HolidayResponse) => void;
@@ -21,11 +20,6 @@ export const getHolidaysColumns = (
     header: 'Data',
     accessorKey: 'date',
     cell: ({ row }) => datetimeToDate(row.original.date),
-  },
-  {
-    header: 'Tipo',
-    accessorKey: 'type',
-    cell: ({ row }) => holidaysTypeFormatter(row.original.type),
   },
   {
     header: 'Criado por',

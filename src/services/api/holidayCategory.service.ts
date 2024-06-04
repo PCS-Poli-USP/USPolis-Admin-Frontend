@@ -17,18 +17,18 @@ export default class HolidaysCategoriesService extends HttpService {
     return this.http.get('');
   }
 
-  create(data: CreateHolidayCategory): Promise<AxiosResponse<string>> {
+  create(data: CreateHolidayCategory): Promise<AxiosResponse<HolidayCategoryResponse>> {
     return this.http.post('', data);
   }
 
-  delete(id: string): Promise<AxiosResponse<number>> {
-    return this.http.delete(id);
+  delete(id: number): Promise<AxiosResponse<string>> {
+    return this.http.delete(`/${id}`);
   }
 
   update(
-    id: string,
+    id: number,
     data: UpdateHolidayCategory,
-  ): Promise<AxiosResponse<string>> {
-    return this.http.put(id, data);
+  ): Promise<AxiosResponse<HolidayCategoryResponse>> {
+    return this.http.put(`/${id}`, data);
   }
 }
