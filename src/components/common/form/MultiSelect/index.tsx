@@ -31,7 +31,7 @@ export function MultiSelect({
   return (
     <Controller
       control={control}
-      name={'categories_ids'}
+      name={name}
       render={({ field }) => (
         <FormControl isInvalid={!!errors[name]}>
           <FormLabel alignSelf='flex-start'>{label}</FormLabel>
