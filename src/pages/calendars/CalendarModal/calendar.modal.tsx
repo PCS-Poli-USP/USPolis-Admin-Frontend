@@ -12,16 +12,19 @@ import {
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from 'components/common';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { CalendarForm, CalendarModalProps } from './calendar.modal.interface';
 import { defaultValues, schema } from './calendar.modal.form';
 import {
   CreateCalendar,
   UpdateCalendar,
 } from 'models/http/requests/calendar.request.models';
-import { MultiSelect } from 'components/common/form/MultiSelect';
+import { MultiSelect, Option } from 'components/common/form/MultiSelect';
 
 function CalendarModal(props: CalendarModalProps) {
+  const [selectedOptions, setSelectedOptions] = useState<Option[] | undefined>(
+    undefined,
+  );
   const form = useForm<CalendarForm>({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
@@ -64,12 +67,20 @@ function CalendarModal(props: CalendarModalProps) {
 
   useEffect(() => {
     if (props.selectedCalendar) {
-      reset(props.selectedCalendar);
+      const selected: Option[] = props.selectedCalendar.categories.map(
+        (category) => ({ label: category.name, value: category.id }),
+      );
+      setSelectedOptions(selected);
+      reset({ name: props.selectedCalendar.name });
     }
   }, [reset, props]);
 
   return (
-    <Modal isOpen={props.isOpen} closeOnOverlayClick={false} onClose={handleCloseModal}>
+    <Modal
+      isOpen={props.isOpen}
+      closeOnOverlayClick={false}
+      onClose={handleCloseModal}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
@@ -89,6 +100,7 @@ function CalendarModal(props: CalendarModalProps) {
                 <MultiSelect
                   label={'Categorias'}
                   name={'categories_ids'}
+                  value={selectedOptions}
                   options={props.categories.map((category) => ({
                     value: category.id,
                     label: category.name,
