@@ -1,6 +1,5 @@
 import { FormLabel, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FieldProps } from 'models/interfaces';
-import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import Select from 'react-select';
 
