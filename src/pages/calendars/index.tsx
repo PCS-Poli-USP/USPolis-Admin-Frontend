@@ -6,7 +6,7 @@ import {
   CreateCalendar,
   UpdateCalendar,
 } from 'models/http/requests/calendar.request.models';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import HolidaysCategoriesService from 'services/api/holidayCategory.service';
 import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
 import useCustomToast from 'hooks/useCustomToast';
@@ -14,6 +14,8 @@ import CalendarAccordion from './CalendarAccordion/calendar.accordion';
 import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
 import CalendarsService from 'services/api/calendars.service';
 import CalendarViewModal from './CalendarViewModal/calendarView.modal';
+import Dialog from 'components/common/Dialog/dialog.component';
+import { appContext } from 'context/AppContext';
 
 function Calendars() {
   const {
@@ -26,6 +28,11 @@ function Calendars() {
     onOpen: onOpenCalendarViewModal,
     onClose: onCloseCalendarViewModal,
   } = useDisclosure();
+  const {
+    isOpen: isOpenDeleteCalendarDialog,
+    onOpen: onOpenDeleteCalendarDialog,
+    onClose: onCloseDeleteCalendarDialog,
+  } = useDisclosure();
 
   const [categories, setCategories] = useState<HolidayCategoryResponse[]>([]);
   const [calendars, setCalendars] = useState<CalendarResponse[]>([]);
@@ -34,13 +41,17 @@ function Calendars() {
     CalendarResponse | undefined
   >(undefined);
 
+  const { setLoading } = useContext(appContext);
+
   const calendarsService = new CalendarsService();
   const holidaysCategoriesService = new HolidaysCategoriesService();
   const showToast = useCustomToast();
 
   async function fetchData() {
+    setLoading(true);
     await fetchCalendars();
     await fetchCategories();
+    setLoading(false);
   }
 
   async function fetchCalendars() {
@@ -84,21 +95,22 @@ function Calendars() {
         );
       })
       .catch((error) => {
-        showToast('Erro', `Erro ao cadastrar calendário: ${error}`, 'error');
+        showToast('Erro', `Erro ao atualizar calendário: ${error}`, 'error');
       })
       .finally(() => {
         fetchData();
       });
   }
 
-  async function deleteCalendar(id: number) {
+  async function deleteCalendar() {
+    if (!selectedCalendar) return;
     await calendarsService
-      .delete(id)
+      .delete(selectedCalendar.id)
       .then((response) => {
-        showToast('Sucesso!', `Calendário excluído com sucesso!`, 'success');
+        showToast('Sucesso!', `Calendário deletado com sucesso!`, 'success');
       })
       .catch((error) => {
-        showToast('Erro', `Erro ao cadastrar calendário: ${error}`, 'error');
+        showToast('Erro', `Erro ao deletar calendário: ${error}`, 'error');
       })
       .finally(() => {
         fetchData();
@@ -121,11 +133,13 @@ function Calendars() {
   }
 
   function handleDeleteCalendarButton(data: CalendarResponse) {
-    console.log('Apaga o', data);
+    setSelectedCalendar(data);
+    onOpenDeleteCalendarDialog();
   }
 
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -156,6 +170,8 @@ function Calendars() {
           isOpen={isOpenCalendarModal}
           onClose={() => {
             onCloseCalendarModal();
+            setSelectedCalendar(undefined);
+            setIsUpdateCalendar(false);
           }}
         />
         <CalendarViewModal
@@ -164,6 +180,20 @@ function Calendars() {
             onCloseCalendarViewModal();
           }}
           calendar={selectedCalendar}
+        />
+        <Dialog
+          title={`Deseja o calendário ${selectedCalendar?.name}`}
+          warningText={`Essa mudança é irreversível`}
+          isOpen={isOpenDeleteCalendarDialog}
+          onClose={() => {
+            onCloseDeleteCalendarDialog();
+            setSelectedCalendar(undefined);
+          }}
+          onConfirm={() => {
+            deleteCalendar();
+            setSelectedCalendar(undefined);
+            onCloseDeleteCalendarDialog();
+          }}
         />
       </Flex>
     </>

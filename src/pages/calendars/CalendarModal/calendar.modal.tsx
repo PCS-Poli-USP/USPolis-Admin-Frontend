@@ -62,6 +62,7 @@ function CalendarModal(props: CalendarModalProps) {
   function handleCloseModal() {
     reset(defaultValues);
     clearErrors();
+    setSelectedOptions(undefined);
     props.onClose();
   }
 
