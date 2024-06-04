@@ -1,4 +1,4 @@
-import { Tooltip, HStack, Text, VStack, Heading, Box } from '@chakra-ui/react';
+import { Tooltip, HStack, Text, VStack } from '@chakra-ui/react';
 import { EventContentArg } from '@fullcalendar/react';
 
 export default function CalendarViewEventContent(eventInfo: EventContentArg) {

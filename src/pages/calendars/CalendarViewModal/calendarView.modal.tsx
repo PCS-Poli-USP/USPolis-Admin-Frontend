@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
