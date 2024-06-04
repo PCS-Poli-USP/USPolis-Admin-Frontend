@@ -1,9 +1,10 @@
 import { FormLabel, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FieldProps } from 'models/interfaces';
+import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import Select from 'react-select';
 
-type Option = {
+export type Option = {
   label: string;
   value: string | number;
 };
@@ -46,6 +47,7 @@ export function MultiSelect({
                 (option: Option) => option.value,
               );
               field.onChange(values);
+              value = selectedOption as Option[];
               return;
             }}
             options={options}
