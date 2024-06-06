@@ -1,27 +1,13 @@
 import {
   Box,
   Button,
-  Checkbox,
   Center,
   Flex,
-  IconButton,
   Spacer,
   Text,
-  Tooltip,
-  HStack,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react';
 
-import {
-  BsCalendarDateFill,
-  BsClipboardCheck,
-  BsFillPenFill,
-  BsFillTrashFill,
-  BsCalendarXFill,
-} from 'react-icons/bs';
-
-import { ColumnDef, Row } from '@tanstack/react-table';
 import { AxiosError } from 'axios';
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
@@ -43,14 +29,6 @@ import { useContext, useEffect, useState } from 'react';
 import ClassesService from 'services/api/classes.service';
 import BuildingsService from 'services/api/buildings.service';
 import EventsService from 'services/api/events.service';
-import { Capitalize } from 'utils/formatters';
-import {
-  FilterArray,
-  FilterBoolean,
-  FilterBuilding,
-  FilterClassroom,
-  FilterNumber,
-} from 'utils/tanstackTableHelpers/tableFiltersFns';
 import {
   ClassToEventByClassroom,
   ClassToSClass,
@@ -62,6 +40,9 @@ import CrawlerService from 'services/api/crawler.service';
 import { sortBuildings, sortClasses } from 'utils/sorter';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
 import MultipleEditModal from 'components/classes/multipleEdit.modal';
+import { getClassesColumns } from './Tables/class.table';
+import useCustomToast from 'hooks/useCustomToast';
+import { Row } from '@tanstack/react-table';
 
 function Classes() {
   const {
@@ -121,232 +102,17 @@ function Classes() {
   const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
   const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
 
-  const toast = useToast();
-  const toastSuccess = (message: string) => {
-    toast({
-      position: 'top-left',
-      title: 'Sucesso!',
-      description: message,
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-  const toastError = (message: string) => {
-    toast({
-      position: 'top-left',
-      title: 'Erro!',
-      description: message,
-      status: 'error',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
+  const showToast = useCustomToast();
 
-  const columns: ColumnDef<SClass>[] = [
-    {
-      header: 'Marcar',
-      maxSize: 70,
-      meta: {
-        isCheckBox: true,
-        markAllClickFn: handleCheckAllClick,
-        dismarkAllClickFn: handleCheckAllClick,
-      },
-      cell: ({ row }) => (
-        <Box>
-          <Checkbox
-            isChecked={row.original.selected}
-            ml={5}
-            onChange={(event) => {
-              const subjectCode = row.original.subject_code;
-              const classCode = row.original.class_code;
-              const newClassesList = [];
-              for (let cl of classesList) {
-                if (
-                  cl.subject_code === subjectCode &&
-                  cl.class_code === classCode
-                )
-                  cl.selected = event.target.checked;
-                newClassesList.push(cl);
-              }
-              setClassesList(newClassesList);
-            }}
-          />
-        </Box>
-      ),
-    },
-    {
-      accessorKey: 'subject_code',
-      header: 'Código',
-      maxSize: 120,
-    },
-    {
-      accessorKey: 'class_code',
-      header: 'Turma',
-      maxSize: 120,
-    },
-    {
-      accessorKey: 'subject_name',
-      header: 'Disciplina',
-      maxSize: 300,
-    },
-    {
-      accessorKey: 'ignore_to_allocate',
-      header: 'Ignorar',
-      maxSize: 75,
-      meta: { isBoolean: true, isSelectable: true },
-      filterFn: FilterBoolean,
-    },
-    {
-      accessorFn: (row) => (row.buildings ? row.buildings : ['Não alocada']),
-      filterFn: FilterBuilding,
-      header: 'Prédio',
-      maxSize: 120,
-      cell: ({ row }) => (
-        <Box>
-          {row.original.buildings ? (
-            row.original.buildings.map((build, index) => (
-              <Text key={index}>{build}</Text>
-            ))
-          ) : (
-            <Text>Não alocada</Text>
-          )}
-        </Box>
-      ),
-    },
-    {
-      accessorFn: (row) => (row.classrooms ? row.classrooms : ['Não alocada']),
-      filterFn: FilterClassroom,
-      header: 'Sala',
-      maxSize: 120,
-      cell: ({ row }) => (
-        <Box>
-          {row.original.classrooms ? (
-            row.original.classrooms.map((classroom, index) => (
-              <Text key={index}>{classroom}</Text>
-            ))
-          ) : (
-            <Text>Não alocada</Text>
-          )}
-        </Box>
-      ),
-    },
-    {
-      accessorFn: (row) => (row.buildings ? row.buildings : ['Não alocada']),
-      header: 'Prédio',
-      cell: ({ row }) => (
-        <Box>
-          {row.original.buildings ? (
-            row.original.buildings.map((building, index) => (
-              <Text key={index}>{building}</Text>
-            ))
-          ) : (
-            <Text>Não alocada</Text>
-          )}
-        </Box>
-      ),
-    },
-    {
-      accessorFn: (row) =>
-        row.week_days?.map(
-          (day, index) =>
-            `${Capitalize(day)} ${row.start_time[index]} - ${
-              row.end_time[index]
-            }`,
-        ),
-      header: 'Horários',
-      cell: (info) => (
-        <Box>
-          {(info.getValue() as string[])?.map((it) => (
-            <Text key={it}>{it}</Text>
-          ))}
-        </Box>
-      ),
-      filterFn: FilterArray,
-    },
-    {
-      accessorKey: 'subscribers',
-      header: 'Nº Alunos',
-      maxSize: 100,
-      filterFn: FilterNumber,
-    },
-    {
-      accessorKey: 'professors',
-      header: 'Professores',
-      cell: ({ row }) => (
-        <Box>
-          {row.original.professors?.map((professor, index) => (
-            <Text
-              maxW={425}
-              overflowX={'hidden'}
-              textOverflow={'ellipsis'}
-              key={index}
-            >
-              {professor}
-            </Text>
-          ))}
-        </Box>
-      ),
-      filterFn: FilterArray,
-    },
-    {
-      id: 'options',
-      header: 'Opções',
-      cell: ({ row }) => (
-        <HStack spacing='0px'>
-          <Tooltip label='Editar Turma'>
-            <IconButton
-              colorScheme='yellow'
-              size='xs'
-              variant='ghost'
-              aria-label='editar-turma'
-              icon={<BsFillPenFill />}
-              onClick={() => handleEditClick(row.original)}
-            />
-          </Tooltip>
-          <Tooltip label='Editar Alocação'>
-            <IconButton
-              colorScheme='teal'
-              size='xs'
-              variant='ghost'
-              aria-label='editar-alocacao'
-              icon={<BsCalendarDateFill />}
-              onClick={() => handleAllocationEditClick(row.original)}
-            />
-          </Tooltip>
-          <Tooltip label='Preferências'>
-            <IconButton
-              size='xs'
-              variant='ghost'
-              aria-label='preferências-turma'
-              icon={<BsClipboardCheck />}
-              onClick={() => handlePreferencesClick(row.original)}
-            />
-          </Tooltip>
-          <Tooltip label='Excluir Turma'>
-            <IconButton
-              colorScheme='red'
-              size='xs'
-              variant='ghost'
-              aria-label='excluir-turma'
-              icon={<BsFillTrashFill />}
-              onClick={() => handleDeleteClassClick(row.original)}
-            />
-          </Tooltip>
-          <Tooltip label='Excluir Alocação'>
-            <IconButton
-              colorScheme='red'
-              size='xs'
-              variant='ghost'
-              aria-label='excluir-alocacao'
-              icon={<BsCalendarXFill />}
-              onClick={() => handleDeleteAllocClick(row.original)}
-            />
-          </Tooltip>
-        </HStack>
-      ),
-    },
-  ];
+  const columns = getClassesColumns({
+    handleCheckAllClick,
+    handleCheckboxClick,
+    handleEditClick,
+    handleAllocationEditClick,
+    handlePreferencesClick,
+    handleDeleteClassClick,
+    handleDeleteAllocClick,
+  });
 
   const classesService = new ClassesService();
   const buildingsService = new BuildingsService();
@@ -376,7 +142,7 @@ function Classes() {
       })
       .catch((error) => {
         setLoading(false);
-        toastError(`Erro ao carregar turmas: ${error.message}`);
+        showToast('Erro!', `Erro ao carregar turmas: ${error.message}`, 'error');
       });
   }
 
@@ -390,10 +156,10 @@ function Classes() {
       .createOne(events)
       .then(() => {
         fetchData();
-        toastSuccess('Turma criada com sucesso!');
+        showToast('Sucesso!', 'Turma criada com sucesso!', 'success');
       })
       .catch((error) => {
-        toastError(`Erro ao criar turma: ${error}`);
+        showToast('Erro!', `Erro ao criar turma: ${error}`, 'error');
       });
   }
 
@@ -414,10 +180,10 @@ function Classes() {
         .then((it) => {
           onCloseDeleteClass();
           fetchData();
-          toastSuccess('Turma deletada com sucesso!');
+          showToast('Sucesso!', 'Turma deletada com sucesso!', 'success');
         })
         .catch((error) => {
-          toastError(`Erro ao deletar turma: ${error}`);
+          showToast('Erro!', `Erro ao deletar turma: ${error}`, 'error');
         });
     }
   }
@@ -432,13 +198,13 @@ function Classes() {
         .then((it) => {
           onCloseDeleteAlloc();
           fetchData();
-          toastSuccess(
-            `Alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}  deletada com sucesso!`,
+          showToast('Sucesso!', 
+            `Alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}  deletada com sucesso!`, 'success'
           );
         })
         .catch((error) => {
-          toastError(
-            `Erro ao deletar alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}: ${error}`,
+          showToast('Erro!', 
+            `Erro ao deletar alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}: ${error}`, 'error'
           );
         });
     }
@@ -463,13 +229,13 @@ function Classes() {
         building_id,
       })
       .then((it) => {
-        toastSuccess('Alocação editada com sucesso!');
+        showToast('Sucesso!', 'Alocação editada com sucesso!', 'success');
         fetchData();
         // refetch data
         // TODO: create AllocationContext
       })
       .catch((error) => {
-        toastError(`Erro ao editar alocação: ${error}`);
+        showToast('Erro!', `Erro ao editar alocação: ${error}`, 'error');
       });
   }
 
@@ -477,14 +243,14 @@ function Classes() {
     eventsService
       .deleteClassAllocation(subjectCode, classCode)
       .then((it) => {
-        toastSuccess(
-          `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
+        showToast('Sucesso!', 
+          `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`, 'success'
         );
         fetchData();
       })
       .catch((error) => {
-        toastError(
-          `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`,
+        showToast('Erro!', 
+          `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`, 'error'
         );
       });
   }
@@ -504,10 +270,10 @@ function Classes() {
         )
         .then((it) => {
           fetchData();
-          toastSuccess('Preferências editadas com sucesso!');
+          showToast('Sucesso!', 'Preferências editadas com sucesso!', 'success');
         })
         .catch((error) => {
-          toastError(`Erro ao editar preferências: ${error}`);
+          showToast('Erro!', `Erro ao editar preferências: ${error}`, 'error');
         });
     }
   }
@@ -524,10 +290,10 @@ function Classes() {
         .edit(selectedClass.subject_code, selectedClass.class_code, events)
         .then((it) => {
           fetchData();
-          toastSuccess('Turma editada com sucesso!');
+          showToast('Sucesso!', 'Turma editada com sucesso!', 'success');
         })
         .catch((error) => {
-          toastError(`Erro ao criar turma: ${error}`);
+          showToast('Erro!', `Erro ao criar turma: ${error}`, 'error');
         });
     }
   }
@@ -544,10 +310,10 @@ function Classes() {
         setFailedSubjects(it.data.failed);
         onOpenJupiterModal();
         fetchData();
-        toastSuccess('Disciplinas foram carregadas com sucesso!');
+        showToast('Sucesso!', 'Disciplinas foram carregadas com sucesso!', 'success');
       })
       .catch(({ response }: AxiosError<ErrorResponse>) =>
-        toastError(`Erro ao buscar disciplinas: ${response?.data.message}`),
+        showToast('Erro!', `Erro ao buscar disciplinas: ${response?.data.message}`, 'error'),
       )
       .finally(() => {
         setLoading(false);
@@ -571,10 +337,10 @@ function Classes() {
     eventsService
       .deleteManyEvents({ events_ids })
       .then((it) => {
-        toastSuccess('Turmas removidas com sucesso!');
+        showToast('Sucesso!', 'Turmas removidas com sucesso!', 'success');
       })
       .catch((error) => {
-        toastError(`Erro ao remover turmas: ${error}`);
+        showToast('Erro!', `Erro ao remover turmas: ${error}`, 'error');
       })
       .finally(() => {
         fetchData();
@@ -614,6 +380,20 @@ function Classes() {
       }
     }
     setClassesList(newClasses);
+  }
+
+  function handleCheckboxClick(
+    subject_code: string,
+    class_code: string,
+    value: boolean,
+  ) {
+    const newClassesList = [];
+    for (let cl of classesList) {
+      if (cl.subject_code === subject_code && cl.class_code === class_code)
+        cl.selected = value;
+      newClassesList.push(cl);
+    }
+    setClassesList(newClassesList);
   }
 
   return (
