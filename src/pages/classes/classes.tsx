@@ -11,8 +11,8 @@ import {
 import { AxiosError } from 'axios';
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
-import PreferencesModal from 'components/classes/preferences.modal';
-import RegisterModal from 'components/classes/register.modal';
+import PreferencesModal from './ClassPreferencesModal/class.preferences.modal'
+import RegisterModal from './ClassRegisterModal/class.register.modal';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
@@ -101,18 +101,9 @@ function Classes() {
   const [allocating, setAllocating] = useState(false);
   const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
   const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
+  const [checkMap, setCheckMap] = useState<boolean[]>([]);
 
   const showToast = useCustomToast();
-
-  const columns = getClassesColumns({
-    handleCheckAllClick,
-    handleCheckboxClick,
-    handleEditClick,
-    handleAllocationEditClick,
-    handlePreferencesClick,
-    handleDeleteClassClick,
-    handleDeleteAllocClick,
-  });
 
   const classesService = new ClassesService();
   const buildingsService = new BuildingsService();
@@ -124,6 +115,18 @@ function Classes() {
     fetchBuildings();
     // eslint-disable-next-line
   }, []);
+
+  const columns = getClassesColumns({
+    handleCheckAllClick,
+    handleCheckboxClick,
+    handleEditClick,
+    handleAllocationEditClick,
+    handlePreferencesClick,
+    handleDeleteClassClick,
+    handleDeleteAllocClick,
+    checkMap,
+  });
+
 
   function fetchBuildings() {
     buildingsService.list().then((it) => {

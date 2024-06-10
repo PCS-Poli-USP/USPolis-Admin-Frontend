@@ -23,6 +23,7 @@ interface ClassesColumnsProps {
   handlePreferencesClick: (data: Class) => void;
   handleDeleteClassClick: (data: Class) => void;
   handleDeleteAllocClick: (data: Class) => void;
+  checkMap: boolean[];
 }
 
 export const getClassesColumns = (
