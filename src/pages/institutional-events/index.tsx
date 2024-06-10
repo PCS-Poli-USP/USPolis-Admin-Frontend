@@ -12,15 +12,15 @@ import {
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
 import Navbar from 'components/common/NavBar/navbar.component';
-import EventFormModal from 'components/events/EventFormModal';
 import { GoSync } from 'react-icons/go';
-import useInstitutionalEvents from './Hooks';
 import { useEffect, useState } from 'react';
 import BuildingsService from 'services/api/buildings.service';
 import { getInstitutionalEventsColumns } from './Tables/institutionalEvent.table';
 import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
+import useInstitutionalEvents from 'hooks/useInstitutionalEvents';
+import EventFormModal from './InstitutionalEventModal';
 
 function InstitutionalEvents() {
   const {
