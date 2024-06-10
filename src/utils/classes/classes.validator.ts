@@ -29,7 +29,15 @@ export class ClassValidator extends CommonValidator {
   }
 
   static isInvalidProfessorList(professors: string[]) {
+    if (this.isEmptyArray(professors)) return true;
+    professors.forEach((professor) => {
+      if (this.isInvalidProfessor(professor)) return true;
+    });
     return false;
+  }
+
+  static isInvalidSemester(value: number) {
+    return value !== 1 && value !== 2;
   }
 
   static isInvalidPeriod(start: string, end: string) {

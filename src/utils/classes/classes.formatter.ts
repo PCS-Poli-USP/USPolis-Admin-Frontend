@@ -4,6 +4,7 @@ import { Classrooms } from 'utils/enums/clasrooms.enum';
 import { ClassCodeText } from 'utils/mappers/allocation.mapper';
 import { Building } from 'models/common/building.model';
 import { Capitalize } from 'utils/formatters';
+import { ClassType } from 'utils/enums/classes.enum';
 
 export function breakClassFormInEvents(form: Class) {
   const events: CreateClassEvents[] = [];
@@ -133,3 +134,18 @@ export function getClassScheduleShortText(data: Class): string {
   }
   return text.replace(/,\s*$/, '');
 }
+
+export const classTypeFormatter = (value: string): string => {
+  switch (value) {
+    case ClassType.PRACTIC:
+      return 'Prática';
+    case ClassType.THEORIC:
+      return 'Teórica';
+    case ClassType.VINCULATED_PRACTIC:
+      return 'Prática Vinculada';
+    case ClassType.VINCULATED_THEORIC:
+      return 'Teórica Vinculada';
+    default:
+      return 'Tipo desconhecido';
+  }
+};
