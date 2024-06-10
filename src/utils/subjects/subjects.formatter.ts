@@ -7,8 +7,9 @@ export const datetimeFormatter = (row: Row<SubjectResponse>) => {
   const start = row.original.activation;
   const end = row.original.desactivation;
   const startFormatted = moment(start).format('DD/MM/YYYY');
-
-  if (end === start) {
+  if (!end) {
+    return `${startFormatted} ~ Indefinida`;
+  } else if (end === start) {
     return moment(start).format('DD/MM/YYYY');
   } else {
     const endFormatted = moment(end).format('DD/MM/YYYY');
