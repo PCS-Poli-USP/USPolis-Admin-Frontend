@@ -1,15 +1,14 @@
-import { Box, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
+import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
 import moment from 'moment';
-import { FaEllipsisV } from 'react-icons/fa';
+import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { periodFormatter } from 'utils/institutionalEvents/institutionalEvents.formatter';
 
 interface InstitutionalEventsColumnsProps {
-  onEditInstitutionalEvent: (data: InstitutionalEventResponse) => void;
-  onDeleteInstittuionalEvent: (data: InstitutionalEventResponse) => void;
+  handleEditInstitutionalEvent: (data: InstitutionalEventResponse) => void;
+  handleDeleteInstitutionalEvent: (data: InstitutionalEventResponse) => void;
 }
-
 
 export const getInstitutionalEventsColumns = (
   props: InstitutionalEventsColumnsProps,
@@ -52,27 +51,31 @@ export const getInstitutionalEventsColumns = (
   },
   {
     id: 'options',
+    header: 'Opções',
     cell: ({ row }) => (
-      <Menu>
-        <MenuButton
-          as={IconButton}
-          aria-label='Options'
-          icon={<Icon as={FaEllipsisV} />}
-          variant='ghost'
-        />
-        <MenuList>
-          <MenuItem
-            onClick={() => props.onEditInstitutionalEvent(row.original)}
-          >
-            Editar
-          </MenuItem>
-          <MenuItem
-            onClick={() => props.onDeleteInstittuionalEvent(row.original)}
-          >
-            Deletar
-          </MenuItem>
-        </MenuList>
-      </Menu>
+      <HStack spacing='0px'>
+        <Tooltip label='Editar Evento'>
+          <IconButton
+            colorScheme='yellow'
+            size='xs'
+            variant='ghost'
+            aria-label='editar-evento'
+            icon={<BsFillPenFill />}
+            onClick={() => props.handleEditInstitutionalEvent(row.original)}
+          />
+        </Tooltip>
+
+        <Tooltip label='Excluir Disciplina'>
+          <IconButton
+            colorScheme='red'
+            size='xs'
+            variant='ghost'
+            aria-label='excluir-turma'
+            icon={<BsFillTrashFill />}
+            onClick={() => props.handleDeleteInstitutionalEvent(row.original)}
+          />
+        </Tooltip>
+      </HStack>
     ),
   },
 ];

@@ -40,8 +40,8 @@ function InstitutionalEvents() {
   const { events, loading, getEvents, deleteEvent } = useInstitutionalEvents();
 
   const columns = getInstitutionalEventsColumns({
-    onEditInstitutionalEvent: handleEditInstitutionalEvent,
-    onDeleteInstittuionalEvent: handleDeleteInstitutionalEvent,
+    handleEditInstitutionalEvent,
+    handleDeleteInstitutionalEvent,
   });
 
   useEffect(() => {
