@@ -29,6 +29,7 @@ import { useContext, useEffect, useState } from 'react';
 import BuildingsService from 'services/api/buildings.service';
 import ClassroomsService from 'services/api/classrooms.service';
 import { Capitalize } from 'utils/formatters';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 interface ClassroomOption {
   value: string;
@@ -41,7 +42,7 @@ interface EditEventModalProps {
   onSave: (
     events_ids: string[],
     newClassroom: string,
-    building_id: string,
+    building_id: number,
   ) => void;
   onDelete: (subjectCode: string, classCode: string) => void;
   classEvents: EventByClassrooms[];
@@ -65,8 +66,8 @@ export default function EditEventModal({
   >([]);
   const [selectedClassroom, setSelectedClassroom] =
     useState<AvailableClassroom>();
-  const [selectedBuilding, setSelectedBuilding] = useState<Building>();
-  const [buildingsList, setBuildingsList] = useState<Building[]>([]);
+  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
+  const [buildingsList, setBuildingsList] = useState<BuildingResponse[]>([]);
   const [buildingsLoading, setBuildingsLoading] = useState(true);
   const [classroomsLoading, setClassroomsLoading] = useState(false);
   const checkBoxHook = useCheckboxGroup();
@@ -255,7 +256,7 @@ export default function EditEventModal({
                   placeholder='Selecionar prédio'
                   onChange={(event) => {
                     setSelectedBuilding(
-                      buildingsList.find((it) => it.id === event.target.value),
+                      buildingsList.find((it) => it.id === Number(event.target.value)),
                     );
                   }}
                   icon={buildingsLoading ? <Spinner size='sm' /> : undefined}

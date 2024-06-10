@@ -17,9 +17,9 @@ import {
   Select,
 } from '@chakra-ui/react';
 import { appContext } from 'context/AppContext';
-import { Building } from 'models/common/building.model';
 import Classroom from 'models/common/classroom.model';
 import { User } from 'models/common/user.common.model';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 import { useContext, useEffect, useState } from 'react';
 import BuildingsService from 'services/api/buildings.service';
@@ -31,7 +31,7 @@ interface RegisterModalProps {
   formData?: Classroom;
   isUpdate: boolean;
   onSave: (data: Classroom) => void;
-  buildingsOptions: Building[];
+  buildingsOptions: BuildingResponse[];
 }
 
 export default function RegisterModal(props: RegisterModalProps) {
@@ -39,7 +39,7 @@ export default function RegisterModal(props: RegisterModalProps) {
   const buildingsService = new BuildingsService();
   const usersService = new UsersService();
   const [usersList, setUsersList] = useState<User[]>([]);
-  const [buildingsList, setBuildingsList] = useState<Building[]>([]);
+  const [buildingsList, setBuildingsList] = useState<BuildingResponse[]>([]);
 
   const initialForm: Classroom = {
     classroom_name: '',

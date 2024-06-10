@@ -1,4 +1,4 @@
-import { Building } from "./building.model";
+import { BuildingResponse } from "models/http/responses/building.response.models";
 
 export interface User {
     id: string;
@@ -8,7 +8,7 @@ export interface User {
     email: string;
     updated_at: string;
     created_by?: string;
-    buildings?: Array<Building>
+    buildings?: Array<BuildingResponse>
 }
 
 export interface CreateUser {
@@ -16,7 +16,7 @@ export interface CreateUser {
     username: string;
     email: string;
     is_admin: boolean;
-    building_ids?: Array<string>;
+    building_ids?: Array<number>;
 }
 
 export interface CreateUserResponse {
@@ -24,6 +24,6 @@ export interface CreateUserResponse {
 }
 
 export interface EditUser {
-    building_ids?: Array<string>;
+    building_ids?: Array<number>;
     is_admin?: boolean;
 }

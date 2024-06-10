@@ -43,12 +43,13 @@ import Class from 'models/common/class.model';
 import { useEffect, useState } from 'react';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 import * as validator from 'utils/classes/classes.validator';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
   formData?: Class;
-  buildings?: Array<Building>;
+  buildings?: Array<BuildingResponse>;
   isUpdate?: boolean;
   onSave: (data: Class) => void;
 }
