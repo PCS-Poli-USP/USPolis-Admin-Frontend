@@ -79,7 +79,7 @@ export const getSubjectColumns = (props: SubjectColumnsProps): ColumnDef<Subject
             colorScheme='yellow'
             size='xs'
             variant='ghost'
-            aria-label='editar-turma'
+            aria-label='editar-disciplina'
             icon={<BsFillPenFill />}
             onClick={() => props.handleEditButton(row.original)}
           />
@@ -90,7 +90,7 @@ export const getSubjectColumns = (props: SubjectColumnsProps): ColumnDef<Subject
             colorScheme='red'
             size='xs'
             variant='ghost'
-            aria-label='excluir-turma'
+            aria-label='excluir-disciplina'
             icon={<BsFillTrashFill />}
             onClick={() => props.handleEditButton(row.original)}
           />
