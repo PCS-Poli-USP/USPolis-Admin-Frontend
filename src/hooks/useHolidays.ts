@@ -10,7 +10,7 @@ import HolidaysService from 'services/api/holiday.service';
 
 const holidaysService = new HolidaysService();
 
-const useInstitutionalEvents = () => {
+const useHolidays = () => {
   const [loading, setLoading] = useState(false);
   const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
 
@@ -108,7 +108,7 @@ const useInstitutionalEvents = () => {
           getHolidays();
         })
         .catch((error) => {
-          showToast('Erro!', 'Erro ao remover feriados', 'error');
+          showToast('Erro!', 'Erro ao remover feriado', 'error');
           console.log(error);
         })
         .finally(() => {
@@ -133,4 +133,4 @@ const useInstitutionalEvents = () => {
   };
 };
 
-export default useInstitutionalEvents;
+export default useHolidays;
