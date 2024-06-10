@@ -4,31 +4,23 @@ import {
   Center,
   Flex,
   HStack,
-  Icon,
   IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Spinner,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ColumnDef } from '@tanstack/react-table';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
 import Navbar from 'components/common/NavBar/navbar.component';
 import EventFormModal from 'components/events/EventFormModal';
-import { InstitutionalEvent } from 'models/common/institutionalEvent.model';
-import moment from 'moment';
-import { FaEllipsisV } from 'react-icons/fa';
 import { GoSync } from 'react-icons/go';
 import { useEvents } from './hook';
 import { useEffect, useState } from 'react';
-import { Building } from 'models/common/building.model';
 import BuildingsService from 'services/api/buildings.service';
-import { sortBuildings } from 'utils/sorter';
-import { periodFormatter } from './formatters';
+import { getInstitutionalEventsColumns } from './Tables/institutionalEvent.table';
+import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
+import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
 
 function InstitutionalEvents() {
   const {
@@ -42,100 +34,45 @@ function InstitutionalEvents() {
     onOpen: onOpenDelete,
   } = useDisclosure();
 
-  const [selectedEvent, setSelectedEvent] = useState<InstitutionalEvent | null>(
-    null,
-  );
-  const [buildings, setBuildings] = useState<Array<Building>>([]);
+  const [selectedEvent, setSelectedEvent] = useState<
+    InstitutionalEventResponse | undefined
+  >(undefined);
+  const [buildings, setBuildings] = useState<Array<BuildingResponse>>([]);
 
   const { events, loading, getEvents, deleteEvent } = useEvents();
   const buildingsService = new BuildingsService();
 
-  const columns: ColumnDef<InstitutionalEvent>[] = [
-    {
-      accessorKey: 'created_at',
-      header: 'Criado em',
-      cell: ({ row }) =>
-        moment(row.original.created_at).format('DD/MM/YYYY HH:mm'),
-    },
-    {
-      accessorKey: 'title',
-      header: 'Título',
-    },
-    {
-      accessorKey: 'description',
-      header: 'Descrição',
-      cell: ({ row }) => (
-        <Box maxWidth='450px'>
-          <Text textOverflow='ellipsis' whiteSpace='nowrap' overflow='hidden'>
-            {row.original.description}
-          </Text>
-        </Box>
-      ),
-    },
-    {
-      accessorKey: 'category',
-      header: 'Categoria',
-    },
-    {
-      header: 'Local',
-      cell: ({ row }) =>
-        row.original.building
-          ? `${row.original.building} - ${row.original.classroom}`
-          : row.original.location,
-    },
-    {
-      header: 'Período',
-      cell: ({ row }) => periodFormatter(row),
-    },
-    {
-      id: 'options',
-      cell: ({ row }) => (
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            aria-label='Options'
-            icon={<Icon as={FaEllipsisV} />}
-            variant='ghost'
-          />
-          <MenuList>
-            <MenuItem
-              onClick={() => {
-                setSelectedEvent(row.original);
-                onOpenEventForm();
-              }}
-            >
-              Editar
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                setSelectedEvent(row.original);
-                onOpenDelete();
-              }}
-            >
-              Deletar
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      ),
-    },
-  ];
+  const columns = getInstitutionalEventsColumns({
+    onEditInstitutionalEvent: handleEditInstitutionalEvent,
+    onDeleteInstittuionalEvent: handleDeleteInstitutionalEvent,
+  });
 
   useEffect(() => {
     fetchBuildings();
   }, []);
 
   useEffect(() => {
-    if (!isOpenEventForm) setSelectedEvent(null);
+    if (!isOpenEventForm) setSelectedEvent(undefined);
   }, [isOpenEventForm]);
 
   useEffect(() => {
-    if (!isOpenDelete) setSelectedEvent(null);
+    if (!isOpenDelete) setSelectedEvent(undefined);
   }, [isOpenDelete]);
 
   function fetchBuildings() {
     buildingsService.list().then((it) => {
-      setBuildings(it.data.sort(sortBuildings));
+      setBuildings(it.data.sort(sortBuildingsResponse));
     });
+  }
+
+  function handleEditInstitutionalEvent(data: InstitutionalEventResponse) {
+    setSelectedEvent(data);
+    onOpenEventForm();
+  }
+
+  function handleDeleteInstitutionalEvent(data: InstitutionalEventResponse) {
+    setSelectedEvent(data);
+    onOpenDelete();
   }
 
   return (
@@ -154,7 +91,7 @@ function InstitutionalEvents() {
         onClose={onCloseDelete}
         onConfirm={() => {
           if (!!selectedEvent) {
-            deleteEvent(selectedEvent._id);
+            deleteEvent(selectedEvent.id);
             onCloseDelete();
           }
         }}
