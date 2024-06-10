@@ -3,6 +3,7 @@ import { CreateHolidayCategory, UpdateHolidayCategory } from 'models/http/reques
 import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import HolidaysCategoriesService from 'services/api/holidayCategory.service';
+import { sortHolidaysCategoriesResponse } from 'utils/holidaysCategories/holidaysCategories.sorter';
 
 const service = new HolidaysCategoriesService();
 
@@ -17,7 +18,7 @@ const useHolidaysCategories = () => {
     await service
       .list()
       .then((response) => {
-        setHolidaysCategories(response.data);
+        setHolidaysCategories(response.data.sort(sortHolidaysCategoriesResponse));
       })
       .catch((error) => {
         showToast('Erro', 'Erro ao carregar categorias', 'error');

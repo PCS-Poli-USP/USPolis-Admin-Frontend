@@ -34,6 +34,7 @@ import {
 import moment, { Moment } from 'moment';
 import { sortDates } from 'utils/holidays/holidays.sorter';
 import { Badge } from '@mui/material';
+import useHolidays from 'hooks/useHolidays';
 
 function ServerDay(
   props: PickersDayProps<Moment> & {
@@ -86,18 +87,20 @@ function HolidayModal(props: HolidayModalProps) {
   });
 
   const { trigger, reset, getValues, clearErrors } = form;
+  const { createHoliday, createManyHolidays, updateHoliday } = useHolidays();
+
   async function handleCreateSubmit() {
     if (isMultipleHolidays) {
       const values = getValues();
-      props.onCreateMany({ category_id: values.category_id, dates: dates });
+      createManyHolidays({ category_id: values.category_id, dates: dates });
     } else {
       const isValid = await trigger();
       if (!isValid) return;
 
       const values = getValues();
-      props.onCreate(values as CreateHoliday);
+      createHoliday(values as CreateHoliday);
     }
-
+    props.refetch();
     handleCloseModal();
   }
 
@@ -115,7 +118,8 @@ function HolidayModal(props: HolidayModalProps) {
 
     const values = getValues();
     if (!props.selectedHoliday) return;
-    props.onUpdate(props.selectedHoliday.id, formatUpdateData(values));
+    updateHoliday(props.selectedHoliday.id, formatUpdateData(values));
+    props.refetch();
     handleCloseModal();
   }
 
@@ -157,7 +161,11 @@ function HolidayModal(props: HolidayModalProps) {
   }, [reset, props]);
 
   return (
-    <Modal isOpen={props.isOpen} onClose={handleCloseModal} closeOnOverlayClick={false}>
+    <Modal
+      isOpen={props.isOpen}
+      onClose={handleCloseModal}
+      closeOnOverlayClick={false}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>

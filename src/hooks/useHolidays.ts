@@ -7,6 +7,7 @@ import {
 import { HolidayResponse } from 'models/http/responses/holiday.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import HolidaysService from 'services/api/holiday.service';
+import { sortHolidaysResponse } from 'utils/holidays/holidays.sorter';
 
 const holidaysService = new HolidaysService();
 
@@ -21,7 +22,7 @@ const useHolidays = () => {
     await holidaysService
       .list()
       .then((response) => {
-        setHolidays(response.data);
+        setHolidays(response.data.sort(sortHolidaysResponse));
       })
       .catch((error) => {
         showToast('Erro', 'Erro ao carregar feriados', 'error');
