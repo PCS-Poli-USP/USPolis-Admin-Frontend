@@ -14,7 +14,7 @@ import Dialog from 'components/common/Dialog/dialog.component';
 import Navbar from 'components/common/NavBar/navbar.component';
 import EventFormModal from 'components/events/EventFormModal';
 import { GoSync } from 'react-icons/go';
-import { useEvents } from './hook';
+import useInstitutionalEvents from './Hooks';
 import { useEffect, useState } from 'react';
 import BuildingsService from 'services/api/buildings.service';
 import { getInstitutionalEventsColumns } from './Tables/institutionalEvent.table';
@@ -39,7 +39,7 @@ function InstitutionalEvents() {
   >(undefined);
   const [buildings, setBuildings] = useState<Array<BuildingResponse>>([]);
 
-  const { events, loading, getEvents, deleteEvent } = useEvents();
+  const { events, loading, getEvents, deleteEvent } = useInstitutionalEvents();
   const buildingsService = new BuildingsService();
 
   const columns = getInstitutionalEventsColumns({

@@ -5,7 +5,7 @@ import InstutionalEventsService from 'services/api/institutionalEvents.service';
 
 const service = new InstutionalEventsService();
 
-export const useEvents = () => {
+const useInstitutionalEvents = () => {
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState<InstitutionalEventResponse[]>([]);
 
@@ -57,3 +57,5 @@ export const useEvents = () => {
 
   return { loading, getEvents, events, deleteEvent };
 };
+
+export default useInstitutionalEvents;
