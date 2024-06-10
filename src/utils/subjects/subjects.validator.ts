@@ -1,14 +1,12 @@
-export default class SubjectValidator {
-  static isEmpty(value: string): boolean {
-    return value.length <= 0;
-  }
+import CommonValidator from "utils/common/common.validator";
 
+export default class SubjectValidator extends CommonValidator {
   static isInvalidCode(code: string): boolean {
     return code.length !== 7;
   }
 
   static isInvalidName(name: string): boolean {
-    return this.isEmpty(name);
+    return this.isEmptyString(name);
   }
 
   static isInvalidProfessor(professor: string): boolean {
@@ -20,7 +18,7 @@ export default class SubjectValidator {
   }
 
   static isInvalidType(type: string): boolean {
-    return this.isEmpty(type);
+    return this.isEmptyString(type);
   }
 
   static isInvalidCredit(class_credit: number, work_credit: number): boolean {
@@ -28,6 +26,6 @@ export default class SubjectValidator {
   }
 
   static isInvalidDate(date: string): boolean {
-    return this.isEmpty(date);
+    return this.isEmptyString(date);
   }
 }
