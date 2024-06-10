@@ -157,7 +157,7 @@ function HolidayModal(props: HolidayModalProps) {
   }, [reset, props]);
 
   return (
-    <Modal isOpen={props.isOpen} onClose={handleCloseModal}>
+    <Modal isOpen={props.isOpen} onClose={handleCloseModal} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>

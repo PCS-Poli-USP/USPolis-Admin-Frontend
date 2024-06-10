@@ -69,7 +69,9 @@ function Holidays() {
   }, []);
 
   async function fetchData() {
+    setLoading(true);
     await fetchHolidaysCategories();
+    setLoading(false);
   }
 
   async function fetchHolidaysCategories() {
@@ -102,7 +104,6 @@ function Holidays() {
   }
 
   async function createHolidayCategory(data: CreateHolidayCategory) {
-    setLoading(true);
     await holidaysCategoriesService
       .create(data)
       .then((response) => {
@@ -111,13 +112,12 @@ function Holidays() {
           `Categoria ${data.name} criada com sucesso!`,
           'success',
         );
-        fetchHolidaysCategories();
       })
       .catch((error) => {
         showToast('Erro', `Erro ao criar categoria: ${error}`, 'error');
       })
       .finally(() => {
-        setLoading(false);
+        fetchHolidaysCategories();
       });
   }
 
@@ -125,7 +125,6 @@ function Holidays() {
     id: number,
     data: UpdateHolidayCategory,
   ) {
-    setLoading(true);
     await holidaysCategoriesService
       .update(id, data)
       .then(() => {
@@ -134,30 +133,27 @@ function Holidays() {
           `Categoria ${data.name} atualizada com sucesso`,
           'success',
         );
-        fetchHolidaysCategories();
       })
       .catch((error) => {
         showToast('Erro', `Erro ao atualizar categoria: ${error}`, 'error');
       })
       .finally(() => {
-        setLoading(false);
+        fetchHolidaysCategories();
       });
   }
 
   async function deleteHolidayCategory() {
     if (!selectedHolidayCategory) return;
-    setLoading(true);
     await holidaysCategoriesService
       .delete(selectedHolidayCategory.id)
       .then((response) => {
         showToast('Sucesso', 'Categoria removida com sucesso', 'success');
-        fetchHolidaysCategories();
       })
       .catch((error) => {
         showToast('Erro', `Erro ao apagar categoria: ${error}`, 'error');
       })
       .finally(() => {
-        setLoading(false);
+        fetchHolidaysCategories();
       });
   }
 
@@ -307,6 +303,7 @@ function Holidays() {
           }}
           onConfirm={() => {
             deleteHoliday();
+            setSelectedHoliday(undefined);
             onCloseDeleteHolidayDialog();
           }}
         />

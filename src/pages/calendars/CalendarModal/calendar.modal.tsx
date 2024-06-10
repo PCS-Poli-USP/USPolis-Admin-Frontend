@@ -9,22 +9,23 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react';
-import {
-  HolidayCategoryForm,
-  HolidayCategoryModalProps,
-} from './holidayCategory.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
-import { defaultValues, schema } from './holidayCategory.modal.form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from 'components/common';
+import { useEffect, useState } from 'react';
+import { CalendarForm, CalendarModalProps } from './calendar.modal.interface';
+import { defaultValues, schema } from './calendar.modal.form';
 import {
-  CreateHolidayCategory,
-  UpdateHolidayCategory,
-} from 'models/http/requests/holidayCategory.request.models';
-import { useEffect } from 'react';
+  CreateCalendar,
+  UpdateCalendar,
+} from 'models/http/requests/calendar.request.models';
+import { MultiSelect, Option } from 'components/common/form/MultiSelect';
 
-function HolidayCategoryModal(props: HolidayCategoryModalProps) {
-  const form = useForm<HolidayCategoryForm>({
+function CalendarModal(props: CalendarModalProps) {
+  const [selectedOptions, setSelectedOptions] = useState<Option[] | undefined>(
+    undefined,
+  );
+  const form = useForm<CalendarForm>({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
   });
@@ -36,13 +37,14 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
     if (!isValid) return;
 
     const values = getValues();
-    props.onCreate(values as CreateHolidayCategory);
+    props.onCreate(values as CreateCalendar);
     handleCloseModal();
   }
 
-  function formatUpdateData(data: HolidayCategoryForm): UpdateHolidayCategory {
-    const formated_data: UpdateHolidayCategory = {
+  function formatUpdateData(data: CalendarForm): UpdateCalendar {
+    const formated_data: UpdateCalendar = {
       name: data.name,
+      categories_ids: data.categories_ids,
     };
     return formated_data;
   }
@@ -52,29 +54,38 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
     if (!isValid) return;
 
     const values = getValues();
-    if (!props.selectedHolidayCategory) return;
-    props.onUpdate(props.selectedHolidayCategory.id, formatUpdateData(values));
+    if (!props.selectedCalendar) return;
+    props.onUpdate(props.selectedCalendar.id, formatUpdateData(values));
     handleCloseModal();
   }
 
   function handleCloseModal() {
     reset(defaultValues);
     clearErrors();
+    setSelectedOptions(undefined);
     props.onClose();
   }
 
   useEffect(() => {
-    if (props.selectedHolidayCategory) {
-      reset(props.selectedHolidayCategory);
+    if (props.selectedCalendar) {
+      const selected: Option[] = props.selectedCalendar.categories.map(
+        (category) => ({ label: category.name, value: category.id }),
+      );
+      setSelectedOptions(selected);
+      reset({ name: props.selectedCalendar.name });
     }
   }, [reset, props]);
 
   return (
-    <Modal isOpen={props.isOpen} onClose={handleCloseModal} closeOnOverlayClick={false}>
+    <Modal
+      isOpen={props.isOpen}
+      closeOnOverlayClick={false}
+      onClose={handleCloseModal}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          {props.isUpdate ? 'Atualizar categoria' : 'Cadastrar categoria'}
+          {props.isUpdate ? 'Atualizar calendário' : 'Cadastrar calendário'}
         </ModalHeader>
         <ModalCloseButton />
         <FormProvider {...form}>
@@ -82,10 +93,19 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
             <ModalBody>
               <VStack spacing={4}>
                 <Input
-                  label={'Categoria'}
+                  label={'Nome'}
                   name={'name'}
                   type={'text'}
-                  placeholder={'Nome da categoria'}
+                  placeholder={'Nome do calendário'}
+                />
+                <MultiSelect
+                  label={'Categorias'}
+                  name={'categories_ids'}
+                  value={selectedOptions}
+                  options={props.categories.map((category) => ({
+                    value: category.id,
+                    label: category.name,
+                  }))}
                 />
               </VStack>
             </ModalBody>
@@ -110,4 +130,4 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
   );
 }
 
-export default HolidayCategoryModal;
+export default CalendarModal;

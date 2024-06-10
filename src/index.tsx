@@ -27,6 +27,7 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { chakraTheme, muiTheme } from 'utils/chakra.theme';
 import { ThemeProvider } from '@mui/material';
 import 'moment/locale/pt-br';
+import Calendars from 'pages/calendars';
 
 Amplify.configure(awsConfig);
 
@@ -49,6 +50,7 @@ root.render(
                 <Route path='buildings' element={<Buildings />} />
                 <Route path='subjects' element={<Subjects />} />
                 <Route path='holidays' element={<Holidays />} />
+                <Route path='calendars' element={<Calendars />} />
                 <Route path='classrooms' element={<Classrooms />} />
                 <Route path='classes' element={<Classes />} />
                 <Route path='allocation' element={<Allocation />} />

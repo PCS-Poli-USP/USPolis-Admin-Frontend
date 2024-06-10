@@ -4,7 +4,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  HStack,
   Input,
   Modal,
   ModalBody,
@@ -13,8 +12,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  NumberInput,
-  NumberInputField,
 } from '@chakra-ui/react';
 import Select from 'react-select';
 import { Building } from 'models/common/building.model';
