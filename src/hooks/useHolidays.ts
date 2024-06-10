@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import HolidaysService from 'services/api/holiday.service';
 import { sortHolidaysResponse } from 'utils/holidays/holidays.sorter';
 
-const holidaysService = new HolidaysService();
+const service = new HolidaysService();
 
 const useHolidays = () => {
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ const useHolidays = () => {
 
   const getHolidays = useCallback(async () => {
     setLoading(true);
-    await holidaysService
+    await service
       .list()
       .then((response) => {
         setHolidays(response.data.sort(sortHolidaysResponse));
@@ -35,7 +35,7 @@ const useHolidays = () => {
   const createHoliday = useCallback(
     async (data: CreateHoliday) => {
       setLoading(true);
-      await holidaysService
+      await service
         .create(data)
         .then((response) => {
           showToast(
@@ -58,7 +58,7 @@ const useHolidays = () => {
   const createManyHolidays = useCallback(
     async (data: CreateManyHolidays) => {
       setLoading(true);
-      await holidaysService
+      await service
         .createMany(data)
         .then((response) => {
           showToast(
@@ -80,7 +80,7 @@ const useHolidays = () => {
 
   const updateHoliday = useCallback(async (id: number, data: UpdateHoliday) => {
     setLoading(true);
-    await holidaysService
+    await service
       .update(id, data)
       .then((response) => {
         showToast('Sucesso', `Feriado atualizado com sucesso!`, 'success');
@@ -101,7 +101,7 @@ const useHolidays = () => {
   const deleteHoliday = useCallback(
     async (id: number) => {
       setLoading(true);
-      await holidaysService
+      await service
         .delete(id)
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao remover feriado', 'success');

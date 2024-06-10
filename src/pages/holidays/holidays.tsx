@@ -3,7 +3,6 @@ import Navbar from 'components/common/NavBar/navbar.component';
 import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
 import { useState } from 'react';
 import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
-
 import HolidayCategoryModal from './HolidayCategoryModal';
 import HolidayModal from './HolidayModal';
 import Dialog from 'components/common/Dialog/dialog.component';
