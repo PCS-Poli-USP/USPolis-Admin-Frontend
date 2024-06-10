@@ -39,7 +39,7 @@ export type EventForm = {
   title: string;
 };
 
-interface EventFormModalProps extends ModalProps {
+interface InstitutionalEventModalProps extends ModalProps {
   selectedEvent: InstitutionalEventResponse | undefined;
   refetch: () => Promise<void>;
   buildings: BuildingResponse[];
@@ -47,13 +47,13 @@ interface EventFormModalProps extends ModalProps {
 
 const service = new InstutionalEventsService();
 
-function EventFormModal({
+function InstitutionalEventModal({
   isOpen,
   onClose,
   refetch,
   selectedEvent,
   buildings,
-}: EventFormModalProps) {
+}: InstitutionalEventModalProps) {
   const [loading, setLoading] = useState(false);
   const [fullDayEvent, setFullDayEvent] = useState(false);
 
@@ -277,4 +277,4 @@ function EventFormModal({
   );
 }
 
-export default EventFormModal;
+export default InstitutionalEventModal;

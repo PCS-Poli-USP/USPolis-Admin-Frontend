@@ -20,7 +20,7 @@ import { InstitutionalEventResponse } from 'models/http/responses/instituionalEv
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
 import useInstitutionalEvents from 'hooks/useInstitutionalEvents';
-import EventFormModal from './InstitutionalEventModal';
+import InstitutionalEventModal from './InstitutionalEventModal/institutionalEvent.modal';
 
 function InstitutionalEvents() {
   const {
@@ -78,7 +78,7 @@ function InstitutionalEvents() {
   return (
     <>
       <Navbar />
-      <EventFormModal
+      <InstitutionalEventModal
         isOpen={isOpenEventForm}
         onClose={onCloseEventForm}
         children={null}

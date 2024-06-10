@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { EventForm } from '.';
+import { EventForm } from './institutionalEvent.modal';
 import moment from 'moment';
 import { EventTypes } from 'utils/enums/eventTypes.enum';
 
