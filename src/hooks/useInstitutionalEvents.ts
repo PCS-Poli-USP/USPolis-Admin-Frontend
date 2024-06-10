@@ -1,4 +1,8 @@
 import useCustomToast from 'hooks/useCustomToast';
+import {
+  CreateInstitutionalEvent,
+  UpdateInstitutionalEvent,
+} from 'models/http/requests/institutionalEvent.request.models';
 import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import InstutionalEventsService from 'services/api/institutionalEvents.service';
@@ -25,6 +29,60 @@ const useInstitutionalEvents = () => {
         setLoading(false);
       });
   }, [showToast]);
+
+  const createEvent = useCallback(
+    async (data: CreateInstitutionalEvent) => {
+      setLoading(true);
+      await service
+        .create(data)
+        .then((response) => {
+          showToast(
+            'Sucesso',
+            `Evento institucional criado com sucesso!`,
+            'success',
+          );
+          getEvents();
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao criar o evento ${data.title}: ${error}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [getEvents, showToast],
+  );
+
+  const updateEvent = useCallback(
+    async (id: number, data: UpdateInstitutionalEvent) => {
+      setLoading(true);
+      await service
+        .update(id, data)
+        .then((response) => {
+          showToast(
+            'Sucesso',
+            `Evento institucional atualizado com sucesso!`,
+            'success',
+          );
+          getEvents();
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao atualizar o evento institucional ${data.title}: ${error}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [getEvents, showToast],
+  );
 
   const deleteEvent = useCallback(
     async (id: number) => {
@@ -55,7 +113,7 @@ const useInstitutionalEvents = () => {
     getEvents();
   }, [getEvents]);
 
-  return { loading, getEvents, events, deleteEvent };
+  return { loading, events, getEvents, createEvent, updateEvent, deleteEvent };
 };
 
 export default useInstitutionalEvents;

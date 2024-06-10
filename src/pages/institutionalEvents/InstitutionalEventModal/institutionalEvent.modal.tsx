@@ -12,7 +12,6 @@ import {
   ModalOverlay,
   VStack,
   Text,
-  useToast,
   Checkbox,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -21,13 +20,12 @@ import { defaultValues, schema } from './institutionalEvent.modal.form';
 import { Input, Select, Textarea } from 'components/common';
 import { useEffect, useState } from 'react';
 import { EventTypes } from 'utils/enums/eventTypes.enum';
-import InstutionalEventsService from 'services/api/institutionalEvents.service';
 import { CreateInstitutionalEvent } from 'models/http/requests/institutionalEvent.request.models';
-import { InstitutionalEventForm, InstitutionalEventModalProps } from './institutionalEvent.modal.interface';
-
-
-
-const service = new InstutionalEventsService();
+import {
+  InstitutionalEventForm,
+  InstitutionalEventModalProps,
+} from './institutionalEvent.modal.interface';
+import useInstitutionalEvents from 'hooks/useInstitutionalEvents';
 
 function InstitutionalEventModal({
   isOpen,
@@ -36,7 +34,6 @@ function InstitutionalEventModal({
   selectedEvent,
   buildings,
 }: InstitutionalEventModalProps) {
-  const [loading, setLoading] = useState(false);
   const [fullDayEvent, setFullDayEvent] = useState(false);
 
   useEffect(() => {
@@ -53,12 +50,13 @@ function InstitutionalEventModal({
   });
 
   const { trigger, getValues, reset, clearErrors, watch } = form;
-
-  const toast = useToast();
+  const { loading, createEvent, updateEvent } = useInstitutionalEvents();
   const buildingWatcher: string | undefined = watch('building');
   const locationWatcher = watch('location');
 
-  function formatCreateData(data: InstitutionalEventForm): CreateInstitutionalEvent {
+  function formatCreateData(
+    data: InstitutionalEventForm,
+  ): CreateInstitutionalEvent {
     const formated_data: CreateInstitutionalEvent = {
       title: data.title,
       description: data.description,
@@ -74,77 +72,33 @@ function InstitutionalEventModal({
   }
 
   const handleCreateSubmit = async () => {
-    try {
-      const isValid = await trigger();
+    const isValid = await trigger();
+    if (!isValid) return;
 
-      if (!isValid) return;
+    const values = getValues();
 
-      setLoading(true);
-
-      const values = getValues();
-
-      if (fullDayEvent) {
-        values['end'] = values['start'];
-      }
-      console.log('Dados: ', formatCreateData(values));
-      await service.create(formatCreateData(values));
-
-      toast({
-        description: 'Evento cadastrado com sucesso!',
-        status: 'success',
-        isClosable: true,
-        position: 'top-right',
-      });
-
-      onClose();
-      refetch();
-    } catch {
-      toast({
-        description: 'Houve um erro ao criar o evento',
-        status: 'error',
-        isClosable: true,
-        position: 'top-right',
-      });
-    } finally {
-      setLoading(false);
+    if (fullDayEvent) {
+      values['end'] = values['start'];
     }
+
+    createEvent(formatCreateData(values));
+    onClose();
+    refetch();
   };
 
   const handleUpdateSubmit = async () => {
-    try {
-      const isValid = await trigger();
+    const isValid = await trigger();
+    if (!isValid || !selectedEvent) return;
 
-      if (!isValid || !selectedEvent) return;
+    const values = getValues();
 
-      setLoading(true);
-
-      const values = getValues();
-
-      if (fullDayEvent) {
-        values['end'] = values['start'];
-      }
-
-      await service.update(selectedEvent.id, values);
-
-      toast({
-        description: 'Evento atualizado com sucesso!',
-        status: 'success',
-        isClosable: true,
-        position: 'top-right',
-      });
-
-      onClose();
-      refetch();
-    } catch {
-      toast({
-        description: 'Houve um erro ao atualizar o evento',
-        status: 'error',
-        isClosable: true,
-        position: 'top-right',
-      });
-    } finally {
-      setLoading(false);
+    if (fullDayEvent) {
+      values['end'] = values['start'];
     }
+
+    updateEvent(selectedEvent.id, formatCreateData(values));
+    onClose();
+    refetch();
   };
 
   useEffect(() => {
