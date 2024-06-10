@@ -9,7 +9,6 @@ import {
   VStack,
   HStack,
   IconButton,
-  Input,
   List,
   ListItem,
   Modal,
@@ -43,6 +42,7 @@ import Class from 'models/common/class.model';
 import { useEffect, useState } from 'react';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 import * as validator from 'utils/classes/classes.validator';
+import { Input } from 'components/common';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -89,19 +89,6 @@ export default function RegisterModal(props: RegisterModalProps) {
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [editDateIndex, setEditDateIndex] = useState(0);
   const [buildingName, setBuildingName] = useState('');
-
-  // Errors flags for inputs validation:
-  const [hasClassCodeError, setHasClassCodeError] = useState(false);
-  const [hasSubjectCodeError, setHasSubjectCodeError] = useState(false);
-  const [hasSubjectNameError, setHasSubjectNameError] = useState(false);
-  const [hasOferingError, setHasOferingError] = useState(false);
-  const [hasClassTypeError, setHasClassTypeError] = useState(false);
-  const [hasProfessorError, setHasProfessorError] = useState(false);
-  const [hasPeriodError, setHasPeriodError] = useState(false);
-  const [hasTimeError, setHasTimeError] = useState(false);
-  const [hasDayError, setHasDayError] = useState(false);
-  const [hasBuildingError, setHasBuildingError] = useState(false);
-  const [hasErrors, setHasErros] = useState(false);
 
   useEffect(() => {
     if (props.formData) setForm(props.formData);
@@ -231,92 +218,6 @@ export default function RegisterModal(props: RegisterModalProps) {
     }));
   }
 
-  function clearForm() {
-    clearProfessorInput();
-    clearDateInputs();
-    clearBuildingInput();
-    clearErrors();
-  }
-
-  function clearProfessorInput() {
-    setProfessor('');
-    setEditProfessorIndex(0);
-  }
-
-  function clearDateInputs() {
-    setWeekDay('');
-    setStartTime('');
-    setEndTime('');
-    setEditDateIndex(0);
-  }
-
-  function clearBuildingInput() {
-    setBuildingName('');
-  }
-
-  function clearErrors() {
-    setHasClassCodeError(false);
-    setHasSubjectCodeError(false);
-    setHasSubjectNameError(false);
-    setHasOferingError(false);
-    setHasClassTypeError(false);
-    setHasProfessorError(false);
-    setHasPeriodError(false);
-    setHasTimeError(false);
-    setHasDayError(false);
-    setHasBuildingError(false);
-    setHasErros(false);
-  }
-
-  function isInvalidClass(): boolean {
-    let hasError = false;
-    if (validator.isInvalidClassCode(form.class_code)) {
-      setHasClassCodeError(true);
-      hasError = true;
-    }
-    if (validator.isInvalidSubjectCode(form.subject_code)) {
-      setHasSubjectCodeError(true);
-      hasError = true;
-    }
-    if (validator.isInvalidSubjectName(form.subject_name)) {
-      setHasSubjectNameError(true);
-      hasError = true;
-    }
-    return hasError;
-  }
-
-  function isInvalidForm() {
-    let hasError = false;
-    if (isInvalidClass()) {
-      hasError = true;
-    }
-
-    if (validator.isInvalidClassType(form.class_type)) {
-      setHasClassTypeError(true);
-      hasError = true;
-    }
-
-    if (validator.isInvalidPeriod(form.start_period, form.end_period)) {
-      setHasPeriodError(true);
-      hasError = true;
-    }
-
-    if (validator.isInvalidProfessorList(form.professors)) {
-      hasError = true;
-    }
-
-    if (validator.isInvalidTimeList(form.start_time, form.end_time)) {
-      hasError = true;
-    }
-
-    if (validator.isEmpty(form.preferences.building_id)) {
-      setHasBuildingError(true);
-      hasError = true;
-    }
-
-    return hasError;
-  }
-
   return (
     <Modal
       isOpen={props.isOpen}
@@ -337,9 +238,9 @@ export default function RegisterModal(props: RegisterModalProps) {
           </Text>
 
           <VStack spacing='20px' alignItems='start'>
-            <FormControl isInvalid={hasClassCodeError}>
-              <FormLabel>Código da turma</FormLabel>
-              <Input //Input do tipo number está aceitando um 'e' ou 'E'
+              <Input
+                label={'Código da turma'}
+                name={'class_code'}
                 placeholder='Código da turma'
                 value={form.class_code}
                 errorBorderColor='crimson'
@@ -356,12 +257,6 @@ export default function RegisterModal(props: RegisterModalProps) {
                   if (event.target.value) setHasClassCodeError(false);
                 }}
               />
-              {hasClassCodeError ? (
-                <FormErrorMessage>
-                  Código de turma inválido, tamanho mínimo de 7 números.
-                </FormErrorMessage>
-              ) : undefined}
-            </FormControl>
 
             <FormControl isInvalid={hasSubjectCodeError}>
               <FormLabel>Código da disciplina</FormLabel>
