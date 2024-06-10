@@ -14,13 +14,11 @@ import Dialog from 'components/common/Dialog/dialog.component';
 import Navbar from 'components/common/NavBar/navbar.component';
 import { GoSync } from 'react-icons/go';
 import { useEffect, useState } from 'react';
-import BuildingsService from 'services/api/buildings.service';
 import { getInstitutionalEventsColumns } from './Tables/institutionalEvent.table';
 import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
 import useInstitutionalEvents from 'hooks/useInstitutionalEvents';
 import InstitutionalEventModal from './InstitutionalEventModal/institutionalEvent.modal';
+import useBuildings from 'hooks/useBuildings';
 
 function InstitutionalEvents() {
   const {
@@ -37,20 +35,14 @@ function InstitutionalEvents() {
   const [selectedEvent, setSelectedEvent] = useState<
     InstitutionalEventResponse | undefined
   >(undefined);
-  const [buildings, setBuildings] = useState<Array<BuildingResponse>>([]);
 
+  const { buildings } = useBuildings();
   const { events, loading, getEvents, deleteEvent } = useInstitutionalEvents();
-  const buildingsService = new BuildingsService();
 
   const columns = getInstitutionalEventsColumns({
     onEditInstitutionalEvent: handleEditInstitutionalEvent,
     onDeleteInstittuionalEvent: handleDeleteInstitutionalEvent,
   });
-
-  useEffect(() => {
-    fetchBuildings();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     if (!isOpenEventForm) setSelectedEvent(undefined);
@@ -59,12 +51,6 @@ function InstitutionalEvents() {
   useEffect(() => {
     if (!isOpenDelete) setSelectedEvent(undefined);
   }, [isOpenDelete]);
-
-  function fetchBuildings() {
-    buildingsService.list().then((it) => {
-      setBuildings(it.data.sort(sortBuildingsResponse));
-    });
-  }
 
   function handleEditInstitutionalEvent(data: InstitutionalEventResponse) {
     setSelectedEvent(data);

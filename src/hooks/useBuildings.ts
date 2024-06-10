@@ -7,7 +7,7 @@ import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
 
 const service = new BuildingsService();
 
-const useHolidays = () => {
+const useBuildings = () => {
   const [loading, setLoading] = useState(false);
   const [buildings, setBuildings] = useState<BuildingResponse[]>([]);
 
@@ -28,7 +28,7 @@ const useHolidays = () => {
       });
   }, [showToast]);
 
-  const createBuildings = useCallback(
+  const createBuilding = useCallback(
     async (data: CreateBuilding) => {
       setLoading(true);
       await service
@@ -51,7 +51,7 @@ const useHolidays = () => {
     [getBuildings, showToast],
   );
 
-  const updateBuildings = useCallback(async (id: number, data: UpdateBuilding) => {
+  const updateBuilding = useCallback(async (id: number, data: UpdateBuilding) => {
     setLoading(true);
     await service
       .update(id, data)
@@ -100,10 +100,10 @@ const useHolidays = () => {
     loading,
     buildings,
     getBuildings,
-    createBuildings,
-    updateBuildings,
+    createBuilding,
+    updateBuilding,
     deleteBuilding,
   };
 };
 
-export default useHolidays;
+export default useBuildings;
