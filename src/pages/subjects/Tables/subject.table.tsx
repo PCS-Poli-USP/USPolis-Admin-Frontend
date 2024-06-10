@@ -92,7 +92,7 @@ export const getSubjectColumns = (props: SubjectColumnsProps): ColumnDef<Subject
             variant='ghost'
             aria-label='excluir-disciplina'
             icon={<BsFillTrashFill />}
-            onClick={() => props.handleEditButton(row.original)}
+            onClick={() => props.handleDeleteButton(row.original)}
           />
         </Tooltip>
       </HStack>

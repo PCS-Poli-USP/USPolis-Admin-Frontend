@@ -78,6 +78,7 @@ export default function SubjectModal(props: SubjectModalProps) {
     } else {
       await createSubject(formatFormData(values));
     }
+    props.refetch();
     handleCloseModal();
   }
 

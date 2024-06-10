@@ -84,11 +84,14 @@ function Subjects() {
           }
           isOpen={isOpenDeleteSubjectDialog}
           onClose={() => {
-            handleDeleteSubject()
             setSelectedSubject(undefined);
             onCloseDeleteSubjectDialog();
           }}
-          onConfirm={handleDeleteSubject}
+          onConfirm={() => {
+            handleDeleteSubject();
+            setSelectedSubject(undefined);
+            onCloseDeleteSubjectDialog();
+          }}
         />
       </Flex>
     </>
