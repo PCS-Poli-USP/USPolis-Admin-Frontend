@@ -22,6 +22,7 @@ import {
   UpdateHolidayCategory,
 } from 'models/http/requests/holidayCategory.request.models';
 import { useEffect } from 'react';
+import useHolidaysCategories from 'hooks/useHolidaysCategories';
 
 function HolidayCategoryModal(props: HolidayCategoryModalProps) {
   const form = useForm<HolidayCategoryForm>({
@@ -30,13 +31,16 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
   });
 
   const { trigger, getValues, reset, clearErrors } = form;
+  const { createHolidayCategory, updateHolidayCategory } =
+    useHolidaysCategories();
 
   async function handleCreateSubmit() {
     const isValid = await trigger();
     if (!isValid) return;
 
     const values = getValues();
-    props.onCreate(values as CreateHolidayCategory);
+    createHolidayCategory(values as CreateHolidayCategory);
+    props.refetch();
     handleCloseModal();
   }
 
@@ -53,7 +57,8 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
 
     const values = getValues();
     if (!props.selectedHolidayCategory) return;
-    props.onUpdate(props.selectedHolidayCategory.id, formatUpdateData(values));
+    updateHolidayCategory(props.selectedHolidayCategory.id, formatUpdateData(values));
+    props.refetch();
     handleCloseModal();
   }
 
@@ -70,7 +75,11 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
   }, [reset, props]);
 
   return (
-    <Modal isOpen={props.isOpen} onClose={handleCloseModal} closeOnOverlayClick={false}>
+    <Modal
+      isOpen={props.isOpen}
+      onClose={handleCloseModal}
+      closeOnOverlayClick={false}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>

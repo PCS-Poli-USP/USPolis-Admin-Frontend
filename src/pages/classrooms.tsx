@@ -28,16 +28,17 @@ import {
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
-import { sortBuildings, sortClassrooms } from 'utils/sorter';
-import { Building } from 'models/common/building.model';
+import { sortClassrooms } from 'utils/sorter';
 import BuildingsService from 'services/api/buildings.service';
-import AdminClassroomService, {
-  AdminUpdateClassroom,
-} from 'services/api/admin.classrooms.service';
+import AdminClassroomService from 'services/api/admin.classrooms.service';
+import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 function Classrooms() {
   const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);
-  const [buildingsList, setBuildingsList] = useState<Array<Building>>([]);
+  const [buildingsList, setBuildingsList] = useState<Array<BuildingResponse>>(
+    [],
+  );
   const {
     isOpen: isOpenRegister,
     onOpen: onOpenRegister,
@@ -192,7 +193,7 @@ function Classrooms() {
 
   function fetchBuildings() {
     buildingsService.list().then((it) => {
-      setBuildingsList(it.data.sort(sortBuildings));
+      setBuildingsList(it.data.sort(sortBuildingsResponse));
     });
   }
 

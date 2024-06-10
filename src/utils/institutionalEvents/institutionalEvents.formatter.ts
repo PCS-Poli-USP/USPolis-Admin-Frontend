@@ -1,10 +1,9 @@
-import { Row } from '@tanstack/react-table';
-import { InstitutionalEvent } from 'models/common/institutionalEvent.model';
+import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
 import moment from 'moment';
 
-export const periodFormatter = (row: Row<InstitutionalEvent>) => {
-  const start = row.original.start_datetime;
-  const end = row.original.end_datetime;
+export const periodFormatter = (data: InstitutionalEventResponse) => {
+  const start = data.start;
+  const end = data.end;
   const startFormatted = moment(start).format('DD/MM/YYYY HH:mm');
 
   if (end === start) {

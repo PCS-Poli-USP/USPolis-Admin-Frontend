@@ -15,14 +15,15 @@ import RegisterModal from 'components/buildings/register.modal';
 import Dialog from 'components/common/Dialog/dialog.component';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import { appContext } from 'context/AppContext';
-import { sortBuildings } from 'utils/sorter';
+import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 const Buildings = () => {
   const { setLoading } = useContext(appContext);
   const buildingsService = new BuildingsService();
 
-  const [buildings, setBuildings] = React.useState<Building[]>([]);
-  const [contextBuilding, setContextBuilding] = React.useState<Building | null>(
+  const [buildings, setBuildings] = React.useState<BuildingResponse[]>([]);
+  const [contextBuilding, setContextBuilding] = React.useState<BuildingResponse | null>(
     null,
   );
   const [registerModalOpen, setRegisterModalOpen] =
@@ -53,7 +54,7 @@ const Buildings = () => {
     });
   };
 
-  const columns: ColumnDef<Building>[] = [
+  const columns: ColumnDef<BuildingResponse>[] = [
     {
       accessorKey: 'name',
       header: 'Nome',
@@ -102,7 +103,7 @@ const Buildings = () => {
     try {
       const response = await buildingsService.list();
       console.log(response.data);
-      setBuildings(response.data.sort(sortBuildings));
+      setBuildings(response.data.sort(sortBuildingsResponse));
       setLoading(false);
     } catch (err) {
       console.log('err');
@@ -126,7 +127,7 @@ const Buildings = () => {
     }
   }
 
-  async function editBuilding(id: string, data: CreateBuilding) {
+  async function editBuilding(id: number, data: CreateBuilding) {
     try {
       setLoading(true);
       await buildingsService.update(id, data);
@@ -138,7 +139,7 @@ const Buildings = () => {
     }
   }
 
-  async function deleteBuilding(id: string) {
+  async function deleteBuilding(id: number) {
     try {
       setLoading(true);
       await buildingsService.delete(id);
@@ -155,20 +156,20 @@ const Buildings = () => {
     setRegisterModalOpen(true);
   }
 
-  function handleEditButton(building: Building) {
+  function handleEditButton(building: BuildingResponse) {
     setIsUpdate(true);
     setContextBuilding(building);
     setRegisterModalOpen(true);
   }
 
-  function handleDeleteButton(building: Building) {
+  function handleDeleteButton(building: BuildingResponse) {
     setContextBuilding(building);
     setDeleteDialogOpen(true);
   }
 
   function handleRegisterSave(data: UpdateBuilding | CreateBuilding) {
     if (isUpdate) {
-      editBuilding(contextBuilding?.id as string, data as CreateBuilding);
+      editBuilding(contextBuilding?.id as number, data as CreateBuilding);
     } else {
       createBuilding(data as CreateBuilding);
     }
@@ -202,7 +203,7 @@ const Buildings = () => {
           setDeleteDialogOpen(false);
         }}
         onConfirm={() => {
-          deleteBuilding(contextBuilding?.id as string);
+          deleteBuilding(contextBuilding?.id as number);
           setDeleteDialogOpen(false);
         }}
         title={`Deletar o prédio ${contextBuilding?.name}`}

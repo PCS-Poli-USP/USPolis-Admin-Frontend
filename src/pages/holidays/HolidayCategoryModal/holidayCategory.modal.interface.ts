@@ -1,14 +1,9 @@
-import {
-  CreateHolidayCategory,
-  UpdateHolidayCategory,
-} from 'models/http/requests/holidayCategory.request.models';
 import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
 import { ModalProps } from 'models/interfaces';
 
 export interface HolidayCategoryModalProps extends ModalProps {
   isUpdate: boolean;
-  onCreate: (data: CreateHolidayCategory) => void;
-  onUpdate: (id: number, data: UpdateHolidayCategory) => void;
+  refetch: () => void;
   selectedHolidayCategory?: HolidayCategoryResponse;
 }
 

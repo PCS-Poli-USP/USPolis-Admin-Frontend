@@ -14,9 +14,9 @@ import {
   Select,
 } from '@chakra-ui/react';
 import Class, { Preferences } from 'models/common/class.model';
-import { Building } from 'models/common/building.model';
 
 import { useEffect, useState } from 'react';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 interface PreferencesForm extends Preferences {
   ignore_to_allocate: boolean;
@@ -26,7 +26,7 @@ interface PreferencesModalProps {
   isOpen: boolean;
   onClose: () => void;
   data?: Class; // data from database
-  buildings: Array<Building>;
+  buildings: Array<BuildingResponse>;
   onSave: (data: PreferencesForm) => void;
 }
 

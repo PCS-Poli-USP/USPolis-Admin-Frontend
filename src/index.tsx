@@ -2,7 +2,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import Allocation from 'pages/allocation';
 import Classes from 'pages/classes/classes';
 import Classrooms from 'pages/classrooms';
-import InstitutionalEvents from 'pages/institutional-events';
+import InstitutionalEvents from 'pages/institutionalEvents';
 import ReactDOM from 'react-dom/client';
 import {
   BrowserRouter as Router,

@@ -34,10 +34,9 @@ import {
   ClassToSClass,
   breakClassFormInEvents,
 } from 'utils/classes/classes.formatter';
-import { Building } from 'models/common/building.model';
 import { EventByClassrooms } from 'models/common/event.model';
 import CrawlerService from 'services/api/crawler.service';
-import { sortBuildings, sortClasses } from 'utils/sorter';
+import { sortClasses } from 'utils/sorter';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
 import MultipleEditModal from 'components/classes/multipleEdit.modal';
 import { getClassesColumns } from './Tables/class.table';
@@ -92,7 +91,9 @@ function Classes() {
   } = useDisclosure();
 
   const [classesList, setClassesList] = useState<Array<SClass>>([]);
-  const [buildingsList, setBuildingsList] = useState<Array<Building>>([]);
+  const [buildingsList, setBuildingsList] = useState<Array<BuildingResponse>>(
+    [],
+  );
   const [selectedClassEventList, setSelectedClassEventList] = useState<
     Array<EventByClassrooms>
   >([]);
@@ -130,7 +131,7 @@ function Classes() {
 
   function fetchBuildings() {
     buildingsService.list().then((it) => {
-      setBuildingsList(it.data.sort(sortBuildings));
+      setBuildingsList(it.data.sort(sortBuildingsResponse));
     });
   }
 
@@ -223,7 +224,7 @@ function Classes() {
   function handleAllocationEdit(
     events_ids: string[],
     newClassroom: string,
-    building_id: string,
+    building_id: number,
   ) {
     eventsService
       .editManyAllocations({
@@ -301,7 +302,7 @@ function Classes() {
     }
   }
 
-  function handleCrawlerSave(subjectsList: string[], building_id: string) {
+  function handleCrawlerSave(subjectsList: string[], building_id: number) {
     setLoading(true);
     crawlerService
       .crawl({

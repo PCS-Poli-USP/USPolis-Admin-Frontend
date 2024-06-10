@@ -48,7 +48,7 @@ interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
   formData?: Class;
-  buildings?: Array<Building>;
+  buildings?: Array<BuildingResponse>;
   isUpdate?: boolean;
   onSave: (data: Class) => void;
 }

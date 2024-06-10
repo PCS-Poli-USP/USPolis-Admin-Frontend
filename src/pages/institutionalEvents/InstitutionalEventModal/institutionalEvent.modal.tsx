@@ -10,146 +10,95 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  ModalProps,
   VStack,
   Text,
-  useToast,
   Checkbox,
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
-import { defaultValues, schema } from './form';
+import { defaultValues, schema } from './institutionalEvent.modal.form';
 import { Input, Select, Textarea } from 'components/common';
 import { useEffect, useState } from 'react';
-import InstutionalEventsService from 'services/api/institutional-events.service';
-import { InstitutionalEvent } from 'models/common/institutionalEvent.model';
 import { EventTypes } from 'utils/enums/eventTypes.enum';
-import { Building } from 'models/common/building.model';
+import { CreateInstitutionalEvent } from 'models/http/requests/institutionalEvent.request.models';
+import {
+  InstitutionalEventForm,
+  InstitutionalEventModalProps,
+} from './institutionalEvent.modal.interface';
+import useInstitutionalEvents from 'hooks/useInstitutionalEvents';
 
-export type EventForm = {
-  building?: string | null;
-  category: string;
-  classroom?: string | null;
-  description: string;
-  end_datetime: string;
-  start_datetime: string;
-  external_link?: string;
-  location?: string | null;
-  title: string;
-};
-
-interface EventFormModalProps extends ModalProps {
-  selectedEvent: InstitutionalEvent | null;
-  refetch: () => Promise<void>;
-  buildings: Building[];
-}
-
-const service = new InstutionalEventsService();
-
-function EventFormModal({
+function InstitutionalEventModal({
   isOpen,
   onClose,
   refetch,
   selectedEvent,
   buildings,
-}: EventFormModalProps) {
-  const [loading, setLoading] = useState(false);
+}: InstitutionalEventModalProps) {
   const [fullDayEvent, setFullDayEvent] = useState(false);
 
   useEffect(() => {
-    if (
-      selectedEvent &&
-      selectedEvent.end_datetime === selectedEvent.start_datetime
-    ) {
+    if (selectedEvent && selectedEvent.end === selectedEvent.start) {
       setFullDayEvent(true);
     } else {
       setFullDayEvent(false);
     }
   }, [selectedEvent]);
 
-  const form = useForm<EventForm>({
+  const form = useForm<InstitutionalEventForm>({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
   });
 
   const { trigger, getValues, reset, clearErrors, watch } = form;
-
-  const toast = useToast();
-  const buildingWatcher = watch('building');
+  const { loading, createEvent, updateEvent } = useInstitutionalEvents();
+  const buildingWatcher: string | undefined = watch('building');
   const locationWatcher = watch('location');
 
+  function formatCreateData(
+    data: InstitutionalEventForm,
+  ): CreateInstitutionalEvent {
+    const formated_data: CreateInstitutionalEvent = {
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      start: data.start,
+      end: data.end,
+      location: data.location ? data.location : undefined,
+      building: data.building ? data.building : undefined,
+      classroom: data.classroom ? data.classroom : undefined,
+      external_link: data.external_link ? data.external_link : undefined,
+    };
+    return formated_data;
+  }
+
   const handleCreateSubmit = async () => {
-    try {
-      const isValid = await trigger();
+    const isValid = await trigger();
+    if (!isValid) return;
 
-      if (!isValid) return;
+    const values = getValues();
 
-      setLoading(true);
-
-      const values = getValues();
-
-      if (fullDayEvent) {
-        values['end_datetime'] = values['start_datetime'];
-      }
-
-      await service.create(values);
-
-      toast({
-        description: 'Evento cadastrado com sucesso!',
-        status: 'success',
-        isClosable: true,
-        position: 'top-right',
-      });
-
-      onClose();
-      refetch();
-    } catch {
-      toast({
-        description: 'Houve um erro ao criar o evento',
-        status: 'error',
-        isClosable: true,
-        position: 'top-right',
-      });
-    } finally {
-      setLoading(false);
+    if (fullDayEvent) {
+      values['end'] = values['start'];
     }
+
+    createEvent(formatCreateData(values));
+    onClose();
+    refetch();
   };
 
   const handleUpdateSubmit = async () => {
-    try {
-      const isValid = await trigger();
+    const isValid = await trigger();
+    if (!isValid || !selectedEvent) return;
 
-      if (!isValid || !selectedEvent) return;
+    const values = getValues();
 
-      setLoading(true);
-
-      const values = getValues();
-
-      if (fullDayEvent) {
-        values['end_datetime'] = values['start_datetime'];
-      }
-
-      await service.update(selectedEvent._id, values);
-
-      toast({
-        description: 'Evento atualizado com sucesso!',
-        status: 'success',
-        isClosable: true,
-        position: 'top-right',
-      });
-
-      onClose();
-      refetch();
-    } catch {
-      toast({
-        description: 'Houve um erro ao atualizar o evento',
-        status: 'error',
-        isClosable: true,
-        position: 'top-right',
-      });
-    } finally {
-      setLoading(false);
+    if (fullDayEvent) {
+      values['end'] = values['start'];
     }
+
+    updateEvent(selectedEvent.id, formatCreateData(values));
+    onClose();
+    refetch();
   };
 
   useEffect(() => {
@@ -192,33 +141,25 @@ function EventFormModal({
                     isChecked={fullDayEvent}
                     onChange={(e) => {
                       setFullDayEvent(e.target.checked);
-                      form.setValue('end_datetime', '');
-                      form.setValue('start_datetime', '');
+                      form.setValue('end', '');
+                      form.setValue('start', '');
                     }}
                   >
                     Evento de dia inteiro
                   </Checkbox>
                 </Box>
                 {fullDayEvent ? (
-                  <Input label='Data' name='start_datetime' type='date' />
+                  <Input label='Data' name='start' type='date' />
                 ) : (
                   <Flex w='100%' gap={3}>
-                    <Input
-                      label='Início'
-                      name='start_datetime'
-                      type='datetime-local'
-                    />
-                    <Input
-                      label='Fim'
-                      name='end_datetime'
-                      type='datetime-local'
-                    />
+                    <Input label='Início' name='start' type='datetime-local' />
+                    <Input label='Fim' name='end' type='datetime-local' />
                   </Flex>
                 )}
                 <Input
                   label='Localização'
                   name='location'
-                  disabled={!!buildingWatcher}
+                  disabled={buildingWatcher ? true : false}
                 />
                 <Text color='gray.500'>ou</Text>
                 <Flex w='100%' gap={3}>
@@ -272,4 +213,4 @@ function EventFormModal({
   );
 }
 
-export default EventFormModal;
+export default InstitutionalEventModal;

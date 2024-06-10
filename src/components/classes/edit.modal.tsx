@@ -41,6 +41,7 @@ import { Building } from 'models/common/building.model';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 import * as validator from 'utils/classes/classes.validator';
 import { FormatData } from 'utils/formatters';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 interface EditModalProps {
   isOpen: boolean;
@@ -48,7 +49,7 @@ interface EditModalProps {
   formData?: Class;
   onSave: (data: Class) => void;
 
-  buildings?: Array<Building>;
+  buildings?: Array<BuildingResponse>;
 }
 
 export default function EditModal({
@@ -360,7 +361,7 @@ export default function EditModal({
             Prédio:{' '}
             {
               buildings?.find(
-                (build) => build.id === form.preferences.building_id,
+                (build) => build.id === Number(form.preferences.building_id),
               )?.name
             }
           </Text>
