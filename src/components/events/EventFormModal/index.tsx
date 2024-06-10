@@ -21,27 +21,28 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './form';
 import { Input, Select, Textarea } from 'components/common';
 import { useEffect, useState } from 'react';
-import InstutionalEventsService from 'services/api/institutional-events.service';
-import { InstitutionalEvent } from 'models/common/institutionalEvent.model';
 import { EventTypes } from 'utils/enums/eventTypes.enum';
-import { Building } from 'models/common/building.model';
+import InstutionalEventsService from 'services/api/institutionalEvents.service';
+import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
+import { CreateInstitutionalEvent } from 'models/http/requests/institutionalEvent.request.models';
 
 export type EventForm = {
-  building?: string | null;
+  building?: string;
   category: string;
-  classroom?: string | null;
+  classroom?: string;
   description: string;
-  end_datetime: string;
-  start_datetime: string;
+  end: string;
+  start: string;
   external_link?: string;
-  location?: string | null;
+  location?: string;
   title: string;
 };
 
 interface EventFormModalProps extends ModalProps {
-  selectedEvent: InstitutionalEvent | null;
+  selectedEvent: InstitutionalEventResponse | undefined;
   refetch: () => Promise<void>;
-  buildings: Building[];
+  buildings: BuildingResponse[];
 }
 
 const service = new InstutionalEventsService();
@@ -57,10 +58,7 @@ function EventFormModal({
   const [fullDayEvent, setFullDayEvent] = useState(false);
 
   useEffect(() => {
-    if (
-      selectedEvent &&
-      selectedEvent.end_datetime === selectedEvent.start_datetime
-    ) {
+    if (selectedEvent && selectedEvent.end === selectedEvent.start) {
       setFullDayEvent(true);
     } else {
       setFullDayEvent(false);
@@ -75,8 +73,23 @@ function EventFormModal({
   const { trigger, getValues, reset, clearErrors, watch } = form;
 
   const toast = useToast();
-  const buildingWatcher = watch('building');
+  const buildingWatcher: string | undefined = watch('building');
   const locationWatcher = watch('location');
+
+  function formatCreateData(data: EventForm): CreateInstitutionalEvent {
+    const formated_data: CreateInstitutionalEvent = {
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      start: data.start,
+      end: data.end,
+      location: data.location ? data.location : undefined,
+      building: data.building ? data.building : undefined,
+      classroom: data.classroom ? data.classroom : undefined,
+      external_link: data.external_link ? data.external_link : undefined,
+    };
+    return formated_data;
+  }
 
   const handleCreateSubmit = async () => {
     try {
@@ -89,10 +102,10 @@ function EventFormModal({
       const values = getValues();
 
       if (fullDayEvent) {
-        values['end_datetime'] = values['start_datetime'];
+        values['end'] = values['start'];
       }
-
-      await service.create(values);
+      console.log('Dados: ', formatCreateData(values));
+      await service.create(formatCreateData(values));
 
       toast({
         description: 'Evento cadastrado com sucesso!',
@@ -126,10 +139,10 @@ function EventFormModal({
       const values = getValues();
 
       if (fullDayEvent) {
-        values['end_datetime'] = values['start_datetime'];
+        values['end'] = values['start'];
       }
 
-      await service.update(selectedEvent._id, values);
+      await service.update(selectedEvent.id, values);
 
       toast({
         description: 'Evento atualizado com sucesso!',
@@ -192,33 +205,25 @@ function EventFormModal({
                     isChecked={fullDayEvent}
                     onChange={(e) => {
                       setFullDayEvent(e.target.checked);
-                      form.setValue('end_datetime', '');
-                      form.setValue('start_datetime', '');
+                      form.setValue('end', '');
+                      form.setValue('start', '');
                     }}
                   >
                     Evento de dia inteiro
                   </Checkbox>
                 </Box>
                 {fullDayEvent ? (
-                  <Input label='Data' name='start_datetime' type='date' />
+                  <Input label='Data' name='start' type='date' />
                 ) : (
                   <Flex w='100%' gap={3}>
-                    <Input
-                      label='Início'
-                      name='start_datetime'
-                      type='datetime-local'
-                    />
-                    <Input
-                      label='Fim'
-                      name='end_datetime'
-                      type='datetime-local'
-                    />
+                    <Input label='Início' name='start' type='datetime-local' />
+                    <Input label='Fim' name='end' type='datetime-local' />
                   </Flex>
                 )}
                 <Input
                   label='Localização'
                   name='location'
-                  disabled={!!buildingWatcher}
+                  disabled={buildingWatcher ? true : false}
                 />
                 <Text color='gray.500'>ou</Text>
                 <Flex w='100%' gap={3}>

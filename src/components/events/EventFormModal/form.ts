@@ -52,14 +52,14 @@ export const formFields = {
     validator: yup.string().required('Campo obrigatório'),
     defaultValue: '',
   },
-  start_datetime: {
+  start: {
     validator: yup
       .string()
       .required('Campo obrigatório')
       .test('is-valid', 'Data inválida', (value) => moment(value).isValid()),
     defaultValue: '',
   },
-  end_datetime: {
+  end: {
     validator: yup
       .string()
       .test(
@@ -87,20 +87,20 @@ export const schema = yup.object<EventForm>().shape(
     external_link: formFields.external_link.validator,
     location: formFields.location.validator,
     title: formFields.title.validator,
-    start_datetime: formFields.start_datetime.validator,
-    end_datetime: formFields.end_datetime.validator,
+    start: formFields.start.validator,
+    end: formFields.end.validator,
   },
   [['location', 'building']],
 );
 
 export const defaultValues: EventForm = {
-  building: formFields.building.defaultValue as string | null,
-  classroom: formFields.classroom.defaultValue as string | null,
+  building: formFields.building.defaultValue,
+  classroom: formFields.classroom.defaultValue,
   category: formFields.category.defaultValue,
   description: formFields.description.defaultValue,
   external_link: formFields.external_link.defaultValue,
-  location: formFields.location.defaultValue as string | null,
+  location: formFields.location.defaultValue,
   title: formFields.title.defaultValue,
-  start_datetime: formFields.start_datetime.defaultValue,
-  end_datetime: formFields.end_datetime.defaultValue,
+  start: formFields.start.defaultValue,
+  end: formFields.end.defaultValue,
 };
