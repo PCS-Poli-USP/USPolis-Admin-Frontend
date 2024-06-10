@@ -2,7 +2,7 @@ import { SubjectsTypes } from 'utils/enums/subjects.enum';
 import { BuildingResponse } from './building.response.models';
 
 export interface SubjectResponse {
-  id: string;
+  id: number;
   code: string;
   name: string;
   buildings?: BuildingResponse[];
