@@ -10,7 +10,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  ModalProps,
   VStack,
   Text,
   useToast,
@@ -18,32 +17,15 @@ import {
 } from '@chakra-ui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
-import { defaultValues, schema } from './form';
+import { defaultValues, schema } from './institutionalEvent.modal.form';
 import { Input, Select, Textarea } from 'components/common';
 import { useEffect, useState } from 'react';
 import { EventTypes } from 'utils/enums/eventTypes.enum';
 import InstutionalEventsService from 'services/api/institutionalEvents.service';
-import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { CreateInstitutionalEvent } from 'models/http/requests/institutionalEvent.request.models';
+import { InstitutionalEventForm, InstitutionalEventModalProps } from './institutionalEvent.modal.interface';
 
-export type EventForm = {
-  building?: string;
-  category: string;
-  classroom?: string;
-  description: string;
-  end: string;
-  start: string;
-  external_link?: string;
-  location?: string;
-  title: string;
-};
 
-interface InstitutionalEventModalProps extends ModalProps {
-  selectedEvent: InstitutionalEventResponse | undefined;
-  refetch: () => Promise<void>;
-  buildings: BuildingResponse[];
-}
 
 const service = new InstutionalEventsService();
 
@@ -65,7 +47,7 @@ function InstitutionalEventModal({
     }
   }, [selectedEvent]);
 
-  const form = useForm<EventForm>({
+  const form = useForm<InstitutionalEventForm>({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
   });
@@ -76,7 +58,7 @@ function InstitutionalEventModal({
   const buildingWatcher: string | undefined = watch('building');
   const locationWatcher = watch('location');
 
-  function formatCreateData(data: EventForm): CreateInstitutionalEvent {
+  function formatCreateData(data: InstitutionalEventForm): CreateInstitutionalEvent {
     const formated_data: CreateInstitutionalEvent = {
       title: data.title,
       description: data.description,

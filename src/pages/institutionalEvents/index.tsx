@@ -49,6 +49,7 @@ function InstitutionalEvents() {
 
   useEffect(() => {
     fetchBuildings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -81,7 +82,6 @@ function InstitutionalEvents() {
       <InstitutionalEventModal
         isOpen={isOpenEventForm}
         onClose={onCloseEventForm}
-        children={null}
         refetch={getEvents}
         selectedEvent={selectedEvent}
         buildings={buildings}

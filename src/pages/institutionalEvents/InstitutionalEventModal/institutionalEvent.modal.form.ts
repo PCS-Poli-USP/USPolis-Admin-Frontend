@@ -1,7 +1,7 @@
 import * as yup from 'yup';
-import { EventForm } from './institutionalEvent.modal';
 import moment from 'moment';
 import { EventTypes } from 'utils/enums/eventTypes.enum';
+import { InstitutionalEventForm } from './institutionalEvent.modal.interface';
 
 export const formFields = {
   building: {
@@ -78,7 +78,7 @@ export const formFields = {
   },
 };
 
-export const schema = yup.object<EventForm>().shape(
+export const schema = yup.object<InstitutionalEventForm>().shape(
   {
     building: formFields.building.validator,
     classroom: formFields.classroom.validator,
@@ -93,7 +93,7 @@ export const schema = yup.object<EventForm>().shape(
   [['location', 'building']],
 );
 
-export const defaultValues: EventForm = {
+export const defaultValues: InstitutionalEventForm = {
   building: formFields.building.defaultValue,
   classroom: formFields.classroom.defaultValue,
   category: formFields.category.defaultValue,
