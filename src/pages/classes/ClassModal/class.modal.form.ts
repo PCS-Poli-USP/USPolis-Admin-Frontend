@@ -1,15 +1,15 @@
 import { ClassValidator } from 'utils/classes/classes.validator';
 import * as yup from 'yup';
-import { ClassRegisterForm } from './class.register.modal.interface';
+import { ClassForm } from './class.modal.interface';
 
-export const formFields = {
+export const classFormFields = {
   subject_id: {
     validator: yup
       .number()
       .required('Campo obrigatório')
       .test(
         'is-valid-id',
-        'Campo obrigatório',
+        'Escolha uma disciplina válida',
         (value) => !ClassValidator.isInvalidId(value),
       ),
     defaultValue: 0,
@@ -20,7 +20,7 @@ export const formFields = {
       .required('Campo obrigatório')
       .test(
         'is-valid-field',
-        'Campo obrigatório',
+        'Código deve conter 7 caracteres',
         (value) => !ClassValidator.isInvalidClassCode(value),
       ),
     defaultValue: '',
@@ -31,7 +31,7 @@ export const formFields = {
       .required('Campo obrigatório')
       .test(
         'is-valid-field',
-        'Campo obrigatório',
+        'Tipo inválido',
         (value) => !ClassValidator.isInvalidClassType(value),
       ),
     defaultValue: '',
@@ -54,7 +54,7 @@ export const formFields = {
       .required('Campo obrigatório')
       .test(
         'is-valid-id',
-        'Campo obrigatório',
+        'Semestre inválido',
         (value) => !ClassValidator.isInvalidSemester(value),
       ),
     defaultValue: 0,
@@ -129,36 +129,36 @@ export const formFields = {
   },
 };
 
-export const schema = yup.object<ClassRegisterForm>().shape({
-  subject_id: formFields.subject_id.validator,
-  code: formFields.code.validator,
-  type: formFields.type.validator,
-  professors: formFields.professors.validator,
-  semester: formFields.semester.validator,
-  start_date: formFields.start_date.validator,
-  end_date: formFields.end_date.validator,
-  vacancies: formFields.vacancies.validator,
-  subscribers: formFields.subscribers.validator,
-  pendings: formFields.pendings.validator,
-  air_conditioning: formFields.air_conditioning.validator,
-  projector: formFields.projector.validator,
-  accessibility: formFields.accessibility.validator,
-  ignore_to_allocate: formFields.ignore_to_allocate.validator,
+export const classSchema = yup.object<ClassForm>().shape({
+  subject_id: classFormFields.subject_id.validator,
+  code: classFormFields.code.validator,
+  type: classFormFields.type.validator,
+  professors: classFormFields.professors.validator,
+  semester: classFormFields.semester.validator,
+  start_date: classFormFields.start_date.validator,
+  end_date: classFormFields.end_date.validator,
+  vacancies: classFormFields.vacancies.validator,
+  subscribers: classFormFields.subscribers.validator,
+  pendings: classFormFields.pendings.validator,
+  air_conditioning: classFormFields.air_conditioning.validator,
+  projector: classFormFields.projector.validator,
+  accessibility: classFormFields.accessibility.validator,
+  ignore_to_allocate: classFormFields.ignore_to_allocate.validator,
 });
 
-export const defaultValues: ClassRegisterForm = {
-  subject_id: formFields.subject_id.defaultValue,
-  code: formFields.code.defaultValue,
-  type: formFields.type.defaultValue,
-  professors: formFields.professors.defaultValue,
-  semester: formFields.semester.defaultValue,
-  start_date: formFields.start_date.defaultValue,
-  end_date: formFields.end_date.defaultValue,
-  vacancies: formFields.vacancies.defaultValue,
-  subscribers: formFields.subscribers.defaultValue,
-  pendings: formFields.pendings.defaultValue,
-  air_conditioning: formFields.air_conditioning.defaultValue,
-  projector: formFields.projector.defaultValue,
-  accessibility: formFields.accessibility.defaultValue,
-  ignore_to_allocate: formFields.ignore_to_allocate.defaultValue,
+export const classDefaultValues: ClassForm = {
+  subject_id: classFormFields.subject_id.defaultValue,
+  code: classFormFields.code.defaultValue,
+  type: classFormFields.type.defaultValue,
+  professors: classFormFields.professors.defaultValue,
+  semester: classFormFields.semester.defaultValue,
+  start_date: classFormFields.start_date.defaultValue,
+  end_date: classFormFields.end_date.defaultValue,
+  vacancies: classFormFields.vacancies.defaultValue,
+  subscribers: classFormFields.subscribers.defaultValue,
+  pendings: classFormFields.pendings.defaultValue,
+  air_conditioning: classFormFields.air_conditioning.defaultValue,
+  projector: classFormFields.projector.defaultValue,
+  accessibility: classFormFields.accessibility.defaultValue,
+  ignore_to_allocate: classFormFields.ignore_to_allocate.defaultValue,
 };

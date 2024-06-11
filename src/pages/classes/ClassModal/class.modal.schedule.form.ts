@@ -1,9 +1,9 @@
 import { ScheduleValidator } from 'utils/schedules/schedules.validator';
 import * as yup from 'yup';
 import { Recurrence } from 'utils/enums/recurrence.enum';
-import { ClassScheduleForm } from './class.register.modal.interface';
+import { ClassScheduleForm } from './class.modal.interface';
 
-export const formFields = {
+export const scheduleFormFields = {
   week_days: {
     validator: yup
       .array()
@@ -94,26 +94,26 @@ export const formFields = {
   },
 };
 
-export const schema = yup.object<ClassScheduleForm>().shape({
-  week_days: formFields.week_days.validator,
-  start_times: formFields.start_times.validator,
-  end_times: formFields.end_times.validator,
-  calendar_id: formFields.calendar_id.validator,
-  start_date: formFields.start_date.validator,
-  end_date: formFields.end_date.validator,
-  recurrence: formFields.recurrence.validator,
-  skip_exceptions: formFields.skip_exceptions.validator,
-  all_day: formFields.all_day.validator,
+export const scheduleSchema = yup.object<ClassScheduleForm>().shape({
+  week_days: scheduleFormFields.week_days.validator,
+  start_times: scheduleFormFields.start_times.validator,
+  end_times: scheduleFormFields.end_times.validator,
+  calendar_id: scheduleFormFields.calendar_id.validator,
+  start_date: scheduleFormFields.start_date.validator,
+  end_date: scheduleFormFields.end_date.validator,
+  recurrence: scheduleFormFields.recurrence.validator,
+  skip_exceptions: scheduleFormFields.skip_exceptions.validator,
+  all_day: scheduleFormFields.all_day.validator,
 });
 
-export const defaultValues: ClassScheduleForm = {
-  week_days: formFields.week_days.defaultValue,
-  start_times: formFields.start_times.defaultValue,
-  end_times: formFields.end_times.defaultValue,
-  calendar_id: formFields.calendar_id.defaultValue,
-  start_date: formFields.start_date.defaultValue,
-  end_date: formFields.end_date.defaultValue,
-  recurrence: formFields.recurrence.defaultValue as Recurrence,
-  skip_exceptions: formFields.skip_exceptions.defaultValue,
-  all_day: formFields.all_day.defaultValue,
+export const scheduleDefaultValues: ClassScheduleForm = {
+  week_days: scheduleFormFields.week_days.defaultValue,
+  start_times: scheduleFormFields.start_times.defaultValue,
+  end_times: scheduleFormFields.end_times.defaultValue,
+  calendar_id: scheduleFormFields.calendar_id.defaultValue,
+  start_date: scheduleFormFields.start_date.defaultValue,
+  end_date: scheduleFormFields.end_date.defaultValue,
+  recurrence: scheduleFormFields.recurrence.defaultValue as Recurrence,
+  skip_exceptions: scheduleFormFields.skip_exceptions.defaultValue,
+  all_day: scheduleFormFields.all_day.defaultValue,
 };

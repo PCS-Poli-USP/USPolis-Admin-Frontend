@@ -1,10 +1,12 @@
 import { ClassResponse } from "models/http/responses/class.response.models";
+import { SubjectResponse } from "models/http/responses/subject.response.models";
 import { ModalProps } from "models/interfaces";
 import { Recurrence } from "utils/enums/recurrence.enum";
 
-interface ClassModalProps extends ModalProps {
+export interface ClassModalProps extends ModalProps {
   isUpdate: boolean;
-  selectedClass: ClassResponse;
+  subjects: SubjectResponse[];
+  selectedClass?: ClassResponse;
 }
 
 export interface ClassForm {
