@@ -46,14 +46,7 @@ import { Input } from 'components/common';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { useForm } from 'react-hook-form';
 
-interface RegisterModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  formData?: Class;
-  buildings?: Array<BuildingResponse>;
-  isUpdate?: boolean;
-  onSave: (data: Class) => void;
-}
+
 
 export default function RegisterModal(props: RegisterModalProps) {
   const [professor, setProfessor] = useState('');

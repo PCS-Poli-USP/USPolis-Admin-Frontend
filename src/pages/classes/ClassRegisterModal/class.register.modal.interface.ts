@@ -1,8 +1,13 @@
+import { ClassResponse } from "models/http/responses/class.response.models";
+import { ModalProps } from "models/interfaces";
 import { Recurrence } from "utils/enums/recurrence.enum";
 
-export interface ClassRegisterModalProps {}
+interface ClassModalProps extends ModalProps {
+  isUpdate: boolean;
+  selectedClass: ClassResponse;
+}
 
-export interface ClassRegisterForm {
+export interface ClassForm {
   subject_id: number;
   code: string;
   type: string;

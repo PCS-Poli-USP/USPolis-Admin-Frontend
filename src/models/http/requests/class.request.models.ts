@@ -7,6 +7,7 @@ export interface ClassBase {
   end_date: string;
   code: string;
   type: ClassType;
+  professors: string[];
   vacancies: number;
   subscribers: number;
   pendings: number;
