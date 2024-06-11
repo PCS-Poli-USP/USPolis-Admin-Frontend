@@ -1,6 +1,6 @@
-import { ClassType } from "utils/enums/classes.enum";
-import { SubjectUnfetchResponse } from "./subject.response.models";
-import { ScheduleUnfetchResponse } from "./schedule.response.models";
+import { ClassType } from 'utils/enums/classes.enum';
+import { SubjectUnfetchResponse } from './subject.response.models';
+import { ScheduleResponse } from './schedule.response.models';
 
 export interface ClassResponseBase {
   id: number;
@@ -21,7 +21,7 @@ export interface ClassResponseBase {
 
 export interface ClassResponse extends ClassResponseBase {
   subject: SubjectUnfetchResponse;
-  schedules?: ScheduleUnfetchResponse[];
+  schedules?: ScheduleResponse[];
 }
 
 export interface ClassUnfetchResponse extends ClassResponseBase {
