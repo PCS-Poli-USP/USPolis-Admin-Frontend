@@ -12,7 +12,7 @@ import { AxiosError } from 'axios';
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import PreferencesModal from './ClassPreferencesModal/class.preferences.modal'
-import RegisterModal from './ClassRegisterModal/class.register.modal';
+import RegisterModal from './ClassModal/class.modal';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
@@ -42,6 +42,9 @@ import MultipleEditModal from 'components/classes/multipleEdit.modal';
 import { getClassesColumns } from './Tables/class.table';
 import useCustomToast from 'hooks/useCustomToast';
 import { Row } from '@tanstack/react-table';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
+import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
+import { sortClassResponse } from 'utils/classes/classes.sorter';
 
 function Classes() {
   const {
@@ -135,20 +138,20 @@ function Classes() {
     });
   }
 
-  function fetchData() {
-    setLoading(true);
-    classesService
-      .list()
-      .then((it) => {
-        const classes = ClassToSClass(it.data.sort(sortClasses));
-        setClassesList(classes);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setLoading(false);
-        showToast('Erro!', `Erro ao carregar turmas: ${error.message}`, 'error');
-      });
-  }
+  // function fetchData() {
+  //   setLoading(true);
+  //   classesService
+  //     .list()
+  //     .then((it) => {
+  //       const classes = ClassToSClass(it.data.sort(sortClassResponse));
+  //       setClassesList(classes);
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       setLoading(false);
+  //       showToast('Erro!', `Erro ao carregar turmas: ${error.message}`, 'error');
+  //     });
+  // }
 
   function handleRegisterClick() {
     onOpenRegister();
@@ -264,23 +267,23 @@ function Classes() {
     onOpenPreferences();
   }
 
-  function handleSavePreferences(data: Preferences) {
-    if (selectedClass) {
-      classesService
-        .patchPreferences(
-          selectedClass.subject_code,
-          selectedClass.class_code,
-          data,
-        )
-        .then((it) => {
-          fetchData();
-          showToast('Sucesso!', 'Preferências editadas com sucesso!', 'success');
-        })
-        .catch((error) => {
-          showToast('Erro!', `Erro ao editar preferências: ${error}`, 'error');
-        });
-    }
-  }
+  // function handleSavePreferences(data: Preferences) {
+  //   if (selectedClass) {
+  //     classesService
+  //       .patchPreferences(
+  //         selectedClass.subject_code,
+  //         selectedClass.class_code,
+  //         data,
+  //       )
+  //       .then((it) => {
+  //         fetchData();
+  //         showToast('Sucesso!', 'Preferências editadas com sucesso!', 'success');
+  //       })
+  //       .catch((error) => {
+  //         showToast('Erro!', `Erro ao editar preferências: ${error}`, 'error');
+  //       });
+  //   }
+  // }
 
   function handleEditClick(obj: Class) {
     setSelectedClass(obj);

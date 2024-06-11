@@ -1,6 +1,6 @@
 import { Box, Checkbox, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import Class, { SClass } from 'models/common/class.model';
+import { ClassResponse } from 'models/http/responses/class.response.models';
 import { BsCalendarDateFill, BsCalendarXFill, BsClipboardCheck, BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { Capitalize } from 'utils/formatters';
 import {
@@ -12,23 +12,23 @@ import {
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface ClassesColumnsProps {
-  handleCheckAllClick: (data: Row<SClass>[], value: boolean) => void;
+  handleCheckAllClick: (data: Row<ClassResponse>[], value: boolean) => void;
   handleCheckboxClick: (
-    subject_code: string,
+    subject_id: number,
     class_code: string,
     checkbox_value: boolean,
   ) => void;
-  handleEditClick: (data: Class) => void;
-  handleAllocationEditClick: (data: Class) => void;
-  handlePreferencesClick: (data: Class) => void;
-  handleDeleteClassClick: (data: Class) => void;
-  handleDeleteAllocClick: (data: Class) => void;
+  handleEditClick: (data: ClassResponse) => void;
+  handleAllocationEditClick: (data: ClassResponse) => void;
+  handlePreferencesClick: (data: ClassResponse) => void;
+  handleDeleteClassClick: (data: ClassResponse) => void;
+  handleDeleteAllocClick: (data: ClassResponse) => void;
   checkMap: boolean[];
 }
 
 export const getClassesColumns = (
   props: ClassesColumnsProps,
-): ColumnDef<SClass>[] => [
+): ColumnDef<ClassResponse>[] => [
   {
     header: 'Marcar',
     maxSize: 70,
@@ -40,12 +40,12 @@ export const getClassesColumns = (
     cell: ({ row }) => (
       <Box>
         <Checkbox
-          isChecked={row.original.selected}
+          isChecked={props.checkMap[row.index]}
           ml={5}
           onChange={(event) =>
             props.handleCheckboxClick(
-              row.original.subject_code,
-              row.original.class_code,
+              row.original.subject.id,
+              row.original.code,
               event.target.checked,
             )
           }

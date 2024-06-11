@@ -58,6 +58,24 @@ export namespace WeekDay {
     6: WeekDay.SUNDAY,
   };
 
+  const translations: { [key in WeekDay]: string } = {
+    [WeekDay.MONDAY]: 'Segunda',
+    [WeekDay.TUESDAY]: 'Terça',
+    [WeekDay.WEDNESDAY]: 'Quarta',
+    [WeekDay.THURSDAY]: 'Quinta',
+    [WeekDay.FRIDAY]: 'Sexta',
+    [WeekDay.SATURDAY]: 'Sábado',
+    [WeekDay.SUNDAY]: 'Domingo',
+  };
+
+  export function translate(day: WeekDay): string {
+    return translations[day];
+  }
+
+  export function getValues(): WeekDay[] {
+    return Object.values(WeekDay) as WeekDay[];
+}
+
   export function fromStr(dayStr: string): WeekDay {
     const day = mapping[dayStr.toLowerCase()];
     if (!day) {
