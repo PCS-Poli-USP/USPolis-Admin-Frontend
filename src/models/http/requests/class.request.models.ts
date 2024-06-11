@@ -1,8 +1,7 @@
 export interface CreateClass {
   subject_id: number;
-  period: string[];
+  code: string;
+  semester: number;
 }
 
-export interface UpdateClass {
-
-}
+export interface UpdateClass extends CreateClass {}
