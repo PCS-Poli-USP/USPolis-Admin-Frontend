@@ -1,8 +1,10 @@
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import {
   FormLabel,
   Select as ChakraSelect,
   FormControl,
   FormErrorMessage,
+  Spinner,
 } from '@chakra-ui/react';
 import { FieldProps } from 'models/interfaces';
 import { useFormContext } from 'react-hook-form';
@@ -24,6 +26,7 @@ export function Select({
   disabled = false,
   value = undefined,
   placeholder = undefined,
+  isLoading = false,
 }: SelectProps) {
   const {
     register,
@@ -33,10 +36,14 @@ export function Select({
   return (
     <FormControl isInvalid={!!errors[name]}>
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
-      <ChakraSelect {...register(name)} disabled={disabled} value={value} placeholder={placeholder}>
-        <option value={undefined}>
-          Selecione uma opção
-        </option>
+      <ChakraSelect
+        {...register(name)}
+        disabled={disabled || isLoading}
+        value={value}
+        placeholder={placeholder}
+        icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
+      >
+        <option value={undefined}>Selecione uma opção</option>
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}

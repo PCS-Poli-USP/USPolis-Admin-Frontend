@@ -11,6 +11,8 @@ import { useFormContext } from 'react-hook-form';
 interface InputProps extends FieldProps {
   type?: React.HTMLInputTypeAttribute;
   value?: string | number | readonly string[] | undefined;
+  min?: string | number | undefined;
+  max?: string | number | undefined;
 }
 
 export function Input({
@@ -21,6 +23,8 @@ export function Input({
   hidden = false,
   placeholder = undefined,
   value = undefined,
+  min = undefined,
+  max = undefined,
 }: InputProps) {
   const {
     register,
@@ -37,6 +41,8 @@ export function Input({
         placeholder={placeholder}
         value={value}
         hidden={hidden}
+        min={min}
+        max={max}
       />
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
     </FormControl>
