@@ -1,5 +1,5 @@
 import { Row } from '@tanstack/react-table';
-import { SubjectsTypes } from 'utils/enums/subjects.enum';
+import { SubjectType } from 'utils/enums/subjects.enum';
 import moment from 'moment';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
 
@@ -19,11 +19,11 @@ export const datetimeFormatter = (row: Row<SubjectResponse>) => {
 
 export const subjectTypeFormatter = (type: string) => {
   switch (type) {
-    case SubjectsTypes.BIANNUAL:
+    case SubjectType.BIANNUAL:
       return 'Semestral';
-    case SubjectsTypes.FOUR_MONTHLY:
+    case SubjectType.FOUR_MONTHLY:
       return 'Quadrimestral';
-    case SubjectsTypes.OTHER:
+    case SubjectType.OTHER:
       return 'Outro';
     default:
       return 'Tipo desconhecido';

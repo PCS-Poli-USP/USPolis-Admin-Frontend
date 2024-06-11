@@ -4,6 +4,7 @@ import { Classrooms } from 'utils/enums/clasrooms.enum';
 import { ClassCodeText } from 'utils/mappers/allocation.mapper';
 import { Capitalize } from 'utils/formatters';
 import { ClassType } from 'utils/enums/classes.enum';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 export function breakClassFormInEvents(form: Class) {
   const events: CreateClassEvents[] = [];

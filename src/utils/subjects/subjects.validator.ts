@@ -1,5 +1,5 @@
 import CommonValidator from 'utils/common/common.validator';
-import { SubjectsTypes } from 'utils/enums/subjects.enum';
+import { SubjectType } from 'utils/enums/subjects.enum';
 
 export default class SubjectValidator extends CommonValidator {
   static isInvalidCode(value: string): boolean {
@@ -23,7 +23,7 @@ export default class SubjectValidator extends CommonValidator {
   }
 
   static isInvalidType(value: string): boolean {
-    return !Object.values(SubjectsTypes).includes(value as SubjectsTypes);
+    return !Object.values(SubjectType).includes(value as SubjectType);
   }
 
   static isInvalidCredit(value: number): boolean {

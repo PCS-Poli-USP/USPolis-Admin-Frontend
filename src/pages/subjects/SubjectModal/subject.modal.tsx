@@ -29,7 +29,7 @@ import {
   BsFillTrashFill,
   BsPersonCheckFill,
 } from 'react-icons/bs';
-import { SubjectsTypes } from 'utils/enums/subjects.enum';
+import { SubjectType } from 'utils/enums/subjects.enum';
 import { SubjectForm, SubjectModalProps } from './subject.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -162,12 +162,12 @@ export default function SubjectModal(props: SubjectModalProps) {
                       : undefined
                   }
                   options={[
-                    { label: 'Semestral', value: SubjectsTypes.BIANNUAL },
+                    { label: 'Semestral', value: SubjectType.BIANNUAL },
                     {
                       label: 'Quadrimestral',
-                      value: SubjectsTypes.FOUR_MONTHLY,
+                      value: SubjectType.FOUR_MONTHLY,
                     },
-                    { label: 'Outro', value: SubjectsTypes.OTHER },
+                    { label: 'Outro', value: SubjectType.OTHER },
                   ]}
                 />
 

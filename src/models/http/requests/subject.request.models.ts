@@ -1,10 +1,10 @@
-import { SubjectsTypes } from "utils/enums/subjects.enum";
+import { SubjectType } from 'utils/enums/subjects.enum';
 
 export interface CreateSubject {
   code: string;
   name: string;
   professors: Array<string>;
-  type: SubjectsTypes;
+  type: SubjectType;
   class_credit: number;
   work_credit: number;
   activation: string;

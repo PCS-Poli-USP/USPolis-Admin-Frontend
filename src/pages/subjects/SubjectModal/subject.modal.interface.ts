@@ -1,11 +1,11 @@
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { ModalProps } from 'models/interfaces';
-import { SubjectsTypes } from 'utils/enums/subjects.enum';
+import { SubjectType } from 'utils/enums/subjects.enum';
 
 export interface SubjectForm {
   code: string;
   name: string;
-  type: SubjectsTypes;
+  type: SubjectType;
   class_credit: number;
   work_credit: number;
   activation: string;

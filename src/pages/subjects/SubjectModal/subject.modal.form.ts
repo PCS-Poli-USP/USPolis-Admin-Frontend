@@ -1,7 +1,7 @@
 import SubjectValidator from 'utils/subjects/subjects.validator';
 import * as yup from 'yup';
 import { SubjectForm } from './subject.modal.interface';
-import { SubjectsTypes } from 'utils/enums/subjects.enum';
+import { SubjectType } from 'utils/enums/subjects.enum';
 
 export const formFields = {
   code: {
@@ -89,7 +89,7 @@ export const schema = yup.object<SubjectForm>().shape({
 export const defaultValues: SubjectForm = {
   code: formFields.code.defaultValue,
   name: formFields.name.defaultValue,
-  type: formFields.type.defaultValue as SubjectsTypes,
+  type: formFields.type.defaultValue as SubjectType,
   class_credit: formFields.class_credit.defaultValue,
   work_credit: formFields.work_credit.defaultValue,
   activation: formFields.activation.defaultValue,

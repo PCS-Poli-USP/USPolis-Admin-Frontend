@@ -43,6 +43,8 @@ import { useEffect, useState } from 'react';
 import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 import * as validator from 'utils/classes/classes.validator';
 import { Input } from 'components/common';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
+import { useForm } from 'react-hook-form';
 
 interface RegisterModalProps {
   isOpen: boolean;
@@ -54,32 +56,6 @@ interface RegisterModalProps {
 }
 
 export default function RegisterModal(props: RegisterModalProps) {
-  const initialForm: Class = {
-    class_code: '',
-    subject_code: '',
-    subject_name: '',
-    professors: [],
-    start_period: '',
-    end_period: '',
-    start_time: [],
-    end_time: [],
-    week_days: [],
-    class_type: '',
-    vacancies: 0,
-    subscribers: 0,
-    pendings: 0,
-    preferences: {
-      building_id: '',
-      air_conditioning: false,
-      projector: false,
-      accessibility: false,
-    },
-    has_to_be_allocated: true,
-    ignore_to_allocate: false,
-    events_ids: [],
-  };
-
-  const [form, setForm] = useState(initialForm);
   const [professor, setProfessor] = useState('');
   const [isEditingProfessor, setIsEditingProfessor] = useState(false);
   const [editProfessorIndex, setEditProfessorIndex] = useState(0);
@@ -89,6 +65,8 @@ export default function RegisterModal(props: RegisterModalProps) {
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [editDateIndex, setEditDateIndex] = useState(0);
   const [buildingName, setBuildingName] = useState('');
+
+  const {} = useForm();
 
   useEffect(() => {
     if (props.formData) setForm(props.formData);
