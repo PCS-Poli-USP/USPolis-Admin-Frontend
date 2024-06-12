@@ -1,8 +1,6 @@
-import { DayTime } from "models/common/common.models";
-import { Recurrence } from "utils/enums/recurrence.enum";
-import { WeekDay } from "utils/enums/weekDays.enum";
-import { ClassroomResponse } from "./classroom.response.models";
-import { ReservationResponse } from "./reservation.response.models";
+import { DayTime } from 'models/common/common.models';
+import { Recurrence } from 'utils/enums/recurrence.enum';
+import { WeekDay } from 'utils/enums/weekDays.enum';
 
 export interface ScheduleResponseBase {
   id: number;
@@ -18,9 +16,15 @@ export interface ScheduleResponseBase {
 }
 
 export interface ScheduleResponse extends ScheduleResponseBase {
-  classroom?: ClassroomResponse;
   class_id?: number;
-  reservation?: ReservationResponse;
+  reservation_id?: number;
+  classroom_id?: number;
+  classroom?: string;
+  building_id?: number;
+  building?: string;
 }
 
-export interface ScheduleUnfetchResponse extends ScheduleResponseBase {}
+export interface ScheduleUnfetchResponse extends ScheduleResponseBase {
+  class_id?: number;
+  classroom_id?: number;
+}
