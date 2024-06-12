@@ -14,9 +14,9 @@ export interface ClassForm {
   code: string;
   type: string;
   professors: string[];
-  semester: number;
   start_date: string;
   end_date: string;
+  calendar_ids: number[];
 
   vacancies: number;
   subscribers: number;
@@ -33,7 +33,6 @@ export interface ClassScheduleForm {
   week_days: string[];
   start_times: string[];
   end_times: string[];
-  calendar_id: number;
   start_date: string;
   end_date: string;
   recurrence: Recurrence;

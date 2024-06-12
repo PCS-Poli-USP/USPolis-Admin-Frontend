@@ -11,7 +11,7 @@ import {
 import { AxiosError } from 'axios';
 import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
-import PreferencesModal from './ClassPreferencesModal/class.preferences.modal'
+import PreferencesModal from './ClassPreferencesModal/class.preferences.modal';
 import RegisterModal from './ClassModal/class.modal';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import DataTable from 'components/common/DataTable/dataTable.component';
@@ -19,11 +19,7 @@ import Dialog from 'components/common/Dialog/dialog.component';
 import Loading from 'components/common/Loading/loading.component';
 import Navbar from 'components/common/NavBar/navbar.component';
 import { appContext } from 'context/AppContext';
-import Class, {
-  CreateClassEvents,
-  Preferences,
-  SClass,
-} from 'models/common/class.model';
+import Class, { CreateClassEvents, SClass } from 'models/common/class.model';
 import { ErrorResponse } from 'models/interfaces/serverResponses';
 import { useContext, useEffect, useState } from 'react';
 import ClassesService from 'services/api/classes.service';
@@ -31,12 +27,10 @@ import BuildingsService from 'services/api/buildings.service';
 import EventsService from 'services/api/events.service';
 import {
   ClassToEventByClassroom,
-  ClassToSClass,
   breakClassFormInEvents,
 } from 'utils/classes/classes.formatter';
 import { EventByClassrooms } from 'models/common/event.model';
 import CrawlerService from 'services/api/crawler.service';
-import { sortClasses } from 'utils/sorter';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
 import MultipleEditModal from 'components/classes/multipleEdit.modal';
 import { getClassesColumns } from './Tables/class.table';
@@ -44,7 +38,7 @@ import useCustomToast from 'hooks/useCustomToast';
 import { Row } from '@tanstack/react-table';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
-import { sortClassResponse } from 'utils/classes/classes.sorter';
+import { ClassResponse } from 'models/http/responses/class.response.models';
 
 function Classes() {
   const {
@@ -114,11 +108,11 @@ function Classes() {
   const crawlerService = new CrawlerService();
   const eventsService = new EventsService();
 
-  useEffect(() => {
-    fetchData();
-    fetchBuildings();
-    // eslint-disable-next-line
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  //   fetchBuildings();
+  //   // eslint-disable-next-line
+  // }, []);
 
   const columns = getClassesColumns({
     handleCheckAllClick,
@@ -130,7 +124,6 @@ function Classes() {
     handleDeleteAllocClick,
     checkMap,
   });
-
 
   function fetchBuildings() {
     buildingsService.list().then((it) => {
@@ -157,18 +150,18 @@ function Classes() {
     onOpenRegister();
   }
 
-  function handleRegister(data: Class) {
-    const events: CreateClassEvents[] = breakClassFormInEvents(data);
-    classesService
-      .createOne(events)
-      .then(() => {
-        fetchData();
-        showToast('Sucesso!', 'Turma criada com sucesso!', 'success');
-      })
-      .catch((error) => {
-        showToast('Erro!', `Erro ao criar turma: ${error}`, 'error');
-      });
-  }
+  // function handleRegister(data: Class) {
+  //   const events: CreateClassEvents[] = breakClassFormInEvents(data);
+  //   classesService
+  //     .create(events)
+  //     .then(() => {
+  //       fetchData();
+  //       showToast('Sucesso!', 'Turma criada com sucesso!', 'success');
+  //     })
+  //     .catch((error) => {
+  //       showToast('Erro!', `Erro ao criar turma: ${error}`, 'error');
+  //     });
+  // }
 
   function handleDeleteClassClick(obj: Class) {
     setSelectedClass(obj);
@@ -180,42 +173,46 @@ function Classes() {
     onOpenDeleteAlloc();
   }
 
-  function handleDeleteClass() {
-    if (selectedClass) {
-      classesService
-        .delete(selectedClass.subject_code, selectedClass.class_code)
-        .then((it) => {
-          onCloseDeleteClass();
-          fetchData();
-          showToast('Sucesso!', 'Turma deletada com sucesso!', 'success');
-        })
-        .catch((error) => {
-          showToast('Erro!', `Erro ao deletar turma: ${error}`, 'error');
-        });
-    }
-  }
+  // function handleDeleteClass() {
+  //   if (selectedClass) {
+  //     classesService
+  //       .delete(selectedClass.subject_code, selectedClass.class_code)
+  //       .then((it) => {
+  //         onCloseDeleteClass();
+  //         fetchData();
+  //         showToast('Sucesso!', 'Turma deletada com sucesso!', 'success');
+  //       })
+  //       .catch((error) => {
+  //         showToast('Erro!', `Erro ao deletar turma: ${error}`, 'error');
+  //       });
+  //   }
+  // }
 
-  function handleDeleteAlloc() {
-    if (selectedClass) {
-      eventsService
-        .deleteClassAllocation(
-          selectedClass.subject_code,
-          selectedClass.class_code,
-        )
-        .then((it) => {
-          onCloseDeleteAlloc();
-          fetchData();
-          showToast('Sucesso!', 
-            `Alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}  deletada com sucesso!`, 'success'
-          );
-        })
-        .catch((error) => {
-          showToast('Erro!', 
-            `Erro ao deletar alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}: ${error}`, 'error'
-          );
-        });
-    }
-  }
+  // function handleDeleteAlloc() {
+  //   if (selectedClass) {
+  //     eventsService
+  //       .deleteClassAllocation(
+  //         selectedClass.subject_code,
+  //         selectedClass.class_code,
+  //       )
+  //       .then((it) => {
+  //         onCloseDeleteAlloc();
+  //         fetchData();
+  //         showToast(
+  //           'Sucesso!',
+  //           `Alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}  deletada com sucesso!`,
+  //           'success',
+  //         );
+  //       })
+  //       .catch((error) => {
+  //         showToast(
+  //           'Erro!',
+  //           `Erro ao deletar alocação de ${selectedClass.subject_code} - ${selectedClass.class_code}: ${error}`,
+  //           'error',
+  //         );
+  //       });
+  //   }
+  // }
 
   function handleAllocationEditClick(obj: Class) {
     setSelectedClass(obj);
@@ -250,14 +247,18 @@ function Classes() {
     eventsService
       .deleteClassAllocation(subjectCode, classCode)
       .then((it) => {
-        showToast('Sucesso!', 
-          `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`, 'success'
+        showToast(
+          'Sucesso!',
+          `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
+          'success',
         );
         fetchData();
       })
       .catch((error) => {
-        showToast('Erro!', 
-          `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`, 'error'
+        showToast(
+          'Erro!',
+          `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`,
+          'error',
         );
       });
   }
@@ -317,10 +318,18 @@ function Classes() {
         setFailedSubjects(it.data.failed);
         onOpenJupiterModal();
         fetchData();
-        showToast('Sucesso!', 'Disciplinas foram carregadas com sucesso!', 'success');
+        showToast(
+          'Sucesso!',
+          'Disciplinas foram carregadas com sucesso!',
+          'success',
+        );
       })
       .catch(({ response }: AxiosError<ErrorResponse>) =>
-        showToast('Erro!', `Erro ao buscar disciplinas: ${response?.data.message}`, 'error'),
+        showToast(
+          'Erro!',
+          `Erro ao buscar disciplinas: ${response?.data.message}`,
+          'error',
+        ),
       )
       .finally(() => {
         setLoading(false);
@@ -364,29 +373,29 @@ function Classes() {
     return checkedClasses;
   }
 
-  function handleCheckAllClick(data: Row<SClass>[], value: boolean) {
-    const newClasses: SClass[] = [];
+  function handleCheckAllClick(data: Row<ClassResponse>[], value: boolean) {
+    // const newClasses: SClass[] = [];
 
-    if (data.length !== classesList.length) {
-      for (let cl of classesList) {
-        const newCl = { ...cl };
-        data.forEach((row) => {
-          if (
-            row.original.class_code === cl.class_code &&
-            row.original.subject_code === cl.subject_code
-          ) {
-            newCl.selected = value;
-          }
-        });
-        newClasses.push(newCl);
-      }
-    } else {
-      for (let i = 0; i < data.length; i++) {
-        const newClass = { ...data[i].original, selected: value };
-        newClasses.push(newClass);
-      }
-    }
-    setClassesList(newClasses);
+    // if (data.length !== classesList.length) {
+    //   for (let cl of classesList) {
+    //     const newCl = { ...cl };
+    //     data.forEach((row) => {
+    //       if (
+    //         row.original.class_code === cl.class_code &&
+    //         row.original.subject_code === cl.subject_code
+    //       ) {
+    //         newCl.selected = value;
+    //       }
+    //     });
+    //     newClasses.push(newCl);
+    //   }
+    // } else {
+    //   for (let i = 0; i < data.length; i++) {
+    //     const newClass = { ...data[i].original, selected: value };
+    //     newClasses.push(newClass);
+    //   }
+    // }
+    // setClassesList(newClasses);
   }
 
   function handleCheckboxClick(

@@ -13,6 +13,16 @@ export default class CommonValidator {
     return value <= 0;
   }
 
+  static isInvalidIdArray(values: number[]) {
+    if (this.isEmptyArray(values)) return true;
+    values.forEach((id) => {
+      if (this.isInvalidId(id)) {
+        return true;
+      }
+    });
+    return false;
+  }
+
   static isInvalidDate(date: string) {
     return !moment(date).isValid();
   }

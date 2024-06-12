@@ -93,7 +93,7 @@ export default function RegisterModal(props: ClassModalProps) {
 
   useEffect(() => {
     if (props.selectedClass) {
-      classReset({ subject_id: props.selectedClass.subject.id });
+      classReset({ subject_id: props.selectedClass.subject_id });
     }
   }, [props.selectedClass, classReset]);
 
@@ -230,7 +230,7 @@ export default function RegisterModal(props: ClassModalProps) {
               name={'subject_id'}
               placeholder={'Selecione uma disciplina'}
               value={
-                props.selectedClass ? props.selectedClass.subject.id : undefined
+                props.selectedClass ? props.selectedClass.subject_id : undefined
               }
               options={props.subjects.map((subject) => ({
                 value: subject.id,

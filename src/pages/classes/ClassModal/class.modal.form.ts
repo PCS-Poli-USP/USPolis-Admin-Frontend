@@ -48,17 +48,6 @@ export const classFormFields = {
       ),
     defaultValue: [],
   },
-  semester: {
-    validator: yup
-      .number()
-      .required('Campo obrigatório')
-      .test(
-        'is-valid-id',
-        'Semestre inválido',
-        (value) => !ClassValidator.isInvalidSemester(value),
-      ),
-    defaultValue: 0,
-  },
   start_date: {
     validator: yup
       .string()
@@ -80,6 +69,18 @@ export const classFormFields = {
         (value) => !ClassValidator.isInvalidDate(value),
       ),
     defaultValue: '',
+  },
+  calendar_ids: {
+    validator: yup
+      .array()
+      .of(yup.number().required('Campo obrigatório'))
+      .min(1, 'Selecione pelo menos um calendário')
+      .test(
+        'is-valid-option',
+        'Calendários invalidos',
+        (value) => value && !ClassValidator.isInvalidIdArray(value),
+      ),
+    defaultValue: [],
   },
   vacancies: {
     validator: yup
@@ -134,9 +135,9 @@ export const classSchema = yup.object<ClassForm>().shape({
   code: classFormFields.code.validator,
   type: classFormFields.type.validator,
   professors: classFormFields.professors.validator,
-  semester: classFormFields.semester.validator,
   start_date: classFormFields.start_date.validator,
   end_date: classFormFields.end_date.validator,
+  calendar_ids: classFormFields.calendar_ids.validator,
   vacancies: classFormFields.vacancies.validator,
   subscribers: classFormFields.subscribers.validator,
   pendings: classFormFields.pendings.validator,
@@ -151,9 +152,9 @@ export const classDefaultValues: ClassForm = {
   code: classFormFields.code.defaultValue,
   type: classFormFields.type.defaultValue,
   professors: classFormFields.professors.defaultValue,
-  semester: classFormFields.semester.defaultValue,
   start_date: classFormFields.start_date.defaultValue,
   end_date: classFormFields.end_date.defaultValue,
+  calendar_ids: classFormFields.calendar_ids.defaultValue,
   vacancies: classFormFields.vacancies.defaultValue,
   subscribers: classFormFields.subscribers.defaultValue,
   pendings: classFormFields.pendings.defaultValue,
