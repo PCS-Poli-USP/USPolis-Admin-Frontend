@@ -1,8 +1,22 @@
-import { Box, Checkbox, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
+import {
+  Box,
+  Checkbox,
+  HStack,
+  IconButton,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
 import { ColumnDef, Row } from '@tanstack/react-table';
+import { DayTime } from 'models/common/common.models';
 import { ClassResponse } from 'models/http/responses/class.response.models';
-import { BsCalendarDateFill, BsCalendarXFill, BsClipboardCheck, BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { Capitalize } from 'utils/formatters';
+import {
+  BsCalendarDateFill,
+  BsCalendarXFill,
+  BsClipboardCheck,
+  BsFillPenFill,
+  BsFillTrashFill,
+} from 'react-icons/bs';
+import { WeekDay } from 'utils/enums/weekDays.enum';
 import {
   FilterArray,
   FilterBoolean,
@@ -44,7 +58,7 @@ export const getClassesColumns = (
           ml={5}
           onChange={(event) =>
             props.handleCheckboxClick(
-              row.original.subject.id,
+              row.original.subject_id,
               row.original.code,
               event.target.checked,
             )
@@ -76,61 +90,51 @@ export const getClassesColumns = (
     filterFn: FilterBoolean,
   },
   {
-    accessorFn: (row) => (row.buildings ? row.buildings : ['Não alocada']),
+    accessorFn: (row) => (row.schedules ? row.schedules : ['Não alocada']),
     filterFn: FilterBuilding,
     header: 'Prédio',
     maxSize: 120,
     cell: ({ row }) => (
       <Box>
-        {row.original.buildings ? (
-          row.original.buildings.map((build, index) => (
-            <Text key={index}>{build}</Text>
-          ))
-        ) : (
-          <Text>Não alocada</Text>
-        )}
-      </Box>
-    ),
-  },
-  {
-    accessorFn: (row) => (row.classrooms ? row.classrooms : ['Não alocada']),
-    filterFn: FilterClassroom,
-    header: 'Sala',
-    maxSize: 120,
-    cell: ({ row }) => (
-      <Box>
-        {row.original.classrooms ? (
-          row.original.classrooms.map((classroom, index) => (
-            <Text key={index}>{classroom}</Text>
-          ))
-        ) : (
-          <Text>Não alocada</Text>
-        )}
-      </Box>
-    ),
-  },
-  {
-    accessorFn: (row) => (row.buildings ? row.buildings : ['Não alocada']),
-    header: 'Prédio',
-    cell: ({ row }) => (
-      <Box>
-        {row.original.buildings ? (
-          row.original.buildings.map((building, index) => (
-            <Text key={index}>{building}</Text>
-          ))
-        ) : (
-          <Text>Não alocada</Text>
+        {row.original.schedules.map((schedule, index) =>
+          schedule.building ? (
+            <Text key={index}>{schedule.building}</Text>
+          ) : (
+            <Text>Não alocada</Text>
+          ),
         )}
       </Box>
     ),
   },
   {
     accessorFn: (row) =>
-      row.week_days?.map(
-        (day, index) =>
-          `${Capitalize(day)} ${row.start_time[index]} - ${
-            row.end_time[index]
-          }`,
+      row.schedules
+        ? row.schedules.map((schedule) =>
+            schedule.classroom ? schedule.classroom : 'Não alocaada',
+          )
+        : ['Não alocada'],
+    filterFn: FilterClassroom,
+    header: 'Sala',
+    maxSize: 120,
+    cell: ({ row }) => (
+      <Box>
+        {row.original.schedules.map((schedule, index) =>
+          schedule.classroom ? (
+            <Text key={index}>{schedule.classroom}</Text>
+          ) : (
+            <Text>Não alocada</Text>
+          ),
+        )}
+      </Box>
+    ),
+  },
+  {
+    accessorFn: (row) =>
+      row.schedules.map(
+        (schedule) =>
+          `${WeekDay.translate(schedule.week_day)} ${DayTime.toString(
+            schedule.start_time,
+          )} - ${DayTime.toString(schedule.end_time)}`,
       ),
     header: 'Horários',
     cell: (info) => (

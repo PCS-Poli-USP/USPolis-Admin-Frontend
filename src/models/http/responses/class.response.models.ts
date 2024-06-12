@@ -3,10 +3,10 @@ import { ScheduleResponse } from './schedule.response.models';
 
 export interface ClassResponseBase {
   id: number;
-  semester: number;
   start_date: string;
   end_date: string;
   code: string;
+  professors: string[];
   type: ClassType;
   vacancies: number;
   subscribers: number;

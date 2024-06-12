@@ -2,7 +2,6 @@ import { ClassType } from 'utils/enums/classes.enum';
 import { CreateManySchedule } from './schedule.request.models';
 
 export interface ClassBase {
-  semester: number;
   start_date: string;
   end_date: string;
   code: string;
@@ -16,6 +15,7 @@ export interface ClassBase {
   projector: boolean;
   ignore_to_allocate: boolean;
   full_allocated: boolean;
+  calendar_ids: number[];
 }
 
 export interface CreateClass extends ClassBase {

@@ -2,7 +2,6 @@ import { Recurrence } from "utils/enums/recurrence.enum";
 import { WeekDays } from "utils/enums/weekDays.enum";
 
 export interface ScheduleBase {
-  calendar_ids: number[];
   start_date: string;
   end_date: string;
   recurrence: Recurrence;
