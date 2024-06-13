@@ -27,6 +27,10 @@ export function Select({
   value = undefined,
   placeholder = undefined,
   isLoading = false,
+  mt = undefined,
+  mb = undefined,
+  mr = undefined,
+  ml = undefined,
 }: SelectProps) {
   const {
     register,
@@ -34,16 +38,20 @@ export function Select({
   } = useFormContext();
 
   return (
-    <FormControl isInvalid={!!errors[name]}>
+    <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
       <ChakraSelect
         {...register(name)}
         disabled={disabled || isLoading}
         value={value}
-        placeholder={placeholder}
+        // placeholder={placeholder}
         icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
       >
-        <option value={undefined}>Selecione uma opção</option>
+        {placeholder ? (
+          <option value={undefined}>{placeholder}</option>
+        ) : (
+          <option value={undefined}>Selecione uma opção</option>
+        )}
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}

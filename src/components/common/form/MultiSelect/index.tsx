@@ -22,6 +22,10 @@ export function MultiSelect({
   loading = false,
   value = undefined,
   placeholder = undefined,
+  mt = undefined,
+  mb = undefined,
+  mr = undefined,
+  ml = undefined,
 }: MultiSelectProps) {
   const {
     control,
@@ -33,7 +37,7 @@ export function MultiSelect({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormControl isInvalid={!!errors[name]}>
+        <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
           <FormLabel alignSelf='flex-start'>{label}</FormLabel>
           <Select
             value={value}

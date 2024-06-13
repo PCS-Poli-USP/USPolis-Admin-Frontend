@@ -25,6 +25,10 @@ export function Input({
   value = undefined,
   min = undefined,
   max = undefined,
+  mt = undefined,
+  mb = undefined,
+  mr = undefined,
+  ml = undefined,
 }: InputProps) {
   const {
     register,
@@ -32,7 +36,14 @@ export function Input({
   } = useFormContext();
 
   return (
-    <FormControl isInvalid={!!errors[name]} hidden={hidden}>
+    <FormControl
+      isInvalid={!!errors[name]}
+      hidden={hidden}
+      mt={mt}
+      mb={mb}
+      ml={ml}
+      mr={mr}
+    >
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
       <ChakraInput
         {...register(name)}
