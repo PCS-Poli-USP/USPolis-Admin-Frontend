@@ -55,7 +55,10 @@ import {
   scheduleSchema,
 } from './class.modal.schedule.form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { classDefaultValues, classSchema } from './class.modal.form';
+// import {
+//   classDefaultValues,
+//   classSchema,
+// } from './Steps/First/class.modal.steps.first.form';
 import { ClassType } from 'utils/enums/classes.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import ClassModalStepsFirst from './Steps/First/class.modal.steps.first';
@@ -87,22 +90,22 @@ function ClassModal(props: ClassModalProps) {
   const [editDateIndex, setEditDateIndex] = useState(0);
   const [buildingName, setBuildingName] = useState('');
 
-  const classForm = useForm<ClassForm>({
-    defaultValues: classDefaultValues,
-    resolver: yupResolver(classSchema),
-  });
+  // const classForm = useForm<ClassForm>({
+  //   defaultValues: classDefaultValues,
+  //   resolver: yupResolver(classSchema),
+  // });
 
   // const scheduleForm = useForm<ClassScheduleForm>({
   //   defaultValues: scheduleDefaultValues,
   //   resolver: yupResolver(scheduleSchema),
   // });
 
-  const {
-    trigger: classTrigger,
-    reset: classReset,
-    getValues: classGetValues,
-    clearErrors: classClearErrors,
-  } = classForm;
+  // const {
+  //   trigger: classTrigger,
+  //   reset: classReset,
+  //   getValues: classGetValues,
+  //   clearErrors: classClearErrors,
+  // } = classForm;
   // const {
   //   trigger: scheduleTrigger,
   //   reset: scheduleReset,
@@ -110,11 +113,11 @@ function ClassModal(props: ClassModalProps) {
   //   clearErrors: scheduleClearErrors,
   // } = scheduleForm;
 
-  useEffect(() => {
-    if (props.selectedClass) {
-      classReset({ subject_id: props.selectedClass.subject_id });
-    }
-  }, [props.selectedClass, classReset]);
+  // useEffect(() => {
+  //   if (props.selectedClass) {
+  //     classReset({ subject_id: props.selectedClass.subject_id });
+  //   }
+  // }, [props.selectedClass, classReset]);
 
   function handleSaveClick() {
     props.onClose();

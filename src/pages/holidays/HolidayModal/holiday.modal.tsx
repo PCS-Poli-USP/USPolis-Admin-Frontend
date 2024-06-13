@@ -66,6 +66,7 @@ function ServerDay(
       <PickersDay
         {...other}
         disabled={isOcupped}
+        disableHighlightToday={true}
         outsideCurrentMonth={outsideCurrentMonth}
         day={day}
       />

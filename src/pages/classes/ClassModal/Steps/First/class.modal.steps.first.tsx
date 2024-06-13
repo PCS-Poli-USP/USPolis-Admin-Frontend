@@ -1,49 +1,23 @@
 import {
-  Box,
-  FormLabel,
   HStack,
-  Input as ChakraInput,
-  Step,
-  StepDescription,
-  StepIcon,
-  StepIndicator,
-  StepNumber,
-  StepSeparator,
-  StepStatus,
-  StepTitle,
-  Stepper,
-  useSteps,
-  Button,
-  List,
-  ListItem,
-  Text,
-  Tooltip,
-  IconButton,
-  Alert,
-  AlertIcon,
   VStack,
-  Center,
-  Flex,
-  Container,
 } from '@chakra-ui/react';
-import { ClassModalStepsProps } from './class.modal.steps.first.interface';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ClassForm } from '../../class.modal.interface';
-import { classDefaultValues, classSchema } from '../../class.modal.form';
+
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input, Select } from 'components/common';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import { ClassType } from 'utils/enums/classes.enum';
-import { useState } from 'react';
-import {
-  BsFillPenFill,
-  BsFillTrashFill,
-  BsPersonCheckFill,
-} from 'react-icons/bs';
 import { NumberInput } from 'components/common/form/NumberInput';
 import { ClassValidator } from 'utils/classes/classes.validator';
-import { FormControl } from '@mui/material';
+import { ClassModalStepsProps } from '../class.modal.steps.interface';
+import {
+  classFirstDefaultValues,
+  classFirstSchema,
+} from './class.modal.steps.first.form';
+import ListInput from 'components/common/form/ListInput';
 
 interface ClassModalFirstStepProps extends ClassModalStepsProps {
   subjects: SubjectResponse[];
@@ -52,49 +26,9 @@ interface ClassModalFirstStepProps extends ClassModalStepsProps {
 
 function ClassModalFirstStep(props: ClassModalFirstStepProps) {
   const classForm = useForm<ClassForm>({
-    defaultValues: classDefaultValues,
-    resolver: yupResolver(classSchema),
+    defaultValues: classFirstDefaultValues,
+    resolver: yupResolver(classFirstSchema),
   });
-
-  const [professor, setProfessor] = useState('');
-  const [hasProfessorError, setHasProfessorError] = useState(false);
-  const [professors, setProfessors] = useState<string[]>([]);
-  const [isEditingProfessor, setIsEditingProfessor] = useState(false);
-  const [editProfessorIndex, setEditProfessorIndex] = useState(0);
-
-  const handleProfessorButton = () => {
-    if (ClassValidator.isInvalidProfessor(professor)) {
-      setHasProfessorError(true);
-      return;
-    } else setHasProfessorError(false);
-
-    const names: string[] = [...professors];
-    if (!isEditingProfessor) {
-      names.push(professor);
-    } else {
-      names[editProfessorIndex] = professor;
-    }
-    setProfessor('');
-    setIsEditingProfessor(false);
-  };
-
-  function handleProfessorInputKeyDown(
-    event: React.KeyboardEvent<HTMLInputElement>,
-  ) {
-    if (event.key === 'Enter') handleProfessorButton();
-  }
-
-  function handleEditProfessorButton(index: number) {
-    setIsEditingProfessor(true);
-    setEditProfessorIndex(index);
-    setProfessor(professors[index]);
-  }
-
-  function handleDeleteProfessorButton(index: number) {
-    const newProfessors = [...professors];
-    newProfessors.splice(index, 1);
-    setProfessors(newProfessors);
-  }
 
   return (
     <VStack w={'full'} mt={5}>
@@ -174,8 +108,16 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               },
             ]}
           />
-
-          <VStack alignItems={'start'} mt={4}>
+          <ListInput
+            listLabel={'Professores adicionados'}
+            valueErrorMessage={'Professor inválido'}
+            label={'Professores'}
+            name={'professors'}
+            isInvalid={ClassValidator.isInvalidProfessor}
+            placeholder={'Digite o nome do professor'}
+            mt={4}
+          />
+          {/* <VStack alignItems={'start'} mt={4}>
             <FormLabel>Professores</FormLabel>
             <HStack w={'full'} spacing={4}>
               <FormControl>
@@ -192,7 +134,11 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
                 />
               </FormControl>
 
-              <Button onClick={handleProfessorButton} colorScheme={'teal'} variant={'outline'}>
+              <Button
+                onClick={handleProfessorButton}
+                colorScheme={'teal'}
+                variant={'outline'}
+              >
                 {isEditingProfessor
                   ? 'Editar professor'
                   : 'Adicionar professor'}
@@ -241,7 +187,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
                 Nenhum professor adicionado
               </Alert>
             )}
-          </VStack>
+          </VStack> */}
 
           {/* <Text as='b' fontSize='xl'>
             Horários e datas da turma
