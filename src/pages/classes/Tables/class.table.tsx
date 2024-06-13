@@ -26,10 +26,9 @@ import {
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface ClassesColumnsProps {
-  handleCheckAllClick: (data: Row<ClassResponse>[], value: boolean) => void;
+  handleCheckAllClick: (data: Row<ClassResponseIndexed>[], value: boolean) => void;
   handleCheckboxClick: (
-    subject_id: number,
-    class_code: string,
+    original_index: number,
     checkbox_value: boolean,
   ) => void;
   handleEditClick: (data: ClassResponse) => void;
@@ -40,9 +39,13 @@ interface ClassesColumnsProps {
   checkMap: boolean[];
 }
 
+export interface ClassResponseIndexed extends ClassResponse {
+  index: number;
+}
+
 export const getClassesColumns = (
   props: ClassesColumnsProps,
-): ColumnDef<ClassResponse>[] => [
+): ColumnDef<ClassResponseIndexed>[] => [
   {
     header: 'Marcar',
     maxSize: 70,
@@ -58,8 +61,7 @@ export const getClassesColumns = (
           ml={5}
           onChange={(event) =>
             props.handleCheckboxClick(
-              row.original.subject_id,
-              row.original.code,
+              row.original.index,
               event.target.checked,
             )
           }

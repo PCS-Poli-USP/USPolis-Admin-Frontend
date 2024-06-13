@@ -33,12 +33,13 @@ import { EventByClassrooms } from 'models/common/event.model';
 import CrawlerService from 'services/api/crawler.service';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
 import MultipleEditModal from 'components/classes/multipleEdit.modal';
-import { getClassesColumns } from './Tables/class.table';
+import { ClassResponseIndexed, getClassesColumns } from './Tables/class.table';
 import useCustomToast from 'hooks/useCustomToast';
 import { Row } from '@tanstack/react-table';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
 import { ClassResponse } from 'models/http/responses/class.response.models';
+import useClasses from 'hooks/useClasses';
 
 function Classes() {
   const {
@@ -87,7 +88,6 @@ function Classes() {
     onClose: onCloseMultipleEdit,
   } = useDisclosure();
 
-  const [classesList, setClassesList] = useState<Array<SClass>>([]);
   const [buildingsList, setBuildingsList] = useState<Array<BuildingResponse>>(
     [],
   );
@@ -99,14 +99,13 @@ function Classes() {
   const [allocating, setAllocating] = useState(false);
   const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
   const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
-  const [checkMap, setCheckMap] = useState<boolean[]>([]);
 
-  const showToast = useCustomToast();
+  const { classes } = useClasses();
 
-  const classesService = new ClassesService();
   const buildingsService = new BuildingsService();
   const crawlerService = new CrawlerService();
-  const eventsService = new EventsService();
+
+  const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
 
   // useEffect(() => {
   //   fetchData();
@@ -163,14 +162,14 @@ function Classes() {
   //     });
   // }
 
-  function handleDeleteClassClick(obj: Class) {
-    setSelectedClass(obj);
-    onOpenDeleteClass();
+  function handleDeleteClassClick(obj: ClassResponse) {
+    // setSelectedClass(obj);
+    // onOpenDeleteClass();
   }
 
-  function handleDeleteAllocClick(obj: Class) {
-    setSelectedClass(obj);
-    onOpenDeleteAlloc();
+  function handleDeleteAllocClick(obj: ClassResponse) {
+    // setSelectedClass(obj);
+    // onOpenDeleteAlloc();
   }
 
   // function handleDeleteClass() {
@@ -214,11 +213,11 @@ function Classes() {
   //   }
   // }
 
-  function handleAllocationEditClick(obj: Class) {
-    setSelectedClass(obj);
-    const events = ClassToEventByClassroom(obj, buildingsList);
-    setSelectedClassEventList(events);
-    onOpenAllocEdit();
+  function handleAllocationEditClick(obj: ClassResponse) {
+    // setSelectedClass(obj);
+    // const events = ClassToEventByClassroom(obj, buildingsList);
+    // setSelectedClassEventList(events);
+    // onOpenAllocEdit();
   }
 
   function handleAllocationEdit(
@@ -226,46 +225,46 @@ function Classes() {
     newClassroom: string,
     building_id: number,
   ) {
-    eventsService
-      .editManyAllocations({
-        events_ids,
-        classroom: newClassroom,
-        building_id,
-      })
-      .then((it) => {
-        showToast('Sucesso!', 'Alocação editada com sucesso!', 'success');
-        fetchData();
-        // refetch data
-        // TODO: create AllocationContext
-      })
-      .catch((error) => {
-        showToast('Erro!', `Erro ao editar alocação: ${error}`, 'error');
-      });
+    // eventsService
+    //   .editManyAllocations({
+    //     events_ids,
+    //     classroom: newClassroom,
+    //     building_id,
+    //   })
+    //   .then((it) => {
+    //     showToast('Sucesso!', 'Alocação editada com sucesso!', 'success');
+    //     fetchData();
+    //     // refetch data
+    //     // TODO: create AllocationContext
+    //   })
+    //   .catch((error) => {
+    //     showToast('Erro!', `Erro ao editar alocação: ${error}`, 'error');
+    //   });
   }
 
   function handleAllocationEditDelete(subjectCode: string, classCode: string) {
-    eventsService
-      .deleteClassAllocation(subjectCode, classCode)
-      .then((it) => {
-        showToast(
-          'Sucesso!',
-          `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
-          'success',
-        );
-        fetchData();
-      })
-      .catch((error) => {
-        showToast(
-          'Erro!',
-          `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`,
-          'error',
-        );
-      });
+    // eventsService
+    //   .deleteClassAllocation(subjectCode, classCode)
+    //   .then((it) => {
+    //     showToast(
+    //       'Sucesso!',
+    //       `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
+    //       'success',
+    //     );
+    //     fetchData();
+    //   })
+    //   .catch((error) => {
+    //     showToast(
+    //       'Erro!',
+    //       `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`,
+    //       'error',
+    //     );
+    //   });
   }
 
-  function handlePreferencesClick(obj: Class) {
-    setSelectedClass(obj);
-    onOpenPreferences();
+  function handlePreferencesClick(obj: ClassResponse) {
+    // setSelectedClass(obj);
+    // onOpenPreferences();
   }
 
   // function handleSavePreferences(data: Preferences) {
@@ -286,54 +285,54 @@ function Classes() {
   //   }
   // }
 
-  function handleEditClick(obj: Class) {
-    setSelectedClass(obj);
-    onOpenEdit();
+  function handleEditClick(obj: ClassResponse) {
+    // setSelectedClass(obj);
+    // onOpenEdit();
   }
 
   function handleEdit(data: Class) {
-    if (selectedClass) {
-      const events = breakClassFormInEvents(data);
-      classesService
-        .edit(selectedClass.subject_code, selectedClass.class_code, events)
-        .then((it) => {
-          fetchData();
-          showToast('Sucesso!', 'Turma editada com sucesso!', 'success');
-        })
-        .catch((error) => {
-          showToast('Erro!', `Erro ao criar turma: ${error}`, 'error');
-        });
-    }
+    // if (selectedClass) {
+    //   const events = breakClassFormInEvents(data);
+    //   classesService
+    //     .edit(selectedClass.subject_code, selectedClass.class_code, events)
+    //     .then((it) => {
+    //       fetchData();
+    //       showToast('Sucesso!', 'Turma editada com sucesso!', 'success');
+    //     })
+    //     .catch((error) => {
+    //       showToast('Erro!', `Erro ao criar turma: ${error}`, 'error');
+    //     });
+    // }
   }
 
   function handleCrawlerSave(subjectsList: string[], building_id: number) {
-    setLoading(true);
-    crawlerService
-      .crawl({
-        building_id,
-        subject_codes_list: subjectsList,
-      })
-      .then((it) => {
-        setSuccessSubjects(it.data.sucess);
-        setFailedSubjects(it.data.failed);
-        onOpenJupiterModal();
-        fetchData();
-        showToast(
-          'Sucesso!',
-          'Disciplinas foram carregadas com sucesso!',
-          'success',
-        );
-      })
-      .catch(({ response }: AxiosError<ErrorResponse>) =>
-        showToast(
-          'Erro!',
-          `Erro ao buscar disciplinas: ${response?.data.message}`,
-          'error',
-        ),
-      )
-      .finally(() => {
-        setLoading(false);
-      });
+    // setLoading(true);
+    // crawlerService
+    //   .crawl({
+    //     building_id,
+    //     subject_codes_list: subjectsList,
+    //   })
+    //   .then((it) => {
+    //     setSuccessSubjects(it.data.sucess);
+    //     setFailedSubjects(it.data.failed);
+    //     onOpenJupiterModal();
+    //     fetchData();
+    //     showToast(
+    //       'Sucesso!',
+    //       'Disciplinas foram carregadas com sucesso!',
+    //       'success',
+    //     );
+    //   })
+    //   .catch(({ response }: AxiosError<ErrorResponse>) =>
+    //     showToast(
+    //       'Erro!',
+    //       `Erro ao buscar disciplinas: ${response?.data.message}`,
+    //       'error',
+    //     ),
+    //   )
+    //   .finally(() => {
+    //     setLoading(false);
+    //   });
   }
 
   function handleDeleteSelectedClassesClick() {
@@ -341,94 +340,77 @@ function Classes() {
   }
 
   function getSelectedEventsIds() {
-    const events_ids: string[] = [];
-    const checkedClasses = getCheckedClasses();
-    checkedClasses.forEach((cl) => events_ids.push(...cl.events_ids));
-    return events_ids;
+    // const events_ids: string[] = [];
+    // const checkedClasses = getCheckedClasses();
+    // checkedClasses.forEach((cl) => events_ids.push(...cl.events_ids));
+    // return events_ids;
   }
 
   function handleDeleteSelectedClasses() {
-    const events_ids = getSelectedEventsIds();
-    setLoading(true);
-    eventsService
-      .deleteManyEvents({ events_ids })
-      .then((it) => {
-        showToast('Sucesso!', 'Turmas removidas com sucesso!', 'success');
-      })
-      .catch((error) => {
-        showToast('Erro!', `Erro ao remover turmas: ${error}`, 'error');
-      })
-      .finally(() => {
-        fetchData();
-        setLoading(false);
-      });
-    onCloseDeleteSelectedClasses();
+    // const events_ids = getSelectedEventsIds();
+    // setLoading(true);
+    // eventsService
+    //   .deleteManyEvents({ events_ids })
+    //   .then((it) => {
+    //     showToast('Sucesso!', 'Turmas removidas com sucesso!', 'success');
+    //   })
+    //   .catch((error) => {
+    //     showToast('Erro!', `Erro ao remover turmas: ${error}`, 'error');
+    //   })
+    //   .finally(() => {
+    //     fetchData();
+    //     setLoading(false);
+    //   });
+    // onCloseDeleteSelectedClasses();
   }
 
   function getCheckedClasses() {
-    const checkedClasses: SClass[] = [];
-    classesList.forEach((cl) => {
-      if (cl.selected) checkedClasses.push(cl);
-    });
-    return checkedClasses;
+    // const checkedClasses: SClass[] = [];
+    // classesList.forEach((cl) => {
+    //   if (cl.selected) checkedClasses.push(cl);
+    // });
+    // return checkedClasses;
   }
 
-  function handleCheckAllClick(data: Row<ClassResponse>[], value: boolean) {
-    // const newClasses: SClass[] = [];
-
-    // if (data.length !== classesList.length) {
-    //   for (let cl of classesList) {
-    //     const newCl = { ...cl };
-    //     data.forEach((row) => {
-    //       if (
-    //         row.original.class_code === cl.class_code &&
-    //         row.original.subject_code === cl.subject_code
-    //       ) {
-    //         newCl.selected = value;
-    //       }
-    //     });
-    //     newClasses.push(newCl);
-    //   }
-    // } else {
-    //   for (let i = 0; i < data.length; i++) {
-    //     const newClass = { ...data[i].original, selected: value };
-    //     newClasses.push(newClass);
-    //   }
-    // }
-    // setClassesList(newClasses);
-  }
-
-  function handleCheckboxClick(
-    subject_code: string,
-    class_code: string,
+  function handleCheckAllClick(
+    data: Row<ClassResponseIndexed>[],
     value: boolean,
   ) {
-    const newClassesList = [];
-    for (let cl of classesList) {
-      if (cl.subject_code === subject_code && cl.class_code === class_code)
-        cl.selected = value;
-      newClassesList.push(cl);
-    }
-    setClassesList(newClassesList);
+    const newCheckMap = [...checkMap];
+    data.forEach((cls) => (newCheckMap[cls.index] = value));
+    setCheckMap(newCheckMap);
+  }
+
+  function handleCheckboxClick(original_index: number, value: boolean) {
+    const newCheckMap = [...checkMap];
+    newCheckMap[original_index] = value;
+    setCheckMap(newCheckMap);
+    // const newClassesList = [];
+    // for (let cl of classesList) {
+    //   if (cl.subject_code === subject_code && cl.class_code === class_code)
+    //     cl.selected = value;
+    //   newClassesList.push(cl);
+    // }
+    // setClassesList(newClassesList);
   }
 
   return (
     <>
       <Navbar />
       <Loading isOpen={allocating} onClose={() => setAllocating(false)} />
-      <PreferencesModal
+      {/* <PreferencesModal
         isOpen={isOpenPreferences}
         onClose={onClosePreferences}
         data={selectedClass}
         buildings={buildingsList}
         onSave={handleSavePreferences}
-      />
-      <RegisterModal
+      /> */}
+      {/* <RegisterModal
         isOpen={isOpenRegister}
         onClose={onCloseRegister}
         onSave={handleRegister}
         buildings={buildingsList}
-      />
+      /> */}
       <EditModal
         isOpen={isOpenEdit}
         onClose={onCloseEdit}
@@ -449,14 +431,14 @@ function Classes() {
         successSubjects={successSubjects}
         failedSubjects={failedSubjects}
       />
-      <MultipleEditModal
+      {/* <MultipleEditModal
         isOpen={isOpenMultipleEdit}
         onClose={() => {
           onCloseMultipleEdit();
         }}
         classes={getCheckedClasses()}
         onRefresh={() => fetchData()}
-      />
+      /> */}
 
       <Center>
         <Box p={4} w={'100%'} overflow='auto'>
@@ -486,12 +468,12 @@ function Classes() {
               Remover selecioandos
             </Button>
           </Flex>
-          <Dialog
+          {/* <Dialog
             isOpen={isOpenDeleteClass}
             onClose={onCloseDeleteClass}
             onConfirm={handleDeleteClass}
             title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
-          />
+          /> */}
           <Dialog
             isOpen={isOpenDeleteSelectedClasses}
             onClose={onCloseDeleteSelectedClasses}
@@ -499,14 +481,17 @@ function Classes() {
             title={`Deseja remover todas as turmas selecionadas`}
             warningText='ATENÇÃO: QUALQUER TURMA SELECIONADA SERÁ PERDIDA!'
           />
-          <Dialog
+          {/* <Dialog
             isOpen={isOpenDeleteAlloc}
             onClose={onCloseDeleteAlloc}
             onConfirm={handleDeleteAlloc}
             title={`Deseja remover a alocação de ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
             warningText='Atenção: ao confirmar a alocação dessa turma será perdida'
+          /> */}
+          <DataTable
+            data={classes.map((cls, index) => ({ ...cls, index: index }))}
+            columns={columns}
           />
-          <DataTable data={classesList} columns={columns} />
         </Box>
       </Center>
     </>
