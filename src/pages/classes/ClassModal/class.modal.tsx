@@ -21,6 +21,17 @@ import {
   Select as ChakraSelect,
   Text,
   Tooltip,
+  Stepper,
+  useSteps,
+  Step,
+  StepIndicator,
+  StepStatus,
+  StepIcon,
+  StepNumber,
+  Box,
+  StepTitle,
+  StepDescription,
+  StepSeparator,
 } from '@chakra-ui/react';
 
 import {
@@ -47,8 +58,16 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { classDefaultValues, classSchema } from './class.modal.form';
 import { ClassType } from 'utils/enums/classes.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
+import ClassModalStepsFirst from './Steps/First/class.modal.steps.first';
+import ClassModalFirstStep from './Steps/First/class.modal.steps.first';
 
-export default function RegisterModal(props: ClassModalProps) {
+const steps = [
+  { title: 'Primeiro', description: 'Informações da Turma' },
+  { title: 'Segundo', description: 'Horários da Turma' },
+  { title: 'Terceiro', description: 'Preferências da Turma' },
+];
+
+function ClassModal(props: ClassModalProps) {
   const [professor, setProfessor] = useState('');
   const [hasProfessorError, setHasProfessorError] = useState(false);
   const [professors, setProfessors] = useState<string[]>([]);
@@ -73,10 +92,10 @@ export default function RegisterModal(props: ClassModalProps) {
     resolver: yupResolver(classSchema),
   });
 
-  const scheduleForm = useForm<ClassScheduleForm>({
-    defaultValues: scheduleDefaultValues,
-    resolver: yupResolver(scheduleSchema),
-  });
+  // const scheduleForm = useForm<ClassScheduleForm>({
+  //   defaultValues: scheduleDefaultValues,
+  //   resolver: yupResolver(scheduleSchema),
+  // });
 
   const {
     trigger: classTrigger,
@@ -84,12 +103,12 @@ export default function RegisterModal(props: ClassModalProps) {
     getValues: classGetValues,
     clearErrors: classClearErrors,
   } = classForm;
-  const {
-    trigger: scheduleTrigger,
-    reset: scheduleReset,
-    getValues: scheduleGetValues,
-    clearErrors: scheduleClearErrors,
-  } = scheduleForm;
+  // const {
+  //   trigger: scheduleTrigger,
+  //   reset: scheduleReset,
+  //   getValues: scheduleGetValues,
+  //   clearErrors: scheduleClearErrors,
+  // } = scheduleForm;
 
   useEffect(() => {
     if (props.selectedClass) {
@@ -198,6 +217,11 @@ export default function RegisterModal(props: ClassModalProps) {
     setEndTimes(newEndtimes);
   }
 
+  const { activeStep } = useSteps({
+    index: 1,
+    count: steps.length,
+  });
+
   return (
     <Modal
       isOpen={props.isOpen}
@@ -213,180 +237,40 @@ export default function RegisterModal(props: ClassModalProps) {
         <ModalCloseButton />
 
         <ModalBody pb={10}>
-          <Text as='b' fontSize='xl'>
-            Informações gerais
-          </Text>
+          <VStack>
+            <Stepper size='lg' index={activeStep}>
+              {steps.map((step, index) => (
+                <Step key={index}>
+                  <StepIndicator>
+                    <StepStatus
+                      complete={<StepIcon />}
+                      incomplete={<StepNumber />}
+                      active={<StepNumber />}
+                    />
+                  </StepIndicator>
 
-          <VStack spacing='20px' alignItems='start'>
-            <Input
-              label={'Código da turma'}
-              name={'code'}
-              placeholder='Código da turma'
-            />
+                  <Box flexShrink='0'>
+                    <StepTitle>{step.title}</StepTitle>
+                    <StepDescription>{step.description}</StepDescription>
+                  </Box>
 
-            <FormLabel>Código da disciplina</FormLabel>
-            <Select
-              label={'Disciplina'}
-              name={'subject_id'}
-              placeholder={'Selecione uma disciplina'}
-              value={
-                props.selectedClass ? props.selectedClass.subject_id : undefined
-              }
-              options={props.subjects.map((subject) => ({
-                value: subject.id,
-                label: subject.code,
-              }))}
-            />
+                  <StepSeparator />
+                </Step>
+              ))}
+            </Stepper>
 
-            <FormLabel>Oferecimento da disciplina</FormLabel>
-            <HStack spacing='8px'>
-              <Input
-                label={'Vagas'}
-                name={'vacancies'}
-                placeholder={'Quantidade de vagas'}
-                value={
-                  props.selectedClass
-                    ? props.selectedClass.vacancies
-                    : undefined
-                }
-                type={'number'}
-                min={0}
-                max={99999}
+            <Stepper size={'lg'} index={activeStep}>
+              <ClassModalFirstStep
+                title={steps[0].title}
+                description={steps[0].description}
+                subjects={props.subjects}
+                selectedClass={props.selectedClass}
               />
-              <Input
-                label={'Inscritos'}
-                name={'subscribers'}
-                placeholder={'Quantidade de inscritos'}
-                value={
-                  props.selectedClass
-                    ? props.selectedClass.subscribers
-                    : undefined
-                }
-                type={'number'}
-                min={0}
-                max={99999}
-              />
-              <Input
-                label={'Pendentes'}
-                name={'pendings'}
-                placeholder={'Quantidade de pendentes'}
-                value={
-                  props.selectedClass ? props.selectedClass.pendings : undefined
-                }
-                type={'number'}
-                min={0}
-                max={99999}
-              />
-            </HStack>
+            </Stepper>
+          </VStack>
 
-            <FormLabel>Tipo de turma</FormLabel>
-            <Select
-              label={'Tipo de turma'}
-              name={'type'}
-              value={props.selectedClass ? props.selectedClass.type : undefined}
-              placeholder={'Escolha o tipo da turma'}
-              options={[
-                { label: 'Prática', value: ClassType.PRACTIC },
-                { label: 'Teórica', value: ClassType.THEORIC },
-                {
-                  label: 'Prática Vinculada',
-                  value: ClassType.VINCULATED_PRACTIC,
-                },
-                {
-                  label: 'Teórica Vinculada',
-                  value: ClassType.VINCULATED_THEORIC,
-                },
-              ]}
-            />
-
-            <FormLabel>Professores</FormLabel>
-            <ChakraInput
-              placeholder='Insira os nomes dos professores'
-              type='text'
-              value={professor}
-              onChange={(event) => {
-                setProfessor(event.target.value);
-                if (event.target.value) setHasProfessorError(false);
-              }}
-              onKeyDown={handleProfessorInputKeyDown}
-            />
-
-            <Button onClick={handleProfessorButton}>
-              {isEditingProfessor ? 'Editar professor' : 'Adicionar professor'}
-            </Button>
-
-            <Text as='b' fontSize='lg'>
-              Professores adicionados:
-            </Text>
-            {professors.length > 0 ? (
-              <List spacing={3}>
-                {professors.map((professor, index) => (
-                  <ListItem key={index}>
-                    <HStack>
-                      <BsPersonCheckFill />
-                      <Text>{professor}</Text>
-
-                      <Tooltip label='Editar'>
-                        <IconButton
-                          colorScheme='yellow'
-                          size='sm'
-                          variant='ghost'
-                          aria-label='editar-professor'
-                          icon={<BsFillPenFill />}
-                          onClick={() => handleEditProfessorButton(index)}
-                        />
-                      </Tooltip>
-
-                      <Tooltip label='Remover'>
-                        <IconButton
-                          colorScheme='red'
-                          size='sm'
-                          variant='ghost'
-                          aria-label='remover-professor'
-                          icon={<BsFillTrashFill />}
-                          onClick={() => handleDeleteProfessorButton(index)}
-                        />
-                      </Tooltip>
-                    </HStack>
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <Alert status='warning' fontSize='sm' mb={4}>
-                <AlertIcon />
-                Nenhum professor adicionado
-              </Alert>
-            )}
-
-            <Text as='b' fontSize='xl'>
-              Horários e datas da turma
-            </Text>
-
-            <FormLabel>Período da disciplina</FormLabel>
-            <HStack spacing='5px'>
-              <Input
-                label={'Início'}
-                name={'start_date'}
-                placeholder='Data de início da disciplina'
-                type='date'
-                value={
-                  props.selectedClass
-                    ? props.selectedClass.start_date
-                    : undefined
-                }
-              />
-              <Input
-                label={'Fim'}
-                name={'end_date'}
-                placeholder='Data de encerramento da disciplina'
-                type='date'
-                value={
-                  props.selectedClass ? props.selectedClass.end_date : undefined
-                }
-              />
-            </HStack>
-
-            <Select
+          {/* <VStack spacing='20px' alignItems='start'> */}
+          {/* <Select
               label={'Dia da semana'}
               name={'Teste'}
               placeholder='Escolha o dia da semana'
@@ -478,8 +362,8 @@ export default function RegisterModal(props: ClassModalProps) {
             </HStack>
             <Checkbox isChecked={true}>
               Ignorar para alocação automática
-            </Checkbox>
-          </VStack>
+            </Checkbox> */}
+          {/* </VStack> */}
         </ModalBody>
 
         <ModalFooter>
@@ -502,3 +386,5 @@ export default function RegisterModal(props: ClassModalProps) {
     </Modal>
   );
 }
+
+export default ClassModal;

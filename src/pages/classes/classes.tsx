@@ -40,6 +40,8 @@ import { BuildingResponse } from 'models/http/responses/building.response.models
 import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import useClasses from 'hooks/useClasses';
+import ClassModal from './ClassModal/class.modal';
+import useSubjects from 'hooks/useSubjetcts';
 
 function Classes() {
   const {
@@ -100,6 +102,7 @@ function Classes() {
   const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
   const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
 
+  const { subjects } = useSubjects();
   const { classes } = useClasses();
 
   const buildingsService = new BuildingsService();
@@ -411,14 +414,20 @@ function Classes() {
         onSave={handleRegister}
         buildings={buildingsList}
       /> */}
-      <EditModal
+      <ClassModal 
+        isOpen={isOpenRegister}
+        onClose={onCloseRegister}
+        isUpdate={false}
+        subjects={subjects}
+      />
+      {/* <EditModal
         isOpen={isOpenEdit}
         onClose={onCloseEdit}
         formData={selectedClass}
         onSave={handleEdit}
         buildings={buildingsList}
-      />
-      <EditEventModal
+      /> */}
+      {/* <EditEventModal
         isOpen={isOpenAllocEdit}
         onClose={onCloseAllocEdit}
         onSave={handleAllocationEdit}
@@ -430,7 +439,7 @@ function Classes() {
         onClose={onCloseJupiterModal}
         successSubjects={successSubjects}
         failedSubjects={failedSubjects}
-      />
+      /> */}
       {/* <MultipleEditModal
         isOpen={isOpenMultipleEdit}
         onClose={() => {

@@ -5,4 +5,8 @@ export interface FieldProps {
   placeholder?: string;
   disabled?: boolean;
   hidden?: boolean;
+  mt?: string | number;
+  ml?: string | number;
+  mr?: string | number;
+  mb?: string | number;
 }
