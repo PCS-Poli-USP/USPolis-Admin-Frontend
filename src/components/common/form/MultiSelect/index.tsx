@@ -1,5 +1,6 @@
 import { FormLabel, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FieldProps } from 'models/interfaces';
+import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import Select from 'react-select';
 
@@ -32,6 +33,8 @@ export function MultiSelect({
     formState: { errors },
   } = useFormContext();
 
+  const [selectValue, setSelectValue] = useState(value);
+
   return (
     <Controller
       control={control}
@@ -40,7 +43,7 @@ export function MultiSelect({
         <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
           <FormLabel alignSelf='flex-start'>{label}</FormLabel>
           <Select
-            value={value}
+            value={selectValue}
             isLoading={loading}
             isDisabled={disabled}
             placeholder={placeholder}
@@ -50,7 +53,7 @@ export function MultiSelect({
                 (option: Option) => option.value,
               );
               field.onChange(values);
-              value = selectedOption as Option[];
+              setSelectValue(selectedOption as Option[]);
               return;
             }}
             options={options}
