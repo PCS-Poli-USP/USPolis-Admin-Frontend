@@ -1,29 +1,17 @@
 import { HStack, Text, VStack } from '@chakra-ui/react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { FormProvider } from 'react-hook-form';
 import { Input, Select } from 'components/common';
 import { ClassType } from 'utils/enums/classes.enum';
 import { NumberInput } from 'components/common/form/NumberInput';
 import { ClassValidator } from 'utils/classes/classes.validator';
-import {
-  classFirstDefaultValues,
-  classFirstSchema,
-} from './class.modal.steps.first.form';
+
 import ListInput from 'components/common/form/ListInput';
-import {
-  ClassFirstForm,
-  ClassModalFirstStepProps,
-} from './class.modal.steps.first.interface';
+import { ClassModalFirstStepProps } from './class.modal.steps.first.interface';
 
 function ClassModalFirstStep(props: ClassModalFirstStepProps) {
-  const classForm = useForm<ClassFirstForm>({
-    defaultValues: classFirstDefaultValues,
-    resolver: yupResolver(classFirstSchema),
-  });
-
   return (
     <VStack mt={5} width={'100%'} align={'stretch'}>
-      <FormProvider {...classForm}>
+      <FormProvider {...props.form}>
         <form>
           <Text as={'b'} fontSize={'lg'}>
             Informações gerais
@@ -56,7 +44,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               name={'vacancies'}
               placeholder={'Quantidade de vagas'}
               value={
-                props.selectedClass ? props.selectedClass.vacancies : undefined
+                props.selectedClass ? props.selectedClass.vacancies : 0
               }
               min={0}
               max={99999}
@@ -68,7 +56,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               value={
                 props.selectedClass
                   ? props.selectedClass.subscribers
-                  : undefined
+                  : 0
               }
               min={0}
               max={99999}
@@ -78,7 +66,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               name={'pendings'}
               placeholder={'Quantidade de pendentes'}
               value={
-                props.selectedClass ? props.selectedClass.pendings : undefined
+                props.selectedClass ? props.selectedClass.pendings : 0
               }
               min={0}
               max={99999}

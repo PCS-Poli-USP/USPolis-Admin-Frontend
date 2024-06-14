@@ -144,7 +144,7 @@ export function ListInput({
             {`${listLabel}`}
           </Text>
           {listValues.length > 0 ? (
-            <List spacing={3} >
+            <List spacing={3}>
               {listValues.map((val, index) => (
                 <ListItem key={index}>
                   <HStack>
@@ -176,15 +176,17 @@ export function ListInput({
                 </ListItem>
               ))}
             </List>
+          ) : errors[name] ? (
+            <Alert status='error' fontSize={'sm'} mb={4}>
+              <AlertIcon />
+              {errors[name]?.message?.toString()}
+            </Alert>
           ) : (
             <Alert status='warning' fontSize='sm' mb={4}>
               <AlertIcon />
               Nenhum valor adicionado
             </Alert>
           )}
-          <FormErrorMessage>
-            {errors[name]?.message?.toString()}
-          </FormErrorMessage>
         </VStack>
       )}
     />

@@ -23,48 +23,53 @@ import {
   StepDescription,
   StepSeparator,
 } from '@chakra-ui/react';
-
 import {
   ArrowBackIcon,
   ArrowForwardIcon,
   DownloadIcon,
   SmallCloseIcon,
 } from '@chakra-ui/icons';
-
 import { useState } from 'react';
 import { ClassModalProps } from './class.modal.interface';
-
 import ClassModalFirstStep from './Steps/First/class.modal.steps.first';
 import { ClassFirstForm } from './Steps/First/class.modal.steps.first.interface';
 import ClassModalSecondStep from './Steps/Second/class.modal.steps.second';
 import ClassModalThirdStep from './Steps/Third/class.modal.steps.third';
+import { ClassSecondForm } from './Steps/Second/class.modal.steps.second.interface';
+import { useForm } from 'react-hook-form';
+import {
+  classFirstDefaultValues,
+  classFirstSchema,
+} from './Steps/First/class.modal.steps.first.form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import {
+  classSecondDefaultValues,
+  classSecondSchema,
+} from './Steps/Second/class.modal.steps.second.form';
 
 function ClassModal(props: ClassModalProps) {
-  const [week_day, setWeekDay] = useState('');
-  const [week_days, setWeekDays] = useState<string[]>([]);
+  const firstForm = useForm<ClassFirstForm>({
+    defaultValues: classFirstDefaultValues,
+    resolver: yupResolver(classFirstSchema),
+  });
 
-  const [start_time, setStartTime] = useState('');
-  const [start_times, setStartTimes] = useState<string[]>([]);
+  const secondForm = useForm<ClassSecondForm>({
+    defaultValues: classSecondDefaultValues,
+    resolver: yupResolver(classSecondSchema),
+  });
 
-  const [end_time, setEndTime] = useState('');
-  const [end_times, setEndTimes] = useState<string[]>([]);
+  async function handleFirstNextClick() {
+    const { trigger, getValues } = firstForm;
+    const isValid = await trigger();
+    if (!isValid) return;
+    const values = getValues();
+    setActiveStep(activeStep + 1);
+  }
 
-  const [isEditingDate, setIsEditingDate] = useState(false);
-  const [editDateIndex, setEditDateIndex] = useState(0);
- 
-
-  // useEffect(() => {
-  //   if (props.selectedClass) {
-  //     classReset({ subject_id: props.selectedClass.subject_id });
-  //   }
-  // }, [props.selectedClass, classReset]);
-
-  async function handleFirstNextClick(data: ClassFirstForm) {}
+  function handleSecondNextClick(data: ClassSecondForm) {}
 
   function handleNextClick() {
-    if (activeStep < steps.length - 1) {
-      setActiveStep(activeStep + 1);
-    }
+    if (activeStep === 0) handleFirstNextClick();
   }
 
   function handlePreviousClick() {
@@ -81,65 +86,6 @@ function ClassModal(props: ClassModalProps) {
     props.onClose();
   }
 
-  function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
-    setWeekDay(event.target.value);
-  }
-
-  function handleDateButton() {
-    // if (validator.isInvalidTime(start_time, end_time)) {
-    //   setHasTimeError(true);
-    // } else setHasTimeError(false);
-
-    // if (validator.isEmpty(week_day)) {
-    //   setHasDayError(true);
-    // } else setHasDayError(false);
-
-    // if (
-    //   validator.isInvalidTime(start_time, end_time) ||
-    //   validator.isEmpty(week_day)
-    // )
-    //   return;
-
-    const newWeekDays = [...week_days];
-    const newStarTime = [...start_time];
-    const newEndTime = [...end_time];
-
-    if (isEditingDate) {
-      newWeekDays[editDateIndex] = week_day;
-      newStarTime[editDateIndex] = start_time;
-      newEndTime[editDateIndex] = end_time;
-    } else {
-      newWeekDays.push(week_day);
-      newStarTime.push(start_time);
-      newEndTime.push(end_time);
-    }
-
-    setIsEditingDate(false);
-  }
-
-  function handleEditDateButton(index: number): void {
-    setStartTime(start_times[index]);
-    setEndTime(end_times[index]);
-    setWeekDay(week_days[index]);
-    setEditDateIndex(index);
-    setIsEditingDate(true);
-  }
-
-  function handleDeleteDateButton(index: number): void {
-    const newWeekDays = [...week_days];
-    newWeekDays.splice(index, 1);
-
-    const newStartTimes = [...start_times];
-    newStartTimes.splice(index, 1);
-
-    const newEndtimes = [...end_times];
-    newEndtimes.splice(index, 1);
-
-    setWeekDays(newWeekDays);
-    setStartTimes(newStartTimes);
-    setEndTimes(newEndtimes);
-  }
-
   const steps = [
     {
       title: 'Primeiro',
@@ -147,9 +93,9 @@ function ClassModal(props: ClassModalProps) {
       content: (
         <ClassModalFirstStep
           isUpdate={false}
+          form={firstForm}
           subjects={props.subjects}
           selectedClass={props.selectedClass}
-          onNext={handleFirstNextClick}
         />
       ),
     },
@@ -158,10 +104,10 @@ function ClassModal(props: ClassModalProps) {
       description: 'Horários e Datas',
       content: (
         <ClassModalSecondStep
+          form={secondForm}
           isUpdate={false}
           calendars={props.calendars}
           selectedClass={props.selectedClass}
-          onNext={handleFirstNextClick}
         />
       ),
     },

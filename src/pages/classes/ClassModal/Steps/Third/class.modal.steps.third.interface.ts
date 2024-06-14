@@ -4,6 +4,7 @@ import { ClassModalStepsProps } from '../class.modal.steps.interface';
 
 export interface ClassModalThirdStepProps extends ClassModalStepsProps {
   subjects: SubjectResponse[];
+  onNext: (data: ClassThirdForm) => void;
   selectedClass?: ClassResponse;
 }
 export interface ClassThirdForm {

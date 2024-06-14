@@ -1,100 +1,106 @@
-import { ClassValidator } from 'utils/classes/classes.validator';
 import * as yup from 'yup';
 import { ClassSecondForm } from './class.modal.steps.second.interface';
+import { ScheduleValidator } from 'utils/schedules/schedules.validator';
+import { Recurrence } from 'utils/enums/recurrence.enum';
+import { WeekDay } from 'utils/enums/weekDays.enum';
 
 export const classSecondFormFields = {
-  subject_id: {
-    validator: yup
-      .number()
-      .required('Campo obrigatório')
-      .test(
-        'is-valid-id',
-        'Escolha uma disciplina válida',
-        (value) => !ClassValidator.isInvalidId(value),
-      ),
-    defaultValue: 0,
-  },
-  code: {
+  start_date: {
     validator: yup
       .string()
       .required('Campo obrigatório')
       .test(
-        'is-valid-field',
-        'Código deve conter 7 caracteres',
-        (value) => !ClassValidator.isInvalidClassCode(value),
+        'is-valid-date',
+        'Campo obrigatório',
+        (value) => !ScheduleValidator.isInvalidDate(value),
       ),
     defaultValue: '',
   },
-  type: {
+  end_date: {
     validator: yup
       .string()
       .required('Campo obrigatório')
       .test(
-        'is-valid-field',
-        'Tipo inválido',
-        (value) => !ClassValidator.isInvalidClassType(value),
+        'is-valid-date',
+        'Campo obrigatório',
+        (value) => !ScheduleValidator.isInvalidDate(value),
       ),
     defaultValue: '',
   },
-  professors: {
+  calendar_ids: {
     validator: yup
       .array()
-      .of(yup.string().required('Campo obrigatório'))
-      .min(1, 'Coloque pelo menos um professor')
+      .of(yup.number().required('Campo obrigatório'))
+      .min(1, 'Coloque pelo menos um calendário')
       .test(
         'is-valid-array',
-        'Professores inválidos',
-        (value) => value && !ClassValidator.isInvalidProfessorList(value),
+        'Calendários inválidos',
+        (value) => value && !ScheduleValidator.isInvalidIdArray(value),
       ),
     defaultValue: [],
   },
-  vacancies: {
+  recurrence: {
     validator: yup
-      .number()
-      .min(0, 'Vagas não pode ser negativa')
-      .required('Campo obrigatório'),
-    defaultValue: 0,
-  },
-  subscribers: {
-    validator: yup
-      .number()
-      .min(0, 'Inscritos não pode ser negativo')
-      .required('Campo obrigatório'),
-    defaultValue: 0,
-  },
-  pendings: {
-    validator: yup
-      .number()
-      .min(0, 'Pendentes não pode ser negativo')
+      .string()
       .required('Campo obrigatório')
       .test(
-        'is-greater',
-        'Número de inscritos deve ser maior ou igual ao de pendentes',
-        function (value) {
-          const { subscribers } = this.parent;
-          return subscribers >= value;
-        },
+        'is-valid-date',
+        'Campo obrigatório',
+        (value) => !ScheduleValidator.isInvalidRecurrence(value),
       ),
-    defaultValue: 0,
+    defaultValue: '',
+  },
+  week_day: {
+    validator: yup
+      .string()
+      .required()
+      .test(
+        'is-valid-week-day',
+        'Escolha um dia válido',
+        (value) => !ScheduleValidator.isInvalidWeekDay(value),
+      ),
+    defaultValue: '',
+  },
+  start_time: {
+    validator: yup
+      .string()
+      .required('Escolha um horário de início')
+      .test(
+        'is-valid-day-time',
+        'Horário inválido',
+        (value) => !ScheduleValidator.isInvalidDayTime(value),
+      ),
+    defaultValue: '',
+  },
+  end_time: {
+    validator: yup
+      .string()
+      .required('Escolha um horário de fim')
+      .test(
+        'is-valid-day-time',
+        'Horário inválido',
+        (value) => !ScheduleValidator.isInvalidDayTime(value),
+      ),
+    defaultValue: '',
   },
 };
 
 export const classSecondSchema = yup.object<ClassSecondForm>().shape({
-  subject_id: classSecondFormFields.subject_id.validator,
-  code: classSecondFormFields.code.validator,
-  type: classSecondFormFields.type.validator,
-  vacancies: classSecondFormFields.vacancies.validator,
-  subscribers: classSecondFormFields.subscribers.validator,
-  pendings: classSecondFormFields.pendings.validator,
-  professors: classSecondFormFields.professors.validator,
+  start_date: classSecondFormFields.start_date.validator,
+  end_date: classSecondFormFields.end_date.validator,
+  calendar_ids: classSecondFormFields.calendar_ids.validator,
+  recurrence: classSecondFormFields.recurrence.validator,
+  week_day: classSecondFormFields.week_day.validator,
+  start_time: classSecondFormFields.start_date.validator,
+  end_time: classSecondFormFields.start_date.validator,
 });
 
 export const classSecondDefaultValues: ClassSecondForm = {
-  subject_id: classSecondFormFields.subject_id.defaultValue,
-  code: classSecondFormFields.code.defaultValue,
-  type: classSecondFormFields.type.defaultValue,
-  professors: classSecondFormFields.professors.defaultValue,
-  vacancies: classSecondFormFields.vacancies.defaultValue,
-  subscribers: classSecondFormFields.subscribers.defaultValue,
-  pendings: classSecondFormFields.pendings.defaultValue,
+  start_date: classSecondFormFields.start_date.defaultValue,
+  end_date: classSecondFormFields.end_date.defaultValue,
+  calendar_ids: classSecondFormFields.calendar_ids.defaultValue,
+  recurrence: classSecondFormFields.recurrence.defaultValue as Recurrence,
+  week_day: classSecondFormFields.week_day.defaultValue as WeekDay,
+  start_time: classSecondFormFields.start_date.defaultValue,
+  end_time: classSecondFormFields.start_date.defaultValue,
 };

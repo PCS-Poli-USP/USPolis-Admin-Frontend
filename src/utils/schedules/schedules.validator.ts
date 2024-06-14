@@ -1,10 +1,10 @@
 import CommonValidator from 'utils/common/common.validator';
 import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDays } from 'utils/enums/weekDays.enum';
+import { WeekDay } from 'utils/enums/weekDays.enum';
 
 export class ScheduleValidator extends CommonValidator {
   static isInvalidWeekDay(value: string) {
-    return !Object.values(WeekDays).includes(value as WeekDays);
+    return !WeekDay.getValues().includes(value as WeekDay);
   }
 
   static isInvalidDayTime(value: string) {
@@ -13,7 +13,7 @@ export class ScheduleValidator extends CommonValidator {
   }
 
   static isInvalidRecurrence(value: string) {
-    return !Object.values(Recurrence).includes(value as Recurrence);
+    return !Recurrence.getValues().includes(value as Recurrence);
   }
 
   static isInvalidWeekDayArray(values: string[]) {

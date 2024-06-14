@@ -69,7 +69,7 @@ export const classFirstFormFields = {
       .required('Campo obrigatório')
       .test(
         'is-greater',
-        'Número de inscritos deve ser maior ou igual ao de pendentes',
+        'Número de pendentes não pode ser maior que inscritos',
         function (value) {
           const { subscribers } = this.parent;
           return subscribers >= value;
