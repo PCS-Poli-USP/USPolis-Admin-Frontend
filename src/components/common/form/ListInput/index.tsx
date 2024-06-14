@@ -140,11 +140,11 @@ export function ListInput({
             <FormErrorMessage>{`${valueErrorMessage}`}</FormErrorMessage>
           </FormControl>
 
-          <Text as='b' fontSize='lg'>
+          <Text as='b' fontSize='lg' mt={4}>
             {`${listLabel}`}
           </Text>
           {listValues.length > 0 ? (
-            <List spacing={3}>
+            <List spacing={3} >
               {listValues.map((val, index) => (
                 <ListItem key={index}>
                   <HStack>
