@@ -1,16 +1,17 @@
 import { DateCalendar, DayCalendarSkeleton } from '@mui/x-date-pickers';
 import ServerDay from './ServerDay/serverday';
 import moment, { Moment } from 'moment';
-import { sortDates } from 'utils/holidays/holidays.sorter';
 import { DateCalendarPickerProps } from './datecalendarpicker.interface';
-import { useDateCalendarPicker } from './hooks/useDateCalendarPicker';
 
 function DateCalendarPicker(props: DateCalendarPickerProps) {
-  const { selectedDates, setSelectedDates, highlightedDays, setHighlightedDays, ocuppedDays } =
-    useDateCalendarPicker();
-
+  const currentYear = moment().year();
+  const minDate = moment({ year: currentYear, month: 0, day: 1 }); // Janeiro 1º do ano atual
+  const maxDate = moment({ year: currentYear, month: 11, day: 31 }); // Dezembro 31 do ano atual
   return (
     <DateCalendar
+      minDate={minDate}
+      maxDate={maxDate}
+      views={['day']}
       renderLoading={() => <DayCalendarSkeleton />}
       showDaysOutsideCurrentMonth
       slots={{
@@ -18,31 +19,14 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
       }}
       slotProps={{
         day: {
-          highlightedDays,
-          ocuppedDays,
+          selectedDays: props.selectedDays,
+          occupiedDays: props.occupiedDays,
         } as any,
       }}
       onChange={(newValue: Moment) => {
-        const newDates = [...selectedDates];
-        const newHighlightedDays = [...highlightedDays];
-        const date = moment(newValue).format('YYYY-MM-DDTHH:mm:ss');
-        const index = newDates.findIndex((value) => value === date);
-        if (index >= 0) {
-          newDates.splice(index, 1);
-          const highlightIndex = newHighlightedDays.findIndex((val) => {
-            const parsedDate = moment(val);
-            return (
-              parsedDate.date() === newValue.date() &&
-              parsedDate.month() === newValue.month()
-            );
-          });
-          newHighlightedDays.splice(highlightIndex, 1);
-        } else {
-          newDates.push(date);
-          newHighlightedDays.push(newValue.format('YYYY-MM-DDTHH:mm:ss'));
-        }
-        setHighlightedDays(newHighlightedDays);
-        setSelectedDates(newDates.sort(sortDates));
+        if (!!props.isVisualization) return;
+        const date = moment(newValue).format('YYYY-MM-DD');
+        props.dayClick(date);
       }}
     />
   );

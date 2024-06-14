@@ -2,18 +2,14 @@ import {
   Alert,
   AlertIcon,
   Button,
-  Flex,
   HStack,
   Spacer,
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input, Select } from 'components/common';
-import { ClassResponse } from 'models/http/responses/class.response.models';
-import { ClassModalStepsProps } from '../class.modal.steps.interface';
 import {
   ClassModalSecondStepProps,
   ClassSecondForm,
@@ -25,8 +21,10 @@ import {
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { MultiSelect } from 'components/common/form/MultiSelect';
-import { DateCalendar } from '@mui/x-date-pickers';
 import { useState } from 'react';
+import DateCalendarPicker, {
+  useDateCalendarPicker,
+} from 'components/common/DateCalendarPicker';
 
 function ClassModalSecondStep(props: ClassModalSecondStepProps) {
   const classForm = useForm<ClassSecondForm>({
@@ -35,6 +33,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
   });
 
   const [schedules, setSchedules] = useState([]);
+  const { selectedDays, occupiedDays, dayClick } = useDateCalendarPicker();
 
   return (
     <VStack mt={5} width={'100%'} align={'stretch'}>
@@ -63,10 +62,6 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               }
             />
           </HStack>
-
-          {/* <Text as={'b'} fontSize={'md'}>
-            Agendas e Horários
-          </Text> */}
 
           <HStack align={'center'} mt={4}>
             <MultiSelect
@@ -134,8 +129,11 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               ) : undefined}
             </VStack>
             <Spacer />
-            <DateCalendar 
-              
+            <DateCalendarPicker
+              selectedDays={selectedDays}
+              occupiedDays={occupiedDays}
+              dayClick={dayClick}
+              isVisualization={true}
             />
           </HStack>
         </form>

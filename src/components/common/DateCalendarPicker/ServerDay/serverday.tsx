@@ -4,26 +4,26 @@ import moment, { Moment } from 'moment';
 
 function ServerDay(
   props: PickersDayProps<Moment> & {
-    highlightedDays?: string[];
-    ocuppedDays?: string[];
+    selectedDays?: string[];
+    occupiedDays?: string[];
   },
 ) {
   const {
-    highlightedDays = [],
-    ocuppedDays = [],
+    selectedDays = [],
+    occupiedDays = [],
     day,
     outsideCurrentMonth,
     ...other
   } = props;
 
-  const isSelected = !!highlightedDays.find((val) => {
+  const isSelected = !!selectedDays.find((val) => {
     const parsedDate = moment(val);
     return (
       parsedDate.date() === props.day.date() &&
       parsedDate.month() === props.day.month()
     );
   });
-  const isOcupped = !!ocuppedDays.find((val) => {
+  const isOcupped = !!occupiedDays.find((val) => {
     const parsedDate = moment(val);
     return (
       parsedDate.date() === props.day.date() &&
