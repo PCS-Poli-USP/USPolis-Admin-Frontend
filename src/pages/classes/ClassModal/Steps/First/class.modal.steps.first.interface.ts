@@ -1,6 +1,6 @@
-import { ClassResponse } from "models/http/responses/class.response.models";
-import { SubjectResponse } from "models/http/responses/subject.response.models";
-import { ClassModalStepsProps } from "../class.modal.steps.interface";
+import { ClassResponse } from 'models/http/responses/class.response.models';
+import { SubjectResponse } from 'models/http/responses/subject.response.models';
+import { ClassModalStepsProps } from '../class.modal.steps.interface';
 
 export interface ClassModalFirstStepProps extends ClassModalStepsProps {
   isUpdate: boolean;
