@@ -25,62 +25,13 @@ import {
 } from 'models/http/requests/holiday.request.models';
 import { useEffect, useState } from 'react';
 import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
-import {
-  DateCalendar,
-  DayCalendarSkeleton,
-  PickersDay,
-  PickersDayProps,
-} from '@mui/x-date-pickers';
-import moment, { Moment } from 'moment';
-import { sortDates } from 'utils/holidays/holidays.sorter';
-import { Badge } from '@mui/material';
+import moment from 'moment';
 import useHolidays from 'hooks/useHolidays';
-
-function ServerDay(
-  props: PickersDayProps<Moment> & {
-    highlightedDays?: [number, number][];
-    ocuppedDays?: [number, number][];
-  },
-) {
-  const {
-    highlightedDays = [],
-    ocuppedDays = [],
-    day,
-    outsideCurrentMonth,
-    ...other
-  } = props;
-
-  const isSelected = !!highlightedDays.find(
-    (val) => val[0] === props.day.date() && val[1] === props.day.month(),
-  );
-  const isOcupped = !!ocuppedDays.find(
-    (val) => val[0] === props.day.date() && val[1] === props.day.month(),
-  );
-
-  return (
-    <Badge
-      key={props.day.toString()}
-      overlap='circular'
-      badgeContent={isSelected ? '✔️' : isOcupped ? '📅' : undefined}
-    >
-      <PickersDay
-        {...other}
-        disabled={isOcupped}
-        disableHighlightToday={true}
-        outsideCurrentMonth={outsideCurrentMonth}
-        day={day}
-      />
-    </Badge>
-  );
-}
+import DateCalendarPicker, { useDateCalendarPicker } from 'components/common/DateCalendarPicker';
 
 function HolidayModal(props: HolidayModalProps) {
   const [isMultipleHolidays, setIsMultipleHolidays] = useState(false);
-  const [dates, setDates] = useState<string[]>([]);
-  const [highlightedDays, setHighlightedDays] = useState<[number, number][]>(
-    [],
-  );
-  const [ocuppedDays, setOcuppedDays] = useState<[number, number][]>([]);
+  const {selectedDays, occupiedDays, dayClick, setOccupiedDays, setSelectedDays} = useDateCalendarPicker();
 
   const form = useForm<HolidayForm>({
     defaultValues: defaultValues,
@@ -93,13 +44,13 @@ function HolidayModal(props: HolidayModalProps) {
   async function handleCreateSubmit() {
     if (isMultipleHolidays) {
       const values = getValues();
-      createManyHolidays({ category_id: values.category_id, dates: dates });
+      await createManyHolidays({ category_id: values.category_id, dates: selectedDays });
     } else {
       const isValid = await trigger();
       if (!isValid) return;
 
       const values = getValues();
-      createHoliday(values as CreateHoliday);
+      await createHoliday(values as CreateHoliday);
     }
     props.refetch();
     handleCloseModal();
@@ -119,7 +70,7 @@ function HolidayModal(props: HolidayModalProps) {
 
     const values = getValues();
     if (!props.selectedHoliday) return;
-    updateHoliday(props.selectedHoliday.id, formatUpdateData(values));
+    await updateHoliday(props.selectedHoliday.id, formatUpdateData(values));
     props.refetch();
     handleCloseModal();
   }
@@ -127,8 +78,8 @@ function HolidayModal(props: HolidayModalProps) {
   function handleCloseModal() {
     reset(defaultValues);
     setIsMultipleHolidays(false);
-    setHighlightedDays([]);
-    setOcuppedDays([]);
+    setSelectedDays([]);
+    setOccupiedDays([]);
     clearErrors();
     props.onClose();
   }
@@ -141,19 +92,19 @@ function HolidayModal(props: HolidayModalProps) {
     return formated;
   }
 
-  function fetchOcuppedDays(data: HolidayUnfetchResponse[]) {
-    const newOcuppedDays: [number, number][] = [];
+  function fetchOccupiedDays(data: HolidayUnfetchResponse[]) {
+    const newOcuppedDays: string[] = [];
     data.forEach((val) => {
-      const date = moment(val.date);
-      newOcuppedDays.push([date.date(), date.month()]);
+      const date = moment(val.date).format('YYYY-MM-DD');;
+      newOcuppedDays.push(date);
     });
-    setOcuppedDays(newOcuppedDays);
+    setOccupiedDays(newOcuppedDays);
   }
 
   useEffect(() => {
     if (props.category) {
       reset({ category_id: props.category.id, date: '' });
-      fetchOcuppedDays(props.category.holidays);
+      fetchOccupiedDays(props.category.holidays);
     }
     if (props.selectedHoliday) {
       reset(formatSelectedHoliday(props.selectedHoliday));
@@ -209,45 +160,10 @@ function HolidayModal(props: HolidayModalProps) {
                     <Text as='b' fontSize='lg'>
                       Selecione as datas:
                     </Text>
-                    <DateCalendar
-                      renderLoading={() => <DayCalendarSkeleton />}
-                      showDaysOutsideCurrentMonth
-                      slots={{
-                        day: ServerDay,
-                      }}
-                      slotProps={{
-                        day: {
-                          highlightedDays,
-                          ocuppedDays,
-                        } as any,
-                      }}
-                      onChange={(newValue: Moment) => {
-                        const newDates = [...dates];
-                        const newHighlightedDays = [...highlightedDays];
-                        const date = moment(newValue).format(
-                          'YYYY-MM-DDTHH:mm:ss',
-                        );
-                        const index = newDates.findIndex(
-                          (value) => value === date,
-                        );
-                        if (index >= 0) {
-                          newDates.splice(index, 1);
-                          const highlightIndex = newHighlightedDays.findIndex(
-                            (val) =>
-                              val[0] === newValue.date() &&
-                              val[1] === newValue.month(),
-                          );
-                          newHighlightedDays.splice(highlightIndex, 1);
-                        } else {
-                          newDates.push(date);
-                          newHighlightedDays.push([
-                            newValue.date(),
-                            newValue.month(),
-                          ]);
-                        }
-                        setHighlightedDays(newHighlightedDays);
-                        setDates(newDates.sort(sortDates));
-                      }}
+                    <DateCalendarPicker
+                      selectedDays={selectedDays}
+                      occupiedDays={occupiedDays}
+                      dayClick={dayClick}
                     />
                     <Text fontSize={'sm'}>
                       Clique para adicionar, clique novamente para remover
@@ -256,7 +172,7 @@ function HolidayModal(props: HolidayModalProps) {
                       As datas em cinza já estão cadastradas
                     </Text>
 
-                    {dates.length === 0 ? (
+                    {selectedDays.length === 0 ? (
                       <Alert status='error' fontSize='sm' mb={4}>
                         <AlertIcon />
                         Nenhuma data adicionada
@@ -270,7 +186,7 @@ function HolidayModal(props: HolidayModalProps) {
         </FormProvider>
         <ModalFooter>
           <Button
-            disabled={isMultipleHolidays && dates.length === 0}
+            disabled={isMultipleHolidays && selectedDays.length === 0}
             onClick={props.isUpdate ? handleUpdateSubmit : handleCreateSubmit}
             mr={4}
           >

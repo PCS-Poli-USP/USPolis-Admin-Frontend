@@ -50,7 +50,7 @@ function Holidays() {
     deleteHolidayCategory,
   } = useHolidaysCategories();
 
-  const { deleteHoliday } = useHolidays();
+  const { deleteHoliday, loading: loadingHolidays } = useHolidays();
 
   function handleCreateHolidayCategoryButton() {
     onOpenHolidayCategoryModal();
@@ -89,10 +89,10 @@ function Holidays() {
     onOpenDeleteHolidayDialog();
   }
 
-  function handleDeleteHoliday() {
+  async function handleDeleteHoliday() {
     if (!selectedHoliday) return;
-    deleteHoliday(selectedHoliday.id);
-    getHolidaysCategories();
+    await deleteHoliday(selectedHoliday.id);
+    await getHolidaysCategories();
   }
 
   return (
@@ -112,7 +112,7 @@ function Holidays() {
           </Button>
         </Flex>
         <HolidayCategoryAccordion
-          loading={loadingCategories}
+          loading={loadingCategories || loadingHolidays}
           categories={holidaysCategories}
           onHolidayCategoryUpdate={handleEditHolidayCategoryButton}
           onHolidayCategoryDelete={handleDeleteHolidayCategoryButton}

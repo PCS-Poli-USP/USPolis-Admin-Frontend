@@ -50,9 +50,11 @@ export const useDateCalendarPicker = () => {
   return {
     dayClick,
     selectedDays,
+    setSelectedDays,
     selectDay,
     selectManyDays,
     occupiedDays,
+    setOccupiedDays,
     occupyDay,
     occupyManyDays,
   };

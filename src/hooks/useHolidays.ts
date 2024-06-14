@@ -105,7 +105,6 @@ const useHolidays = () => {
         .delete(id)
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao remover feriado', 'success');
-
           getHolidays();
         })
         .catch((error) => {
