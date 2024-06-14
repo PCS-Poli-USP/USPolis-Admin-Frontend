@@ -1,6 +1,6 @@
 import useCustomToast from 'hooks/useCustomToast';
 import { CreateCalendar, UpdateCalendar } from 'models/http/requests/calendar.request.models';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
+import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
 import { useCallback, useEffect, useState } from 'react';
 import CalendarsService from 'services/api/calendars.service';
 import { sortCalendarResponse } from 'utils/calendars/calendar.sorter';
@@ -9,11 +9,11 @@ const service = new CalendarsService();
 
 const useCalendars = () => {
   const [loading, setLoading] = useState(false);
-  const [calendars, setCalendars] = useState<BuildingResponse[]>([]);
+  const [calendars, setCalendars] = useState<CalendarResponse[]>([]);
 
   const showToast = useCustomToast();
 
-  const getBuildings = useCallback(async () => {
+  const getCalendars = useCallback(async () => {
     setLoading(true);
     await service
       .list()
@@ -39,7 +39,7 @@ const useCalendars = () => {
             `Calendário ${data.name} criado com sucesso!`,
             'success',
           );
-          getBuildings();
+          getCalendars();
         })
         .catch((error) => {
           showToast('Erro', `Erro ao criar calendário: ${error}`, 'error');
@@ -48,7 +48,7 @@ const useCalendars = () => {
           setLoading(false);
         });
     },
-    [getBuildings, showToast],
+    [getCalendars, showToast],
   );
 
   const updateCalendar = useCallback(async (id: number, data: UpdateCalendar) => {
@@ -57,7 +57,7 @@ const useCalendars = () => {
       .update(id, data)
       .then((response) => {
         showToast('Sucesso', `Calendário atualizado com sucesso!`, 'success');
-        getBuildings();
+        getCalendars();
       })
       .catch((error) => {
         showToast(
@@ -69,7 +69,7 @@ const useCalendars = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [getBuildings, showToast]);
+  }, [getCalendars, showToast]);
 
   const deleteCalendar = useCallback(
     async (id: number) => {
@@ -79,7 +79,7 @@ const useCalendars = () => {
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao remover calendário', 'success');
 
-          getBuildings();
+          getCalendars();
         })
         .catch((error) => {
           showToast('Erro!', 'Erro ao remover calendário', 'error');
@@ -89,17 +89,17 @@ const useCalendars = () => {
           setLoading(false);
         });
     },
-    [getBuildings, showToast],
+    [getCalendars, showToast],
   );
 
   useEffect(() => {
-    getBuildings();
-  }, [getBuildings]);
+    getCalendars();
+  }, [getCalendars]);
 
   return {
     loading,
     calendars,
-    getBuildings,
+    getCalendars,
     createCalendar,
     updateCalendar,
     deleteCalendar,

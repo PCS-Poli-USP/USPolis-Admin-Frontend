@@ -73,8 +73,16 @@ export namespace WeekDay {
   }
 
   export function getValues(): WeekDay[] {
-    return Object.values(WeekDay) as WeekDay[];
-}
+    return [
+      WeekDay.MONDAY,
+      WeekDay.TUESDAY,
+      WeekDay.WEDNESDAY,
+      WeekDay.THURSDAY,
+      WeekDay.FRIDAY,
+      WeekDay.SATURDAY,
+      WeekDay.SUNDAY,
+    ];
+  }
 
   export function fromStr(dayStr: string): WeekDay {
     const day = mapping[dayStr.toLowerCase()];

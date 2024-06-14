@@ -1,5 +1,5 @@
 import { ClassType } from 'utils/enums/classes.enum';
-import { CreateManySchedule } from './schedule.request.models';
+import { CreateSchedule } from './schedule.request.models';
 
 export interface ClassBase {
   start_date: string;
@@ -20,7 +20,7 @@ export interface ClassBase {
 
 export interface CreateClass extends ClassBase {
   subject_id: number;
-  schedules_data: CreateManySchedule;
+  schedules_data: CreateSchedule[];
 }
 
 export interface UpdateClass extends CreateClass {}
