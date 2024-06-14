@@ -1,24 +1,19 @@
 import { HStack, Text, VStack } from '@chakra-ui/react';
-import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input, Select } from 'components/common';
-import { ClassResponse } from 'models/http/responses/class.response.models';
 import { ClassType } from 'utils/enums/classes.enum';
 import { NumberInput } from 'components/common/form/NumberInput';
 import { ClassValidator } from 'utils/classes/classes.validator';
-import { ClassModalStepsProps } from '../class.modal.steps.interface';
 import {
   classFirstDefaultValues,
   classFirstSchema,
 } from './class.modal.steps.first.form';
 import ListInput from 'components/common/form/ListInput';
-import { ClassFirstForm } from './class.modal.steps.first.interface';
-
-interface ClassModalFirstStepProps extends ClassModalStepsProps {
-  subjects: SubjectResponse[];
-  selectedClass?: ClassResponse;
-}
+import {
+  ClassFirstForm,
+  ClassModalFirstStepProps,
+} from './class.modal.steps.first.interface';
 
 function ClassModalFirstStep(props: ClassModalFirstStepProps) {
   const classForm = useForm<ClassFirstForm>({
@@ -33,7 +28,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
           <Text as={'b'} fontSize={'lg'}>
             Informações gerais
           </Text>
-          
+
           <Select
             mt={4}
             label={'Disciplina'}

@@ -42,6 +42,7 @@ import { ClassResponse } from 'models/http/responses/class.response.models';
 import useClasses from 'hooks/useClasses';
 import ClassModal from './ClassModal/class.modal';
 import useSubjects from 'hooks/useSubjetcts';
+import useCalendars from 'hooks/useCalendars';
 
 function Classes() {
   const {
@@ -103,6 +104,7 @@ function Classes() {
   const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
 
   const { subjects } = useSubjects();
+  const { calendars } = useCalendars();
   const { classes } = useClasses();
 
   const buildingsService = new BuildingsService();
@@ -414,11 +416,12 @@ function Classes() {
         onSave={handleRegister}
         buildings={buildingsList}
       /> */}
-      <ClassModal 
+      <ClassModal
         isOpen={isOpenRegister}
         onClose={onCloseRegister}
         isUpdate={false}
         subjects={subjects}
+        calendars={calendars}
       />
       {/* <EditModal
         isOpen={isOpenEdit}

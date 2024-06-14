@@ -2,15 +2,8 @@ import {
   Alert,
   AlertIcon,
   Button,
-  Checkbox,
-  FormControl,
-  FormLabel,
   VStack,
   HStack,
-  IconButton,
-  Input as ChakraInput,
-  List,
-  ListItem,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -18,9 +11,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Select as ChakraSelect,
-  Text,
-  Tooltip,
   Stepper,
   useSteps,
   Step,
@@ -35,48 +25,21 @@ import {
 } from '@chakra-ui/react';
 
 import {
-  BsPersonCheckFill,
-  BsFillPenFill,
-  BsFillTrashFill,
-} from 'react-icons/bs';
-import { CalendarIcon } from '@chakra-ui/icons';
+  ArrowBackIcon,
+  ArrowForwardIcon,
+  DownloadIcon,
+  SmallCloseIcon,
+} from '@chakra-ui/icons';
 
-import { useEffect, useState } from 'react';
-import { weekDaysFormatter } from 'utils/classes/classes.formatter';
-import { Input, Select } from 'components/common';
-import { FormProvider, useForm } from 'react-hook-form';
-import {
-  ClassForm,
-  ClassModalProps,
-  ClassScheduleForm,
-} from './class.modal.interface';
-import {
-  scheduleDefaultValues,
-  scheduleSchema,
-} from './class.modal.schedule.form';
-import { yupResolver } from '@hookform/resolvers/yup';
-// import {
-//   classDefaultValues,
-//   classSchema,
-// } from './Steps/First/class.modal.steps.first.form';
-import { ClassType } from 'utils/enums/classes.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
-import ClassModalStepsFirst from './Steps/First/class.modal.steps.first';
+import { useState } from 'react';
+import { ClassModalProps } from './class.modal.interface';
+
 import ClassModalFirstStep from './Steps/First/class.modal.steps.first';
-
-const steps = [
-  { title: 'Primeiro', description: 'Informações da Turma' },
-  { title: 'Segundo', description: 'Horários da Turma' },
-  { title: 'Terceiro', description: 'Preferências da Turma' },
-];
+import { ClassFirstForm } from './Steps/First/class.modal.steps.first.interface';
+import ClassModalSecondStep from './Steps/Second/class.modal.steps.second';
+import ClassModalThirdStep from './Steps/Third/class.modal.steps.third';
 
 function ClassModal(props: ClassModalProps) {
-  const [professor, setProfessor] = useState('');
-  const [hasProfessorError, setHasProfessorError] = useState(false);
-  const [professors, setProfessors] = useState<string[]>([]);
-  const [isEditingProfessor, setIsEditingProfessor] = useState(false);
-  const [editProfessorIndex, setEditProfessorIndex] = useState(0);
-
   const [week_day, setWeekDay] = useState('');
   const [week_days, setWeekDays] = useState<string[]>([]);
 
@@ -88,36 +51,27 @@ function ClassModal(props: ClassModalProps) {
 
   const [isEditingDate, setIsEditingDate] = useState(false);
   const [editDateIndex, setEditDateIndex] = useState(0);
-  const [buildingName, setBuildingName] = useState('');
-
-  // const classForm = useForm<ClassForm>({
-  //   defaultValues: classDefaultValues,
-  //   resolver: yupResolver(classSchema),
-  // });
-
-  // const scheduleForm = useForm<ClassScheduleForm>({
-  //   defaultValues: scheduleDefaultValues,
-  //   resolver: yupResolver(scheduleSchema),
-  // });
-
-  // const {
-  //   trigger: classTrigger,
-  //   reset: classReset,
-  //   getValues: classGetValues,
-  //   clearErrors: classClearErrors,
-  // } = classForm;
-  // const {
-  //   trigger: scheduleTrigger,
-  //   reset: scheduleReset,
-  //   getValues: scheduleGetValues,
-  //   clearErrors: scheduleClearErrors,
-  // } = scheduleForm;
+ 
 
   // useEffect(() => {
   //   if (props.selectedClass) {
   //     classReset({ subject_id: props.selectedClass.subject_id });
   //   }
   // }, [props.selectedClass, classReset]);
+
+  async function handleFirstNextClick(data: ClassFirstForm) {}
+
+  function handleNextClick() {
+    if (activeStep < steps.length - 1) {
+      setActiveStep(activeStep + 1);
+    }
+  }
+
+  function handlePreviousClick() {
+    if (activeStep > 0) {
+      setActiveStep(activeStep - 1);
+    }
+  }
 
   function handleSaveClick() {
     props.onClose();
@@ -129,40 +83,6 @@ function ClassModal(props: ClassModalProps) {
 
   function handleSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
     setWeekDay(event.target.value);
-  }
-
-  const handleProfessorButton = () => {
-    // if (validator.isInvalidProfessor(professor)) {
-    //   setHasProfessorError(true);
-    //   return;
-    // } else setHasProfessorError(false);
-
-    const names: string[] = [...professors];
-    if (!isEditingProfessor) {
-      names.push(professor);
-    } else {
-      names[editProfessorIndex] = professor;
-    }
-    setProfessor('');
-    setIsEditingProfessor(false);
-  };
-
-  function handleProfessorInputKeyDown(
-    event: React.KeyboardEvent<HTMLInputElement>,
-  ) {
-    if (event.key === 'Enter') handleProfessorButton();
-  }
-
-  function handleEditProfessorButton(index: number) {
-    setIsEditingProfessor(true);
-    setEditProfessorIndex(index);
-    setProfessor(professors[index]);
-  }
-
-  function handleDeleteProfessorButton(index: number) {
-    const newProfessors = [...professors];
-    newProfessors.splice(index, 1);
-    setProfessors(newProfessors);
   }
 
   function handleDateButton() {
@@ -220,8 +140,48 @@ function ClassModal(props: ClassModalProps) {
     setEndTimes(newEndtimes);
   }
 
-  const { activeStep } = useSteps({
-    index: 1,
+  const steps = [
+    {
+      title: 'Primeiro',
+      description: 'Informações',
+      content: (
+        <ClassModalFirstStep
+          isUpdate={false}
+          subjects={props.subjects}
+          selectedClass={props.selectedClass}
+          onNext={handleFirstNextClick}
+        />
+      ),
+    },
+    {
+      title: 'Segundo',
+      description: 'Horários e Datas',
+      content: (
+        <ClassModalSecondStep
+          isUpdate={false}
+          calendars={props.calendars}
+          selectedClass={props.selectedClass}
+          onNext={handleFirstNextClick}
+        />
+      ),
+    },
+    {
+      title: 'Terceiro',
+      description: 'Preferências',
+      content: (
+        <ClassModalThirdStep
+          isUpdate={false}
+          subjects={props.subjects}
+          selectedClass={props.selectedClass}
+          onNext={handleFirstNextClick}
+        />
+      ),
+    },
+    { title: 'Quarto', description: 'Finalizar', content: undefined },
+  ];
+
+  const { activeStep, setActiveStep } = useSteps({
+    index: 0,
     count: steps.length,
   });
 
@@ -231,19 +191,21 @@ function ClassModal(props: ClassModalProps) {
       onClose={handleCloseModal}
       closeOnOverlayClick={false}
       motionPreset='slideInBottom'
-      size={'3xl'}
+      size={'4xl'}
       scrollBehavior='outside'
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Cadastrar uma turma</ModalHeader>
+        <ModalHeader>
+          Cadastrar uma turma - {`${steps[activeStep].description}`}
+        </ModalHeader>
         <ModalCloseButton />
 
         <ModalBody pb={10}>
           <VStack>
-            <Stepper size='lg' index={activeStep}>
+            <Stepper size='lg' index={activeStep} alignItems={'start'}>
               {steps.map((step, index) => (
-                <Step key={index}>
+                <Step key={index} onClick={() => setActiveStep(index)}>
                   <StepIndicator>
                     <StepStatus
                       complete={<StepIcon />}
@@ -262,126 +224,53 @@ function ClassModal(props: ClassModalProps) {
               ))}
             </Stepper>
 
-            <Stepper size={'lg'} index={activeStep}>
-              <ClassModalFirstStep
-                title={steps[0].title}
-                description={steps[0].description}
-                subjects={props.subjects}
-                selectedClass={props.selectedClass}
-              />
-            </Stepper>
-          </VStack>
-
-          {/* <VStack spacing='20px' alignItems='start'> */}
-          {/* <Select
-              label={'Dia da semana'}
-              name={'Teste'}
-              placeholder='Escolha o dia da semana'
-              value={week_day}
-              options={WeekDay.getValues().map((value: WeekDay) => ({
-                label: WeekDay.translate(value),
-                value: value,
-              }))}
-            />
-
-            <FormLabel>Horário da aula</FormLabel>
-            <HStack spacing='5px'>
-              <FormLabel>Início</FormLabel>
-              <Input
-                label={'Início'}
-                name={'aaa'}
-                placeholder='Horario de início da disciplina'
-                type='time'
-                value={start_time}
-              />
-              <FormLabel>Fim</FormLabel>
-              <Input
-                label={'Fim'}
-                name={'aaa'}
-                placeholder='Horário de encerramento da disciplina'
-                type='time'
-                value={end_time}
-              />
-            </HStack>
-
-            <FormControl>
-              <Button type='submit' onClick={handleDateButton}>
-                {isEditingDate ? 'Editar Horário' : 'Adicionar horário'}
-              </Button>
-            </FormControl>
-
-            <Text as='b' fontSize='lg'>
-              Horários adicionados:
-            </Text>
-            {week_days.length > 0 ? (
-              <List spacing={3}>
-                {week_days.map((week_day, index) => (
-                  <HStack key={index}>
-                    <CalendarIcon />
-                    <Text>
-                      {` ${weekDaysFormatter(week_day)}, ${
-                        start_time[index]
-                      } às ${end_time[index]}`}{' '}
-                    </Text>
-                    <Tooltip label='Editar'>
-                      <IconButton
-                        colorScheme='yellow'
-                        size='sm'
-                        variant='ghost'
-                        aria-label='editar-data'
-                        icon={<BsFillPenFill />}
-                        onClick={() => handleEditDateButton(index)}
-                      />
-                    </Tooltip>
-
-                    <Tooltip label='Remover'>
-                      <IconButton
-                        colorScheme='red'
-                        size='sm'
-                        variant='ghost'
-                        aria-label='remover-data'
-                        icon={<BsFillTrashFill />}
-                        onClick={() => handleDeleteDateButton(index)}
-                      />
-                    </Tooltip>
-                  </HStack>
-                ))}
-              </List>
+            {steps[activeStep].content ? (
+              steps[activeStep].content
             ) : (
-              <Alert status='error' fontSize='sm' mb={4}>
+              <Alert status='error' fontSize='sm' mt={4}>
                 <AlertIcon />
-                Nenhum horário adicionado
+                Não foi possível carregar o conteúdo do passo atual
               </Alert>
             )}
-
-            <Text as='b' fontSize='xl'>
-              Preferências
-            </Text>
-
-            <HStack>
-              <Checkbox isChecked={true}>Acessibilidade</Checkbox>
-              <Checkbox>Ar Condicionado</Checkbox>
-              <Checkbox>Projetor</Checkbox>
-            </HStack>
-            <Checkbox isChecked={true}>
-              Ignorar para alocação automática
-            </Checkbox> */}
-          {/* </VStack> */}
+          </VStack>
         </ModalBody>
 
         <ModalFooter>
           <VStack width={'full'}>
-            {true ? (
-              <Alert status='error' fontSize='sm'>
-                <AlertIcon />
-                Fomulário inválido, corrija os campos inválidos
-              </Alert>
-            ) : undefined}
             <HStack spacing='10px' alignSelf={'flex-end'}>
-              <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-                Salvar
+              <Button
+                colorScheme={'red'}
+                onClick={handleCloseModal}
+                rightIcon={<SmallCloseIcon />}
+              >
+                Cancelar
               </Button>
-              <Button onClick={handleCloseModal}>Cancelar</Button>
+              <Button
+                colorScheme={'blue'}
+                isDisabled={activeStep === 0}
+                leftIcon={<ArrowBackIcon />}
+                onClick={handlePreviousClick}
+              >
+                Anterior
+              </Button>
+
+              {activeStep === steps.length - 1 ? (
+                <Button
+                  colorScheme={'blue'}
+                  onClick={handleSaveClick}
+                  rightIcon={<DownloadIcon />}
+                >
+                  Finalizar
+                </Button>
+              ) : (
+                <Button
+                  colorScheme={'blue'}
+                  rightIcon={<ArrowForwardIcon />}
+                  onClick={handleNextClick}
+                >
+                  Próximo
+                </Button>
+              )}
             </HStack>
           </VStack>
         </ModalFooter>
