@@ -13,6 +13,7 @@ interface InputProps extends FieldProps {
   value?: string | number | readonly string[] | undefined;
   min?: string | number | undefined;
   max?: string | number | undefined;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }
 
 export function Input({
@@ -29,6 +30,7 @@ export function Input({
   mb = undefined,
   mr = undefined,
   ml = undefined,
+  onChange = undefined,
 }: InputProps) {
   const {
     register,
@@ -54,6 +56,7 @@ export function Input({
         hidden={hidden}
         min={min}
         max={max}
+        onChange={onChange}
       />
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
     </FormControl>

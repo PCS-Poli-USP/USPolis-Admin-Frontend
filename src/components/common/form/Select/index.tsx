@@ -17,6 +17,7 @@ type Option = {
 interface SelectProps extends FieldProps {
   options: Option[];
   value?: string | number;
+  onChange?: React.ChangeEventHandler<HTMLSelectElement>;
 }
 
 export function Select({
@@ -31,6 +32,7 @@ export function Select({
   mb = undefined,
   mr = undefined,
   ml = undefined,
+  onChange = undefined,
 }: SelectProps) {
   const {
     register,
@@ -46,6 +48,7 @@ export function Select({
         value={value}
         // placeholder={placeholder}
         icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
+        onChange={onChange}
       >
         {placeholder ? (
           <option value={undefined}>{placeholder}</option>

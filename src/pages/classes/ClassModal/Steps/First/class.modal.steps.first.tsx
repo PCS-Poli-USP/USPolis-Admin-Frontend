@@ -43,9 +43,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               label={'Vagas'}
               name={'vacancies'}
               placeholder={'Quantidade de vagas'}
-              value={
-                props.selectedClass ? props.selectedClass.vacancies : 0
-              }
+              value={props.selectedClass ? props.selectedClass.vacancies : 0}
               min={0}
               max={99999}
             />
@@ -53,11 +51,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               label={'Inscritos'}
               name={'subscribers'}
               placeholder={'Quantidade de inscritos'}
-              value={
-                props.selectedClass
-                  ? props.selectedClass.subscribers
-                  : 0
-              }
+              value={props.selectedClass ? props.selectedClass.subscribers : 0}
               min={0}
               max={99999}
             />
@@ -65,9 +59,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               label={'Pendentes'}
               name={'pendings'}
               placeholder={'Quantidade de pendentes'}
-              value={
-                props.selectedClass ? props.selectedClass.pendings : 0
-              }
+              value={props.selectedClass ? props.selectedClass.pendings : 0}
               min={0}
               max={99999}
             />

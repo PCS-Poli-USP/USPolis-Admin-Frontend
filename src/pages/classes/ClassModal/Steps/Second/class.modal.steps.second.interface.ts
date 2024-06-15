@@ -6,7 +6,7 @@ import { WeekDay } from 'utils/enums/weekDays.enum';
 import { UseFormReturn } from 'react-hook-form';
 
 export interface ClassModalSecondStepProps extends ClassModalStepsProps {
-  form: UseFormReturn<ClassSecondForm, any, ClassSecondForm>,
+  form: UseFormReturn<ClassSecondForm, any, ClassSecondForm>;
   calendars: CalendarResponse[];
   selectedClass?: ClassResponse;
 }
@@ -15,7 +15,12 @@ export interface ClassSecondForm {
   end_date: string;
   calendar_ids: number[];
   recurrence: Recurrence;
-  week_day: WeekDay;
-  start_time: string;
-  end_time: string;
+  week_days: WeekDay[];
+  start_times: string[];
+  end_times: string[];
+  start_time?: string;
+  end_time?: string;
+  week_day?: WeekDay;
+  schedule_start_date?: string;
+  schedule_end_date?: string;
 }

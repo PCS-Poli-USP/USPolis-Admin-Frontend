@@ -53,6 +53,8 @@ export function ListInput({
 }: ListInputProps) {
   const {
     control,
+    watch,
+    setValue,
     formState: { errors },
   } = useFormContext();
 
@@ -61,9 +63,9 @@ export function ListInput({
   const [editingIndex, setEditingIndex] = useState(0);
   const [hasValueError, setHasValueError] = useState(false);
 
-  const [listValues, setListValues] = useState<string[]>([]);
+  const listValues: string[] = watch(name);
   if (values) {
-    setListValues(values);
+    setValue(name, values);
   }
 
   function handleEditValueButton(index: number) {
@@ -78,7 +80,7 @@ export function ListInput({
   ) {
     const newListValues = [...listValues];
     newListValues.splice(index, 1);
-    setListValues(newListValues);
+    setValue(name, newListValues);
     field.onChange(newListValues);
   }
 
@@ -98,7 +100,7 @@ export function ListInput({
     }
     setCurrentValue('');
     setIsEditing(false);
-    setListValues(newListValues);
+    setValue(name, newListValues);
     field.onChange(newListValues);
   }
 

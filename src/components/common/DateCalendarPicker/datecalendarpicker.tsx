@@ -9,6 +9,7 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
   const maxDate = moment({ year: currentYear, month: 11, day: 31 }); // Dezembro 31 do ano atual
   return (
     <DateCalendar
+      readOnly={props.readOnly}
       minDate={minDate}
       maxDate={maxDate}
       views={['day']}
@@ -24,7 +25,7 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
         } as any,
       }}
       onChange={(newValue: Moment) => {
-        if (!!props.isVisualization) return;
+        if (!!props.readOnly) return;
         const date = moment(newValue).format('YYYY-MM-DD');
         props.dayClick(date);
       }}
