@@ -3,6 +3,7 @@ import { ClassResponse } from "models/http/responses/class.response.models";
 import { SubjectResponse } from "models/http/responses/subject.response.models";
 import { ModalProps } from "models/interfaces";
 import { Recurrence } from "utils/enums/recurrence.enum";
+import { WeekDay } from "utils/enums/weekDays.enum";
 
 export interface ClassModalProps extends ModalProps {
   isUpdate: boolean;
@@ -29,6 +30,15 @@ export interface ClassForm {
   accessibility: boolean;
 
   ignore_to_allocate: boolean;
+}
+
+export interface ScheduleData {
+  week_day: WeekDay;
+  start_time: string;
+  end_time: string;
+  start_date: string;
+  end_date: string;
+  recurrence: Recurrence;
 }
 
 export interface ClassScheduleForm {

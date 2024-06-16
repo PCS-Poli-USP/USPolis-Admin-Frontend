@@ -30,7 +30,7 @@ import {
   SmallCloseIcon,
 } from '@chakra-ui/icons';
 import { useState } from 'react';
-import { ClassModalProps } from './class.modal.interface';
+import { ClassModalProps, ScheduleData } from './class.modal.interface';
 import ClassModalFirstStep from './Steps/First/class.modal.steps.first';
 import { ClassFirstForm } from './Steps/First/class.modal.steps.first.interface';
 import ClassModalSecondStep from './Steps/Second/class.modal.steps.second';
@@ -57,6 +57,8 @@ function ClassModal(props: ClassModalProps) {
     defaultValues: classSecondDefaultValues,
     resolver: yupResolver(classSecondSchema),
   });
+
+  const [schedules, setSchedules] = useState<ScheduleData[]>([]);
 
   async function handleFirstNextClick() {
     const { trigger, getValues } = firstForm;
@@ -116,6 +118,8 @@ function ClassModal(props: ClassModalProps) {
           form={secondForm}
           isUpdate={false}
           calendars={props.calendars}
+          schedules={schedules}
+          setSchedules={setSchedules}
           selectedClass={props.selectedClass}
         />
       ),
@@ -146,7 +150,7 @@ function ClassModal(props: ClassModalProps) {
       onClose={handleCloseModal}
       closeOnOverlayClick={false}
       motionPreset='slideInBottom'
-      size={'4xl'}
+      size={'5xl'}
       scrollBehavior='outside'
     >
       <ModalOverlay />

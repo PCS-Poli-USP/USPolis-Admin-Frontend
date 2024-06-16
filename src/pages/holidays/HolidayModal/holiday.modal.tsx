@@ -27,11 +27,21 @@ import { useEffect, useState } from 'react';
 import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
 import moment from 'moment';
 import useHolidays from 'hooks/useHolidays';
-import DateCalendarPicker, { useDateCalendarPicker } from 'components/common/DateCalendarPicker';
+import DateCalendarPicker, {
+  useDateCalendarPicker,
+} from 'components/common/DateCalendarPicker';
 
 function HolidayModal(props: HolidayModalProps) {
   const [isMultipleHolidays, setIsMultipleHolidays] = useState(false);
-  const {selectedDays, occupiedDays, dayClick, setOccupiedDays, setSelectedDays} = useDateCalendarPicker();
+  const {
+    selectedDays,
+    occupiedDays,
+    highlightedDays,
+    dayClick,
+    setOccupiedDays,
+    setSelectedDays,
+    setHighlightedDays,
+  } = useDateCalendarPicker();
 
   const form = useForm<HolidayForm>({
     defaultValues: defaultValues,
@@ -44,7 +54,10 @@ function HolidayModal(props: HolidayModalProps) {
   async function handleCreateSubmit() {
     if (isMultipleHolidays) {
       const values = getValues();
-      await createManyHolidays({ category_id: values.category_id, dates: selectedDays });
+      await createManyHolidays({
+        category_id: values.category_id,
+        dates: selectedDays,
+      });
     } else {
       const isValid = await trigger();
       if (!isValid) return;
@@ -95,10 +108,11 @@ function HolidayModal(props: HolidayModalProps) {
   function fetchOccupiedDays(data: HolidayUnfetchResponse[]) {
     const newOcuppedDays: string[] = [];
     data.forEach((val) => {
-      const date = moment(val.date).format('YYYY-MM-DD');;
+      const date = moment(val.date).format('YYYY-MM-DD');
       newOcuppedDays.push(date);
     });
     setOccupiedDays(newOcuppedDays);
+    setHighlightedDays(newOcuppedDays);
   }
 
   useEffect(() => {
@@ -162,6 +176,7 @@ function HolidayModal(props: HolidayModalProps) {
                     </Text>
                     <DateCalendarPicker
                       selectedDays={selectedDays}
+                      highlightedDays={highlightedDays}
                       occupiedDays={occupiedDays}
                       dayClick={dayClick}
                     />
