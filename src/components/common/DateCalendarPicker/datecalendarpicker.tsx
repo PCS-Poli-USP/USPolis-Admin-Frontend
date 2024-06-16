@@ -21,6 +21,7 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
       slotProps={{
         day: {
           selectedDays: props.selectedDays,
+          highlightedDays: props.highlightedDays,
           occupiedDays: props.occupiedDays,
         } as any,
       }}

@@ -3,6 +3,7 @@ import { sortDates } from 'utils/holidays/holidays.sorter';
 
 export const useDateCalendarPicker = () => {
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [highlightedDays, setHighlightedDays] = useState<string[]>([]);
   const [occupiedDays, setOccupiedDays] = useState<string[]>([]);
 
   const dayClick = useCallback((day: string) => {
@@ -47,6 +48,22 @@ export const useDateCalendarPicker = () => {
     });
   }, []);
 
+  const highlightDay = useCallback((day: string) => {
+    setHighlightedDays((prev) => {
+      if (!prev.includes(day)) {
+        return [...prev, day].sort(sortDates);
+      }
+      return prev;
+    });
+  }, []);
+
+  const hightlightManyDays = useCallback((days: string[]) => {
+    setHighlightedDays((prev) => {
+      const newDays = days.filter((day) => !prev.includes(day));
+      return [...prev, ...newDays].sort(sortDates);
+    });
+  }, []);
+
   return {
     dayClick,
     selectedDays,
@@ -57,5 +74,9 @@ export const useDateCalendarPicker = () => {
     setOccupiedDays,
     occupyDay,
     occupyManyDays,
+    highlightedDays,
+    setHighlightedDays,
+    highlightDay,
+    hightlightManyDays,
   };
 };

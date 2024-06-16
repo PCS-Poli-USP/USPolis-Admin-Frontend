@@ -5,12 +5,18 @@ import moment, { Moment } from 'moment';
 function ServerDay(
   props: PickersDayProps<Moment> & {
     selectedDays?: string[];
+    highlightedDays?: string[];
     occupiedDays?: string[];
+    selectIcon?: string;
+    highlightIcon?: string;
   },
 ) {
   const {
     selectedDays = [],
+    highlightedDays = [],
     occupiedDays = [],
+    selectIcon = undefined,
+    highlightIcon = undefined,
     day,
     outsideCurrentMonth,
     ...other
@@ -23,6 +29,13 @@ function ServerDay(
       parsedDate.month() === props.day.month()
     );
   });
+  const isHighlight = !!highlightedDays.find((val) => {
+    const parsedDate = moment(val);
+    return (
+      parsedDate.date() === props.day.date() &&
+      parsedDate.month() === props.day.month()
+    );
+  })
   const isOcupped = !!occupiedDays.find((val) => {
     const parsedDate = moment(val);
     return (
@@ -30,12 +43,15 @@ function ServerDay(
       parsedDate.month() === props.day.month()
     );
   });
+  
+  const sIcon = selectIcon ? selectIcon : '✔️'
+  const hIcon = highlightIcon ? highlightIcon : '📅'
 
   return (
     <Badge
       key={props.day.toString()}
       overlap='circular'
-      badgeContent={isSelected ? '✔️' : isOcupped ? '📅' : undefined}
+      badgeContent={isSelected ? sIcon : isHighlight ? hIcon : undefined}
     >
       <PickersDay
         {...other}
