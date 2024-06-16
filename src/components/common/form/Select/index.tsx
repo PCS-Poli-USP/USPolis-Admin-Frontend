@@ -46,17 +46,17 @@ export function Select({
         {...register(name)}
         disabled={disabled || isLoading}
         value={value}
-        // placeholder={placeholder}
+        placeholder={placeholder}
         icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
         onChange={onChange}
       >
         {placeholder ? (
-          <option value={undefined}>{placeholder}</option>
+          undefined
         ) : (
           <option value={undefined}>Selecione uma opção</option>
         )}
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
+        {options.map((opt, index) => (
+          <option key={index} value={opt.value}>
             {opt.label}
           </option>
         ))}
