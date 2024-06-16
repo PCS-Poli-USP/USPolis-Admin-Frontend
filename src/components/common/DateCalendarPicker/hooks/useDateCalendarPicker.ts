@@ -12,7 +12,7 @@ export const useDateCalendarPicker = () => {
         const newDays = prev.filter((val) => val !== day);
         return newDays.sort(sortDates);
       }
-      return [...prev, day].sort(sortDates)
+      return [...prev, day].sort(sortDates);
     });
   }, []);
 
@@ -64,6 +64,13 @@ export const useDateCalendarPicker = () => {
     });
   }, []);
 
+  const removeManyHighlightDays = useCallback((days: string[]) => {
+    setHighlightedDays((prev) => {
+      const newHighlightDays = prev.filter((day) => !prev.includes(day));
+      return [...newHighlightDays].sort(sortDates);
+    });
+  }, []);
+
   return {
     dayClick,
     selectedDays,
@@ -78,5 +85,6 @@ export const useDateCalendarPicker = () => {
     setHighlightedDays,
     highlightDay,
     hightlightManyDays,
+    removeManyHighlightDays,
   };
 };

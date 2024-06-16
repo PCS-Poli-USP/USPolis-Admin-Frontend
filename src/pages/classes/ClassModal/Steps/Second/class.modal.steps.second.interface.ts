@@ -17,10 +17,6 @@ export interface ClassSecondForm {
   start_date: string;
   end_date: string;
   calendar_ids: number[];
-  recurrences: Recurrence[];
-  week_days: WeekDay[];
-  start_times: string[];
-  end_times: string[];
   start_time?: string;
   end_time?: string;
   week_day?: WeekDay;

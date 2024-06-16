@@ -33,12 +33,13 @@ export interface ClassForm {
 }
 
 export interface ScheduleData {
-  week_day: WeekDay;
+  week_day?: WeekDay;
   start_time: string;
   end_time: string;
   start_date: string;
   end_date: string;
   recurrence: Recurrence;
+  dates?: string[];
 }
 
 export interface ClassScheduleForm {

@@ -69,11 +69,12 @@ function ClassModal(props: ClassModalProps) {
   }
 
   async function handleSecondNextClick() {
-    const { trigger, getValues } = secondForm;
+    const { trigger, getValues, formState } = secondForm;
     const isValid = await trigger();
     const values = getValues();
     console.log(values);
     console.log(isValid);
+    console.log(formState.errors)
     if (!isValid) return;
     setActiveStep(activeStep + 1);
   }

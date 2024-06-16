@@ -33,6 +33,8 @@ import {
 } from 'react-icons/bs';
 import { ScheduleData } from '../../class.modal.interface';
 import moment from 'moment';
+import { generateRecurrenceDates } from 'utils/common/common.generator';
+import { sortScheduleData } from './class.modal.steps.second.utils';
 
 function ClassModalSecondStep(props: ClassModalSecondStepProps) {
   const {
@@ -41,28 +43,58 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
     highlightedDays,
     dayClick,
     setHighlightedDays,
+    setSelectedDays,
   } = useDateCalendarPicker();
   const [isDaily, setIsDayli] = useState(false);
   const [isCustom, setIsCustom] = useState(false);
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [isUpdatingSchedule, setIsUpdatingSchedule] = useState(false);
+  const [scheduleIndex, setScheduleIndex] = useState(0);
 
   useEffect(() => {
-    setHighlightedDays(['2024-06-15']);
-  }, [setHighlightedDays]);
+    const allDates: string[] = [];
+    props.schedules.forEach((schedule) =>
+      allDates.push(
+        ...generateRecurrenceDates(
+          schedule.start_date,
+          schedule.end_date,
+          schedule.recurrence,
+          schedule.week_day,
+        ),
+      ),
+    );
+    setHighlightedDays(allDates);
+  }, [props.schedules, setHighlightedDays]);
+
+  function handleSelectClassDate(date: string, isStart: boolean) {
+    const values = props.form.getValues([
+      'schedule_start_date',
+      'schedule_end_date',
+    ]);
+    if (isStart && !values[0]) {
+      const { setValue } = props.form;
+      setValue('schedule_start_date', date);
+    }
+    if (!isStart && !values[1]) {
+      const { setValue } = props.form;
+      setValue('schedule_end_date', date);
+    }
+  }
 
   function scheduleToString(schedule: ScheduleData) {
     if (
       schedule.recurrence === Recurrence.CUSTOM ||
       schedule.recurrence === Recurrence.DAILY
     )
-      return `${Recurrence.translate(schedule.recurrence)}, de ${moment(
+      return `${Recurrence.translate(schedule.recurrence)}, ${schedule.dates ? `${schedule.dates.length} datas` : ''} de ${moment(
         schedule.start_date,
-      ).format('DD/MM/YYYY')} até ${moment(schedule.start_date).format(
+      ).format('DD/MM/YYYY')} até ${moment(schedule.end_date).format(
         'DD/MM/YYYY',
       )} - ${schedule.start_time} ~ ${schedule.end_time}`;
     else {
       return `${Recurrence.translate(
         schedule.recurrence,
-      )}, às ${WeekDay.translate(schedule.week_day)} de ${moment(
+      )}, às ${WeekDay.translate(schedule.week_day as WeekDay)}s de ${moment(
         schedule.start_date,
       ).format('DD/MM/YYYY')} até ${moment(schedule.start_date).format(
         'DD/MM/YYYY',
@@ -71,13 +103,14 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
   }
 
   function resetScheduleInputs() {
-    const { reset } = props.form;
+    const { reset, getValues } = props.form;
+    const values = getValues(['start_date', 'end_date']);
     reset({
       week_day: classSecondDefaultValues.week_day,
       start_time: classSecondDefaultValues.start_time,
       end_time: classSecondDefaultValues.end_time,
-      schedule_start_date: classSecondDefaultValues.schedule_start_date,
-      schedule_end_date: classSecondDefaultValues.schedule_end_date,
+      schedule_start_date: values[0],
+      schedule_end_date: values[1],
       recurrence: classSecondDefaultValues.recurrence,
     });
   }
@@ -91,9 +124,6 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
       'start_time',
       'end_time',
     ]);
-    if (isDaily || isCustom) {
-      values[1] = WeekDay.MONDAY;
-    }
     return values;
   }
 
@@ -115,7 +145,8 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
       if (!current) {
         result = false;
       }
-      if (current && !values[i]) {
+      if (current && !values[i] && i !== 1) {
+        // week_day can be null when recurrence is dayli or custom
         const { setError } = props.form;
         setError(namesDict[i as numberRange] as fieldNames, {
           type: 'required',
@@ -127,41 +158,58 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
     return result;
   }
 
+  function updateSchedules(schedule: ScheduleData) {
+    if (isUpdatingSchedule) {
+      const newSchedules = [...props.schedules];
+      newSchedules[scheduleIndex] = schedule;
+      props.setSchedules(newSchedules.sort(sortScheduleData));
+    } else {
+      const newSchedules = [...props.schedules, schedule];
+      props.setSchedules(newSchedules.sort(sortScheduleData));
+    }
+  }
+
+  function handleUpdateScheduleClick(index: number) {
+    const { reset } = props.form;
+    const schedule = props.schedules[index];
+    reset({
+      schedule_start_date: schedule.start_date,
+      schedule_end_date: schedule.end_date,
+      recurrence: schedule.recurrence,
+      week_day: schedule.week_day,
+      start_time: schedule.start_time,
+      end_time: schedule.end_time,
+    });
+    if (schedule.recurrence === Recurrence.CUSTOM && schedule.dates) {
+      setIsSelecting(true);
+      setIsCustom(true);
+      setSelectedDays(schedule.dates);
+    }
+    setScheduleIndex(index);
+    setIsUpdatingSchedule(true);
+  }
+
   async function handleScheduleButton() {
     const values = getScheduleInputValues();
     const isValid = await validateScheduleInputs();
     if (!isValid) return;
-
-    const newSchedules = [
-      ...props.schedules,
-      {
-        recurrence: values[0] as Recurrence,
-        week_day: values[1] as WeekDay,
-        start_date: values[2] as string,
-        end_date: values[3] as string,
-        start_time: values[4] as string,
-        end_time: values[5] as string,
-      },
-    ];
-    props.setSchedules(newSchedules);
+    const schedule: ScheduleData = {
+      recurrence: values[0] as Recurrence,
+      week_day: values[1] as WeekDay,
+      start_date: values[2] as string,
+      end_date: values[3] as string,
+      start_time: values[4] as string,
+      end_time: values[5] as string,
+    };
+    if (isCustom) {
+      if (selectedDays.length === 0) return;
+      schedule.dates = selectedDays;
+    }
+    updateSchedules(schedule);
     resetScheduleInputs();
     setIsDayli(false);
     setIsCustom(false);
-  }
-
-  function handleSelectClassDate(date: string, isStart: boolean) {
-    const values = props.form.getValues([
-      'schedule_start_date',
-      'schedule_end_date',
-    ]);
-    if (isStart && !values[0]) {
-      const { setValue } = props.form;
-      setValue('schedule_start_date', date);
-    }
-    if (!isStart && !values[1]) {
-      const { setValue } = props.form;
-      setValue('schedule_end_date', date);
-    }
+    setIsUpdatingSchedule(false);
   }
 
   return (
@@ -200,6 +248,16 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               label={'Calendários'}
               name={'calendar_ids'}
               placeholder={'Escolha um ou mais'}
+              value={
+                props.selectedClass
+                  ? props.selectedClass.calendar_ids.map((val, index) => ({
+                      value: val,
+                      label: props.selectedClass?.calendar_names[
+                        index
+                      ] as string,
+                    }))
+                  : undefined
+              }
               options={props.calendars.map((calendar) => ({
                 value: calendar.id,
                 label: calendar.name,
@@ -225,14 +283,18 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
                 } else setIsDayli(false);
                 if (event.target.value === Recurrence.CUSTOM) {
                   setIsCustom(true);
-                } else setIsCustom(false);
+                  setIsSelecting(true);
+                } else {
+                  setIsCustom(false);
+                  setIsSelecting(false);
+                  setSelectedDays([]);
+                }
               }}
             />
             <Select
               label={'Dia da semana'}
               name={'week_day'}
               placeholder='Escolha o dia da semana'
-              // value={week_day}
               disabled={isDaily || isCustom}
               options={WeekDay.getValues().map((value: WeekDay) => ({
                 label: WeekDay.translate(value),
@@ -280,8 +342,9 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               mt={8}
               w={240}
               onClick={handleScheduleButton}
+              disabled={selectedDays.length === 0 && isSelecting}
             >
-              Adicionar
+              {isUpdatingSchedule ? 'Atualizar' : 'Adicionar'}
             </Button>
           </HStack>
 
@@ -305,7 +368,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
                             variant='ghost'
                             aria-label='editar-valor'
                             icon={<BsFillPenFill />}
-                            onClick={() => console.log('Editando')}
+                            onClick={() => handleUpdateScheduleClick(index)}
                           />
                         </Tooltip>
 
@@ -332,16 +395,24 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               ) : undefined}
             </VStack>
             <Spacer />
-            <VStack alignContent={'strech'} maxH={280}>
+            <VStack alignContent={'strech'}>
               <Text fontSize={'lg'} fontWeight={'bold'}>
-                Visualização das ocorrências
+                {isSelecting
+                  ? 'Selecione as datas'
+                  : 'Visualização das ocorrências'}
               </Text>
+              {isSelecting && selectedDays.length === 0 ? (
+                <Alert status='error' fontSize='md' mt={0} w={'full'}>
+                  <AlertIcon />
+                  Nenhuma data foi selecionada
+                </Alert>
+              ) : undefined}
               <DateCalendarPicker
                 selectedDays={selectedDays}
                 highlightedDays={highlightedDays}
                 occupiedDays={occupiedDays}
                 dayClick={dayClick}
-                readOnly={true}
+                readOnly={!isSelecting}
               />
             </VStack>
           </HStack>

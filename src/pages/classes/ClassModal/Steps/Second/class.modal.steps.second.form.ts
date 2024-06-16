@@ -3,7 +3,6 @@ import { ClassSecondForm } from './class.modal.steps.second.interface';
 import { ScheduleValidator } from 'utils/schedules/schedules.validator';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
-import { ScheduleData } from '../../class.modal.interface';
 
 export const classSecondFormFields = {
   schedule_start_date: {
@@ -43,7 +42,7 @@ export const classSecondFormFields = {
   recurrence: {
     validator: yup
       .string()
-      .nullable()
+      .notRequired()
       .test('is-valid-recurrence', 'Recorrência inválida', function (value) {
         if (!value) return true;
         return !ScheduleValidator.isInvalidRecurrence(value);
@@ -53,7 +52,7 @@ export const classSecondFormFields = {
   week_day: {
     validator: yup
       .string()
-      .nullable()
+      .notRequired()
       .test('is-valid-week-day', 'Dia da semana inválido', function (value) {
         const { recurrence } = this.parent;
         if (!value) return true;
@@ -137,106 +136,7 @@ export const classSecondFormFields = {
       ),
     defaultValue: [],
   },
-  recurrences: {
-    validator: yup
-      .array()
-      .of(
-        yup
-          .string()
-          .required('Campo obrigatório')
-          .test(
-            'is-valid-recurrence',
-            'Campo obrigatório',
-            (value) => !ScheduleValidator.isInvalidRecurrence(value),
-          ),
-      )
-      .min(1, 'Adicione pelo menos uma recorrência')
-      .required('Campo obrigatório'),
-    defaultValue: [],
-  },
-  week_days: {
-    validator: yup
-      .array()
-      .of(
-        yup
-          .string()
-          .required('Campo obrigatório')
-          .test(
-            'is-valid-week-day',
-            'Escolha um dia válido',
-            (value) => !ScheduleValidator.isInvalidWeekDay(value),
-          ),
-      )
-      .min(1, 'Selecione pelo menos um dia')
-      .required('Campo obrigatório'),
-    defaultValue: [],
-  },
-  start_times: {
-    validator: yup
-      .array()
-      .of(
-        yup
-          .string()
-          .required('Escolha um horário de início')
-          .test(
-            'is-valid-day-time',
-            'Horário inválido',
-            (value) => !ScheduleValidator.isInvalidDayTime(value),
-          ),
-      )
-      .min(1, 'Selecione pelo menos um horário de início')
-      .required('Campo obrigatório'),
-    defaultValue: [],
-  },
-  end_times: {
-    validator: yup
-      .array()
-      .of(
-        yup
-          .string()
-          .required('Escolha um horário de fim')
-          .test(
-            'is-valid-day-time',
-            'Horário inválido',
-            (value) => !ScheduleValidator.isInvalidDayTime(value),
-          ),
-      )
-      .min(1, 'Selecione pelo menos um horário de fim')
-      .required('Campo obrigatório'),
-    defaultValue: [],
-  },
 };
-
-const defaultSchedule: ScheduleData = {
-  start_date: classSecondFormFields.schedule_start_date.defaultValue,
-  end_date: classSecondFormFields.schedule_end_date.defaultValue,
-  start_time: classSecondFormFields.start_time.defaultValue,
-  end_time: classSecondFormFields.end_time.defaultValue,
-  recurrence: classSecondFormFields.recurrence.defaultValue as Recurrence,
-  week_day: classSecondFormFields.week_day.defaultValue as WeekDay,
-};
-
-const scheduleSchema = yup.object().shape({
-  start_date: classSecondFormFields.schedule_start_date.validator,
-  end_date: classSecondFormFields.schedule_end_date.validator,
-  start_time: classSecondFormFields.start_time.validator,
-  end_time: classSecondFormFields.end_time.validator,
-  recurrence: classSecondFormFields.recurrence.validator,
-  week_day: classSecondFormFields.week_day.validator,
-}),
-
-const scheduleFormFields = {
-  schedule: {
-    validator: scheduleSchema,
-    defaultValue: defaultSchedule,
-  },
-  schedules: {
-    validator: yup.array().of(scheduleSchema).min(1, 'Selecione pelo menos um dia')
-    .required('Campo obrigatório'),
-    defaultValue: [],
-  }
-};
-
 
 export const classSecondSchema = yup.object<ClassSecondForm>().shape({
   schedule_start_date: classSecondFormFields.schedule_start_date.validator,
@@ -248,7 +148,6 @@ export const classSecondSchema = yup.object<ClassSecondForm>().shape({
   start_date: classSecondFormFields.start_date.validator,
   end_date: classSecondFormFields.end_date.validator,
   calendar_ids: classSecondFormFields.calendar_ids.validator,
-  schedule: scheduleFormFields.schedule.validator,
 });
 
 export const classSecondDefaultValues: ClassSecondForm = {
@@ -261,6 +160,4 @@ export const classSecondDefaultValues: ClassSecondForm = {
   start_date: classSecondFormFields.start_date.defaultValue,
   end_date: classSecondFormFields.end_date.defaultValue,
   calendar_ids: classSecondFormFields.calendar_ids.defaultValue,
-  schedule: scheduleFormFields.schedule.defaultValue,
-  schedules: 
 };

@@ -30,10 +30,15 @@ export function MultiSelect({
 }: MultiSelectProps) {
   const {
     control,
+    getValues,
     formState: { errors },
   } = useFormContext();
 
   const [selectValue, setSelectValue] = useState(value);
+
+  function getSelectedOptions(values: (string | number)[]) {
+    return options.filter((option) => values.includes(option.value));
+  }
 
   return (
     <Controller
@@ -43,7 +48,9 @@ export function MultiSelect({
         <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
           <FormLabel alignSelf='flex-start'>{label}</FormLabel>
           <Select
-            value={selectValue}
+            value={
+              selectValue ? selectValue : getSelectedOptions(getValues(name))
+            }
             isLoading={loading}
             isDisabled={disabled}
             placeholder={placeholder}
