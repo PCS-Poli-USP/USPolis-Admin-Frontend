@@ -26,4 +26,10 @@ export default class CommonValidator {
   static isInvalidDate(date: string) {
     return !moment(date).isValid();
   }
+
+  static isInvalidDateOferring(start_date: string, end_date: string) {
+    const start = moment(start_date, 'YYYY:MM:DD');
+    const end = moment(end_date, 'YYYY:MM:DD');
+    return !start.isSameOrBefore(end);
+  }
 }
