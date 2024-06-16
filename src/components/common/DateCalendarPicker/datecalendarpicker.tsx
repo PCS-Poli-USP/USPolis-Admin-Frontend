@@ -23,6 +23,8 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
           selectedDays: props.selectedDays,
           highlightedDays: props.highlightedDays,
           occupiedDays: props.occupiedDays,
+          selectIcon: props.selectIcon,
+          highlightIcon: props.highlightIcon,
         } as any,
       }}
       onChange={(newValue: Moment) => {
