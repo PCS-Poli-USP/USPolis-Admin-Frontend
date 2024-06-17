@@ -72,21 +72,17 @@ function ClassModal(props: ClassModalProps) {
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
 
   async function handleFirstNextClick() {
-    const { trigger, getValues } = firstForm;
+    const { trigger } = firstForm;
     const isValid = await trigger();
     if (!isValid) return;
-    const values = getValues();
     setActiveStep(activeStep + 1);
   }
 
   async function handleSecondNextClick() {
-    const { trigger, getValues, formState } = secondForm;
+    const { trigger } = secondForm;
     const isValid = await trigger();
-    const values = getValues();
-    console.log(values);
-    console.log(isValid);
-    console.log(formState.errors);
     if (!isValid) return;
+    if (schedules.length === 0) return;
     setActiveStep(activeStep + 1);
   }
 
@@ -171,9 +167,18 @@ function ClassModal(props: ClassModalProps) {
       description: 'Revisão',
       content: (
         <ClassModalFourthStep
+          data={{
+            first: firstForm.getValues(),
+            second: secondForm.getValues(),
+            third: thirdForm.getValues(),
+          }}
+          calendars={props.calendars}
+          subjects={props.subjects}
+          schedules={schedules}
           isUpdate={false}
           selectedClass={props.selectedClass}
           onNext={handleFirstNextClick}
+          moveTo={(index) => setActiveStep(index)}
         />
       ),
     },
@@ -204,7 +209,7 @@ function ClassModal(props: ClassModalProps) {
           <VStack>
             <Stepper size='lg' index={activeStep} alignItems={'start'}>
               {steps.map((step, index) => (
-                <Step key={index} onClick={() => setActiveStep(index)}>
+                <Step key={index}>
                   <StepIndicator>
                     <StepStatus
                       complete={<StepIcon />}
