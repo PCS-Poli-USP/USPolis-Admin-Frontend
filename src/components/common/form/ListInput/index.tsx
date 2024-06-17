@@ -58,7 +58,7 @@ export function ListInput({
     formState: { errors },
   } = useFormContext();
 
-  const [currentValue, setCurrentValue] = useState(value);
+  const [currentValue, setCurrentValue] = useState(value ? value : '');
   const [isEditing, setIsEditing] = useState(false);
   const [editingIndex, setEditingIndex] = useState(0);
   const [hasValueError, setHasValueError] = useState(false);

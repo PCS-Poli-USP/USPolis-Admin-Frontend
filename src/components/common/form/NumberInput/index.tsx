@@ -35,6 +35,7 @@ export function NumberInput({
 }: MultiSelectProps) {
   const {
     control,
+    getValues,
     formState: { errors },
   } = useFormContext();
 
@@ -48,7 +49,7 @@ export function NumberInput({
         <FormControl isInvalid={!!errors[name]}>
           <FormLabel alignSelf='flex-start'>{label}</FormLabel>
           <ChakraNumberInput
-            value={inputValue}
+            value={inputValue ? inputValue : getValues(name) ? getValues(name) : 0}
             hidden={hidden}
             min={min}
             max={max}

@@ -49,7 +49,11 @@ export function MultiSelect({
           <FormLabel alignSelf='flex-start'>{label}</FormLabel>
           <Select
             value={
-              selectValue ? selectValue : getSelectedOptions(getValues(name))
+              selectValue
+                ? selectValue
+                : getSelectedOptions(getValues(name))
+                ? getSelectedOptions(getValues(name))
+                : undefined
             }
             isLoading={loading}
             isDisabled={disabled}
