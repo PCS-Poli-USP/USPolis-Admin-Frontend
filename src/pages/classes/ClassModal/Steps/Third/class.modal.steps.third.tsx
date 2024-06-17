@@ -1,28 +1,44 @@
-import { Text, VStack } from '@chakra-ui/react';
-import { SubjectResponse } from 'models/http/responses/subject.response.models';
-import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { ClassResponse } from 'models/http/responses/class.response.models';
-import { ClassModalStepsProps } from '../class.modal.steps.interface';
-import { ClassModalThirdStepProps, ClassThirdForm } from './class.modal.steps.third.interface';
+import { Checkbox, Divider, Heading, VStack } from '@chakra-ui/react';
 import {
-  classThirdDefaultValues,
-  classThirdSchema,
-} from './class.modal.steps.third.form';
+  ClassModalThirdStepProps,
+  fieldNames,
+} from './class.modal.steps.third.interface';
+import { Input } from 'components/common';
+import { FormProvider } from 'react-hook-form';
+import { CheckBox } from 'components/common/form/CheckBox';
 
 function ClassModalThirdStep(props: ClassModalThirdStepProps) {
-  const classForm = useForm<ClassThirdForm>({
-    defaultValues: classThirdDefaultValues,
-    resolver: yupResolver(classThirdSchema),
-  });
+  function setFormValue(name: string, value: boolean) {
+    const { setValue } = props.form;
+    setValue(name as fieldNames, value);
+  }
 
   return (
-    <VStack mt={5} width={'100%'} align={'stretch'}>
-      <FormProvider {...classForm}>
+    <VStack mt={5} width={'100%'} align={'stretch'} spacing={4}>
+      <FormProvider {...props.form}>
         <form>
-          <Text as='b' fontSize={'lg'}>
-            Preferências
-          </Text>
+          <VStack align={'start'}>
+            <Divider borderColor={'black'}/>
+            <Heading size={'lg'}>Preferências da Alocação</Heading>
+            <CheckBox
+              name={'ignore_to_allocate'}
+              text={'Ignorar para alocação automática'}
+            />
+            <Divider borderColor={'black'}/>
+
+            <Heading size={'lg'}>Preferências da Sala</Heading>
+            <CheckBox name={'projector'} text={'Projetor'} />
+            <CheckBox name={'air_conditionating'} text={'Ar condicionado'} />
+            <CheckBox name={'accessibility'} text={'Acessibilidade'} />
+            <Divider borderColor={'black'}/>
+
+            <Heading size={'lg'}>Preferências das Agendas</Heading>
+            <CheckBox
+              name={'skip_exceptions'}
+              text={'Ignorar calendários e feriados'}
+            />
+            <Divider borderColor={'black'}/>
+          </VStack>
         </form>
       </FormProvider>
     </VStack>

@@ -395,7 +395,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               ) : undefined}
             </VStack>
             <Spacer />
-            <VStack alignContent={'strech'}>
+            <VStack alignContent={'strech'} maxH={320}>
               <Text fontSize={'lg'} fontWeight={'bold'}>
                 {isSelecting
                   ? 'Selecione as datas'

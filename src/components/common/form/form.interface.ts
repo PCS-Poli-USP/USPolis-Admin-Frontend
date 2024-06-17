@@ -1,7 +1,5 @@
-export interface FieldProps {
+export interface FieldPropsBase {
   name: string;
-  label: string;
-  isLoading?: boolean;
   placeholder?: string;
   disabled?: boolean;
   hidden?: boolean;
@@ -9,4 +7,9 @@ export interface FieldProps {
   ml?: string | number;
   mr?: string | number;
   mb?: string | number;
+}
+
+export interface FieldProps extends FieldPropsBase {
+  label: string;
+  isLoading?: boolean;
 }

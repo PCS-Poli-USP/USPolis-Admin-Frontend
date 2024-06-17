@@ -14,7 +14,6 @@ export interface ClassBase {
   accessibility: boolean;
   projector: boolean;
   ignore_to_allocate: boolean;
-  full_allocated: boolean;
   calendar_ids: number[];
 }
 

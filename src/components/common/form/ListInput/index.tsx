@@ -14,7 +14,7 @@ import {
   Alert,
   AlertIcon,
 } from '@chakra-ui/react';
-import { FieldProps } from 'models/interfaces';
+import { FieldProps } from '../form.interface';
 import { useState } from 'react';
 import {
   Controller,

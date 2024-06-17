@@ -46,6 +46,12 @@ import {
   classSecondDefaultValues,
   classSecondSchema,
 } from './Steps/Second/class.modal.steps.second.form';
+import ClassModalFourthStep from './Steps/Fourth/class.modal.steps.fourth';
+import { ClassThirdForm } from './Steps/Third/class.modal.steps.third.interface';
+import {
+  classThirdDefaultValues,
+  classThirdSchema,
+} from './Steps/Third/class.modal.steps.third.form';
 
 function ClassModal(props: ClassModalProps) {
   const firstForm = useForm<ClassFirstForm>({
@@ -56,6 +62,11 @@ function ClassModal(props: ClassModalProps) {
   const secondForm = useForm<ClassSecondForm>({
     defaultValues: classSecondDefaultValues,
     resolver: yupResolver(classSecondSchema),
+  });
+
+  const thirdForm = useForm<ClassThirdForm>({
+    defaultValues: classThirdDefaultValues,
+    resolver: yupResolver(classThirdSchema),
   });
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
@@ -74,14 +85,31 @@ function ClassModal(props: ClassModalProps) {
     const values = getValues();
     console.log(values);
     console.log(isValid);
-    console.log(formState.errors)
+    console.log(formState.errors);
     if (!isValid) return;
     setActiveStep(activeStep + 1);
+  }
+
+  async function handleThirdNextClick() {
+    const { trigger, getValues, formState } = thirdForm;
+    const isValid = await trigger();
+    const values = getValues();
+    console.log(values);
+    console.log(isValid);
+    console.log(formState.errors);
+    if (!isValid) return;
+    setActiveStep(activeStep + 1);
+  }
+
+  function handleFourthNextClick() {
+    return;
   }
 
   function handleNextClick() {
     if (activeStep === 0) handleFirstNextClick();
     if (activeStep === 1) handleSecondNextClick();
+    if (activeStep === 2) handleThirdNextClick();
+    if (activeStep === 3) handleFourthNextClick();
   }
 
   function handlePreviousClick() {
@@ -130,6 +158,7 @@ function ClassModal(props: ClassModalProps) {
       description: 'Preferências',
       content: (
         <ClassModalThirdStep
+          form={thirdForm}
           isUpdate={false}
           subjects={props.subjects}
           selectedClass={props.selectedClass}
@@ -137,7 +166,17 @@ function ClassModal(props: ClassModalProps) {
         />
       ),
     },
-    { title: 'Quarto', description: 'Finalizar', content: undefined },
+    {
+      title: 'Quarto',
+      description: 'Revisão',
+      content: (
+        <ClassModalFourthStep
+          isUpdate={false}
+          selectedClass={props.selectedClass}
+          onNext={handleFirstNextClick}
+        />
+      ),
+    },
   ];
 
   const { activeStep, setActiveStep } = useSteps({

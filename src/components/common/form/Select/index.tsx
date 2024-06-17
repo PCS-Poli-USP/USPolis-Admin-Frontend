@@ -6,7 +6,7 @@ import {
   FormErrorMessage,
   Spinner,
 } from '@chakra-ui/react';
-import { FieldProps } from 'models/interfaces';
+import { FieldProps } from '../form.interface';
 import { useFormContext } from 'react-hook-form';
 
 type Option = {
