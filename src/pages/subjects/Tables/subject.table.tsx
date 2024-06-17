@@ -43,8 +43,8 @@ export const getSubjectColumns = (props: SubjectColumnsProps): ColumnDef<Subject
     cell: ({ row }) => (
       <Box>
         {row.original.buildings ? (
-          row.original.buildings.map((ref, index) => (
-            <Text key={index}>{ref.id}</Text>
+          row.original.buildings.map((building, index) => (
+            <Text key={index}>{building.name}</Text>
           ))
         ) : (
           <Text>Não alocada</Text>

@@ -7,6 +7,7 @@ import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { getSubjectColumns } from './Tables/subject.table';
 import useSubjects from 'hooks/useSubjetcts';
 import SubjectModal from './SubjectModal/subject.modal';
+import useBuildings from 'hooks/useBuildings';
 
 function Subjects() {
   const columns = getSubjectColumns({
@@ -32,6 +33,8 @@ function Subjects() {
   const [selectedSubject, setSelectedSubject] = useState<
     SubjectResponse | undefined
   >(undefined);
+
+  const { buildings } = useBuildings();
 
   function handleCreateSubjectButton() {
     setIsUpdateSubject(false);
@@ -67,6 +70,7 @@ function Subjects() {
         </Flex>
         <DataTable data={subjects} columns={columns} />
         <SubjectModal
+          buildings={buildings}
           isOpen={isOpenRegisterSubjectModal}
           onClose={() => {
             setSelectedSubject(undefined);

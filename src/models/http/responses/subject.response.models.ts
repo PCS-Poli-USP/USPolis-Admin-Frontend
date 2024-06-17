@@ -15,7 +15,8 @@ export interface SubjectResponseBase {
 }
 
 export interface SubjectResponse extends SubjectResponseBase {
-  buildings?: BuildingResponse[];
+  buildings_ids: number[];
+  buildings: BuildingResponse[];
   classes?: ClassUnfetchResponse[];
 }
 

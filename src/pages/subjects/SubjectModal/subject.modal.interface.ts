@@ -1,8 +1,10 @@
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { ModalProps } from 'models/interfaces';
 import { SubjectType } from 'utils/enums/subjects.enum';
 
 export interface SubjectForm {
+  building_ids: number[];
   code: string;
   name: string;
   type: SubjectType;
@@ -13,6 +15,7 @@ export interface SubjectForm {
 }
 
 export interface SubjectModalProps extends ModalProps {
+  buildings: BuildingResponse[];
   isUpdate: boolean;
   refetch: () => void;
   selectedSubject?: SubjectResponse;

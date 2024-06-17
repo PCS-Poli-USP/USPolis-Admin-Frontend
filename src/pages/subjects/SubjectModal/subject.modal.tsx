@@ -38,6 +38,7 @@ import { sortProfessors } from 'utils/subjects/subjects.sorter';
 import { Input, Select } from 'components/common';
 import { CreateSubject } from 'models/http/requests/subject.request.models';
 import useSubjects from 'hooks/useSubjetcts';
+import { MultiSelect } from 'components/common/form/MultiSelect';
 
 export default function SubjectModal(props: SubjectModalProps) {
   const form = useForm<SubjectForm>({
@@ -139,6 +140,24 @@ export default function SubjectModal(props: SubjectModalProps) {
           <form>
             <ModalBody pb={6}>
               <VStack spacing={5} alignItems={'flex-start'}>
+                <MultiSelect
+                  label={'Prédios'}
+                  name={'building_ids'}
+                  value={
+                    props.selectedSubject
+                      ? props.selectedSubject.buildings_ids.map(
+                          (val, index) => ({
+                            value: val,
+                            label: props.selectedSubject?.buildings[index].name as string,
+                          }),
+                        )
+                      : undefined
+                  }
+                  options={props.buildings.map((building) => ({
+                    value: building.id,
+                    label: building.name,
+                  }))}
+                />
                 <Input
                   label={'Código da Disciplina'}
                   name={'code'}

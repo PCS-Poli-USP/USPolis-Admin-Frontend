@@ -4,6 +4,18 @@ import { SubjectForm } from './subject.modal.interface';
 import { SubjectType } from 'utils/enums/subjects.enum';
 
 export const formFields = {
+  building_ids: {
+    validator: yup
+      .array()
+      .of(yup.number().required('Campo obrigatório'))
+      .min(1, 'Selecione pelo menos um prédio')
+      .test(
+        'is-valid-array',
+        'Calendários inválidos',
+        (value) => value && !SubjectValidator.isInvalidIdArray(value),
+      ),
+    defaultValue: [],
+  },
   code: {
     validator: yup
       .string()
@@ -77,6 +89,7 @@ export const formFields = {
 };
 
 export const schema = yup.object<SubjectForm>().shape({
+  building_ids: formFields.building_ids.validator,
   code: formFields.code.validator,
   name: formFields.name.validator,
   type: formFields.type.validator,
@@ -87,6 +100,7 @@ export const schema = yup.object<SubjectForm>().shape({
 });
 
 export const defaultValues: SubjectForm = {
+  building_ids: formFields.building_ids.defaultValue,
   code: formFields.code.defaultValue,
   name: formFields.name.defaultValue,
   type: formFields.type.defaultValue as SubjectType,
