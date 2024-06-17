@@ -1,4 +1,5 @@
 import CommonValidator from 'utils/common/common.validator';
+import { ClassType } from 'utils/enums/classes.enum';
 
 export class ClassValidator extends CommonValidator {
   static isInvalidClassCode(value: string) {
@@ -21,7 +22,7 @@ export class ClassValidator extends CommonValidator {
   }
 
   static isInvalidClassType(value: string) {
-    return this.isEmptyString(value);
+    return !Object.values(ClassType).includes(value as ClassType);
   }
 
   static isInvalidProfessor(value: string) {

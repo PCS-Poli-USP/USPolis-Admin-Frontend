@@ -1,6 +1,7 @@
 import { ClassValidator } from 'utils/classes/classes.validator';
 import * as yup from 'yup';
 import { ClassFirstForm } from './class.modal.steps.first.interface';
+import { ClassType } from 'utils/enums/classes.enum';
 
 export const classFirstFormFields = {
   subject_id: {
@@ -92,7 +93,7 @@ export const classFirstSchema = yup.object<ClassFirstForm>().shape({
 export const classFirstDefaultValues: ClassFirstForm = {
   subject_id: classFirstFormFields.subject_id.defaultValue,
   code: classFirstFormFields.code.defaultValue,
-  type: classFirstFormFields.type.defaultValue,
+  type: classFirstFormFields.type.defaultValue as ClassType,
   professors: classFirstFormFields.professors.defaultValue,
   vacancies: classFirstFormFields.vacancies.defaultValue,
   subscribers: classFirstFormFields.subscribers.defaultValue,

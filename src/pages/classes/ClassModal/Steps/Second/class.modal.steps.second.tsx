@@ -32,9 +32,8 @@ import {
   BsFillTrashFill,
 } from 'react-icons/bs';
 import { ScheduleData } from '../../class.modal.interface';
-import moment from 'moment';
 import { generateRecurrenceDates } from 'utils/common/common.generator';
-import { sortScheduleData } from './class.modal.steps.second.utils';
+import { scheduleToString, sortScheduleData } from '../class.modal.steps.utils';
 
 function ClassModalSecondStep(props: ClassModalSecondStepProps) {
   const {
@@ -81,26 +80,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
     }
   }
 
-  function scheduleToString(schedule: ScheduleData) {
-    if (
-      schedule.recurrence === Recurrence.CUSTOM ||
-      schedule.recurrence === Recurrence.DAILY
-    )
-      return `${Recurrence.translate(schedule.recurrence)}, ${schedule.dates ? `${schedule.dates.length} datas` : ''} de ${moment(
-        schedule.start_date,
-      ).format('DD/MM/YYYY')} até ${moment(schedule.end_date).format(
-        'DD/MM/YYYY',
-      )} - ${schedule.start_time} ~ ${schedule.end_time}`;
-    else {
-      return `${Recurrence.translate(
-        schedule.recurrence,
-      )}, às ${WeekDay.translate(schedule.week_day as WeekDay)}s de ${moment(
-        schedule.start_date,
-      ).format('DD/MM/YYYY')} até ${moment(schedule.start_date).format(
-        'DD/MM/YYYY',
-      )} - ${schedule.start_time} ~ ${schedule.end_time}`;
-    }
-  }
+  
 
   function resetScheduleInputs() {
     const { reset, getValues } = props.form;
@@ -217,7 +197,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
       <FormProvider {...props.form}>
         <form>
           <Text as={'b'} fontSize={'lg'}>
-            Datas e calendários da disciplina
+            Datas e Calendários da Disciplina
           </Text>
           <HStack spacing='5px' mt={4} w={'full'} mb={4}>
             <Input
