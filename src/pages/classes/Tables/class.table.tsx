@@ -12,7 +12,6 @@ import { ClassResponse } from 'models/http/responses/class.response.models';
 import {
   BsCalendarDateFill,
   BsCalendarXFill,
-  BsClipboardCheck,
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
@@ -30,7 +29,6 @@ interface ClassesColumnsProps {
   handleCheckboxClick: (id: number, value: boolean) => void;
   handleEditClick: (data: ClassResponse) => void;
   handleAllocationEditClick: (data: ClassResponse) => void;
-  handlePreferencesClick: (data: ClassResponse) => void;
   handleDeleteClassClick: (data: ClassResponse) => void;
   handleDeleteAllocClick: (data: ClassResponse) => void;
   checkMap: boolean[];
@@ -191,15 +189,6 @@ export const getClassesColumns = (
             aria-label='editar-alocacao'
             icon={<BsCalendarDateFill />}
             onClick={() => props.handleAllocationEditClick(row.original)}
-          />
-        </Tooltip>
-        <Tooltip label='Preferências'>
-          <IconButton
-            size='xs'
-            variant='ghost'
-            aria-label='preferências-turma'
-            icon={<BsClipboardCheck />}
-            onClick={() => props.handlePreferencesClick(row.original)}
           />
         </Tooltip>
         <Tooltip label='Excluir Turma'>
