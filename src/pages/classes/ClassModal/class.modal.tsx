@@ -29,7 +29,7 @@ import {
   DownloadIcon,
   SmallCloseIcon,
 } from '@chakra-ui/icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ClassModalProps, ScheduleData } from './class.modal.interface';
 import ClassModalFirstStep from './Steps/First/class.modal.steps.first';
 import { ClassFirstForm } from './Steps/First/class.modal.steps.first.interface';
@@ -62,6 +62,7 @@ import {
 } from 'models/http/requests/schedule.request.models';
 import useClasses from 'hooks/useClasses';
 import { DayTime } from 'models/common/common.models';
+import { ClassResponse } from 'models/http/responses/class.response.models';
 
 function ClassModal(props: ClassModalProps) {
   const firstForm = useForm<ClassFirstForm>({
@@ -164,12 +165,15 @@ function ClassModal(props: ClassModalProps) {
 
   async function handleSaveClick() {
     const data = getClassData();
-    console.log(data);
     if (props.isUpdate && props.selectedClass) {
+      console.log('Aqui')
       await updateClass(props.selectedClass.id, data as UpdateClass);
-    } else {
+    } else if (!props.isUpdate) {
+      console.log("Criou cara")
       await createClass(data as CreateClass);
     }
+    props.refetch();
+    handleCloseModal();
   }
 
   function handleCloseModal() {
@@ -181,6 +185,68 @@ function ClassModal(props: ClassModalProps) {
     props.onClose();
   }
 
+  function loadThirdFormFromClass(data: ClassResponse) {
+    thirdForm.reset({
+      skip_exceptions: data.schedules[0].skip_exceptions,
+      ignore_to_allocate: data.ignore_to_allocate,
+      projector: data.projector,
+      accessibility: data.accessibility,
+      air_conditionating: data.air_conditionating,
+    });
+  }
+
+  function loadSecondFormFromClass(data: ClassResponse) {
+    secondForm.reset({
+      start_date: data.start_date.substring(0, 10), //Remove HH:MM:SS....
+      end_date: data.end_date.substring(0, 10),
+      calendar_ids: data.calendar_ids,
+    });
+  }
+
+  function loadFirstFormFromClass(data: ClassResponse) {
+    firstForm.reset({
+      subject_id: data.subject_id,
+      code: data.code,
+      type: data.type,
+      vacancies: data.vacancies,
+      subscribers: data.subscribers,
+      pendings: data.pendings,
+      professors: data.professors,
+    });
+  }
+
+  function loadFormsFromClass(data: ClassResponse) {
+    loadFirstFormFromClass(data);
+    loadSecondFormFromClass(data);
+    loadThirdFormFromClass(data);
+  }
+
+  function loadSchedulesFromClass(data: ClassResponse) {
+    console.log(data.schedules);
+    const newSchedules: ScheduleData[] = data.schedules.map((schedule) => ({
+      recurrence: schedule.recurrence,
+      start_date: schedule.start_date.substring(0, 10),
+      end_date: schedule.end_date.substring(0, 10),
+      start_time: DayTime.toString(schedule.start_time),
+      end_time: DayTime.toString(schedule.end_time),
+      week_day: schedule.week_day,
+      dates: schedule.dates,
+    }));
+    setSchedules(newSchedules);
+  }
+
+  function loadSelectedClass(data: ClassResponse) {
+    loadSchedulesFromClass(data);
+    loadFormsFromClass(data);
+  }
+
+  useEffect(() => {
+    if (props.selectedClass) {
+      loadSelectedClass(props.selectedClass);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.selectedClass]);
+
   const steps = [
     {
       title: 'Primeiro',
@@ -190,7 +256,6 @@ function ClassModal(props: ClassModalProps) {
           isUpdate={false}
           form={firstForm}
           subjects={props.subjects}
-          selectedClass={props.selectedClass}
         />
       ),
     },
@@ -204,7 +269,6 @@ function ClassModal(props: ClassModalProps) {
           calendars={props.calendars}
           schedules={schedules}
           setSchedules={setSchedules}
-          selectedClass={props.selectedClass}
         />
       ),
     },
@@ -216,7 +280,6 @@ function ClassModal(props: ClassModalProps) {
           form={thirdForm}
           isUpdate={false}
           subjects={props.subjects}
-          selectedClass={props.selectedClass}
           onNext={handleFirstNextClick}
         />
       ),
@@ -260,7 +323,9 @@ function ClassModal(props: ClassModalProps) {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          Cadastrar uma turma - {`${steps[activeStep].description}`}
+          {props.isUpdate
+            ? `Editar Turma - ${steps[activeStep].description}`
+            : `Cadastrar Turma - ${steps[activeStep].description}`}
         </ModalHeader>
         <ModalCloseButton />
 

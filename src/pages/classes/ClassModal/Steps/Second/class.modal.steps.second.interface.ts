@@ -11,7 +11,6 @@ export interface ClassModalSecondStepProps extends ClassModalStepsProps {
   calendars: CalendarResponse[];
   schedules: ScheduleData[];
   setSchedules: (schedules: ScheduleData[]) => void;
-  selectedClass?: ClassResponse;
 }
 export interface ClassSecondForm {
   start_date: string;

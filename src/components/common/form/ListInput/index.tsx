@@ -32,6 +32,7 @@ interface ListInputProps extends FieldProps {
   listLabel: string;
   valueErrorMessage: string;
   isInvalid: (value: string) => boolean; // Retorna true => invalido
+  sorter?: (a: string, b: string) => -1 | 1 | 0;
   value?: string;
   values?: string[];
 }
@@ -42,6 +43,7 @@ export function ListInput({
   label,
   name,
   isInvalid,
+  sorter = undefined,
   disabled = false,
   value = undefined,
   values = undefined,
@@ -65,6 +67,7 @@ export function ListInput({
 
   const listValues: string[] = watch(name);
   if (values) {
+    if (sorter) values.sort(sorter);
     setValue(name, values);
   }
 
@@ -78,10 +81,17 @@ export function ListInput({
     index: number,
     field: ControllerRenderProps<FieldValues, string>,
   ) {
+    if (index === editingIndex) {
+      setIsEditing(false);
+      setHasValueError(false);
+      setCurrentValue('');
+    }
     const newListValues = [...listValues];
     newListValues.splice(index, 1);
+    if (sorter) newListValues.sort(sorter);
     setValue(name, newListValues);
     field.onChange(newListValues);
+    setEditingIndex(0);
   }
 
   function handleValueButtonClick(
@@ -98,6 +108,7 @@ export function ListInput({
     } else {
       newListValues[editingIndex] = currentValue;
     }
+    if (sorter) newListValues.sort(sorter);
     setCurrentValue('');
     setIsEditing(false);
     setValue(name, newListValues);
@@ -116,7 +127,7 @@ export function ListInput({
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <VStack align={'start'} mt={mt} mb={mb} ml={ml} mr={mr}>
+        <VStack align={'strech'} mt={mt} mb={mb} ml={ml} mr={mr} w={'full'}>
           <FormControl isInvalid={hasValueError}>
             <FormLabel alignSelf='flex-start'>{label}</FormLabel>
             <HStack>

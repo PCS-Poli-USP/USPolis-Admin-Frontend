@@ -9,6 +9,7 @@ export interface ClassModalProps extends ModalProps {
   isUpdate: boolean;
   subjects: SubjectResponse[];
   calendars: CalendarResponse[];
+  refetch: () => void;
   selectedClass?: ClassResponse;
 }
 

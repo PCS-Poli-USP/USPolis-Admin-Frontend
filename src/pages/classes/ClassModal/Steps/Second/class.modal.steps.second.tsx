@@ -20,7 +20,7 @@ import {
 } from './class.modal.steps.second.interface';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
-import { MultiSelect } from 'components/common/form/MultiSelect';
+import { MultiSelect, Option } from 'components/common/form/MultiSelect';
 import { useEffect, useState } from 'react';
 import DateCalendarPicker, {
   useDateCalendarPicker,
@@ -49,6 +49,24 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
   const [isSelecting, setIsSelecting] = useState(false);
   const [isUpdatingSchedule, setIsUpdatingSchedule] = useState(false);
   const [scheduleIndex, setScheduleIndex] = useState(0);
+  const [selectedCalendars, setSelectedCalendars] = useState<
+    Option[] | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const calendars_ids = props.form.getValues('calendar_ids');
+    if (calendars_ids.length > 0) {
+      const calendars = props.calendars.filter((calendar) =>
+        calendars_ids.includes(calendar.id),
+      );
+      setSelectedCalendars(
+        calendars.map((calendar) => ({
+          value: calendar.id,
+          label: calendar.name,
+        })),
+      );
+    }
+  }, [props.form, props.calendars]);
 
   useEffect(() => {
     const allDates: string[] = [];
@@ -158,6 +176,27 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
     }
   }
 
+  function handleDeleteScheduleClick(index: number) {
+    if (scheduleIndex === index) {
+      const { reset } = props.form;
+      reset({
+        schedule_start_date: classSecondDefaultValues.schedule_start_date,
+        schedule_end_date: classSecondDefaultValues.end_date,
+        recurrence: classSecondDefaultValues.recurrence,
+        week_day: classSecondDefaultValues.week_day,
+        start_time: classSecondDefaultValues.start_time,
+        end_time: classSecondDefaultValues.end_time,
+      });
+      setSelectedDays([]);
+      setIsCustom(false);
+      setIsDayli(false);
+    }
+    const newSchedules = [...props.schedules];
+    newSchedules.splice(index, -1);
+    props.setSchedules(newSchedules);
+    setScheduleIndex(0);
+  }
+
   function handleUpdateScheduleClick(index: number) {
     const { reset } = props.form;
     const schedule = props.schedules[index];
@@ -214,9 +253,6 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               name={'start_date'}
               placeholder='Data de início da disciplina'
               type='date'
-              value={
-                props.selectedClass ? props.selectedClass.start_date : undefined
-              }
               onChange={(event) =>
                 handleSelectClassDate(event.target.value, true)
               }
@@ -226,9 +262,6 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               name={'end_date'}
               placeholder='Data de encerramento da disciplina'
               type='date'
-              value={
-                props.selectedClass ? props.selectedClass.end_date : undefined
-              }
               onChange={(event) =>
                 handleSelectClassDate(event.target.value, false)
               }
@@ -237,16 +270,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               label={'Calendários'}
               name={'calendar_ids'}
               placeholder={'Escolha um ou mais'}
-              value={
-                props.selectedClass
-                  ? props.selectedClass.calendar_ids.map((val, index) => ({
-                      value: val,
-                      label: props.selectedClass?.calendar_names[
-                        index
-                      ] as string,
-                    }))
-                  : undefined
-              }
+              value={selectedCalendars}
               options={props.calendars.map((calendar) => ({
                 value: calendar.id,
                 label: calendar.name,
@@ -298,32 +322,24 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               name={'schedule_start_date'}
               placeholder='Data de inicio da agenda'
               type='date'
-              value={
-                props.selectedClass ? props.selectedClass.end_date : undefined
-              }
             />
             <Input
               label={'Fim da agenda'}
               name={'schedule_end_date'}
               placeholder='Data de fim  da agenda'
               type='date'
-              value={
-                props.selectedClass ? props.selectedClass.end_date : undefined
-              }
             />
             <Input
               label={'Horário de início'}
               name={'start_time'}
               placeholder='Horario de início da disciplina'
               type='time'
-              // value={startTime}
             />
             <Input
               label={'Horário de fim'}
               name={'end_time'}
               placeholder='Horário de encerramento da disciplina'
               type='time'
-              // value={endTime}
             />
             <Button
               colorScheme='teal'

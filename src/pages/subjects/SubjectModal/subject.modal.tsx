@@ -1,15 +1,6 @@
 import {
-  Alert,
-  AlertIcon,
   Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
   HStack,
-  Input as ChakraInput,
-  IconButton,
-  List,
-  ListItem,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -17,28 +8,23 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Text,
-  Tooltip,
   VStack,
 } from '@chakra-ui/react';
-import SubjectValidator from 'utils/subjects/subjects.validator';
 
-import { useEffect, useState } from 'react';
-import {
-  BsFillPenFill,
-  BsFillTrashFill,
-  BsPersonCheckFill,
-} from 'react-icons/bs';
+import { useEffect } from 'react';
 import { SubjectType } from 'utils/enums/subjects.enum';
 import { SubjectForm, SubjectModalProps } from './subject.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { defaultValues, schema } from './subject.modal.form';
-import { sortProfessors } from 'utils/subjects/subjects.sorter';
 import { Input, Select } from 'components/common';
 import { CreateSubject } from 'models/http/requests/subject.request.models';
 import useSubjects from 'hooks/useSubjetcts';
 import { MultiSelect } from 'components/common/form/MultiSelect';
+import ListInput from 'components/common/form/ListInput';
+import { ClassValidator } from 'utils/classes/classes.validator';
+import { sortProfessors } from 'utils/subjects/subjects.sorter';
+import { SubjectResponse } from 'models/http/responses/subject.response.models';
 
 export default function SubjectModal(props: SubjectModalProps) {
   const form = useForm<SubjectForm>({
@@ -49,29 +35,31 @@ export default function SubjectModal(props: SubjectModalProps) {
   const { trigger, getValues, reset, clearErrors } = form;
   const { createSubject, updateSubject } = useSubjects();
 
-  const [professor, setProfessor] = useState<string>('');
-  const [hasProfessorError, setHasProfessorError] = useState(false);
-  const [professors, setProfessors] = useState<string[]>([]);
-  const [isEditingProfessor, setIsEditingProfessor] = useState(false);
-  const [editProfessorIndex, setEditProfessorIndex] = useState(0);
-
   function formatFormData(data: SubjectForm): CreateSubject {
-    const formated_data: CreateSubject = { ...data, professors };
+    const formated_data: CreateSubject = { ...data };
     return formated_data;
+  }
+
+  function formatSelectedSubject(data: SubjectResponse): SubjectResponse {
+    const formated: SubjectResponse = {
+      ...data,
+      activation: data.activation.substring(0, 10),
+      desactivation: data.desactivation
+        ? data.desactivation.substring(0, 10)
+        : undefined,
+    };
+    return formated;
   }
 
   useEffect(() => {
     if (props.selectedSubject) {
-      reset({ ...props.selectedSubject });
+      reset({ ...formatSelectedSubject(props.selectedSubject) });
     }
   }, [props.selectedSubject, reset]);
 
   async function handleSaveClick() {
     const isValid = await trigger();
     if (!isValid) return;
-
-    if (professors.length === 0) return;
-
     const values = getValues();
     if (values['desactivation'] === '') values['desactivation'] = undefined;
     if (props.isUpdate && props.selectedSubject) {
@@ -86,44 +74,7 @@ export default function SubjectModal(props: SubjectModalProps) {
   function handleCloseModal() {
     clearErrors();
     reset(defaultValues);
-    setProfessor('');
-    setProfessors([]);
     props.onClose();
-  }
-
-  const handleProfessorButton = () => {
-    if (SubjectValidator.isInvalidProfessor(professor)) {
-      setHasProfessorError(true);
-      return;
-    } else setHasProfessorError(false);
-
-    const names: string[] = [...professors];
-    if (!isEditingProfessor) {
-      names.push(professor);
-    } else {
-      names[editProfessorIndex] = professor;
-    }
-    setProfessors(names.sort(sortProfessors));
-    setProfessor('');
-    setIsEditingProfessor(false);
-  };
-
-  function handleProfessorInputKeyDown(
-    event: React.KeyboardEvent<HTMLInputElement>,
-  ) {
-    if (event.key === 'Enter') handleProfessorButton();
-  }
-
-  function handleEditProfessorButton(index: number) {
-    setIsEditingProfessor(true);
-    setEditProfessorIndex(index);
-    setProfessor(professors[index]);
-  }
-
-  function handleDeleteProfessorButton(index: number) {
-    const newProfessors = [...professors];
-    newProfessors.splice(index, 1);
-    setProfessors(newProfessors);
   }
 
   return (
@@ -137,20 +88,25 @@ export default function SubjectModal(props: SubjectModalProps) {
       <ModalContent>
         <ModalHeader>
           {props.isUpdate
-            ? 'Editar informações da disciplina'
-            : 'Cadastrar uma disciplina'}
+            ? 'Editar Disciplina'
+            : 'Cadastrar Disciplina'}
         </ModalHeader>
         <ModalCloseButton />
         <FormProvider {...form}>
           <form>
             <ModalBody pb={6}>
-              <VStack spacing={5} alignItems={'flex-start'}>
+              <VStack
+                spacing={5}
+                alignItems={'flex-start'}
+                align={'stretch'}
+                w={'full'}
+              >
                 <MultiSelect
                   label={'Prédios'}
                   name={'building_ids'}
                   value={
                     props.selectedSubject
-                      ? props.selectedSubject.buildings_ids.map(
+                      ? props.selectedSubject.building_ids.map(
                           (val, index) => ({
                             value: val,
                             label: props.selectedSubject?.buildings[index]
@@ -181,11 +137,6 @@ export default function SubjectModal(props: SubjectModalProps) {
                 <Select
                   label={'Tipo de turma'}
                   name={'type'}
-                  value={
-                    props.selectedSubject
-                      ? props.selectedSubject.type
-                      : undefined
-                  }
                   options={[
                     { label: 'Semestral', value: SubjectType.BIANNUAL },
                     {
@@ -201,11 +152,6 @@ export default function SubjectModal(props: SubjectModalProps) {
                     label={'Créditos Aula'}
                     name={'class_credit'}
                     type={'number'}
-                    value={
-                      props.selectedSubject
-                        ? props.selectedSubject.class_credit
-                        : undefined
-                    }
                     placeholder='Quantidade de créditos aula'
                   />
 
@@ -213,11 +159,6 @@ export default function SubjectModal(props: SubjectModalProps) {
                     label={'Créditos Trabalho'}
                     name={'work_credit'}
                     type={'number'}
-                    value={
-                      props.selectedSubject
-                        ? props.selectedSubject.work_credit
-                        : undefined
-                    }
                     placeholder='Quantidade de créditos trabalho'
                   />
                 </HStack>
@@ -227,93 +168,26 @@ export default function SubjectModal(props: SubjectModalProps) {
                     label={'Ativação'}
                     name={'activation'}
                     placeholder={'Data de ativação'}
-                    type={'datetime-local'}
-                    value={
-                      props.selectedSubject
-                        ? props.selectedSubject.activation
-                        : undefined
-                    }
+                    type={'date'}
                   />
                   <Input
                     label={'Desativação (Opcional)'}
                     name={'desactivation'}
-                    placeholder={'Data de ativação'}
-                    type={'datetime-local'}
-                    value={
-                      props.selectedSubject
-                        ? props.selectedSubject.desactivation
-                        : undefined
-                    }
+                    placeholder={'Data de desativação'}
+                    type={'date'}
                   />
                 </HStack>
 
-                <FormControl isInvalid={hasProfessorError}>
-                  <FormLabel>Professor</FormLabel>
-                  <ChakraInput
-                    placeholder='Insira o nome do professor'
-                    type='text'
-                    value={professor}
-                    onChange={(event) => {
-                      setProfessor(event.target.value);
-                      if (event.target.value) setHasProfessorError(false);
-                    }}
-                    onKeyDown={handleProfessorInputKeyDown}
-                  />
-                  {hasProfessorError ? (
-                    <FormErrorMessage>
-                      Nome de professor inválido, tamanho mínimo de 3 letras.
-                    </FormErrorMessage>
-                  ) : undefined}
-                </FormControl>
-
-                <Button onClick={handleProfessorButton}>
-                  {isEditingProfessor
-                    ? 'Editar professor'
-                    : 'Adicionar professor'}
-                </Button>
-
-                <Text as='b' fontSize='lg'>
-                  Professores adicionados:
-                </Text>
-                {professors.length > 0 ? (
-                  <List spacing={3}>
-                    {professors.map((professor, index) => (
-                      <ListItem key={index}>
-                        <HStack>
-                          <BsPersonCheckFill />
-                          <Text>{professor}</Text>
-
-                          <Tooltip label='Editar'>
-                            <IconButton
-                              colorScheme='yellow'
-                              size='sm'
-                              variant='ghost'
-                              aria-label='editar-professor'
-                              icon={<BsFillPenFill />}
-                              onClick={() => handleEditProfessorButton(index)}
-                            />
-                          </Tooltip>
-
-                          <Tooltip label='Remover'>
-                            <IconButton
-                              colorScheme='red'
-                              size='sm'
-                              variant='ghost'
-                              aria-label='remover-professor'
-                              icon={<BsFillTrashFill />}
-                              onClick={() => handleDeleteProfessorButton(index)}
-                            />
-                          </Tooltip>
-                        </HStack>
-                      </ListItem>
-                    ))}
-                  </List>
-                ) : (
-                  <Alert status='error' fontSize='sm' mb={4}>
-                    <AlertIcon />
-                    Nenhum professor adicionado
-                  </Alert>
-                )}
+                <ListInput
+                  listLabel={'Professores adicionados'}
+                  valueErrorMessage={'Professor inválido'}
+                  label={'Professores'}
+                  name={'professors'}
+                  sorter={sortProfessors}
+                  isInvalid={ClassValidator.isInvalidProfessor}
+                  placeholder={'Digite o nome do professor'}
+                  mt={4}
+                />
               </VStack>
             </ModalBody>
           </form>

@@ -13,6 +13,7 @@ export interface ScheduleResponseBase {
   allocated: boolean;
   recurrence: Recurrence;
   all_day: boolean;
+  dates?: string[];
 }
 
 export interface ScheduleResponse extends ScheduleResponseBase {

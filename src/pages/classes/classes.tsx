@@ -8,22 +8,15 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-import { AxiosError } from 'axios';
-import EditModal from 'components/classes/edit.modal';
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
-import PreferencesModal from './ClassPreferencesModal/class.preferences.modal';
-import RegisterModal from './ClassModal/class.modal';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
 import Loading from 'components/common/Loading/loading.component';
 import Navbar from 'components/common/NavBar/navbar.component';
 import { appContext } from 'context/AppContext';
-import Class, { CreateClassEvents, SClass } from 'models/common/class.model';
-import { ErrorResponse } from 'models/interfaces/serverResponses';
-import { useContext, useEffect, useState } from 'react';
-import ClassesService from 'services/api/classes.service';
-import BuildingsService from 'services/api/buildings.service';
+import Class from 'models/common/class.model';
+import { useContext, useState } from 'react';
 import EventsService from 'services/api/events.service';
 import {
   ClassToEventByClassroom,
@@ -33,16 +26,13 @@ import { EventByClassrooms } from 'models/common/event.model';
 import CrawlerService from 'services/api/crawler.service';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
 import MultipleEditModal from 'components/classes/multipleEdit.modal';
-import { ClassResponseIndexed, getClassesColumns } from './Tables/class.table';
-import useCustomToast from 'hooks/useCustomToast';
-import { Row } from '@tanstack/react-table';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
+import { getClassesColumns } from './Tables/class.table';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import useClasses from 'hooks/useClasses';
 import ClassModal from './ClassModal/class.modal';
 import useSubjects from 'hooks/useSubjetcts';
 import useCalendars from 'hooks/useCalendars';
+import { Row } from '@tanstack/react-table';
 
 function Classes() {
   const {
@@ -61,24 +51,14 @@ function Classes() {
     onClose: onCloseDeleteAlloc,
   } = useDisclosure();
   const {
-    isOpen: isOpenPreferences,
-    onOpen: onOpenPreferences,
-    onClose: onClosePreferences,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenEdit,
-    onOpen: onOpenEdit,
-    onClose: onCloseEdit,
-  } = useDisclosure();
-  const {
     isOpen: isOpenAllocEdit,
     onOpen: onOpenAllocEdit,
     onClose: onCloseAllocEdit,
   } = useDisclosure();
   const {
-    isOpen: isOpenRegister,
-    onOpen: onOpenRegister,
-    onClose: onCloseRegister,
+    isOpen: isOpenClassModal,
+    onOpen: onOpenClassModal,
+    onClose: onCloseClassModal,
   } = useDisclosure();
   const {
     isOpen: isOpenJupiterModal,
@@ -91,13 +71,8 @@ function Classes() {
     onClose: onCloseMultipleEdit,
   } = useDisclosure();
 
-  const [buildingsList, setBuildingsList] = useState<Array<BuildingResponse>>(
-    [],
-  );
-  const [selectedClassEventList, setSelectedClassEventList] = useState<
-    Array<EventByClassrooms>
-  >([]);
-  const [selectedClass, setSelectedClass] = useState<Class>();
+  const [selectedClass, setSelectedClass] = useState<ClassResponse>();
+  const [isUpdateClass, setIsUpdateClass] = useState(false);
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
   const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
@@ -105,18 +80,9 @@ function Classes() {
 
   const { subjects } = useSubjects();
   const { calendars } = useCalendars();
-  const { classes } = useClasses();
-
-  const buildingsService = new BuildingsService();
-  const crawlerService = new CrawlerService();
+  const { classes, getClasses, deleteClass } = useClasses();
 
   const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
-
-  // useEffect(() => {
-  //   fetchData();
-  //   fetchBuildings();
-  //   // eslint-disable-next-line
-  // }, []);
 
   const columns = getClassesColumns({
     handleCheckAllClick,
@@ -128,12 +94,6 @@ function Classes() {
     handleDeleteAllocClick,
     checkMap,
   });
-
-  function fetchBuildings() {
-    buildingsService.list().then((it) => {
-      setBuildingsList(it.data.sort(sortBuildingsResponse));
-    });
-  }
 
   // function fetchData() {
   //   setLoading(true);
@@ -151,7 +111,7 @@ function Classes() {
   // }
 
   function handleRegisterClick() {
-    onOpenRegister();
+    onOpenClassModal();
   }
 
   // function handleRegister(data: Class) {
@@ -167,9 +127,9 @@ function Classes() {
   //     });
   // }
 
-  function handleDeleteClassClick(obj: ClassResponse) {
-    // setSelectedClass(obj);
-    // onOpenDeleteClass();
+  function handleDeleteClassClick(data: ClassResponse) {
+    setSelectedClass(data);
+    onOpenDeleteClass();
   }
 
   function handleDeleteAllocClick(obj: ClassResponse) {
@@ -177,20 +137,13 @@ function Classes() {
     // onOpenDeleteAlloc();
   }
 
-  // function handleDeleteClass() {
-  //   if (selectedClass) {
-  //     classesService
-  //       .delete(selectedClass.subject_code, selectedClass.class_code)
-  //       .then((it) => {
-  //         onCloseDeleteClass();
-  //         fetchData();
-  //         showToast('Sucesso!', 'Turma deletada com sucesso!', 'success');
-  //       })
-  //       .catch((error) => {
-  //         showToast('Erro!', `Erro ao deletar turma: ${error}`, 'error');
-  //       });
-  //   }
-  // }
+  async function handleDeleteClass() {
+    if (selectedClass) {
+      await deleteClass(selectedClass.id);
+      setSelectedClass(undefined);
+      onCloseDeleteClass();
+    }
+  }
 
   // function handleDeleteAlloc() {
   //   if (selectedClass) {
@@ -290,9 +243,10 @@ function Classes() {
   //   }
   // }
 
-  function handleEditClick(obj: ClassResponse) {
-    // setSelectedClass(obj);
-    // onOpenEdit();
+  function handleEditClick(data: ClassResponse) {
+    setSelectedClass(data);
+    setIsUpdateClass(true);
+    onOpenClassModal();
   }
 
   function handleEdit(data: Class) {
@@ -377,26 +331,24 @@ function Classes() {
     // return checkedClasses;
   }
 
-  function handleCheckAllClick(
-    data: Row<ClassResponseIndexed>[],
-    value: boolean,
-  ) {
+  function handleCheckAllClick(data: Row<ClassResponse>[], value: boolean) {
     const newCheckMap = [...checkMap];
-    data.forEach((cls) => (newCheckMap[cls.index] = value));
+    const filteredIds = data.map((cls) => Number(cls.original.id));
+    console.log('Ids', filteredIds);
+    filteredIds.forEach((id) => {
+      const index = classes.findIndex((cls) => cls.id === id);
+      console.log('Index atual: ', index);
+      if (index >= 0) newCheckMap[index] = value;
+    });
     setCheckMap(newCheckMap);
   }
 
-  function handleCheckboxClick(original_index: number, value: boolean) {
+  function handleCheckboxClick(id: number, value: boolean) {
+    const index = classes.findIndex((cls) => cls.id === id);
+    if (index < 0) return;
     const newCheckMap = [...checkMap];
-    newCheckMap[original_index] = value;
+    newCheckMap[index] = value;
     setCheckMap(newCheckMap);
-    // const newClassesList = [];
-    // for (let cl of classesList) {
-    //   if (cl.subject_code === subject_code && cl.class_code === class_code)
-    //     cl.selected = value;
-    //   newClassesList.push(cl);
-    // }
-    // setClassesList(newClassesList);
   }
 
   return (
@@ -410,26 +362,17 @@ function Classes() {
         buildings={buildingsList}
         onSave={handleSavePreferences}
       /> */}
-      {/* <RegisterModal
-        isOpen={isOpenRegister}
-        onClose={onCloseRegister}
-        onSave={handleRegister}
-        buildings={buildingsList}
-      /> */}
+
       <ClassModal
-        isOpen={isOpenRegister}
-        onClose={onCloseRegister}
-        isUpdate={false}
+        isOpen={isOpenClassModal}
+        onClose={onCloseClassModal}
+        isUpdate={isUpdateClass}
+        refetch={getClasses}
         subjects={subjects}
         calendars={calendars}
+        selectedClass={selectedClass}
       />
-      {/* <EditModal
-        isOpen={isOpenEdit}
-        onClose={onCloseEdit}
-        formData={selectedClass}
-        onSave={handleEdit}
-        buildings={buildingsList}
-      /> */}
+
       {/* <EditEventModal
         isOpen={isOpenAllocEdit}
         onClose={onCloseAllocEdit}
@@ -480,12 +423,12 @@ function Classes() {
               Remover selecioandos
             </Button>
           </Flex>
-          {/* <Dialog
+          <Dialog
             isOpen={isOpenDeleteClass}
             onClose={onCloseDeleteClass}
             onConfirm={handleDeleteClass}
-            title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
-          /> */}
+            title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.code}`}
+          />
           <Dialog
             isOpen={isOpenDeleteSelectedClasses}
             onClose={onCloseDeleteSelectedClasses}

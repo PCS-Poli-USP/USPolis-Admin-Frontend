@@ -12,6 +12,7 @@ export interface ClassResponseBase {
   subscribers: number;
   pendings: number;
   air_conditionating: boolean;
+  projector: boolean;
   accessibility: boolean;
   ignore_to_allocate: boolean;
   full_allocated: boolean;

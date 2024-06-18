@@ -125,7 +125,7 @@ export const classSecondFormFields = {
     validator: yup
       .array()
       .of(yup.number().required('Campo obrigatório'))
-      .min(1, 'Coloque pelo menos um calendário')
+      .min(1, 'Coloque pelo menos um calendário ou tente colocar novamente')
       .test(
         'is-valid-array',
         'Calendários inválidos',

@@ -26,11 +26,8 @@ import {
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface ClassesColumnsProps {
-  handleCheckAllClick: (data: Row<ClassResponseIndexed>[], value: boolean) => void;
-  handleCheckboxClick: (
-    original_index: number,
-    checkbox_value: boolean,
-  ) => void;
+  handleCheckAllClick: (data: Row<ClassResponse>[], value: boolean) => void;
+  handleCheckboxClick: (id: number, value: boolean) => void;
   handleEditClick: (data: ClassResponse) => void;
   handleAllocationEditClick: (data: ClassResponse) => void;
   handlePreferencesClick: (data: ClassResponse) => void;
@@ -39,13 +36,9 @@ interface ClassesColumnsProps {
   checkMap: boolean[];
 }
 
-export interface ClassResponseIndexed extends ClassResponse {
-  index: number;
-}
-
 export const getClassesColumns = (
   props: ClassesColumnsProps,
-): ColumnDef<ClassResponseIndexed>[] => [
+): ColumnDef<ClassResponse>[] => [
   {
     header: 'Marcar',
     maxSize: 70,
@@ -60,10 +53,7 @@ export const getClassesColumns = (
           isChecked={props.checkMap[row.index]}
           ml={5}
           onChange={(event) =>
-            props.handleCheckboxClick(
-              row.original.index,
-              event.target.checked,
-            )
+            props.handleCheckboxClick(row.original.id, event.target.checked)
           }
         />
       </Box>
@@ -71,17 +61,22 @@ export const getClassesColumns = (
   },
   {
     accessorKey: 'subject_code',
-    header: 'Código',
+    header: 'Disciplina',
     maxSize: 120,
   },
   {
-    accessorKey: 'class_code',
+    accessorKey: 'code',
     header: 'Turma',
     maxSize: 120,
+    cell: ({ row }) => (
+      <Box>
+        <Text>{row.original.code.slice(-2)}</Text>
+      </Box>
+    ),
   },
   {
     accessorKey: 'subject_name',
-    header: 'Disciplina',
+    header: 'Nome da Disciplina',
     maxSize: 300,
   },
   {

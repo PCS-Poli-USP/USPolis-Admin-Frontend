@@ -5,6 +5,7 @@ import { SubjectType } from 'utils/enums/subjects.enum';
 
 export interface SubjectForm {
   building_ids: number[];
+  professors: string[];
   code: string;
   name: string;
   type: SubjectType;

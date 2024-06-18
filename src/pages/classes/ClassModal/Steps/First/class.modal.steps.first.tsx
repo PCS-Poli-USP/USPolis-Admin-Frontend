@@ -22,21 +22,13 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
       setSelectedSubject(
         props.subjects.find((subject) => subject.id === subject_id),
       );
-    } else if (props.selectedClass) {
-      setSelectedSubject(
-        props.subjects.find(
-          (subject) => subject.id === props.selectedClass?.subject_id,
-        ),
-      );
     }
 
     const professors = props.form.getValues('professors');
-    if (professors.length > 0) {
+    if (professors) {
       setSelectedProfessors(professors);
-    } else if (props.selectedClass) {
-      setSelectedProfessors(props.selectedClass.professors);
-    }
-  }, [props.selectedClass, setSelectedSubject, props.subjects, props.form]);
+    } 
+  }, [setSelectedSubject, props.subjects, props.form]);
 
   return (
     <VStack mt={5} width={'100%'} align={'stretch'}>
@@ -51,9 +43,6 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
             label={'Disciplina'}
             name={'subject_id'}
             placeholder={'Selecione uma disciplina'}
-            value={
-              props.selectedClass ? props.selectedClass.subject_id : undefined
-            }
             options={props.subjects.map((subject) => ({
               value: subject.id,
               label: `${subject.code} - ${subject.name}`,
@@ -78,7 +67,6 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               label={'Vagas'}
               name={'vacancies'}
               placeholder={'Quantidade de vagas'}
-              value={props.selectedClass ? props.selectedClass.vacancies : 0}
               min={0}
               max={99999}
             />
@@ -86,7 +74,6 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               label={'Inscritos'}
               name={'subscribers'}
               placeholder={'Quantidade de inscritos'}
-              value={props.selectedClass ? props.selectedClass.subscribers : 0}
               min={0}
               max={99999}
             />
@@ -94,7 +81,6 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               label={'Pendentes'}
               name={'pendings'}
               placeholder={'Quantidade de pendentes'}
-              value={props.selectedClass ? props.selectedClass.pendings : 0}
               min={0}
               max={99999}
             />
@@ -104,7 +90,6 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
             label={'Tipo de turma'}
             name={'type'}
             mt={4}
-            value={props.selectedClass ? props.selectedClass.type : undefined}
             placeholder={'Escolha o tipo da turma'}
             options={[
               { label: 'Prática', value: ClassType.PRACTIC },
@@ -142,15 +127,6 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
                 : []
             }
           />
-          {/* <ListInput
-            listLabel={'Professores adicionados'}
-            valueErrorMessage={'Professor inválido'}
-            label={'Professores'}
-            name={'professors'}
-            isInvalid={ClassValidator.isInvalidProfessor}
-            placeholder={'Digite o nome do professor'}
-            mt={4}
-          /> */}
         </form>
       </FormProvider>
     </VStack>
