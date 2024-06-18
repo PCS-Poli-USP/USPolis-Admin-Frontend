@@ -102,7 +102,7 @@ export const getClassesColumns = (
           schedule.building ? (
             <Text key={index}>{schedule.building}</Text>
           ) : (
-            <Text>Não alocada</Text>
+            <Text key={index}>Não alocada</Text>
           ),
         )}
       </Box>
@@ -124,7 +124,7 @@ export const getClassesColumns = (
           schedule.classroom ? (
             <Text key={index}>{schedule.classroom}</Text>
           ) : (
-            <Text>Não alocada</Text>
+            <Text key={index}>Não alocada</Text>
           ),
         )}
       </Box>

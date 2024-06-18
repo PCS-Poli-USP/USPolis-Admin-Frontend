@@ -1,6 +1,7 @@
 import { SubjectType } from 'utils/enums/subjects.enum';
 
 export interface CreateSubject {
+  building_ids: number[];
   code: string;
   name: string;
   professors: Array<string>;

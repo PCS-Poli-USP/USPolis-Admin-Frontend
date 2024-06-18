@@ -1,6 +1,6 @@
 import { FormLabel, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FieldProps } from '../form.interface';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import Select from 'react-select';
 
@@ -13,6 +13,7 @@ interface MultiSelectProps extends FieldProps {
   options: Option[];
   value?: Option[];
   loading?: boolean;
+  onChange?: () => void;
 }
 
 export function MultiSelect({
@@ -27,34 +28,37 @@ export function MultiSelect({
   mb = undefined,
   mr = undefined,
   ml = undefined,
+  onChange = undefined,
 }: MultiSelectProps) {
   const {
     control,
-    getValues,
+    setValue,
     formState: { errors },
   } = useFormContext();
 
-  const [selectValue, setSelectValue] = useState(value);
+  const [selectedOptions, setSelectedOptions] = useState<Option[] | undefined>(
+    undefined,
+  );
 
-  function getSelectedOptions(values: (string | number)[]) {
-    return options.filter((option) => values.includes(option.value));
-  }
+  useEffect(() => {
+    if (value) {
+      setValue(
+        name,
+        value.map((val) => val.value),
+      );
+      setSelectedOptions(value);
+    }
+  }, [value, name, setValue]);
 
   return (
     <Controller
       control={control}
       name={name}
-      render={({ field }) => (
+      render={() => (
         <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
           <FormLabel alignSelf='flex-start'>{label}</FormLabel>
           <Select
-            value={
-              selectValue
-                ? selectValue
-                : getSelectedOptions(getValues(name))
-                ? getSelectedOptions(getValues(name))
-                : undefined
-            }
+            value={selectedOptions}
             isLoading={loading}
             isDisabled={disabled}
             placeholder={placeholder}
@@ -63,9 +67,12 @@ export function MultiSelect({
               const values = selectedOption.map(
                 (option: Option) => option.value,
               );
-              field.onChange(values);
-              setSelectValue(selectedOption as Option[]);
-              return;
+              setValue(name, values);
+              setSelectedOptions(selectedOption as Option[]);
+              if (onChange) {
+                onChange()
+              }
+              return
             }}
             options={options}
           />

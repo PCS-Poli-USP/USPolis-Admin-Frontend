@@ -52,6 +52,16 @@ import {
   classThirdDefaultValues,
   classThirdSchema,
 } from './Steps/Third/class.modal.steps.third.form';
+import {
+  CreateClass,
+  UpdateClass,
+} from 'models/http/requests/class.request.models';
+import {
+  CreateSchedule,
+  UpdateSchedule,
+} from 'models/http/requests/schedule.request.models';
+import useClasses from 'hooks/useClasses';
+import { DayTime } from 'models/common/common.models';
 
 function ClassModal(props: ClassModalProps) {
   const firstForm = useForm<ClassFirstForm>({
@@ -69,7 +79,54 @@ function ClassModal(props: ClassModalProps) {
     resolver: yupResolver(classThirdSchema),
   });
 
+  const { createClass, updateClass } = useClasses();
+
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
+
+  function getFormatedScheduleData(): CreateSchedule[] | UpdateSchedule[] {
+    const thirdData = thirdForm.getValues();
+
+    return schedules.map((schedule) => {
+      const formated: UpdateSchedule = {
+        start_date: schedule.start_date,
+        end_date: schedule.end_date,
+        start_time: DayTime.fromString(schedule.start_time),
+        end_time: DayTime.fromString(schedule.end_time),
+        recurrence: schedule.recurrence,
+        week_day: schedule.week_day,
+        all_day: false,
+        allocated: false,
+        skip_exceptions: thirdData.skip_exceptions,
+        dates: schedule.dates,
+      };
+      return formated;
+    });
+  }
+
+  function getClassData(): CreateClass | UpdateClass {
+    const firstData = firstForm.getValues();
+    const secondData = secondForm.getValues();
+    const thirdData = thirdForm.getValues();
+
+    const data: CreateClass = {
+      subject_id: Number(firstData.subject_id),
+      calendar_ids: secondData.calendar_ids,
+      code: firstData.code,
+      type: firstData.type,
+      professors: firstData.professors,
+      vacancies: firstData.vacancies,
+      subscribers: firstData.subscribers,
+      pendings: firstData.pendings,
+      air_conditionating: thirdData.air_conditionating,
+      accessibility: thirdData.accessibility,
+      projector: thirdData.projector,
+      ignore_to_allocate: thirdData.ignore_to_allocate,
+      schedules_data: getFormatedScheduleData(),
+      start_date: secondData.start_date,
+      end_date: secondData.end_date,
+    };
+    return data;
+  }
 
   async function handleFirstNextClick() {
     const { trigger } = firstForm;
@@ -87,25 +144,16 @@ function ClassModal(props: ClassModalProps) {
   }
 
   async function handleThirdNextClick() {
-    const { trigger, getValues, formState } = thirdForm;
+    const { trigger } = thirdForm;
     const isValid = await trigger();
-    const values = getValues();
-    console.log(values);
-    console.log(isValid);
-    console.log(formState.errors);
     if (!isValid) return;
     setActiveStep(activeStep + 1);
-  }
-
-  function handleFourthNextClick() {
-    return;
   }
 
   function handleNextClick() {
     if (activeStep === 0) handleFirstNextClick();
     if (activeStep === 1) handleSecondNextClick();
     if (activeStep === 2) handleThirdNextClick();
-    if (activeStep === 3) handleFourthNextClick();
   }
 
   function handlePreviousClick() {
@@ -114,11 +162,22 @@ function ClassModal(props: ClassModalProps) {
     }
   }
 
-  function handleSaveClick() {
-    props.onClose();
+  async function handleSaveClick() {
+    const data = getClassData();
+    console.log(data);
+    if (props.isUpdate && props.selectedClass) {
+      await updateClass(props.selectedClass.id, data as UpdateClass);
+    } else {
+      await createClass(data as CreateClass);
+    }
   }
 
   function handleCloseModal() {
+    firstForm.reset(classFirstDefaultValues);
+    secondForm.reset(classSecondDefaultValues);
+    thirdForm.reset(classThirdDefaultValues);
+    setSchedules([]);
+    setActiveStep(0);
     props.onClose();
   }
 

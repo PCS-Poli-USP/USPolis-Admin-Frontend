@@ -1,5 +1,8 @@
 import useCustomToast from 'hooks/useCustomToast';
-import { CreateClass, UpdateClass } from 'models/http/requests/class.request.models';
+import {
+  CreateClass,
+  UpdateClass,
+} from 'models/http/requests/class.request.models';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import ClassesService from 'services/api/classes.service';
@@ -42,6 +45,7 @@ const useClasses = () => {
           getClasses();
         })
         .catch((error) => {
+          console.log(error);
           showToast('Erro', `Erro ao criar turma: ${error}`, 'error');
         })
         .finally(() => {
@@ -51,25 +55,29 @@ const useClasses = () => {
     [getClasses, showToast],
   );
 
-  const updateClass = useCallback(async (id: number, data: UpdateClass) => {
-    setLoading(true);
-    await service
-      .update(id, data)
-      .then((response) => {
-        showToast('Sucesso', `Turma atualizado com sucesso!`, 'success');
-        getClasses();
-      })
-      .catch((error) => {
-        showToast(
-          'Erro',
-          `Erro ao atualizar a turma ${data.code}: ${error}`,
-          'error',
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [getClasses, showToast]);
+  const updateClass = useCallback(
+    async (id: number, data: UpdateClass) => {
+      setLoading(true);
+      await service
+        .update(id, data)
+        .then((response) => {
+          showToast('Sucesso', `Turma atualizado com sucesso!`, 'success');
+          getClasses();
+        })
+        .catch((error) => {
+          console.log(error);
+          showToast(
+            'Erro',
+            `Erro ao atualizar a turma ${data.code}: ${error}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [getClasses, showToast],
+  );
 
   const deleteClass = useCallback(
     async (id: number) => {

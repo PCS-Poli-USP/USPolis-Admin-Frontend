@@ -3,12 +3,41 @@ import { FormProvider } from 'react-hook-form';
 import { Input, Select } from 'components/common';
 import { ClassType } from 'utils/enums/classes.enum';
 import { NumberInput } from 'components/common/form/NumberInput';
-import { ClassValidator } from 'utils/classes/classes.validator';
-
-import ListInput from 'components/common/form/ListInput';
 import { ClassModalFirstStepProps } from './class.modal.steps.first.interface';
+import { useEffect, useState } from 'react';
+import { SubjectResponse } from 'models/http/responses/subject.response.models';
+import { MultiSelect } from 'components/common/form/MultiSelect';
 
 function ClassModalFirstStep(props: ClassModalFirstStepProps) {
+  const [selectedSubject, setSelectedSubject] = useState<
+    SubjectResponse | undefined
+  >(undefined);
+  const [selectedProfessors, setSelectedProfessors] = useState<
+    string[] | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const subject_id = Number(props.form.getValues('subject_id'));
+    if (subject_id > 0) {
+      setSelectedSubject(
+        props.subjects.find((subject) => subject.id === subject_id),
+      );
+    } else if (props.selectedClass) {
+      setSelectedSubject(
+        props.subjects.find(
+          (subject) => subject.id === props.selectedClass?.subject_id,
+        ),
+      );
+    }
+
+    const professors = props.form.getValues('professors');
+    if (professors.length > 0) {
+      setSelectedProfessors(professors);
+    } else if (props.selectedClass) {
+      setSelectedProfessors(props.selectedClass.professors);
+    }
+  }, [props.selectedClass, setSelectedSubject, props.subjects, props.form]);
+
   return (
     <VStack mt={5} width={'100%'} align={'stretch'}>
       <FormProvider {...props.form}>
@@ -29,6 +58,12 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               value: subject.id,
               label: `${subject.code} - ${subject.name}`,
             }))}
+            onChange={(event) => {
+              const selected = props.subjects.find(
+                (subject) => subject.id === Number(event.target.value),
+              );
+              setSelectedSubject(selected);
+            }}
           />
 
           <Input
@@ -84,7 +119,30 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               },
             ]}
           />
-          <ListInput
+          <MultiSelect
+            label={'Professores'}
+            name={'professors'}
+            placeholder={'Escolha os professores'}
+            mt={4}
+            disabled={false}
+            value={
+              selectedProfessors
+                ? selectedProfessors.map((professor) => ({
+                    value: professor,
+                    label: professor,
+                  }))
+                : undefined
+            }
+            options={
+              selectedSubject
+                ? selectedSubject.professors.map((professor) => ({
+                    value: professor,
+                    label: professor,
+                  }))
+                : []
+            }
+          />
+          {/* <ListInput
             listLabel={'Professores adicionados'}
             valueErrorMessage={'Professor inválido'}
             label={'Professores'}
@@ -92,7 +150,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
             isInvalid={ClassValidator.isInvalidProfessor}
             placeholder={'Digite o nome do professor'}
             mt={4}
-          />
+          /> */}
         </form>
       </FormProvider>
     </VStack>

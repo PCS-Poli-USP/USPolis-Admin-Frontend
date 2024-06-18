@@ -22,4 +22,7 @@ export interface CreateClass extends ClassBase {
   schedules_data: CreateSchedule[];
 }
 
-export interface UpdateClass extends CreateClass {}
+export interface UpdateClass extends ClassBase {
+  subject_id?: number;
+  schedules_data?: CreateSchedule[];
+}

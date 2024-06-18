@@ -66,21 +66,15 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
   }, [props.schedules, setHighlightedDays]);
 
   function handleSelectClassDate(date: string, isStart: boolean) {
-    const values = props.form.getValues([
-      'schedule_start_date',
-      'schedule_end_date',
-    ]);
-    if (isStart && !values[0]) {
+    if (isStart) {
       const { setValue } = props.form;
       setValue('schedule_start_date', date);
     }
-    if (!isStart && !values[1]) {
+    if (!isStart) {
       const { setValue } = props.form;
       setValue('schedule_end_date', date);
     }
   }
-
-  
 
   function resetScheduleInputs() {
     const { reset, getValues } = props.form;
@@ -121,18 +115,33 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
     const values = getScheduleInputValues();
     for (let i = 0; i < values.length; i++) {
       const { trigger } = props.form;
-      const current = await trigger(namesDict[i as numberRange] as fieldNames);
+      const fieldName = namesDict[i as numberRange] as fieldNames;
+      const current = await trigger(fieldName);
       if (!current) {
         result = false;
       }
-      if (current && !values[i] && i !== 1) {
-        // week_day can be null when recurrence is dayli or custom
+      if (current && !values[i] && fieldName !== 'week_day') {
         const { setError } = props.form;
         setError(namesDict[i as numberRange] as fieldNames, {
           type: 'required',
           message: 'Campo Obrigatório',
         });
         result = false;
+      }
+      // week_day can be null when recurrence is dayli or custom
+      if (fieldName === 'week_day') {
+        if (
+          !values[i] &&
+          values[0] !== Recurrence.CUSTOM &&
+          values[0] !== Recurrence.DAILY
+        ) {
+          const { setError } = props.form;
+          setError('week_day', {
+            type: 'required',
+            message: 'Campo Obrigatório',
+          });
+          result = false;
+        }
       }
     }
     return result;

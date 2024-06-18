@@ -54,10 +54,7 @@ export const classSecondFormFields = {
       .string()
       .notRequired()
       .test('is-valid-week-day', 'Dia da semana inválido', function (value) {
-        const { recurrence } = this.parent;
         if (!value) return true;
-        if (recurrence === Recurrence.DAILY || recurrence === Recurrence.CUSTOM)
-          return true;
         return !ScheduleValidator.isInvalidWeekDay(value);
       }),
     defaultValue: '',

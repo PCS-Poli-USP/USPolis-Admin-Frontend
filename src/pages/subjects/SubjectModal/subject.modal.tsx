@@ -127,7 +127,12 @@ export default function SubjectModal(props: SubjectModalProps) {
   }
 
   return (
-    <Modal isOpen={props.isOpen} onClose={handleCloseModal} size={'2xl'}>
+    <Modal
+      isOpen={props.isOpen}
+      onClose={handleCloseModal}
+      size={'2xl'}
+      closeOnOverlayClick={false}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
@@ -148,7 +153,8 @@ export default function SubjectModal(props: SubjectModalProps) {
                       ? props.selectedSubject.buildings_ids.map(
                           (val, index) => ({
                             value: val,
-                            label: props.selectedSubject?.buildings[index].name as string,
+                            label: props.selectedSubject?.buildings[index]
+                              .name as string,
                           }),
                         )
                       : undefined
