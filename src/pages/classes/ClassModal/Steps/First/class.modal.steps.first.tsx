@@ -25,9 +25,10 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
     }
 
     const professors = props.form.getValues('professors');
-    if (professors) {
+    console.log('Valor do form: ', professors);
+    if (professors && professors.length > 0) {
       setSelectedProfessors(professors);
-    } 
+    }
   }, [setSelectedSubject, props.subjects, props.form]);
 
   return (
