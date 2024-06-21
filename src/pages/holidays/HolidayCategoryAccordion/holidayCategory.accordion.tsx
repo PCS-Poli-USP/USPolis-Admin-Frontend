@@ -76,6 +76,7 @@ export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
                   <AccordionPanel>
                     <Divider mb={2} borderColor={'blackAlpha.500'} />
                     <HStack mb={4}>
+                      <Text>{`Criador por ${category.created_by}`}</Text>
                       <Spacer />
                       <Button
                         leftIcon={<BsFillPenFill />}
