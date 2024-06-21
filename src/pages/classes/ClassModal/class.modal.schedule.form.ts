@@ -7,7 +7,7 @@ export const scheduleFormFields = {
   week_days: {
     validator: yup
       .array()
-      .of(yup.string().required('Escolha um dia da semana'))
+      .of(yup.number().required('Escolha um dia da semana'))
       .min(1, 'Selecione pelo menos um dia da semana')
       .test(
         'is-valid-array-of-day-time',

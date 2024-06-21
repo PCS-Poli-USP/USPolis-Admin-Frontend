@@ -85,6 +85,7 @@ function Classes() {
   const columns = getClassesColumns({
     handleCheckAllClick,
     handleCheckboxClick,
+    handleDuplicateClick,
     handleEditClick,
     handleAllocationEditClick,
     handleDeleteClassClick,
@@ -137,6 +138,11 @@ function Classes() {
     //       'error',
     //     );
     //   });
+  }
+
+  function handleDuplicateClick(data: ClassResponse) {
+    setSelectedClass(data);
+    onOpenClassModal();
   }
 
   function handleEditClick(data: ClassResponse) {
@@ -223,7 +229,11 @@ function Classes() {
       <Loading isOpen={allocating} onClose={() => setAllocating(false)} />
       <ClassModal
         isOpen={isOpenClassModal}
-        onClose={onCloseClassModal}
+        onClose={() => {
+          setSelectedClass(undefined);
+          onCloseClassModal();
+          setIsUpdateClass(false);
+        }}
         isUpdate={isUpdateClass}
         refetch={getClasses}
         subjects={subjects}

@@ -2,7 +2,6 @@ import {
   Alert,
   AlertIcon,
   Button,
-  Checkbox,
   HStack,
   IconButton,
   List,
@@ -21,7 +20,7 @@ import {
 } from './class.modal.steps.second.interface';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
-import { MultiSelect, Option } from 'components/common/form/MultiSelect';
+import { MultiSelect } from 'components/common/form/MultiSelect';
 import { useEffect, useState } from 'react';
 import DateCalendarPicker, {
   useDateCalendarPicker,
@@ -50,10 +49,6 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
   const [isSelecting, setIsSelecting] = useState(false);
   const [isUpdatingSchedule, setIsUpdatingSchedule] = useState(false);
   const [scheduleIndex, setScheduleIndex] = useState(0);
-  const [isDisabledCalendars, setIsDisabledCalendars] = useState(false);
-  const [selectedCalendars, setSelectedCalendars] = useState<
-    Option[] | undefined
-  >(undefined);
 
   useEffect(() => {
     const allDates: string[] = [];
@@ -69,12 +64,6 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
     );
     setHighlightedDays(allDates);
   }, [props.schedules, setHighlightedDays]);
-
-  useEffect(() => {
-    if (props.form.getValues('calendar_ids') === undefined) {
-      setIsDisabledCalendars(true);
-    }
-  }, [props.form]);
 
   function handleSelectClassDate(date: string, isStart: boolean) {
     if (isStart) {
@@ -265,53 +254,14 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               }
             />
             <MultiSelect
-              disabled={isDisabledCalendars}
-              label={'Calendários'}
+              label={'Calendários (Opcional)'}
               name={'calendar_ids'}
-              placeholder={'Escolha um ou mais'}
+              placeholder={'Escolha nenhum ou mais'}
               options={props.calendars.map((calendar) => ({
                 value: calendar.id,
                 label: calendar.name,
               }))}
             />
-          </HStack>
-          <HStack w={'full'}>
-            <Spacer />
-            <Checkbox
-              isChecked={isDisabledCalendars}
-              w={320}
-              onChange={(event) => {
-                const { setValue } = props.form;
-                if (event.target.checked) {
-                  const calendars_ids = props.form.getValues('calendar_ids');
-                  if (calendars_ids) {
-                    const calendars = props.calendars.filter((calendar) =>
-                      calendars_ids.includes(calendar.id),
-                    );
-                    setSelectedCalendars(
-                      calendars.map((calendar) => ({
-                        value: calendar.id,
-                        label: calendar.name,
-                      })),
-                    );
-                  }
-                  setValue('calendar_ids', []);
-                  setIsDisabledCalendars(true);
-                } else {
-                  if (selectedCalendars) {
-                    const values = selectedCalendars.map(
-                      (option) => option.value as number,
-                    );
-                    setValue('calendar_ids', values);
-                  } else {
-                    setValue('calendar_ids', []);
-                  }
-                  setIsDisabledCalendars(false);
-                }
-              }}
-            >
-              Turma sem Calendários
-            </Checkbox>
           </HStack>
 
           <Text as={'b'} fontSize={'lg'}>
@@ -379,7 +329,6 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
             />
             <Button
               colorScheme='teal'
-              variant={'outline'}
               mt={8}
               w={240}
               onClick={handleScheduleButton}

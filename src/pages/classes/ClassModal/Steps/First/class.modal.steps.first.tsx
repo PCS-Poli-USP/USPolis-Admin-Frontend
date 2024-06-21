@@ -12,9 +12,6 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
   const [selectedSubject, setSelectedSubject] = useState<
     SubjectResponse | undefined
   >(undefined);
-  const [selectedProfessors, setSelectedProfessors] = useState<
-    string[] | undefined
-  >(undefined);
 
   useEffect(() => {
     const subject_id = Number(props.form.getValues('subject_id'));
@@ -22,12 +19,6 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
       setSelectedSubject(
         props.subjects.find((subject) => subject.id === subject_id),
       );
-    }
-
-    const professors = props.form.getValues('professors');
-    console.log('Valor do form: ', professors);
-    if (professors && professors.length > 0) {
-      setSelectedProfessors(professors);
     }
   }, [setSelectedSubject, props.subjects, props.form]);
 
@@ -111,14 +102,6 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
             placeholder={'Escolha os professores'}
             mt={4}
             disabled={false}
-            value={
-              selectedProfessors
-                ? selectedProfessors.map((professor) => ({
-                    value: professor,
-                    label: professor,
-                  }))
-                : undefined
-            }
             options={
               selectedSubject
                 ? selectedSubject.professors.map((professor) => ({

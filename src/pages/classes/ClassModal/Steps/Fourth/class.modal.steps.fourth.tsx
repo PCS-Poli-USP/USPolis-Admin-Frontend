@@ -22,9 +22,11 @@ function ClassModalFourthStep(props: ClassModalFourthStepProps) {
 
   const subject_id = Number(firstForm.subject_id);
   const subject = props.subjects.find((subject) => subject.id === subject_id);
-  const calendars = props.calendars.filter((calendar) =>
-    seccondForm.calendar_ids.includes(calendar.id),
-  );
+  const calendars = props.calendars.filter((calendar) => {
+    if (seccondForm.calendar_ids)
+      return seccondForm.calendar_ids.includes(calendar.id);
+    return false;
+  });
 
   const calendarsNames = calendars.map((calendar) => calendar.name);
 
@@ -88,10 +90,10 @@ function ClassModalFourthStep(props: ClassModalFourthStepProps) {
       </HStack>
       <HStack>
         <Text as={'b'}>{`Calendários: `}</Text>
-        <Text color={calendarsNames.length === 0 ? 'red' : undefined}>
+        <Text fontWeight={calendarsNames.length === 0 ? 'bold' : undefined}>
           {calendarsNames.length !== 0
             ? calendarsNames.join(', ')
-            : 'Nenhum calendário encontrado'}
+            : 'Nenhum calendário escolhido'}
         </Text>
       </HStack>
       <Text as={'b'}>Agendas: </Text>
@@ -122,10 +124,6 @@ function ClassModalFourthStep(props: ClassModalFourthStepProps) {
         </Button>
       </HStack>
 
-      <HStack>
-        <Text as={'b'}>{`Ignorar calendários e feriados: `}</Text>
-        <Text>{thirdForm.skip_exceptions ? 'Sim' : 'Não'}</Text>
-      </HStack>
       <HStack>
         <Text as={'b'}>{`Ignorar para alocação: `}</Text>
         <Text>{thirdForm.ignore_to_allocate ? 'Sim' : 'Não'}</Text>

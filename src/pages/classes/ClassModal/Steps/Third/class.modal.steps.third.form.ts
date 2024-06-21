@@ -18,10 +18,6 @@ export const classThirdFormFields = {
     validator: yup.boolean().required('Campo obrigatório'),
     defaultValue: false,
   },
-  skip_exceptions: {
-    validator: yup.boolean().required('Campo obrigatório'),
-    defaultValue: false,
-  },
 };
 
 export const classThirdSchema = yup.object<ClassThirdForm>().shape({
@@ -29,7 +25,6 @@ export const classThirdSchema = yup.object<ClassThirdForm>().shape({
   projector: classThirdFormFields.projector.validator,
   air_conditionating: classThirdFormFields.air_conditionating.validator,
   accessibility: classThirdFormFields.accessibility.validator,
-  skip_exceptions: classThirdFormFields.skip_exceptions.validator,
 });
 
 export const classThirdDefaultValues: ClassThirdForm = {
@@ -37,5 +32,4 @@ export const classThirdDefaultValues: ClassThirdForm = {
   projector: classThirdFormFields.projector.defaultValue,
   air_conditionating: classThirdFormFields.air_conditionating.defaultValue,
   accessibility: classThirdFormFields.accessibility.defaultValue,
-  skip_exceptions: classThirdFormFields.skip_exceptions.defaultValue,
 };

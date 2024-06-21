@@ -1,3 +1,4 @@
+import { CopyIcon } from '@chakra-ui/icons';
 import {
   Box,
   Checkbox,
@@ -7,7 +8,6 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { DayTime } from 'models/common/common.models';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import {
   BsCalendarDateFill,
@@ -27,6 +27,7 @@ import {
 interface ClassesColumnsProps {
   handleCheckAllClick: (data: Row<ClassResponse>[], value: boolean) => void;
   handleCheckboxClick: (id: number, value: boolean) => void;
+  handleDuplicateClick: (data: ClassResponse) => void;
   handleEditClick: (data: ClassResponse) => void;
   handleAllocationEditClick: (data: ClassResponse) => void;
   handleDeleteClassClick: (data: ClassResponse) => void;
@@ -63,6 +64,11 @@ export const getClassesColumns = (
     maxSize: 120,
   },
   {
+    accessorKey: 'subject_name',
+    header: 'Nome da Disciplina',
+    maxSize: 300,
+  },
+  {
     accessorKey: 'code',
     header: 'Turma',
     maxSize: 120,
@@ -71,11 +77,6 @@ export const getClassesColumns = (
         <Text>{row.original.code.slice(-2)}</Text>
       </Box>
     ),
-  },
-  {
-    accessorKey: 'subject_name',
-    header: 'Nome da Disciplina',
-    maxSize: 300,
   },
   {
     accessorKey: 'ignore_to_allocate',
@@ -87,7 +88,7 @@ export const getClassesColumns = (
   {
     accessorFn: (row) => (row.schedules ? row.schedules : ['Não alocada']),
     filterFn: FilterBuilding,
-    header: 'Prédio',
+    header: 'Prédios',
     maxSize: 120,
     cell: ({ row }) => (
       <Box>
@@ -127,9 +128,9 @@ export const getClassesColumns = (
     accessorFn: (row) =>
       row.schedules.map(
         (schedule) =>
-          `${WeekDay.translate(schedule.week_day)} ${DayTime.toString(
-            schedule.start_time,
-          )} - ${DayTime.toString(schedule.end_time)}`,
+          `${WeekDay.translate(schedule.week_day)}:
+          ${schedule.start_time.substring(0, 5)} - 
+          ${schedule.end_time.substring(0, 5)}`,
       ),
     header: 'Horários',
     cell: (info) => (
@@ -140,6 +141,24 @@ export const getClassesColumns = (
       </Box>
     ),
     filterFn: FilterArray,
+  },
+  {
+    accessorFn: (row) =>
+      row.calendar_names ? row.calendar_names : ['Sem calendários'],
+    filterFn: FilterBuilding,
+    header: 'Calendários',
+    maxSize: 140,
+    cell: ({ row }) => (
+      <Box>
+        {row.original.calendar_names ? (
+          row.original.calendar_names.map((calendar, index) => (
+            <Text key={index}>{calendar}</Text>
+          ))
+        ) : (
+          <Text>Sem calendários</Text>
+        )}
+      </Box>
+    ),
   },
   {
     accessorKey: 'subscribers',
@@ -171,10 +190,20 @@ export const getClassesColumns = (
     header: 'Opções',
     cell: ({ row }) => (
       <HStack spacing='0px'>
+        <Tooltip label='Duplicar Turma'>
+          <IconButton
+            colorScheme='cyan'
+            size='sm'
+            variant='ghost'
+            aria-label='duplicar-turma'
+            icon={<CopyIcon />}
+            onClick={() => props.handleDuplicateClick(row.original)}
+          />
+        </Tooltip>
         <Tooltip label='Editar Turma'>
           <IconButton
             colorScheme='yellow'
-            size='xs'
+            size='sm'
             variant='ghost'
             aria-label='editar-turma'
             icon={<BsFillPenFill />}
@@ -184,7 +213,7 @@ export const getClassesColumns = (
         <Tooltip label='Editar Alocação'>
           <IconButton
             colorScheme='teal'
-            size='xs'
+            size='sm'
             variant='ghost'
             aria-label='editar-alocacao'
             icon={<BsCalendarDateFill />}
@@ -194,7 +223,7 @@ export const getClassesColumns = (
         <Tooltip label='Excluir Turma'>
           <IconButton
             colorScheme='red'
-            size='xs'
+            size='sm'
             variant='ghost'
             aria-label='excluir-turma'
             icon={<BsFillTrashFill />}
@@ -204,7 +233,7 @@ export const getClassesColumns = (
         <Tooltip label='Excluir Alocação'>
           <IconButton
             colorScheme='red'
-            size='xs'
+            size='sm'
             variant='ghost'
             aria-label='excluir-alocacao'
             icon={<BsCalendarXFill />}

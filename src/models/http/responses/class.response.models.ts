@@ -24,8 +24,8 @@ export interface ClassResponse extends ClassResponseBase {
   subject_name: string;
   subject_code: string; 
   schedules: ScheduleResponse[];
-  calendar_ids: number[];
-  calendar_names: string[];
+  calendar_ids?: number[];
+  calendar_names?: string[];
 }
 
 export interface ClassUnfetchResponse extends ClassResponseBase {

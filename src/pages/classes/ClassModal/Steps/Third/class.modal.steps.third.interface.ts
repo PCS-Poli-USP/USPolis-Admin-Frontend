@@ -12,7 +12,6 @@ export interface ClassThirdForm {
   projector: boolean;
   air_conditionating: boolean;
   accessibility: boolean;
-  skip_exceptions: boolean;
 }
 
 export type fieldNames =

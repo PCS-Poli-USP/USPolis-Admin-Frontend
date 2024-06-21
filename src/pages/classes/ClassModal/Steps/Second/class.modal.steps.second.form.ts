@@ -2,7 +2,6 @@ import * as yup from 'yup';
 import { ClassSecondForm } from './class.modal.steps.second.interface';
 import { ScheduleValidator } from 'utils/schedules/schedules.validator';
 import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
 
 export const classSecondFormFields = {
   schedule_start_date: {
@@ -51,13 +50,14 @@ export const classSecondFormFields = {
   },
   week_day: {
     validator: yup
-      .string()
+      .number()
       .notRequired()
+      .transform((curr, orig) => (orig === '' ? undefined : curr)) // Yup treats notRequired as ''
       .test('is-valid-week-day', 'Dia da semana inválido', function (value) {
         if (!value) return true;
         return !ScheduleValidator.isInvalidWeekDay(value);
       }),
-    defaultValue: '',
+    defaultValue: undefined,
   },
   start_time: {
     validator: yup
@@ -125,11 +125,16 @@ export const classSecondFormFields = {
     validator: yup
       .array()
       .of(yup.number().required('Campo obrigatório'))
-      .min(1, 'Coloque pelo menos um calendário ou tente colocar novamente')
+      .notRequired()
+      .nullable()
       .test(
         'is-valid-array',
-        'Calendários inválidos',
-        (value) => value && !ScheduleValidator.isInvalidIdArray(value),
+        'Selecione pelo menos um calendário',
+        function (value) {
+          if (!value) return true;
+          if (value.length === 0) return true;
+          return !ScheduleValidator.isInvalidIdArray(value);
+        },
       ),
     defaultValue: [],
   },
@@ -151,7 +156,7 @@ export const classSecondDefaultValues: ClassSecondForm = {
   schedule_start_date: classSecondFormFields.schedule_start_date.defaultValue,
   schedule_end_date: classSecondFormFields.schedule_end_date.defaultValue,
   recurrence: classSecondFormFields.recurrence.defaultValue as Recurrence,
-  week_day: classSecondFormFields.week_day.defaultValue as WeekDay,
+  week_day: classSecondFormFields.week_day.defaultValue,
   start_time: classSecondFormFields.start_time.defaultValue,
   end_time: classSecondFormFields.end_time.defaultValue,
   start_date: classSecondFormFields.start_date.defaultValue,

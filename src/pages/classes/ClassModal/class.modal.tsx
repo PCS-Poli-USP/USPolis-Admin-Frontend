@@ -22,6 +22,7 @@ import {
   StepTitle,
   StepDescription,
   StepSeparator,
+  Text,
 } from '@chakra-ui/react';
 import {
   ArrowBackIcon,
@@ -61,7 +62,6 @@ import {
   UpdateSchedule,
 } from 'models/http/requests/schedule.request.models';
 import useClasses from 'hooks/useClasses';
-import { DayTime } from 'models/common/common.models';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 
 function ClassModal(props: ClassModalProps) {
@@ -83,21 +83,21 @@ function ClassModal(props: ClassModalProps) {
   const { createClass, updateClass } = useClasses();
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
+  const [stepsIsValid, setStepsIsValid] = useState<
+    [boolean, boolean, boolean, boolean]
+  >([false, false, true, true]);
 
   function getFormatedScheduleData(): CreateSchedule[] | UpdateSchedule[] {
-    const thirdData = thirdForm.getValues();
-
     return schedules.map((schedule) => {
       const formated: UpdateSchedule = {
         start_date: schedule.start_date,
         end_date: schedule.end_date,
-        start_time: DayTime.fromString(schedule.start_time),
-        end_time: DayTime.fromString(schedule.end_time),
+        start_time: schedule.start_time,
+        end_time: schedule.end_time,
         recurrence: schedule.recurrence,
-        week_day: schedule.week_day,
+        week_day: Number(schedule.week_day),
         all_day: false,
         allocated: false,
-        skip_exceptions: thirdData.skip_exceptions,
         dates: schedule.dates,
       };
       return formated;
@@ -111,7 +111,10 @@ function ClassModal(props: ClassModalProps) {
 
     const data: CreateClass = {
       subject_id: Number(firstData.subject_id),
-      calendar_ids: secondData.calendar_ids,
+      calendar_ids:
+        secondData.calendar_ids && secondData.calendar_ids.length > 0
+          ? secondData.calendar_ids
+          : undefined,
       code: firstData.code,
       type: firstData.type,
       professors: firstData.professors,
@@ -132,6 +135,7 @@ function ClassModal(props: ClassModalProps) {
   async function handleFirstNextClick() {
     const { trigger } = firstForm;
     const isValid = await trigger();
+    setStepsIsValid((prev) => [isValid, prev[1], prev[2], prev[3]]);
     if (!isValid) return;
     setActiveStep(activeStep + 1);
   }
@@ -139,6 +143,12 @@ function ClassModal(props: ClassModalProps) {
   async function handleSecondNextClick() {
     const { trigger } = secondForm;
     const isValid = await trigger();
+    setStepsIsValid((prev) => [
+      prev[0],
+      schedules.length > 0 ? isValid : false,
+      prev[2],
+      prev[3],
+    ]);
     if (!isValid) return;
     if (schedules.length === 0) return;
     setActiveStep(activeStep + 1);
@@ -147,6 +157,7 @@ function ClassModal(props: ClassModalProps) {
   async function handleThirdNextClick() {
     const { trigger } = thirdForm;
     const isValid = await trigger();
+    setStepsIsValid((prev) => [prev[0], prev[1], isValid, prev[3]]);
     if (!isValid) return;
     setActiveStep(activeStep + 1);
   }
@@ -166,10 +177,8 @@ function ClassModal(props: ClassModalProps) {
   async function handleSaveClick() {
     const data = getClassData();
     if (props.isUpdate && props.selectedClass) {
-      console.log('Aqui')
       await updateClass(props.selectedClass.id, data as UpdateClass);
     } else if (!props.isUpdate) {
-      console.log("Criou cara")
       await createClass(data as CreateClass);
     }
     props.refetch();
@@ -187,7 +196,6 @@ function ClassModal(props: ClassModalProps) {
 
   function loadThirdFormFromClass(data: ClassResponse) {
     thirdForm.reset({
-      skip_exceptions: data.schedules[0].skip_exceptions,
       ignore_to_allocate: data.ignore_to_allocate,
       projector: data.projector,
       accessibility: data.accessibility,
@@ -197,8 +205,8 @@ function ClassModal(props: ClassModalProps) {
 
   function loadSecondFormFromClass(data: ClassResponse) {
     secondForm.reset({
-      start_date: data.start_date.substring(0, 10), //Remove HH:MM:SS....
-      end_date: data.end_date.substring(0, 10),
+      start_date: data.start_date,
+      end_date: data.end_date,
       calendar_ids: data.calendar_ids,
     });
   }
@@ -222,13 +230,12 @@ function ClassModal(props: ClassModalProps) {
   }
 
   function loadSchedulesFromClass(data: ClassResponse) {
-    console.log(data.schedules);
     const newSchedules: ScheduleData[] = data.schedules.map((schedule) => ({
       recurrence: schedule.recurrence,
-      start_date: schedule.start_date.substring(0, 10),
-      end_date: schedule.end_date.substring(0, 10),
-      start_time: DayTime.toString(schedule.start_time),
-      end_time: DayTime.toString(schedule.end_time),
+      start_date: schedule.start_date,
+      end_date: schedule.end_date,
+      start_time: schedule.start_time,
+      end_time: schedule.end_time,
       week_day: schedule.week_day,
       dates: schedule.dates,
     }));
@@ -243,7 +250,8 @@ function ClassModal(props: ClassModalProps) {
   useEffect(() => {
     if (props.selectedClass) {
       loadSelectedClass(props.selectedClass);
-    }
+      setStepsIsValid([true, true, true, true]);
+    } else setStepsIsValid([false, false, true, true]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.selectedClass]);
 
@@ -333,7 +341,7 @@ function ClassModal(props: ClassModalProps) {
           <VStack>
             <Stepper size='lg' index={activeStep} alignItems={'start'}>
               {steps.map((step, index) => (
-                <Step key={index}>
+                <Step key={index} onClick={() => setActiveStep(index)}>
                   <StepIndicator>
                     <StepStatus
                       complete={<StepIcon />}
@@ -345,6 +353,12 @@ function ClassModal(props: ClassModalProps) {
                   <Box flexShrink='0'>
                     <StepTitle>{step.title}</StepTitle>
                     <StepDescription>{step.description}</StepDescription>
+                    <Text
+                      color={stepsIsValid[index] ? undefined : 'red'}
+                      hidden={stepsIsValid[index]}
+                    >
+                      Inválido
+                    </Text>
                   </Box>
 
                   <StepSeparator />
@@ -387,6 +401,7 @@ function ClassModal(props: ClassModalProps) {
                   colorScheme={'blue'}
                   onClick={handleSaveClick}
                   rightIcon={<DownloadIcon />}
+                  isDisabled={stepsIsValid.filter((value) => !value).length > 0}
                 >
                   Finalizar
                 </Button>

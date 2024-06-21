@@ -1,4 +1,3 @@
-import { ClassResponse } from 'models/http/responses/class.response.models';
 import { ClassModalStepsProps } from '../class.modal.steps.interface';
 import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
 import { Recurrence } from 'utils/enums/recurrence.enum';
@@ -15,7 +14,7 @@ export interface ClassModalSecondStepProps extends ClassModalStepsProps {
 export interface ClassSecondForm {
   start_date: string;
   end_date: string;
-  calendar_ids: number[];
+  calendar_ids?: number[];
   start_time?: string;
   end_time?: string;
   week_day?: WeekDay;

@@ -10,12 +10,6 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
         <form>
           <VStack align={'start'}>
             <Divider borderColor={'black'} />
-            <Heading size={'lg'}>Preferências das Agendas</Heading>
-            <CheckBox
-              name={'skip_exceptions'}
-              text={'Ignorar calendários e feriados'}
-            />
-            <Divider borderColor={'black'} />
             <Heading size={'lg'}>Preferências da Alocação</Heading>
             <CheckBox
               name={'ignore_to_allocate'}
