@@ -2,6 +2,7 @@ import {
   Alert,
   AlertIcon,
   Button,
+  Checkbox,
   HStack,
   IconButton,
   List,
@@ -49,24 +50,10 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
   const [isSelecting, setIsSelecting] = useState(false);
   const [isUpdatingSchedule, setIsUpdatingSchedule] = useState(false);
   const [scheduleIndex, setScheduleIndex] = useState(0);
+  const [isDisabledCalendars, setIsDisabledCalendars] = useState(false);
   const [selectedCalendars, setSelectedCalendars] = useState<
     Option[] | undefined
   >(undefined);
-
-  useEffect(() => {
-    const calendars_ids = props.form.getValues('calendar_ids');
-    if (calendars_ids.length > 0) {
-      const calendars = props.calendars.filter((calendar) =>
-        calendars_ids.includes(calendar.id),
-      );
-      setSelectedCalendars(
-        calendars.map((calendar) => ({
-          value: calendar.id,
-          label: calendar.name,
-        })),
-      );
-    }
-  }, [props.form, props.calendars]);
 
   useEffect(() => {
     const allDates: string[] = [];
@@ -83,6 +70,12 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
     setHighlightedDays(allDates);
   }, [props.schedules, setHighlightedDays]);
 
+  useEffect(() => {
+    if (props.form.getValues('calendar_ids') === undefined) {
+      setIsDisabledCalendars(true);
+    }
+  }, [props.form]);
+
   function handleSelectClassDate(date: string, isStart: boolean) {
     if (isStart) {
       const { setValue } = props.form;
@@ -96,14 +89,16 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
 
   function resetScheduleInputs() {
     const { reset, getValues } = props.form;
-    const values = getValues(['start_date', 'end_date']);
+    const values = getValues(['start_date', 'end_date', 'calendar_ids']);
     reset({
+      ...props.form.getValues(),
       week_day: classSecondDefaultValues.week_day,
       start_time: classSecondDefaultValues.start_time,
       end_time: classSecondDefaultValues.end_time,
       schedule_start_date: values[0],
       schedule_end_date: values[1],
       recurrence: classSecondDefaultValues.recurrence,
+      calendar_ids: values[2],
     });
   }
 
@@ -131,6 +126,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
 
     let result = true;
     const values = getScheduleInputValues();
+
     for (let i = 0; i < values.length; i++) {
       const { trigger } = props.form;
       const fieldName = namesDict[i as numberRange] as fieldNames;
@@ -180,6 +176,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
     if (scheduleIndex === index) {
       const { reset } = props.form;
       reset({
+        ...props.form.getValues(),
         schedule_start_date: classSecondDefaultValues.schedule_start_date,
         schedule_end_date: classSecondDefaultValues.end_date,
         recurrence: classSecondDefaultValues.recurrence,
@@ -192,7 +189,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
       setIsDayli(false);
     }
     const newSchedules = [...props.schedules];
-    newSchedules.splice(index, -1);
+    newSchedules.splice(index, 1);
     props.setSchedules(newSchedules);
     setScheduleIndex(0);
   }
@@ -201,6 +198,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
     const { reset } = props.form;
     const schedule = props.schedules[index];
     reset({
+      ...props.form.getValues(),
       schedule_start_date: schedule.start_date,
       schedule_end_date: schedule.end_date,
       recurrence: schedule.recurrence,
@@ -267,15 +265,53 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               }
             />
             <MultiSelect
+              disabled={isDisabledCalendars}
               label={'Calendários'}
               name={'calendar_ids'}
               placeholder={'Escolha um ou mais'}
-              value={selectedCalendars}
               options={props.calendars.map((calendar) => ({
                 value: calendar.id,
                 label: calendar.name,
               }))}
             />
+          </HStack>
+          <HStack w={'full'}>
+            <Spacer />
+            <Checkbox
+              isChecked={isDisabledCalendars}
+              w={320}
+              onChange={(event) => {
+                const { setValue } = props.form;
+                if (event.target.checked) {
+                  const calendars_ids = props.form.getValues('calendar_ids');
+                  if (calendars_ids) {
+                    const calendars = props.calendars.filter((calendar) =>
+                      calendars_ids.includes(calendar.id),
+                    );
+                    setSelectedCalendars(
+                      calendars.map((calendar) => ({
+                        value: calendar.id,
+                        label: calendar.name,
+                      })),
+                    );
+                  }
+                  setValue('calendar_ids', []);
+                  setIsDisabledCalendars(true);
+                } else {
+                  if (selectedCalendars) {
+                    const values = selectedCalendars.map(
+                      (option) => option.value as number,
+                    );
+                    setValue('calendar_ids', values);
+                  } else {
+                    setValue('calendar_ids', []);
+                  }
+                  setIsDisabledCalendars(false);
+                }
+              }}
+            >
+              Turma sem Calendários
+            </Checkbox>
           </HStack>
 
           <Text as={'b'} fontSize={'lg'}>
@@ -384,7 +420,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
                             variant='ghost'
                             aria-label='remover-valor'
                             icon={<BsFillTrashFill />}
-                            onClick={() => console.log('Deletandoo', index)}
+                            onClick={() => handleDeleteScheduleClick(index)}
                           />
                         </Tooltip>
                       </HStack>
