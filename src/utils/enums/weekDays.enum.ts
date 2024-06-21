@@ -9,13 +9,13 @@ export enum WeekDays {
 }
 
 export enum WeekDay {
-  MONDAY = 'Monday',
-  TUESDAY = 'Tuesday',
-  WEDNESDAY = 'Wednesday',
-  THURSDAY = 'Thursday',
-  FRIDAY = 'Friday',
-  SATURDAY = 'Saturday',
-  SUNDAY = 'Sunday',
+  MONDAY = 0,
+  TUESDAY = 1,
+  WEDNESDAY = 2,
+  THURSDAY = 3,
+  FRIDAY = 4,
+  SATURDAY = 5,
+  SUNDAY = 6,
 }
 
 // Classe de exceção personalizada
@@ -38,24 +38,24 @@ export namespace WeekDay {
     dom: WeekDay.SUNDAY,
   };
 
-  const intMapping: { [key in WeekDay]: number } = {
-    [WeekDay.MONDAY]: 1,
-    [WeekDay.TUESDAY]: 2,
-    [WeekDay.WEDNESDAY]: 3,
-    [WeekDay.THURSDAY]: 4,
-    [WeekDay.FRIDAY]: 5,
-    [WeekDay.SATURDAY]: 6,
-    [WeekDay.SUNDAY]: 0,
+  const stringMapping: { [key in WeekDay]: string } = {
+    [WeekDay.MONDAY]: 'Monday',
+    [WeekDay.TUESDAY]: 'Tuesday',
+    [WeekDay.WEDNESDAY]: 'Wednesday',
+    [WeekDay.THURSDAY]: 'Thursday',
+    [WeekDay.FRIDAY]: 'Friday',
+    [WeekDay.SATURDAY]: 'Saturday',
+    [WeekDay.SUNDAY]: 'Sunday',
   };
 
-  const reverseIntMapping: { [key: number]: WeekDay } = {
-    0: WeekDay.MONDAY,
-    1: WeekDay.TUESDAY,
-    2: WeekDay.WEDNESDAY,
-    3: WeekDay.THURSDAY,
-    4: WeekDay.FRIDAY,
-    5: WeekDay.SATURDAY,
-    6: WeekDay.SUNDAY,
+  const reverseStringMapping: { [key: string]: WeekDay } = {
+    Monday: WeekDay.MONDAY,
+    Tuesday: WeekDay.TUESDAY,
+    Wednesday: WeekDay.WEDNESDAY,
+    Thursday: WeekDay.THURSDAY,
+    Friday: WeekDay.FRIDAY,
+    Saturday: WeekDay.SATURDAY,
+    Sunday: WeekDay.SUNDAY,
   };
 
   const translations: { [key in WeekDay]: string } = {
@@ -72,8 +72,15 @@ export namespace WeekDay {
     return translations[day];
   }
 
-  export function toInt(day: WeekDay): number {
-    return intMapping[day];
+  export function toString(day: WeekDay): string {
+    return stringMapping[day];
+  }
+
+  export function toInt(day: WeekDay) {
+    // In moment Sunday = 0, Monday = 1, ...
+    const fixed = day + 1;
+    if (fixed === 7) return 0;
+    return fixed;
   }
 
   export function getValues(): WeekDay[] {
@@ -101,11 +108,11 @@ export namespace WeekDay {
   }
 
   export function fromInt(dayInt: number): string {
-    const dayStr = reverseIntMapping[dayInt];
+    const dayStr = stringMapping[dayInt as WeekDay];
     if (dayStr === undefined) {
       throw new NoSuchWeekDay(
         `No such week day: ${dayInt}. Valid week days: ${Object.keys(
-          reverseIntMapping,
+          stringMapping,
         ).join(', ')}`,
       );
     }

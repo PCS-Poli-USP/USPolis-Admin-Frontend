@@ -43,9 +43,9 @@ export default function SubjectModal(props: SubjectModalProps) {
   function formatSelectedSubject(data: SubjectResponse): SubjectResponse {
     const formated: SubjectResponse = {
       ...data,
-      activation: data.activation.substring(0, 10),
+      activation: data.activation,
       desactivation: data.desactivation
-        ? data.desactivation.substring(0, 10)
+        ? data.desactivation
         : undefined,
     };
     return formated;
@@ -104,7 +104,7 @@ export default function SubjectModal(props: SubjectModalProps) {
                 <MultiSelect
                   label={'Prédios'}
                   name={'building_ids'}
-                  value={
+                  values={
                     props.selectedSubject
                       ? props.selectedSubject.building_ids.map(
                           (val, index) => ({

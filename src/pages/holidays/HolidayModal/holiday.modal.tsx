@@ -100,7 +100,7 @@ function HolidayModal(props: HolidayModalProps) {
   function formatSelectedHoliday(data: HolidayUnfetchResponse): HolidayForm {
     const formated: HolidayForm = {
       category_id: data.category_id,
-      date: data.date.substring(0, 10),
+      date: data.date,
     };
     return formated;
   }
@@ -147,7 +147,6 @@ function HolidayModal(props: HolidayModalProps) {
                   label={'Categoria do feriado'}
                   name={'category_id'}
                   placeholder={'Selecione uma opção'}
-                  value={props.category ? props.category.id : undefined}
                   options={props.categories.map((category) => ({
                     label: category.name,
                     value: category.id,

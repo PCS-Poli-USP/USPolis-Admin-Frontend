@@ -4,7 +4,7 @@ import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 
 export class ScheduleValidator extends CommonValidator {
-  static isInvalidWeekDay(value: string) {
+  static isInvalidWeekDay(value: number) {
     return !WeekDay.getValues().includes(value as WeekDay);
   }
 
@@ -23,7 +23,7 @@ export class ScheduleValidator extends CommonValidator {
     return !Recurrence.getValues().includes(value as Recurrence);
   }
 
-  static isInvalidWeekDayArray(values: string[]) {
+  static isInvalidWeekDayArray(values: number[]) {
     values.forEach((value) => {
       if (this.isInvalidWeekDay(value)) return true;
     });

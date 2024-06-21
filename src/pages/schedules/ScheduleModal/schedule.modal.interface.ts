@@ -13,7 +13,7 @@ interface ScheduleFormBase {
 }
 
 export interface ScheduleForm extends ScheduleFormBase {
-  week_day: string;
+  week_day: number;
   start_time: string;
   end_time: string;
 }

@@ -6,14 +6,14 @@ import { Recurrence } from 'utils/enums/recurrence.enum';
 export const formFields = {
   week_day: {
     validator: yup
-      .string()
+      .number()
       .required()
       .test(
         'is-valid-week-day',
         'Escolha um dia válido',
         (value) => !ScheduleValidator.isInvalidWeekDay(value),
       ),
-    defaultValue: '',
+    defaultValue: -1,
   },
   start_time: {
     validator: yup

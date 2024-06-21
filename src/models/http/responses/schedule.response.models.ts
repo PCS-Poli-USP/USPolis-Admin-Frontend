@@ -7,9 +7,8 @@ export interface ScheduleResponseBase {
   week_day: WeekDay;
   start_date: string;
   end_date: string;
-  start_time: DayTime;
-  end_time: DayTime;
-  skip_exceptions: boolean;
+  start_time: string;
+  end_time: string;
   allocated: boolean;
   recurrence: Recurrence;
   all_day: boolean;

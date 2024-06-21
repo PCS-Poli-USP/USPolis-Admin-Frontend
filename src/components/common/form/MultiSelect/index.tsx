@@ -11,7 +11,7 @@ export type Option = {
 
 interface MultiSelectProps extends FieldProps {
   options: Option[];
-  value?: Option[];
+  values?: Option[];
   loading?: boolean;
   onChange?: () => void;
 }
@@ -22,7 +22,7 @@ export function MultiSelect({
   options,
   disabled = false,
   loading = false,
-  value = undefined,
+  values = undefined,
   placeholder = undefined,
   mt = undefined,
   mb = undefined,
@@ -33,6 +33,7 @@ export function MultiSelect({
   const {
     control,
     setValue,
+    getValues,
     formState: { errors },
   } = useFormContext();
 
@@ -41,14 +42,22 @@ export function MultiSelect({
   );
 
   useEffect(() => {
-    if (value) {
+    if (values) {
       setValue(
         name,
-        value.map((val) => val.value),
+        values.map((val) => val.value),
       );
-      setSelectedOptions(value);
+      setSelectedOptions(values);
+    } else {
+      const current: (string | number)[] = getValues(name);
+      if (current) {
+        setSelectedOptions(
+          options.filter((option) => current.includes(option.value)),
+        );
+      }
     }
-  }, [value, name, setValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values, name, options]);
 
   return (
     <Controller
@@ -70,9 +79,9 @@ export function MultiSelect({
               setValue(name, values);
               setSelectedOptions(selectedOption as Option[]);
               if (onChange) {
-                onChange()
+                onChange();
               }
-              return
+              return;
             }}
             options={options}
           />
