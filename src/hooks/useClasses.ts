@@ -100,6 +100,32 @@ const useClasses = () => {
     [getClasses, showToast],
   );
 
+  const deleteManyClass = useCallback(
+    async (ids: number[]) => {
+      console.log('Enviei', ids);
+      setLoading(true);
+      await service
+        .deleteMany(ids)
+        .then((response) => {
+          showToast(
+            'Sucesso!',
+            `Sucesso ao remover ${ids.length} turmas`,
+            'success',
+          );
+
+          getClasses();
+        })
+        .catch((error) => {
+          showToast('Erro!', 'Erro ao remover turmas', 'error');
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [getClasses, showToast],
+  );
+
   useEffect(() => {
     getClasses();
   }, [getClasses]);
@@ -111,6 +137,7 @@ const useClasses = () => {
     createClass,
     updateClass,
     deleteClass,
+    deleteManyClass,
   };
 };
 

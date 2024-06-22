@@ -94,7 +94,7 @@ export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
                         variant={'ghost'}
                         onClick={() => props.onHolidayCategoryDelete(category)}
                       >
-                        Deletar Categoria
+                        Excluir Categoria
                       </Button>
                       <Button
                         leftIcon={<AddIcon />}

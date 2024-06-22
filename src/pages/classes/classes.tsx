@@ -78,7 +78,7 @@ function Classes() {
 
   const { subjects } = useSubjects();
   const { calendars } = useCalendars();
-  const { classes, getClasses, deleteClass } = useClasses();
+  const { classes, getClasses, deleteClass, deleteManyClass } = useClasses();
 
   const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
 
@@ -186,30 +186,19 @@ function Classes() {
   }
 
   function handleDeleteSelectedClasses() {
-    // const events_ids = getSelectedEventsIds();
-    // setLoading(true);
-    // eventsService
-    //   .deleteManyEvents({ events_ids })
-    //   .then((it) => {
-    //     showToast('Sucesso!', 'Turmas removidas com sucesso!', 'success');
-    //   })
-    //   .catch((error) => {
-    //     showToast('Erro!', `Erro ao remover turmas: ${error}`, 'error');
-    //   })
-    //   .finally(() => {
-    //     fetchData();
-    //     setLoading(false);
-    //   });
-    // onCloseDeleteSelectedClasses();
+    const classes_ids = classes
+      .filter((cls, index) => checkMap[index])
+      .map((cls) => cls.id);
+    deleteManyClass(classes_ids);
+    setCheckMap((prev) => prev.filter((val) => !val));
+    onCloseDeleteSelectedClasses();
   }
 
   function handleCheckAllClick(data: Row<ClassResponse>[], value: boolean) {
     const newCheckMap = [...checkMap];
     const filteredIds = data.map((cls) => Number(cls.original.id));
-    console.log('Ids', filteredIds);
     filteredIds.forEach((id) => {
       const index = classes.findIndex((cls) => cls.id === id);
-      console.log('Index atual: ', index);
       if (index >= 0) newCheckMap[index] = value;
     });
     setCheckMap(newCheckMap);
@@ -288,7 +277,7 @@ function Classes() {
               colorScheme={'red'}
               onClick={handleDeleteSelectedClassesClick}
             >
-              Remover selecioandos
+              Excluir selecionados
             </Button>
           </Flex>
           <Dialog

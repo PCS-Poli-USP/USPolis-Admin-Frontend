@@ -1,7 +1,10 @@
 import { AxiosResponse } from 'axios';
 import HttpService from './http.service';
 import { ClassResponse } from 'models/http/responses/class.response.models';
-import { CreateClass, UpdateClass } from 'models/http/requests/class.request.models';
+import {
+  CreateClass,
+  UpdateClass,
+} from 'models/http/requests/class.request.models';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
@@ -30,15 +33,12 @@ export default class ClassesService extends HttpService {
     return this.http.delete(`/${id}`);
   }
 
-  // patchPreferences(subjectCode: string, classCode: string, data: Preferences) {
-  //   return this.http.patch(`preferences/${subjectCode}/${classCode}`, data);
-  // }
+  deleteMany(ids: number[]) {
+    const params = new URLSearchParams();
+    ids.forEach((id) => params.append('ids', id.toString()));
 
-  // edit(subjectCode: string, classCode: string, data: CreateClassEvents[]) {
-  //   return this.http.patch(`${subjectCode}/${classCode}`, data);
-  // }
-
-  // editHasToBeAllocated(data: HasToBeAllocatedClass[]) {
-  //   return this.http.patch('has-to-be-allocated', data);
-  // }
+    return this.http.delete('/many/', {
+      params: params,
+    });
+  }
 }
