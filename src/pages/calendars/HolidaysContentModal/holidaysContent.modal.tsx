@@ -19,9 +19,9 @@ import Dialog from 'components/common/Dialog/dialog.component';
 import { datetimeToDate } from 'utils/formatters';
 import useHolidaysCategories from 'hooks/useHolidaysCategories';
 import useHolidays from 'hooks/useHolidays';
-import HolidayCategoryAccordion from 'pages/holidays/HolidayCategoryAccordion';
-import HolidayCategoryModal from 'pages/holidays/HolidayCategoryModal';
-import HolidayModal from 'pages/holidays/HolidayModal';
+import HolidayCategoryAccordion from 'pages/calendars/HolidayCategoryAccordion';
+import HolidayCategoryModal from 'pages/calendars/HolidayCategoryModal';
+import HolidayModal from 'pages/calendars/HolidayModal';
 import { HolidaysContentModalProps } from './holidaysContent.modal.interface';
 import { AddIcon } from '@chakra-ui/icons';
 
