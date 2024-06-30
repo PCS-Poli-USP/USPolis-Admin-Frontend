@@ -30,13 +30,15 @@ export default class ClassroomsService extends HttpService {
     return this.http.post('', data);
   }
 
-  delete(name: string): Promise<AxiosResponse<any>> {
-    return this.http.delete(name);
+  delete(id: string): Promise<AxiosResponse<any>> {
+    return this.http.delete(`/${id}`);
   }
 
-  update(name: string, data: any): Promise<AxiosResponse<any>> {
-    return this.http.put(name, data);
+  update(id: string, data: any): Promise<AxiosResponse<any>> {
+    console.log("updating...")
+    return this.http.put(`/${id}`, data);
   }
+
   getAvailable(
     week_day: string,
     start_time: string,

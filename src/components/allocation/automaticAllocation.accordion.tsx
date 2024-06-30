@@ -142,10 +142,10 @@ export default function AutomaticAllocationAccordion({
                 <BsHouseFill />
                 {value.ignore_to_allocate ? (
                   <Text>
-                    {`${value.classroom_name} - ${value.capacity} capacidade (Ignorada)`}
+                    {`${value.name} - ${value.capacity} capacidade (Ignorada)`}
                   </Text>
                 ) : (
-                  <Text>{`${value.classroom_name} - ${value.capacity} capacidade`}</Text>
+                  <Text>{`${value.name} - ${value.capacity} capacidade`}</Text>
                 )}
               </HStack>
             ))

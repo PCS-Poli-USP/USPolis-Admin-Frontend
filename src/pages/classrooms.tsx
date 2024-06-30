@@ -20,7 +20,10 @@ import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
 import Navbar from 'components/common/NavBar/navbar.component';
 import { appContext } from 'context/AppContext';
-import Classroom from 'models/common/classroom.model';
+import Classroom, {
+  ClassroomCreate,
+  convertClassroomToClassroomCreate,
+} from 'models/common/classroom.model';
 import { useContext, useEffect, useState } from 'react';
 import ClassroomsService from 'services/api/classrooms.service';
 import {
@@ -31,9 +34,6 @@ import {
 import { sortBuildings, sortClassrooms } from 'utils/sorter';
 import { Building } from 'models/common/building.model';
 import BuildingsService from 'services/api/buildings.service';
-import AdminClassroomService, {
-  AdminUpdateClassroom,
-} from 'services/api/admin.classrooms.service';
 
 function Classrooms() {
   const [classroomsList, setClassroomsList] = useState<Array<Classroom>>([]);
@@ -54,7 +54,7 @@ function Classrooms() {
 
   const [columns, setColumns] = useState<ColumnDef<Classroom>[]>([
     {
-      accessorKey: 'classroom_name',
+      accessorKey: 'name',
       header: 'Nome',
     },
     {
@@ -134,7 +134,6 @@ function Classrooms() {
   ]);
 
   const classroomService = new ClassroomsService();
-  const adminClassroomService = new AdminClassroomService();
   const buildingsService = new BuildingsService();
 
   const toast = useToast();
@@ -175,19 +174,10 @@ function Classrooms() {
 
   function fetchData() {
     setLoading(true);
-    if (!!loggedUser) {
-      if (!loggedUser.is_admin) {
-        classroomService.list().then((it) => {
-          setClassroomsList(it.data.sort(sortClassrooms));
-          setLoading(false);
-        });
-      } else {
-        adminClassroomService.list().then((it) => {
-          setClassroomsList(it.data.sort(sortClassrooms));
-          setLoading(false);
-        });
-      }
-    }
+    classroomService.list().then((it) => {
+      setClassroomsList(it.data.sort(sortClassrooms));
+      setLoading(false);
+    });
   }
 
   function fetchBuildings() {
@@ -208,6 +198,7 @@ function Classrooms() {
   }
 
   function handleCreateClick() {
+    setSelectedClassroom(undefined);
     setIsUpdate(false);
     onOpenRegister();
   }
@@ -215,7 +206,7 @@ function Classrooms() {
   function handleDelete() {
     if (selectedClassroom) {
       classroomService
-        .delete(selectedClassroom.classroom_name)
+        .delete(selectedClassroom.id!)
         .then((it) => {
           console.log(it.data);
           toastSuccess('Sala deletada com sucesso!');
@@ -228,16 +219,11 @@ function Classrooms() {
     }
   }
 
-  function handleSave(formData: Classroom) {
-    const { id, ...formDataWithoutId } = formData;
+  function handleSave(formData: ClassroomCreate) {
+    const { id, ...rest } = formData;
     const request = isUpdate
-      ? loggedUser?.is_admin
-        ? adminClassroomService.update(id, formDataWithoutId)
-        : classroomService.update(
-            formDataWithoutId.classroom_name,
-            formDataWithoutId,
-          )
-      : classroomService.create(formDataWithoutId);
+      ? classroomService.update(id!, rest)
+      : classroomService.create(rest);
     Promise.resolve(request)
       .then((it) => {
         console.log(it.data);
@@ -258,7 +244,7 @@ function Classrooms() {
       <RegisterModal
         isOpen={isOpenRegister}
         onClose={onCloseRegister}
-        formData={selectedClassroom}
+        formData={convertClassroomToClassroomCreate(selectedClassroom)}
         buildingsOptions={buildingsList}
         isUpdate={isUpdate}
         onSave={handleSave}
@@ -267,7 +253,7 @@ function Classrooms() {
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
         onConfirm={handleDelete}
-        title={`Deseja deletar ${selectedClassroom?.classroom_name}?`}
+        title={`Deseja deletar ${selectedClassroom?.name}?`}
       />
       <Center>
         <Box p={4} w='8xl' overflowX='auto'>
