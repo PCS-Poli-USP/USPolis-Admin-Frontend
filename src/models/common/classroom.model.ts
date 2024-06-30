@@ -1,15 +1,45 @@
 export default interface Classroom {
   id?: string;
-  classroom_name: string;
+  name: string;
   building: string;
+  building_id?: string;
   floor: number;
   capacity: number;
   ignore_to_allocate: boolean;
   air_conditioning: boolean;
   projector: boolean;
   accessibility: boolean;
-  updated_at?: string;
+  updated_at?: Date;
   created_by?: string;
+}
+
+export interface ClassroomCreate {
+  id?: string;
+  name: string;
+  building_id: string;
+  floor: number;
+  capacity: number;
+  ignore_to_allocate: boolean;
+  air_conditioning: boolean;
+  projector: boolean;
+  accessibility: boolean;
+}
+
+export function convertClassroomToClassroomCreate(
+  classroom?: Classroom,
+): ClassroomCreate | undefined {
+  if (!classroom) return undefined;
+  return {
+    id: classroom.id,
+    name: classroom.name,
+    building_id: classroom.building_id || '',
+    floor: classroom.floor,
+    capacity: classroom.capacity,
+    ignore_to_allocate: classroom.ignore_to_allocate,
+    air_conditioning: classroom.air_conditioning,
+    projector: classroom.projector,
+    accessibility: classroom.accessibility,
+  };
 }
 
 export interface AvailableClassroom {
