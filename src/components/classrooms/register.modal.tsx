@@ -53,6 +53,7 @@ export default function RegisterModal(props: RegisterModalProps) {
 
   useEffect(() => {
     if (props.formData) setForm(props.formData);
+    else setForm(initialForm);
   }, [props.formData]);
 
   useEffect(() => {
