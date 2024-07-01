@@ -64,7 +64,10 @@ import {
 import useClasses from 'hooks/useClasses';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import { ClassFourthForm } from './Steps/Fourth/class.modal.steps.fourth.interface';
-import { classFourthDefaultValues, classFourthchema } from './Steps/Fourth/class.modal.steps.fourth.form';
+import {
+  classFourthDefaultValues,
+  classFourthchema,
+} from './Steps/Fourth/class.modal.steps.fourth.form';
 import ClassModalFifthStep from './Steps/Fifth/class.modal.steps.fifth';
 import ClassModalFourthStep from './Steps/Fourth/class.modal.steps.fourth';
 
@@ -108,6 +111,7 @@ function ClassModal(props: ClassModalProps) {
         all_day: false,
         allocated: schedule.allocated ? schedule.allocated : false,
         dates: schedule.dates,
+        month_week: Number(schedule.month_week),
       };
       return formated;
     });
@@ -164,10 +168,18 @@ function ClassModal(props: ClassModalProps) {
   async function handleSecondNextClick() {
     const { trigger } = secondForm;
     const isValid = await trigger();
+    setStepsIsValid((prev) => [prev[0], isValid, prev[2], prev[3], prev[4]]);
+    if (!isValid) return;
+    setActiveStep(activeStep + 1);
+  }
+
+  async function handleThirdNextClick() {
+    const { trigger } = thirdForm;
+    const isValid = await trigger();
     setStepsIsValid((prev) => [
       prev[0],
+      prev[1],
       schedules.length > 0 ? isValid : false,
-      prev[2],
       prev[3],
       prev[4],
     ]);
@@ -176,10 +188,10 @@ function ClassModal(props: ClassModalProps) {
     setActiveStep(activeStep + 1);
   }
 
-  async function handleThirdNextClick() {
-    const { trigger } = thirdForm;
+  async function handleFourthNextClick() {
+    const { trigger } = fourthForm;
     const isValid = await trigger();
-    setStepsIsValid((prev) => [prev[0], prev[1], isValid, prev[3], prev[4]]);
+    setStepsIsValid((prev) => [prev[0], prev[1], prev[2], isValid, prev[4]]);
     if (!isValid) return;
     setActiveStep(activeStep + 1);
   }
@@ -188,6 +200,7 @@ function ClassModal(props: ClassModalProps) {
     if (activeStep === 0) handleFirstNextClick();
     if (activeStep === 1) handleSecondNextClick();
     if (activeStep === 2) handleThirdNextClick();
+    if (activeStep === 3) handleFourthNextClick();
   }
 
   function handlePreviousClick() {
@@ -198,6 +211,7 @@ function ClassModal(props: ClassModalProps) {
 
   async function handleSaveClick() {
     const data = getClassData();
+    console.log(data);
     if (props.isUpdate && props.selectedClass) {
       await updateClass(props.selectedClass.id, data as UpdateClass);
     } else if (!props.isUpdate) {
@@ -324,7 +338,6 @@ function ClassModal(props: ClassModalProps) {
         <ClassModalFourthStep
           form={fourthForm}
           isUpdate={props.isUpdate}
-          subjects={props.subjects}
           onNext={handleFirstNextClick}
         />
       ),
@@ -377,7 +390,7 @@ function ClassModal(props: ClassModalProps) {
 
         <ModalBody pb={10}>
           <VStack w={'full'}>
-            <Stepper size='lg' index={activeStep} alignItems={'center'} >
+            <Stepper size='lg' index={activeStep} alignItems={'center'}>
               {steps.map((step, index) => (
                 <Step key={index} onClick={() => setActiveStep(index)}>
                   <StepIndicator>

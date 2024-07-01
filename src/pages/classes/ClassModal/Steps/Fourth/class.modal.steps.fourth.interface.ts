@@ -1,10 +1,8 @@
-import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { ClassModalStepsProps } from '../class.modal.steps.interface';
 import { UseFormReturn } from 'react-hook-form';
 
 export interface ClassModalFourthStepProps extends ClassModalStepsProps {
   form: UseFormReturn<ClassFourthForm, any, ClassFourthForm>;
-  subjects: SubjectResponse[];
   onNext: (data: ClassFourthForm) => void;
 }
 export interface ClassFourthForm {

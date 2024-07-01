@@ -71,6 +71,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
       schedule_start_date: values[0],
       schedule_end_date: values[1],
       recurrence: classThirdDefaultValues.recurrence,
+      month_week: classThirdDefaultValues.month_week,
     });
   }
 
@@ -87,7 +88,17 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
     return values;
   }
 
-  async function validateScheduleInputs() {
+  async function validateScheduleInputs(
+    values: [
+      Recurrence | undefined,
+      MonthWeek | undefined,
+      WeekDay | undefined,
+      string | undefined,
+      string | undefined,
+      string | undefined,
+      string | undefined,
+    ],
+  ) {
     const namesDict = {
       0: 'recurrence',
       1: 'month_week',
@@ -99,8 +110,6 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
     };
 
     let result = true;
-    const values = getScheduleInputValues();
-
     for (let i = 0; i < values.length; i++) {
       const { trigger } = props.form;
       const fieldName = namesDict[i as numberRange] as fieldNames;
@@ -186,7 +195,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
   }
 
   function handleUpdateScheduleClick(index: number) {
-    const { reset } = props.form;
+    const { reset, resetField } = props.form;
     const schedule = props.schedules[index];
     reset({
       ...props.form.getValues(),
@@ -203,13 +212,17 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
       setIsCustom(true);
       setSelectedDays(schedule.dates);
     }
+    if (schedule.recurrence === Recurrence.MONTHLY) {
+      setIsMonthly(true);
+    }
     setScheduleIndex(index);
     setIsUpdatingSchedule(true);
   }
 
   async function handleScheduleButton() {
     const values = getScheduleInputValues();
-    const isValid = await validateScheduleInputs();
+    console.log('Recebi aqui: ', values);
+    const isValid = await validateScheduleInputs(values);
     if (!isValid) return;
     const schedule: ScheduleData = {
       recurrence: values[0] as Recurrence,
@@ -228,7 +241,9 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
     resetScheduleInputs();
     setIsDayli(false);
     setIsCustom(false);
+    setIsMonthly(false);
     setIsUpdatingSchedule(false);
+    console.log(getScheduleInputValues());
   }
 
   return (
