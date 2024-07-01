@@ -78,7 +78,7 @@ export namespace WeekDay {
 
   export function toInt(day: WeekDay) {
     // In moment Sunday = 0, Monday = 1, ...
-    const fixed = day + 1;
+    const fixed = Number(day) + 1;
     if (fixed === 7) return 0;
     return fixed;
   }
