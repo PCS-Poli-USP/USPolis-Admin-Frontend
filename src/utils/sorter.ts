@@ -79,8 +79,8 @@ export function sortBuildings(a: Building, b: Building) {
 }
 
 export function sortClassrooms(a: Classroom, b: Classroom) {
-  if (a.classroom_name < b.classroom_name) return -1;
-  if (a.classroom_name === b.classroom_name) return 0;
+  if (a.name < b.name) return -1;
+  if (a.name === b.name) return 0;
   return 1;
 }
 

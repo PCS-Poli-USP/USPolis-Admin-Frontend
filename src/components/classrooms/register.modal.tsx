@@ -28,10 +28,10 @@ import UsersService from 'services/api/users.service';
 interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
-  formData?: Classroom;
+  formData?: ClassroomCreate;
   isUpdate: boolean;
-  onSave: (data: Classroom) => void;
-  buildingsOptions: BuildingResponse[];
+  onSave: (data: ClassroomCreate) => void;
+  buildingsOptions: Building[];
 }
 
 export default function RegisterModal(props: RegisterModalProps) {
@@ -41,35 +41,27 @@ export default function RegisterModal(props: RegisterModalProps) {
   const [usersList, setUsersList] = useState<User[]>([]);
   const [buildingsList, setBuildingsList] = useState<BuildingResponse[]>([]);
 
-  const initialForm: Classroom = {
-    classroom_name: '',
-    building: '',
+  const initialForm: ClassroomCreate = {
+    name: '',
+    building_id: '',
     floor: 0,
     capacity: 0,
     ignore_to_allocate: false,
     air_conditioning: false,
     projector: false,
     accessibility: false,
-    created_by: undefined,
   };
 
   const [form, setForm] = useState(initialForm);
 
   useEffect(() => {
     if (props.formData) setForm(props.formData);
+    else setForm(initialForm);
   }, [props.formData]);
 
   useEffect(() => {
     getBuildingsList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loggedUser]);
-
-  useEffect(() => {
-    if (loggedUser?.is_admin) {
-      usersService.list().then((response) => {
-        setUsersList(response.data.map((it) => it));
-      });
-    }
   }, [loggedUser]);
 
   function getBuildingsList() {
@@ -85,7 +77,7 @@ export default function RegisterModal(props: RegisterModalProps) {
   }
 
   function handleSaveClick() {
-    if (isEmpty(form.classroom_name)) return;
+    if (isEmpty(form.name)) return;
     props.onSave(form);
     clearForm();
     props.onClose();
@@ -113,16 +105,15 @@ export default function RegisterModal(props: RegisterModalProps) {
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <FormControl isInvalid={isEmpty(form.classroom_name)}>
+          <FormControl isInvalid={isEmpty(form.name)}>
             <FormLabel>Nome</FormLabel>
             <Input
-              disabled={props.isUpdate}
               placeholder='Nome'
-              value={form.classroom_name}
+              value={form.name}
               onChange={(event) =>
                 setForm((prev) => ({
                   ...prev,
-                  classroom_name: event.target.value,
+                  name: event.target.value,
                 }))
               }
             />
@@ -130,7 +121,7 @@ export default function RegisterModal(props: RegisterModalProps) {
 
           <FormControl
             mt={4}
-            isInvalid={isEmpty(form.building)}
+            isInvalid={isEmpty(form.building_id)}
             isDisabled={props.isUpdate}
           >
             <FormLabel>Prédio</FormLabel>
@@ -139,12 +130,13 @@ export default function RegisterModal(props: RegisterModalProps) {
               onChange={(event) => {
                 setForm((prev) => ({
                   ...prev,
-                  building: event.target.value,
+                  building_id: event.target.value,
                 }));
               }}
+              value={form.building_id}
             >
               {buildingsList.map((it) => (
-                <option key={it.id} value={it.name}>
+                <option key={it.id} value={it.id}>
                   {it.name}
                 </option>
               ))}
@@ -237,28 +229,6 @@ export default function RegisterModal(props: RegisterModalProps) {
               Ignorar para alocar
             </Checkbox>
           </FormControl>
-
-          {loggedUser?.is_admin && (
-            <FormControl mt={4}>
-              <FormLabel>Criado por</FormLabel>
-              <Select
-                placeholder={'Escolha um usuário'}
-                value={form.created_by}
-                onChange={(event) => {
-                  setForm((prev) => ({
-                    ...prev,
-                    created_by: event.target.value,
-                  }));
-                }}
-              >
-                {usersList.map((it) => (
-                  <option key={it.id} value={it.username}>
-                    {it.username}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-          )}
         </ModalBody>
 
         <ModalFooter>
