@@ -15,7 +15,8 @@ export class ScheduleValidator extends CommonValidator {
 
   static isInvalidDayTime(value: string) {
     const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
-    return !timeRegex.test(value);
+    const timeRegex2 = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+    return !timeRegex.test(value) && !timeRegex2.test(value);
   }
 
   static isInvalidDayTimeOfering(start_time: string, end_time: string) {
