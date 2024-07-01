@@ -47,13 +47,13 @@ import {
   classSecondDefaultValues,
   classSecondSchema,
 } from './Steps/Second/class.modal.steps.second.form';
-import ClassModalFourthStep from './Steps/Fourth/class.modal.steps.fourth';
 import { ClassThirdForm } from './Steps/Third/class.modal.steps.third.interface';
 import {
   classThirdDefaultValues,
   classThirdSchema,
 } from './Steps/Third/class.modal.steps.third.form';
 import {
+  ClassBase,
   CreateClass,
   UpdateClass,
 } from 'models/http/requests/class.request.models';
@@ -63,6 +63,10 @@ import {
 } from 'models/http/requests/schedule.request.models';
 import useClasses from 'hooks/useClasses';
 import { ClassResponse } from 'models/http/responses/class.response.models';
+import { ClassFourthForm } from './Steps/Fourth/class.modal.steps.fourth.interface';
+import { classFourthDefaultValues, classFourthchema } from './Steps/Fourth/class.modal.steps.fourth.form';
+import ClassModalFifthStep from './Steps/Fifth/class.modal.steps.fifth';
+import ClassModalFourthStep from './Steps/Fourth/class.modal.steps.fourth';
 
 function ClassModal(props: ClassModalProps) {
   const firstForm = useForm<ClassFirstForm>({
@@ -80,12 +84,17 @@ function ClassModal(props: ClassModalProps) {
     resolver: yupResolver(classThirdSchema),
   });
 
+  const fourthForm = useForm<ClassFourthForm>({
+    defaultValues: classFourthDefaultValues,
+    resolver: yupResolver(classFourthchema),
+  });
+
   const { createClass, updateClass } = useClasses();
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [stepsIsValid, setStepsIsValid] = useState<
-    [boolean, boolean, boolean, boolean]
-  >([false, false, true, true]);
+    [boolean, boolean, boolean, boolean, boolean]
+  >([false, false, false, true, true]);
 
   function getFormatedScheduleData(): CreateSchedule[] | UpdateSchedule[] {
     return schedules.map((schedule) => {
@@ -97,7 +106,7 @@ function ClassModal(props: ClassModalProps) {
         recurrence: schedule.recurrence,
         week_day: Number(schedule.week_day),
         all_day: false,
-        allocated: false,
+        allocated: schedule.allocated ? schedule.allocated : false,
         dates: schedule.dates,
       };
       return formated;
@@ -107,10 +116,9 @@ function ClassModal(props: ClassModalProps) {
   function getClassData(): CreateClass | UpdateClass {
     const firstData = firstForm.getValues();
     const secondData = secondForm.getValues();
-    const thirdData = thirdForm.getValues();
+    const fourthData = fourthForm.getValues();
 
-    const data: CreateClass = {
-      subject_id: Number(firstData.subject_id),
+    const baseData: ClassBase = {
       calendar_ids:
         secondData.calendar_ids && secondData.calendar_ids.length > 0
           ? secondData.calendar_ids
@@ -121,13 +129,26 @@ function ClassModal(props: ClassModalProps) {
       vacancies: firstData.vacancies,
       subscribers: firstData.subscribers,
       pendings: firstData.pendings,
-      air_conditionating: thirdData.air_conditionating,
-      accessibility: thirdData.accessibility,
-      projector: thirdData.projector,
-      ignore_to_allocate: thirdData.ignore_to_allocate,
-      schedules_data: getFormatedScheduleData(),
+      air_conditionating: fourthData.air_conditionating,
+      accessibility: fourthData.accessibility,
+      projector: fourthData.projector,
+      ignore_to_allocate: fourthData.ignore_to_allocate,
       start_date: secondData.start_date,
       end_date: secondData.end_date,
+    };
+
+    if (props.isUpdate) {
+      const updatedData: UpdateClass = {
+        ...baseData,
+        subject_id: Number(firstData.subject_id),
+        schedules_data: getFormatedScheduleData(),
+      };
+      return updatedData;
+    }
+    const data: CreateClass = {
+      ...baseData,
+      subject_id: Number(firstData.subject_id),
+      schedules_data: getFormatedScheduleData(),
     };
     return data;
   }
@@ -135,7 +156,7 @@ function ClassModal(props: ClassModalProps) {
   async function handleFirstNextClick() {
     const { trigger } = firstForm;
     const isValid = await trigger();
-    setStepsIsValid((prev) => [isValid, prev[1], prev[2], prev[3]]);
+    setStepsIsValid((prev) => [isValid, prev[1], prev[2], prev[3], prev[4]]);
     if (!isValid) return;
     setActiveStep(activeStep + 1);
   }
@@ -148,6 +169,7 @@ function ClassModal(props: ClassModalProps) {
       schedules.length > 0 ? isValid : false,
       prev[2],
       prev[3],
+      prev[4],
     ]);
     if (!isValid) return;
     if (schedules.length === 0) return;
@@ -157,7 +179,7 @@ function ClassModal(props: ClassModalProps) {
   async function handleThirdNextClick() {
     const { trigger } = thirdForm;
     const isValid = await trigger();
-    setStepsIsValid((prev) => [prev[0], prev[1], isValid, prev[3]]);
+    setStepsIsValid((prev) => [prev[0], prev[1], isValid, prev[3], prev[4]]);
     if (!isValid) return;
     setActiveStep(activeStep + 1);
   }
@@ -194,8 +216,8 @@ function ClassModal(props: ClassModalProps) {
     props.onClose();
   }
 
-  function loadThirdFormFromClass(data: ClassResponse) {
-    thirdForm.reset({
+  function loadFourthFormFromClass(data: ClassResponse) {
+    fourthForm.reset({
       ignore_to_allocate: data.ignore_to_allocate,
       projector: data.projector,
       accessibility: data.accessibility,
@@ -226,7 +248,7 @@ function ClassModal(props: ClassModalProps) {
   function loadFormsFromClass(data: ClassResponse) {
     loadFirstFormFromClass(data);
     loadSecondFormFromClass(data);
-    loadThirdFormFromClass(data);
+    loadFourthFormFromClass(data);
   }
 
   function loadSchedulesFromClass(data: ClassResponse) {
@@ -238,6 +260,7 @@ function ClassModal(props: ClassModalProps) {
       end_time: schedule.end_time,
       week_day: schedule.week_day,
       dates: schedule.dates,
+      allocated: schedule.allocated,
     }));
     setSchedules(newSchedules);
   }
@@ -250,8 +273,8 @@ function ClassModal(props: ClassModalProps) {
   useEffect(() => {
     if (props.selectedClass) {
       loadSelectedClass(props.selectedClass);
-      setStepsIsValid([true, true, true, true]);
-    } else setStepsIsValid([false, false, true, true]);
+      setStepsIsValid([true, true, true, true, true]);
+    } else setStepsIsValid([false, false, false, true, true]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.selectedClass]);
 
@@ -261,7 +284,7 @@ function ClassModal(props: ClassModalProps) {
       description: 'Informações',
       content: (
         <ClassModalFirstStep
-          isUpdate={false}
+          isUpdate={props.isUpdate}
           form={firstForm}
           subjects={props.subjects}
         />
@@ -269,43 +292,58 @@ function ClassModal(props: ClassModalProps) {
     },
     {
       title: 'Segundo',
-      description: 'Horários e Datas',
+      description: 'Datas',
       content: (
         <ClassModalSecondStep
           form={secondForm}
-          isUpdate={false}
+          thirdForm={thirdForm}
+          isUpdate={props.isUpdate}
           calendars={props.calendars}
-          schedules={schedules}
-          setSchedules={setSchedules}
+          onNext={handleSecondNextClick}
         />
       ),
     },
     {
       title: 'Terceiro',
-      description: 'Preferências',
+      description: 'Horários',
       content: (
         <ClassModalThirdStep
           form={thirdForm}
-          isUpdate={false}
+          secondForm={secondForm}
+          isUpdate={props.isUpdate}
+          schedules={schedules}
+          setSchedules={setSchedules}
+          onNext={handleThirdNextClick}
+        />
+      ),
+    },
+    {
+      title: 'Quarto',
+      description: 'Preferências',
+      content: (
+        <ClassModalFourthStep
+          form={fourthForm}
+          isUpdate={props.isUpdate}
           subjects={props.subjects}
           onNext={handleFirstNextClick}
         />
       ),
     },
     {
-      title: 'Quarto',
+      title: 'Quinto',
       description: 'Revisão',
       content: (
-        <ClassModalFourthStep
+        <ClassModalFifthStep
           data={{
             first: firstForm.getValues(),
             second: secondForm.getValues(),
             third: thirdForm.getValues(),
+            fourth: fourthForm.getValues(),
           }}
           calendars={props.calendars}
           subjects={props.subjects}
           schedules={schedules}
-          isUpdate={false}
+          isUpdate={props.isUpdate}
           selectedClass={props.selectedClass}
           onNext={handleFirstNextClick}
           moveTo={(index) => setActiveStep(index)}
@@ -338,8 +376,8 @@ function ClassModal(props: ClassModalProps) {
         <ModalCloseButton />
 
         <ModalBody pb={10}>
-          <VStack>
-            <Stepper size='lg' index={activeStep} alignItems={'start'}>
+          <VStack w={'full'}>
+            <Stepper size='lg' index={activeStep} alignItems={'center'} >
               {steps.map((step, index) => (
                 <Step key={index} onClick={() => setActiveStep(index)}>
                   <StepIndicator>

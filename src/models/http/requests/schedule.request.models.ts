@@ -1,3 +1,4 @@
+import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 
@@ -23,6 +24,7 @@ export interface CreateSchedule extends ScheduleBase {
   start_time: string;
   end_time: string;
   dates?: string[];
+  month_week?: MonthWeek;
 }
 
 export interface UpdateSchedule extends CreateSchedule {}

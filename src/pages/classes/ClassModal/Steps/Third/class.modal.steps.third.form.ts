@@ -1,35 +1,126 @@
 import * as yup from 'yup';
 import { ClassThirdForm } from './class.modal.steps.third.interface';
+import { Recurrence } from 'utils/enums/recurrence.enum';
+import { ScheduleValidator } from 'utils/schedules/schedules.validator';
 
 export const classThirdFormFields = {
-  ignore_to_allocate: {
-    validator: yup.boolean().required('Campo obrigatório'),
-    defaultValue: false,
+  schedule_start_date: {
+    validator: yup
+      .string()
+      .notRequired()
+      .test('is-valid-date', 'Data de início inválida', (value) => {
+        if (!value) return true;
+        return !ScheduleValidator.isInvalidDate(value);
+      }),
+    defaultValue: '',
   },
-  projector: {
-    validator: yup.boolean().required('Campo obrigatório'),
-    defaultValue: false,
+  schedule_end_date: {
+    validator: yup
+      .string()
+      .notRequired()
+      .test('is-valid-end-date', 'Data inválida', function (value) {
+        if (!value) return true;
+        return !ScheduleValidator.isInvalidDate(value);
+      })
+      .test(
+        'is-greater',
+        'Data de fim não pode ser antes de início',
+        function (value) {
+          const { schedule_start_date } = this.parent;
+          if (!value) return true;
+          if (!schedule_start_date) return true;
+
+          return !ScheduleValidator.isInvalidDateOferring(
+            schedule_start_date,
+            value,
+          );
+        },
+      ),
+    defaultValue: '',
   },
-  air_conditionating: {
-    validator: yup.boolean().required('Campo obrigatório'),
-    defaultValue: false,
+  recurrence: {
+    validator: yup
+      .string()
+      .notRequired()
+      .test('is-valid-recurrence', 'Recorrência inválida', function (value) {
+        if (!value) return true;
+        return !ScheduleValidator.isInvalidRecurrence(value);
+      }),
+    defaultValue: '',
   },
-  accessibility: {
-    validator: yup.boolean().required('Campo obrigatório'),
-    defaultValue: false,
+  month_week: {
+    validator: yup
+      .number()
+      .notRequired()
+      .transform((curr, orig) => (orig === '' ? undefined : curr)) // Yup treats notRequired as ''
+      .test('is-valid-month-week', 'Semana do mês inválido', function (value) {
+        if (!value) return true;
+        return !ScheduleValidator.isInvalidMonthWeek(value);
+      }),
+    defaultValue: undefined,
   },
+  week_day: {
+    validator: yup
+      .number()
+      .notRequired()
+      .transform((curr, orig) => (orig === '' ? undefined : curr)) // Yup treats notRequired as ''
+      .test('is-valid-week-day', 'Dia da semana inválido', function (value) {
+        if (!value) return true;
+        return !ScheduleValidator.isInvalidWeekDay(value);
+      }),
+    defaultValue: undefined,
+  },
+  start_time: {
+    validator: yup
+      .string()
+      .notRequired()
+      .test('is-valid-day-time', 'Horário inválido', (value) => {
+        if (!value) return true;
+        return !ScheduleValidator.isInvalidDayTime(value);
+      }),
+    defaultValue: '',
+  },
+  end_time: {
+    validator: yup
+      .string()
+      .notRequired()
+      .test('is-valid-day-time', 'Horário inválido', function (value) {
+        if (!value) return true;
+        return !ScheduleValidator.isInvalidDayTime(value);
+      })
+      .test(
+        'is-greater',
+        'Horário de fim não pode ser menor que início',
+        function (value) {
+          const { start_time } = this.parent;
+          if (!value) return true;
+          if (!start_time) return !ScheduleValidator.isInvalidDayTime(value);
+          return !ScheduleValidator.isInvalidDayTimeOfering(start_time, value);
+        },
+      ),
+    defaultValue: '',
+  },
+  
 };
 
 export const classThirdSchema = yup.object<ClassThirdForm>().shape({
-  ignore_to_allocate: classThirdFormFields.ignore_to_allocate.validator,
-  projector: classThirdFormFields.projector.validator,
-  air_conditionating: classThirdFormFields.air_conditionating.validator,
-  accessibility: classThirdFormFields.accessibility.validator,
+  schedule_start_date: classThirdFormFields.schedule_start_date.validator,
+  schedule_end_date: classThirdFormFields.schedule_end_date.validator,
+  recurrence: classThirdFormFields.recurrence.validator,
+  month_week: classThirdFormFields.month_week.validator,
+  week_day: classThirdFormFields.week_day.validator,
+  start_time: classThirdFormFields.start_time.validator,
+  end_time: classThirdFormFields.end_time.validator,
+  
 });
 
 export const classThirdDefaultValues: ClassThirdForm = {
-  ignore_to_allocate: classThirdFormFields.ignore_to_allocate.defaultValue,
-  projector: classThirdFormFields.projector.defaultValue,
-  air_conditionating: classThirdFormFields.air_conditionating.defaultValue,
-  accessibility: classThirdFormFields.accessibility.defaultValue,
+  schedule_start_date: classThirdFormFields.schedule_start_date.defaultValue,
+  schedule_end_date: classThirdFormFields.schedule_end_date.defaultValue,
+  recurrence: classThirdFormFields.recurrence.defaultValue as Recurrence,
+  month_week: classThirdFormFields.month_week.defaultValue,
+  week_day: classThirdFormFields.week_day.defaultValue,
+  start_time: classThirdFormFields.start_time.defaultValue,
+  end_time: classThirdFormFields.end_time.defaultValue,
+  
 };

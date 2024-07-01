@@ -2,6 +2,7 @@ import { CalendarResponse } from "models/http/responses/calendar.responde.models
 import { ClassResponse } from "models/http/responses/class.response.models";
 import { SubjectResponse } from "models/http/responses/subject.response.models";
 import { ModalProps } from "models/interfaces";
+import { MonthWeek } from "utils/enums/monthWeek.enum";
 import { Recurrence } from "utils/enums/recurrence.enum";
 import { WeekDay } from "utils/enums/weekDays.enum";
 
@@ -41,6 +42,8 @@ export interface ScheduleData {
   end_date: string;
   recurrence: Recurrence;
   dates?: string[];
+  month_week?: MonthWeek;
+  allocated?: boolean;
 }
 
 export interface ClassScheduleForm {
