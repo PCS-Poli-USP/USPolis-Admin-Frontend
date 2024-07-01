@@ -19,6 +19,7 @@ import { Building } from 'models/common/building.model';
 import { appContext } from 'context/AppContext';
 import { MultipleEditAllocation } from './multipleEdit.allocation';
 import { ClassroomSchedule } from 'models/common/classroom.model';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 interface MultipleEditAccordionProps {
   subjectsMap: [string, Class[]][];
@@ -26,7 +27,7 @@ interface MultipleEditAccordionProps {
   isLoadingSchedules: boolean;
   isUpdatingSchedules: boolean;
   handleSelectBuilding: (
-    building_id: string,
+    building_id: number,
     building_name: string,
     event_id: string,
   ) => void;
@@ -60,7 +61,7 @@ export default function MultipleEditAccordion({
 }: MultipleEditAccordionProps) {
   const { loggedUser } = useContext(appContext);
 
-  const [buildingsList, setBuildingsList] = useState<Building[]>([]);
+  const [buildingsList, setBuildingsList] = useState<BuildingResponse[]>([]);
   const [buildingsLoading, setBuildingsLoading] = useState(true);
 
   const buildingsService = new BuildingsService();

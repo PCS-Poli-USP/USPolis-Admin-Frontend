@@ -1,127 +1,21 @@
 import Navbar from 'components/common/NavBar/navbar.component';
 import DataTable from 'components/common/DataTable/dataTable.component';
-import { ColumnDef } from '@tanstack/react-table';
-
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  IconButton,
-  Text,
-  Tooltip,
-  useDisclosure,
-  useToast,
-} from '@chakra-ui/react';
-import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { useContext, useEffect, useState } from 'react';
-import SubjectRegisterModal from 'components/subjects/subjectRegister.modal';
+import { Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import { useState } from 'react';
 import Dialog from 'components/common/Dialog/dialog.component';
-import { appContext } from 'context/AppContext';
-import SubjectsService from 'services/api/subjects.service';
-import { sortSubjectsResponse } from 'utils/subjects/subjects.sorter';
-import {
-  datetimeFormatter,
-  subjectTypeFormatter,
-} from 'utils/subjects/subjects.formatter';
-import { SubjectsResponseCode } from 'utils/enums/subjects.enum';
-import {
-  CreateSubject,
-  UpdateSubject,
-} from 'models/http/requests/subject.request.models';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
+import { getSubjectColumns } from './Tables/subject.table';
+import useSubjects from 'hooks/useSubjetcts';
+import SubjectModal from './SubjectModal/subject.modal';
+import useBuildings from 'hooks/useBuildings';
 
 function Subjects() {
-  const columns: ColumnDef<SubjectResponse>[] = [
-    {
-      accessorKey: 'code',
-      header: 'Código',
-    },
-    {
-      accessorKey: 'name',
-      header: 'Nome',
-      maxSize: 300,
-    },
-    {
-      accessorKey: 'professors',
-      header: 'Professores',
-      cell: ({ row }) => (
-        <Box>
-          {row.original.professors?.map((professor, index) => (
-            <Text
-              maxW={425}
-              overflowX={'hidden'}
-              textOverflow={'ellipsis'}
-              key={index}
-            >
-              {professor}
-            </Text>
-          ))}
-        </Box>
-      ),
-    },
-    {
-      accessorFn: (row) => (row.buildings ? row.buildings : ['Não alocada']),
-      header: 'Prédios',
-      cell: ({ row }) => (
-        <Box>
-          {row.original.buildings ? (
-            row.original.buildings.map((ref, index) => (
-              <Text key={index}>{ref.id}</Text>
-            ))
-          ) : (
-            <Text>Não alocada</Text>
-          )}
-        </Box>
-      ),
-    },
-    {
-      accessorKey: 'type',
-      header: 'Tipo',
-      cell: ({ row }) => subjectTypeFormatter(row.original.type),
-    },
-    {
-      accessorKey: 'class_credit',
-      header: 'Créditos Aula',
-    },
-    {
-      accessorKey: 'work_credit',
-      header: 'Créditos Trabalho',
-    },
-    {
-      header: 'Ativação / Desativação',
-      cell: ({ row }) => datetimeFormatter(row),
-    },
-    {
-      id: 'options',
-      header: 'Opções',
-      cell: ({ row }) => (
-        <HStack spacing='0px'>
-          <Tooltip label='Editar Disciplina'>
-            <IconButton
-              colorScheme='yellow'
-              size='xs'
-              variant='ghost'
-              aria-label='editar-turma'
-              icon={<BsFillPenFill />}
-              onClick={() => handleEditSubjectButton(row.original)}
-            />
-          </Tooltip>
+  const columns = getSubjectColumns({
+    handleEditButton: handleEditSubjectButton,
+    handleDeleteButton: handleDeleteSubjectButton,
+  });
 
-          <Tooltip label='Excluir Disciplina'>
-            <IconButton
-              colorScheme='red'
-              size='xs'
-              variant='ghost'
-              aria-label='excluir-turma'
-              icon={<BsFillTrashFill />}
-              onClick={() => handleDeleteSubjectButton(row.original)}
-            />
-          </Tooltip>
-        </HStack>
-      ),
-    },
-  ];
+  const { subjects, getSubjects, deleteSubject } = useSubjects();
 
   const {
     isOpen: isOpenRegisterSubjectModal,
@@ -135,59 +29,12 @@ function Subjects() {
     onClose: onCloseDeleteSubjectDialog,
   } = useDisclosure();
 
-  const { setLoading } = useContext(appContext);
-  const subjectsService = new SubjectsService();
-
-  const [subjects, setSubjects] = useState<Array<SubjectResponse>>([]);
-
   const [isUpdateSubject, setIsUpdateSubject] = useState<boolean>(false);
   const [selectedSubject, setSelectedSubject] = useState<
     SubjectResponse | undefined
   >(undefined);
 
-  const toast = useToast();
-  const toastSuccess = (message: string) => {
-    toast({
-      position: 'top-left',
-      title: 'Sucesso!',
-      description: message,
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-  const toastError = (message: string) => {
-    toast({
-      position: 'top-left',
-      title: 'Erro!',
-      description: message,
-      status: 'error',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-
-  useEffect(() => {
-    setLoading(true);
-    fetchSubjects();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  async function fetchSubjects() {
-    setLoading(true);
-    await subjectsService
-      .list()
-      .then((response) => {
-        setSubjects(response.data.sort(sortSubjectsResponse));
-      })
-      .catch((error) => {
-        toastError(`Erro ao carregar disciplinas: ${error}`);
-        console.log(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }
+  const { buildings } = useBuildings();
 
   function handleCreateSubjectButton() {
     setIsUpdateSubject(false);
@@ -205,85 +52,10 @@ function Subjects() {
     setSelectedSubject(data);
   }
 
-  async function handleRegisterSubjectSave(
-    data: CreateSubject | UpdateSubject,
-  ) {
-    if (isUpdateSubject && selectedSubject) {
-      editSubject(selectedSubject?.id, data as UpdateSubject);
-    } else {
-      createSubject(data as CreateSubject);
-    }
-  }
-
-  async function createSubject(data: CreateSubject) {
-    await subjectsService
-      .create(data)
-      .then((response) => {
-        toastSuccess(`Disciplina ${data.code} criada com sucesso!`);
-        console.log(response);
-      })
-      .catch((error) => {
-        const status = error.response.status;
-        if (status === SubjectsResponseCode.ALREADY_EXISTS) {
-          toastError(`Disciplina ${data.code} já existe!`);
-        } else if (status === SubjectsResponseCode.NOT_FOUND) {
-          toastError(`Disciplina ${data.code} não encontrada`);
-        } else {
-          toastError(`Erro ao criar disciplina ${data.code}`);
-        }
-      })
-      .finally(() => {
-        fetchSubjects();
-      });
-  }
-
-  async function editSubject(id: string, data: UpdateSubject) {
-    await subjectsService
-      .update(id, data)
-      .then((response) => {
-        toastSuccess(`Disciplina ${data.code} atualizada com sucesso!`);
-      })
-      .catch((error) => {
-        const status = error.response.status;
-        if (status === SubjectsResponseCode.ALREADY_EXISTS) {
-          toastError(`Disciplina ${data.code} já existe!`);
-        } else if (status === SubjectsResponseCode.METHOD_NOT_ALLOWED) {
-          toastError(
-            `Erro ao editar disciplina ${data.code}, método não autorizado`,
-          );
-        } else {
-          toastError(`Erro ao editar disciplina: ${error}`);
-        }
-        console.log(error);
-      })
-      .finally(() => {
-        fetchSubjects();
-      });
-  }
-
   async function handleDeleteSubject() {
-    onCloseDeleteSubjectDialog();
-    if (selectedSubject) {
-      await subjectsService
-        .delete(selectedSubject.id)
-        .then((response) => {
-          toastSuccess(`Disciplina excluída!`);
-        })
-        .catch((error) => {
-          const status = error.response.status;
-          if (status === SubjectsResponseCode.NOT_FOUND) {
-            toastError(`Disciplina não encontrada`);
-          }
-          if (status === 500) {
-            toastError('Erro do server ao excluir disciplina');
-          } else {
-            toastError(`Erro ao excluir disciplina: ${error}`);
-          }
-        })
-        .finally(() => {
-          fetchSubjects();
-        });
-    }
+    if (!selectedSubject) return;
+    deleteSubject(selectedSubject.id);
+    getSubjects();
   }
 
   return (
@@ -297,16 +69,17 @@ function Subjects() {
           <Button onClick={handleCreateSubjectButton}>Cadastrar</Button>
         </Flex>
         <DataTable data={subjects} columns={columns} />
-        <SubjectRegisterModal
+        <SubjectModal
+          buildings={buildings}
           isOpen={isOpenRegisterSubjectModal}
           onClose={() => {
             setSelectedSubject(undefined);
             setIsUpdateSubject(false);
             onCloseRegisterSubjectModal();
           }}
-          onSave={handleRegisterSubjectSave}
-          formData={selectedSubject ? selectedSubject : undefined}
+          refetch={getSubjects}
           isUpdate={isUpdateSubject}
+          selectedSubject={selectedSubject}
         />
         <Dialog
           title={`Deletar disciplina ${selectedSubject?.code}`}
@@ -318,7 +91,11 @@ function Subjects() {
             setSelectedSubject(undefined);
             onCloseDeleteSubjectDialog();
           }}
-          onConfirm={handleDeleteSubject}
+          onConfirm={() => {
+            handleDeleteSubject();
+            setSelectedSubject(undefined);
+            onCloseDeleteSubjectDialog();
+          }}
         />
       </Flex>
     </>

@@ -1,10 +1,6 @@
-import moment from 'moment';
-export class HolidayValidator {
+import CommonValidator from 'utils/common/common.validator';
+export class HolidayValidator extends CommonValidator {
   static isInvalidCategoryId(category_id: number) {
-    return category_id <= 0;
-  }
-
-  static isInvalidDate(date: string) {
-    return !moment(date).isValid();
+    return this.isInvalidId(category_id);
   }
 }

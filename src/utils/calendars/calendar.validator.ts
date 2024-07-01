@@ -4,6 +4,6 @@ export class CalendarValidator {
   }
 
   static isInvalidCategoriesIds(value: number[]) {
-    return value.length === 0 || value.find((id) => id <= 0);
+    return value.length === 0 || !!value.find((id) => id <= 0);
   }
 }

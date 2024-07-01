@@ -93,9 +93,9 @@ const ClassesPDF = () => {
   }, []);
 
   function fetchData() {
-    classesService
-      .list()
-      .then((it) => setClassesGroupBySubject(ClassesBySubject(it.data)));
+    // classesService
+    //   .list()
+    //   .then((it) => setClassesGroupBySubject(ClassesBySubject(it.data)));
   }
 
   return (

@@ -9,7 +9,7 @@ const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
 interface GetAvailableWithConflictIndicatorProps {
   events_ids: string[];
-  building_id: string;
+  building_id: number;
 }
 
 interface GetClassroomsSchedulesProps {

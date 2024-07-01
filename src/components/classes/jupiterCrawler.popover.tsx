@@ -26,12 +26,13 @@ import {
 } from '@chakra-ui/react';
 import { appContext } from 'context/AppContext';
 import { Building } from 'models/common/building.model';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { useContext, useEffect, useRef, useState } from 'react';
 import BuildingsService from 'services/api/buildings.service';
 
 interface JupiterCrawlerPopoverPrpos {
   subjects?: string[];
-  onSave: (subjectsList: string[], building_id: string) => void;
+  onSave: (subjectsList: string[], building_id: number) => void;
 }
 
 export default function JupiterCrawlerPopover({
@@ -46,9 +47,9 @@ export default function JupiterCrawlerPopover({
   const [subjectInput, setSubjectInput] = useState('');
   const [multSubjectInput, setMultSubjectInput] = useState('');
   const [buildingIdSelection, setBuildingIdSelection] = useState<
-    string | undefined
+    number | undefined
   >(undefined);
-  const [buildingsList, setBuildingsList] = useState<Building[]>([]);
+  const [buildingsList, setBuildingsList] = useState<BuildingResponse[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const initialFocusRef = useRef(null);
   const [buildingsLoading, setBuildingsLoading] = useState(true);
@@ -121,7 +122,7 @@ export default function JupiterCrawlerPopover({
           {buildingsList.length !== 1 && (
             <Select
               placeholder='Selecionar prédio'
-              onChange={(event) => setBuildingIdSelection(event.target.value)}
+              onChange={(event) => setBuildingIdSelection(Number(event.target.value))}
               icon={buildingsLoading ? <Spinner size='sm' /> : undefined}
             >
               {buildingsList.map((it) => (
@@ -195,7 +196,7 @@ export default function JupiterCrawlerPopover({
         </PopoverBody>
         {subjectsList.length > 0 &&
           buildingIdSelection !== undefined &&
-          buildingIdSelection !== '' && (
+          buildingIdSelection !== 0 && (
             <PopoverFooter>
               <VStack>
                 {subjectsList.length > 10 ? (

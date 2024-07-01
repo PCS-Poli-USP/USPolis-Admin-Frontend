@@ -1,5 +1,5 @@
 export interface BuildingResponse {
-  id: string;
+  id: number;
   name: string;
   created_by: string;
 }

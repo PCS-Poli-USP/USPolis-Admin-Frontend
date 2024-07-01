@@ -14,10 +14,10 @@ import {
   ModalOverlay,
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import { Building } from 'models/common/building.model';
 
 import { useEffect, useState } from 'react';
 import BuildingsService from 'services/api/buildings.service';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 interface EditModalProps {
   isOpen: boolean;
@@ -38,7 +38,7 @@ interface EditUserOtherData {
 }
 
 interface BuildingOption {
-  value: string;
+  value: number;
   label: string;
 }
 
@@ -51,7 +51,7 @@ export default function EditUserModal(props: EditModalProps) {
   };
 
   const [isLoadingBuildings, setIsLoadingBuildings] = useState(false);
-  const [buildings, setBuildings] = useState<Building[]>([]);
+  const [buildings, setBuildings] = useState<BuildingResponse[]>([]);
   const [form, setForm] = useState<EditUserFormValues>(initialForm);
 
   useEffect(() => {

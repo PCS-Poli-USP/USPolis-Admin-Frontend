@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Button,
   Modal,
   ModalBody,
@@ -92,6 +94,10 @@ function CalendarModal(props: CalendarModalProps) {
           <form>
             <ModalBody>
               <VStack spacing={4}>
+                <Alert status={'error'} hidden={props.categories.length !== 0}>
+                  <AlertIcon />
+                  Nenhuma Categoria de Feriado disponível, crie alguma.
+                </Alert>
                 <Input
                   label={'Nome'}
                   name={'name'}
@@ -99,9 +105,9 @@ function CalendarModal(props: CalendarModalProps) {
                   placeholder={'Nome do calendário'}
                 />
                 <MultiSelect
-                  label={'Categorias'}
+                  label={'Categorias de Feriados'}
                   name={'categories_ids'}
-                  value={selectedOptions}
+                  values={selectedOptions}
                   options={props.categories.map((category) => ({
                     value: category.id,
                     label: category.name,

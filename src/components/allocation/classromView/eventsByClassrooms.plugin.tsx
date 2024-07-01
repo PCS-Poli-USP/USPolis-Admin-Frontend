@@ -82,7 +82,7 @@ function ClassroomsTables(props: any) {
   function handleAllocationSave(
     events_ids: string[],
     newClassroom: string,
-    building_id: string,
+    building_id: number,
   ) {
     setCanShowToast(true);
     eventsService

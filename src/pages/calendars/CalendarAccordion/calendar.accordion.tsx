@@ -10,6 +10,9 @@ import {
   Button,
   Divider,
   HStack,
+  List,
+  ListIcon,
+  ListItem,
   Spacer,
   Text,
 } from '@chakra-ui/react';
@@ -17,6 +20,7 @@ import { CalendarResponse } from 'models/http/responses/calendar.responde.models
 import { useEffect } from 'react';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { sortCalendarResponse } from 'utils/calendars/calendar.sorter';
+import { holidayCategoryToString } from 'utils/holidaysCategories/holidaysCategories.formatter';
 
 interface HolidayCategoryAccordionProps {
   calendars: CalendarResponse[];
@@ -35,7 +39,7 @@ export function CalendarAccordion(props: HolidayCategoryAccordionProps) {
       {props.calendars.length === 0 ? (
         <Alert status={'warning'} fontSize={'sm'} mb={4}>
           <AlertIcon />
-          Nenhuma calendário criado
+          Nenhum Calendário adicionado
         </Alert>
       ) : undefined}
       {props.calendars.map((calendar, index) => (
@@ -56,6 +60,7 @@ export function CalendarAccordion(props: HolidayCategoryAccordionProps) {
               <AccordionPanel>
                 <Divider mb={2} borderColor={'blackAlpha.500'} />
                 <HStack mb={4}>
+                  <Text>{`Criado por ${calendar.created_by}`}</Text>
                   <Spacer />
                   <Button
                     leftIcon={<CalendarIcon />}
@@ -85,6 +90,15 @@ export function CalendarAccordion(props: HolidayCategoryAccordionProps) {
                   </Button>
                 </HStack>
                 <Divider mb={2} borderColor={'blackAlpha.500'} />
+                <Text fontWeight={'bold'}>Categorias</Text>
+                <List>
+                  {calendar.categories.map((category, index) => (
+                    <ListItem key={index}>
+                      <ListIcon as={CalendarIcon}/>
+                      {holidayCategoryToString(category)}
+                    </ListItem>
+                  ))}
+                </List>
               </AccordionPanel>
             </>
           )}

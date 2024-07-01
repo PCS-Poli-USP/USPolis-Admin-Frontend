@@ -2,7 +2,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import Allocation from 'pages/allocation';
 import Classes from 'pages/classes/classes';
 import Classrooms from 'pages/classrooms';
-import InstitutionalEvents from 'pages/institutional-events';
+import InstitutionalEvents from 'pages/institutionalEvents';
 import ReactDOM from 'react-dom/client';
 import {
   BrowserRouter as Router,
@@ -12,7 +12,11 @@ import {
 } from 'react-router-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { chakraTheme, muiTheme } from 'utils/chakra.theme';
+import { ThemeProvider } from '@mui/material';
+import 'moment/locale/pt-br';
 import { Amplify } from 'aws-amplify';
 import awsConfig from 'aws-config';
 import AuthRoute from 'components/routes/auth.route';
@@ -21,12 +25,6 @@ import Buildings from 'pages/buildings';
 import Users from 'pages/users/users';
 import ConflictsPage from 'pages/conflicts';
 import Subjects from 'pages/subjects/subjects';
-import Holidays from 'pages/holidays';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { chakraTheme, muiTheme } from 'utils/chakra.theme';
-import { ThemeProvider } from '@mui/material';
-import 'moment/locale/pt-br';
 import Calendars from 'pages/calendars';
 
 Amplify.configure(awsConfig);
@@ -49,7 +47,6 @@ root.render(
                 <Route path='users' element={<Users />} />
                 <Route path='buildings' element={<Buildings />} />
                 <Route path='subjects' element={<Subjects />} />
-                <Route path='holidays' element={<Holidays />} />
                 <Route path='calendars' element={<Calendars />} />
                 <Route path='classrooms' element={<Classrooms />} />
                 <Route path='classes' element={<Classes />} />

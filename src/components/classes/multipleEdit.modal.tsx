@@ -40,7 +40,7 @@ interface MultipleEditModalProps {
 interface Allocation {
   event_id: string;
   classroom?: string;
-  building_id?: string;
+  building_id?: number;
 }
 
 export default function MultipleEditModal({
@@ -104,7 +104,7 @@ export default function MultipleEditModal({
     } else setMap([]);
   }, [classes, filteredClasses]);
 
-  function addBuildingInAllocMap(event_id: string, building_id: string) {
+  function addBuildingInAllocMap(event_id: string, building_id: number) {
     const newAllocationMap = [...allocationMap];
     newAllocationMap.forEach((alloc) => {
       if (alloc.event_id === event_id) {
@@ -134,7 +134,7 @@ export default function MultipleEditModal({
   }
 
   function handleSelectBuilding(
-    building_id: string,
+    building_id: number,
     building_name: string,
     event_id: string,
   ) {
@@ -299,7 +299,7 @@ export default function MultipleEditModal({
   function getAllocationData() {
     const events_ids: string[] = [];
     const classrooms: string[] = [];
-    const buildings_ids: string[] = [];
+    const buildings_ids: number[] = [];
     allocationMap.forEach((alloc) => {
       events_ids.push(alloc.event_id);
       if (alloc.classroom) classrooms.push(alloc.classroom);

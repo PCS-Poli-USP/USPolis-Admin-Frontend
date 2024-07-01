@@ -95,7 +95,7 @@ export default function AutomaticAllocationModal({
   function handleEditEvent(
     events_ids: string[],
     newClassroom: string,
-    building_id: string,
+    building_id: number,
   ) {
     eventsService
       .editManyAllocations({
