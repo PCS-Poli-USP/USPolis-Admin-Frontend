@@ -32,6 +32,10 @@ export function NumberInput({
   value = undefined,
   min = undefined,
   max = undefined,
+  mt = undefined,
+  mb = undefined,
+  mr = undefined,
+  ml = undefined,
 }: MultiSelectProps) {
   const {
     control,
@@ -46,10 +50,19 @@ export function NumberInput({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormControl isInvalid={!!errors[name]}>
+        <FormControl
+          isInvalid={!!errors[name]}
+          hidden={hidden}
+          mt={mt}
+          mb={mb}
+          ml={ml}
+          mr={mr}
+        >
           <FormLabel alignSelf='flex-start'>{label}</FormLabel>
           <ChakraNumberInput
-            value={inputValue ? inputValue : getValues(name) ? getValues(name) : 0}
+            value={
+              inputValue ? inputValue : getValues(name) ? getValues(name) : 0
+            }
             hidden={hidden}
             min={min}
             max={max}
