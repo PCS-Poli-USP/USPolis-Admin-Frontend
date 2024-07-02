@@ -10,7 +10,7 @@ import { sortClassroomResponse } from 'utils/classrooms/classrooms.sorter';
 
 const service = new ClassroomsService();
 
-const useSubjects = () => {
+const useClassrooms = () => {
   const [loading, setLoading] = useState(false);
   const [classrooms, setClassrooms] = useState<ClassroomResponse[]>([]);
 
@@ -106,9 +106,9 @@ const useSubjects = () => {
     classrooms,
     getClassrooms,
     createClassroom,
-    updateSubject,
-    deleteSubject,
+    updateClassroom,
+    deleteClassroom,
   };
 };
 
-export default useSubjects;
+export default useClassrooms;
