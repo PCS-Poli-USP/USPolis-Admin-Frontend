@@ -1,6 +1,6 @@
 export interface CreateClassroom {
   name: string;
-  building_id: string;
+  building_id: number;
   floor: number;
   capacity: number;
   ignore_to_allocate: boolean;

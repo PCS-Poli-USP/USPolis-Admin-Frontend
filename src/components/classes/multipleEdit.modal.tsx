@@ -146,21 +146,21 @@ export default function MultipleEditModal({
 
     setIsLoadingSchedules(true);
     // O front verifica os conflitos
-    classroomsService
-      .getClassroomsSchedulesByBuilding(building_name)
-      .then((it) => {
-        const newScheduleMap = [...classroomSchedulesMap];
-        it.data.forEach((schedule) => {
-          ConflictCalculator.classroomHasTimeConflict(schedule);
-          newScheduleMap.push([
-            schedule.classroom_name,
-            building_name,
-            schedule,
-          ]);
-        });
-        setClassroomSchedulesMap(newScheduleMap.sort(sortClassroomScheduleMap));
-      })
-      .finally(() => setIsLoadingSchedules(false));
+    // classroomsService
+    //   .getClassroomsSchedulesByBuilding(building_name)
+    //   .then((it) => {
+    //     const newScheduleMap = [...classroomSchedulesMap];
+    //     it.data.forEach((schedule) => {
+    //       ConflictCalculator.classroomHasTimeConflict(schedule);
+    //       newScheduleMap.push([
+    //         schedule.classroom_name,
+    //         building_name,
+    //         schedule,
+    //       ]);
+    //     });
+    //     setClassroomSchedulesMap(newScheduleMap.sort(sortClassroomScheduleMap));
+    //   })
+    //   .finally(() => setIsLoadingSchedules(false));
   }
 
   function handleSelectClassroom(
