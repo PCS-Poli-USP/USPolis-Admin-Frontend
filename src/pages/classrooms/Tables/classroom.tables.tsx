@@ -19,7 +19,7 @@ export function getClassroomColumns(
   props: ClassroomColumnsProps,
 ): ColumnDef<ClassroomResponse>[] {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { setLoading, loggedUser } = useContext(appContext);
+  const { loggedUser } = useContext(appContext);
   const columns: ColumnDef<ClassroomResponse>[] = [
     {
       accessorKey: 'name',

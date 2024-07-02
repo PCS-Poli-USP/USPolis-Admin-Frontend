@@ -10,12 +10,7 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import { appContext } from 'context/AppContext';
-import { User } from 'models/common/user.common.model';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { useContext, useEffect, useState } from 'react';
-import BuildingsService from 'services/api/buildings.service';
-import UsersService from 'services/api/users.service';
+import { useEffect } from 'react';
 import {
   ClassroomForm,
   ClassroomModalProps,
@@ -29,12 +24,6 @@ import { CheckBox } from 'components/common/form/CheckBox';
 import useClassrooms from 'hooks/useClassrooms';
 
 export default function ClassroomModal(props: ClassroomModalProps) {
-  const { loggedUser } = useContext(appContext);
-  const buildingsService = new BuildingsService();
-  const usersService = new UsersService();
-  const [usersList, setUsersList] = useState<User[]>([]);
-  const [buildingsList, setBuildingsList] = useState<BuildingResponse[]>([]);
-
   const form = useForm<ClassroomForm>({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
