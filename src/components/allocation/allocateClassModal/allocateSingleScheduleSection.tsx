@@ -1,5 +1,6 @@
 import {
   Box,
+  Checkbox,
   Flex,
   Select,
   Spinner,
@@ -36,7 +37,13 @@ const AllocateSingleScheduleSection = forwardRef<
       reset();
     },
     getData(): { schedule_id: number; classroom_id: number } | null {
-      if (!selectedClassroom || !schedule) return null;
+      if (!schedule) return null;
+      if (removeAllocation)
+        return {
+          schedule_id: schedule.id,
+          classroom_id: -1,
+        };
+      if (!selectedClassroom) return null;
       return {
         schedule_id: schedule.id,
         classroom_id: Number(selectedClassroom.id),
@@ -55,6 +62,7 @@ const AllocateSingleScheduleSection = forwardRef<
   // selectedData
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
   const [selectedClassroom, setSelectedClassroom] = useState<Classroom>();
+  const [removeAllocation, setRemoveAllocation] = useState<boolean>(false);
 
   // loadings
   const [classroomsLoading, setClassroomsLoading] = useState(false);
@@ -92,6 +100,7 @@ const AllocateSingleScheduleSection = forwardRef<
   }, [selectedBuilding, schedule]);
 
   function reset() {
+    setRemoveAllocation(false);
     if (schedule) {
       if (schedule.classroom_id) {
         if (selectedBuilding?.id !== schedule.building_id)
@@ -120,7 +129,7 @@ const AllocateSingleScheduleSection = forwardRef<
   return (
     <>
       {schedule && (
-        <Flex flexDir={'column'} gap={2}>
+        <Flex flexDir={'column'} gap={4}>
           <Flex flexDir={'column'}>
             <Text>
               Recorrencia:{' '}
@@ -143,46 +152,59 @@ const AllocateSingleScheduleSection = forwardRef<
               Periodo: {schedule.start_date} ~ {schedule.end_date}
             </Text>
           </Flex>
-          <VStack>
-            <Select
-              placeholder='Selecione o prédio'
+          <VStack alignItems={'flex-start'}>
+            <Checkbox
+              colorScheme='red'
+              isChecked={removeAllocation}
               onChange={(e) => {
-                setSelectedBuilding(
-                  allowedBuildings.find(
-                    (building) => building.id === Number(e.target.value),
-                  ),
-                );
+                setRemoveAllocation(e.target.checked);
               }}
-              value={selectedBuilding ? selectedBuilding.id : 0}
             >
-              {allowedBuildings.map((building) => (
-                <option key={building.id} value={building.id}>
-                  {building.name}
-                </option>
-              ))}
-            </Select>
-            <Select
-              placeholder='Selecione a sala'
-              icon={classroomsLoading ? <Spinner /> : undefined}
-              onChange={(e) => {
-                setSelectedClassroom(
-                  classrooms.find(
-                    (classroom) =>
-                      Number(classroom.id) === Number(e.target.value),
-                  ),
-                );
-              }}
-              value={selectedClassroom ? Number(selectedClassroom.id) : 0}
-              disabled={!selectedBuilding || classroomsLoading}
-            >
-              {classrooms.map((classroom) => (
-                <option key={classroom.id} value={Number(classroom.id)}>
-                  {classroom.conflicts > 0
-                    ? `⚠️ ${classroom.name} (${classroom.conflicts} dias conflitantes)`
-                    : classroom.name}
-                </option>
-              ))}
-            </Select>
+              Remover alocação
+            </Checkbox>
+            {!removeAllocation && (
+              <>
+                <Select
+                  placeholder='Selecione o prédio'
+                  onChange={(e) => {
+                    setSelectedBuilding(
+                      allowedBuildings.find(
+                        (building) => building.id === Number(e.target.value),
+                      ),
+                    );
+                  }}
+                  value={selectedBuilding ? selectedBuilding.id : 0}
+                >
+                  {allowedBuildings.map((building) => (
+                    <option key={building.id} value={building.id}>
+                      {building.name}
+                    </option>
+                  ))}
+                </Select>
+                <Select
+                  placeholder='Selecione a sala'
+                  icon={classroomsLoading ? <Spinner /> : undefined}
+                  onChange={(e) => {
+                    setSelectedClassroom(
+                      classrooms.find(
+                        (classroom) =>
+                          Number(classroom.id) === Number(e.target.value),
+                      ),
+                    );
+                  }}
+                  value={selectedClassroom ? Number(selectedClassroom.id) : 0}
+                  disabled={!selectedBuilding || classroomsLoading}
+                >
+                  {classrooms.map((classroom) => (
+                    <option key={classroom.id} value={Number(classroom.id)}>
+                      {classroom.conflicts > 0
+                        ? `⚠️ ${classroom.name} (${classroom.conflicts} dias conflitantes)`
+                        : classroom.name}
+                    </option>
+                  ))}
+                </Select>
+              </>
+            )}
           </VStack>
         </Flex>
       )}
