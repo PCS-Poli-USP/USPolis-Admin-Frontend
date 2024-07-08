@@ -74,7 +74,7 @@ export function AllocateClassModal({
               Descartar Mudanças
             </Button>
             <Divider />
-            <Flex flexDir={'column'} gap={4}>
+            <Flex flexDir={'column'} gap={2}>
               {class_.schedules.map((schedule, index) => (
                 <>
                   <AllocateSingleScheduleSection
