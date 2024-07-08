@@ -7,6 +7,9 @@ export interface ReservationResponseBase {
 }
 
 export interface ReservationResponse extends ReservationResponseBase {
+  building_id: number;
+  building_name: string;
+
   classroom_id: number;
   classroom_name: string;
 
