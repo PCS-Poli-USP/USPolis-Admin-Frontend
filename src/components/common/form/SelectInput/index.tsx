@@ -1,13 +1,8 @@
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import {
-  FormLabel,
-  Select as ChakraSelect,
-  FormControl,
-  FormErrorMessage,
-  Spinner,
-} from '@chakra-ui/react';
+import { FormLabel, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FieldProps } from '../form.interface';
 import { Controller, useFormContext } from 'react-hook-form';
+import Select from 'react-select';
+import { useEffect, useState } from 'react';
 
 type Option = {
   label: string;
@@ -17,10 +12,10 @@ type Option = {
 interface SelectProps extends FieldProps {
   options: Option[];
   value?: string | number;
-  onChange?: React.ChangeEventHandler<HTMLSelectElement>;
+  onChange?: (value: Option | undefined) => void;
 }
 
-export function Select({
+export function SelectInput({
   label,
   name,
   options,
@@ -36,7 +31,19 @@ export function Select({
   const {
     control,
     formState: { errors },
+    setValue,
+    getValues,
   } = useFormContext();
+
+  const [selectedOption, setSelectedOption] = useState<Option>();
+
+  useEffect(() => {
+    const current: string | number = getValues(name);
+    if (current) {
+      setSelectedOption(options.find((option) => option.value === current));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, options]);
 
   return (
     <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
@@ -45,28 +52,27 @@ export function Select({
         name={name}
         control={control}
         render={({ field }) => (
-          <ChakraSelect
+          <Select
             {...field}
             id={name}
-            value={field.value ? field.value : ''}
-            disabled={disabled || isLoading}
-            icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
-            onChange={(event) => {
-              if (onChange) onChange(event);
-              field.onChange(event.target.value);
+            value={selectedOption}
+            isDisabled={disabled || isLoading}
+            placeholder={placeholder ? placeholder : 'Selecione uma opção'}
+            isClearable={true}
+            // icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
+            onChange={(option) => {
+              if (onChange) onChange(option ? option : undefined);
+              setValue(name, option ? option.value : undefined);
+              setSelectedOption(
+                options.find((opt) => opt.value === option?.value),
+              );
             }}
-          >
-            {placeholder ? (
-              <option value={''}>{placeholder}</option>
-            ) : (
-              <option value={''}>Selecione uma opção</option>
-            )}
-            {options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </ChakraSelect>
+            options={options}
+            classNames={{
+              control: (state) =>
+                state.isFocused ? 'border-red-600' : 'border-grey-300',
+            }}
+          />
         )}
       />
       {/* <ChakraSelect
