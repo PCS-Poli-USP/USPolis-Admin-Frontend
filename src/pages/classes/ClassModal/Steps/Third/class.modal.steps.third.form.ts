@@ -56,6 +56,12 @@ export const classThirdFormFields = {
       .test('is-valid-month-week', 'Semana do mês inválido', function (value) {
         if (!value) return true;
         return !ScheduleValidator.isInvalidMonthWeek(value);
+      }).test('must-have-mont-week-when-recurrence', 'É preciso escolher uma semana do mês', function (value) {
+        const { recurrence } = this.parent;
+        if (!recurrence) return true;
+        if (recurrence !== Recurrence.MONTHLY) return true;
+        if (!value) return false;
+        return !ScheduleValidator.isInvalidMonthWeek(value);
       }),
     defaultValue: undefined,
   },
@@ -66,6 +72,13 @@ export const classThirdFormFields = {
       .transform((curr, orig) => (orig === '' ? undefined : curr)) // Yup treats notRequired as ''
       .test('is-valid-week-day', 'Dia da semana inválido', function (value) {
         if (!value) return true;
+        return !ScheduleValidator.isInvalidWeekDay(value);
+      })
+      .test('must-have-week-day-when-recurrence', 'É preciso escolher um dia da semana', function (value) {
+        const { recurrence } = this.parent;
+        if (!recurrence) return true;
+        if (recurrence === Recurrence.CUSTOM || recurrence === Recurrence.DAILY) return true;
+        if (!value) return false;
         return !ScheduleValidator.isInvalidWeekDay(value);
       }),
     defaultValue: undefined,

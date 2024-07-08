@@ -196,11 +196,11 @@ function ClassModal(props: ClassModalProps) {
     setActiveStep(activeStep + 1);
   }
 
-  function handleNextClick() {
-    if (activeStep === 0) handleFirstNextClick();
-    if (activeStep === 1) handleSecondNextClick();
-    if (activeStep === 2) handleThirdNextClick();
-    if (activeStep === 3) handleFourthNextClick();
+  async function handleNextClick() {
+    if (activeStep === 0) await handleFirstNextClick();
+    if (activeStep === 1) await handleSecondNextClick();
+    if (activeStep === 2) await handleThirdNextClick();
+    if (activeStep === 3) await handleFourthNextClick();
   }
 
   function handlePreviousClick() {
@@ -211,7 +211,6 @@ function ClassModal(props: ClassModalProps) {
 
   async function handleSaveClick() {
     const data = getClassData();
-    console.log(data);
     if (props.isUpdate && props.selectedClass) {
       await updateClass(props.selectedClass.id, data as UpdateClass);
     } else if (!props.isUpdate) {
@@ -358,7 +357,6 @@ function ClassModal(props: ClassModalProps) {
           schedules={schedules}
           isUpdate={props.isUpdate}
           selectedClass={props.selectedClass}
-          onNext={handleFirstNextClick}
           moveTo={(index) => setActiveStep(index)}
         />
       ),
