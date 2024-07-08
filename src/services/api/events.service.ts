@@ -6,13 +6,13 @@ const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
 interface EditManyAllocationsDTO {
   events_ids: string[];
-  building_id: string;
+  building_id: number;
   classroom: string;
 }
 
 interface EditManyAllocationsInManyBuildingsDTO {
   events_ids: string[];
-  buildings_ids: string[];
+  buildings_ids: number[];
   classrooms: string[];
 }
 

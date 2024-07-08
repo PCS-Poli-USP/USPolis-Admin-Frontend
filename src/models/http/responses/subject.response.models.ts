@@ -1,13 +1,31 @@
-import { SubjectsTypes } from 'utils/enums/subjects.enum';
+import { SubjectType } from 'utils/enums/subjects.enum';
 import { BuildingResponse } from './building.response.models';
+import { ClassUnfetchResponse } from './class.response.models';
 
-export interface SubjectResponse {
-  id: string;
+export interface SubjectResponseBase {
+  id: number;
   code: string;
   name: string;
-  buildings?: BuildingResponse[];
   professors: string[];
-  type: SubjectsTypes;
+  type: SubjectType;
+  class_credit: number;
+  work_credit: number;
+  activation: string;
+  desactivation?: string;
+}
+
+export interface SubjectResponse extends SubjectResponseBase {
+  building_ids: number[];
+  buildings: BuildingResponse[];
+  classes?: ClassUnfetchResponse[];
+}
+
+export interface SubjectUnfetchResponse {
+  id: number;
+  name: string;
+  code: string;
+  professors: string[];
+  type: SubjectType;
   class_credit: number;
   work_credit: number;
   activation: string;

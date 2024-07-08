@@ -2,22 +2,21 @@ import { AddIcon } from '@chakra-ui/icons';
 import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 import Navbar from 'components/common/NavBar/navbar.component';
 import CalendarModal from './CalendarModal/calendar.modal';
-import {
-  CreateCalendar,
-  UpdateCalendar,
-} from 'models/http/requests/calendar.request.models';
-import { useContext, useEffect, useState } from 'react';
-import HolidaysCategoriesService from 'services/api/holidayCategory.service';
-import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
-import useCustomToast from 'hooks/useCustomToast';
-import CalendarAccordion from './CalendarAccordion/calendar.accordion';
+import { useState } from 'react';
 import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
-import CalendarsService from 'services/api/calendars.service';
 import CalendarViewModal from './CalendarViewModal/calendarView.modal';
 import Dialog from 'components/common/Dialog/dialog.component';
-import { appContext } from 'context/AppContext';
+import useCalendars from 'hooks/useCalendars';
+import useHolidaysCategories from 'hooks/useHolidaysCategories';
+import CalendarAccordion from './CalendarAccordion/calendar.accordion';
+import HolidaysContentModal from './HolidaysContentModal/holidaysContent.modal';
 
 function Calendars() {
+  const {
+    isOpen: isOpenHolidaysModal,
+    onOpen: onOpenHolidaysModal,
+    onClose: onCloseHolidaysModal,
+  } = useDisclosure();
   const {
     isOpen: isOpenCalendarModal,
     onOpen: onOpenCalendarModal,
@@ -34,88 +33,23 @@ function Calendars() {
     onClose: onCloseDeleteCalendarDialog,
   } = useDisclosure();
 
-  const [categories, setCategories] = useState<HolidayCategoryResponse[]>([]);
-  const [calendars, setCalendars] = useState<CalendarResponse[]>([]);
+  const {
+    holidaysCategories: categories,
+    getHolidaysCategories,
+    loading: loadingCategories,
+  } = useHolidaysCategories();
+  const {
+    calendars,
+    getCalendars,
+    createCalendar,
+    updateCalendar,
+    deleteCalendar,
+  } = useCalendars();
+
   const [isUpdateCalendar, setIsUpdateCalendar] = useState(false);
   const [selectedCalendar, setSelectedCalendar] = useState<
     CalendarResponse | undefined
   >(undefined);
-
-  const { setLoading } = useContext(appContext);
-
-  const calendarsService = new CalendarsService();
-  const holidaysCategoriesService = new HolidaysCategoriesService();
-  const showToast = useCustomToast();
-
-  async function fetchData() {
-    setLoading(true);
-    await fetchCalendars();
-    await fetchCategories();
-    setLoading(false);
-  }
-
-  async function fetchCalendars() {
-    await calendarsService.list().then((response) => {
-      setCalendars(response.data);
-    });
-  }
-
-  async function fetchCategories() {
-    await holidaysCategoriesService.list().then((response) => {
-      setCategories(response.data);
-    });
-  }
-
-  async function createCalendar(data: CreateCalendar) {
-    await calendarsService
-      .create(data)
-      .then((response) => {
-        showToast(
-          'Sucesso!',
-          `Calendário ${data.name} criado com sucesso!`,
-          'success',
-        );
-      })
-      .catch((error) => {
-        showToast('Erro', `Erro ao cadastrar calendário: ${error}`, 'error');
-      })
-      .finally(() => {
-        fetchData();
-      });
-  }
-
-  async function updateCalendar(id: number, data: UpdateCalendar) {
-    await calendarsService
-      .update(id, data)
-      .then((response) => {
-        showToast(
-          'Sucesso!',
-          `Calendário ${data.name} atualizado com sucesso!`,
-          'success',
-        );
-      })
-      .catch((error) => {
-        showToast('Erro', `Erro ao atualizar calendário: ${error}`, 'error');
-      })
-      .finally(() => {
-        fetchData();
-      });
-  }
-
-  async function deleteCalendar() {
-    if (!selectedCalendar) return;
-    await calendarsService
-      .delete(selectedCalendar.id)
-      .then((response) => {
-        showToast('Sucesso!', `Calendário deletado com sucesso!`, 'success');
-      })
-      .catch((error) => {
-        showToast('Erro', `Erro ao deletar calendário: ${error}`, 'error');
-      })
-      .finally(() => {
-        fetchData();
-      });
-  }
 
   function handleCreateCalendarButton() {
     onOpenCalendarModal();
@@ -137,10 +71,13 @@ function Calendars() {
     onOpenDeleteCalendarDialog();
   }
 
-  useEffect(() => {
-    fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  function handleDeleteCalendar() {
+    if (selectedCalendar) {
+      deleteCalendar(selectedCalendar.id);
+      setSelectedCalendar(undefined);
+      onCloseDeleteCalendarDialog();
+    }
+  }
 
   return (
     <>
@@ -151,7 +88,20 @@ function Calendars() {
             Calendários
           </Text>
           <Spacer />
-          <Button onClick={handleCreateCalendarButton} leftIcon={<AddIcon />}>
+          <Button
+            mr={2}
+            colorScheme={'blue'}
+            onClick={() => {
+              onOpenHolidaysModal();
+            }}
+          >
+            Feriados e Categorias
+          </Button>
+          <Button
+            colorScheme={'blue'}
+            onClick={handleCreateCalendarButton}
+            leftIcon={<AddIcon />}
+          >
             Adicionar Calendário
           </Button>
         </Flex>
@@ -181,6 +131,16 @@ function Calendars() {
           }}
           calendar={selectedCalendar}
         />
+        <HolidaysContentModal
+          isLoading={loadingCategories}
+          isOpen={isOpenHolidaysModal}
+          onClose={onCloseHolidaysModal}
+          categories={categories}
+          refetch={() => {
+            getHolidaysCategories();
+            getCalendars();
+          }}
+        />
         <Dialog
           title={`Deseja o calendário ${selectedCalendar?.name}`}
           warningText={`Essa mudança é irreversível`}
@@ -189,11 +149,7 @@ function Calendars() {
             onCloseDeleteCalendarDialog();
             setSelectedCalendar(undefined);
           }}
-          onConfirm={() => {
-            deleteCalendar();
-            setSelectedCalendar(undefined);
-            onCloseDeleteCalendarDialog();
-          }}
+          onConfirm={handleDeleteCalendar}
         />
       </Flex>
     </>

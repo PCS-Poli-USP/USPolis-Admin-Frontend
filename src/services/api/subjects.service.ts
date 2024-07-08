@@ -14,15 +14,15 @@ export default class SubjectsService extends HttpService {
     return this.http.get('');
   }
 
-  create(data: CreateSubject): Promise<AxiosResponse<string>> {
+  create(data: CreateSubject): Promise<AxiosResponse<SubjectResponse>> {
     return this.http.post('', data);
   }
 
-  delete(id: string): Promise<AxiosResponse<number>> {
-    return this.http.delete(id);
+  delete(id: number): Promise<AxiosResponse<undefined>> {
+    return this.http.delete(`/${id}`);
   }
 
-  update(id: string, data: UpdateSubject): Promise<AxiosResponse<string>> {
-    return this.http.put(id, data);
+  update(id: number, data: UpdateSubject): Promise<AxiosResponse<SubjectResponse>> {
+    return this.http.put(`/${id}`, data);
   }
 }

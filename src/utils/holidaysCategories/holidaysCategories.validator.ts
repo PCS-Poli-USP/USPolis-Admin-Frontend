@@ -1,5 +1,7 @@
-export default class HolidayCategoryValidator {
+import CommonValidator from "utils/common/common.validator";
+
+export default class HolidayCategoryValidator extends CommonValidator {
   static isInvalidName(name: string): boolean {
-    return name.length === 0;
+    return this.isEmptyString(name);
   }
 }
