@@ -31,6 +31,9 @@ import ClassModal from './ClassModal/class.modal';
 import useSubjects from 'hooks/useSubjetcts';
 import useCalendars from 'hooks/useCalendars';
 import { Row } from '@tanstack/react-table';
+import AllocateScheduleModal from 'components/allocation/allocateClassModal/allocateSingleScheduleSection';
+import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
+import { AllocateClassModal } from 'components/allocation/allocateClassModal';
 
 function Classes() {
   const {
@@ -70,6 +73,7 @@ function Classes() {
   } = useDisclosure();
 
   const [selectedClass, setSelectedClass] = useState<ClassResponse>();
+  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleResponse>();
   const [isUpdateClass, setIsUpdateClass] = useState(false);
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
@@ -117,6 +121,7 @@ function Classes() {
 
   function handleAllocationEditClick(data: ClassResponse) {
     setSelectedClass(data);
+    setSelectedSchedule(data.schedules[1]);
     onOpenAllocEdit();
   }
 
@@ -229,7 +234,12 @@ function Classes() {
         calendars={calendars}
         selectedClass={selectedClass}
       />
-
+      <AllocateClassModal
+        isOpen={isOpenAllocEdit}
+        onClose={onCloseAllocEdit}
+        refresh={getClasses}
+        class_={selectedClass}
+      />
       {/* <EditEventModal
         isOpen={isOpenAllocEdit}
         onClose={onCloseAllocEdit}
