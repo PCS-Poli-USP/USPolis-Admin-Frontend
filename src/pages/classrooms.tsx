@@ -249,7 +249,6 @@ function Classrooms() {
         isOpen={isOpenRegister}
         onClose={onCloseRegister}
         formData={convertClassroomToClassroomCreate(selectedClassroom)}
-        buildingsOptions={buildingsList}
         isUpdate={isUpdate}
         onSave={handleSave}
       />
