@@ -125,7 +125,7 @@ function InstitutionalEventModal({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          {!!selectedEvent ? 'Atualizar evento' : 'Cadastrar de evento'}
+          {!!selectedEvent ? 'Atualizar Evento' : 'Cadastrar Evento'}
         </ModalHeader>
         <ModalCloseButton />
         <FormProvider {...form}>

@@ -26,6 +26,7 @@ import Users from 'pages/users/users';
 import ConflictsPage from 'pages/conflicts';
 import Subjects from 'pages/subjects/subjects';
 import Calendars from 'pages/calendars';
+import Reservations from 'pages/reservations';
 
 Amplify.configure(awsConfig);
 
@@ -51,6 +52,7 @@ root.render(
                 <Route path='classrooms' element={<Classrooms />} />
                 <Route path='classes' element={<Classes />} />
                 <Route path='allocation' element={<Allocation />} />
+                <Route path='reservations' element={<Reservations />} />
                 <Route path='conflicts' element={<ConflictsPage />} />
                 <Route
                   path='institutional-events'
