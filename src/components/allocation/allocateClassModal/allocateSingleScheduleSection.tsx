@@ -198,7 +198,7 @@ const AllocateSingleScheduleSection = forwardRef<
                   {classrooms.map((classroom) => (
                     <option key={classroom.id} value={Number(classroom.id)}>
                       {classroom.conflicts > 0
-                        ? `⚠️ ${classroom.name} (${classroom.conflicts} dias conflitantes)`
+                        ? `⚠️ ${classroom.name} (${classroom.conflicts} conflitos)`
                         : classroom.name}
                     </option>
                   ))}

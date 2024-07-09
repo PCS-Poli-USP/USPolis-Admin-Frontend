@@ -34,8 +34,13 @@ import { Row } from '@tanstack/react-table';
 import AllocateScheduleModal from 'components/allocation/allocateClassModal/allocateSingleScheduleSection';
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
 import { AllocateClassModal } from 'components/allocation/allocateClassModal';
+import SubjectsService from 'services/api/subjects.service';
+import { AxiosError } from 'axios';
+import useCustomToast from 'hooks/useCustomToast';
 
 function Classes() {
+  const showToast = useCustomToast();
+
   const {
     isOpen: isOpenDeleteClass,
     onOpen: onOpenDeleteClass,
@@ -157,33 +162,32 @@ function Classes() {
   }
 
   function handleCrawlerSave(subjectsList: string[], building_id: number) {
-    // setLoading(true);
-    // crawlerService
-    //   .crawl({
-    //     building_id,
-    //     subject_codes_list: subjectsList,
-    //   })
-    //   .then((it) => {
-    //     setSuccessSubjects(it.data.sucess);
-    //     setFailedSubjects(it.data.failed);
-    //     onOpenJupiterModal();
-    //     fetchData();
-    //     showToast(
-    //       'Sucesso!',
-    //       'Disciplinas foram carregadas com sucesso!',
-    //       'success',
-    //     );
-    //   })
-    //   .catch(({ response }: AxiosError<ErrorResponse>) =>
-    //     showToast(
-    //       'Erro!',
-    //       `Erro ao buscar disciplinas: ${response?.data.message}`,
-    //       'error',
-    //     ),
-    //   )
-    //   .finally(() => {
-    //     setLoading(false);
-    //   });
+    setLoading(true);
+    const subjectsService = new SubjectsService();
+
+    subjectsService
+      .crawl(building_id, subjectsList)
+      .then((it) => {
+        setSuccessSubjects(it.data.sucess);
+        setFailedSubjects(it.data.failed);
+        onOpenJupiterModal();
+        getClasses();
+        showToast(
+          'Sucesso!',
+          'Disciplinas foram carregadas com sucesso!',
+          'success',
+        );
+      })
+      .catch(({ response }: AxiosError<any>) =>
+        showToast(
+          'Erro!',
+          `Erro ao buscar disciplinas: ${response?.data.message}`,
+          'error',
+        ),
+      )
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
   function handleDeleteSelectedClassesClick() {
