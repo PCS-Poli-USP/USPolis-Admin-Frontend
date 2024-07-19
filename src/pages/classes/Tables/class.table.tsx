@@ -15,6 +15,7 @@ import {
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
+import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import {
   FilterArray,
@@ -128,7 +129,11 @@ export const getClassesColumns = (
     accessorFn: (row) =>
       row.schedules.map(
         (schedule) =>
-          `${WeekDay.translate(schedule.week_day)}:
+          `${
+            schedule.week_day
+              ? WeekDay.translate(schedule.week_day)
+              : Recurrence.translate(schedule.recurrence)
+          }:
           ${schedule.start_time.substring(0, 5)} - 
           ${schedule.end_time.substring(0, 5)}`,
       ),
