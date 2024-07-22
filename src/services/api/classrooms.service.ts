@@ -2,6 +2,7 @@ import { AxiosResponse } from 'axios';
 import Classroom, {
   AvailableClassroom,
   ClassroomSchedule,
+  ClassroomWithConflictCount,
 } from 'models/common/classroom.model';
 import HttpService from './http.service';
 
@@ -35,7 +36,7 @@ export default class ClassroomsService extends HttpService {
   }
 
   update(id: string, data: any): Promise<AxiosResponse<any>> {
-    console.log("updating...")
+    console.log('updating...');
     return this.http.put(`/${id}`, data);
   }
 
@@ -49,14 +50,11 @@ export default class ClassroomsService extends HttpService {
     });
   }
 
-  async getAvailableWithConflictIndicator(
-    data: GetAvailableWithConflictIndicatorProps,
-  ): Promise<AxiosResponse<AvailableClassroom[]>> {
-    const response = await this.http.post(
-      'available-with-conflict-check',
-      data,
-    );
-    return response;
+  getWithConflictCount(
+    schedule_id: number,
+    building_id: number,
+  ): Promise<AxiosResponse<ClassroomWithConflictCount[]>> {
+    return this.http.get(`with-conflict-count/${building_id}/${schedule_id}`);
   }
 
   getClassroomsByBuilding(

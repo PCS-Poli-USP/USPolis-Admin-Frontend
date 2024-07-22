@@ -13,6 +13,10 @@ export default interface Classroom {
   created_by?: string;
 }
 
+export interface ClassroomWithConflictCount extends Classroom {
+  conflicts: number;
+}
+
 export interface ClassroomCreate {
   id?: string;
   name: string;
