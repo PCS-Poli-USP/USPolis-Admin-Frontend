@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import HttpService from './http.service';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import { ClassroomResponse, ClassroomWithSchedulesResponse } from 'models/http/responses/classroom.response.models';
 import { CreateClassroom, UpdateClassroom } from 'models/http/requests/classroom.request.models';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
@@ -23,6 +23,10 @@ export default class ClassroomsService extends HttpService {
 
   list(): Promise<AxiosResponse<Array<ClassroomResponse>>> {
     return this.http.get('');
+  }
+  
+  getClassroomWithSchedules(id: number): Promise<AxiosResponse<ClassroomWithSchedulesResponse>> {
+    return this.http.get(`/with-schedules/${id}`)
   }
 
   create(data: CreateClassroom): Promise<AxiosResponse<ClassroomResponse>> {

@@ -4,7 +4,7 @@ import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
-import { Occurrence } from 'models/common/occurrence.model';
+import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 
 export interface ReservationModalSecondStepProps {
   isUpdate: boolean;
@@ -12,7 +12,7 @@ export interface ReservationModalSecondStepProps {
   classrooms: ClassroomResponse[];
   setDates: (value: string[]) => void;
   form: UseFormReturn<ReservationSecondForm, any, ReservationSecondForm>;
-  occurrences?: Occurrence[];
+  selectedReservation?: ReservationResponse;
 }
 export interface ReservationSecondForm {
   building_id: number;

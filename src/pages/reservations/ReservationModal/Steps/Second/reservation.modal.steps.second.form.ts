@@ -104,13 +104,18 @@ export const secondFormFields = {
       .test('is-valid-month-week', 'Semana do mês inválido', function (value) {
         if (!value) return true;
         return !ScheduleValidator.isInvalidMonthWeek(value);
-      }).test('must-have-mont-week-when-recurrence', 'É preciso escolher uma semana do mês', function (value) {
-        const { recurrence } = this.parent;
-        if (!recurrence) return true;
-        if (recurrence !== Recurrence.MONTHLY) return true;
-        if (!value) return false;
-        return !ScheduleValidator.isInvalidMonthWeek(value);
-      }),
+      })
+      .test(
+        'must-have-mont-week-when-recurrence',
+        'É preciso escolher uma semana do mês',
+        function (value) {
+          const { recurrence } = this.parent;
+          if (!recurrence) return true;
+          if (recurrence !== Recurrence.MONTHLY) return true;
+          if (!value) return false;
+          return !ScheduleValidator.isInvalidMonthWeek(value);
+        },
+      ),
     defaultValue: undefined,
   },
   week_day: {
@@ -122,13 +127,22 @@ export const secondFormFields = {
         if (!value) return true;
         return !ScheduleValidator.isInvalidWeekDay(value);
       })
-      .test('must-have-week-day-when-recurrence', 'É preciso escolher um dia da semana', function (value) {
-        const { recurrence } = this.parent;
-        if (!recurrence) return true;
-        if (recurrence === Recurrence.CUSTOM || recurrence === Recurrence.DAILY) return true;
-        if (!value) return false;
-        return !ScheduleValidator.isInvalidWeekDay(value);
-      }),
+      .test(
+        'must-have-week-day-when-recurrence',
+        'É preciso escolher um dia da semana',
+        function (value) {
+          const { recurrence } = this.parent;
+          console.log('Valor atual no teste: ', value, recurrence);
+          if (!recurrence) return true;
+          if (
+            recurrence === Recurrence.CUSTOM ||
+            recurrence === Recurrence.DAILY
+          )
+            return true;
+          if (value === undefined || value === null) return false;
+          return !ScheduleValidator.isInvalidWeekDay(value);
+        },
+      ),
     defaultValue: undefined,
   },
 };

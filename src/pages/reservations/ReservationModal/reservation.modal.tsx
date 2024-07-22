@@ -50,7 +50,7 @@ import {
   ReservationBase,
   UpdateReservation,
 } from 'models/http/requests/reservation.request.models';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 
 function ReservationModal(props: ReservationModalProps) {
@@ -68,19 +68,15 @@ function ReservationModal(props: ReservationModalProps) {
 
   const [dates, setDates] = useState<string[]>([]);
 
-  
-
   function getReservationData(): CreateReservation | UpdateReservation {
     const firstData = firstForm.getValues();
     const secondData = secondForm.getValues();
-
     const baseData: ReservationBase = {
       name: firstData.name,
       type: firstData.type,
       description: firstData.description,
       classroom_id: secondData.classroom_id,
     };
-
     if (props.isUpdate) {
       const updatedData: UpdateReservation = {
         ...baseData,
@@ -94,9 +90,13 @@ function ReservationModal(props: ReservationModalProps) {
           start_time: secondData.start_time,
           end_time: secondData.end_time,
           recurrence: secondData.recurrence,
-          week_day: secondData.week_day,
-          month_week: secondData.month_week,
-          dates: dates,
+          week_day: secondData.week_day
+            ? Number(secondData.week_day)
+            : undefined,
+          month_week: secondData.month_week
+            ? Number(secondData.month_week)
+            : undefined,
+          dates: dates.length > 0 ? dates : undefined,
           all_day: false,
         },
       };
@@ -111,9 +111,11 @@ function ReservationModal(props: ReservationModalProps) {
         start_time: secondData.start_time,
         end_time: secondData.end_time,
         recurrence: secondData.recurrence,
-        week_day: secondData.week_day,
-        month_week: secondData.month_week,
-        dates: dates,
+        week_day: secondData.week_day ? Number(secondData.week_day) : undefined,
+        month_week: secondData.month_week
+          ? Number(secondData.month_week)
+          : undefined,
+        dates: dates.length > 0 ? dates : undefined,
         all_day: false,
       },
     };
@@ -139,8 +141,9 @@ function ReservationModal(props: ReservationModalProps) {
     const isValid = await trigger();
     if (!isValid) return;
 
-    if (getValues('recurrence') === Recurrence.CUSTOM && dates.length === 0) return;
-
+    if (getValues('recurrence') === Recurrence.CUSTOM && dates.length === 0) {
+      return;
+    }
     handleSaveClick();
   }
 
@@ -166,8 +169,34 @@ function ReservationModal(props: ReservationModalProps) {
       await createReservation(data as CreateReservation);
     }
     props.refetch();
-    handleCloseModal();
+    // handleCloseModal();
   }
+
+  useEffect(() => {
+    if (props.selectedReservation) {
+      console.log(props.selectedReservation);
+      firstForm.reset({
+        name: props.selectedReservation.name,
+        type: props.selectedReservation.type,
+        description: props.selectedReservation.description,
+      });
+      secondForm.reset({
+        building_id: props.selectedReservation.building_id,
+        classroom_id: props.selectedReservation.classroom_id,
+        start_time: props.selectedReservation.schedule.start_time,
+        end_time: props.selectedReservation.schedule.end_time,
+        start_date: props.selectedReservation.schedule.start_date,
+        end_date: props.selectedReservation.schedule.end_date,
+        recurrence: props.selectedReservation.schedule.recurrence,
+        week_day: props.selectedReservation.schedule.week_day,
+        month_week: props.selectedReservation.schedule.month_week,
+      });
+
+      if (props.selectedReservation.schedule.occurrences) {
+        setDates(props.selectedReservation.schedule.occurrences.map((occur) => occur.date));
+      }
+    }
+  }, [props, firstForm, secondForm]);
 
   const steps = [
     {
@@ -187,6 +216,7 @@ function ReservationModal(props: ReservationModalProps) {
           isUpdate={props.isUpdate}
           buildings={props.buildings}
           classrooms={props.classrooms}
+          selectedReservation={props.selectedReservation}
         />
       ),
     },
@@ -199,7 +229,7 @@ function ReservationModal(props: ReservationModalProps) {
 
   return (
     <Modal
-      onClose={props.onClose}
+      onClose={handleCloseModal}
       isOpen={props.isOpen}
       closeOnOverlayClick={false}
       size='6xl'

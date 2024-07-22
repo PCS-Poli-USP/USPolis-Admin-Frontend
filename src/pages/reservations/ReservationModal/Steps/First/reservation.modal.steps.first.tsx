@@ -5,8 +5,6 @@ import { ReservationType } from 'utils/enums/reservations.enum';
 import { ReservationModalFirstStepProps } from './reservation.modal.steps.first.interface';
 
 function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
-  const { trigger, getValues, reset, clearErrors, watch } = props.form;
-
   return (
     <VStack w={'full'} align={'stretch'}>
       <FormProvider {...props.form}>

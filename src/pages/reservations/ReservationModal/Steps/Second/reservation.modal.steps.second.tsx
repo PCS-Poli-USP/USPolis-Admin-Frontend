@@ -12,6 +12,10 @@ import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { SelectInput } from 'components/common/form/SelectInput';
+import ClassroomCalendar from 'components/common/ClassroomCalendar';
+import { ClassroomWithSchedulesResponse } from 'models/http/responses/classroom.response.models';
+import useClassrooms from 'hooks/useClassrooms';
+import { sortDates } from 'utils/holidays/holidays.sorter';
 
 function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   const {
@@ -22,7 +26,10 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     setHighlightedDays,
     setSelectedDays,
   } = useDateCalendarPicker();
+  const { getClassroomWithSchedules } = useClassrooms();
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
+  const [selectedClassroom, setSelectedClassroom] =
+    useState<ClassroomWithSchedulesResponse>();
   const [isDaily, setIsDayli] = useState(false);
   const [isMonthly, setIsMonthly] = useState(false);
   const [isCustom, setIsCustom] = useState(false);
@@ -31,67 +38,139 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   const { clearErrors } = props.form;
 
   useEffect(() => {
-    if (props.occurrences) {
-      setHighlightedDays(
-        props.occurrences.map((occurrence) => occurrence.date),
+    const { getValues } = props.form;
+    const building_id = Number(getValues('building_id'));
+    if (building_id > 0) {
+      setSelectedBuilding(
+        props.buildings.find((building) => building.id === building_id),
       );
     }
-  }, [props, setHighlightedDays]);
+
+    const classroom_id = Number(getValues('classroom_id'));
+    if (classroom_id > 0) {
+      handleSelectClassroom(classroom_id);
+    }
+
+    if (props.selectedReservation) {
+      if (props.selectedReservation.schedule.occurrences) {
+        setSelectedDays(props.selectedReservation.schedule.occurrences.map((occur) => occur.date));
+      }
+      handleChangeRecurrence(props.selectedReservation.schedule.recurrence);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleChangeRecurrence(value: string) {
+    if (value === Recurrence.MONTHLY) {
+      setIsCustom(false);
+      setIsDayli(false);
+      setIsMonthly(true);
+      setSelectedDays([]);
+      setIsSelecting(false);
+    } else if (value === Recurrence.CUSTOM) {
+      setIsCustom(true);
+      setIsDayli(false);
+      setIsMonthly(false);
+      setIsSelecting(true);
+    } else if (value === Recurrence.DAILY) {
+      setIsCustom(false);
+      setIsDayli(true);
+      setIsMonthly(false);
+      setSelectedDays([]);
+      setIsSelecting(false);
+    } else {
+      setIsCustom(false);
+      setIsDayli(false);
+      setIsMonthly(false);
+      setSelectedDays([]);
+      setIsSelecting(false);
+    }
+  }
+
+  async function handleSelectClassroom(id: number) {
+    const classroom = await getClassroomWithSchedules(id);
+    setSelectedClassroom(classroom);
+    setHighlightedDays(classroom ? classroom.occurrences.map((occur) => occur.date) : []);
+  }
 
   return (
-    <VStack w={'full'} align={'strech'}>
+    <VStack w={'full'} align={'strech'} h={'full'}>
       <FormProvider {...props.form}>
         <form>
           <Text fontSize={'lg'} fontWeight={'bold'}>
-            Local
+            Local e Disponibilidade
           </Text>
+          <HStack alignContent={'stretch'} maxH={200} w={'full'}>
+            <VStack w={'full'} alignSelf={'flex-start'}>
+              <Select
+                mt={4}
+                label={'Prédio'}
+                name={'building_id'}
+                options={props.buildings.map((building) => ({
+                  value: building.id,
+                  label: building.name,
+                }))}
+                onChange={(event) => {
+                  setSelectedBuilding(
+                    props.buildings.find(
+                      (building) => building.id === Number(event.target.value),
+                    ),
+                  );
+                }}
+              />
+              <SelectInput
+                mt={4}
+                label={'Sala de Aula'}
+                disabled={!selectedBuilding}
+                name={'classroom_id'}
+                options={
+                  selectedBuilding
+                    ? props.classrooms
+                        .filter(
+                          (value) => value.building_id === selectedBuilding?.id,
+                        )
+                        .map((classroom) => ({
+                          value: classroom.id,
+                          label: classroom.name,
+                        }))
+                    : []
+                }
+                onChange={(event) => {
+                  if (event) {
+                    handleSelectClassroom(Number(event.value));
+                  } else {
+                    setSelectedClassroom(undefined);
+                  }
+                }}
+              />
+            </VStack>
+            <Spacer></Spacer>
+            <VStack w={'auto'} h={'full'}>
+              <ClassroomCalendar classroom={selectedClassroom} h={130} />
+            </VStack>
+          </HStack>
 
-          <Select
-            mt={4}
-            label={'Prédio'}
-            name={'building_id'}
-            options={props.buildings.map((building) => ({
-              value: building.id,
-              label: building.name,
-            }))}
-            onChange={(event) => {
-              setSelectedBuilding(
-                props.buildings.find(
-                  (building) => building.id === Number(event.target.value),
-                ),
-              );
-            }}
-          />
-          <SelectInput
-            mt={4}
-            label={'Sala de Aula'}
-            disabled={!selectedBuilding}
-            name={'classroom_id'}
-            options={
-              selectedBuilding
-                ? props.classrooms
-                    .filter(
-                      (value) => value.building_id === selectedBuilding?.id,
-                    )
-                    .map((classroom) => ({
-                      value: classroom.id,
-                      label: classroom.name,
-                    }))
-                : []
-            }
-          />
-          <HStack mt={4}>
+          <HStack mt={8}>
             <Text fontSize={'lg'} fontWeight={'bold'}>
               Horários
             </Text>
             <Spacer />
             <Text
+              textAlign={'center'}
               fontSize={'lg'}
+              rounded={10}
+              backgroundColor={isSelecting ? 'lightgreen' : undefined}
               fontWeight={isSelecting ? 'bold' : 'thin'}
-              color={isSelecting ? undefined : 'gray'}
+              color={
+                isSelecting
+                  ? selectedDays.length > 0
+                    ? undefined
+                    : 'red'
+                  : 'gray'
+              }
               mr={20}
             >
-              Selecione as Datas
+              {'Selecione as Datas'}
             </Text>
           </HStack>
           <HStack w={'full'} h={'full'} mt={-5}>
@@ -107,21 +186,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   }))}
                   onChange={(event) => {
                     clearErrors(['month_week', 'week_day']);
-                    if (event.target.value === Recurrence.DAILY) {
-                      setIsDayli(true);
-                    } else setIsDayli(false);
-                    if (event.target.value === Recurrence.MONTHLY) {
-                      setIsMonthly(true);
-                    } else setIsMonthly(false);
-
-                    if (event.target.value === Recurrence.CUSTOM) {
-                      setIsCustom(true);
-                      setIsSelecting(true);
-                    } else {
-                      setIsCustom(false);
-                      setIsSelecting(false);
-                      setSelectedDays([]);
-                    }
+                    handleChangeRecurrence(event.target.value);
                   }}
                 />
                 <Select
@@ -177,31 +242,25 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                 />
               </HStack>
             </VStack>
-            {/* <Spacer /> */}
-            {/* <HStack mt={4} align={'center'}> */}
-            <VStack h={'full'} spacing={0} mt={4}>
-              <Spacer />
-              {/* <Text  fontWeight={isSelecting ? 'bold' : 'thin'} color={isSelecting ? undefined : 'gray'}>Selecione as Datas</Text> */}
+
+            <VStack h={'full'} spacing={0} mt={4} alignItems={'center'}>
               <DateCalendarPicker
                 selectedDays={selectedDays}
                 highlightedDays={highlightedDays}
                 occupiedDays={occupiedDays}
-                dayClick={dayClick}
-                readOnly={!isSelecting}
+                dayClick={(day) => {
+                  dayClick(day);
+                  if (selectedDays.includes(day)) {
+                    const newDates = selectedDays.filter((val) => val !== day);
+                    newDates.sort(sortDates);
+                    props.setDates(newDates);
+                  } else {
+                    props.setDates([...selectedDays, day].sort(sortDates));
+                  }
+                }}
+                readOnly={false}
               />
             </VStack>
-            {/* <Spacer /> */}
-            {/* <VStack>
-                <Text>Test 2</Text>
-                <DateCalendarPicker
-                  selectedDays={selectedDays}
-                  highlightedDays={highlightedDays}
-                  occupiedDays={occupiedDays}
-                  dayClick={dayClick}
-                  readOnly={true}
-                />
-              </VStack> */}
-            {/* </HStack> */}
           </HStack>
         </form>
       </FormProvider>
