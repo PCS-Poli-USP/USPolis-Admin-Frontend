@@ -31,8 +31,16 @@ import ClassModal from './ClassModal/class.modal';
 import useSubjects from 'hooks/useSubjetcts';
 import useCalendars from 'hooks/useCalendars';
 import { Row } from '@tanstack/react-table';
+import AllocateScheduleModal from 'components/allocation/allocateClassModal/allocateSingleScheduleSection';
+import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
+import { AllocateClassModal } from 'components/allocation/allocateClassModal';
+import SubjectsService from 'services/api/subjects.service';
+import { AxiosError } from 'axios';
+import useCustomToast from 'hooks/useCustomToast';
 
 function Classes() {
+  const showToast = useCustomToast();
+
   const {
     isOpen: isOpenDeleteClass,
     onOpen: onOpenDeleteClass,
@@ -70,6 +78,7 @@ function Classes() {
   } = useDisclosure();
 
   const [selectedClass, setSelectedClass] = useState<ClassResponse>();
+  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleResponse>();
   const [isUpdateClass, setIsUpdateClass] = useState(false);
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
@@ -117,6 +126,7 @@ function Classes() {
 
   function handleAllocationEditClick(data: ClassResponse) {
     setSelectedClass(data);
+    setSelectedSchedule(data.schedules[1]);
     onOpenAllocEdit();
   }
 
@@ -152,33 +162,32 @@ function Classes() {
   }
 
   function handleCrawlerSave(subjectsList: string[], building_id: number) {
-    // setLoading(true);
-    // crawlerService
-    //   .crawl({
-    //     building_id,
-    //     subject_codes_list: subjectsList,
-    //   })
-    //   .then((it) => {
-    //     setSuccessSubjects(it.data.sucess);
-    //     setFailedSubjects(it.data.failed);
-    //     onOpenJupiterModal();
-    //     fetchData();
-    //     showToast(
-    //       'Sucesso!',
-    //       'Disciplinas foram carregadas com sucesso!',
-    //       'success',
-    //     );
-    //   })
-    //   .catch(({ response }: AxiosError<ErrorResponse>) =>
-    //     showToast(
-    //       'Erro!',
-    //       `Erro ao buscar disciplinas: ${response?.data.message}`,
-    //       'error',
-    //     ),
-    //   )
-    //   .finally(() => {
-    //     setLoading(false);
-    //   });
+    setLoading(true);
+    const subjectsService = new SubjectsService();
+
+    subjectsService
+      .crawl(building_id, subjectsList)
+      .then((it) => {
+        setSuccessSubjects(it.data.sucess);
+        setFailedSubjects(it.data.failed);
+        onOpenJupiterModal();
+        getClasses();
+        showToast(
+          'Sucesso!',
+          'Disciplinas foram carregadas com sucesso!',
+          'success',
+        );
+      })
+      .catch(({ response }: AxiosError<any>) =>
+        showToast(
+          'Erro!',
+          `Erro ao buscar disciplinas: ${response?.data.message}`,
+          'error',
+        ),
+      )
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
   function handleDeleteSelectedClassesClick() {
@@ -216,7 +225,25 @@ function Classes() {
     <>
       <Navbar />
       <Loading isOpen={allocating} onClose={() => setAllocating(false)} />
-
+      <ClassModal
+        isOpen={isOpenClassModal}
+        onClose={() => {
+          setSelectedClass(undefined);
+          onCloseClassModal();
+          setIsUpdateClass(false);
+        }}
+        isUpdate={isUpdateClass}
+        refetch={getClasses}
+        subjects={subjects}
+        calendars={calendars}
+        selectedClass={selectedClass}
+      />
+      <AllocateClassModal
+        isOpen={isOpenAllocEdit}
+        onClose={onCloseAllocEdit}
+        refresh={getClasses}
+        class_={selectedClass}
+      />
       {/* <EditEventModal
         isOpen={isOpenAllocEdit}
         onClose={onCloseAllocEdit}
