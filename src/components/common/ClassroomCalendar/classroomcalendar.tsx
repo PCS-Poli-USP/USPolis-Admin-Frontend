@@ -47,38 +47,68 @@ function ClassroomCalendar({ classroom, h, w }: ClassroomCalendarProps) {
     ['19:00', '20:00', []],
     ['20:00', '21:00', []],
     ['21:00', '22:00', []],
+    ['22:00', '23:00', []],
+    ['23:00', '24:00', []],
   ];
   const [occurrencesByTime, setOccurrencesByTime] = useState<
     [string, string, OccurrenceResponse[]][]
   >(defaultOccurrencesByTime);
+  const [conflicts, setConflicts] = useState(0);
 
   function getOccurrencesByTime(occurrences: OccurrenceResponse[]) {
     const newOccurencesByTime: [string, string, OccurrenceResponse[]][] = [];
+    let newConflicts = 0;
     for (let i = 0; i < defaultOccurrencesByTime.length; i++) {
-      const startTime = defaultOccurrencesByTime[i][0];
-      const endTime = defaultOccurrencesByTime[i][1];
-      const filteredOccurrences = occurrences.filter(
-        (occur) =>
-          moment(occur.start_time, 'HH:mm').isSameOrAfter(startTime) &&
-          moment(occur.start_time, 'HH:mm').isSameOrBefore(endTime),
-      );
-      newOccurencesByTime.push([startTime, endTime, filteredOccurrences]);
+      const startTime = moment(defaultOccurrencesByTime[i][0], 'HH:mm');
+      const endTime = moment(defaultOccurrencesByTime[i][1], 'HH:mm');
+      const filteredOccurrences = occurrences.filter((occur) => {
+        const occurrenceStartTime = moment(occur.start_time, 'HH:mm');
+        const occurrenceEndTime = moment(occur.end_time, 'HH:mm');
+        if (
+          occurrenceStartTime.isSameOrAfter(startTime) &&
+          occurrenceEndTime.isSameOrBefore(endTime)
+        ) {
+          return true;
+        }
+        if (
+          occurrenceStartTime.isSameOrBefore(startTime) &&
+          occurrenceEndTime.isSameOrBefore(endTime)
+        ) {
+          return true;
+        }
+        if (
+          occurrenceStartTime.isSameOrBefore(endTime) &&
+          occurrenceEndTime.isSameOrAfter(endTime)
+        ) {
+          return true;
+        }
+        if (
+          occurrenceStartTime.isSameOrBefore(startTime) &&
+          occurrenceEndTime.isSameOrAfter(endTime)
+        ) {
+          return true;
+        }
+        return false;
+      });
+      if (filteredOccurrences.length > 0) {
+        newConflicts += 1;
+      }
+      newOccurencesByTime.push([
+        startTime.format('HH:mm'),
+        endTime.format('HH:mm'),
+        filteredOccurrences,
+      ]);
     }
-    console.log('Novo mapeamento: ', newOccurencesByTime);
+    setConflicts(newConflicts);
     return newOccurencesByTime;
   }
 
   useEffect(() => {
     if (classroom) {
       const filteredOccurrences = classroom.occurrences.filter(
-        (occur) => occur.date === currentDate.format('YYYY/MM/DD'),
+        (occur) => occur.date === currentDate.format('YYYY-MM-DD'),
       );
-      console.log('Occorrências filtradas', filteredOccurrences);
-      setOccurrencesByTime(
-        filteredOccurrences.length > 0
-          ? getOccurrencesByTime(filteredOccurrences)
-          : defaultOccurrencesByTime,
-      );
+      setOccurrencesByTime(getOccurrencesByTime(filteredOccurrences));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classroom, currentDate]);
@@ -121,10 +151,10 @@ function ClassroomCalendar({ classroom, h, w }: ClassroomCalendarProps) {
           />
           <IconButton
             isRound={true}
-            colorScheme={'gray'}
+            colorScheme={'teal'}
             variant={'ghost'}
             aria-label={'Anterior'}
-            size={'md'}
+            size={'sm'}
             icon={<FaLessThan />}
             onClick={() => {
               setCurrentDate((prev) => prev.subtract(1, 'day').clone());
@@ -132,16 +162,17 @@ function ClassroomCalendar({ classroom, h, w }: ClassroomCalendarProps) {
           />
           <IconButton
             isRound={true}
-            colorScheme={'gray'}
+            colorScheme={'teal'}
             variant={'ghost'}
             aria-label={'Próximo'}
-            size={'md'}
+            size={'sm'}
             icon={<FaGreaterThan />}
             onClick={() => {
               setCurrentDate((prev) => prev.add(1, 'day').clone());
             }}
           />
         </HStack>
+        <Text>{`${occurrencesByTime.length - conflicts} horários livres`}</Text>
         <VStack
           alignSelf={'flex-start'}
           align={'stretch'}
@@ -156,7 +187,10 @@ function ClassroomCalendar({ classroom, h, w }: ClassroomCalendarProps) {
             <Flex direction='row' width='stretch' key={index}>
               <Text fontWeight={'light'}>{`${map[0]} - ${map[1]}:`}</Text>
               <Box flex='1' ml={5}>
-                <Text textAlign='left'>
+                <Text
+                  textAlign='left'
+                  color={map[2].length > 0 ? 'red' : 'teal'}
+                >
                   {map[2].length > 0 ? 'Ocupado' : 'Disponível'}
                 </Text>
               </Box>
