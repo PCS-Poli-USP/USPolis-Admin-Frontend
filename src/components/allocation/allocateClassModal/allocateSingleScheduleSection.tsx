@@ -1,10 +1,8 @@
 import {
-  Box,
   Checkbox,
   Flex,
   Select,
   Spinner,
-  Stack,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -73,6 +71,7 @@ const AllocateSingleScheduleSection = forwardRef<
 
   useEffect(() => {
     reset();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowedBuildings, schedule]);
 
   useEffect(() => {
@@ -83,6 +82,7 @@ const AllocateSingleScheduleSection = forwardRef<
       );
       setResetClassroomsOnceLoaded(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [schedule, classrooms]);
 
   useEffect(() => {
@@ -138,7 +138,7 @@ const AllocateSingleScheduleSection = forwardRef<
             {schedule.recurrence !== Recurrence.CUSTOM && (
               <Text>
                 Dia da Semana:{' '}
-                <strong>{WeekDay.translate(schedule.week_day)}</strong>
+                <strong>{schedule.week_day ? WeekDay.translate(schedule.week_day) : ''}</strong>
               </Text>
             )}
             <Text>
