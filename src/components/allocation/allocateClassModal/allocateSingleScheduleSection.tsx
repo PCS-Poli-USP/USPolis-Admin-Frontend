@@ -138,7 +138,7 @@ const AllocateSingleScheduleSection = forwardRef<
             {schedule.recurrence !== Recurrence.CUSTOM && (
               <Text>
                 Dia da Semana:{' '}
-                <strong>{schedule.week_day ? WeekDay.translate(schedule.week_day) : ''}</strong>
+                <strong>{schedule.week_day ? WeekDay.translate(schedule.week_day) : 'Sem dia da semana'}</strong>
               </Text>
             )}
             <Text>
