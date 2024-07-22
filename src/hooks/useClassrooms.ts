@@ -3,7 +3,7 @@ import {
   CreateClassroom,
   UpdateClassroom,
 } from 'models/http/requests/classroom.request.models';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import { ClassroomResponse, ClassroomWithSchedulesResponse } from 'models/http/responses/classroom.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import ClassroomsService from 'services/api/classrooms.service';
 import { sortClassroomResponse } from 'utils/classrooms/classrooms.sorter';
@@ -24,12 +24,25 @@ const useClassrooms = () => {
         setClassrooms(response.data.sort(sortClassroomResponse));
       })
       .catch((error) => {
-        showToast('Erro', 'Erro ao carregar Salas', 'error');
+        showToast('Erro', 'Erro ao carregar salas', 'error');
       })
       .finally(() => {
         setLoading(false);
       });
   }, [showToast]);
+
+  const getClassroomWithSchedules = useCallback(async (id: number) => {
+    let current: ClassroomWithSchedulesResponse | undefined;
+    await service
+      .getClassroomWithSchedules(id)
+      .then((response) => {
+        current = response.data;
+      })
+      .catch((error) => {
+        current = undefined;
+      });
+    return current;
+  }, []);
 
   const createClassroom = useCallback(
     async (data: CreateClassroom) => {
@@ -45,7 +58,7 @@ const useClassrooms = () => {
           getClassrooms();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao criar disciplina: ${error}`, 'error');
+          showToast('Erro', `Erro ao criar sala: ${error}`, 'error');
         })
         .finally(() => {
           setLoading(false);
@@ -87,7 +100,7 @@ const useClassrooms = () => {
           getClassrooms();
         })
         .catch((error) => {
-          showToast('Erro!', 'Erro ao remover disciplina', 'error');
+          showToast('Erro!', 'Erro ao remover sala', 'error');
           console.log(error);
         })
         .finally(() => {
@@ -105,6 +118,7 @@ const useClassrooms = () => {
     loading,
     classrooms,
     getClassrooms,
+    getClassroomWithSchedules,
     createClassroom,
     updateClassroom,
     deleteClassroom,
