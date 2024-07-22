@@ -39,13 +39,13 @@ const useReservations = () => {
         .then((response) => {
           showToast(
             'Sucesso',
-            `Prédio ${data.name} criado com sucesso!`,
+            `Reserva ${data.name} criado com sucesso!`,
             'success',
           );
           getReservations();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao criar prédio: ${error}`, 'error');
+          showToast('Erro', `Erro ao criar reserva: ${error}`, 'error');
         })
         .finally(() => {
           setLoading(false);
@@ -60,13 +60,13 @@ const useReservations = () => {
       await service
         .update(id, data)
         .then((response) => {
-          showToast('Sucesso', `Prédio atualizado com sucesso!`, 'success');
+          showToast('Sucesso', `Reserva atualizado com sucesso!`, 'success');
           getReservations();
         })
         .catch((error) => {
           showToast(
             'Erro',
-            `Erro ao atualizar o prédio ${data.name}: ${error}`,
+            `Erro ao atualizar o reserva ${data.name}: ${error}`,
             'error',
           );
         })
