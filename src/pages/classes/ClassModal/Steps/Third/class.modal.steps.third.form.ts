@@ -78,7 +78,7 @@ export const classThirdFormFields = {
         const { recurrence } = this.parent;
         if (!recurrence) return true;
         if (recurrence === Recurrence.CUSTOM || recurrence === Recurrence.DAILY) return true;
-        if (!value) return false;
+        if (value === undefined || value === null) return false;
         return !ScheduleValidator.isInvalidWeekDay(value);
       }),
     defaultValue: undefined,

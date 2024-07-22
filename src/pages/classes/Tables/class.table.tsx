@@ -138,10 +138,15 @@ export const getClassesColumns = (
           ${schedule.end_time.substring(0, 5)}`,
       ),
     header: 'Horários',
-    cell: (info) => (
+    cell: ({ row }) => (
       <Box>
-        {(info.getValue() as string[])?.map((it) => (
-          <Text key={it}>{it}</Text>
+        {row.original.schedules.map((schedule, index) => (
+          <Text key={index}>{`${Recurrence.translate(
+            schedule.recurrence,
+          )}, ${schedule.start_time.substring(
+            0,
+            5,
+          )} ~ ${schedule.end_time.substring(0, 5)}`}</Text>
         ))}
       </Box>
     ),

@@ -216,19 +216,6 @@ function Classes() {
     <>
       <Navbar />
       <Loading isOpen={allocating} onClose={() => setAllocating(false)} />
-      <ClassModal
-        isOpen={isOpenClassModal}
-        onClose={() => {
-          setSelectedClass(undefined);
-          onCloseClassModal();
-          setIsUpdateClass(false);
-        }}
-        isUpdate={isUpdateClass}
-        refetch={getClasses}
-        subjects={subjects}
-        calendars={calendars}
-        selectedClass={selectedClass}
-      />
 
       {/* <EditEventModal
         isOpen={isOpenAllocEdit}
@@ -280,6 +267,19 @@ function Classes() {
               Excluir selecionados
             </Button>
           </Flex>
+          <ClassModal
+            isOpen={isOpenClassModal}
+            onClose={() => {
+              setSelectedClass(undefined);
+              onCloseClassModal();
+              setIsUpdateClass(false);
+            }}
+            isUpdate={isUpdateClass}
+            refetch={getClasses}
+            subjects={subjects}
+            calendars={calendars}
+            selectedClass={selectedClass}
+          />
           <Dialog
             isOpen={isOpenDeleteClass}
             onClose={onCloseDeleteClass}

@@ -272,7 +272,7 @@ function ClassModal(props: ClassModalProps) {
       start_time: schedule.start_time,
       end_time: schedule.end_time,
       week_day: schedule.week_day,
-      dates: schedule.dates,
+      dates: schedule.occurrences ? schedule.occurrences.map((occur) => occur.date) : undefined,
       allocated: schedule.allocated,
     }));
     setSchedules(newSchedules);
