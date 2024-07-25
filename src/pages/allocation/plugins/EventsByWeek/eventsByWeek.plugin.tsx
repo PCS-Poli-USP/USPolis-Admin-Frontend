@@ -1,8 +1,8 @@
 import { VStack, StackDivider } from '@chakra-ui/react';
 import { createPlugin, sliceEvents } from '@fullcalendar/react';
 import { EventsByClassroomMapper } from 'utils/mappers/allocation.mapper';
-import { ClassRoomRow } from './classroomRow.component';
-import { WeekDaysHeader } from './weekDaysHeader.component';
+import { ClassRoomRow } from './components/classroomRow.component';
+import { WeekDaysHeader } from './components/weekDaysHeader.component';
 import { EventByClassrooms } from 'models/common/event.model';
 
 function CalendarWeekView(props: any) {

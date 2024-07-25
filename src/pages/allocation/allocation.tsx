@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Grid,
   GridItem,
@@ -19,32 +20,32 @@ import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import DatePickerModal from 'components/allocation/datePicker.modal';
-import EventContent from 'components/allocation/dayView/eventContent';
-import eventsByClassroomsPlugin from 'components/allocation/classromView/eventsByClassrooms.plugin';
-import eventsByWeekPlugin from 'components/allocation/weekView/eventsByWeek.plugin';
+import EventContent from 'pages/allocation/EventContent/eventContent';
+import eventsByClassroomsPlugin from 'pages/allocation/plugins/EventsByClassrooms/eventsByClassrooms.plugin';
+import eventsByWeekPlugin from 'pages/allocation/plugins/EventsByWeek/eventsByWeek.plugin';
 import Navbar from 'components/common/NavBar/navbar.component';
 import Loading from 'components/common/Loading/loading.component';
-import ClassesPDF from 'components/pdf/classesPDF';
 import { appContext } from 'context/AppContext';
 import { useContext, useEffect, useRef, useState } from 'react';
-import AllocationService from 'services/api/events.service';
 import EventsService from 'services/api/events.service';
 import {
   AllocationEventsMapper,
   AllocationResourcesFromEventsMapper,
   FirstEventDate,
 } from 'utils/mappers/allocation.mapper';
-import Event from 'models/common/event.model';
+// import Event from 'models/common/event.model';
 
 import { BsSearch } from 'react-icons/bs';
 import Dialog from 'components/common/Dialog/dialog.component';
 import AutomaticAllocationModal from 'components/allocation/automaticAllocation.modal';
 import AllocationOptions from 'components/allocation/allocationOptions.modal';
+import { Event } from './interfaces/allocation.interfaces';
+import useAllocation from 'pages/allocation/hooks/useAllocation';
+import ClassesPDF from './pdf/classesPDF';
 
 function Allocation() {
   const [allocation, setAllocation] = useState<any[]>([]);
   const [filteredAllocation, setFilteredAllocation] = useState<any[]>([]);
-  const [resources, setResources] = useState<{ id: string }[]>([]);
   const { loading, setLoading } = useContext(appContext);
   const calendarRef = useRef<FullCalendar>(null!);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -70,7 +71,8 @@ function Allocation() {
   const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
   const [hasNoAllocation, setHasNoAllocation] = useState(false);
 
-  const allocationService = new AllocationService();
+  const { events, resources } = useAllocation();
+
   const eventsService = new EventsService();
 
   const toast = useToast();
@@ -96,15 +98,15 @@ function Allocation() {
   };
 
   function fetchData() {
-    setLoading(true);
-    Promise.all([allocationService.list()]).then((values) => {
-      setAllocation(AllocationEventsMapper(values[0].data));
-      setResources(AllocationResourcesFromEventsMapper(values[0].data));
-      setCalendarDate(FirstEventDate(values[0].data).slice(0, 10));
-      setLoading(false);
-    });
-    if (subjectSearchValue || classroomSearchValue)
-      FilterAllocation(subjectSearchValue, classroomSearchValue);
+    // setLoading(true);
+    // Promise.all([allocationService.list()]).then((values) => {
+    //   setAllocation(AllocationEventsMapper(values[0].data));
+    //   setResources(AllocationResourcesFromEventsMapper(values[0].data));
+    //   setCalendarDate(FirstEventDate(values[0].data).slice(0, 10));
+    //   setLoading(false);
+    // });
+    // if (subjectSearchValue || classroomSearchValue)
+    //   FilterAllocation(subjectSearchValue, classroomSearchValue);
   }
 
   useEffect(() => {
@@ -229,7 +231,7 @@ function Allocation() {
         }
       />
 
-      <AllocationOptions
+      {/* <AllocationOptions
         isOpen={isOpenAllocOptions}
         hasError={hasNoAllocation}
         onLoad={handleAllocLoad}
@@ -242,7 +244,7 @@ function Allocation() {
         onClose={onCloseAllocModal}
         allocatedEvents={allocatedEvents}
         unallocatedEvents={unallocatedEvents}
-      />
+      /> */}
 
       <Grid
         templateAreas={`"header"
@@ -262,12 +264,12 @@ function Allocation() {
               }
             </PDFDownloadLink>
           </Button>
-          <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
+          {/* <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
             Alocação Automática
           </Button>
           <Button ml={2} colorScheme='red' onClick={handleDeleteClick}>
             Remover Alocações
-          </Button>
+          </Button> */}
         </GridItem>
         <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
           <Skeleton isLoaded={!loading} h='100vh' startColor='uspolis.blue'>
@@ -315,76 +317,78 @@ function Allocation() {
                   Limpar filtro
               </Button> */}
             </HStack>
-
-            <FullCalendar
-              ref={calendarRef}
-              schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
-              plugins={[
-                timeGridPlugin,
-                resourceTimelinePlugin,
-                eventsByClassroomsPlugin,
-                eventsByWeekPlugin,
-              ]}
-              initialView='eventsByClassrooms'
-              locale='pt-br'
-              height='auto'
-              slotMinTime='06:00'
-              firstDay={1}
-              headerToolbar={{
-                left: 'eventsByClassrooms resourceTimelineDay eventsByWeek timeGridWeek',
-                center: 'title',
-                right: 'goToDate prev,next today',
-              }}
-              buttonText={{
-                eventsByClassrooms: 'Salas',
-                resourceTimelineDay: 'Sala / Dia',
-                eventsByWeek: 'Sala / Semana',
-                timeGridWeek: 'Geral',
-                today: 'Hoje',
-              }}
-              customButtons={{
-                goToDate: {
-                  text: 'Escolher data',
-                  click: (_ev, _el) => onOpen(),
-                },
-              }}
-              views={{
-                timeGridWeek: {
-                  slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
-                  eventMaxStack: 1,
-                  titleFormat: { year: 'numeric', month: 'long' },
-                },
-                resourceTimelineDay: {
-                  slotDuration: '01:00',
-                  slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
-                  eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
-                  titleFormat: {
-                    weekday: 'long',
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric',
+            <Box paddingBottom={4}>
+              <FullCalendar
+                ref={calendarRef}
+                schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
+                plugins={[
+                  timeGridPlugin,
+                  resourceTimelinePlugin,
+                  // eventsByClassroomsPlugin,
+                  // eventsByWeekPlugin,
+                ]}
+                initialView='resourceTimelineDay'
+                locale='pt-br'
+                height='auto'
+                slotMinTime='06:00'
+                firstDay={1}
+                headerToolbar={{
+                  left: 'resourceTimelineDay timeGridWeek',
+                  center: 'title',
+                  right: 'goToDate prev,next today',
+                }}
+                buttonText={{
+                  // eventsByClassrooms: 'Salas',
+                  resourceTimelineDay: 'Sala / Dia',
+                  // eventsByWeek: 'Sala / Semana',
+                  timeGridWeek: 'Geral',
+                  today: 'Hoje',
+                }}
+                customButtons={{
+                  goToDate: {
+                    text: 'Escolher data',
+                    click: (_ev, _el) => onOpen(),
                   },
-                },
-                eventsByClassrooms: {
-                  duration: { weeks: 1 },
-                },
-                eventsByWeek: {
-                  duration: { weeks: 1 },
-                },
-              }}
-              events={
-                subjectSearchValue || classroomSearchValue
-                  ? filteredAllocation
-                  : allocation
-              }
-              eventContent={EventContent}
-              eventColor='#408080'
-              displayEventTime
-              resources={resources}
-              resourceAreaWidth='10%'
-              resourceGroupField='building'
-              resourceAreaHeaderContent='Salas'
-            />
+                }}
+                views={{
+                  timeGridWeek: {
+                    slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
+                    eventMaxStack: 1,
+                    titleFormat: { year: 'numeric', month: 'long' },
+                  },
+                  resourceTimelineDay: {
+                    slotDuration: '01:00',
+                    slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
+                    eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
+                    titleFormat: {
+                      weekday: 'long',
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
+                    },
+                  },
+                  // eventsByClassrooms: {
+                  //   duration: { weeks: 1 },
+                  // },
+                  // eventsByWeek: {
+                  //   duration: { weeks: 1 },
+                  // },
+                }}
+                events={
+                  events
+                  // subjectSearchValue || classroomSearchValue
+                  //   ? filteredAllocation
+                  //   : allocation
+                }
+                eventContent={EventContent}
+                eventColor='#408080'
+                displayEventTime
+                resources={resources}
+                resourceAreaWidth='10%'
+                resourceGroupField='building'
+                resourceAreaHeaderContent='Salas'
+              />
+            </Box>
           </Skeleton>
         </GridItem>
       </Grid>

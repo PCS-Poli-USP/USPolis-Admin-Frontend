@@ -1,6 +1,6 @@
 import { HStack, Text, StackDivider, VStack } from '@chakra-ui/react';
 import { ClassEvent } from './classEvent.component';
-import { EventByClassrooms } from '../../../models/common/event.model';
+import { EventByClassrooms } from '../../../../../models/common/event.model';
 import { EventsByWeekDay } from 'utils/mappers/allocation.mapper';
 import { useEffect, useState } from 'react';
 
