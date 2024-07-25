@@ -11,7 +11,6 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import {
   BsCalendarDateFill,
-  BsCalendarXFill,
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
@@ -32,7 +31,6 @@ interface ClassesColumnsProps {
   handleEditClick: (data: ClassResponse) => void;
   handleAllocationEditClick: (data: ClassResponse) => void;
   handleDeleteClassClick: (data: ClassResponse) => void;
-  handleDeleteAllocClick: (data: ClassResponse) => void;
   checkMap: boolean[];
 }
 
@@ -238,16 +236,6 @@ export const getClassesColumns = (
             aria-label='excluir-turma'
             icon={<BsFillTrashFill />}
             onClick={() => props.handleDeleteClassClick(row.original)}
-          />
-        </Tooltip>
-        <Tooltip label='Excluir Alocação'>
-          <IconButton
-            colorScheme='red'
-            size='sm'
-            variant='ghost'
-            aria-label='excluir-alocacao'
-            icon={<BsCalendarXFill />}
-            onClick={() => props.handleDeleteAllocClick(row.original)}
           />
         </Tooltip>
       </HStack>

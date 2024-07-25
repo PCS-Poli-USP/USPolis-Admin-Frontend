@@ -9,21 +9,13 @@ import {
 } from '@chakra-ui/react';
 
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
-import EditEventModal from 'components/allocation/editEvent.modal';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
 import Loading from 'components/common/Loading/loading.component';
 import Navbar from 'components/common/NavBar/navbar.component';
 import { appContext } from 'context/AppContext';
 import { useContext, useState } from 'react';
-import {
-  ClassToEventByClassroom,
-  breakClassFormInEvents,
-} from 'utils/classes/classes.formatter';
-import { EventByClassrooms } from 'models/common/event.model';
-import CrawlerService from 'services/api/crawler.service';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
-import MultipleEditModal from 'components/classes/multipleEdit.modal';
 import { getClassesColumns } from './Tables/class.table';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import useClasses from 'hooks/useClasses';
@@ -31,8 +23,6 @@ import ClassModal from './ClassModal/class.modal';
 import useSubjects from 'hooks/useSubjetcts';
 import useCalendars from 'hooks/useCalendars';
 import { Row } from '@tanstack/react-table';
-import AllocateScheduleModal from 'components/allocation/allocateClassModal/allocateSingleScheduleSection';
-import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
 import { AllocateClassModal } from 'components/allocation/allocateClassModal';
 import SubjectsService from 'services/api/subjects.service';
 import { AxiosError } from 'axios';
@@ -45,16 +35,6 @@ function Classes() {
     isOpen: isOpenDeleteClass,
     onOpen: onOpenDeleteClass,
     onClose: onCloseDeleteClass,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenDeleteSelectedClasses,
-    onOpen: onOpenDeleteSelectedClasses,
-    onClose: onCloseDeleteSelectedClasses,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenDeleteAlloc,
-    onOpen: onOpenDeleteAlloc,
-    onClose: onCloseDeleteAlloc,
   } = useDisclosure();
   const {
     isOpen: isOpenAllocEdit,
@@ -71,14 +51,8 @@ function Classes() {
     onOpen: onOpenJupiterModal,
     onClose: onCloseJupiterModal,
   } = useDisclosure();
-  const {
-    isOpen: isOpenMultipleEdit,
-    onOpen: onOpenMultipleEdit,
-    onClose: onCloseMultipleEdit,
-  } = useDisclosure();
 
   const [selectedClass, setSelectedClass] = useState<ClassResponse>();
-  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleResponse>();
   const [isUpdateClass, setIsUpdateClass] = useState(false);
   const { setLoading } = useContext(appContext);
   const [allocating, setAllocating] = useState(false);
@@ -87,7 +61,7 @@ function Classes() {
 
   const { subjects } = useSubjects();
   const { calendars } = useCalendars();
-  const { classes, getClasses, deleteClass, deleteManyClass } = useClasses();
+  const { classes, getClasses, deleteClass } = useClasses();
 
   const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
 
@@ -98,7 +72,6 @@ function Classes() {
     handleEditClick,
     handleAllocationEditClick,
     handleDeleteClassClick,
-    handleDeleteAllocClick,
     checkMap,
   });
 
@@ -111,11 +84,6 @@ function Classes() {
     onOpenDeleteClass();
   }
 
-  function handleDeleteAllocClick(data: ClassResponse) {
-    setSelectedClass(data);
-    onOpenDeleteAlloc();
-  }
-
   async function handleDeleteClass() {
     if (selectedClass) {
       await deleteClass(selectedClass.id);
@@ -126,28 +94,7 @@ function Classes() {
 
   function handleAllocationEditClick(data: ClassResponse) {
     setSelectedClass(data);
-    setSelectedSchedule(data.schedules[1]);
     onOpenAllocEdit();
-  }
-
-  function handleAllocationEditDelete(subjectCode: string, classCode: string) {
-    // eventsService
-    //   .deleteClassAllocation(subjectCode, classCode)
-    //   .then((it) => {
-    //     showToast(
-    //       'Sucesso!',
-    //       `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
-    //       'success',
-    //     );
-    //     fetchData();
-    //   })
-    //   .catch((error) => {
-    //     showToast(
-    //       'Erro!',
-    //       `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`,
-    //       'error',
-    //     );
-    //   });
   }
 
   function handleDuplicateClick(data: ClassResponse) {
@@ -188,19 +135,6 @@ function Classes() {
       .finally(() => {
         setLoading(false);
       });
-  }
-
-  function handleDeleteSelectedClassesClick() {
-    onOpenDeleteSelectedClasses();
-  }
-
-  function handleDeleteSelectedClasses() {
-    const classes_ids = classes
-      .filter((cls, index) => checkMap[index])
-      .map((cls) => cls.id);
-    deleteManyClass(classes_ids);
-    setCheckMap((prev) => prev.filter((val) => !val));
-    onCloseDeleteSelectedClasses();
   }
 
   function handleCheckAllClick(data: Row<ClassResponse>[], value: boolean) {
@@ -244,27 +178,12 @@ function Classes() {
         refresh={getClasses}
         class_={selectedClass}
       />
-      {/* <EditEventModal
-        isOpen={isOpenAllocEdit}
-        onClose={onCloseAllocEdit}
-        onSave={handleAllocationEdit}
-        onDelete={handleAllocationEditDelete}
-        classEvents={selectedClassEventList}
-      />
       <JupiterCrawlerModal
         isOpen={isOpenJupiterModal}
         onClose={onCloseJupiterModal}
         successSubjects={successSubjects}
         failedSubjects={failedSubjects}
-      /> */}
-      {/* <MultipleEditModal
-        isOpen={isOpenMultipleEdit}
-        onClose={() => {
-          onCloseMultipleEdit();
-        }}
-        classes={getCheckedClasses()}
-        onRefresh={() => fetchData()}
-      /> */}
+      />
 
       <Center>
         <Box p={4} w={'100%'} overflow='auto'>
@@ -277,22 +196,6 @@ function Classes() {
               Adicionar Turma
             </Button>
             <JupiterCrawlerPopover onSave={handleCrawlerSave} />
-            <Button
-              ml={2}
-              colorScheme={'blue'}
-              onClick={() => {
-                onOpenMultipleEdit();
-              }}
-            >
-              Editar selecionados
-            </Button>
-            <Button
-              ml={2}
-              colorScheme={'red'}
-              onClick={handleDeleteSelectedClassesClick}
-            >
-              Excluir selecionados
-            </Button>
           </Flex>
           <ClassModal
             isOpen={isOpenClassModal}
@@ -313,20 +216,6 @@ function Classes() {
             onConfirm={handleDeleteClass}
             title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.code}`}
           />
-          <Dialog
-            isOpen={isOpenDeleteSelectedClasses}
-            onClose={onCloseDeleteSelectedClasses}
-            onConfirm={handleDeleteSelectedClasses}
-            title={`Deseja remover todas as turmas selecionadas`}
-            warningText='ATENÇÃO: QUALQUER TURMA SELECIONADA SERÁ PERDIDA!'
-          />
-          {/* <Dialog
-            isOpen={isOpenDeleteAlloc}
-            onClose={onCloseDeleteAlloc}
-            onConfirm={handleDeleteAlloc}
-            title={`Deseja remover a alocação de ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
-            warningText='Atenção: ao confirmar a alocação dessa turma será perdida'
-          /> */}
           <DataTable
             data={classes.map((cls, index) => ({ ...cls, index: index }))}
             columns={columns}
