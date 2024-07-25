@@ -25,7 +25,7 @@ export interface AllocateSingleScheduleSectionRef {
 }
 
 interface props {
-  schedule?: ScheduleResponse;
+  schedule: ScheduleResponse;
 }
 
 const AllocateSingleScheduleSection = forwardRef<

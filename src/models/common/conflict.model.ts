@@ -1,20 +1,13 @@
-import Event from './event.model';
+import { OccurrenceResponse } from 'models/http/responses/occurrence.response.model';
 
 export default interface Conflict {
-  buildings: ByBuildingConflict[];
-}
-
-interface ByBuildingConflict {
+  id: number;
   name: string;
-  classrooms: ByClassroomConflict[];
+  conflicts: ByClassroomConflict[];
 }
 
 interface ByClassroomConflict {
+  id: number;
   name: string;
-  week_days: ByWeekDayConflict[];
-}
-
-interface ByWeekDayConflict {
-  name: string;
-  events: Event[][];
+  conflicts: OccurrenceResponse[][];
 }

@@ -30,6 +30,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import AllocationService from 'services/api/events.service';
 import EventsService from 'services/api/events.service';
 import {
+  AllocationClassesMapper,
   AllocationEventsMapper,
   AllocationResourcesFromEventsMapper,
   FirstEventDate,
@@ -40,9 +41,11 @@ import { BsSearch } from 'react-icons/bs';
 import Dialog from 'components/common/Dialog/dialog.component';
 import AutomaticAllocationModal from 'components/allocation/automaticAllocation.modal';
 import AllocationOptions from 'components/allocation/allocationOptions.modal';
+import { Allocation as AllocationModel } from 'models/common/allocation.model';
+import ClassesService from 'services/api/classes.service';
 
 function Allocation() {
-  const [allocation, setAllocation] = useState<any[]>([]);
+  const [allocation, setAllocation] = useState<AllocationModel[]>([]);
   const [filteredAllocation, setFilteredAllocation] = useState<any[]>([]);
   const [resources, setResources] = useState<{ id: string }[]>([]);
   const { loading, setLoading } = useContext(appContext);
@@ -71,7 +74,7 @@ function Allocation() {
   const [hasNoAllocation, setHasNoAllocation] = useState(false);
 
   const allocationService = new AllocationService();
-  const eventsService = new EventsService();
+  const classesService = new ClassesService();
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -97,14 +100,18 @@ function Allocation() {
 
   function fetchData() {
     setLoading(true);
-    Promise.all([allocationService.list()]).then((values) => {
-      setAllocation(AllocationEventsMapper(values[0].data));
-      setResources(AllocationResourcesFromEventsMapper(values[0].data));
-      setCalendarDate(FirstEventDate(values[0].data).slice(0, 10));
-      setLoading(false);
-    });
-    if (subjectSearchValue || classroomSearchValue)
-      FilterAllocation(subjectSearchValue, classroomSearchValue);
+    classesService
+      .list()
+      .then((it) => {
+        const classes = it.data;
+        const allocation = AllocationClassesMapper(classes);
+        setAllocation(allocation);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+    // if (subjectSearchValue || classroomSearchValue)
+    //   FilterAllocation(subjectSearchValue, classroomSearchValue);
   }
 
   useEffect(() => {
@@ -118,6 +125,7 @@ function Allocation() {
   }
 
   function FilterAllocation(subjectValue: string, classroomValue: string) {
+    console.log('FilterAllocation');
     if (subjectValue && classroomValue) {
       setFilteredAllocation(
         allocation.filter((data) => {
@@ -155,18 +163,20 @@ function Allocation() {
 
   function handleAllocLoad() {
     setLoading(true);
-    eventsService
-      .loadAllocations()
+    console.log('handleAllocLoad');
+    classesService
+      .list()
       .then((it) => {
-        if (
-          it.data.allocated_events.length === 0 &&
-          it.data.unallocated_events.length === 0
-        ) {
-          setHasNoAllocation(true);
-          return;
-        }
-        setAllocatedEvents(it.data.allocated_events);
-        setUnallocatedEvents(it.data.unallocated_events);
+        const classes = it.data;
+        // if (
+        //   it.data.allocated_events.length === 0 &&
+        //   it.data.unallocated_events.length === 0
+        // ) {
+        //   setHasNoAllocation(true);
+        //   return;
+        // }
+        // setAllocatedEvents(it.data.allocated_events);
+        // setUnallocatedEvents(it.data.unallocated_events);
         toastSuccess('Alocação carregada com sucesso!');
         onCloseAllocOptions();
         onOpenAllocModal();
@@ -179,23 +189,23 @@ function Allocation() {
   }
 
   function handleAllocNew() {
-    setLoading(true);
-    eventsService
-      .allocate()
-      .then((it) => {
-        setAllocatedEvents(it.data.allocated);
-        setUnallocatedEvents(it.data.unallocated);
-        setHasNoAllocation(false);
-        onCloseAllocOptions();
-        onOpenAllocModal();
-        fetchData();
-      })
-      .catch(({ response }: AxiosError<ErrorResponse>) => {
-        onCloseAllocModal();
-        toastError(`Erro ao alocar turmas: ${response?.data.error}`);
-        console.log(response?.data.error);
-      })
-      .finally(() => setLoading(false));
+    // setLoading(true);
+    // eventsService
+    //   .allocate()
+    //   .then((it) => {
+    //     setAllocatedEvents(it.data.allocated);
+    //     setUnallocatedEvents(it.data.unallocated);
+    //     setHasNoAllocation(false);
+    //     onCloseAllocOptions();
+    //     onOpenAllocModal();
+    //     fetchData();
+    //   })
+    //   .catch(({ response }: AxiosError<ErrorResponse>) => {
+    //     onCloseAllocModal();
+    //     toastError(`Erro ao alocar turmas: ${response?.data.error}`);
+    //     console.log(response?.data.error);
+    //   })
+    //   .finally(() => setLoading(false));
   }
 
   function handleDeleteClick() {
@@ -203,16 +213,16 @@ function Allocation() {
   }
 
   function handleDelete() {
-    eventsService
-      .deleteAllAllocations()
-      .then((value) => {
-        toastSuccess(`Foram removidas ${value.data} alocações!`);
-        fetchData();
-      })
-      .catch((error) => {
-        toastError(`Erro ao remover alocações: ${error}`);
-      });
-    onCloseDelete();
+    // eventsService
+    //   .deleteAllAllocations()
+    //   .then((value) => {
+    //     toastSuccess(`Foram removidas ${value.data} alocações!`);
+    //     fetchData();
+    //   })
+    //   .catch((error) => {
+    //     toastError(`Erro ao remover alocações: ${error}`);
+    //   });
+    // onCloseDelete();
   }
 
   return (
