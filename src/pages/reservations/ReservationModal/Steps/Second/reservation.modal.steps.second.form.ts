@@ -132,7 +132,6 @@ export const secondFormFields = {
         'É preciso escolher um dia da semana',
         function (value) {
           const { recurrence } = this.parent;
-          console.log('Valor atual no teste: ', value, recurrence);
           if (!recurrence) return true;
           if (
             recurrence === Recurrence.CUSTOM ||

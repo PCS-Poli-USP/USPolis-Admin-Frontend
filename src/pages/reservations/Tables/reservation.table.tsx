@@ -1,12 +1,14 @@
+import { CopyIcon } from '@chakra-ui/icons';
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { ReservationType } from 'utils/enums/reservations.enum';
-import { getReservationRecurrenceText } from 'utils/reservations/reservations.formatter';
+import { getScheduleString } from 'utils/schedules/schedule.formatter';
 
 interface ReservationsColumnsProps {
+  handleDuplicateClick: (data: ReservationResponse) => void;
   handleEditClick: (data: ReservationResponse) => void;
   handleDeleteClick: (data: ReservationResponse) => void;
 }
@@ -44,7 +46,7 @@ export const getReservationsColumns = (
     header: 'Recorrência',
     cell: ({ row }) => (
       <Box>
-        <Text>{getReservationRecurrenceText(row.original)}</Text>
+        <Text>{getScheduleString(row.original.schedule)}</Text>
       </Box>
     ),
   },
@@ -53,7 +55,10 @@ export const getReservationsColumns = (
     header: 'Horário',
     cell: ({ row }) => (
       <Box>
-        <Text>{`${row.original.schedule.start_time} ~ ${row.original.schedule.end_time}`}</Text>
+        <Text>{`${row.original.schedule.start_time.substring(
+          0,
+          5,
+        )} ~ ${row.original.schedule.end_time.substring(0, 5)}`}</Text>
       </Box>
     ),
   },
@@ -75,6 +80,16 @@ export const getReservationsColumns = (
     header: 'Opções',
     cell: ({ row }) => (
       <HStack spacing='0px'>
+        <Tooltip label='Duplicar Reserva'>
+          <IconButton
+            colorScheme='cyan'
+            size='sm'
+            variant='ghost'
+            aria-label='duplicar-reserva'
+            icon={<CopyIcon />}
+            onClick={() => props.handleDuplicateClick(row.original)}
+          />
+        </Tooltip>
         <Tooltip label='Editar'>
           <IconButton
             colorScheme='yellow'

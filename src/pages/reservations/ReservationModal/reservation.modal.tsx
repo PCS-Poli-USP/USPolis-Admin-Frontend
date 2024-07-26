@@ -126,6 +126,7 @@ function ReservationModal(props: ReservationModalProps) {
     firstForm.reset(firstDefaultValues);
     secondForm.reset(secondDefaultValues);
     setActiveStep(0);
+    setDates([]);
     props.onClose();
   }
 
@@ -168,6 +169,7 @@ function ReservationModal(props: ReservationModalProps) {
     } else if (!props.isUpdate) {
       await createReservation(data as CreateReservation);
     }
+    console.log(data);
     props.refetch();
     // handleCloseModal();
   }
@@ -193,7 +195,11 @@ function ReservationModal(props: ReservationModalProps) {
       });
 
       if (props.selectedReservation.schedule.occurrences) {
-        setDates(props.selectedReservation.schedule.occurrences.map((occur) => occur.date));
+        setDates(
+          props.selectedReservation.schedule.occurrences.map(
+            (occur) => occur.date,
+          ),
+        );
       }
     }
   }, [props, firstForm, secondForm]);

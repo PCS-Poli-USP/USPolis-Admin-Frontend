@@ -29,12 +29,14 @@ import { sortClassMapBySubject, sortClassroomScheduleMap } from 'utils/sorter';
 import { ConflictCalculator } from 'utils/conflict.calculator';
 import { ClassroomSchedule } from 'models/common/classroom.model';
 import ClassroomsService from 'services/api/classrooms.service';
+import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import { ClassResponse } from 'models/http/responses/class.response.models';
 
 interface MultipleEditModalProps {
   isOpen: boolean;
   onClose: () => void;
   onRefresh: () => void;
-  classes: Class[];
+  classes: ClassResponse[];
 }
 
 interface Allocation {
@@ -50,9 +52,9 @@ export default function MultipleEditModal({
   classes,
 }: MultipleEditModalProps) {
   const [subjectSearchValue, setSubjectSearchValue] = useState('');
-  const [map, setMap] = useState<[string, Class[]][]>([]);
-  const [filteredMap, setFilteredMap] = useState<[string, Class[]][]>([]);
-  const [filteredClasses, setFilteredClasses] = useState<Class[]>([]);
+  const [map, setMap] = useState<[string, ClassResponse[]][]>([]);
+  const [filteredMap, setFilteredMap] = useState<[string, ClassResponse[]][]>([]);
+  const [filteredClasses, setFilteredClasses] = useState<ClassroomResponse[]>([]);
   const [allocationMap, setAllocationMap] = useState<Allocation[]>([]);
   const [classroomSchedulesMap, setClassroomSchedulesMap] = useState<
     [string, string, ClassroomSchedule][]
@@ -88,20 +90,20 @@ export default function MultipleEditModal({
   };
 
   useEffect(() => {
-    if (classes.length > 0) {
-      const newAllocationMap: Allocation[] = [];
-      classes.forEach((cl) => {
-        cl.events_ids.forEach((id) => {
-          newAllocationMap.push({ event_id: id });
-        });
-      });
-      setAllocationMap(newAllocationMap);
-      if (filteredClasses.length > 0)
-        setFilteredMap(
-          ClassesBySubject(filteredClasses).sort(sortClassMapBySubject),
-        );
-      else setMap(ClassesBySubject(classes));
-    } else setMap([]);
+    // if (classes.length > 0) {
+    //   const newAllocationMap: Allocation[] = [];
+    //   classes.forEach((cl) => {
+    //     cl.events_ids.forEach((id) => {
+    //       newAllocationMap.push({ event_id: id });
+    //     });
+    //   });
+    //   setAllocationMap(newAllocationMap);
+    //   if (filteredClasses.length > 0)
+    //     setFilteredMap(
+    //       ClassesBySubject(filteredClasses).sort(sortClassMapBySubject),
+    //     );
+    //   else setMap(ClassesBySubject(classes));
+    // } else setMap([]);
   }, [classes, filteredClasses]);
 
   function addBuildingInAllocMap(event_id: string, building_id: number) {
@@ -323,8 +325,8 @@ export default function MultipleEditModal({
       const filtered = classes.filter((cl) =>
         cl.subject_code.includes(subjectValue),
       );
-      setFilteredClasses(filtered);
-      setFilteredMap(ClassesBySubject(filteredClasses));
+      // setFilteredClasses(filtered);
+      // setFilteredMap(ClassesBySubject(filteredClasses));
     }
   }
 
@@ -356,7 +358,7 @@ export default function MultipleEditModal({
           </VStack>
 
           <Skeleton isLoaded={!isLoading}>
-            <MultipleEditAccordion
+            {/* <MultipleEditAccordion
               subjectsMap={subjectSearchValue ? filteredMap : map}
               schedulesMap={classroomSchedulesMap}
               isLoadingSchedules={isLoadingSchedules}
@@ -364,7 +366,7 @@ export default function MultipleEditModal({
               handleSelectBuilding={handleSelectBuilding}
               handleSelectClassroom={handleSelectClassroom}
               handleRemoveClassroom={handleRemoveClassroom}
-            />
+            /> */}
           </Skeleton>
         </ModalBody>
 

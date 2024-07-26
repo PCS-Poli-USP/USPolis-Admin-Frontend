@@ -1,8 +1,8 @@
-import { DayTime } from 'models/common/common.models';
 import { Occurrence } from 'models/common/occurrence.models';
 import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
+import { OccurrenceResponse } from './occurrence.response.models';
 
 export interface ScheduleResponseBase {
   id: number;
@@ -15,10 +15,7 @@ export interface ScheduleResponseBase {
   allocated: boolean;
   recurrence: Recurrence;
   all_day: boolean;
-  occurrences?: Occurrence[];
-}
 
-export interface ScheduleResponse extends ScheduleResponseBase {
   class_id?: number;
   reservation_id?: number;
   classroom_id?: number;
@@ -27,7 +24,11 @@ export interface ScheduleResponse extends ScheduleResponseBase {
   building?: string;
 }
 
-export interface ScheduleUnfetchResponse extends ScheduleResponseBase {
-  class_id?: number;
-  classroom_id?: number;
+export interface ScheduleResponse extends ScheduleResponseBase {
+  occurrences_ids?: number[];
+  occurrences?: Occurrence[];
+}
+
+export interface ScheduleWithOccurrencesResponse extends ScheduleResponseBase {
+  occurrences: OccurrenceResponse[];
 }

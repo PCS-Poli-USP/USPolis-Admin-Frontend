@@ -53,7 +53,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
 
     if (props.selectedReservation) {
       if (props.selectedReservation.schedule.occurrences) {
-        setSelectedDays(props.selectedReservation.schedule.occurrences.map((occur) => occur.date));
+        setSelectedDays(
+          props.selectedReservation.schedule.occurrences.map(
+            (occur) => occur.date,
+          ),
+        );
       }
       handleChangeRecurrence(props.selectedReservation.schedule.recurrence);
     }
@@ -90,7 +94,9 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   async function handleSelectClassroom(id: number) {
     const classroom = await getClassroomWithSchedules(id);
     setSelectedClassroom(classroom);
-    setHighlightedDays(classroom ? classroom.occurrences.map((occur) => occur.date) : []);
+    setHighlightedDays(
+      classroom ? classroom.occurrences.map((occur) => occur.date) : [],
+    );
   }
 
   return (
@@ -159,7 +165,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               textAlign={'center'}
               fontSize={'lg'}
               rounded={10}
-              backgroundColor={isSelecting ? 'lightgreen' : undefined}
+              hidden={!isSelecting}
               fontWeight={isSelecting ? 'bold' : 'thin'}
               color={
                 isSelecting

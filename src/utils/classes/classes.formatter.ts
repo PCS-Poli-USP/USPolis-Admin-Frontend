@@ -124,18 +124,6 @@ export function getClassScheduleText(data: Class): string[] {
   return schedule;
 }
 
-export function getClassScheduleShortText(data: Class): string {
-  let text = '';
-  for (let i = 0; i < data.week_days.length; i++) {
-    text += `${Capitalize(data.week_days[i])} (${data.start_time[i]} - ${
-      data.end_time[i]
-    }) - ${
-      !data.has_to_be_allocated && data.classrooms ? data.classrooms[i] : 'NA'
-    }, `;
-  }
-  return text.replace(/,\s*$/, '');
-}
-
 export const classTypeFormatter = (value: string): string => {
   switch (value) {
     case ClassType.PRACTIC:
