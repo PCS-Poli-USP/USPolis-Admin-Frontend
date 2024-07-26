@@ -18,6 +18,7 @@ import { ErrorResponse } from 'models/interfaces/serverResponses';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import rrulePlugin from '@fullcalendar/rrule';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import DatePickerModal from 'components/allocation/datePicker.modal';
 import EventContent from 'pages/allocation/EventContent/eventContent';
@@ -324,6 +325,7 @@ function Allocation() {
                 plugins={[
                   timeGridPlugin,
                   resourceTimelinePlugin,
+                  rrulePlugin
                   // eventsByClassroomsPlugin,
                   // eventsByWeekPlugin,
                 ]}

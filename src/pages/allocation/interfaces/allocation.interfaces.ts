@@ -13,17 +13,22 @@ export interface Resource {
   eventTextColor?: string;
 }
 
+export interface RecurrenceRule {
+  dtstart: string; // Must be YYYY-MM-DDTHH:mm:ss
+  until: string; // Must be YYYY-MM-DDTHH:mm:ss
+  freq: string;
+  interval: number;
+  byweekday: string[];
+  bysetpos?: number;
+}
+
 // See https://fullcalendar.io/docs/event-parsing
 export interface Event {
   id: string;
-  title: string; 
-  start?: string; // Must be YYYY-MM-DDTHH:mm:ss 
-  end?: string; // Must be YYYY-MM-DDTHH:mm:ss
-  startRecur?: string; // Don't use with start or end
-  endRecur?: string; // Don't use with start or end
-  startTime?: string; // Don't use with start or end
-  endTime?: string; // Don't use with start or end
-  daysOfWeek?: number[];
+  title: string;
+  start: string; // Must be YYYY-MM-DDTHH:mm:ss
+  end: string; // Must be YYYY-MM-DDTHH:mm:ss
+  rrule?: RecurrenceRule; // Used when is unallocated
   allDay: boolean;
   resourceId: string;
   backgroundColor?: string;

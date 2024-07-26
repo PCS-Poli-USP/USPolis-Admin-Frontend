@@ -28,6 +28,8 @@ export class NoSuchWeekDay extends Error {
 
 // Função de mapeamento dentro de um namespace
 export namespace WeekDay {
+  export type typeValue = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
   const mapping: { [key: string]: WeekDay } = {
     seg: WeekDay.MONDAY,
     ter: WeekDay.TUESDAY,
@@ -48,15 +50,6 @@ export namespace WeekDay {
     [WeekDay.SUNDAY]: 'Sunday',
   };
 
-  const reverseStringMapping: { [key: string]: WeekDay } = {
-    Monday: WeekDay.MONDAY,
-    Tuesday: WeekDay.TUESDAY,
-    Wednesday: WeekDay.WEDNESDAY,
-    Thursday: WeekDay.THURSDAY,
-    Friday: WeekDay.FRIDAY,
-    Saturday: WeekDay.SATURDAY,
-    Sunday: WeekDay.SUNDAY,
-  };
 
   const translations: { [key in WeekDay]: string } = {
     [WeekDay.MONDAY]: 'Segunda',
@@ -81,6 +74,25 @@ export namespace WeekDay {
     const fixed = Number(day) + 1;
     if (fixed === 7) return 0;
     return fixed;
+  }
+
+  export function toRRule(day: WeekDay) {
+    switch (day) {
+      case WeekDay.MONDAY:
+        return 'MO';
+      case WeekDay.TUESDAY:
+        return 'TU';
+      case WeekDay.WEDNESDAY:
+        return 'WE';
+      case WeekDay.THURSDAY:
+        return 'TH';
+      case WeekDay.FRIDAY:
+        return 'FR';
+      case WeekDay.SATURDAY:
+        return 'SA';
+      case WeekDay.SUNDAY:
+        return 'SU';
+    }
   }
 
   export function getValues(): WeekDay[] {

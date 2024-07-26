@@ -1,8 +1,30 @@
 import { ClassWithOccurrencesResponse } from 'models/http/responses/class.response.models';
-import { Event, Resource } from '../interfaces/allocation.interfaces';
+import {
+  Event,
+  RecurrenceRule,
+  Resource,
+} from '../interfaces/allocation.interfaces';
 import { ReservationWithOccurrencesResponse } from 'models/http/responses/reservation.response.models';
 import { AllocationEnum } from 'utils/enums/allocation.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
+import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
+import { Recurrence } from 'utils/enums/recurrence.enum';
+
+function scheduleToRRule(schedule: ScheduleResponse): RecurrenceRule {
+  const byweekday: string[] = [];
+  if (schedule.week_day) byweekday.push(WeekDay.toRRule(schedule.week_day));
+  if (schedule.recurrence === Recurrence.DAILY)
+    byweekday.push('MO', 'TH', 'WE', 'TU', 'FR');
+
+  return {
+    dtstart: `${schedule.start_date}T${schedule.start_time}`,
+    until: `${schedule.end_date}T${schedule.end_time}`,
+    freq: Recurrence.toRRule(schedule.recurrence),
+    interval: Recurrence.toRRuleInterval(schedule.recurrence),
+    byweekday: byweekday,
+    bysetpos: schedule.month_week ? schedule.month_week : undefined,
+  };
+}
 
 // See docs https://fullcalendar.io/docs/v5/event-parsing
 export function EventsFromClasses(
@@ -23,8 +45,8 @@ export function EventsFromClasses(
             resourceId: schedule.building
               ? schedule.classroom
                 ? `${schedule.building}-${schedule.classroom}`
-                : `${AllocationEnum.UNALLOCATED}-${AllocationEnum.UNALLOCATED}`
-              : `${AllocationEnum.UNALLOCATED}-${AllocationEnum.UNALLOCATED}`,
+                : AllocationEnum.UNALLOCATED_CLASSROOM_ID
+              : AllocationEnum.UNALLOCATED_CLASSROOM_ID,
             extendedProps: {
               class_data: {
                 building: schedule.building
@@ -52,19 +74,15 @@ export function EventsFromClasses(
         classEvents.push({
           id: String(schedule.id),
           title: cls.subject_code,
-          startRecur: schedule.start_date,
-          endRecur: schedule.end_date,
-          startTime: schedule.start_time,
-          endTime: schedule.end_time,
-          daysOfWeek: schedule.week_day
-            ? [WeekDay.toInt(schedule.week_day)]
-            : [],
+          start: `${schedule.start_date}T${schedule.start_time}`,
+          end: `${schedule.end_date}T${schedule.end_time}`,
+          rrule: scheduleToRRule(schedule),
           allDay: schedule.all_day,
           resourceId: schedule.building
             ? schedule.classroom
               ? `${schedule.building}-${schedule.classroom}`
-              : `${AllocationEnum.UNALLOCATED}-${AllocationEnum.UNALLOCATED}`
-            : `${AllocationEnum.UNALLOCATED}-${AllocationEnum.UNALLOCATED}`,
+              : AllocationEnum.UNALLOCATED_CLASSROOM_ID
+            : AllocationEnum.UNALLOCATED_CLASSROOM_ID,
           extendedProps: {
             class_data: {
               building: schedule.building
@@ -93,6 +111,7 @@ export function EventsFromClasses(
     });
     events.push(...classEvents);
   });
+  console.log('C-Events', events);
   return events;
 }
 
@@ -125,6 +144,8 @@ export function EventsFromReservations(
               month_week: reservation.schedule.month_week,
               start_time: reservation.schedule.start_time,
               end_time: reservation.schedule.end_time,
+              start_date: reservation.schedule.start_date,
+              end_date: reservation.schedule.end_date,
               description: reservation.description,
               created_by: reservation.created_by,
             },
@@ -133,6 +154,7 @@ export function EventsFromReservations(
       ),
     [],
   );
+  console.log('R-Events', events);
   return events;
 }
 

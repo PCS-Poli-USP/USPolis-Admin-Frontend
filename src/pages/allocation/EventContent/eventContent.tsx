@@ -30,9 +30,9 @@ export default function EventContent(eventInfo: EventContentArg) {
             </Heading>
             {isTimeGridView && (
               <>
-                <Text noOfLines={1}>{classData.professors.join(', ')}</Text>
+                <Text noOfLines={1}>{'Professores: '}{classData.professors.join(', ')}</Text>
                 <Text noOfLines={1}>
-                  {classData.building} {classData.classroom}
+                  {`Local: ${classData.building} - ${classData.classroom}`}
                 </Text>
               </>
             )}
@@ -176,6 +176,22 @@ function ToolTipLabel(eventInfo: EventContentArg) {
                 0,
                 5,
               )} ~ ${reservationData.end_time.substring(0, 5)}`}
+            </Text>
+
+            <Text
+              fontSize='lg'
+              textColor='#408080'
+              hidden={reservationData.start_date ? false : true}
+            >
+              {`De ${
+                reservationData.start_date
+                  ? moment(reservationData.start_date).format('DD/MM/YYYY')
+                  : ''
+              } até ${
+                reservationData.end_date
+                  ? moment(reservationData.end_date).format('DD/MM/YYYY')
+                  : ''
+              }`}
             </Text>
           </Box>
         </>
