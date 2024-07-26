@@ -10,11 +10,8 @@ import {
   Skeleton,
   StackDivider,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import { useDisclosure } from '@chakra-ui/react-use-disclosure';
-import { AxiosError } from 'axios';
-import { ErrorResponse } from 'models/interfaces/serverResponses';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -27,225 +24,63 @@ import eventsByWeekPlugin from 'pages/allocation/plugins/EventsByWeek/eventsByWe
 import Navbar from 'components/common/NavBar/navbar.component';
 import Loading from 'components/common/Loading/loading.component';
 import { appContext } from 'context/AppContext';
-import { useContext, useEffect, useRef, useState } from 'react';
-import EventsService from 'services/api/events.service';
-import {
-  AllocationEventsMapper,
-  AllocationResourcesFromEventsMapper,
-  FirstEventDate,
-} from 'utils/mappers/allocation.mapper';
-// import Event from 'models/common/event.model';
-
+import { useContext, useRef, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
-import Dialog from 'components/common/Dialog/dialog.component';
-import AutomaticAllocationModal from 'components/allocation/automaticAllocation.modal';
-import AllocationOptions from 'components/allocation/allocationOptions.modal';
 import { Event } from './interfaces/allocation.interfaces';
 import useAllocation from 'pages/allocation/hooks/useAllocation';
 import ClassesPDF from './pdf/classesPDF';
+import useCustomToast from 'hooks/useCustomToast';
 
 function Allocation() {
-  const [allocation, setAllocation] = useState<any[]>([]);
-  const [filteredAllocation, setFilteredAllocation] = useState<any[]>([]);
   const { loading, setLoading } = useContext(appContext);
   const calendarRef = useRef<FullCalendar>(null!);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: isOpenDelete,
-    onOpen: onOpenDelete,
-    onClose: onCloseDelete,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenAllocOptions,
-    onOpen: onOpenAllocOptions,
-    onClose: onCloseAllocOptions,
-  } = useDisclosure();
-  const {
-    isOpen: isOpenAllocModal,
-    onOpen: onOpenAllocModal,
-    onClose: onCloseAllocModal,
-  } = useDisclosure();
 
-  const [subjectSearchValue, setSubjectSearchValue] = useState('');
+  const [nameSearchValue, setNameSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
-  const [allocatedEvents, setAllocatedEvents] = useState<Event[]>([]);
-  const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
-  const [hasNoAllocation, setHasNoAllocation] = useState(false);
-
   const { events, resources } = useAllocation();
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
 
-  const eventsService = new EventsService();
-
-  const toast = useToast();
-  const toastSuccess = (message: string) => {
-    toast({
-      position: 'top-left',
-      title: 'Sucesso!',
-      description: message,
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-  const toastError = (message: string) => {
-    toast({
-      position: 'top-left',
-      title: 'Erro!',
-      description: message,
-      status: 'error',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-
-  function fetchData() {
-    // setLoading(true);
-    // Promise.all([allocationService.list()]).then((values) => {
-    //   setAllocation(AllocationEventsMapper(values[0].data));
-    //   setResources(AllocationResourcesFromEventsMapper(values[0].data));
-    //   setCalendarDate(FirstEventDate(values[0].data).slice(0, 10));
-    //   setLoading(false);
-    // });
-    // if (subjectSearchValue || classroomSearchValue)
-    //   FilterAllocation(subjectSearchValue, classroomSearchValue);
-  }
-
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line
-  }, []);
+  const showToast = useCustomToast();
 
   function setCalendarDate(ISOdate: string) {
     const calendarApi = calendarRef.current.getApi();
     calendarApi.gotoDate(ISOdate);
   }
 
-  function FilterAllocation(subjectValue: string, classroomValue: string) {
-    if (subjectValue && classroomValue) {
-      setFilteredAllocation(
-        allocation.filter((data) => {
-          const subjectResult = data.extendedProps.subject_code
-            .toLowerCase()
-            .includes(subjectValue.toLowerCase());
-          const classroomResult = data.extendedProps.classroom
-            .toLowerCase()
-            .includes(classroomValue.toLowerCase());
-          return subjectResult && classroomResult;
+  function FilterEvents(name: string, classroom: string) {
+    const nameValue = name.toLowerCase();
+    const classroomValue = classroom.toLowerCase();
+    if (name && classroom) {
+      setFilteredEvents(
+        events.filter((event) => {
+          const nameFilterResult = event.title.toLowerCase().includes(nameValue);
+          const data =
+            event.extendedProps.class_data ||
+            event.extendedProps.reservation_data;
+          const classroomFilterResult =
+            data && data.classroom.toLowerCase().includes(classroomValue);
+          return nameFilterResult && classroomFilterResult;
         }),
       );
-    } else if (subjectValue && !classroomValue) {
-      setFilteredAllocation(
-        allocation.filter((data) => {
-          return data.extendedProps.subject_code
-            .toLowerCase()
-            .includes(subjectValue.toLowerCase());
-        }),
-      );
-    } else if (!subjectValue && classroomValue) {
-      setFilteredAllocation(
-        allocation.filter((data) => {
-          return data.extendedProps.classroom
-            .toLowerCase()
-            .includes(classroomValue.toLowerCase());
+    } else if (name && !classroom) {
+      setFilteredEvents(events.filter((event) => event.title.toLowerCase().includes(nameValue)));
+    } else if (!name && classroom) {
+      setFilteredEvents(
+        events.filter((event) => {
+          const data =
+            event.extendedProps.class_data ||
+            event.extendedProps.reservation_data;
+          return data && data.classroom.toLowerCase().includes(classroomValue);
         }),
       );
     }
-  }
-
-  function handleAllocClick() {
-    onOpenAllocOptions();
-  }
-
-  function handleAllocLoad() {
-    setLoading(true);
-    eventsService
-      .loadAllocations()
-      .then((it) => {
-        if (
-          it.data.allocated_events.length === 0 &&
-          it.data.unallocated_events.length === 0
-        ) {
-          setHasNoAllocation(true);
-          return;
-        }
-        setAllocatedEvents(it.data.allocated_events);
-        setUnallocatedEvents(it.data.unallocated_events);
-        toastSuccess('Alocação carregada com sucesso!');
-        onCloseAllocOptions();
-        onOpenAllocModal();
-        fetchData();
-      })
-      .catch((error) => {
-        toastError(`Erro ao carregar alocação: ${error}`);
-      })
-      .finally(() => setLoading(false));
-  }
-
-  function handleAllocNew() {
-    setLoading(true);
-    eventsService
-      .allocate()
-      .then((it) => {
-        setAllocatedEvents(it.data.allocated);
-        setUnallocatedEvents(it.data.unallocated);
-        setHasNoAllocation(false);
-        onCloseAllocOptions();
-        onOpenAllocModal();
-        fetchData();
-      })
-      .catch(({ response }: AxiosError<ErrorResponse>) => {
-        onCloseAllocModal();
-        toastError(`Erro ao alocar turmas: ${response?.data.error}`);
-        console.log(response?.data.error);
-      })
-      .finally(() => setLoading(false));
-  }
-
-  function handleDeleteClick() {
-    onOpenDelete();
-  }
-
-  function handleDelete() {
-    eventsService
-      .deleteAllAllocations()
-      .then((value) => {
-        toastSuccess(`Foram removidas ${value.data} alocações!`);
-        fetchData();
-      })
-      .catch((error) => {
-        toastError(`Erro ao remover alocações: ${error}`);
-      });
-    onCloseDelete();
   }
 
   return (
     <>
       <Navbar />
       <Loading isOpen={loading} onClose={() => setLoading(false)} />
-      <Dialog
-        isOpen={isOpenDelete}
-        onClose={onCloseDelete}
-        onConfirm={handleDelete}
-        title={'Deseja remover todas alocações feitas'}
-        warningText={
-          'ATENÇÃO: AO CONFIRMAR QUALQUER ALOCAÇÃO SALVA SERÁ PERDIDA'
-        }
-      />
-
-      {/* <AllocationOptions
-        isOpen={isOpenAllocOptions}
-        hasError={hasNoAllocation}
-        onLoad={handleAllocLoad}
-        onNew={handleAllocNew}
-        onClose={onCloseAllocOptions}
-      />
-
-      <AutomaticAllocationModal
-        isOpen={isOpenAllocModal}
-        onClose={onCloseAllocModal}
-        allocatedEvents={allocatedEvents}
-        unallocatedEvents={unallocatedEvents}
-      /> */}
 
       <Grid
         templateAreas={`"header"
@@ -265,12 +100,6 @@ function Allocation() {
               }
             </PDFDownloadLink>
           </Button>
-          {/* <Button ml={2} colorScheme='blue' onClick={handleAllocClick}>
-            Alocação Automática
-          </Button>
-          <Button ml={2} colorScheme='red' onClick={handleDeleteClick}>
-            Remover Alocações
-          </Button> */}
         </GridItem>
         <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
           <Skeleton isLoaded={!loading} h='100vh' startColor='uspolis.blue'>
@@ -287,11 +116,11 @@ function Allocation() {
                 </InputLeftElement>
                 <Input
                   type='text'
-                  placeholder='Filtrar disciplinas'
-                  value={subjectSearchValue}
+                  placeholder='Filtrar por nome'
+                  value={nameSearchValue}
                   onChange={(event) => {
-                    setSubjectSearchValue(event.target.value);
-                    FilterAllocation(event.target.value, classroomSearchValue);
+                    setNameSearchValue(event.target.value);
+                    FilterEvents(event.target.value, classroomSearchValue);
                   }}
                 />
               </InputGroup>
@@ -306,17 +135,10 @@ function Allocation() {
                   value={classroomSearchValue}
                   onChange={(event) => {
                     setClassroomSearchValue(event.target.value);
-                    FilterAllocation(subjectSearchValue, event.target.value);
+                    FilterEvents(nameSearchValue, event.target.value);
                   }}
                 />
               </InputGroup>
-
-              {/* <Button colorScheme='red' onClick={() => {
-                setSubjectSearchValue('');
-                setClassroomSearchValue('');
-              }}>
-                  Limpar filtro
-              </Button> */}
             </HStack>
             <Box paddingBottom={4}>
               <FullCalendar
@@ -325,7 +147,7 @@ function Allocation() {
                 plugins={[
                   timeGridPlugin,
                   resourceTimelinePlugin,
-                  rrulePlugin
+                  rrulePlugin,
                   // eventsByClassroomsPlugin,
                   // eventsByWeekPlugin,
                 ]}
@@ -377,10 +199,9 @@ function Allocation() {
                   // },
                 }}
                 events={
-                  events
-                  // subjectSearchValue || classroomSearchValue
-                  //   ? filteredAllocation
-                  //   : allocation
+                  nameSearchValue || classroomSearchValue
+                    ? filteredEvents
+                    : events
                 }
                 eventContent={EventContent}
                 eventColor='#408080'
