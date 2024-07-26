@@ -178,6 +178,7 @@ const ConflictsPage = () => {
                           borderRadius={4}
                           padding={4}
                         >
+                          <C.Heading size='md'>{event_group[0].date}</C.Heading>
                           {event_group.map((event) => (
                             <C.Flex
                               key={event.id}
