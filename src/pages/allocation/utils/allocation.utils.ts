@@ -111,7 +111,6 @@ export function EventsFromClasses(
     });
     events.push(...classEvents);
   });
-  console.log('C-Events', events);
   return events;
 }
 
@@ -154,7 +153,6 @@ export function EventsFromReservations(
       ),
     [],
   );
-  console.log('R-Events', events);
   return events;
 }
 
