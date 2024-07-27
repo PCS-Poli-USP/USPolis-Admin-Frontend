@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { CreateBuilding } from 'models/common/building.model';
+import { CreateBuilding, UpdateBuilding } from 'models/http/requests/building.request.models';
 import HttpService from './http.service';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 
@@ -22,7 +22,7 @@ export default class BuildingsService extends HttpService {
     return this.http.delete(`/admin/buildings/${id}`);
   }
 
-  update(id: number, data: any): Promise<AxiosResponse<BuildingResponse>> {
+  update(id: number, data: UpdateBuilding): Promise<AxiosResponse<BuildingResponse>> {
     return this.http.put(`/admin/buildings/${id}`, data);
   }
 }
