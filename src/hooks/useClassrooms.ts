@@ -59,6 +59,7 @@ const useClassrooms = () => {
         })
         .catch((error) => {
           showToast('Erro', `Erro ao criar sala: ${error}`, 'error');
+          console.log(error);
         })
         .finally(() => {
           setLoading(false);

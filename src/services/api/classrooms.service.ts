@@ -78,6 +78,12 @@ export default class ClassroomsService extends HttpService {
     return this.http.get(`with-conflict-count/${building_id}/${schedule_id}`);
   }
 
+  getClassroomsByBuilding(
+    building: string,
+  ): Promise<AxiosResponse<Classroom[]>> {
+    return this.http.get(`/${building}`);
+  }
+
   // getAllSchedules() {
   //   return this.http.get('schedules');
   // }
