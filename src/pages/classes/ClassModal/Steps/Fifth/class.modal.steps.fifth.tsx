@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Divider,
   HStack,
@@ -20,7 +19,6 @@ import { ClassModalFifthStepProps } from './class.modal.steps.fifth.interface';
 function ClassModalFifthStep(props: ClassModalFifthStepProps) {
   const firstForm = props.data.first;
   const secondForm = props.data.second;
-  const thirdForm = props.data.third;
   const fourthForm = props.data.fourth;
 
   const subject_id = Number(firstForm.subject_id);

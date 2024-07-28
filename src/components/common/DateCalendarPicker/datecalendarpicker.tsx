@@ -9,11 +9,13 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
   const maxDate = moment({ year: currentYear, month: 11, day: 31 }); // Dezembro 31 do ano atual
   return (
     <DateCalendar
+      disabled={props.disabled}
       readOnly={props.readOnly}
       minDate={minDate}
       maxDate={maxDate}
       views={['day']}
       renderLoading={() => <DayCalendarSkeleton />}
+      disableHighlightToday={true}
       showDaysOutsideCurrentMonth
       slots={{
         day: ServerDay,

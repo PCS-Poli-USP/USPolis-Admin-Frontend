@@ -1,10 +1,13 @@
 import { DayTime } from 'models/common/common.models';
+import { Occurrence } from 'models/common/occurrence.models';
+import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 
 export interface ScheduleResponseBase {
   id: number;
-  week_day: WeekDay;
+  week_day?: WeekDay;
+  month_week?: MonthWeek;
   start_date: string;
   end_date: string;
   start_time: string;
@@ -12,7 +15,7 @@ export interface ScheduleResponseBase {
   allocated: boolean;
   recurrence: Recurrence;
   all_day: boolean;
-  dates?: string[];
+  occurrences?: Occurrence[];
 }
 
 export interface ScheduleResponse extends ScheduleResponseBase {

@@ -195,7 +195,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
   }
 
   function handleUpdateScheduleClick(index: number) {
-    const { reset, resetField } = props.form;
+    const { reset } = props.form;
     const schedule = props.schedules[index];
     reset({
       ...props.form.getValues(),
@@ -221,7 +221,6 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
 
   async function handleScheduleButton() {
     const values = getScheduleInputValues();
-    console.log('Recebi aqui: ', values);
     const isValid = await validateScheduleInputs(values);
     if (!isValid) return;
     const schedule: ScheduleData = {
@@ -243,7 +242,6 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
     setIsCustom(false);
     setIsMonthly(false);
     setIsUpdatingSchedule(false);
-    console.log(getScheduleInputValues());
   }
 
   return (
@@ -260,6 +258,8 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
                 value: value,
               }))}
               onChange={(event) => {
+                const { clearErrors } = props.form;
+                clearErrors(['month_week', 'week_day']);
                 if (event.target.value === Recurrence.DAILY) {
                   setIsDayli(true);
                 } else setIsDayli(false);

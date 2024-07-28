@@ -58,26 +58,19 @@ function getWeekdayDateForMonthWeek(
 ): Moment {
   const firstDate = moment(start_date, DATE_FORMATER).startOf('month');
   const daysGap = (WeekDay.toInt(week_day) - firstDate.day() + 7) % 7; // week_day is not isoWeekday, so we need to use WeekDay.toInt()
-  console.log(
-    'Teste: ',
-    firstDate.day(),
-    firstDate.weekday(),
-    WeekDay.toInt(week_day),
-    firstDate.format(DATE_FORMATER),
-    daysGap,
-  );
   const firstWeekDayDate = firstDate.clone().add(daysGap, 'days');
-  if (month_week === MonthWeek.LAST) {
+  if (Number(month_week) === MonthWeek.LAST) {
     const lastWeekDayDate = firstWeekDayDate.clone().add(4, 'weeks');
     if (
-      lastWeekDayDate.month() > firstDate.month() ||
-      (lastWeekDayDate.month() === 1 && firstDate.month() === 12)
+      lastWeekDayDate.month() > firstWeekDayDate.month() ||
+      (lastWeekDayDate.month() === 1 && firstWeekDayDate.month() === 12)
     ) {
       lastWeekDayDate.subtract(1, 'weeks');
     }
     return lastWeekDayDate;
   }
-  return firstWeekDayDate.add(month_week - 1, 'weeks');
+  firstWeekDayDate.add(month_week - 1, 'weeks');
+  return firstWeekDayDate;
 }
 
 function generateMonthlyDates(

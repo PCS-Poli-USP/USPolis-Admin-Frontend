@@ -294,6 +294,19 @@ function Classes() {
               Excluir selecionados
             </Button>
           </Flex>
+          <ClassModal
+            isOpen={isOpenClassModal}
+            onClose={() => {
+              setSelectedClass(undefined);
+              onCloseClassModal();
+              setIsUpdateClass(false);
+            }}
+            isUpdate={isUpdateClass}
+            refetch={getClasses}
+            subjects={subjects}
+            calendars={calendars}
+            selectedClass={selectedClass}
+          />
           <Dialog
             isOpen={isOpenDeleteClass}
             onClose={onCloseDeleteClass}

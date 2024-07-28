@@ -1,3 +1,6 @@
+import { OccurrenceResponse } from "./occurrence.response.models";
+import { ScheduleResponse } from "./schedule.response.models";
+
 export interface ClassroomResponse {
   id: number;
   name: string;
@@ -12,4 +15,9 @@ export interface ClassroomResponse {
   created_by: string;
   building_id: number;
   building: string;
+}
+
+export interface ClassroomWithSchedulesResponse extends ClassroomResponse {
+  schedules: ScheduleResponse[];
+  occurrences: OccurrenceResponse[];
 }
