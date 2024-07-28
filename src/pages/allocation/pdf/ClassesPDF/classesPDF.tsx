@@ -1,13 +1,15 @@
 import { Document, Page, Text, View } from '@react-pdf/renderer';
-import { ClassesBySubject } from 'utils/mappers/classes.mapper';
-import { styles } from './styles';
-import useClasses from 'hooks/useClasses';
+import { ClassesBySubject } from 'utils/classes/classes.mapper';
 import { AllocationEnum } from 'utils/enums/allocation.enum';
 import { getScheduleTime } from 'utils/schedules/schedule.formatter';
+import { ClassFullResponse } from 'models/http/responses/class.response.models';
+import { classStyles as styles } from './styles';
 
-const ClassesPDF = () => {
-  const { classes } = useClasses();
+interface ClassesPDFProps {
+  classes: ClassFullResponse[];
+}
 
+const ClassesPDF = ({ classes }: ClassesPDFProps) => {
   return (
     <Document>
       {ClassesBySubject(classes).map(([subjectCode, classesList]) => (

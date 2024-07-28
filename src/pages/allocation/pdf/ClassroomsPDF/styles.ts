@@ -36,28 +36,21 @@ export const styles = StyleSheet.create({
     borderLeftWidth: 0,
     borderTopWidth: 0,
   },
-  tableColClass: {
-    width: '10%',
-    borderStyle: 'solid',
-    borderWidth: 1,
-    borderLeftWidth: 0,
-    borderTopWidth: 0,
-  },
-  tableColClassroom: {
+  tableColWeekDay: {
     width: '20%',
     borderStyle: 'solid',
     borderWidth: 1,
     borderLeftWidth: 0,
     borderTopWidth: 0,
   },
-  tableColTime: {
-    width: '30%',
+  tableColSchedule: {
+    width: '40%',
     borderStyle: 'solid',
     borderWidth: 1,
     borderLeftWidth: 0,
     borderTopWidth: 0,
   },
-  tableColProfessor: {
+  tableColInfo: {
     width: '40%',
     borderStyle: 'solid',
     borderWidth: 1,

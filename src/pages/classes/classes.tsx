@@ -16,10 +16,6 @@ import Loading from 'components/common/Loading/loading.component';
 import Navbar from 'components/common/NavBar/navbar.component';
 import { appContext } from 'context/AppContext';
 import { useContext, useState } from 'react';
-import {
-  ClassToEventByClassroom,
-  breakClassFormInEvents,
-} from 'utils/classes/classes.formatter';
 import { EventByClassrooms } from 'models/common/event.model';
 import CrawlerService from 'services/api/crawler.service';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';

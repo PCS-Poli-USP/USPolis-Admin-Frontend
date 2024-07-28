@@ -1,7 +1,7 @@
 import { ClassType } from 'utils/enums/classes.enum';
 import {
+  ScheduleFullResponse,
   ScheduleResponse,
-  ScheduleWithOccurrencesResponse,
 } from './schedule.response.models';
 
 export interface ClassResponseBase {
@@ -20,9 +20,7 @@ export interface ClassResponseBase {
   ignore_to_allocate: boolean;
   full_allocated: boolean;
   updated_at: string;
-}
 
-export interface ClassResponse extends ClassResponseBase {
   subject_id: number;
   subject_name: string;
   subject_code: string;
@@ -31,13 +29,12 @@ export interface ClassResponse extends ClassResponseBase {
   calendar_names?: string[];
 }
 
-export interface ClassWithOccurrencesResponse extends ClassResponseBase {
-  subject_id: number;
-  subject_name: string;
-  subject_code: string;
-  schedules: ScheduleWithOccurrencesResponse[];
-  calendar_ids?: number[];
-  calendar_names?: string[];
+export interface ClassResponse extends ClassResponseBase {
+  schedules: ScheduleResponse[];
+}
+
+export interface ClassFullResponse extends ClassResponseBase {
+  schedules: ScheduleFullResponse[];
 }
 
 export interface ClassUnfetchResponse extends ClassResponseBase {

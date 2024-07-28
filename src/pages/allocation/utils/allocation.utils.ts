@@ -1,10 +1,10 @@
-import { ClassWithOccurrencesResponse } from 'models/http/responses/class.response.models';
+import { ClassFullResponse } from 'models/http/responses/class.response.models';
 import {
   Event,
   RecurrenceRule,
   Resource,
 } from '../interfaces/allocation.interfaces';
-import { ReservationWithOccurrencesResponse } from 'models/http/responses/reservation.response.models';
+import { ReservationFullResponse } from 'models/http/responses/reservation.response.models';
 import { AllocationEnum } from 'utils/enums/allocation.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
@@ -28,7 +28,7 @@ function scheduleToRRule(schedule: ScheduleResponse): RecurrenceRule {
 
 // See docs https://fullcalendar.io/docs/v5/event-parsing
 export function EventsFromClasses(
-  classes: ClassWithOccurrencesResponse[],
+  classes: ClassFullResponse[],
 ): Event[] {
   const events: Event[] = [];
   classes.forEach((cls) => {
@@ -116,7 +116,7 @@ export function EventsFromClasses(
 
 // See docs https://fullcalendar.io/docs/v5/event-parsing
 export function EventsFromReservations(
-  reservations: ReservationWithOccurrencesResponse[],
+  reservations: ReservationFullResponse[],
 ): Event[] {
   const events = reservations.reduce<Event[]>(
     (acc, reservation) =>
@@ -158,7 +158,7 @@ export function EventsFromReservations(
 
 // See docs https://fullcalendar.io/docs/v5/resource-parsing
 export function AllocationResourcesFromClasses(
-  classes: ClassWithOccurrencesResponse[],
+  classes: ClassFullResponse[],
 ): Resource[] {
   const buildingResources: Resource[] = [];
   const classroomResources: Resource[] = [];
@@ -194,7 +194,7 @@ export function AllocationResourcesFromClasses(
 
 // See docs https://fullcalendar.io/docs/v5/resource-parsing
 export function AllocationResourcesFromReservations(
-  reservations: ReservationWithOccurrencesResponse[],
+  reservations: ReservationFullResponse[],
 ): Resource[] {
   const buildingResources: Resource[] = [];
   const classroomResources: Resource[] = [];

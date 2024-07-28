@@ -22,7 +22,6 @@ import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
 import Dialog from 'components/common/Dialog/dialog.component';
 import { appContext } from 'context/AppContext';
-import { Building } from 'models/common/building.model';
 import { AvailableClassroom } from 'models/common/classroom.model';
 import { EventByClassrooms } from 'models/common/event.model';
 import { useContext, useEffect, useState } from 'react';

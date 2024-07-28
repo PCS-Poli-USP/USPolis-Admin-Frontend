@@ -1,6 +1,6 @@
 import useCustomToast from 'hooks/useCustomToast';
-import { ClassWithOccurrencesResponse } from 'models/http/responses/class.response.models';
-import { ReservationWithOccurrencesResponse } from 'models/http/responses/reservation.response.models';
+import { ClassFullResponse } from 'models/http/responses/class.response.models';
+import { ReservationFullResponse } from 'models/http/responses/reservation.response.models';
 import {
   AllocationResourcesFromClasses,
   AllocationResourcesFromReservations,
@@ -23,25 +23,25 @@ const useAllocation = () => {
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [loagindResources, setLoadingResources] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [classesWithOccurrences, setClassesWithOccurrences] = useState<
-    ClassWithOccurrencesResponse[]
+  const [classes, setClasses] = useState<
+    ClassFullResponse[]
   >([]);
-  const [reservationsWithOccurrences, setReserationWithOccurrences] = useState<
-    ReservationWithOccurrencesResponse[]
+  const [reservations, setReservations] = useState<
+    ReservationFullResponse[]
   >([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
 
   const showToast = useCustomToast();
 
-  const getClassesWithOccurrences = useCallback(async () => {
+  const getClassesFull = useCallback(async () => {
     setLoadingClasses(true);
-    let classes: ClassWithOccurrencesResponse[] = [];
+    let classesF: ClassFullResponse[] = [];
     await classService
-      .listWithOccurrences()
+      .listFull()
       .then((response) => {
-        classes = response.data.sort(sortClassResponse);
-        setClassesWithOccurrences(classes);
+        classesF = response.data.sort(sortClassResponse);
+        setClasses(classesF);
       })
       .catch((error) => {
         showToast('Erro', 'Erro ao carregar turmas com ocorrências', 'error');
@@ -50,17 +50,17 @@ const useAllocation = () => {
       .finally(() => {
         setLoadingClasses(false);
       });
-    return classes;
+    return classesF;
   }, [showToast]);
 
-  const getReservationsWithOccurrences = useCallback(async () => {
+  const getReservationsFull= useCallback(async () => {
     setLoadingReservations(true);
-    let reservations: ReservationWithOccurrencesResponse[] = [];
+    let reservations: ReservationFullResponse[] = [];
     await reservationService
-      .listWithOccurrences()
+      .listFull()
       .then((response) => {
         reservations = response.data.sort(sortReservationsResponse);
-        setReserationWithOccurrences(reservations);
+        setReservations(reservations);
       })
       .catch((error) => {
         showToast('Erro', 'Erro ao carregar reservas com ocorrências', 'error');
@@ -74,8 +74,8 @@ const useAllocation = () => {
 
   const getEvents = useCallback(async () => {
     setLoadingEvents(true);
-    const classes = await getClassesWithOccurrences();
-    const reservations = await getReservationsWithOccurrences();
+    const classes = await getClassesFull();
+    const reservations = await getReservationsFull();
     const classEvents = EventsFromClasses(classes);
     const reservationEvents = EventsFromReservations(reservations);
     const allEvents = [...classEvents, ...reservationEvents];
@@ -86,11 +86,14 @@ const useAllocation = () => {
 
   const getResources = useCallback(async () => {
     setLoadingResources(true);
+    const classes = await getClassesFull();
+    const reservations = await getReservationsFull();
+
     const classResources = AllocationResourcesFromClasses(
-      classesWithOccurrences,
+      classes,
     );
     const reservationResources = AllocationResourcesFromReservations(
-      reservationsWithOccurrences,
+      reservations,
     );
     setResources(
       Array.from(new Set([...classResources, ...reservationResources])),
@@ -101,8 +104,8 @@ const useAllocation = () => {
 
   const getAllocation = useCallback(async () => {
     setLoading(true);
-    const classes = await getClassesWithOccurrences();
-    const reservations = await getReservationsWithOccurrences();
+    const classes = await getClassesFull();
+    const reservations = await getReservationsFull();
 
     const classEvents = EventsFromClasses(classes);
     const reservationEvents = EventsFromReservations(reservations);
@@ -128,12 +131,12 @@ const useAllocation = () => {
     loadingReservations,
     loadingEvents,
     loagindResources,
-    classesWithOccurrences,
-    reservationsWithOccurrences,
+    classes,
+    reservations,
     events,
     resources,
-    getClassesWithOccurrences,
-    getReservationsWithOccurrences,
+    getClassesFull,
+    getReservationsFull,
     getEvents,
     getResources,
     getAllocation,

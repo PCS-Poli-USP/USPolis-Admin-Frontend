@@ -1,4 +1,3 @@
-import { Occurrence } from 'models/common/occurrence.models';
 import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
@@ -26,9 +25,9 @@ export interface ScheduleResponseBase {
 
 export interface ScheduleResponse extends ScheduleResponseBase {
   occurrences_ids?: number[];
-  occurrences?: Occurrence[];
+  occurrences?: OccurrenceResponse[];
 }
 
-export interface ScheduleWithOccurrencesResponse extends ScheduleResponseBase {
+export interface ScheduleFullResponse extends ScheduleResponseBase {
   occurrences: OccurrenceResponse[];
 }

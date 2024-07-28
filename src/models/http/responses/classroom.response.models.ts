@@ -17,7 +17,7 @@ export interface ClassroomResponse {
   building: string;
 }
 
-export interface ClassroomWithSchedulesResponse extends ClassroomResponse {
+export interface ClassroomFullResponse extends ClassroomResponse {
   schedules: ScheduleResponse[];
   occurrences: OccurrenceResponse[];
 }

@@ -28,8 +28,9 @@ import { useContext, useRef, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import { Event } from './interfaces/allocation.interfaces';
 import useAllocation from 'pages/allocation/hooks/useAllocation';
-import ClassesPDF from './pdf/classesPDF';
+import ClassesPDF from './pdf/ClassesPDF/classesPDF';
 import useCustomToast from 'hooks/useCustomToast';
+import ClassroomsPDF from './pdf/ClassroomsPDF/classroomsPDF';
 
 function Allocation() {
   const { loading, setLoading } = useContext(appContext);
@@ -38,7 +39,12 @@ function Allocation() {
 
   const [nameSearchValue, setNameSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
-  const { events, resources } = useAllocation();
+  const {
+    events,
+    resources,
+    classes,
+    reservations,
+  } = useAllocation();
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
 
   const showToast = useCustomToast();
@@ -54,7 +60,9 @@ function Allocation() {
     if (name && classroom) {
       setFilteredEvents(
         events.filter((event) => {
-          const nameFilterResult = event.title.toLowerCase().includes(nameValue);
+          const nameFilterResult = event.title
+            .toLowerCase()
+            .includes(nameValue);
           const data =
             event.extendedProps.class_data ||
             event.extendedProps.reservation_data;
@@ -64,7 +72,9 @@ function Allocation() {
         }),
       );
     } else if (name && !classroom) {
-      setFilteredEvents(events.filter((event) => event.title.toLowerCase().includes(nameValue)));
+      setFilteredEvents(
+        events.filter((event) => event.title.toLowerCase().includes(nameValue)),
+      );
     } else if (!name && classroom) {
       setFilteredEvents(
         events.filter((event) => {
@@ -92,8 +102,23 @@ function Allocation() {
           <Text fontSize='4xl'>Alocações</Text>
           <Button ml={4} colorScheme='blue'>
             <PDFDownloadLink
-              document={<ClassesPDF />}
+              document={<ClassesPDF classes={classes} />}
               fileName='disciplinas.pdf'
+            >
+              {(params) =>
+                params.loading ? 'Carregando PDF...' : 'Baixar alocação'
+              }
+            </PDFDownloadLink>
+          </Button>
+          <Button ml={4} colorScheme='blue'>
+            <PDFDownloadLink
+              document={
+                <ClassroomsPDF
+                  classes={classes}
+                  reservations={reservations}
+                />
+              }
+              fileName='salas.pdf'
             >
               {(params) =>
                 params.loading ? 'Carregando PDF...' : 'Baixar alocação'

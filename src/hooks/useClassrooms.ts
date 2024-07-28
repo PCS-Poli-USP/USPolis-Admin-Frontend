@@ -3,7 +3,7 @@ import {
   CreateClassroom,
   UpdateClassroom,
 } from 'models/http/requests/classroom.request.models';
-import { ClassroomResponse, ClassroomWithSchedulesResponse } from 'models/http/responses/classroom.response.models';
+import { ClassroomResponse, ClassroomFullResponse } from 'models/http/responses/classroom.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import ClassroomsService from 'services/api/classrooms.service';
 import { sortClassroomResponse } from 'utils/classrooms/classrooms.sorter';
@@ -31,10 +31,10 @@ const useClassrooms = () => {
       });
   }, [showToast]);
 
-  const getClassroomWithSchedules = useCallback(async (id: number) => {
-    let current: ClassroomWithSchedulesResponse | undefined;
+  const listOneFull = useCallback(async (id: number) => {
+    let current: ClassroomFullResponse | undefined;
     await service
-      .getClassroomWithSchedules(id)
+      .listOneFull(id)
       .then((response) => {
         current = response.data;
       })
@@ -118,7 +118,7 @@ const useClassrooms = () => {
     loading,
     classrooms,
     getClassrooms,
-    getClassroomWithSchedules,
+    listOneFull,
     createClassroom,
     updateClassroom,
     deleteClassroom,

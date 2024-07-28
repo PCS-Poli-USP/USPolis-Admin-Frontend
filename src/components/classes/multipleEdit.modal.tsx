@@ -18,14 +18,12 @@ import {
   AlertIcon,
   Skeleton,
 } from '@chakra-ui/react';
-import Class from 'models/common/class.model';
 import MultipleEditAccordion from './multipleEdit.accordion';
 import { useEffect, useState } from 'react';
 import { CalendarIcon } from '@chakra-ui/icons';
 import { BsSearch } from 'react-icons/bs';
 import EventsService from 'services/api/events.service';
-import { ClassesBySubject } from 'utils/mappers/classes.mapper';
-import { sortClassMapBySubject, sortClassroomScheduleMap } from 'utils/sorter';
+import { ClassesBySubject } from 'utils/classes/classes.mapper';
 import { ConflictCalculator } from 'utils/conflict.calculator';
 import { ClassroomSchedule } from 'models/common/classroom.model';
 import ClassroomsService from 'services/api/classrooms.service';
@@ -227,7 +225,7 @@ export default function MultipleEditModal({
       ];
 
       setClassroomSchedulesMap(
-        newClassroomSchedulesMap.sort(sortClassroomScheduleMap),
+        newClassroomSchedulesMap //.sort(sortClassroomScheduleMap),
       );
     }
     setIsUpdatingSchedules(false);
@@ -263,7 +261,7 @@ export default function MultipleEditModal({
         );
         newClassroomSchedulesMap[oldScheduleIndex] = oldSchedule;
         setClassroomSchedulesMap(
-          newClassroomSchedulesMap.sort(sortClassroomScheduleMap),
+          newClassroomSchedulesMap //.sort(sortClassroomScheduleMap),
         );
       }
       setIsUpdatingSchedules(false);

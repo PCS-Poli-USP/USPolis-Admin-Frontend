@@ -1,7 +1,7 @@
 import { ReservationType } from 'utils/enums/reservations.enum';
 import {
   ScheduleResponse,
-  ScheduleWithOccurrencesResponse,
+  ScheduleFullResponse,
 } from './schedule.response.models';
 
 export interface ReservationResponseBase {
@@ -27,7 +27,7 @@ export interface ReservationResponse extends ReservationResponseBase {
   schedule: ScheduleResponse;
 }
 
-export interface ReservationWithOccurrencesResponse
+export interface ReservationFullResponse
   extends ReservationResponseBase {
-  schedule: ScheduleWithOccurrencesResponse;
+  schedule: ScheduleFullResponse;
 }

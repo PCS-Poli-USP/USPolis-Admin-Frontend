@@ -1,12 +1,11 @@
-import { BuildingRef } from './building.model';
+import { SubjectType } from "utils/enums/subjects.enum";
 
 export interface Subject {
-  buildings?: Array<BuildingRef>;
-  id: string;
+  id: number;
   code: string;
   name: string;
-  professors: Array<string>;
-  type: string;
+  professors: string[];
+  type: SubjectType;
   class_credit: number;
   work_credit: number;
   activation: string;
