@@ -19,8 +19,8 @@ import rrulePlugin from '@fullcalendar/rrule';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import DatePickerModal from 'components/allocation/datePicker.modal';
 import EventContent from 'pages/allocation/EventContent/eventContent';
-import eventsByClassroomsPlugin from 'pages/allocation/plugins/EventsByClassrooms/eventsByClassrooms.plugin';
-import eventsByWeekPlugin from 'pages/allocation/plugins/EventsByWeek/eventsByWeek.plugin';
+// import eventsByClassroomsPlugin from 'pages/allocation/plugins/EventsByClassrooms/eventsByClassrooms.plugin';
+// import eventsByWeekPlugin from 'pages/allocation/plugins/EventsByWeek/eventsByWeek.plugin';
 import Navbar from 'components/common/NavBar/navbar.component';
 import Loading from 'components/common/Loading/loading.component';
 import { appContext } from 'context/AppContext';
@@ -46,8 +46,6 @@ function Allocation() {
     reservations,
   } = useAllocation();
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
-
-  const showToast = useCustomToast();
 
   function setCalendarDate(ISOdate: string) {
     const calendarApi = calendarRef.current.getApi();
@@ -106,7 +104,7 @@ function Allocation() {
               fileName='disciplinas.pdf'
             >
               {(params) =>
-                params.loading ? 'Carregando PDF...' : 'Baixar alocação'
+                params.loading ? 'Carregando PDF...' : 'Baixar alocação das disciplinas'
               }
             </PDFDownloadLink>
           </Button>
@@ -121,7 +119,7 @@ function Allocation() {
               fileName='salas.pdf'
             >
               {(params) =>
-                params.loading ? 'Carregando PDF...' : 'Baixar alocação'
+                params.loading ? 'Carregando PDF...' : 'Baixar alocação das salas'
               }
             </PDFDownloadLink>
           </Button>
