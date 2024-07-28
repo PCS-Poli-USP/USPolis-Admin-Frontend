@@ -119,7 +119,7 @@ export default function EditEventModal({
   }
 
   async function tryGetAvailableClassrooms() {
-    setSelectedClassroom(undefined);
+    // setSelectedClassroom(undefined);
     // const response = await classroomsService.getAvailableWithConflictIndicator({
     //   events_ids: classEvents.map((it) => it.id!),
     //   building_id: selectedBuilding?.id!,
