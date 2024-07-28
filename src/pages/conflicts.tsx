@@ -11,7 +11,7 @@ const ConflictsPage = () => {
   const eventsService = new EventsService();
   const conflictsService = new ConflictsService();
 
-  const [conflicts, setConflicts] = useState<Conflict | null>(null);
+  const [conflicts, setConflicts] = useState<Conflict[] | null>(null);
   const [buildingNames, setBuildingNames] = useState<string[] | null>(null);
   const [selectedBuildingName, setSelectedBuildingName] = useState<string>('');
   const [classroomNames, setClassroomNames] = useState<string[] | null>(null);
@@ -68,20 +68,8 @@ const ConflictsPage = () => {
   }, []);
 
   useEffect(() => {
-    setBuildingNames(
-      conflicts?.buildings.map((building) => building.name) || [],
-    );
+    setBuildingNames(conflicts?.map((it) => it.name) || []);
   }, [conflicts]);
-
-  useEffect(() => {
-    if (selectedBuildingName) {
-      setClassroomNames(
-        conflicts?.buildings
-          .find((building) => building.name === selectedBuildingName)
-          ?.classrooms.map((classroom) => classroom.name) || [],
-      );
-    } else setClassroomNames(null);
-  }, [selectedBuildingName, conflicts]);
 
   function fetchData() {
     conflictsService
@@ -94,6 +82,10 @@ const ConflictsPage = () => {
         alert('Erro ao carregar conflitos');
       });
   }
+
+  useEffect(() => {
+    console.log(conflicts);
+  }, [conflicts]);
 
   function handleAllocationEdit(
     events_ids: string[],
@@ -130,11 +122,6 @@ const ConflictsPage = () => {
       });
   }
 
-  function handleEditClick(event: Event) {
-    setSelectedEvent(event);
-    onOpenAllocEdit();
-  }
-
   return (
     <>
       <Navbar />
@@ -156,35 +143,18 @@ const ConflictsPage = () => {
               ))}
             </C.Select>
           </C.Flex>
-          <C.Flex direction={'column'} flex={1}>
-            <C.Text fontSize={'md'}>Sala:</C.Text>
-            <C.Select
-              placeholder='Selecione a sala'
-              onChange={(e) => setSelectedClassroomName(e.target.value)}
-              disabled={!selectedBuildingName}
-            >
-              {classroomNames?.map((classroomName) => (
-                <option key={classroomName} value={classroomName}>
-                  {classroomName}
-                </option>
-              ))}
-            </C.Select>
-          </C.Flex>
         </C.Flex>
         <C.Flex direction={'column'}>
           <C.Accordion allowToggle>
-            {selectedBuildingName && selectedClassroomName ? (
-              conflicts?.buildings
-                .find((building) => building.name === selectedBuildingName)
-                ?.classrooms.find(
-                  (classroom) => classroom.name === selectedClassroomName,
-                )
-                ?.week_days.map((week_day) => (
+            {selectedBuildingName ? (
+              conflicts
+                ?.find((it) => it.name === selectedBuildingName)
+                ?.conflicts.map((classroom) => (
                   <C.AccordionItem>
                     <h2>
                       <C.AccordionButton>
                         <C.Box flex='1' textAlign='left'>
-                          {week_day.name}
+                          {classroom.name}
                         </C.Box>
                         <C.AccordionIcon />
                       </C.AccordionButton>
@@ -194,7 +164,7 @@ const ConflictsPage = () => {
                       flexDirection='column'
                       gap={4}
                     >
-                      {week_day.events.map((event_group, index) => (
+                      {classroom.conflicts.map((event_group, index) => (
                         <C.Flex
                           key={index}
                           direction={'column'}
@@ -206,6 +176,7 @@ const ConflictsPage = () => {
                           borderRadius={4}
                           padding={4}
                         >
+                          <C.Heading size='md'>{event_group[0].date}</C.Heading>
                           {event_group.map((event) => (
                             <C.Flex
                               key={event.id}
@@ -218,28 +189,19 @@ const ConflictsPage = () => {
                             >
                               <C.Flex direction={'column'} flex={1}>
                                 <C.Text fontSize={'md'}>
-                                  <strong>Início: {event.start_time}</strong>
+                                  <strong>
+                                    Início: {event.start_time.toLocaleString()}
+                                  </strong>
                                 </C.Text>
                                 <C.Text fontSize={'md'}>
-                                  <strong>Fim: {event.end_time}</strong>
+                                  <strong>
+                                    Fim: {event.end_time.toLocaleString()}
+                                  </strong>
                                 </C.Text>
                               </C.Flex>
                               <C.Flex direction={'column'} flex={1}>
                                 <C.Text fontSize={'md'}>
-                                  Disciplina: {event.subject_name}
-                                </C.Text>
-                                <C.Text fontSize={'md'}>
-                                  Professores:{' '}
-                                  {event.professors?.map((professor, index) => (
-                                    <>
-                                      {professor}
-                                      {event &&
-                                      event.professors &&
-                                      index !== event.professors.length - 1
-                                        ? ', '
-                                        : ''}
-                                    </>
-                                  ))}
+                                  Disciplina: {event.subject_code}
                                 </C.Text>
                               </C.Flex>
                               <C.Flex direction={'column'} flex={1}>
@@ -250,9 +212,7 @@ const ConflictsPage = () => {
                                   Código de disciplina: {event.subject_code}
                                 </C.Text>
                               </C.Flex>
-                              <C.Button onClick={() => handleEditClick(event)}>
-                                Editar Alocação
-                              </C.Button>
+                              <C.Button>Editar Alocação</C.Button>
                             </C.Flex>
                           ))}
                         </C.Flex>

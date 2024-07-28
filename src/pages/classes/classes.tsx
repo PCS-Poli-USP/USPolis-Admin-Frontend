@@ -177,7 +177,7 @@ function Classes() {
       .catch(({ response }: AxiosError<any>) =>
         showToast(
           'Erro!',
-          `Erro ao buscar disciplinas: ${response?.data.message}`,
+          `${response?.data.detail}`,
           'error',
         ),
       )
@@ -234,12 +234,14 @@ function Classes() {
         calendars={calendars}
         selectedClass={selectedClass}
       />
-      <AllocateClassModal
-        isOpen={isOpenAllocEdit}
-        onClose={onCloseAllocEdit}
-        refresh={getClasses}
-        class_={selectedClass}
-      />
+      {selectedClass && (
+        <AllocateClassModal
+          isOpen={isOpenAllocEdit}
+          onClose={onCloseAllocEdit}
+          refresh={getClasses}
+          class_={selectedClass}
+        />
+      )}
       {/* <EditEventModal
         isOpen={isOpenAllocEdit}
         onClose={onCloseAllocEdit}
@@ -261,7 +263,6 @@ function Classes() {
         classes={getCheckedClasses()}
         onRefresh={() => fetchData()}
       /> */}
-
       <Center>
         <Box p={4} w={'100%'} overflow='auto'>
           <Flex align='center'>

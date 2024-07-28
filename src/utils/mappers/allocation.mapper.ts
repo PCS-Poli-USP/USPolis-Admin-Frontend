@@ -2,8 +2,46 @@ import { EventRenderRange } from '@fullcalendar/react';
 import { Classrooms } from 'utils/enums/clasrooms.enum';
 import { WeekDays } from 'utils/enums/weekDays.enum';
 import Event, { EventByClassrooms } from 'models/common/event.model';
+import { Allocation } from 'models/common/allocation.model';
+import { ClassResponse } from 'models/http/responses/class.response.models';
 
-export function AllocationEventsMapper(allocation: Event[]) {
+export function AllocationClassesMapper(classes: ClassResponse[]) {
+  const allocations: Allocation[] = [];
+  classes.forEach((class_) => {
+    const class_allocations: Allocation[] = class_.schedules.map(
+      (schedule) => ({
+        title: class_.subject_code,
+        daysOfWeek: [Number(schedule.week_day)],
+        startTime: schedule.start_time,
+        endTime: schedule.end_time,
+        startRecur: schedule.start_date,
+        endRecur: schedule.end_date,
+        resourceId: schedule.classroom ? String(schedule.classroom) : 'Não Alocado',
+        extendedProps: {
+          id: String(schedule.id),
+          building: schedule.building,
+          class_code: class_.code,
+          subject_code: class_.subject_code,
+          subject_name: class_.subject_name,
+          classroom: schedule.classroom
+            ? String(schedule.classroom)
+            : 'Não Alocado',
+          has_to_be_allocated: class_.ignore_to_allocate,
+          professors: class_.professors || [],
+          start_time: schedule.start_time,
+          end_time: schedule.end_time,
+          week_day: String(schedule.week_day),
+          class_code_text: `Turma ${class_.code}`,
+          subscribers: class_.subscribers,
+        },
+      }),
+    );
+    allocations.push(...class_allocations);
+  });
+  return allocations;
+}
+
+export function AllocationEventsMapper(allocation: Event[]): Allocation[] {
   return allocation.map((it) => ({
     title: it.subject_code,
     daysOfWeek: [WeekDayInt(it.week_day)],
@@ -20,7 +58,7 @@ export function AllocationEventsMapper(allocation: Event[]) {
       subject_name: it.subject_name,
       classroom: it.classroom || Classrooms.UNALLOCATED,
       has_to_be_allocated: it.has_to_be_allocated,
-      professors: it.professors,
+      professors: it.professors || [],
       start_time: it.start_time,
       end_time: it.end_time,
       week_day: it.week_day,

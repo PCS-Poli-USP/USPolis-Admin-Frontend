@@ -9,7 +9,7 @@ export default class ClonflictsService extends HttpService {
     super(`${USPOLIS_SERVER_URL}/conflicts`);
   }
 
-  list(): Promise<AxiosResponse<Conflict>> {
+  list(): Promise<AxiosResponse<Conflict[]>> {
     return this.http.get('');
   }
 }
