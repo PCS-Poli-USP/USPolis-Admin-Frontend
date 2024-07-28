@@ -5,6 +5,8 @@ import Classroom, {
   ClassroomWithConflictCount,
 } from 'models/common/classroom.model';
 import HttpService from './http.service';
+import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import { CreateClassroom, UpdateClassroom } from 'models/http/requests/classroom.request.models';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
@@ -18,37 +20,46 @@ interface GetClassroomsSchedulesProps {
   buildings: string[];
 }
 
+
 export default class ClassroomsService extends HttpService {
   constructor() {
     super(`${USPOLIS_SERVER_URL}/classrooms`);
   }
 
-  list(): Promise<AxiosResponse<Array<Classroom>>> {
+  list(): Promise<AxiosResponse<Array<ClassroomResponse>>> {
     return this.http.get('');
   }
 
-  create(data: any): Promise<AxiosResponse<any>> {
+  create(data: CreateClassroom): Promise<AxiosResponse<ClassroomResponse>> {
     return this.http.post('', data);
   }
 
-  delete(id: string): Promise<AxiosResponse<any>> {
+  delete(id: number): Promise<AxiosResponse<undefined>> {
     return this.http.delete(`/${id}`);
   }
 
-  update(id: string, data: any): Promise<AxiosResponse<any>> {
-    console.log('updating...');
+  update(id: number, data: UpdateClassroom): Promise<AxiosResponse<ClassroomResponse>> {
     return this.http.put(`/${id}`, data);
   }
+  // getAvailable(
+  //   week_day: string,
+  //   start_time: string,
+  //   end_time: string,
+  // ): Promise<AxiosResponse<AvailableClassroom[]>> {
+  //   return this.http.get('available', {
+  //     params: { week_day, start_time, end_time },
+  //   });
+  // }
 
-  getAvailable(
-    week_day: string,
-    start_time: string,
-    end_time: string,
-  ): Promise<AxiosResponse<AvailableClassroom[]>> {
-    return this.http.get('available', {
-      params: { week_day, start_time, end_time },
-    });
-  }
+  // async getAvailableWithConflictIndicator(
+  //   data: GetAvailableWithConflictIndicatorProps,
+  // ): Promise<AxiosResponse<AvailableClassroom[]>> {
+  //   const response = await this.http.post(
+  //     'available-with-conflict-check',
+  //     data,
+  //   );
+  //   return response;
+  // }
 
   getWithConflictCount(
     schedule_id: number,
@@ -63,31 +74,31 @@ export default class ClassroomsService extends HttpService {
     return this.http.get(`/${building}`);
   }
 
-  getAllSchedules() {
-    return this.http.get('schedules');
-  }
+  // getAllSchedules() {
+  //   return this.http.get('schedules');
+  // }
 
-  getClassroomSchedule(
-    classroom: string,
-    building: string,
-  ): Promise<AxiosResponse<ClassroomSchedule>> {
-    return this.http.get('/classroom-schedule', {
-      params: { classroom, building },
-    });
-  }
+  // getClassroomSchedule(
+  //   classroom: string,
+  //   building: string,
+  // ): Promise<AxiosResponse<ClassroomSchedule>> {
+  //   return this.http.get('/classroom-schedule', {
+  //     params: { classroom, building },
+  //   });
+  // }
 
-  getClassroomsSchedulesByBuilding(
-    building: string,
-  ): Promise<AxiosResponse<ClassroomSchedule[]>> {
-    return this.http.get(`/${building}/classrooms-schedules`);
-  }
+  // getClassroomsSchedulesByBuilding(
+  //   building: string,
+  // ): Promise<AxiosResponse<ClassroomSchedule[]>> {
+  //   return this.http.get(`/${building}/classrooms-schedules`);
+  // }
 
-  async getManyClassroomsSchedules(
-    data: GetClassroomsSchedulesProps,
-  ): Promise<AxiosResponse<ClassroomSchedule[]>> {
-    const response = await this.http.get('/many-classrooms-schedules', {
-      params: { classrooms: data.classrooms, buildings: data.buildings },
-    });
-    return response;
-  }
+  // async getManyClassroomsSchedules(
+  //   data: GetClassroomsSchedulesProps,
+  // ): Promise<AxiosResponse<ClassroomSchedule[]>> {
+  //   const response = await this.http.get('/many-classrooms-schedules', {
+  //     params: { classrooms: data.classrooms, buildings: data.buildings },
+  //   });
+  //   return response;
+  // }
 }

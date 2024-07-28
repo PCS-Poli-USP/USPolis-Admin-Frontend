@@ -38,17 +38,17 @@ export default function AutomaticAllocationAccordion({
   const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    if (classrooms.length <= 0) fetchClassrooms();
+    // if (classrooms.length <= 0) fetchClassrooms();
     if (allocated) setAllocatedEvents(allocated);
     if (unallocated) setUnallocatedEvents(unallocated);
   }, [classrooms, allocated, unallocated]);
 
-  function fetchClassrooms() {
-    classroomService.list().then((it) => {
-      it.data.sort(sortClassrooms);
-      setClassrooms(it.data);
-    });
-  }
+  // function fetchClassrooms() {
+  //   classroomService.list().then((it) => {
+  //     it.data.sort(sortClassrooms);
+  //     setClassrooms(it.data);
+  //   });
+  // }
 
   allocatedEvents.sort(sortEventsBySubjectAndClass);
   unallocatedEvents.sort(sortEventsBySubjectAndClass);
