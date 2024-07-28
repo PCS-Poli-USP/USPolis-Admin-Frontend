@@ -29,7 +29,6 @@ import { BsSearch } from 'react-icons/bs';
 import { Event } from './interfaces/allocation.interfaces';
 import useAllocation from 'pages/allocation/hooks/useAllocation';
 import ClassesPDF from './pdf/ClassesPDF/classesPDF';
-import useCustomToast from 'hooks/useCustomToast';
 import ClassroomsPDF from './pdf/ClassroomsPDF/classroomsPDF';
 
 function Allocation() {
