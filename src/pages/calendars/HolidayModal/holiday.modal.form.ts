@@ -14,6 +14,17 @@ export const formFields = {
       ),
     defaultValue: 0,
   },
+  name: {
+    validator: yup
+      .string()
+      .required()
+      .test(
+        'is-valid-name',
+        'Nome inválido',
+        (value) => !HolidayValidator.isInvalidName(value),
+      ),
+    dafaultValue: '',
+  },
   date: {
     validator: yup
       .string()
@@ -30,9 +41,11 @@ export const formFields = {
 export const schema = yup.object<HolidayForm>().shape({
   category_id: formFields.category_id.validator,
   date: formFields.date.validator,
+  name: formFields.name.validator,
 });
 
 export const defaultValues: HolidayForm = {
   category_id: formFields.category_id.defaultValue,
   date: formFields.date.defaultValue,
+  name: formFields.name.dafaultValue,
 };

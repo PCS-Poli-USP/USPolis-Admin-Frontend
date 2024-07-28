@@ -14,19 +14,16 @@ import {
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Input } from 'components/common';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { CalendarForm, CalendarModalProps } from './calendar.modal.interface';
 import { defaultValues, schema } from './calendar.modal.form';
 import {
   CreateCalendar,
   UpdateCalendar,
 } from 'models/http/requests/calendar.request.models';
-import { MultiSelect, Option } from 'components/common/form/MultiSelect';
+import { MultiSelect } from 'components/common/form/MultiSelect';
 
 function CalendarModal(props: CalendarModalProps) {
-  const [selectedOptions, setSelectedOptions] = useState<Option[] | undefined>(
-    undefined,
-  );
   const form = useForm<CalendarForm>({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
@@ -64,17 +61,15 @@ function CalendarModal(props: CalendarModalProps) {
   function handleCloseModal() {
     reset(defaultValues);
     clearErrors();
-    setSelectedOptions(undefined);
     props.onClose();
   }
 
   useEffect(() => {
     if (props.selectedCalendar) {
-      const selected: Option[] = props.selectedCalendar.categories.map(
-        (category) => ({ label: category.name, value: category.id }),
-      );
-      setSelectedOptions(selected);
-      reset({ name: props.selectedCalendar.name });
+      const selected = props.selectedCalendar.categories
+        ? props.selectedCalendar.categories.map((category) => category.id)
+        : undefined;
+      reset({ name: props.selectedCalendar.name, categories_ids: selected });
     }
   }, [reset, props]);
 
@@ -94,9 +89,12 @@ function CalendarModal(props: CalendarModalProps) {
           <form>
             <ModalBody>
               <VStack spacing={4}>
-                <Alert status={'error'} hidden={props.categories.length !== 0}>
+                <Alert
+                  status={'warning'}
+                  hidden={props.categories.length !== 0}
+                >
                   <AlertIcon />
-                  Nenhuma Categoria de Feriado disponível, crie alguma.
+                  Nenhuma categoria de feriado disponível, crie alguma.
                 </Alert>
                 <Input
                   label={'Nome'}
@@ -105,9 +103,8 @@ function CalendarModal(props: CalendarModalProps) {
                   placeholder={'Nome do calendário'}
                 />
                 <MultiSelect
-                  label={'Categorias de Feriados'}
+                  label={'Categorias de Feriados (Opcional)'}
                   name={'categories_ids'}
-                  values={selectedOptions}
                   options={props.categories.map((category) => ({
                     value: category.id,
                     label: category.name,

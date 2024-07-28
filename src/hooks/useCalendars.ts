@@ -1,5 +1,8 @@
 import useCustomToast from 'hooks/useCustomToast';
-import { CreateCalendar, UpdateCalendar } from 'models/http/requests/calendar.request.models';
+import {
+  CreateCalendar,
+  UpdateCalendar,
+} from 'models/http/requests/calendar.request.models';
 import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
 import { useCallback, useEffect, useState } from 'react';
 import CalendarsService from 'services/api/calendars.service';
@@ -21,6 +24,7 @@ const useCalendars = () => {
         setCalendars(response.data.sort(sortCalendarResponse));
       })
       .catch((error) => {
+        console.log(error);
         showToast('Erro', 'Erro ao carregar calendários', 'error');
       })
       .finally(() => {
@@ -42,6 +46,7 @@ const useCalendars = () => {
           getCalendars();
         })
         .catch((error) => {
+          console.log(error);
           showToast('Erro', `Erro ao criar calendário: ${error}`, 'error');
         })
         .finally(() => {
@@ -51,25 +56,29 @@ const useCalendars = () => {
     [getCalendars, showToast],
   );
 
-  const updateCalendar = useCallback(async (id: number, data: UpdateCalendar) => {
-    setLoading(true);
-    await service
-      .update(id, data)
-      .then((response) => {
-        showToast('Sucesso', `Calendário atualizado com sucesso!`, 'success');
-        getCalendars();
-      })
-      .catch((error) => {
-        showToast(
-          'Erro',
-          `Erro ao atualizar o calendário ${data.name}: ${error}`,
-          'error',
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [getCalendars, showToast]);
+  const updateCalendar = useCallback(
+    async (id: number, data: UpdateCalendar) => {
+      setLoading(true);
+      await service
+        .update(id, data)
+        .then((response) => {
+          showToast('Sucesso', `Calendário atualizado com sucesso!`, 'success');
+          getCalendars();
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao atualizar o calendário ${data.name}: ${error}`,
+            'error',
+          );
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [getCalendars, showToast],
+  );
 
   const deleteCalendar = useCallback(
     async (id: number) => {

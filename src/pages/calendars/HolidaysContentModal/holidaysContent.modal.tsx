@@ -14,7 +14,6 @@ import {
 } from '@chakra-ui/react';
 import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
 import { useState } from 'react';
-import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
 import Dialog from 'components/common/Dialog/dialog.component';
 import { datetimeToDate } from 'utils/formatters';
 import useHolidaysCategories from 'hooks/useHolidaysCategories';
@@ -24,6 +23,7 @@ import HolidayCategoryModal from 'pages/calendars/HolidayCategoryModal';
 import HolidayModal from 'pages/calendars/HolidayModal';
 import { HolidaysContentModalProps } from './holidaysContent.modal.interface';
 import { AddIcon } from '@chakra-ui/icons';
+import { HolidayResponse } from 'models/http/responses/holiday.response.models';
 
 function HolidaysContentModal(props: HolidaysContentModalProps) {
   const {
@@ -51,7 +51,7 @@ function HolidaysContentModal(props: HolidaysContentModalProps) {
     HolidayCategoryResponse | undefined
   >(undefined);
   const [selectedHoliday, setSelectedHoliday] = useState<
-    HolidayUnfetchResponse | undefined
+    HolidayResponse | undefined
   >(undefined);
   const [isUpdateHolidayCategory, setIsUpdateHolidayCategory] = useState(false);
   const [isUpdateHoliday, setIsUpdateHoliday] = useState(false);
@@ -86,13 +86,13 @@ function HolidaysContentModal(props: HolidaysContentModalProps) {
     onOpenHolidayModal();
   }
 
-  function handleEditHolidayButton(data: HolidayUnfetchResponse) {
+  function handleEditHolidayButton(data: HolidayResponse) {
     setSelectedHoliday(data);
     setIsUpdateHoliday(true);
     onOpenHolidayModal();
   }
 
-  function handleDeleteHolidayButton(data: HolidayUnfetchResponse) {
+  function handleDeleteHolidayButton(data: HolidayResponse) {
     setSelectedHoliday(data);
     onOpenDeleteHolidayDialog();
   }

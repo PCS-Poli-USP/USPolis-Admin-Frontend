@@ -19,9 +19,9 @@ import {
 import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
 import HolidayCategoryAccordionItem from './holidayCategory.accordion.item';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
 import { useEffect, useState } from 'react';
 import { sortAllHolidaysFromHolidaysCategories } from 'utils/holidaysCategories/holidaysCategories.sorter';
+import { HolidayResponse } from 'models/http/responses/holiday.response.models';
 
 interface HolidayCategoryAccordionProps {
   loading: boolean;
@@ -29,8 +29,8 @@ interface HolidayCategoryAccordionProps {
   onHolidayCategoryUpdate: (data: HolidayCategoryResponse) => void;
   onHolidayCategoryDelete: (data: HolidayCategoryResponse) => void;
   onHolidayCreate: (category: HolidayCategoryResponse) => void;
-  onHolidayUpdate: (data: HolidayUnfetchResponse) => void;
-  onHolidayDelete: (data: HolidayUnfetchResponse) => void;
+  onHolidayUpdate: (data: HolidayResponse) => void;
+  onHolidayDelete: (data: HolidayResponse) => void;
 }
 
 export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
@@ -64,7 +64,7 @@ export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
                     <Box as='span' flex='1' textAlign='left'>
                       <Text
                         as={'b'}
-                      >{`Categoria de Feriado - ${category.name}`}</Text>
+                      >{`Categoria de Feriado: ${category.name}`}</Text>
                     </Box>
                     {isExpanded ? (
                       <MinusIcon fontSize='12px' />

@@ -4,14 +4,14 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
+import { HolidayResponse } from 'models/http/responses/holiday.response.models';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { datetimeToDate } from 'utils/formatters';
 
 interface HolidayCategoryAccordionItemProps {
-  holiday: HolidayUnfetchResponse;
-  onHolidayUpdate: (data: HolidayUnfetchResponse) => void;
-  onHolidayDelete: (data: HolidayUnfetchResponse) => void;
+  holiday: HolidayResponse;
+  onHolidayUpdate: (data: HolidayResponse) => void;
+  onHolidayDelete: (data: HolidayResponse) => void;
 }
 
 function HolidayCategoryAccordionItem(
@@ -19,7 +19,7 @@ function HolidayCategoryAccordionItem(
 ) {
   return (
     <HStack spacing={4} alignSelf={'flex-start'} alignItems={'center'}>
-      <Text>{`Data: ${datetimeToDate(props.holiday.date)}`}</Text>
+      <Text>{`${props.holiday.name} - ${datetimeToDate(props.holiday.date)}`}</Text>
       <Tooltip label='Editar Feriado'>
         <IconButton
           colorScheme='yellow'
