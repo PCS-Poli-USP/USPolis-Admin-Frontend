@@ -37,7 +37,6 @@ export function Select({
     control,
     formState: { errors },
   } = useFormContext();
-
   return (
     <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
@@ -48,7 +47,7 @@ export function Select({
           <ChakraSelect
             {...field}
             id={name}
-            value={field.value ? field.value : ''}
+            value={field.value !== undefined ? field.value : ''}
             disabled={disabled || isLoading}
             icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
             onChange={(event) => {
