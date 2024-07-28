@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import HttpService from './http.service';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { ReservationResponse, ReservationFullResponse } from 'models/http/responses/reservation.response.models';
 import {
   CreateReservation,
   UpdateReservation,
@@ -15,6 +15,10 @@ export default class ReservationsService extends HttpService {
 
   list(): Promise<AxiosResponse<Array<ReservationResponse>>> {
     return this.http.get('');
+  }
+
+  listFull(): Promise<AxiosResponse<Array<ReservationFullResponse>>> {
+    return this.http.get('/full/');
   }
 
   create(data: CreateReservation): Promise<AxiosResponse<ReservationResponse>> {

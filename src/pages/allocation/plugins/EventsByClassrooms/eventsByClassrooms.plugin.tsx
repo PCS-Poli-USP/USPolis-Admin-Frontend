@@ -20,7 +20,7 @@ import {
   ClassEventsMapper,
   EventsByClassroomMapper,
 } from 'utils/mappers/allocation.mapper';
-import EditEventModal from '../editEvent.modal';
+import EditEventModal from '../../../../components/allocation/editEvent.modal';
 import EventsService from 'services/api/events.service';
 
 function ClassroomsTables(props: any) {

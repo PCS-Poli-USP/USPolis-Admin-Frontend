@@ -39,26 +39,26 @@ interface ClassesColumnsProps {
 export const getClassesColumns = (
   props: ClassesColumnsProps,
 ): ColumnDef<ClassResponse>[] => [
-  {
-    header: 'Marcar',
-    maxSize: 70,
-    meta: {
-      isCheckBox: true,
-      markAllClickFn: props.handleCheckAllClick,
-      dismarkAllClickFn: props.handleCheckAllClick,
-    },
-    cell: ({ row }) => (
-      <Box>
-        <Checkbox
-          isChecked={props.checkMap[row.index]}
-          ml={5}
-          onChange={(event) =>
-            props.handleCheckboxClick(row.original.id, event.target.checked)
-          }
-        />
-      </Box>
-    ),
-  },
+  // {
+  //   header: 'Marcar',
+  //   maxSize: 70,
+  //   meta: {
+  //     isCheckBox: true,
+  //     markAllClickFn: props.handleCheckAllClick,
+  //     dismarkAllClickFn: props.handleCheckAllClick,
+  //   },
+  //   cell: ({ row }) => (
+  //     <Box>
+  //       <Checkbox
+  //         isChecked={props.checkMap[row.index]}
+  //         ml={5}
+  //         onChange={(event) =>
+  //           props.handleCheckboxClick(row.original.id, event.target.checked)
+  //         }
+  //       />
+  //     </Box>
+  //   ),
+  // },
   {
     accessorKey: 'subject_code',
     header: 'Disciplina',
@@ -240,7 +240,7 @@ export const getClassesColumns = (
             onClick={() => props.handleDeleteClassClick(row.original)}
           />
         </Tooltip>
-        <Tooltip label='Excluir Alocação'>
+        {/* <Tooltip label='Excluir Alocação'>
           <IconButton
             colorScheme='red'
             size='sm'
@@ -249,7 +249,7 @@ export const getClassesColumns = (
             icon={<BsCalendarXFill />}
             onClick={() => props.handleDeleteAllocClick(row.original)}
           />
-        </Tooltip>
+        </Tooltip> */}
       </HStack>
     ),
   },

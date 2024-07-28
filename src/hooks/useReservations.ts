@@ -45,6 +45,7 @@ const useReservations = () => {
           getReservations();
         })
         .catch((error) => {
+          console.log(error);
           showToast('Erro', `Erro ao criar reserva: ${error}`, 'error');
         })
         .finally(() => {

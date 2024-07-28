@@ -1,8 +1,8 @@
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { ReservationResponseBase } from 'models/http/responses/reservation.response.models';
 
 export function sortReservationsResponse(
-  A: ReservationResponse,
-  B: ReservationResponse,
+  A: ReservationResponseBase,
+  B: ReservationResponseBase,
 ) {
   if (A.building_name < B.building_name) return -1;
   if (A.building_name > B.building_name) return 1;

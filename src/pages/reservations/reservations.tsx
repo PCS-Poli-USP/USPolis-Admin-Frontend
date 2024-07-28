@@ -42,9 +42,15 @@ function Reservations() {
   const [isUpdate, setIsUpdate] = useState(false);
 
   const columns = getReservationsColumns({
+    handleDuplicateClick: handleDuplicateClick,
     handleEditClick: handleEditClick,
     handleDeleteClick: handleDeleteClick,
   });
+
+  function handleDuplicateClick(data: ReservationResponse) {
+    setSelectedReservation(data);
+    onOpenModal();
+  }
 
   function handleEditClick(data: ReservationResponse) {
     setSelectedReservation(data);

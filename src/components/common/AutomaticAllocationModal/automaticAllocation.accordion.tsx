@@ -17,9 +17,7 @@ import Classroom from 'models/common/classroom.model';
 import Event from 'models/common/event.model';
 
 import { useEffect, useState } from 'react';
-import { weekDaysFormatter } from 'utils/classes/classes.formatter';
 import ClassroomsService from 'services/api/classrooms.service';
-import { sortClassrooms, sortEventsBySubjectCode } from 'utils/sorter';
 
 interface AutomaticAllocationAccordionProps {
   onEdit: (event: Event) => void;
@@ -50,8 +48,8 @@ export default function AutomaticAllocationAccordion({
   //   });
   // }
 
-  allocatedEvents.sort(sortEventsBySubjectCode);
-  unallocatedEvents.sort(sortEventsBySubjectCode);
+  // allocatedEvents.sort(sortEventsBySubjectCode);
+  // unallocatedEvents.sort(sortEventsBySubjectCode);
 
   return (
     <Accordion
@@ -75,7 +73,7 @@ export default function AutomaticAllocationAccordion({
               <BsBookHalf />
               <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
               <CalendarIcon />
-              <Text>{`${weekDaysFormatter(value.week_day)}, ${
+              <Text>{`${(value.week_day)}, ${
                 value.start_time
               } às ${value.end_time}`}</Text>
               <BsHouseFill />
@@ -107,7 +105,7 @@ export default function AutomaticAllocationAccordion({
                 <BsBookHalf />
                 <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
                 <CalendarIcon />
-                <Text>{`${weekDaysFormatter(value.week_day)}, ${
+                <Text>{`${(value.week_day)}, ${
                   value.start_time
                 } às ${value.end_time}`}</Text>
                 <Button

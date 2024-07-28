@@ -1,5 +1,5 @@
 import useCustomToast from 'hooks/useCustomToast';
-import { CreateBuilding, UpdateBuilding } from 'models/common/building.model';
+import { CreateBuilding, UpdateBuilding } from 'models/http/requests/building.request.models';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import BuildingsService from 'services/api/buildings.service';

@@ -13,7 +13,7 @@ import { WeekDay } from 'utils/enums/weekDays.enum';
 import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { SelectInput } from 'components/common/form/SelectInput';
 import ClassroomCalendar from 'components/common/ClassroomCalendar';
-import { ClassroomWithSchedulesResponse } from 'models/http/responses/classroom.response.models';
+import { ClassroomFullResponse } from 'models/http/responses/classroom.response.models';
 import useClassrooms from 'hooks/useClassrooms';
 import { sortDates } from 'utils/holidays/holidays.sorter';
 
@@ -26,10 +26,10 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     setHighlightedDays,
     setSelectedDays,
   } = useDateCalendarPicker();
-  const { getClassroomWithSchedules } = useClassrooms();
+  const { listOneFull } = useClassrooms();
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
   const [selectedClassroom, setSelectedClassroom] =
-    useState<ClassroomWithSchedulesResponse>();
+    useState<ClassroomFullResponse>();
   const [isDaily, setIsDayli] = useState(false);
   const [isMonthly, setIsMonthly] = useState(false);
   const [isCustom, setIsCustom] = useState(false);
@@ -53,7 +53,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
 
     if (props.selectedReservation) {
       if (props.selectedReservation.schedule.occurrences) {
-        setSelectedDays(props.selectedReservation.schedule.occurrences.map((occur) => occur.date));
+        setSelectedDays(
+          props.selectedReservation.schedule.occurrences.map(
+            (occur) => occur.date,
+          ),
+        );
       }
       handleChangeRecurrence(props.selectedReservation.schedule.recurrence);
     }
@@ -88,9 +92,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   }
 
   async function handleSelectClassroom(id: number) {
-    const classroom = await getClassroomWithSchedules(id);
+    const classroom = await listOneFull(id);
     setSelectedClassroom(classroom);
-    setHighlightedDays(classroom ? classroom.occurrences.map((occur) => occur.date) : []);
+    setHighlightedDays(
+      classroom ? classroom.occurrences.map((occur) => occur.date) : [],
+    );
   }
 
   return (
@@ -159,7 +165,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               textAlign={'center'}
               fontSize={'lg'}
               rounded={10}
-              backgroundColor={isSelecting ? 'lightgreen' : undefined}
+              hidden={!isSelecting}
               fontWeight={isSelecting ? 'bold' : 'thin'}
               color={
                 isSelecting

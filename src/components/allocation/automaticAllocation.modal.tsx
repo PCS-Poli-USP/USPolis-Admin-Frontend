@@ -18,7 +18,6 @@ import AutomaticAllocationAccordion from './automaticAllocation.accordion';
 import Event, { EventByClassrooms } from 'models/common/event.model';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import { useEffect, useState } from 'react';
-import { EventToEventByClassroom } from 'utils/classes/classes.formatter';
 import EventsService from 'services/api/events.service';
 
 interface AutomaticAllocationModalProps {
@@ -88,7 +87,7 @@ export default function AutomaticAllocationModal({
   }, [allocatedEvents, unallocatedEvents]);
 
   function handleEditEventClick(event: Event) {
-    setSelectedEvent(EventToEventByClassroom(event));
+    // setSelectedEvent(EventToEventByClassroom(event));
     onOpenEditEventModal();
   }
 

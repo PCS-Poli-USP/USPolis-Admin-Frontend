@@ -1,6 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import Allocation from 'pages/allocation';
-import Classes from 'pages/classes/classes';
+import Allocation from 'pages/allocation/allocation';
+import Classes from 'pages/classes/';
 import Classrooms from 'pages/classrooms/classrooms';
 import InstitutionalEvents from 'pages/institutionalEvents';
 import ReactDOM from 'react-dom/client';
@@ -21,11 +21,11 @@ import { Amplify } from 'aws-amplify';
 import awsConfig from 'aws-config';
 import AuthRoute from 'components/routes/auth.route';
 import AppContextProvider from 'context/AppContext';
-import Buildings from 'pages/buildings';
+import Buildings from 'pages/buildings/buildings';
 import Users from 'pages/users/users';
 import ConflictsPage from 'pages/conflicts';
 import Subjects from 'pages/subjects/subjects';
-import Calendars from 'pages/calendars';
+import Calendars from 'pages/calendars/';
 import Reservations from 'pages/reservations';
 
 Amplify.configure(awsConfig);

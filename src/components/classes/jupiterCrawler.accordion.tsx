@@ -9,7 +9,6 @@ import {
   ListItem,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { sortSubjects } from 'utils/sorter';
 
 interface JupiterCrawlerAccordionProps {
   success: string[];
@@ -28,8 +27,8 @@ export default function JupiterCrawlerAccordion({
     if (failed.length > 0) setFailedSubjects(failed);
   }, [success, failed]);
 
-  success.sort(sortSubjects);
-  failed.sort(sortSubjects);
+  success.sort((a, b) => a.localeCompare(b));
+  failed.sort((a, b) => a.localeCompare(b));
 
   return (
     <Accordion

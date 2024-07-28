@@ -19,6 +19,16 @@ export namespace Recurrence {
     return translations[recurrence];
   }
 
+  export function toRRule(recurrence: Recurrence) {
+    if (recurrence === Recurrence.MONTHLY) return 'monthly';
+    return 'weekly';
+  }
+
+  export function toRRuleInterval(recurrence: Recurrence): number {
+    if (recurrence === Recurrence.BIWEEKLY) return 2;
+    return 1;
+  }
+
   export function getValues(): Recurrence[] {
     return [
       Recurrence.DAILY,

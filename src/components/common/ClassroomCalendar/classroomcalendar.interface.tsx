@@ -1,7 +1,7 @@
-import { ClassroomWithSchedulesResponse } from "models/http/responses/classroom.response.models";
+import { ClassroomFullResponse } from "models/http/responses/classroom.response.models";
 
 export interface ClassroomCalendarProps {
-  classroom?: ClassroomWithSchedulesResponse;
+  classroom?: ClassroomFullResponse;
   h?: number;
   w?: number;
 }

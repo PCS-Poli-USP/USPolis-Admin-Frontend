@@ -1,12 +1,14 @@
 import { AxiosResponse } from 'axios';
-import Classroom, {
-  AvailableClassroom,
-  ClassroomSchedule,
-  ClassroomWithConflictCount,
-} from 'models/common/classroom.model';
+import { ClassroomWithConflictCount } from 'models/common/classroom.model';
 import HttpService from './http.service';
-import { ClassroomResponse, ClassroomWithSchedulesResponse } from 'models/http/responses/classroom.response.models';
-import { CreateClassroom, UpdateClassroom } from 'models/http/requests/classroom.request.models';
+import {
+  ClassroomFullResponse,
+  ClassroomResponse,
+} from 'models/http/responses/classroom.response.models';
+import {
+  CreateClassroom,
+  UpdateClassroom,
+} from 'models/http/requests/classroom.request.models';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
@@ -20,7 +22,6 @@ interface GetClassroomsSchedulesProps {
   buildings: string[];
 }
 
-
 export default class ClassroomsService extends HttpService {
   constructor() {
     super(`${USPOLIS_SERVER_URL}/classrooms`);
@@ -29,9 +30,11 @@ export default class ClassroomsService extends HttpService {
   list(): Promise<AxiosResponse<Array<ClassroomResponse>>> {
     return this.http.get('');
   }
-  
-  getClassroomWithSchedules(id: number): Promise<AxiosResponse<ClassroomWithSchedulesResponse>> {
-    return this.http.get(`/with-schedules/${id}`)
+
+  listOneFull(
+    id: number,
+  ): Promise<AxiosResponse<ClassroomFullResponse>> {
+    return this.http.get(`/full/${id}`);
   }
 
   create(data: CreateClassroom): Promise<AxiosResponse<ClassroomResponse>> {
@@ -42,7 +45,10 @@ export default class ClassroomsService extends HttpService {
     return this.http.delete(`/${id}`);
   }
 
-  update(id: number, data: UpdateClassroom): Promise<AxiosResponse<ClassroomResponse>> {
+  update(
+    id: number,
+    data: UpdateClassroom,
+  ): Promise<AxiosResponse<ClassroomResponse>> {
     return this.http.put(`/${id}`, data);
   }
   // getAvailable(
@@ -72,11 +78,11 @@ export default class ClassroomsService extends HttpService {
     return this.http.get(`with-conflict-count/${building_id}/${schedule_id}`);
   }
 
-  getClassroomsByBuilding(
-    building: string,
-  ): Promise<AxiosResponse<Classroom[]>> {
-    return this.http.get(`/${building}`);
-  }
+  // getClassroomsByBuilding(
+  //   building: string,
+  // ): Promise<AxiosResponse<ClassroomResponse[]>> {
+  //   return this.http.get(`/${building}`);
+  // }
 
   // getAllSchedules() {
   //   return this.http.get('schedules');
