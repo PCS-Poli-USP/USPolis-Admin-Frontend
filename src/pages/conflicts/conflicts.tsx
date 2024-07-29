@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import ConflictsService from '../services/api/conflicts.service';
+import ConflictsService from '../../services/api/conflicts.service';
 import Navbar from 'components/common/NavBar/navbar.component';
 import * as C from '@chakra-ui/react';
-import Conflict from 'models/common/conflict.model';
-import { AccordionButton, useDisclosure, useToast } from '@chakra-ui/react';
+import Conflict from 'models/http/responses/conflict.response.models';
+import { useDisclosure, useToast } from '@chakra-ui/react';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import EventsService from 'services/api/events.service';
 import Event from 'models/common/event.model';
+import moment from 'moment';
 const ConflictsPage = () => {
   const eventsService = new EventsService();
   const conflictsService = new ConflictsService();
@@ -153,8 +154,8 @@ const ConflictsPage = () => {
                   <C.AccordionItem>
                     <h2>
                       <C.AccordionButton>
-                        <C.Box flex='1' textAlign='left'>
-                          {classroom.name}
+                        <C.Box flex='1' textAlign='left' fontWeight={'bold'}>
+                          Sala: {classroom.name}
                         </C.Box>
                         <C.AccordionIcon />
                       </C.AccordionButton>
@@ -176,7 +177,9 @@ const ConflictsPage = () => {
                           borderRadius={4}
                           padding={4}
                         >
-                          <C.Heading size='md'>{event_group[0].date}</C.Heading>
+                          <C.Heading size='md'>
+                            {moment(event_group[0].date).format('DD/MM/YYYY')}
+                          </C.Heading>
                           {event_group.map((event) => (
                             <C.Flex
                               key={event.id}
@@ -200,19 +203,31 @@ const ConflictsPage = () => {
                                 </C.Text>
                               </C.Flex>
                               <C.Flex direction={'column'} flex={1}>
-                                <C.Text fontSize={'md'}>
-                                  Disciplina: {event.subject_code}
-                                </C.Text>
+                                {event.subject_code ? (
+                                  <C.Text fontSize={'md'}>
+                                    Disciplina: {event.subject_code}
+                                  </C.Text>
+                                ) : undefined}
+                                {event.reservation_name ? (
+                                  <C.Text fontSize={'md'}>
+                                    Reserva: {event.reservation_name}
+                                  </C.Text>
+                                ) : undefined}
                               </C.Flex>
                               <C.Flex direction={'column'} flex={1}>
-                                <C.Text fontSize={'md'}>
-                                  Código de turma: {event.class_code}
-                                </C.Text>
-                                <C.Text fontSize={'md'}>
-                                  Código de disciplina: {event.subject_code}
-                                </C.Text>
+                                {event.class_code ? (
+                                  <C.Text fontSize={'md'}>
+                                    Código de turma: {event.class_code}
+                                  </C.Text>
+                                ) : undefined}
+
+                                {event.subject_code ? (
+                                  <C.Text fontSize={'md'}>
+                                    Código de disciplina: {event.subject_code}
+                                  </C.Text>
+                                ) : undefined}
                               </C.Flex>
-                              <C.Button>Editar Alocação</C.Button>
+                              {/* <C.Button>Editar Alocação</C.Button> */}
                             </C.Flex>
                           ))}
                         </C.Flex>

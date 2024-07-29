@@ -128,10 +128,7 @@ function ClassModal(props: ClassModalProps) {
     const fourthData = fourthForm.getValues();
 
     const baseData: ClassBase = {
-      calendar_ids:
-        secondData.calendar_ids && secondData.calendar_ids.length > 0
-          ? secondData.calendar_ids
-          : undefined,
+      calendar_ids: secondData.calendar_ids,
       code: firstData.code,
       type: firstData.type,
       professors: firstData.professors,
