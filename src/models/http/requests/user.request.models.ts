@@ -5,3 +5,8 @@ export interface CreateUser {
   is_admin: boolean;
   building_ids?: Array<string>;
 }
+
+export interface UpdateUser {
+  is_admin: boolean;
+  building_ids?: Array<number>;
+}

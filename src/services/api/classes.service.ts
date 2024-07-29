@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import HttpService from './http.service';
-import { ClassResponse } from 'models/http/responses/class.response.models';
+import { ClassResponse, ClassFullResponse } from 'models/http/responses/class.response.models';
 import {
   CreateClass,
   UpdateClass,
@@ -15,6 +15,9 @@ export default class ClassesService extends HttpService {
 
   list(): Promise<AxiosResponse<Array<ClassResponse>>> {
     return this.http.get('');
+  }
+  listFull(): Promise<AxiosResponse<Array<ClassFullResponse>>> {
+    return this.http.get('/full/');
   }
 
   create(data: CreateClass): Promise<AxiosResponse<ClassResponse>> {

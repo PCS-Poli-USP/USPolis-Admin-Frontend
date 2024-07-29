@@ -7,8 +7,6 @@ import { AccordionButton, useDisclosure, useToast } from '@chakra-ui/react';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import EventsService from 'services/api/events.service';
 import Event from 'models/common/event.model';
-import { weekDaysFormatter } from 'utils/classes/classes.formatter';
-
 const ConflictsPage = () => {
   const eventsService = new EventsService();
   const conflictsService = new ConflictsService();

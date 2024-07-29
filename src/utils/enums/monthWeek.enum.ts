@@ -22,6 +22,20 @@ export namespace MonthWeek {
     [MonthWeek.LAST]: 'Last',
   };
 
+  const stringOrdinalMapping: { [key in MonthWeek]: string } = {
+    [MonthWeek.FIRST]: '1º',
+    [MonthWeek.SECOND]: '2º',
+    [MonthWeek.THIRD]: '3º',
+    [MonthWeek.LAST]: '4º',
+  };
+
+  const intMapping: { [key in MonthWeek]: number } = {
+    [MonthWeek.FIRST]: 1,
+    [MonthWeek.SECOND]: 2,
+    [MonthWeek.THIRD]: 3,
+    [MonthWeek.LAST]: -1,
+  };
+
   const translations: { [key in MonthWeek]: string } = {
     [MonthWeek.FIRST]: 'Primeira',
     [MonthWeek.SECOND]: 'Segunda',
@@ -37,13 +51,15 @@ export namespace MonthWeek {
     return stringMapping[day];
   }
 
-  export function getValues(): MonthWeek[] {
-    return [
-      MonthWeek.FIRST,
-      MonthWeek.SECOND,
-      MonthWeek.THIRD,
-      MonthWeek.LAST,
-    ];
+  export function toInt(day: MonthWeek): number {
+    return intMapping[day];
   }
 
+  export function toOrdinal(day: MonthWeek): string {
+    return stringOrdinalMapping[day];
+  }
+
+  export function getValues(): MonthWeek[] {
+    return [MonthWeek.FIRST, MonthWeek.SECOND, MonthWeek.THIRD, MonthWeek.LAST];
+  }
 }

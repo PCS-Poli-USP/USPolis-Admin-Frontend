@@ -1,7 +1,6 @@
 import { HStack, Text, Box } from '@chakra-ui/react';
 import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
-import { Building } from 'models/common/building.model';
 import { Capitalize } from 'utils/formatters';
 import { ClassroomSchedule } from 'models/common/classroom.model';
 import { useEffect, useState } from 'react';

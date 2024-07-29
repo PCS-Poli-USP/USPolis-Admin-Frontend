@@ -15,6 +15,7 @@ import {
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
+import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import {
   FilterArray,
@@ -38,26 +39,26 @@ interface ClassesColumnsProps {
 export const getClassesColumns = (
   props: ClassesColumnsProps,
 ): ColumnDef<ClassResponse>[] => [
-  {
-    header: 'Marcar',
-    maxSize: 70,
-    meta: {
-      isCheckBox: true,
-      markAllClickFn: props.handleCheckAllClick,
-      dismarkAllClickFn: props.handleCheckAllClick,
-    },
-    cell: ({ row }) => (
-      <Box>
-        <Checkbox
-          isChecked={props.checkMap[row.index]}
-          ml={5}
-          onChange={(event) =>
-            props.handleCheckboxClick(row.original.id, event.target.checked)
-          }
-        />
-      </Box>
-    ),
-  },
+  // {
+  //   header: 'Marcar',
+  //   maxSize: 70,
+  //   meta: {
+  //     isCheckBox: true,
+  //     markAllClickFn: props.handleCheckAllClick,
+  //     dismarkAllClickFn: props.handleCheckAllClick,
+  //   },
+  //   cell: ({ row }) => (
+  //     <Box>
+  //       <Checkbox
+  //         isChecked={props.checkMap[row.index]}
+  //         ml={5}
+  //         onChange={(event) =>
+  //           props.handleCheckboxClick(row.original.id, event.target.checked)
+  //         }
+  //       />
+  //     </Box>
+  //   ),
+  // },
   {
     accessorKey: 'subject_code',
     header: 'Disciplina',
@@ -128,15 +129,24 @@ export const getClassesColumns = (
     accessorFn: (row) =>
       row.schedules.map(
         (schedule) =>
-          `${WeekDay.translate(schedule.week_day)}:
+          `${
+            schedule.week_day
+              ? WeekDay.translate(schedule.week_day)
+              : Recurrence.translate(schedule.recurrence)
+          }:
           ${schedule.start_time.substring(0, 5)} - 
           ${schedule.end_time.substring(0, 5)}`,
       ),
     header: 'Horários',
-    cell: (info) => (
+    cell: ({ row }) => (
       <Box>
-        {(info.getValue() as string[])?.map((it) => (
-          <Text key={it}>{it}</Text>
+        {row.original.schedules.map((schedule, index) => (
+          <Text key={index}>{`${Recurrence.translate(
+            schedule.recurrence,
+          )}, ${schedule.start_time.substring(
+            0,
+            5,
+          )} ~ ${schedule.end_time.substring(0, 5)}`}</Text>
         ))}
       </Box>
     ),
@@ -230,7 +240,7 @@ export const getClassesColumns = (
             onClick={() => props.handleDeleteClassClick(row.original)}
           />
         </Tooltip>
-        <Tooltip label='Excluir Alocação'>
+        {/* <Tooltip label='Excluir Alocação'>
           <IconButton
             colorScheme='red'
             size='sm'
@@ -239,7 +249,7 @@ export const getClassesColumns = (
             icon={<BsCalendarXFill />}
             onClick={() => props.handleDeleteAllocClick(row.original)}
           />
-        </Tooltip>
+        </Tooltip> */}
       </HStack>
     ),
   },

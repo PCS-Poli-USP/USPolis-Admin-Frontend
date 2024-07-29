@@ -12,17 +12,16 @@ import {
   Skeleton,
   StackDivider,
 } from '@chakra-ui/react';
-import Class from 'models/common/class.model';
 import BuildingsService from 'services/api/buildings.service';
 import { useContext, useEffect, useState } from 'react';
-import { Building } from 'models/common/building.model';
 import { appContext } from 'context/AppContext';
 import { MultipleEditAllocation } from './multipleEdit.allocation';
 import { ClassroomSchedule } from 'models/common/classroom.model';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
+import { ClassResponse } from 'models/http/responses/class.response.models';
 
 interface MultipleEditAccordionProps {
-  subjectsMap: [string, Class[]][];
+  subjectsMap: [string, ClassResponse[]][];
   schedulesMap: [string, string, ClassroomSchedule][];
   isLoadingSchedules: boolean;
   isUpdatingSchedules: boolean;
@@ -123,7 +122,7 @@ export default function MultipleEditAccordion({
                     alignSelf={'flex-start'}
                     alignItems={'flex-start'}
                   >
-                    <Text as={'b'} mt={4}>
+                    {/* <Text as={'b'} mt={4}>
                       {`Turma ${cl.class_code.slice(-2)} - ${
                         cl.vacancies
                       } vagas: `}
@@ -151,7 +150,7 @@ export default function MultipleEditAccordion({
                           onRemoveClassroom={handleRemoveClassroom}
                         />
                       ))}
-                    </VStack>
+                    </VStack> */}
                   </VStack>
                 ))}
               </VStack>

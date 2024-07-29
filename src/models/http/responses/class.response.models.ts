@@ -1,5 +1,8 @@
 import { ClassType } from 'utils/enums/classes.enum';
-import { ScheduleResponse } from './schedule.response.models';
+import {
+  ScheduleFullResponse,
+  ScheduleResponse,
+} from './schedule.response.models';
 
 export interface ClassResponseBase {
   id: number;
@@ -17,15 +20,21 @@ export interface ClassResponseBase {
   ignore_to_allocate: boolean;
   full_allocated: boolean;
   updated_at: string;
-}
 
-export interface ClassResponse extends ClassResponseBase {
   subject_id: number;
   subject_name: string;
-  subject_code: string; 
+  subject_code: string;
   schedules: ScheduleResponse[];
   calendar_ids?: number[];
   calendar_names?: string[];
+}
+
+export interface ClassResponse extends ClassResponseBase {
+  schedules: ScheduleResponse[];
+}
+
+export interface ClassFullResponse extends ClassResponseBase {
+  schedules: ScheduleFullResponse[];
 }
 
 export interface ClassUnfetchResponse extends ClassResponseBase {

@@ -25,6 +25,7 @@ const useClasses = () => {
       })
       .catch((error) => {
         showToast('Erro', 'Erro ao carregar turmas', 'error');
+        console.log(error);
       })
       .finally(() => {
         setLoading(false);

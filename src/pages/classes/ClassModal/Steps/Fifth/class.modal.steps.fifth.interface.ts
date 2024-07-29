@@ -16,7 +16,6 @@ interface ClassFormData {
 }
 export interface ClassModalFifthStepProps extends ClassModalStepsProps {
   data: ClassFormData,
-  onNext: () => void;
   moveTo: (index: number) => void;
   subjects: SubjectResponse[];
   calendars: CalendarResponse[];

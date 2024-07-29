@@ -57,9 +57,9 @@ export function Select({
             }}
           >
             {placeholder ? (
-              <option value={undefined}>{placeholder}</option>
+              <option value={''}>{placeholder}</option>
             ) : (
-              <option value={undefined}>Selecione uma opção</option>
+              <option value={''}>Selecione uma opção</option>
             )}
             {options.map((option) => (
               <option key={option.value} value={option.value}>

@@ -1,7 +1,7 @@
 import { Alert, AlertIcon, HStack, IconButton, List, ListItem, Text, Tooltip, VStack } from "@chakra-ui/react";
 import { ScheduleData } from "../../class.modal.interface";
 import { BsCalendar2WeekFill, BsFillPenFill, BsFillTrashFill } from "react-icons/bs";
-import { scheduleToString } from "../class.modal.steps.utils";
+import { getScheduleString } from "utils/schedules/schedule.formatter";
 
 interface ScheduleListProps {
   schedules: ScheduleData[];
@@ -21,7 +21,7 @@ function ScheduleList(props: ScheduleListProps) {
             <ListItem key={index}>
               <HStack>
                 <BsCalendar2WeekFill />
-                <Text>{scheduleToString(val)}</Text>
+                <Text>{getScheduleString(val)}</Text>
 
                 <Tooltip label='Editar'>
                   <IconButton

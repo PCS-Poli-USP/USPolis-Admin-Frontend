@@ -25,7 +25,6 @@ import {
   HStack,
 } from '@chakra-ui/react';
 import { appContext } from 'context/AppContext';
-import { Building } from 'models/common/building.model';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { useContext, useEffect, useRef, useState } from 'react';
 import BuildingsService from 'services/api/buildings.service';
