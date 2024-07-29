@@ -22,7 +22,7 @@ interface props {
   isOpen: boolean;
   onClose: () => void;
   refresh?: () => void;
-  class_?: ClassResponse;
+  class_: ClassResponse;
 }
 
 export function AllocateClassModal({
@@ -50,9 +50,7 @@ export function AllocateClassModal({
     onClose();
   }
 
-  return !class_ ? (
-    <></>
-  ) : (
+  return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
