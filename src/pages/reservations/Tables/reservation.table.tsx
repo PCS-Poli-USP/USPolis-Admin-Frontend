@@ -29,6 +29,7 @@ export const getReservationsColumns = (
     header: 'Nome',
   },
   {
+    accessorFn: (row) => ReservationType.translate(row.type),
     accessorKey: 'type',
     header: 'Tipo',
     cell: ({ row }) => (
