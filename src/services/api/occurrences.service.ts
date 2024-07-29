@@ -20,7 +20,7 @@ export default class OccurrencesService extends HttpService {
 
   allocate_many_schedules(
     data: AllocateManySchedulesData[],
-  ): Promise<AxiosResponse<any>> {
+  ): Promise<AxiosResponse<undefined>> {
     return this.http.post('allocate-schedule-many', data);
   }
 }

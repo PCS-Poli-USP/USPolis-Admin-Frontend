@@ -27,16 +27,15 @@ import ClassModal from './ClassModal/class.modal';
 import useSubjects from 'hooks/useSubjetcts';
 import useCalendars from 'hooks/useCalendars';
 import { Row } from '@tanstack/react-table';
-import AllocateScheduleModal from 'components/allocation/allocateClassModal/allocateSingleScheduleSection';
+import AllocateScheduleModal from './AllocateClassModal/allocateSingleScheduleSection';
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
-import { AllocateClassModal } from 'components/allocation/allocateClassModal';
+import { AllocateClassModal } from './AllocateClassModal';
 import SubjectsService from 'services/api/subjects.service';
 import { AxiosError } from 'axios';
 import useCustomToast from 'hooks/useCustomToast';
 
 function Classes() {
   const showToast = useCustomToast();
-
   const {
     isOpen: isOpenDeleteClass,
     onOpen: onOpenDeleteClass,
@@ -290,19 +289,6 @@ function Classes() {
               Excluir selecionados
             </Button> */}
           </Flex>
-          <ClassModal
-            isOpen={isOpenClassModal}
-            onClose={() => {
-              setSelectedClass(undefined);
-              onCloseClassModal();
-              setIsUpdateClass(false);
-            }}
-            isUpdate={isUpdateClass}
-            refetch={getClasses}
-            subjects={subjects}
-            calendars={calendars}
-            selectedClass={selectedClass}
-          />
           <Dialog
             isOpen={isOpenDeleteClass}
             onClose={onCloseDeleteClass}

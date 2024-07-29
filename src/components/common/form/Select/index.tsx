@@ -47,7 +47,7 @@ export function Select({
           <ChakraSelect
             {...field}
             id={name}
-            value={field.value !== undefined ? field.value : ''}
+            value={field.value || field.value === 0 ? field.value : ''}
             disabled={disabled || isLoading}
             icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
             onChange={(event) => {
@@ -68,25 +68,6 @@ export function Select({
           </ChakraSelect>
         )}
       />
-      {/* <ChakraSelect
-        {...register(name)}
-        disabled={disabled || isLoading}
-        value={value}
-        placeholder={placeholder}
-        icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
-        onChange={onChange}
-      >
-        {placeholder ? (
-          undefined
-        ) : (
-          <option value={undefined}>Selecione uma opção</option>
-        )}
-        {options.map((opt, index) => (
-          <option key={index} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </ChakraSelect> */}
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
     </FormControl>
   );
