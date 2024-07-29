@@ -90,9 +90,10 @@ function ReservationModal(props: ReservationModalProps) {
           start_time: secondData.start_time,
           end_time: secondData.end_time,
           recurrence: secondData.recurrence,
-          week_day: secondData.week_day
-            ? Number(secondData.week_day)
-            : undefined,
+          week_day:
+            secondData.week_day !== undefined
+              ? Number(secondData.week_day)
+              : undefined,
           month_week: secondData.month_week
             ? Number(secondData.month_week)
             : undefined,
@@ -111,7 +112,10 @@ function ReservationModal(props: ReservationModalProps) {
         start_time: secondData.start_time,
         end_time: secondData.end_time,
         recurrence: secondData.recurrence,
-        week_day: secondData.week_day ? Number(secondData.week_day) : undefined,
+        week_day:
+          secondData.week_day !== undefined
+            ? Number(secondData.week_day)
+            : undefined,
         month_week: secondData.month_week
           ? Number(secondData.month_week)
           : undefined,
@@ -169,14 +173,12 @@ function ReservationModal(props: ReservationModalProps) {
     } else if (!props.isUpdate) {
       await createReservation(data as CreateReservation);
     }
-    console.log(data);
     props.refetch();
-    // handleCloseModal();
+    handleCloseModal();
   }
 
   useEffect(() => {
     if (props.selectedReservation) {
-      console.log(props.selectedReservation);
       firstForm.reset({
         name: props.selectedReservation.name,
         type: props.selectedReservation.type,

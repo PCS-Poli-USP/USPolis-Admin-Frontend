@@ -16,9 +16,9 @@ export interface ClassModalThirdStepProps extends ClassModalStepsProps {
 export interface ClassThirdForm {
   start_time?: string;
   end_time?: string;
-  week_day?: WeekDay;
-  month_week?: MonthWeek;
-  recurrence?: Recurrence;
+  week_day?: WeekDay | string;
+  month_week?: MonthWeek | string;
+  recurrence?: Recurrence | string;
   schedule_start_date?: string;
   schedule_end_date?: string;
 }
