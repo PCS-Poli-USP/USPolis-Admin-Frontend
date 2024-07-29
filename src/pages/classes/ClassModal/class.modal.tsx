@@ -107,11 +107,16 @@ function ClassModal(props: ClassModalProps) {
         start_time: schedule.start_time,
         end_time: schedule.end_time,
         recurrence: schedule.recurrence,
-        week_day: Number(schedule.week_day),
+        week_day:
+          schedule.week_day || schedule.week_day === 0 // WeekDay can be zero
+            ? Number(schedule.week_day)
+            : undefined,
         all_day: false,
         allocated: schedule.allocated ? schedule.allocated : false,
         dates: schedule.dates,
-        month_week: Number(schedule.month_week),
+        month_week: schedule.month_week
+          ? Number(schedule.month_week)
+          : undefined,
       };
       return formated;
     });
@@ -272,7 +277,9 @@ function ClassModal(props: ClassModalProps) {
       start_time: schedule.start_time,
       end_time: schedule.end_time,
       week_day: schedule.week_day,
-      dates: schedule.occurrences ? schedule.occurrences.map((occur) => occur.date) : undefined,
+      dates: schedule.occurrences
+        ? schedule.occurrences.map((occur) => occur.date)
+        : undefined,
       allocated: schedule.allocated,
     }));
     setSchedules(newSchedules);

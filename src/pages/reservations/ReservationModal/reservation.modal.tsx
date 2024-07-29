@@ -47,7 +47,6 @@ import {
 import useReservations from 'hooks/useReservations';
 import {
   CreateReservation,
-  ReservationBase,
   UpdateReservation,
 } from 'models/http/requests/reservation.request.models';
 import { useEffect, useState } from 'react';
@@ -71,41 +70,15 @@ function ReservationModal(props: ReservationModalProps) {
   function getReservationData(): CreateReservation | UpdateReservation {
     const firstData = firstForm.getValues();
     const secondData = secondForm.getValues();
-    const baseData: ReservationBase = {
+    const data: UpdateReservation | CreateReservation = {
       name: firstData.name,
       type: firstData.type,
       description: firstData.description,
       classroom_id: secondData.classroom_id,
-    };
-    if (props.isUpdate) {
-      const updatedData: UpdateReservation = {
-        ...baseData,
-        schedule_data: {
-          reservation_id: props.selectedReservation
-            ? props.selectedReservation.id
-            : undefined,
-          classroom_id: secondData.classroom_id,
-          start_date: secondData.start_date,
-          end_date: secondData.end_date,
-          start_time: secondData.start_time,
-          end_time: secondData.end_time,
-          recurrence: secondData.recurrence,
-          week_day:
-            secondData.week_day !== undefined
-              ? Number(secondData.week_day)
-              : undefined,
-          month_week: secondData.month_week
-            ? Number(secondData.month_week)
-            : undefined,
-          dates: dates.length > 0 ? dates : undefined,
-          all_day: false,
-        },
-      };
-      return updatedData;
-    }
-    const data: CreateReservation = {
-      ...baseData,
       schedule_data: {
+        reservation_id: props.selectedReservation
+          ? props.selectedReservation.id
+          : undefined,
         classroom_id: secondData.classroom_id,
         start_date: secondData.start_date,
         end_date: secondData.end_date,
@@ -113,7 +86,7 @@ function ReservationModal(props: ReservationModalProps) {
         end_time: secondData.end_time,
         recurrence: secondData.recurrence,
         week_day:
-          secondData.week_day !== undefined
+          secondData.week_day || secondData.week_day === 0 // WeekDay can be zero
             ? Number(secondData.week_day)
             : undefined,
         month_week: secondData.month_week
@@ -123,7 +96,10 @@ function ReservationModal(props: ReservationModalProps) {
         all_day: false,
       },
     };
-    return data;
+    if (props.isUpdate) {
+      return data as UpdateReservation;
+    }
+    return data as CreateReservation;
   }
 
   function handleCloseModal() {
