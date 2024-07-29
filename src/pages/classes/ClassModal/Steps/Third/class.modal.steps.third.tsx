@@ -90,9 +90,9 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
 
   async function validateScheduleInputs(
     values: [
-      Recurrence | undefined,
-      MonthWeek | undefined,
-      WeekDay | undefined,
+      Recurrence | undefined | string,
+      MonthWeek | undefined | string,
+      WeekDay | undefined | string,
       string | undefined,
       string | undefined,
       string | undefined,
@@ -134,6 +134,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
       if (fieldName === 'week_day') {
         if (
           !values[i] &&
+          values[i] !== 0 &&
           values[0] !== Recurrence.CUSTOM &&
           values[0] !== Recurrence.DAILY
         ) {
@@ -244,6 +245,37 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
     setIsUpdatingSchedule(false);
   }
 
+  function handleChangeRecurrence(value: string) {
+    const { resetField } = props.form;
+    if (value === Recurrence.DAILY) {
+      setIsDayli(true);
+      setIsMonthly(false);
+      setIsCustom(false);
+      setIsSelecting(false);
+      setSelectedDays([]);
+      resetField('month_week', { defaultValue: '' });
+      resetField('week_day', { defaultValue: '' });
+    } else if (value === Recurrence.MONTHLY) {
+      setIsDayli(false);
+      setIsMonthly(true);
+      setIsCustom(false);
+      setIsSelecting(false);
+      setSelectedDays([]);
+    } else if (value === Recurrence.CUSTOM) {
+      setIsDayli(false);
+      setIsMonthly(false);
+      setIsCustom(true);
+      setIsSelecting(true);
+    } else {
+      setIsDayli(false);
+      setIsMonthly(false);
+      setIsCustom(false);
+      setIsSelecting(false);
+      setSelectedDays([]);
+      resetField('month_week', { defaultValue: '' });
+    }
+  }
+
   return (
     <VStack mt={5} width={'100%'} align={'stretch'} spacing={4}>
       <FormProvider {...props.form}>
@@ -260,21 +292,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
               onChange={(event) => {
                 const { clearErrors } = props.form;
                 clearErrors(['month_week', 'week_day']);
-                if (event.target.value === Recurrence.DAILY) {
-                  setIsDayli(true);
-                } else setIsDayli(false);
-                if (event.target.value === Recurrence.MONTHLY) {
-                  setIsMonthly(true);
-                } else setIsMonthly(false);
-
-                if (event.target.value === Recurrence.CUSTOM) {
-                  setIsCustom(true);
-                  setIsSelecting(true);
-                } else {
-                  setIsCustom(false);
-                  setIsSelecting(false);
-                  setSelectedDays([]);
-                }
+                handleChangeRecurrence(event.target.value);
               }}
             />
             <Select

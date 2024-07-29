@@ -18,12 +18,11 @@ export const formFields = {
     validator: yup
       .array()
       .of(yup.number().required('Campo obrigatório'))
-      .min(1, 'Selecione pelo menos uma categoria')
-      .test(
-        'is-valid-option',
-        'Categorias invalidas',
-        (value) => value && !CalendarValidator.isInvalidCategoriesIds(value),
-      ),
+      .min(0)
+      .test('is-valid-option', 'Categorias invalidas', (value) => {
+        if (!value) return true;
+        return !CalendarValidator.isInvalidCategoriesIds(value);
+      }),
     defaultValue: [],
   },
 };

@@ -14,7 +14,7 @@ import moment from 'moment';
 import { BsCalendar2WeekFill } from 'react-icons/bs';
 import { WarningIcon } from '@chakra-ui/icons';
 import { ClassModalFifthStepProps } from './class.modal.steps.fifth.interface';
-import { getScheduleWithDateString } from 'utils/schedules/schedule.formatter';
+import { getScheduleFullString } from 'utils/schedules/schedule.formatter';
 
 function ClassModalFifthStep(props: ClassModalFifthStepProps) {
   const firstForm = props.data.first;
@@ -133,8 +133,13 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
       <List>
         {props.schedules.map((schedule, index) => (
           <ListItem key={index}>
-            <ListIcon as={BsCalendar2WeekFill} />
-            {getScheduleWithDateString(schedule)}
+            <HStack>
+              <ListIcon as={BsCalendar2WeekFill} />
+              <Text>{getScheduleFullString(schedule)}</Text>
+              <Text ml={4} fontWeight={'bold'} textColor={'red.500'}>
+                {schedule.allocated ? 'Alocado' : ''}
+              </Text>
+            </HStack>
           </ListItem>
         ))}
         {props.schedules.length === 0 ? (

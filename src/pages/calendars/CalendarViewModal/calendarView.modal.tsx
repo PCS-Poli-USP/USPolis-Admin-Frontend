@@ -9,29 +9,27 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
-import { CalendarViewModalProps } from './calendarView.modal.interface';
+import { CalendarEvent, CalendarViewModalProps } from './calendarView.modal.interface';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import CalendarViewEventContent from './calendarView.event.content';
-
-interface EventType {
-  title: string;
-  date: string;
-  created_by: string;
-}
 
 function CalendarViewModal(props: CalendarViewModalProps) {
   function handleCloseModal() {
     props.onClose();
   }
-  let events: EventType[] = [];
+  const events: CalendarEvent[] = [];
   if (props.calendar) {
     props.calendar.categories.forEach((category) => {
       category.holidays.forEach((holiday) => {
         events.push({
           title: category.name,
           date: holiday.date,
-          created_by: category.created_by,
+          extendedProps: {
+            name: holiday.name,
+            created_by: category.created_by,
+            category_name: category.name,
+          },
         });
       });
     });

@@ -116,7 +116,7 @@ export const secondFormFields = {
           return !ScheduleValidator.isInvalidMonthWeek(value);
         },
       ),
-    defaultValue: undefined,
+    defaultValue: '',
   },
   week_day: {
     validator: yup
@@ -137,12 +137,12 @@ export const secondFormFields = {
             recurrence === Recurrence.CUSTOM ||
             recurrence === Recurrence.DAILY
           )
-            return true;
+            return value === undefined;
           if (value === undefined || value === null) return false;
           return !ScheduleValidator.isInvalidWeekDay(value);
         },
       ),
-    defaultValue: undefined,
+    defaultValue: '',
   },
 };
 

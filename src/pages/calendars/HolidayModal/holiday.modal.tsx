@@ -24,12 +24,12 @@ import {
   UpdateHoliday,
 } from 'models/http/requests/holiday.request.models';
 import { useEffect, useState } from 'react';
-import { HolidayUnfetchResponse } from 'models/http/responses/holiday.response.models';
 import moment from 'moment';
 import useHolidays from 'hooks/useHolidays';
 import DateCalendarPicker, {
   useDateCalendarPicker,
 } from 'components/common/DateCalendarPicker';
+import { HolidayResponse } from 'models/http/responses/holiday.response.models';
 
 function HolidayModal(props: HolidayModalProps) {
   const [isMultipleHolidays, setIsMultipleHolidays] = useState(false);
@@ -57,6 +57,7 @@ function HolidayModal(props: HolidayModalProps) {
       await createManyHolidays({
         category_id: values.category_id,
         dates: selectedDays,
+        name: values.name,
       });
     } else {
       const isValid = await trigger();
@@ -73,6 +74,7 @@ function HolidayModal(props: HolidayModalProps) {
     const formated_data: UpdateHoliday = {
       category_id: props.category ? props.category.id : 0,
       date: data.date,
+      name: data.name,
     };
     return formated_data;
   }
@@ -97,15 +99,16 @@ function HolidayModal(props: HolidayModalProps) {
     props.onClose();
   }
 
-  function formatSelectedHoliday(data: HolidayUnfetchResponse): HolidayForm {
+  function formatSelectedHoliday(data: HolidayResponse): HolidayForm {
     const formated: HolidayForm = {
       category_id: data.category_id,
       date: data.date,
+      name: data.name,
     };
     return formated;
   }
 
-  function fetchOccupiedDays(data: HolidayUnfetchResponse[]) {
+  function fetchOccupiedDays(data: HolidayResponse[]) {
     const newOcuppedDays: string[] = [];
     data.forEach((val) => {
       const date = moment(val.date).format('YYYY-MM-DD');
@@ -151,6 +154,12 @@ function HolidayModal(props: HolidayModalProps) {
                     label: category.name,
                     value: category.id,
                   }))}
+                />
+                <Input
+                  label={'Nome'}
+                  name={'name'}
+                  placeholder={'Nome do feriado'}
+                  type={'text'}
                 />
                 <Input
                   disabled={isMultipleHolidays}

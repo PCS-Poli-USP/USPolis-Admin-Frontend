@@ -35,7 +35,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   const [isCustom, setIsCustom] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
 
-  const { clearErrors } = props.form;
+  const { resetField } = props.form;
 
   useEffect(() => {
     const { getValues } = props.form;
@@ -76,18 +76,23 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
       setIsDayli(false);
       setIsMonthly(false);
       setIsSelecting(true);
+      resetField('month_week', { defaultValue: '' });
+      resetField('week_day', { defaultValue: '' });
     } else if (value === Recurrence.DAILY) {
       setIsCustom(false);
       setIsDayli(true);
       setIsMonthly(false);
       setSelectedDays([]);
       setIsSelecting(false);
+      resetField('month_week', { defaultValue: '' });
+      resetField('week_day', { defaultValue: '' });
     } else {
       setIsCustom(false);
       setIsDayli(false);
       setIsMonthly(false);
       setSelectedDays([]);
       setIsSelecting(false);
+      resetField('month_week', { defaultValue: '' });
     }
   }
 
@@ -191,7 +196,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     value: value,
                   }))}
                   onChange={(event) => {
-                    clearErrors(['month_week', 'week_day']);
+                    // clearErrors(['month_week', 'week_day']);
                     handleChangeRecurrence(event.target.value);
                   }}
                 />

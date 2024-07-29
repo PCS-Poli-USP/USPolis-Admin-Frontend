@@ -5,6 +5,20 @@ import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 
+export function getScheduleFullString(
+  schedule: ScheduleData | ScheduleResponse,
+) {
+  const recurrenceString = getScheduleString(schedule);
+  return `${recurrenceString}  (${schedule.start_time.substring(
+    0,
+    5,
+  )} ~ ${schedule.end_time.substring(0, 5)}) de ${moment(
+    schedule.start_date,
+  ).format('DD/MM/YYYY')} até ${moment(schedule.end_date).format(
+    'DD/MM/YYYY',
+  )}`;
+}
+
 export function getScheduleWithTimeString(
   schedule: ScheduleData | ScheduleResponse,
 ) {
@@ -52,8 +66,10 @@ export function getScheduleString(schedule: ScheduleData | ScheduleResponse) {
 }
 
 export function getScheduleTime(schedule: ScheduleData | ScheduleResponse) {
-  return `${schedule.week_day ? WeekDay.translate(schedule.week_day) : ''} ${schedule.start_time.substring(
+  return `${
+    schedule.week_day !== undefined ? WeekDay.translate(schedule.week_day) : ''
+  } ${schedule.start_time.substring(0, 5)} até ${schedule.end_time.substring(
     0,
     5,
-  )} até ${schedule.end_time.substring(0, 5)}`;
+  )}`;
 }

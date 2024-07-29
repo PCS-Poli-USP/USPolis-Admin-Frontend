@@ -48,7 +48,7 @@ export function CalendarAccordion(props: HolidayCategoryAccordionProps) {
             <>
               <AccordionButton>
                 <Box as='span' flex='1' textAlign='left'>
-                  <Text as={'b'}>{`Calendario - ${calendar.name}`}</Text>
+                  <Text as={'b'}>{`Calendario: ${calendar.name}`}</Text>
                 </Box>
                 {isExpanded ? (
                   <MinusIcon fontSize='12px' />
@@ -90,15 +90,22 @@ export function CalendarAccordion(props: HolidayCategoryAccordionProps) {
                   </Button>
                 </HStack>
                 <Divider mb={2} borderColor={'blackAlpha.500'} />
-                <Text fontWeight={'bold'}>Categorias</Text>
-                <List>
-                  {calendar.categories.map((category, index) => (
-                    <ListItem key={index}>
-                      <ListIcon as={CalendarIcon}/>
-                      {holidayCategoryToString(category)}
-                    </ListItem>
-                  ))}
-                </List>
+                <Text fontWeight={'bold'}>Categorias e Datas</Text>
+                {calendar.categories.length > 0 ? (
+                  <List>
+                    {calendar.categories.map((category, index) => (
+                      <ListItem key={index}>
+                        <ListIcon as={CalendarIcon} />
+                        {holidayCategoryToString(category)}
+                      </ListItem>
+                    ))}
+                  </List>
+                ) : (
+                  <Alert status={'warning'} fontSize={'sm'} mb={4}>
+                    <AlertIcon />
+                    Nenhuma categoria de feriado adicionada
+                  </Alert>
+                )}
               </AccordionPanel>
             </>
           )}

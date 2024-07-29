@@ -17,6 +17,7 @@ import {
 } from 'react-icons/bs';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
+import { getScheduleString } from 'utils/schedules/schedule.formatter';
 import {
   FilterArray,
   FilterBoolean,
@@ -68,6 +69,15 @@ export const getClassesColumns = (
     accessorKey: 'subject_name',
     header: 'Nome da Disciplina',
     maxSize: 300,
+    cell: ({ row }) => (
+      <Box maxW={300}>
+        <Tooltip label={<Text>{row.original.subject_name}</Text>}>
+          <Text overflowX={'hidden'} textOverflow={'ellipsis'}>
+            {row.original.subject_name}
+          </Text>
+        </Tooltip>
+      </Box>
+    ),
   },
   {
     accessorKey: 'code',
@@ -79,13 +89,13 @@ export const getClassesColumns = (
       </Box>
     ),
   },
-  {
-    accessorKey: 'ignore_to_allocate',
-    header: 'Ignorar',
-    maxSize: 75,
-    meta: { isBoolean: true, isSelectable: true },
-    filterFn: FilterBoolean,
-  },
+  // {
+  //   accessorKey: 'ignore_to_allocate',
+  //   header: 'Ignorar',
+  //   maxSize: 75,
+  //   meta: { isBoolean: true, isSelectable: true },
+  //   filterFn: FilterBoolean,
+  // },
   {
     accessorFn: (row) => (row.schedules ? row.schedules : ['Não alocada']),
     filterFn: FilterBuilding,
@@ -107,7 +117,7 @@ export const getClassesColumns = (
     accessorFn: (row) =>
       row.schedules
         ? row.schedules.map((schedule) =>
-            schedule.classroom ? schedule.classroom : 'Não alocaada',
+            schedule.classroom ? schedule.classroom : 'Não alocada',
           )
         : ['Não alocada'],
     filterFn: FilterClassroom,
@@ -141,12 +151,12 @@ export const getClassesColumns = (
     cell: ({ row }) => (
       <Box>
         {row.original.schedules.map((schedule, index) => (
-          <Text key={index}>{`${Recurrence.translate(
-            schedule.recurrence,
-          )}, ${schedule.start_time.substring(
+          <Text key={index}>{`${getScheduleString(
+            schedule,
+          )} (${schedule.start_time.substring(
             0,
             5,
-          )} ~ ${schedule.end_time.substring(0, 5)}`}</Text>
+          )} ~ ${schedule.end_time.substring(0, 5)})`}</Text>
         ))}
       </Box>
     ),
@@ -154,13 +164,13 @@ export const getClassesColumns = (
   },
   {
     accessorFn: (row) =>
-      row.calendar_names ? row.calendar_names : ['Sem calendários'],
+      row.calendar_names.length > 0 ? row.calendar_names : ['Sem calendários'],
     filterFn: FilterBuilding,
     header: 'Calendários',
     maxSize: 140,
     cell: ({ row }) => (
       <Box>
-        {row.original.calendar_names ? (
+        {row.original.calendar_names.length > 0 ? (
           row.original.calendar_names.map((calendar, index) => (
             <Text key={index}>{calendar}</Text>
           ))
@@ -182,14 +192,11 @@ export const getClassesColumns = (
     cell: ({ row }) => (
       <Box>
         {row.original.professors?.map((professor, index) => (
-          <Text
-            maxW={425}
-            overflowX={'hidden'}
-            textOverflow={'ellipsis'}
-            key={index}
-          >
-            {professor}
-          </Text>
+          <Tooltip label={<Text>{professor}</Text>} key={index}>
+            <Text maxW={300} overflowX={'hidden'} textOverflow={'ellipsis'}>
+              {professor}
+            </Text>
+          </Tooltip>
         ))}
       </Box>
     ),

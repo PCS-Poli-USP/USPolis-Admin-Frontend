@@ -101,8 +101,8 @@ function ToolTipLabel(eventInfo: EventContentArg) {
               Informações
             </Text>
             <Text fontSize='lg' textColor='#408080'>{`Sala: ${
-              eventData.extendedProps.classroom
-                ? eventData.extendedProps.classroom
+              classData.classroom
+                ? classData.classroom
                 : 'NÃO ALOCADA'
             }`}</Text>
 

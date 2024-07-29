@@ -21,7 +21,8 @@ const useHolidaysCategories = () => {
         setHolidaysCategories(response.data.sort(sortHolidaysCategoriesResponse));
       })
       .catch((error) => {
-        showToast('Erro', 'Erro ao carregar categorias', 'error');
+        console.log(error);
+        showToast('Erro', `Erro ao carregar categorias: ${error}`, 'error');
       })
       .finally(() => {
         setLoading(false);
@@ -43,6 +44,7 @@ const useHolidaysCategories = () => {
         })
         .catch((error) => {
           showToast('Erro', `Erro ao criar categoria: ${error}`, 'error');
+          console.log(error);
         })
         .finally(() => {
           setLoading(false);
@@ -66,6 +68,7 @@ const useHolidaysCategories = () => {
           `Erro ao atualizar categoria ${data.name}: ${error}`,
           'error',
         );
+        console.log(error);
       })
       .finally(() => {
         setLoading(false);

@@ -1,7 +1,8 @@
-import { User } from 'models/common/user.common.model';
-
 export interface Holiday {
-  id: string;
+  id: number;
   name: string;
-  created_by: User;
+  date: string;
+  update_at: string;
+  category_id: number;
+  created_by_id: number;
 }

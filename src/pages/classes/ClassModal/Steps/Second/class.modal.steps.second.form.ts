@@ -39,11 +39,10 @@ export const classSecondFormFields = {
     validator: yup
       .array()
       .of(yup.number().required('Campo obrigatório'))
-      .notRequired()
-      .nullable()
+      .min(0)
       .test(
         'is-valid-array',
-        'Selecione pelo menos um calendário',
+        'Calendários inválidos',
         function (value) {
           if (!value) return true;
           if (value.length === 0) return true;
