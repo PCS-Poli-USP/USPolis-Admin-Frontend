@@ -17,6 +17,7 @@ import {
 } from 'react-icons/bs';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
+import { getScheduleString } from 'utils/schedules/schedule.formatter';
 import {
   FilterArray,
   FilterBoolean,
@@ -107,7 +108,7 @@ export const getClassesColumns = (
     accessorFn: (row) =>
       row.schedules
         ? row.schedules.map((schedule) =>
-            schedule.classroom ? schedule.classroom : 'Não alocaada',
+            schedule.classroom ? schedule.classroom : 'Não alocada',
           )
         : ['Não alocada'],
     filterFn: FilterClassroom,
@@ -141,12 +142,12 @@ export const getClassesColumns = (
     cell: ({ row }) => (
       <Box>
         {row.original.schedules.map((schedule, index) => (
-          <Text key={index}>{`${Recurrence.translate(
-            schedule.recurrence,
-          )}, ${schedule.start_time.substring(
+          <Text key={index}>{`${getScheduleString(
+            schedule,
+          )} (${schedule.start_time.substring(
             0,
             5,
-          )} ~ ${schedule.end_time.substring(0, 5)}`}</Text>
+          )} ~ ${schedule.end_time.substring(0, 5)})`}</Text>
         ))}
       </Box>
     ),
@@ -154,13 +155,13 @@ export const getClassesColumns = (
   },
   {
     accessorFn: (row) =>
-      row.calendar_names ? row.calendar_names : ['Sem calendários'],
+      row.calendar_names.length > 0 ? row.calendar_names : ['Sem calendários'],
     filterFn: FilterBuilding,
     header: 'Calendários',
     maxSize: 140,
     cell: ({ row }) => (
       <Box>
-        {row.original.calendar_names ? (
+        {row.original.calendar_names.length > 0 ? (
           row.original.calendar_names.map((calendar, index) => (
             <Text key={index}>{calendar}</Text>
           ))
