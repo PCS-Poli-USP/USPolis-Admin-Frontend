@@ -78,7 +78,6 @@ function Allocation() {
       );
     }
   }
-  console.log(events);
   return (
     <>
       <Navbar />

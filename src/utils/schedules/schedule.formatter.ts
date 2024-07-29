@@ -14,7 +14,9 @@ export function getScheduleFullString(
     5,
   )} ~ ${schedule.end_time.substring(0, 5)}) de ${moment(
     schedule.start_date,
-  ).format('DD/MM/YYYY')} até ${moment(schedule.end_date).format('DD/MM/YYYY')}`;
+  ).format('DD/MM/YYYY')} até ${moment(schedule.end_date).format(
+    'DD/MM/YYYY',
+  )}`;
 }
 
 export function getScheduleWithTimeString(
@@ -65,7 +67,7 @@ export function getScheduleString(schedule: ScheduleData | ScheduleResponse) {
 
 export function getScheduleTime(schedule: ScheduleData | ScheduleResponse) {
   return `${
-    schedule.week_day ? WeekDay.translate(schedule.week_day) : ''
+    schedule.week_day !== undefined ? WeekDay.translate(schedule.week_day) : ''
   } ${schedule.start_time.substring(0, 5)} até ${schedule.end_time.substring(
     0,
     5,
