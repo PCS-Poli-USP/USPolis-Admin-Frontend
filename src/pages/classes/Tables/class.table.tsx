@@ -69,6 +69,15 @@ export const getClassesColumns = (
     accessorKey: 'subject_name',
     header: 'Nome da Disciplina',
     maxSize: 300,
+    cell: ({ row }) => (
+      <Box maxW={300}>
+        <Tooltip label={<Text>{row.original.subject_name}</Text>}>
+          <Text overflowX={'hidden'} textOverflow={'ellipsis'}>
+            {row.original.subject_name}
+          </Text>
+        </Tooltip>
+      </Box>
+    ),
   },
   {
     accessorKey: 'code',
@@ -80,13 +89,13 @@ export const getClassesColumns = (
       </Box>
     ),
   },
-  {
-    accessorKey: 'ignore_to_allocate',
-    header: 'Ignorar',
-    maxSize: 75,
-    meta: { isBoolean: true, isSelectable: true },
-    filterFn: FilterBoolean,
-  },
+  // {
+  //   accessorKey: 'ignore_to_allocate',
+  //   header: 'Ignorar',
+  //   maxSize: 75,
+  //   meta: { isBoolean: true, isSelectable: true },
+  //   filterFn: FilterBoolean,
+  // },
   {
     accessorFn: (row) => (row.schedules ? row.schedules : ['Não alocada']),
     filterFn: FilterBuilding,
@@ -183,14 +192,11 @@ export const getClassesColumns = (
     cell: ({ row }) => (
       <Box>
         {row.original.professors?.map((professor, index) => (
-          <Text
-            maxW={425}
-            overflowX={'hidden'}
-            textOverflow={'ellipsis'}
-            key={index}
-          >
-            {professor}
-          </Text>
+          <Tooltip label={<Text>{professor}</Text>} key={index}>
+            <Text maxW={300} overflowX={'hidden'} textOverflow={'ellipsis'}>
+              {professor}
+            </Text>
+          </Tooltip>
         ))}
       </Box>
     ),
