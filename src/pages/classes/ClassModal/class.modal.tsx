@@ -117,6 +117,7 @@ function ClassModal(props: ClassModalProps) {
         month_week: schedule.month_week
           ? Number(schedule.month_week)
           : undefined,
+        classroom_id: schedule.classroom_id,
       };
       return formated;
     });
@@ -278,6 +279,7 @@ function ClassModal(props: ClassModalProps) {
         ? schedule.occurrences.map((occur) => occur.date)
         : undefined,
       allocated: schedule.allocated,
+      classroom_id: schedule.classroom_id,
     }));
     setSchedules(newSchedules);
   }

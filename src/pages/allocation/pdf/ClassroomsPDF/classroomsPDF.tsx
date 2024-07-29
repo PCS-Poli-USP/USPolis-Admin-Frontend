@@ -23,7 +23,7 @@ const ClassroomsPDF = ({ classes, reservations }: ClassroomPDFProps) => {
                 <Text style={styles.header}>
                   {classroomMap[0]} {'\n'}
                 </Text>
-                <Text style={styles.subheader}>{classroomMap[1]}</Text>
+                <Text style={styles.subheader}>{`Sala - ${classroomMap[1]}`}</Text>
               </View>
             </View>
             <View style={styles.tableRow}>

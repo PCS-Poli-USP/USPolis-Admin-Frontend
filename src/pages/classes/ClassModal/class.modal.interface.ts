@@ -44,6 +44,7 @@ export interface ScheduleData {
   dates?: string[];
   month_week?: MonthWeek;
   allocated?: boolean;
+  classroom_id?: number;
 }
 
 export interface ClassScheduleForm {

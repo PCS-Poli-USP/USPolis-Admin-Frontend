@@ -1,7 +1,21 @@
-import { Alert, AlertIcon, HStack, IconButton, List, ListItem, Text, Tooltip, VStack } from "@chakra-ui/react";
-import { ScheduleData } from "../../class.modal.interface";
-import { BsCalendar2WeekFill, BsFillPenFill, BsFillTrashFill } from "react-icons/bs";
-import { getScheduleFullString } from "utils/schedules/schedule.formatter";
+import {
+  Alert,
+  AlertIcon,
+  HStack,
+  IconButton,
+  List,
+  ListItem,
+  Text,
+  Tooltip,
+  VStack,
+} from '@chakra-ui/react';
+import { ScheduleData } from '../../class.modal.interface';
+import {
+  BsCalendar2WeekFill,
+  BsFillPenFill,
+  BsFillTrashFill,
+} from 'react-icons/bs';
+import { getScheduleFullString } from 'utils/schedules/schedule.formatter';
 
 interface ScheduleListProps {
   schedules: ScheduleData[];
@@ -22,6 +36,10 @@ function ScheduleList(props: ScheduleListProps) {
               <HStack>
                 <BsCalendar2WeekFill />
                 <Text>{getScheduleFullString(val)}</Text>
+                
+                <Text fontWeight={'bold'} textColor={'red.500'}>
+                  {val.allocated ? 'Alocado' : ''}
+                </Text>
 
                 <Tooltip label='Editar'>
                   <IconButton
@@ -34,7 +52,7 @@ function ScheduleList(props: ScheduleListProps) {
                   />
                 </Tooltip>
 
-                <Tooltip label='Remover'>
+                <Tooltip label={val.allocated ? 'Remover horário ALOCADO' : 'Remover'}>
                   <IconButton
                     colorScheme='red'
                     size='sm'
@@ -59,4 +77,4 @@ function ScheduleList(props: ScheduleListProps) {
   );
 }
 
-export default ScheduleList
+export default ScheduleList;

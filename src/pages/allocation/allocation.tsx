@@ -38,12 +38,7 @@ function Allocation() {
 
   const [nameSearchValue, setNameSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
-  const {
-    events,
-    resources,
-    classes,
-    reservations,
-  } = useAllocation();
+  const { events, resources, classes, reservations } = useAllocation();
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
 
   function setCalendarDate(ISOdate: string) {
@@ -83,7 +78,7 @@ function Allocation() {
       );
     }
   }
-
+  console.log(events);
   return (
     <>
       <Navbar />
@@ -103,22 +98,23 @@ function Allocation() {
               fileName='disciplinas.pdf'
             >
               {(params) =>
-                params.loading ? 'Carregando PDF...' : 'Baixar alocação das disciplinas'
+                params.loading
+                  ? 'Carregando PDF...'
+                  : 'Baixar alocação das disciplinas'
               }
             </PDFDownloadLink>
           </Button>
           <Button ml={4} colorScheme='blue'>
             <PDFDownloadLink
               document={
-                <ClassroomsPDF
-                  classes={classes}
-                  reservations={reservations}
-                />
+                <ClassroomsPDF classes={classes} reservations={reservations} />
               }
               fileName='salas.pdf'
             >
               {(params) =>
-                params.loading ? 'Carregando PDF...' : 'Baixar alocação das salas'
+                params.loading
+                  ? 'Carregando PDF...'
+                  : 'Baixar alocação das salas'
               }
             </PDFDownloadLink>
           </Button>
