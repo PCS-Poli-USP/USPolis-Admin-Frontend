@@ -239,6 +239,20 @@ const ConflictsPage = () => {
               <></>
             )}
           </C.Accordion>
+          {selectedBuildingName ? (
+            conflicts?.find((val) => val.name === selectedBuildingName)
+              ?.conflicts.length === 0 ? (
+              <C.Alert status='success'>
+                <C.AlertIcon />
+                <C.AlertTitle>Nenhum conflito encontrado</C.AlertTitle>
+              </C.Alert>
+            ) : undefined
+          ) : (
+            <C.Alert status='warning'>
+              <C.AlertIcon />
+              <C.AlertTitle>Selecione um prédio</C.AlertTitle>
+            </C.Alert>
+          )}
         </C.Flex>
       </C.Flex>
       <EditEventModal
