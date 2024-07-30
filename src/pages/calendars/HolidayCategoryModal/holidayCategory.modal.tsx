@@ -57,7 +57,7 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
 
     const values = getValues();
     if (!props.selectedHolidayCategory) return;
-    updateHolidayCategory(
+    await updateHolidayCategory(
       props.selectedHolidayCategory.id,
       formatUpdateData(values),
     );
