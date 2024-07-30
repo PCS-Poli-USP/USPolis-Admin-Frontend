@@ -5,6 +5,7 @@ import {
   UpdateHoliday,
 } from 'models/http/requests/holiday.request.models';
 import { HolidayResponse } from 'models/http/responses/holiday.response.models';
+import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import HolidaysService from 'services/api/holiday.service';
 import { sortHolidaysResponse } from 'utils/holidays/holidays.sorter';
@@ -40,7 +41,7 @@ const useHolidays = () => {
         .then((response) => {
           showToast(
             'Sucesso',
-            `Feriado do dia ${data.date} criado com sucesso!`,
+            `Feriado do dia ${moment(data.date).format('DD/MM/YYYY')} criado com sucesso!`,
             'success',
           );
           getHolidays();
