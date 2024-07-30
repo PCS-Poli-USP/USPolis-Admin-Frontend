@@ -60,16 +60,6 @@ export function AllocateClassModal({
         <ModalCloseButton />
         <ModalBody>
           <Flex flexDir={'column'} gap={4}>
-            <Button
-              flexGrow={1}
-              alignSelf={'stretch'}
-              onClick={() => {
-                reset();
-              }}
-            >
-              Descartar Mudanças
-            </Button>
-            <Divider />
             <Flex flexDir={'column'} gap={4}>
               {class_.schedules.map((schedule, index) => (
                 <Box key={index}>
@@ -85,6 +75,15 @@ export function AllocateClassModal({
             <Flex flexGrow={1} justifyContent={'space-between'} gap={2}>
               <Button onClick={onClose} flexGrow={1} colorScheme='red'>
                 Cancelar
+              </Button>
+              <Button
+                flexGrow={1}
+                alignSelf={'stretch'}
+                onClick={() => {
+                  reset();
+                }}
+              >
+                Restaurar
               </Button>
               <Button onClick={handleSave} flexGrow={1} colorScheme='blue'>
                 Salvar
