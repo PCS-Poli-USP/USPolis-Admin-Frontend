@@ -134,7 +134,9 @@ function Calendars() {
         <HolidaysContentModal
           isLoading={loadingCategories}
           isOpen={isOpenHolidaysModal}
-          onClose={onCloseHolidaysModal}
+          onClose={() => {
+            onCloseHolidaysModal();
+          }}
           categories={categories}
           refetch={() => {
             getHolidaysCategories();

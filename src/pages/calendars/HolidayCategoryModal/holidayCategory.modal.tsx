@@ -39,7 +39,7 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
     if (!isValid) return;
 
     const values = getValues();
-    createHolidayCategory(values as CreateHolidayCategory);
+    await createHolidayCategory(values as CreateHolidayCategory);
     props.refetch();
     handleCloseModal();
   }
@@ -57,7 +57,10 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
 
     const values = getValues();
     if (!props.selectedHolidayCategory) return;
-    updateHolidayCategory(props.selectedHolidayCategory.id, formatUpdateData(values));
+    updateHolidayCategory(
+      props.selectedHolidayCategory.id,
+      formatUpdateData(values),
+    );
     props.refetch();
     handleCloseModal();
   }
