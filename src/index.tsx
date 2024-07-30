@@ -23,7 +23,7 @@ import AuthRoute from 'components/routes/auth.route';
 import AppContextProvider from 'context/AppContext';
 import Buildings from 'pages/buildings/buildings';
 import Users from 'pages/users/users';
-import ConflictsPage from 'pages/conflicts';
+import ConflictsPage from 'pages/conflicts/conflicts';
 import Subjects from 'pages/subjects/subjects';
 import Calendars from 'pages/calendars/';
 import Reservations from 'pages/reservations';

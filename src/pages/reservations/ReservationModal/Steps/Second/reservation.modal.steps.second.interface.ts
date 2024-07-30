@@ -24,6 +24,6 @@ export interface ReservationSecondForm {
   start_date: string;
   end_date: string;
   recurrence: Recurrence;
-  week_day?: WeekDay;
-  month_week?: MonthWeek;
+  week_day?: WeekDay | string;
+  month_week?: MonthWeek | string;
 }

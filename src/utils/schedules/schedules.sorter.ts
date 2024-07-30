@@ -6,29 +6,34 @@ export function sortScheduleResponse(
   A: ScheduleResponseBase,
   B: ScheduleResponseBase,
 ) {
-  if (!A.week_day && !B.week_day) {
+  if (A.week_day === undefined && B.week_day === undefined) {
     // Sort by recurrence
-    const recurA = Recurrence.translate(A.recurrence);
-    const recurB = Recurrence.translate(B.recurrence);
+    const recurA = Recurrence.toInt(A.recurrence);
+    const recurB = Recurrence.toInt(B.recurrence);
     if (recurA < recurB) return -1;
     if (recurA > recurB) return 1;
 
     // Sort by time
     return sortScheduleByTime(A, B);
   }
-  if (!A.week_day && B.week_day) return 1;
-  if (A.week_day && !B.week_day) return -1;
+  if (A.week_day === undefined && B.week_day) return 1;
+  if (A.week_day && B.week_day === undefined) return -1;
 
-  if (A.week_day && B.week_day) {
+  if (A.week_day !== undefined && B.week_day !== undefined) {
     if (A.week_day < B.week_day) return -1;
     if (A.week_day < B.week_day) return 1;
+
+    const recurA = Recurrence.toInt(A.recurrence);
+    const recurB = Recurrence.toInt(B.recurrence);
+    if (recurA < recurB) return -1;
+    if (recurA > recurB) return 1;
 
     return sortScheduleByTime(A, B);
   }
   return 0;
 }
 
-const TIME_FORMAT = 'HH:mm:ss'
+const TIME_FORMAT = 'HH:mm:ss';
 
 function sortScheduleByTime(A: ScheduleResponseBase, B: ScheduleResponseBase) {
   const startA = moment(A.start_time, TIME_FORMAT);

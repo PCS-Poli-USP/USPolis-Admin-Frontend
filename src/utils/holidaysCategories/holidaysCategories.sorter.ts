@@ -1,5 +1,5 @@
 import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
-import { sortHolidaysUnfetchResponse } from 'utils/holidays/holidays.sorter';
+import { sortHolidaysResponse } from 'utils/holidays/holidays.sorter';
 
 export function sortHolidaysCategoriesResponse(
   A: HolidayCategoryResponse,
@@ -14,6 +14,6 @@ export function sortAllHolidaysFromHolidaysCategories(
   categories: HolidayCategoryResponse[],
 ) {
   categories.forEach((category) =>
-    category.holidays.sort(sortHolidaysUnfetchResponse),
+    category.holidays.sort(sortHolidaysResponse),
   );
 }

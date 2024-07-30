@@ -19,6 +19,19 @@ export namespace Recurrence {
     return translations[recurrence];
   }
 
+  export function sortReccurrence(A: Recurrence, B: Recurrence) {
+    return Recurrence.toInt(A) - Recurrence.toInt(B);
+  }
+
+  export function toInt(recurrence: Recurrence) {
+    if (recurrence === Recurrence.DAILY) return 0;
+    if (recurrence === Recurrence.WEEKLY) return 1;
+    if (recurrence === Recurrence.BIWEEKLY) return 2;
+    if (recurrence === Recurrence.MONTHLY) return 3;
+    if (recurrence === Recurrence.CUSTOM) return 4;
+    return 4;
+  }
+
   export function toRRule(recurrence: Recurrence) {
     if (recurrence === Recurrence.MONTHLY) return 'monthly';
     return 'weekly';

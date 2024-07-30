@@ -12,5 +12,5 @@ export interface ClassModalSecondStepProps extends ClassModalStepsProps {
 export interface ClassSecondForm {
   start_date: string;
   end_date: string;
-  calendar_ids?: number[];
+  calendar_ids: number[];
 }

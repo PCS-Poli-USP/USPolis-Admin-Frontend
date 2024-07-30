@@ -1,8 +1,8 @@
-import { HolidayUnfetchResponse } from './holiday.response.models';
+import { HolidayResponse } from './holiday.response.models';
 
 export interface HolidayCategoryResponse {
   id: number;
   name: string;
   created_by: string;
-  holidays: HolidayUnfetchResponse[];
+  holidays: HolidayResponse[];
 }

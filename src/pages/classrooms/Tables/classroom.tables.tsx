@@ -1,3 +1,4 @@
+import { CopyIcon } from '@chakra-ui/icons';
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { appContext } from 'context/AppContext';
@@ -11,6 +12,7 @@ import {
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface ClassroomColumnsProps {
+  handleDuplicateClick: (data: ClassroomResponse) => void;
   handleEditClick: (data: ClassroomResponse) => void;
   handleDeleteClick: (data: ClassroomResponse) => void;
 }
@@ -82,6 +84,16 @@ export function getClassroomColumns(
       header: 'Opções',
       cell: ({ row }) => (
         <HStack spacing='0px'>
+          <Tooltip label='Duplicar Sala'>
+          <IconButton
+            colorScheme='cyan'
+            size='sm'
+            variant='ghost'
+            aria-label='duplicar-sala'
+            icon={<CopyIcon />}
+            onClick={() => props.handleDuplicateClick(row.original)}
+          />
+        </Tooltip>
           <Tooltip label='Editar'>
             <IconButton
               colorScheme='yellow'

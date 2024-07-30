@@ -37,9 +37,15 @@ function Classrooms() {
   const { classrooms, getClassrooms, deleteClassroom } = useClassrooms();
 
   const columns = getClassroomColumns({
+    handleDuplicateClick: handleDuplicateClick,
     handleEditClick: handleEditClick,
     handleDeleteClick: handleDeleteClick,
   });
+
+  function handleDuplicateClick(data: ClassroomResponse) {
+    setSelectedClassroom(data);
+    onOpenModal();
+  }
 
   function handleDeleteClick(data: ClassroomResponse) {
     setSelectedClassroom(data);
@@ -69,7 +75,10 @@ function Classrooms() {
       <Navbar />
       <ClassroomModal
         isOpen={isOpenModal}
-        onClose={onCloseModal}
+        onClose={() => {
+          onCloseModal();
+          setSelectedClassroom(undefined);
+        }}
         isUpdate={isUpdate}
         buildings={buildings}
         refetch={getClassrooms}
@@ -81,7 +90,7 @@ function Classrooms() {
         onConfirm={handleDelete}
         title={`Deseja Remover ${selectedClassroom?.name}?`}
         warningText={
-          'Essa ação é irreversível e irá desalocar todas turmas que usam essa sala'
+          'Essa ação é irreversível e irá desalocar todas turmas e apagará todas reservas que usam essa sala'
         }
       />
       <Center>

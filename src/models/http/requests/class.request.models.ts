@@ -14,7 +14,7 @@ export interface ClassBase {
   accessibility: boolean;
   projector: boolean;
   ignore_to_allocate: boolean;
-  calendar_ids?: number[];
+  calendar_ids: number[];
 }
 
 export interface CreateClass extends ClassBase {
@@ -23,6 +23,6 @@ export interface CreateClass extends ClassBase {
 }
 
 export interface UpdateClass extends ClassBase {
-  subject_id?: number;
-  schedules_data?: UpdateSchedule[];
+  subject_id: number;
+  schedules_data: UpdateSchedule[];
 }

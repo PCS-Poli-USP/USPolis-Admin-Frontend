@@ -63,7 +63,7 @@ export const classThirdFormFields = {
         if (!value) return false;
         return !ScheduleValidator.isInvalidMonthWeek(value);
       }),
-    defaultValue: undefined,
+    defaultValue: '',
   },
   week_day: {
     validator: yup
@@ -81,7 +81,7 @@ export const classThirdFormFields = {
         if (value === undefined || value === null) return false;
         return !ScheduleValidator.isInvalidWeekDay(value);
       }),
-    defaultValue: undefined,
+    defaultValue: '',
   },
   start_time: {
     validator: yup

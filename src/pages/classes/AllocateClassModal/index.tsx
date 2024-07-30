@@ -9,16 +9,14 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  VStack,
 } from '@chakra-ui/react';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import AllocateSingleScheduleSection, {
   AllocateSingleScheduleSectionRef,
 } from './allocateSingleScheduleSection';
 import { useRef } from 'react';
-import OccurrencesService, {
-  AllocateManySchedulesData,
-} from 'services/api/occurrences.service';
+import { AllocateManySchedulesData } from 'services/api/occurrences.service';
+import useOccurrences from 'hooks/useOccurrences';
 
 interface props {
   isOpen: boolean;
@@ -33,7 +31,7 @@ export function AllocateClassModal({
   refresh,
   class_,
 }: props) {
-  const occurrencesService = new OccurrencesService();
+  const { allocateManySchedules } = useOccurrences();
 
   const sectionsRefs = useRef<(AllocateSingleScheduleSectionRef | null)[]>([]);
 
@@ -47,7 +45,7 @@ export function AllocateClassModal({
       const sectionData = ref?.getData();
       if (sectionData) data.push(sectionData);
     }
-    await occurrencesService.allocate_many_schedules(data);
+    await allocateManySchedules(data);
     if (refresh) refresh();
     onClose();
   }
@@ -62,31 +60,30 @@ export function AllocateClassModal({
         <ModalCloseButton />
         <ModalBody>
           <Flex flexDir={'column'} gap={4}>
-            <Button
-              flexGrow={1}
-              alignSelf={'stretch'}
-              onClick={() => {
-                reset();
-              }}
-            >
-              Descartar Mudanças
-            </Button>
-            <Divider />
             <Flex flexDir={'column'} gap={4}>
               {class_.schedules.map((schedule, index) => (
-                <>
+                <Box key={index}>
                   <AllocateSingleScheduleSection
                     key={schedule.id}
                     ref={(ref) => (sectionsRefs.current[index] = ref)}
                     schedule={schedule}
                   />
                   <Divider />
-                </>
+                </Box>
               ))}
             </Flex>
             <Flex flexGrow={1} justifyContent={'space-between'} gap={2}>
               <Button onClick={onClose} flexGrow={1} colorScheme='red'>
                 Cancelar
+              </Button>
+              <Button
+                flexGrow={1}
+                alignSelf={'stretch'}
+                onClick={() => {
+                  reset();
+                }}
+              >
+                Restaurar
               </Button>
               <Button onClick={handleSave} flexGrow={1} colorScheme='blue'>
                 Salvar
