@@ -147,6 +147,7 @@ function Classes() {
 
   function handleDuplicateClick(data: ClassResponse) {
     setSelectedClass(data);
+    setIsUpdateClass(false);
     onOpenClassModal();
   }
 

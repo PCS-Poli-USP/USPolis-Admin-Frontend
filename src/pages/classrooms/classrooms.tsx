@@ -44,6 +44,7 @@ function Classrooms() {
 
   function handleDuplicateClick(data: ClassroomResponse) {
     setSelectedClassroom(data);
+    setIsUpdate(false);
     onOpenModal();
   }
 
@@ -78,6 +79,7 @@ function Classrooms() {
         onClose={() => {
           onCloseModal();
           setSelectedClassroom(undefined);
+          setIsUpdate(false);
         }}
         isUpdate={isUpdate}
         buildings={buildings}

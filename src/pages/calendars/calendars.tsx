@@ -128,6 +128,7 @@ function Calendars() {
           isOpen={isOpenCalendarViewModal}
           onClose={() => {
             onCloseCalendarViewModal();
+            setSelectedCalendar(undefined);
           }}
           calendar={selectedCalendar}
         />
