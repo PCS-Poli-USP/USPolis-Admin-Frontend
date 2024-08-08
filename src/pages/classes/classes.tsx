@@ -157,12 +157,16 @@ function Classes() {
     onOpenClassModal();
   }
 
-  function handleCrawlerSave(subjectsList: string[], building_id: number) {
+  function handleCrawlerSave(
+    subjectsList: string[],
+    building_id: number,
+    calendar_ids: number[],
+  ) {
     setLoading(true);
     const subjectsService = new SubjectsService();
 
     subjectsService
-      .crawl(building_id, subjectsList)
+      .crawl(building_id, { subject_codes: subjectsList, calendar_ids })
       .then((it) => {
         setSuccessSubjects(it.data.sucess);
         setFailedSubjects(it.data.failed);
@@ -175,11 +179,7 @@ function Classes() {
         );
       })
       .catch(({ response }: AxiosError<any>) =>
-        showToast(
-          'Erro!',
-          `${response?.data.detail}`,
-          'error',
-        ),
+        showToast('Erro!', `${response?.data.detail}`, 'error'),
       )
       .finally(() => {
         setLoading(false);

@@ -1,5 +1,10 @@
 import { SubjectType } from 'utils/enums/subjects.enum';
 
+export interface CrawlSubject {
+  subject_codes: string[];
+  calendar_ids: number[];
+}
+
 export interface CreateSubject {
   building_ids: number[];
   code: string;
