@@ -97,19 +97,24 @@ export const getClassesColumns = (
   //   filterFn: FilterBoolean,
   // },
   {
-    accessorFn: (row) => (row.schedules ? row.schedules : ['Não alocada']),
-    filterFn: FilterBuilding,
+    accessorFn: (row) =>
+      row.schedules
+        ? row.schedules.map((schedule) =>
+            schedule.building ? schedule.building : 'Não alocada',
+          )
+        : ['Não alocada'],
+    filterFn: FilterArray,
     header: 'Prédios',
     maxSize: 120,
     cell: ({ row }) => (
       <Box>
-        {row.original.schedules.map((schedule, index) =>
-          schedule.building ? (
-            <Text key={index}>{schedule.building}</Text>
-          ) : (
-            <Text key={index}>Não alocada</Text>
-          ),
-        )}
+        {row.original.schedules.map((schedule, index) => (
+          <Tooltip label={<Text>{schedule.building}</Text>} key={index}>
+            <Text maxW={120} overflowX={'hidden'} textOverflow={'ellipsis'}>
+              {schedule.building ? schedule.building : 'Não alocada'}
+            </Text>
+          </Tooltip>
+        ))}
       </Box>
     ),
   },
@@ -120,32 +125,30 @@ export const getClassesColumns = (
             schedule.classroom ? schedule.classroom : 'Não alocada',
           )
         : ['Não alocada'],
-    filterFn: FilterClassroom,
+    filterFn: FilterArray,
     header: 'Sala',
     maxSize: 120,
     cell: ({ row }) => (
       <Box>
-        {row.original.schedules.map((schedule, index) =>
-          schedule.classroom ? (
-            <Text key={index}>{schedule.classroom}</Text>
-          ) : (
-            <Text key={index}>Não alocada</Text>
-          ),
-        )}
+        {row.original.schedules.map((schedule, index) => (
+          <Tooltip label={<Text>{schedule.classroom}</Text>} key={index}>
+            <Text maxW={120} overflowX={'hidden'} textOverflow={'ellipsis'}>
+              {schedule.classroom ? schedule.classroom : 'Não alocada'}
+            </Text>
+          </Tooltip>
+        ))}
       </Box>
     ),
   },
   {
+    filterFn: FilterArray,
     accessorFn: (row) =>
       row.schedules.map(
         (schedule) =>
-          `${
-            schedule.week_day
-              ? WeekDay.translate(schedule.week_day)
-              : Recurrence.translate(schedule.recurrence)
-          }:
-          ${schedule.start_time.substring(0, 5)} - 
-          ${schedule.end_time.substring(0, 5)}`,
+          `${getScheduleString(schedule)} ${schedule.start_time.substring(
+            0,
+            5,
+          )} ~ ${schedule.end_time.substring(0, 5)}`,
       ),
     header: 'Horários',
     cell: ({ row }) => (
@@ -160,7 +163,6 @@ export const getClassesColumns = (
         ))}
       </Box>
     ),
-    filterFn: FilterArray,
   },
   {
     accessorFn: (row) =>
@@ -172,7 +174,11 @@ export const getClassesColumns = (
       <Box>
         {row.original.calendar_names.length > 0 ? (
           row.original.calendar_names.map((calendar, index) => (
-            <Text key={index}>{calendar}</Text>
+            <Tooltip label={<Text>{calendar}</Text>} key={index}>
+              <Text maxW={140} overflowX={'hidden'} textOverflow={'ellipsis'}>
+                {calendar}
+              </Text>
+            </Tooltip>
           ))
         ) : (
           <Text>Sem calendários</Text>

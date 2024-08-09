@@ -78,6 +78,7 @@ function Allocation() {
       );
     }
   }
+
   return (
     <>
       <Navbar />
@@ -224,6 +225,7 @@ function Allocation() {
                 eventColor='#408080'
                 displayEventTime
                 resources={resources}
+                filterResourcesWithEvents={!!classroomSearchValue}
                 resourceAreaWidth='10%'
                 resourceGroupField='building'
                 resourceAreaHeaderContent='Salas'

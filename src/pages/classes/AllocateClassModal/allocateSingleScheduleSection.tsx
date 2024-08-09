@@ -14,6 +14,7 @@ import { BuildingResponse } from 'models/http/responses/building.response.models
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import ClassroomsService from 'services/api/classrooms.service';
+import { sortClassroomResponse } from 'utils/classrooms/classrooms.sorter';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 
@@ -50,7 +51,7 @@ const AllocateSingleScheduleSection = forwardRef<
   }));
 
   // hooks
-  const { allowedBuildings } = useAllowedBuildings();
+  const { allowedBuildings, loading: loadingBuildings } = useAllowedBuildings();
 
   // data
   const [classrooms, setClassrooms] = useState<ClassroomWithConflictCount[]>(
@@ -92,7 +93,7 @@ const AllocateSingleScheduleSection = forwardRef<
     classroomsService
       .getWithConflictCount(schedule.id, selectedBuilding?.id)
       .then((response) => {
-        setClassrooms(response.data);
+        setClassrooms(response.data.sort(sortClassroomResponse));
       })
       .finally(() => {
         setClassroomsLoading(false);
@@ -139,7 +140,7 @@ const AllocateSingleScheduleSection = forwardRef<
               <Text>
                 Dia da Semana:{' '}
                 <strong>
-                  {schedule.week_day
+                  {schedule.week_day !== undefined
                     ? WeekDay.translate(schedule.week_day)
                     : 'Sem dia da semana'}
                 </strong>
@@ -170,6 +171,7 @@ const AllocateSingleScheduleSection = forwardRef<
               <>
                 <Select
                   placeholder='Selecione o prédio'
+                  icon={loadingBuildings ? <Spinner /> : undefined}
                   onChange={(e) => {
                     setSelectedBuilding(
                       allowedBuildings.find(

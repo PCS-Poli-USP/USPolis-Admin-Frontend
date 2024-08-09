@@ -51,11 +51,11 @@ export function AllocateClassModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          Alocar Turma: {class_.subject_code} - {class_.code}
+          Alocar {class_.subject_code} - Turma {class_.code.slice(-2)}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>

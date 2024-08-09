@@ -146,7 +146,9 @@ function Classes() {
   }
 
   function handleDuplicateClick(data: ClassResponse) {
-    setSelectedClass(data);
+    const selected = { ...data };
+    selected.schedules.forEach((schedule) => (schedule.allocated = false));
+    setSelectedClass({ ...selected });
     setIsUpdateClass(false);
     onOpenClassModal();
   }
@@ -174,7 +176,7 @@ function Classes() {
         getClasses();
         showToast(
           'Sucesso!',
-          'Disciplinas foram carregadas com sucesso!',
+          'Disciplinas carregadas com sucesso!',
           'success',
         );
       })
