@@ -14,27 +14,14 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Stack,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ReactNode, useContext } from 'react';
+import { ReactNode, useContext, useRef } from 'react';
 import { FaUser } from 'react-icons/fa';
 import Logo from 'assets/uspolis.logo.png';
 import { appContext } from 'context/AppContext';
-
-const Links = [
-  { text: 'Disciplinas', value: '/subjects', admin: false },
-  { text: 'Salas', value: '/classrooms', admin: false },
-  { text: 'Turmas', value: '/classes', admin: false },
-  { text: 'Calendários', value: '/calendars', admin: false },
-  { text: 'Reservas', value: '/reservations', admin: false },
-  { text: 'Alocações', value: '/allocation', admin: false },
-  { text: 'Conflitos', value: '/conflicts', admin: false },
-  { text: 'Eventos', value: '/institutional-events', admin: true },
-  { text: 'Prédios', value: '/buildings', admin: true },
-  { text: 'Usuários', value: '/users', admin: true },
-];
+import { MenuDrawer } from '../MenuDrawer';
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
@@ -56,6 +43,8 @@ export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { loggedUser, logout } = useContext(appContext);
 
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
+
   function handleClickLogout() {
     logout();
   }
@@ -64,14 +53,17 @@ export default function Navbar() {
     <>
       <Box bg='uspolis.blue' color='white' px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-          <IconButton
-            size={'md'}
-            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            aria-label={'Open Menu'}
-            display={{ md: 'none' }}
-            onClick={isOpen ? onClose : onOpen}
-          />
-          <HStack spacing={8} alignItems={'center'}>
+          <HStack spacing={3} alignItems={'center'}>
+            <IconButton
+              size={'md'}
+              icon={<HamburgerIcon />}
+              variant={'ghost'}
+              textColor={'white'}
+              aria-label={'open-menu'}
+              onClick={() => onOpen()}
+              ref={menuBtnRef}
+            />
+            <MenuDrawer isOpen={isOpen} onClose={onClose} btnRef={menuBtnRef} />
             <NavLink to='/index'>
               <Image
                 src={Logo}
@@ -82,20 +74,6 @@ export default function Navbar() {
               />
               USPolis
             </NavLink>
-            <HStack
-              as={'nav'}
-              spacing={4}
-              display={{ base: 'none', md: 'flex' }}
-            >
-              {Links.map(
-                (link) =>
-                  (!link.admin || (link.admin && loggedUser?.is_admin)) && (
-                    <NavLink key={link.value} to={link.value}>
-                      {link.text}
-                    </NavLink>
-                  ),
-              )}
-            </HStack>
           </HStack>
           <Flex alignItems={'center'}>
             <Menu>
@@ -120,21 +98,6 @@ export default function Navbar() {
             </Menu>
           </Flex>
         </Flex>
-
-        {isOpen ? (
-          <Box pb={4} display={{ md: 'none' }}>
-            <Stack as={'nav'} spacing={4}>
-              {Links.map(
-                (link) =>
-                  (!link.admin || (link.admin && loggedUser?.is_admin)) && (
-                    <NavLink key={link.value} to={link.value}>
-                      {link.text}
-                    </NavLink>
-                  ),
-              )}
-            </Stack>
-          </Box>
-        ) : null}
       </Box>
     </>
   );
