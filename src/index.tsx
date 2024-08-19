@@ -27,6 +27,7 @@ import ConflictsPage from 'pages/conflicts/conflicts';
 import Subjects from 'pages/subjects/subjects';
 import Calendars from 'pages/calendars/';
 import Reservations from 'pages/reservations';
+import EmptyPage from 'components/common/EmptyPage';
 
 Amplify.configure(awsConfig);
 
@@ -45,19 +46,21 @@ root.render(
               <Route path='/index' element={<App />} />
               {/* Private Routes */}
               <Route path='/' element={<AuthRoute />}>
-                <Route path='users' element={<Users />} />
-                <Route path='buildings' element={<Buildings />} />
-                <Route path='subjects' element={<Subjects />} />
-                <Route path='calendars' element={<Calendars />} />
-                <Route path='classrooms' element={<Classrooms />} />
-                <Route path='classes' element={<Classes />} />
-                <Route path='allocation' element={<Allocation />} />
-                <Route path='reservations' element={<Reservations />} />
-                <Route path='conflicts' element={<ConflictsPage />} />
-                <Route
-                  path='institutional-events'
-                  element={<InstitutionalEvents />}
-                />
+                <Route path='/' element={<EmptyPage />}>
+                  <Route path='users' element={<Users />} />
+                  <Route path='buildings' element={<Buildings />} />
+                  <Route path='subjects' element={<Subjects />} />
+                  <Route path='calendars' element={<Calendars />} />
+                  <Route path='classrooms' element={<Classrooms />} />
+                  <Route path='classes' element={<Classes />} />
+                  <Route path='allocation' element={<Allocation />} />
+                  <Route path='reservations' element={<Reservations />} />
+                  <Route path='conflicts' element={<ConflictsPage />} />
+                  <Route
+                    path='institutional-events'
+                    element={<InstitutionalEvents />}
+                  />
+                </Route>
               </Route>
             </Routes>
           </Router>
