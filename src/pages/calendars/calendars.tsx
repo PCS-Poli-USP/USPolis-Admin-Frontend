@@ -1,6 +1,5 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
-import Navbar from 'components/common/NavBar/navbar.component';
 import CalendarModal from './CalendarModal/calendar.modal';
 import { useState } from 'react';
 import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
@@ -10,6 +9,7 @@ import useCalendars from 'hooks/useCalendars';
 import useHolidaysCategories from 'hooks/useHolidaysCategories';
 import CalendarAccordion from './CalendarAccordion/calendar.accordion';
 import HolidaysContentModal from './HolidaysContentModal/holidaysContent.modal';
+import PageContent from 'components/common/PageContent';
 
 function Calendars() {
   const {
@@ -80,82 +80,79 @@ function Calendars() {
   }
 
   return (
-    <>
-      <Navbar />
-      <Flex paddingX={10} paddingY={5} direction={'column'}>
-        <Flex align={'center'}>
-          <Text fontSize={'4xl'} mb={4}>
-            Calendários
-          </Text>
-          <Spacer />
-          <Button
-            mr={2}
-            colorScheme={'blue'}
-            onClick={() => {
-              onOpenHolidaysModal();
-            }}
-          >
-            Feriados e Categorias
-          </Button>
-          <Button
-            colorScheme={'blue'}
-            onClick={handleCreateCalendarButton}
-            leftIcon={<AddIcon />}
-          >
-            Adicionar Calendário
-          </Button>
-        </Flex>
-        <CalendarAccordion
-          calendars={calendars}
-          onCalendarView={handleViewCalendarButton}
-          onCalendarUpdate={handleEditCalendarButton}
-          onCalendarDelete={handleDeleteCalendarButton}
-        />
-        <CalendarModal
-          isUpdate={isUpdateCalendar}
-          categories={categories}
-          selectedCalendar={selectedCalendar}
-          onCreate={createCalendar}
-          onUpdate={updateCalendar}
-          isOpen={isOpenCalendarModal}
-          onClose={() => {
-            onCloseCalendarModal();
-            setSelectedCalendar(undefined);
-            setIsUpdateCalendar(false);
+    <PageContent>
+      <Flex align={'center'}>
+        <Text fontSize={'4xl'} mb={4}>
+          Calendários
+        </Text>
+        <Spacer />
+        <Button
+          mr={2}
+          colorScheme={'blue'}
+          onClick={() => {
+            onOpenHolidaysModal();
           }}
-        />
-        <CalendarViewModal
-          isOpen={isOpenCalendarViewModal}
-          onClose={() => {
-            onCloseCalendarViewModal();
-            setSelectedCalendar(undefined);
-          }}
-          calendar={selectedCalendar}
-        />
-        <HolidaysContentModal
-          isLoading={loadingCategories}
-          isOpen={isOpenHolidaysModal}
-          onClose={() => {
-            onCloseHolidaysModal();
-          }}
-          categories={categories}
-          refetch={() => {
-            getHolidaysCategories();
-            getCalendars();
-          }}
-        />
-        <Dialog
-          title={`Deseja o calendário ${selectedCalendar?.name}`}
-          warningText={`Essa mudança é irreversível`}
-          isOpen={isOpenDeleteCalendarDialog}
-          onClose={() => {
-            onCloseDeleteCalendarDialog();
-            setSelectedCalendar(undefined);
-          }}
-          onConfirm={handleDeleteCalendar}
-        />
+        >
+          Feriados e Categorias
+        </Button>
+        <Button
+          colorScheme={'blue'}
+          onClick={handleCreateCalendarButton}
+          leftIcon={<AddIcon />}
+        >
+          Adicionar Calendário
+        </Button>
       </Flex>
-    </>
+      <CalendarAccordion
+        calendars={calendars}
+        onCalendarView={handleViewCalendarButton}
+        onCalendarUpdate={handleEditCalendarButton}
+        onCalendarDelete={handleDeleteCalendarButton}
+      />
+      <CalendarModal
+        isUpdate={isUpdateCalendar}
+        categories={categories}
+        selectedCalendar={selectedCalendar}
+        onCreate={createCalendar}
+        onUpdate={updateCalendar}
+        isOpen={isOpenCalendarModal}
+        onClose={() => {
+          onCloseCalendarModal();
+          setSelectedCalendar(undefined);
+          setIsUpdateCalendar(false);
+        }}
+      />
+      <CalendarViewModal
+        isOpen={isOpenCalendarViewModal}
+        onClose={() => {
+          onCloseCalendarViewModal();
+          setSelectedCalendar(undefined);
+        }}
+        calendar={selectedCalendar}
+      />
+      <HolidaysContentModal
+        isLoading={loadingCategories}
+        isOpen={isOpenHolidaysModal}
+        onClose={() => {
+          onCloseHolidaysModal();
+        }}
+        categories={categories}
+        refetch={() => {
+          getHolidaysCategories();
+          getCalendars();
+        }}
+      />
+      <Dialog
+        title={`Deseja o calendário ${selectedCalendar?.name}`}
+        warningText={`Essa mudança é irreversível`}
+        isOpen={isOpenDeleteCalendarDialog}
+        onClose={() => {
+          onCloseDeleteCalendarDialog();
+          setSelectedCalendar(undefined);
+        }}
+        onConfirm={handleDeleteCalendar}
+      />
+    </PageContent>
   );
 }
 

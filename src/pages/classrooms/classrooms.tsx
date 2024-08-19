@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Center,
   Flex,
   Spacer,
   Text,
@@ -10,13 +9,13 @@ import {
 
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
-import Navbar from 'components/common/NavBar/navbar.component';
 import { useState } from 'react';
 import ClassroomModal from './ClassroomModal/classroom.modal';
 import useBuildings from 'hooks/useBuildings';
 import useClassrooms from 'hooks/useClassrooms';
 import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
 import { getClassroomColumns } from './Tables/classroom.tables';
+import PageContent from 'components/common/PageContent';
 
 function Classrooms() {
   const {
@@ -72,8 +71,7 @@ function Classrooms() {
     onCloseDelete();
   }
   return (
-    <>
-      <Navbar />
+    <PageContent>
       <ClassroomModal
         isOpen={isOpenModal}
         onClose={() => {
@@ -95,21 +93,19 @@ function Classrooms() {
           'Essa ação é irreversível e irá desalocar todas turmas e apagará todas reservas que usam essa sala'
         }
       />
-      <Center>
-        <Box p={4} w='9xl' overflowX='auto'>
-          <Flex align='center'>
-            <Text fontSize='4xl' mb={4}>
-              Salas de aula
-            </Text>
-            <Spacer />
-            <Button colorScheme='blue' onClick={handleCreateClick}>
-              Cadastrar
-            </Button>
-          </Flex>
-          <DataTable data={classrooms} columns={columns} />
-        </Box>
-      </Center>
-    </>
+      <Box p={0} w='100%' overflowX='auto'>
+        <Flex align='center'>
+          <Text fontSize='4xl' mb={4}>
+            Salas de aula
+          </Text>
+          <Spacer />
+          <Button colorScheme='blue' onClick={handleCreateClick}>
+            Cadastrar
+          </Button>
+        </Flex>
+        <DataTable data={classrooms} columns={columns} />
+      </Box>
+    </PageContent>
   );
 }
 export default Classrooms;

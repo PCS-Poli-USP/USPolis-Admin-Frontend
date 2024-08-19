@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import ConflictsService from '../../services/api/conflicts.service';
-import Navbar from 'components/common/NavBar/navbar.component';
 import * as C from '@chakra-ui/react';
 import Conflict from 'models/http/responses/conflict.response.models';
 import { useDisclosure, useToast } from '@chakra-ui/react';
@@ -8,6 +7,7 @@ import EditEventModal from 'components/allocation/editEvent.modal';
 import EventsService from 'services/api/events.service';
 import Event from 'models/common/event.model';
 import moment from 'moment';
+import PageContent from 'components/common/PageContent';
 const ConflictsPage = () => {
   const eventsService = new EventsService();
   const conflictsService = new ConflictsService();
@@ -124,8 +124,7 @@ const ConflictsPage = () => {
   }
 
   return (
-    <>
-      <Navbar />
+    <PageContent>
       <C.Flex paddingX={4} direction={'column'}>
         <C.Text fontSize='4xl' mb={4}>
           Conflitos
@@ -277,7 +276,7 @@ const ConflictsPage = () => {
           },
         ]}
       />
-    </>
+    </PageContent>
   );
 };
 

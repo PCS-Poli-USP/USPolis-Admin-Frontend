@@ -4,7 +4,6 @@ import * as C from '@chakra-ui/react';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
-import Navbar from 'components/common/NavBar/navbar.component';
 import UsersService from 'services/api/users.service';
 import { User, EditUser } from 'models/common/user.common.model';
 import DataTable from 'components/common/DataTable/dataTable.component';
@@ -15,6 +14,7 @@ import Dialog from 'components/common/Dialog/dialog.component';
 import RegisterUserModal, {
   RegisterUserFormValues,
 } from 'components/users/register.modal';
+import PageContent from 'components/common/PageContent';
 
 const Users = () => {
   const { setLoading } = useContext(appContext);
@@ -195,17 +195,16 @@ const Users = () => {
   }
 
   return (
-    <>
-      <Navbar />
-      <C.Flex paddingX={4} direction={'column'}>
-        <C.Flex justifyContent={'space-between'} alignItems={'center'}>
-          <C.Text fontSize='4xl' mb={4}>
-            Usuários
-          </C.Text>
-          <C.Button onClick={handleCreateButton}>Cadastrar</C.Button>
-        </C.Flex>
-        <DataTable columns={columns} data={users} />
+    <PageContent>
+      <C.Flex justifyContent={'space-between'} alignItems={'center'}>
+        <C.Text fontSize='4xl' mb={4}>
+          Usuários
+        </C.Text>
+        <C.Button onClick={handleCreateButton} colorScheme={'blue'}>
+          Cadastrar
+        </C.Button>
       </C.Flex>
+      <DataTable columns={columns} data={users} />
       <EditUserModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
@@ -248,7 +247,7 @@ const Users = () => {
         }}
         title={`Deseja deletar o usuário "${contextUser?.username}"`}
       />
-    </>
+    </PageContent>
   );
 };
 

@@ -11,18 +11,14 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import {
   BsCalendarDateFill,
-  BsCalendarXFill,
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { BiSolidCalendarEdit } from 'react-icons/bi';
 import { getScheduleString } from 'utils/schedules/schedule.formatter';
 import {
   FilterArray,
-  FilterBoolean,
   FilterBuilding,
-  FilterClassroom,
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
@@ -33,7 +29,7 @@ interface ClassesColumnsProps {
   handleEditClick: (data: ClassResponse) => void;
   handleAllocationEditClick: (data: ClassResponse) => void;
   handleDeleteClassClick: (data: ClassResponse) => void;
-  handleDeleteAllocClick: (data: ClassResponse) => void;
+  handleEditOccurrencesClick: (data: ClassResponse) => void;
   checkMap: boolean[];
 }
 
@@ -68,7 +64,7 @@ export const getClassesColumns = (
   {
     accessorKey: 'subject_name',
     header: 'Nome da Disciplina',
-    maxSize: 300,
+    maxSize: 250,
     cell: ({ row }) => (
       <Box maxW={300}>
         <Tooltip label={<Text>{row.original.subject_name}</Text>}>
@@ -89,13 +85,6 @@ export const getClassesColumns = (
       </Box>
     ),
   },
-  // {
-  //   accessorKey: 'ignore_to_allocate',
-  //   header: 'Ignorar',
-  //   maxSize: 75,
-  //   meta: { isBoolean: true, isSelectable: true },
-  //   filterFn: FilterBoolean,
-  // },
   {
     accessorFn: (row) =>
       row.schedules
@@ -195,6 +184,7 @@ export const getClassesColumns = (
   {
     accessorKey: 'professors',
     header: 'Professores',
+    maxSize: 250,
     cell: ({ row }) => (
       <Box>
         {row.original.professors?.map((professor, index) => (
@@ -243,6 +233,16 @@ export const getClassesColumns = (
             onClick={() => props.handleAllocationEditClick(row.original)}
           />
         </Tooltip>
+        <Tooltip label='Editar Ocorrências'>
+          <IconButton
+            colorScheme='yellow'
+            size='sm'
+            variant='ghost'
+            aria-label='editar-ocorrencias'
+            icon={<BiSolidCalendarEdit />}
+            onClick={() => props.handleEditOccurrencesClick(row.original)}
+          />
+        </Tooltip>
         <Tooltip label='Excluir Turma'>
           <IconButton
             colorScheme='red'
@@ -253,16 +253,6 @@ export const getClassesColumns = (
             onClick={() => props.handleDeleteClassClick(row.original)}
           />
         </Tooltip>
-        {/* <Tooltip label='Excluir Alocação'>
-          <IconButton
-            colorScheme='red'
-            size='sm'
-            variant='ghost'
-            aria-label='excluir-alocacao'
-            icon={<BsCalendarXFill />}
-            onClick={() => props.handleDeleteAllocClick(row.original)}
-          />
-        </Tooltip> */}
       </HStack>
     ),
   },

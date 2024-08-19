@@ -21,7 +21,6 @@ import DatePickerModal from 'components/allocation/datePicker.modal';
 import EventContent from 'pages/allocation/EventContent/eventContent';
 // import eventsByClassroomsPlugin from 'pages/allocation/plugins/EventsByClassrooms/eventsByClassrooms.plugin';
 // import eventsByWeekPlugin from 'pages/allocation/plugins/EventsByWeek/eventsByWeek.plugin';
-import Navbar from 'components/common/NavBar/navbar.component';
 import Loading from 'components/common/Loading/loading.component';
 import { appContext } from 'context/AppContext';
 import { useContext, useRef, useState } from 'react';
@@ -30,6 +29,7 @@ import { Event } from './interfaces/allocation.interfaces';
 import useAllocation from 'pages/allocation/hooks/useAllocation';
 import ClassesPDF from './pdf/ClassesPDF/classesPDF';
 import ClassroomsPDF from './pdf/ClassroomsPDF/classroomsPDF';
+import PageContent from 'components/common/PageContent';
 
 function Allocation() {
   const { loading, setLoading } = useContext(appContext);
@@ -80,8 +80,7 @@ function Allocation() {
   }
 
   return (
-    <>
-      <Navbar />
+    <PageContent>
       <Loading isOpen={loading} onClose={() => setLoading(false)} />
 
       <Grid
@@ -234,7 +233,7 @@ function Allocation() {
           </Skeleton>
         </GridItem>
       </Grid>
-    </>
+    </PageContent>
   );
 }
 

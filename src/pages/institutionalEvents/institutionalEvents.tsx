@@ -1,17 +1,15 @@
 import {
-  Box,
   Button,
-  Center,
   Flex,
   HStack,
   IconButton,
+  Spacer,
   Spinner,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
-import Navbar from 'components/common/NavBar/navbar.component';
 import { GoSync } from 'react-icons/go';
 import { useEffect, useState } from 'react';
 import { getInstitutionalEventsColumns } from './Tables/institutionalEvent.table';
@@ -19,6 +17,7 @@ import { InstitutionalEventResponse } from 'models/http/responses/instituionalEv
 import useInstitutionalEvents from 'hooks/useInstitutionalEvents';
 import InstitutionalEventModal from './InstitutionalEventModal/institutionalEvent.modal';
 import useBuildings from 'hooks/useBuildings';
+import PageContent from 'components/common/PageContent';
 
 function InstitutionalEvents() {
   const {
@@ -63,8 +62,7 @@ function InstitutionalEvents() {
   }
 
   return (
-    <>
-      <Navbar />
+    <PageContent>
       <InstitutionalEventModal
         isOpen={isOpenEventForm}
         onClose={onCloseEventForm}
@@ -84,7 +82,7 @@ function InstitutionalEvents() {
         title='Remover evento'
         warningText={`Tem certeza que deseja remover o evento "${selectedEvent?.title}"?`}
       />
-      <Center h='100%'>
+      <Flex h='100%' direction={'column'}>
         {loading && (
           <Spinner
             alignSelf='center'
@@ -96,28 +94,25 @@ function InstitutionalEvents() {
             color='uspolis.blue'
           />
         )}
-        <Box p={10} w='100%' overflow='auto'>
-          <Flex align='center' justify='space-between'>
-            <Text fontSize='4xl' mb={4}>
-              Eventos
-            </Text>
-            <HStack gap={1}>
-              <IconButton
-                colorScheme='blue'
-                icon={<GoSync />}
-                aria-label='Get events'
-                onClick={getEvents}
-              />
-              <Button colorScheme='blue' onClick={onOpenEventForm}>
-                Cadastrar evento
-              </Button>
-            </HStack>
-          </Flex>
+        <HStack gap={1}>
+          <Text fontSize='4xl' mb={4}>
+            Eventos
+          </Text>
+          <Spacer />
+          <IconButton
+            colorScheme='blue'
+            icon={<GoSync />}
+            aria-label='Get events'
+            onClick={getEvents}
+          />
+          <Button colorScheme='blue' onClick={onOpenEventForm}>
+            Cadastrar evento
+          </Button>
+        </HStack>
 
-          <DataTable data={events} columns={columns} />
-        </Box>
-      </Center>
-    </>
+        <DataTable data={events} columns={columns} />
+      </Flex>
+    </PageContent>
   );
 }
 

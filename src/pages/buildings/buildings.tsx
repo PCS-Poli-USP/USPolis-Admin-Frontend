@@ -1,6 +1,5 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
 import { useState } from 'react';
-import Navbar from 'components/common/NavBar/navbar.component';
 import {
   CreateBuilding,
   UpdateBuilding,
@@ -11,6 +10,7 @@ import DataTable from 'components/common/DataTable/dataTable.component';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { getBuildingsColumns } from './Tables/building.tables';
 import useBuildings from 'hooks/useBuildings';
+import PageContent from 'components/common/PageContent';
 
 const Buildings = () => {
   const [contextBuilding, setContextBuilding] = useState<
@@ -53,17 +53,16 @@ const Buildings = () => {
   }
 
   return (
-    <>
-      <Navbar />
-      <Flex paddingX={4} direction={'column'}>
-        <Flex justifyContent={'space-between'} alignItems={'center'}>
-          <Text fontSize='4xl' mb={4}>
-            Prédios
-          </Text>
-          <Button onClick={handleCreateButton}>Cadastrar</Button>
-        </Flex>
-        <DataTable columns={columns} data={buildings} />
+    <PageContent>
+      <Flex justifyContent={'space-between'} alignItems={'center'}>
+        <Text fontSize='4xl' mb={4}>
+          Prédios
+        </Text>
+        <Button onClick={handleCreateButton} colorScheme={'blue'}>
+          Cadastrar
+        </Button>
       </Flex>
+      <DataTable columns={columns} data={buildings} />
       <RegisterModal
         isOpen={registerModalOpen}
         onClose={() => {
@@ -86,7 +85,7 @@ const Buildings = () => {
         }}
         title={`Deletar o prédio ${contextBuilding?.name}`}
       />
-    </>
+    </PageContent>
   );
 };
 

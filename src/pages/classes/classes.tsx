@@ -1,7 +1,5 @@
 import {
-  Box,
   Button,
-  Center,
   Flex,
   Spacer,
   Text,
@@ -13,7 +11,6 @@ import EditEventModal from 'components/allocation/editEvent.modal';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
 import Loading from 'components/common/Loading/loading.component';
-import Navbar from 'components/common/NavBar/navbar.component';
 import { appContext } from 'context/AppContext';
 import { useContext, useState } from 'react';
 import { EventByClassrooms } from 'models/common/event.model';
@@ -33,6 +30,8 @@ import { AllocateClassModal } from './AllocateClassModal';
 import SubjectsService from 'services/api/subjects.service';
 import { AxiosError } from 'axios';
 import useCustomToast from 'hooks/useCustomToast';
+import ClassOccurrencesModal from './ClassOccurrencesModal';
+import PageContent from 'components/common/PageContent';
 
 function Classes() {
   const showToast = useCustomToast();
@@ -47,9 +46,9 @@ function Classes() {
     onClose: onCloseDeleteSelectedClasses,
   } = useDisclosure();
   const {
-    isOpen: isOpenDeleteAlloc,
-    onOpen: onOpenDeleteAlloc,
-    onClose: onCloseDeleteAlloc,
+    isOpen: isOpenOccurrencesModal,
+    onOpen: onOpenOccurrencesModal,
+    onClose: onCloseOccurrencesModal,
   } = useDisclosure();
   const {
     isOpen: isOpenAllocEdit,
@@ -93,7 +92,7 @@ function Classes() {
     handleEditClick,
     handleAllocationEditClick,
     handleDeleteClassClick,
-    handleDeleteAllocClick,
+    handleEditOccurrencesClick,
     checkMap,
   });
 
@@ -106,9 +105,9 @@ function Classes() {
     onOpenDeleteClass();
   }
 
-  function handleDeleteAllocClick(data: ClassResponse) {
+  function handleEditOccurrencesClick(data: ClassResponse) {
     setSelectedClass(data);
-    onOpenDeleteAlloc();
+    onOpenOccurrencesModal();
   }
 
   async function handleDeleteClass() {
@@ -146,9 +145,14 @@ function Classes() {
   }
 
   function handleDuplicateClick(data: ClassResponse) {
-    const selected = { ...data };
-    selected.schedules.forEach((schedule) => (schedule.allocated = false));
-    setSelectedClass({ ...selected });
+    const selected: ClassResponse = {
+      ...data,
+      professors: [...data.professors],
+      schedules: data.schedules.map((schedule) => {
+        return { ...schedule, allocated: false };
+      }),
+    };
+    setSelectedClass(selected);
     setIsUpdateClass(false);
     onOpenClassModal();
   }
@@ -174,11 +178,7 @@ function Classes() {
         setFailedSubjects(it.data.failed);
         onOpenJupiterModal();
         getClasses();
-        showToast(
-          'Sucesso!',
-          'Disciplinas carregadas com sucesso!',
-          'success',
-        );
+        showToast('Sucesso!', 'Disciplinas carregadas com sucesso!', 'success');
       })
       .catch(({ response }: AxiosError<any>) =>
         showToast('Erro!', `${response?.data.detail}`, 'error'),
@@ -220,8 +220,7 @@ function Classes() {
   }
 
   return (
-    <>
-      <Navbar />
+    <PageContent>
       <Loading isOpen={allocating} onClose={() => setAllocating(false)} />
       <ClassModal
         isOpen={isOpenClassModal}
@@ -242,6 +241,16 @@ function Classes() {
           onClose={onCloseAllocEdit}
           refresh={getClasses}
           class_={selectedClass}
+        />
+      )}
+      {selectedClass && (
+        <ClassOccurrencesModal
+          selectedClass={selectedClass}
+          isOpen={isOpenOccurrencesModal}
+          onClose={() => {
+            setSelectedClass(undefined);
+            onCloseOccurrencesModal();
+          }}
         />
       )}
       {/* <EditEventModal
@@ -265,18 +274,16 @@ function Classes() {
         classes={getCheckedClasses()}
         onRefresh={() => fetchData()}
       /> */}
-      <Center>
-        <Box p={4} w={'100%'} overflow='auto'>
-          <Flex align='center'>
-            <Text fontSize='4xl' mb={4}>
-              Turmas
-            </Text>
-            <Spacer />
-            <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
-              Adicionar Turma
-            </Button>
-            <JupiterCrawlerPopover onSave={handleCrawlerSave} />
-            {/* <Button
+      <Flex align='center'>
+        <Text fontSize='4xl' mb={4}>
+          Turmas
+        </Text>
+        <Spacer />
+        <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
+          Adicionar Turma
+        </Button>
+        <JupiterCrawlerPopover onSave={handleCrawlerSave} />
+        {/* <Button
               ml={2}
               colorScheme={'blue'}
               onClick={() => {
@@ -292,34 +299,32 @@ function Classes() {
             >
               Excluir selecionados
             </Button> */}
-          </Flex>
-          <Dialog
-            isOpen={isOpenDeleteClass}
-            onClose={onCloseDeleteClass}
-            onConfirm={handleDeleteClass}
-            title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.code}`}
-          />
-          <Dialog
-            isOpen={isOpenDeleteSelectedClasses}
-            onClose={onCloseDeleteSelectedClasses}
-            onConfirm={handleDeleteSelectedClasses}
-            title={`Deseja remover todas as turmas selecionadas`}
-            warningText='ATENÇÃO: QUALQUER TURMA SELECIONADA SERÁ PERDIDA!'
-          />
-          {/* <Dialog
+      </Flex>
+      <Dialog
+        isOpen={isOpenDeleteClass}
+        onClose={onCloseDeleteClass}
+        onConfirm={handleDeleteClass}
+        title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.code}`}
+      />
+      <Dialog
+        isOpen={isOpenDeleteSelectedClasses}
+        onClose={onCloseDeleteSelectedClasses}
+        onConfirm={handleDeleteSelectedClasses}
+        title={`Deseja remover todas as turmas selecionadas`}
+        warningText='ATENÇÃO: QUALQUER TURMA SELECIONADA SERÁ PERDIDA!'
+      />
+      {/* <Dialog
             isOpen={isOpenDeleteAlloc}
             onClose={onCloseDeleteAlloc}
             onConfirm={handleDeleteAlloc}
             title={`Deseja remover a alocação de ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
             warningText='Atenção: ao confirmar a alocação dessa turma será perdida'
           /> */}
-          <DataTable
-            data={classes.map((cls, index) => ({ ...cls, index: index }))}
-            columns={columns}
-          />
-        </Box>
-      </Center>
-    </>
+      <DataTable
+        data={classes.map((cls, index) => ({ ...cls, index: index }))}
+        columns={columns}
+      />
+    </PageContent>
   );
 }
 

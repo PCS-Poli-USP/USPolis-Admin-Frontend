@@ -1,7 +1,5 @@
 import {
-  Box,
   Button,
-  Center,
   Flex,
   Spacer,
   Text,
@@ -10,7 +8,6 @@ import {
 
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Loading from 'components/common/Loading/loading.component';
-import Navbar from 'components/common/NavBar/navbar.component';
 import { getReservationsColumns } from './Tables/reservation.table';
 import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 import { useState } from 'react';
@@ -19,6 +16,7 @@ import useBuildings from 'hooks/useBuildings';
 import useReservations from 'hooks/useReservations';
 import ReservationModal from './ReservationModal/reservation.modal';
 import Dialog from 'components/common/Dialog/dialog.component';
+import PageContent from 'components/common/PageContent';
 
 function Reservations() {
   const {
@@ -77,52 +75,47 @@ function Reservations() {
   }
 
   return (
-    <>
-      <Navbar />
+    <PageContent>
       <Loading
         isOpen={false}
         onClose={() => {
           return;
         }}
       />
-      <Center>
-        <Box p={4} w={'100%'} overflow='auto'>
-          <Flex align='center'>
-            <Text fontSize='4xl' mb={4}>
-              Reservas
-            </Text>
-            <Spacer />
-            <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
-              Adicionar Reserva
-            </Button>
-          </Flex>
-          <ReservationModal
-            onClose={() => {
-              onCloseModal();
-              setIsUpdate(false);
-              setSelectedReservation(undefined);
-            }}
-            isOpen={isOpenModal}
-            isUpdate={isUpdate}
-            classrooms={classrooms}
-            buildings={buildings}
-            selectedReservation={selectedReservation}
-            refetch={getReservations}
-          />
-          <DataTable data={reservations} columns={columns} />
-          <Dialog
-            isOpen={isOpenDialog}
-            onClose={() => {
-              onCloseDialog();
-              setSelectedReservation(undefined);
-            }}
-            title={`Excluir reserva ${selectedReservation?.name}`}
-            onConfirm={handleDeleteConfirm}
-            warningText={'Essa ação é irreversível!'}
-          />
-        </Box>
-      </Center>
-    </>
+      <Flex align='center' direction={'row'}>
+        <Text fontSize='4xl' mb={4}>
+          Reservas
+        </Text>
+        <Spacer />
+        <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
+          Adicionar Reserva
+        </Button>
+      </Flex>
+      <ReservationModal
+        onClose={() => {
+          onCloseModal();
+          setIsUpdate(false);
+          setSelectedReservation(undefined);
+        }}
+        isOpen={isOpenModal}
+        isUpdate={isUpdate}
+        classrooms={classrooms}
+        buildings={buildings}
+        selectedReservation={selectedReservation}
+        refetch={getReservations}
+      />
+      <DataTable data={reservations} columns={columns} />
+      <Dialog
+        isOpen={isOpenDialog}
+        onClose={() => {
+          onCloseDialog();
+          setSelectedReservation(undefined);
+        }}
+        title={`Excluir reserva ${selectedReservation?.name}`}
+        onConfirm={handleDeleteConfirm}
+        warningText={'Essa ação é irreversível!'}
+      />
+    </PageContent>
   );
 }
 
