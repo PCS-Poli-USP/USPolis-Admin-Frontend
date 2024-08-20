@@ -9,20 +9,23 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Spinner,
 } from '@chakra-ui/react';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import AllocateSingleScheduleSection, {
   AllocateSingleScheduleSectionRef,
 } from './allocateSingleScheduleSection';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AllocateManySchedulesData } from 'services/api/occurrences.service';
 import useOccurrences from 'hooks/useOccurrences';
+import ClassesService from 'services/api/classes.service';
 
 interface props {
   isOpen: boolean;
   onClose: () => void;
   refresh?: () => void;
-  class_: ClassResponse;
+  class_?: ClassResponse;
+  class_id?: number;
 }
 
 export function AllocateClassModal({
@@ -30,7 +33,11 @@ export function AllocateClassModal({
   onClose,
   refresh,
   class_,
+  class_id,
 }: props) {
+  const classesService = new ClassesService();
+  const [inputClass, setInputClass] = useState<ClassResponse>();
+
   const { allocateManySchedules } = useOccurrences();
 
   const sectionsRefs = useRef<(AllocateSingleScheduleSectionRef | null)[]>([]);
@@ -38,6 +45,20 @@ export function AllocateClassModal({
   function reset() {
     for (const ref of sectionsRefs.current) ref?.reset();
   }
+
+  useEffect(() => {
+    async function use() {
+      if (class_) {
+        setInputClass(class_);
+        return;
+      }
+      if (class_id) {
+        const response = await classesService.getById(class_id);
+        setInputClass(response.data);
+      }
+    }
+    use();
+  }, [class_, class_id]);
 
   async function handleSave() {
     const data: AllocateManySchedulesData[] = [];
@@ -47,50 +68,63 @@ export function AllocateClassModal({
     }
     await allocateManySchedules(data);
     if (refresh) refresh();
+    handleClose();
+  }
+
+  function handleClose() {
+    setInputClass(undefined);
     onClose();
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          Alocar Turma: {class_.subject_code} - {class_.code}
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Flex flexDir={'column'} gap={4}>
-            <Flex flexDir={'column'} gap={4}>
-              {class_.schedules.map((schedule, index) => (
-                <Box key={index}>
-                  <AllocateSingleScheduleSection
-                    key={schedule.id}
-                    ref={(ref) => (sectionsRefs.current[index] = ref)}
-                    schedule={schedule}
-                  />
-                  <Divider />
-                </Box>
-              ))}
-            </Flex>
-            <Flex flexGrow={1} justifyContent={'space-between'} gap={2}>
-              <Button onClick={onClose} flexGrow={1} colorScheme='red'>
-                Cancelar
-              </Button>
-              <Button
-                flexGrow={1}
-                alignSelf={'stretch'}
-                onClick={() => {
-                  reset();
-                }}
-              >
-                Restaurar
-              </Button>
-              <Button onClick={handleSave} flexGrow={1} colorScheme='blue'>
-                Salvar
-              </Button>
-            </Flex>
-          </Flex>
-        </ModalBody>
+        {inputClass ? (
+          <>
+            <ModalHeader>
+              Alocar Turma: {inputClass.subject_code} - {inputClass.code}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Flex flexDir={'column'} gap={4}>
+                <Flex flexDir={'column'} gap={4}>
+                  {inputClass.schedules.map((schedule, index) => (
+                    <Box key={index}>
+                      <AllocateSingleScheduleSection
+                        key={schedule.id}
+                        ref={(ref) => (sectionsRefs.current[index] = ref)}
+                        schedule={schedule}
+                      />
+                      <Divider />
+                    </Box>
+                  ))}
+                </Flex>
+                <Flex flexGrow={1} justifyContent={'space-between'} gap={2}>
+                  <Button onClick={handleClose} flexGrow={1} colorScheme='red'>
+                    Cancelar
+                  </Button>
+                  <Button
+                    flexGrow={1}
+                    alignSelf={'stretch'}
+                    onClick={() => {
+                      reset();
+                    }}
+                  >
+                    Restaurar
+                  </Button>
+                  <Button onClick={handleSave} flexGrow={1} colorScheme='blue'>
+                    Salvar
+                  </Button>
+                </Flex>
+              </Flex>
+            </ModalBody>
+          </>
+        ) : (
+          <ModalBody>
+            <Spinner />
+          </ModalBody>
+        )}
       </ModalContent>
     </Modal>
   );
