@@ -1,5 +1,4 @@
 import {
-  Button,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -8,8 +7,14 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
-import { ClassResponse } from 'models/http/responses/class.response.models';
+import {
+  ClassFullResponse,
+  ClassResponse,
+} from 'models/http/responses/class.response.models';
 import { ModalProps } from 'models/interfaces';
+import ScheduleAccordion from './schedule.accordion';
+import { useEffect, useState } from 'react';
+import useClasses from 'hooks/useClasses';
 
 interface ClassOccurrencesModalProps extends ModalProps {
   selectedClass: ClassResponse;
@@ -20,22 +25,33 @@ export default function ClassOccurrencesModal({
   isOpen,
   onClose,
 }: ClassOccurrencesModalProps) {
+  const [classFull, setClassFull] = useState<ClassFullResponse | undefined>(
+    undefined,
+  );
+  const { getClassFull } = useClasses(false);
+
+  useEffect(() => {
+    const getOccurrences = async () => {
+      const full = await getClassFull(selectedClass.id);
+      setClassFull(full);
+    };
+    getOccurrences();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedClass]);
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal size={'xl'} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{`Editar Ocorrências ${
           selectedClass.subject_code
         } - ${selectedClass.code.slice(-2)}`}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody></ModalBody>
+        <ModalBody>
+          <ScheduleAccordion class={classFull} />
+        </ModalBody>
 
-        <ModalFooter>
-          <Button colorScheme='red' mr={3} onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button colorScheme={'blue'}>Salvar</Button>
-        </ModalFooter>
+        <ModalFooter></ModalFooter>
       </ModalContent>
     </Modal>
   );
