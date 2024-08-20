@@ -3,14 +3,17 @@ import {
   CreateClass,
   UpdateClass,
 } from 'models/http/requests/class.request.models';
-import { ClassResponse } from 'models/http/responses/class.response.models';
+import {
+  ClassFullResponse,
+  ClassResponse,
+} from 'models/http/responses/class.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import ClassesService from 'services/api/classes.service';
 import { sortClassResponse } from 'utils/classes/classes.sorter';
 
 const service = new ClassesService();
 
-const useClasses = () => {
+const useClasses = (initialFetch: boolean = true) => {
   const [loading, setLoading] = useState(false);
   const [classes, setClasses] = useState<ClassResponse[]>([]);
 
@@ -31,6 +34,23 @@ const useClasses = () => {
         setLoading(false);
       });
   }, [showToast]);
+
+  const getClassFull = useCallback(async (id: number) => {
+    setLoading(true);
+    let full: ClassFullResponse | undefined = undefined;
+    await service
+      .listOneFull(id)
+      .then((response) => {
+        full = response.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+    return full;
+  }, []);
 
   const createClass = useCallback(
     async (data: CreateClass) => {
@@ -128,13 +148,14 @@ const useClasses = () => {
   );
 
   useEffect(() => {
-    getClasses();
-  }, [getClasses]);
+    if (initialFetch) getClasses();
+  }, [getClasses, initialFetch]);
 
   return {
     loading,
     classes,
     getClasses,
+    getClassFull,
     createClass,
     updateClass,
     deleteClass,
