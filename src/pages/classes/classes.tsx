@@ -1,10 +1,4 @@
-import {
-  Button,
-  Flex,
-  Spacer,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import EditEventModal from 'components/allocation/editEvent.modal';
@@ -75,11 +69,11 @@ function Classes() {
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleResponse>();
   const [isUpdateClass, setIsUpdateClass] = useState(false);
   const { setLoading } = useContext(appContext);
-  const [allocating, setAllocating] = useState(false);
+  const [isCrawling, setIsCrawling] = useState(false);
   const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
   const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
 
-  const { subjects } = useSubjects();
+  const { subjects, getSubjects } = useSubjects();
   const { calendars } = useCalendars();
   const { classes, getClasses, deleteClass, deleteManyClass } = useClasses();
 
@@ -163,21 +157,22 @@ function Classes() {
     onOpenClassModal();
   }
 
-  function handleCrawlerSave(
+  async function handleCrawlerSave(
     subjectsList: string[],
     building_id: number,
     calendar_ids: number[],
   ) {
     setLoading(true);
     const subjectsService = new SubjectsService();
-
-    subjectsService
+    setIsCrawling(true);
+    await subjectsService
       .crawl(building_id, { subject_codes: subjectsList, calendar_ids })
       .then((it) => {
         setSuccessSubjects(it.data.sucess);
         setFailedSubjects(it.data.failed);
         onOpenJupiterModal();
         getClasses();
+        getSubjects();
         showToast('Sucesso!', 'Disciplinas carregadas com sucesso!', 'success');
       })
       .catch(({ response }: AxiosError<any>) =>
@@ -185,6 +180,7 @@ function Classes() {
       )
       .finally(() => {
         setLoading(false);
+        setIsCrawling(false);
       });
   }
 
@@ -221,7 +217,7 @@ function Classes() {
 
   return (
     <PageContent>
-      <Loading isOpen={allocating} onClose={() => setAllocating(false)} />
+      <Loading isOpen={isCrawling} onClose={() => setIsCrawling(false)} />
       <ClassModal
         isOpen={isOpenClassModal}
         onClose={() => {
