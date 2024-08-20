@@ -34,8 +34,8 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
             variant={'ghost'}
             w={'full'}
             justifyContent={'flex-start'}
+            fontWeight={'normal'}
             onClick={() => {
-              onClose();
               navigate('/buildings');
             }}
           >
@@ -46,8 +46,8 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
             variant={'ghost'}
             w={'full'}
             justifyContent={'flex-start'}
+            fontWeight={'normal'}
             onClick={() => {
-              onClose();
               navigate('/users');
             }}
           >
@@ -58,8 +58,8 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
             variant={'ghost'}
             w={'full'}
             justifyContent={'flex-start'}
+            fontWeight={'normal'}
             onClick={() => {
-              onClose();
               navigate('/institutional-events');
             }}
           >
@@ -79,9 +79,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           leftIcon={<CalendarIcon />}
           variant={'ghost'}
           w={'full'}
+          fontWeight={'normal'}
           justifyContent={'flex-start'}
           onClick={() => {
-            onClose();
             navigate('/calendars');
           }}
         >
@@ -99,9 +99,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           leftIcon={<PiChair />}
           variant={'ghost'}
           w={'full'}
+          fontWeight={'normal'}
           justifyContent={'flex-start'}
           onClick={() => {
-            onClose();
             navigate('/classrooms');
           }}
         >
@@ -111,9 +111,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           leftIcon={<GiBookCover />}
           variant={'ghost'}
           w={'full'}
+          fontWeight={'normal'}
           justifyContent={'flex-start'}
           onClick={() => {
-            onClose();
             navigate('/subjects');
           }}
         >
@@ -123,9 +123,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           leftIcon={<GiTeacher />}
           variant={'ghost'}
           w={'full'}
+          fontWeight={'normal'}
           justifyContent={'flex-start'}
           onClick={() => {
-            onClose();
             navigate('/classes');
           }}
         >
@@ -135,9 +135,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           leftIcon={<MdEvent />}
           variant={'ghost'}
           w={'full'}
+          fontWeight={'normal'}
           justifyContent={'flex-start'}
           onClick={() => {
-            onClose();
             navigate('/reservations');
           }}
         >
@@ -155,9 +155,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           leftIcon={<BsCalendar3 />}
           variant={'ghost'}
           w={'full'}
+          fontWeight={'normal'}
           justifyContent={'flex-start'}
           onClick={() => {
-            onClose();
             navigate('/allocation');
           }}
         >
@@ -167,9 +167,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           leftIcon={<FaRegCalendarTimes />}
           variant={'ghost'}
           w={'full'}
+          fontWeight={'normal'}
           justifyContent={'flex-start'}
           onClick={() => {
-            onClose();
             navigate('/conflicts');
           }}
         >
