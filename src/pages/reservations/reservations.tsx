@@ -49,6 +49,7 @@ function Reservations() {
 
   function handleDuplicateClick(data: ReservationResponse) {
     setSelectedReservation(data);
+    setIsUpdate(false);
     onOpenModal();
   }
 

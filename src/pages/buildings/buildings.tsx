@@ -69,6 +69,7 @@ const Buildings = () => {
         onClose={() => {
           setRegisterModalOpen(false);
           setContextBuilding(undefined);
+          setIsUpdate(false);
         }}
         onSave={handleRegisterSave}
         isUpdate={isUpdate}
