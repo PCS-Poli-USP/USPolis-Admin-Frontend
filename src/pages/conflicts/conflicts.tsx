@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import ConflictsService from '../../services/api/conflicts.service';
 import * as C from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react';
 import Conflict from 'models/http/responses/conflict.response.models';
-import { useDisclosure, useToast } from '@chakra-ui/react';
-import EditEventModal from 'components/allocation/editEvent.modal';
 import EventsService from 'services/api/events.service';
-import Event from 'models/common/event.model';
 import moment from 'moment';
 import PageContent from 'components/common/PageContent';
+import { AllocateClassModal } from 'pages/classes/AllocateClassModal';
 const ConflictsPage = () => {
   const eventsService = new EventsService();
   const conflictsService = new ConflictsService();
@@ -15,32 +14,8 @@ const ConflictsPage = () => {
   const [conflicts, setConflicts] = useState<Conflict[] | null>(null);
   const [buildingNames, setBuildingNames] = useState<string[] | null>(null);
   const [selectedBuildingName, setSelectedBuildingName] = useState<string>('');
-  const [classroomNames, setClassroomNames] = useState<string[] | null>(null);
-  const [selectedClassroomName, setSelectedClassroomName] =
-    useState<string>('');
-  const [selectedEvent, setSelectedEvent] = useState<Event>({
-    class_code: '',
-    subject_code: '',
-    start_period: '',
-    end_period: '',
-    start_time: '',
-    end_time: '',
-    week_day: '',
-    subject_name: '',
-    has_to_be_allocated: false,
-    vacancies: 0,
-    professors: [],
-    classroom: '',
-    building: '',
-    subscribers: 0,
-    id: '0',
-  });
-
-  const {
-    isOpen: isOpenAllocEdit,
-    onOpen: onOpenAllocEdit,
-    onClose: onCloseAllocEdit,
-  } = useDisclosure();
+  const [isOpenAllocate, setIsOpenAllocate] = useState<boolean>(false);
+  const [selectedClassId, setSelectedClassId] = useState<number>(0);
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -226,7 +201,14 @@ const ConflictsPage = () => {
                                   </C.Text>
                                 ) : undefined}
                               </C.Flex>
-                              {/* <C.Button>Editar Alocação</C.Button> */}
+                              <C.Button
+                                onClick={() => {
+                                  setSelectedClassId(event.class_id);
+                                  setIsOpenAllocate(true);
+                                }}
+                              >
+                                Editar Alocação
+                              </C.Button>
                             </C.Flex>
                           ))}
                         </C.Flex>
@@ -254,27 +236,13 @@ const ConflictsPage = () => {
           )}
         </C.Flex>
       </C.Flex>
-      <EditEventModal
-        isOpen={isOpenAllocEdit}
-        onClose={onCloseAllocEdit}
-        onSave={handleAllocationEdit}
-        onDelete={handleAllocationDelete}
-        classEvents={[
-          {
-            subject_code: selectedEvent.subject_code,
-            classroom: selectedEvent.classroom || '',
-            building: selectedEvent.building || '',
-            class_code: selectedEvent.class_code,
-            professors: selectedEvent.professors || [''],
-            subscribers: selectedEvent.subscribers,
-            has_to_be_allocated: selectedEvent.has_to_be_allocated,
-            week_day: selectedEvent.week_day,
-            start_time: selectedEvent.start_time,
-            end_time: selectedEvent.end_time,
-            class_code_text: selectedEvent.class_code,
-            id: selectedEvent.id,
-          },
-        ]}
+      <AllocateClassModal
+        isOpen={isOpenAllocate}
+        onClose={() => {
+          setIsOpenAllocate(false);
+          fetchData();
+        }}
+        class_id={selectedClassId}
       />
     </PageContent>
   );

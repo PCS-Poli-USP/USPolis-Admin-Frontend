@@ -1,6 +1,9 @@
 import { AxiosResponse } from 'axios';
 import HttpService from './http.service';
-import { ClassResponse, ClassFullResponse } from 'models/http/responses/class.response.models';
+import {
+  ClassResponse,
+  ClassFullResponse,
+} from 'models/http/responses/class.response.models';
 import {
   CreateClass,
   UpdateClass,
@@ -18,6 +21,13 @@ export default class ClassesService extends HttpService {
   }
   listFull(): Promise<AxiosResponse<Array<ClassFullResponse>>> {
     return this.http.get('/full/');
+  }
+
+  listOneFull(id: number): Promise<AxiosResponse<ClassFullResponse>> {
+    return this.http.get(`/${id}/full/`);
+  }
+  getById(id: number): Promise<AxiosResponse<ClassResponse>> {
+    return this.http.get(`/${id}`);
   }
 
   listOneFull(id: number): Promise<AxiosResponse<ClassFullResponse>> {
