@@ -30,9 +30,6 @@ export default class ClassesService extends HttpService {
     return this.http.get(`/${id}`);
   }
 
-  listOneFull(id: number): Promise<AxiosResponse<ClassFullResponse>> {
-    return this.http.get(`/${id}/full/`);
-  }
   create(data: CreateClass): Promise<AxiosResponse<ClassResponse>> {
     return this.http.post('', data);
   }
