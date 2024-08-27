@@ -118,26 +118,6 @@ function Classes() {
     onOpenAllocEdit();
   }
 
-  function handleAllocationEditDelete(subjectCode: string, classCode: string) {
-    // eventsService
-    //   .deleteClassAllocation(subjectCode, classCode)
-    //   .then((it) => {
-    //     showToast(
-    //       'Sucesso!',
-    //       `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
-    //       'success',
-    //     );
-    //     fetchData();
-    //   })
-    //   .catch((error) => {
-    //     showToast(
-    //       'Erro!',
-    //       `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`,
-    //       'error',
-    //     );
-    //   });
-  }
-
   function handleDuplicateClick(data: ClassResponse) {
     const selected: ClassResponse = {
       ...data,
@@ -249,13 +229,7 @@ function Classes() {
           }}
         />
       )}
-      {/* <EditEventModal
-        isOpen={isOpenAllocEdit}
-        onClose={onCloseAllocEdit}
-        onSave={handleAllocationEdit}
-        onDelete={handleAllocationEditDelete}
-        classEvents={selectedClassEventList}
-      />
+      {/* 
       <JupiterCrawlerModal
         isOpen={isOpenJupiterModal}
         onClose={onCloseJupiterModal}
@@ -280,21 +254,21 @@ function Classes() {
         </Button>
         <JupiterCrawlerPopover onSave={handleCrawlerSave} />
         {/* <Button
-              ml={2}
-              colorScheme={'blue'}
-              onClick={() => {
-                onOpenMultipleEdit();
-              }}
-            >
-              Editar selecionados
-            </Button>
-            <Button
-              ml={2}
-              colorScheme={'red'}
-              onClick={handleDeleteSelectedClassesClick}
-            >
-              Excluir selecionados
-            </Button> */}
+          ml={2}
+          colorScheme={'blue'}
+          onClick={() => {
+            onOpenMultipleEdit();
+          }}
+        >
+          Editar selecionados
+        </Button> */}
+        <Button
+          ml={2}
+          colorScheme={'red'}
+          onClick={handleDeleteSelectedClassesClick}
+        >
+          Excluir selecionados
+        </Button>
       </Flex>
       <Dialog
         isOpen={isOpenDeleteClass}
@@ -309,13 +283,6 @@ function Classes() {
         title={`Deseja remover todas as turmas selecionadas`}
         warningText='ATENÇÃO: QUALQUER TURMA SELECIONADA SERÁ PERDIDA!'
       />
-      {/* <Dialog
-            isOpen={isOpenDeleteAlloc}
-            onClose={onCloseDeleteAlloc}
-            onConfirm={handleDeleteAlloc}
-            title={`Deseja remover a alocação de ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
-            warningText='Atenção: ao confirmar a alocação dessa turma será perdida'
-          /> */}
       <DataTable
         data={classes.map((cls, index) => ({ ...cls, index: index }))}
         columns={columns}
