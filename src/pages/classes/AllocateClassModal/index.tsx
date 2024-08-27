@@ -83,7 +83,7 @@ export function AllocateClassModal({
         {inputClass ? (
           <>
             <ModalHeader>
-              Alocar Turma: {inputClass.subject_code} - {inputClass.code}
+              Alocar Turma: {inputClass.subject_code} - {inputClass.code.slice(-2)}
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody>

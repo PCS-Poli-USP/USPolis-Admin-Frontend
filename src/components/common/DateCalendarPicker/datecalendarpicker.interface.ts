@@ -7,4 +7,5 @@ export interface DateCalendarPickerProps {
   highlightIcon?: string;
   readOnly?: boolean;
   disabled?: boolean;
+  helpText?: boolean;
 }

@@ -28,3 +28,7 @@ export interface CreateSchedule extends ScheduleBase {
 }
 
 export interface UpdateSchedule extends CreateSchedule {}
+
+export interface ScheduleUpdateOccurences {
+  dates: string[];
+}

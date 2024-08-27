@@ -1,6 +1,5 @@
-import Navbar from 'components/common/NavBar/navbar.component';
 import DataTable from 'components/common/DataTable/dataTable.component';
-import { Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 import { useState } from 'react';
 import Dialog from 'components/common/Dialog/dialog.component';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
@@ -8,6 +7,7 @@ import { getSubjectColumns } from './Tables/subject.table';
 import useSubjects from 'hooks/useSubjetcts';
 import SubjectModal from './SubjectModal/subject.modal';
 import useBuildings from 'hooks/useBuildings';
+import PageContent from 'components/common/PageContent';
 
 function Subjects() {
   const columns = getSubjectColumns({
@@ -59,46 +59,46 @@ function Subjects() {
   }
 
   return (
-    <>
-      <Navbar />
-      <Flex paddingX={4} direction={'column'}>
-        <Flex justifyContent={'space-between'} alignItems={'center'}>
-          <Text fontSize={'4xl'} mb={4}>
-            Disciplinas
-          </Text>
-          <Button onClick={handleCreateSubjectButton}>Cadastrar</Button>
-        </Flex>
-        <DataTable data={subjects} columns={columns} />
-        <SubjectModal
-          buildings={buildings}
-          isOpen={isOpenRegisterSubjectModal}
-          onClose={() => {
-            setSelectedSubject(undefined);
-            setIsUpdateSubject(false);
-            onCloseRegisterSubjectModal();
-          }}
-          refetch={getSubjects}
-          isUpdate={isUpdateSubject}
-          selectedSubject={selectedSubject}
-        />
-        <Dialog
-          title={`Deletar disciplina ${selectedSubject?.code}`}
-          warningText={
-            'Essa mudança é irreversível e irá apagar todas as turmas dessa disciplina, juntamente com suas alocações!'
-          }
-          isOpen={isOpenDeleteSubjectDialog}
-          onClose={() => {
-            setSelectedSubject(undefined);
-            onCloseDeleteSubjectDialog();
-          }}
-          onConfirm={() => {
-            handleDeleteSubject();
-            setSelectedSubject(undefined);
-            onCloseDeleteSubjectDialog();
-          }}
-        />
+    <PageContent>
+      <Flex align='center'>
+        <Text fontSize={'4xl'} mb={4}>
+          Disciplinas
+        </Text>
+        <Spacer />
+        <Button onClick={handleCreateSubjectButton} colorScheme={'blue'}>
+          Cadastrar
+        </Button>
       </Flex>
-    </>
+      <DataTable data={subjects} columns={columns} />
+      <SubjectModal
+        buildings={buildings}
+        isOpen={isOpenRegisterSubjectModal}
+        onClose={() => {
+          setSelectedSubject(undefined);
+          setIsUpdateSubject(false);
+          onCloseRegisterSubjectModal();
+        }}
+        refetch={getSubjects}
+        isUpdate={isUpdateSubject}
+        selectedSubject={selectedSubject}
+      />
+      <Dialog
+        title={`Deletar disciplina ${selectedSubject?.code}`}
+        warningText={
+          'Essa mudança é irreversível e irá apagar todas as turmas dessa disciplina, juntamente com suas alocações!'
+        }
+        isOpen={isOpenDeleteSubjectDialog}
+        onClose={() => {
+          setSelectedSubject(undefined);
+          onCloseDeleteSubjectDialog();
+        }}
+        onConfirm={() => {
+          handleDeleteSubject();
+          setSelectedSubject(undefined);
+          onCloseDeleteSubjectDialog();
+        }}
+      />
+    </PageContent>
   );
 }
 

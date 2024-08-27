@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import ConflictsService from '../../services/api/conflicts.service';
-import Navbar from 'components/common/NavBar/navbar.component';
 import * as C from '@chakra-ui/react';
+import { useToast } from '@chakra-ui/react';
 import Conflict from 'models/http/responses/conflict.response.models';
-import { useDisclosure, useToast } from '@chakra-ui/react';
-import EditEventModal from 'components/allocation/editEvent.modal';
 import EventsService from 'services/api/events.service';
-import Event from 'models/common/event.model';
 import moment from 'moment';
+import PageContent from 'components/common/PageContent';
 import { AllocateClassModal } from 'pages/classes/AllocateClassModal';
 const ConflictsPage = () => {
   const eventsService = new EventsService();
@@ -18,12 +16,6 @@ const ConflictsPage = () => {
   const [selectedBuildingName, setSelectedBuildingName] = useState<string>('');
   const [isOpenAllocate, setIsOpenAllocate] = useState<boolean>(false);
   const [selectedClassId, setSelectedClassId] = useState<number>(0);
-
-  const {
-    isOpen: isOpenAllocEdit,
-    onOpen: onOpenAllocEdit,
-    onClose: onCloseAllocEdit,
-  } = useDisclosure();
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
@@ -107,16 +99,7 @@ const ConflictsPage = () => {
   }
 
   return (
-    <>
-      <Navbar />
-      <AllocateClassModal
-        isOpen={isOpenAllocate}
-        onClose={() => {
-          setIsOpenAllocate(false);
-          fetchData();
-        }}
-        class_id={selectedClassId}
-      />
+    <PageContent>
       <C.Flex paddingX={4} direction={'column'}>
         <C.Text fontSize='4xl' mb={4}>
           Conflitos
@@ -253,7 +236,15 @@ const ConflictsPage = () => {
           )}
         </C.Flex>
       </C.Flex>
-    </>
+      <AllocateClassModal
+        isOpen={isOpenAllocate}
+        onClose={() => {
+          setIsOpenAllocate(false);
+          fetchData();
+        }}
+        class_id={selectedClassId}
+      />
+    </PageContent>
   );
 };
 

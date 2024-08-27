@@ -1,19 +1,10 @@
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  Spacer,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
 import Loading from 'components/common/Loading/loading.component';
-import Navbar from 'components/common/NavBar/navbar.component';
 import { appContext } from 'context/AppContext';
 import { useContext, useState } from 'react';
 import { EventByClassrooms } from 'models/common/event.model';
@@ -33,6 +24,8 @@ import { AllocateClassModal } from './AllocateClassModal';
 import SubjectsService from 'services/api/subjects.service';
 import { AxiosError } from 'axios';
 import useCustomToast from 'hooks/useCustomToast';
+import ClassOccurrencesModal from './ClassOccurrencesModal';
+import PageContent from 'components/common/PageContent';
 
 function Classes() {
   const showToast = useCustomToast();
@@ -47,9 +40,9 @@ function Classes() {
     onClose: onCloseDeleteSelectedClasses,
   } = useDisclosure();
   const {
-    isOpen: isOpenDeleteAlloc,
-    onOpen: onOpenDeleteAlloc,
-    onClose: onCloseDeleteAlloc,
+    isOpen: isOpenOccurrencesModal,
+    onOpen: onOpenOccurrencesModal,
+    onClose: onCloseOccurrencesModal,
   } = useDisclosure();
   const {
     isOpen: isOpenAllocEdit,
@@ -76,11 +69,11 @@ function Classes() {
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleResponse>();
   const [isUpdateClass, setIsUpdateClass] = useState(false);
   const { setLoading } = useContext(appContext);
-  const [allocating, setAllocating] = useState(false);
+  const [isCrawling, setIsCrawling] = useState(false);
   const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
   const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
 
-  const { subjects } = useSubjects();
+  const { subjects, getSubjects } = useSubjects();
   const { calendars } = useCalendars();
   const { classes, getClasses, deleteClass, deleteManyClass } = useClasses();
 
@@ -93,7 +86,7 @@ function Classes() {
     handleEditClick,
     handleAllocationEditClick,
     handleDeleteClassClick,
-    handleDeleteAllocClick,
+    handleEditOccurrencesClick,
     checkMap,
   });
 
@@ -106,9 +99,9 @@ function Classes() {
     onOpenDeleteClass();
   }
 
-  function handleDeleteAllocClick(data: ClassResponse) {
+  function handleEditOccurrencesClick(data: ClassResponse) {
     setSelectedClass(data);
-    onOpenDeleteAlloc();
+    onOpenOccurrencesModal();
   }
 
   async function handleDeleteClass() {
@@ -125,28 +118,15 @@ function Classes() {
     onOpenAllocEdit();
   }
 
-  function handleAllocationEditDelete(subjectCode: string, classCode: string) {
-    // eventsService
-    //   .deleteClassAllocation(subjectCode, classCode)
-    //   .then((it) => {
-    //     showToast(
-    //       'Sucesso!',
-    //       `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
-    //       'success',
-    //     );
-    //     fetchData();
-    //   })
-    //   .catch((error) => {
-    //     showToast(
-    //       'Erro!',
-    //       `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`,
-    //       'error',
-    //     );
-    //   });
-  }
-
   function handleDuplicateClick(data: ClassResponse) {
-    setSelectedClass(data);
+    const selected: ClassResponse = {
+      ...data,
+      professors: [...data.professors],
+      schedules: data.schedules.map((schedule) => {
+        return { ...schedule, allocated: false };
+      }),
+    };
+    setSelectedClass(selected);
     setIsUpdateClass(false);
     onOpenClassModal();
   }
@@ -157,32 +137,30 @@ function Classes() {
     onOpenClassModal();
   }
 
-  function handleCrawlerSave(subjectsList: string[], building_id: number) {
+  async function handleCrawlerSave(
+    subjectsList: string[],
+    building_id: number,
+    calendar_ids: number[],
+  ) {
     setLoading(true);
     const subjectsService = new SubjectsService();
-
-    subjectsService
-      .crawl(building_id, subjectsList)
+    setIsCrawling(true);
+    await subjectsService
+      .crawl(building_id, { subject_codes: subjectsList, calendar_ids })
       .then((it) => {
         setSuccessSubjects(it.data.sucess);
         setFailedSubjects(it.data.failed);
         onOpenJupiterModal();
         getClasses();
-        showToast(
-          'Sucesso!',
-          'Disciplinas foram carregadas com sucesso!',
-          'success',
-        );
+        getSubjects();
+        showToast('Sucesso!', 'Disciplinas carregadas com sucesso!', 'success');
       })
       .catch(({ response }: AxiosError<any>) =>
-        showToast(
-          'Erro!',
-          `${response?.data.detail}`,
-          'error',
-        ),
+        showToast('Erro!', `${response?.data.detail}`, 'error'),
       )
       .finally(() => {
         setLoading(false);
+        setIsCrawling(false);
       });
   }
 
@@ -218,9 +196,8 @@ function Classes() {
   }
 
   return (
-    <>
-      <Navbar />
-      <Loading isOpen={allocating} onClose={() => setAllocating(false)} />
+    <PageContent>
+      <Loading isOpen={isCrawling} onClose={() => setIsCrawling(false)} />
       <ClassModal
         isOpen={isOpenClassModal}
         onClose={() => {
@@ -242,13 +219,17 @@ function Classes() {
           class_={selectedClass}
         />
       )}
-      {/* <EditEventModal
-        isOpen={isOpenAllocEdit}
-        onClose={onCloseAllocEdit}
-        onSave={handleAllocationEdit}
-        onDelete={handleAllocationEditDelete}
-        classEvents={selectedClassEventList}
-      />
+      {selectedClass && (
+        <ClassOccurrencesModal
+          selectedClass={selectedClass}
+          isOpen={isOpenOccurrencesModal}
+          onClose={() => {
+            setSelectedClass(undefined);
+            onCloseOccurrencesModal();
+          }}
+        />
+      )}
+      {/* 
       <JupiterCrawlerModal
         isOpen={isOpenJupiterModal}
         onClose={onCloseJupiterModal}
@@ -263,61 +244,50 @@ function Classes() {
         classes={getCheckedClasses()}
         onRefresh={() => fetchData()}
       /> */}
-      <Center>
-        <Box p={4} w={'100%'} overflow='auto'>
-          <Flex align='center'>
-            <Text fontSize='4xl' mb={4}>
-              Turmas
-            </Text>
-            <Spacer />
-            <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
-              Adicionar Turma
-            </Button>
-            <JupiterCrawlerPopover onSave={handleCrawlerSave} />
-            {/* <Button
-              ml={2}
-              colorScheme={'blue'}
-              onClick={() => {
-                onOpenMultipleEdit();
-              }}
-            >
-              Editar selecionados
-            </Button>
-            <Button
-              ml={2}
-              colorScheme={'red'}
-              onClick={handleDeleteSelectedClassesClick}
-            >
-              Excluir selecionados
-            </Button> */}
-          </Flex>
-          <Dialog
-            isOpen={isOpenDeleteClass}
-            onClose={onCloseDeleteClass}
-            onConfirm={handleDeleteClass}
-            title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.code}`}
-          />
-          <Dialog
-            isOpen={isOpenDeleteSelectedClasses}
-            onClose={onCloseDeleteSelectedClasses}
-            onConfirm={handleDeleteSelectedClasses}
-            title={`Deseja remover todas as turmas selecionadas`}
-            warningText='ATENÇÃO: QUALQUER TURMA SELECIONADA SERÁ PERDIDA!'
-          />
-          {/* <Dialog
-            isOpen={isOpenDeleteAlloc}
-            onClose={onCloseDeleteAlloc}
-            onConfirm={handleDeleteAlloc}
-            title={`Deseja remover a alocação de ${selectedClass?.subject_code} - ${selectedClass?.class_code}`}
-            warningText='Atenção: ao confirmar a alocação dessa turma será perdida'
-          /> */}
-          <DataTable
-            data={classes.map((cls, index) => ({ ...cls, index: index }))}
-            columns={columns}
-          />
-        </Box>
-      </Center>
-    </>
+      <Flex align='center'>
+        <Text fontSize='4xl' mb={4}>
+          Turmas
+        </Text>
+        <Spacer />
+        <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
+          Adicionar Turma
+        </Button>
+        <JupiterCrawlerPopover onSave={handleCrawlerSave} />
+        {/* <Button
+          ml={2}
+          colorScheme={'blue'}
+          onClick={() => {
+            onOpenMultipleEdit();
+          }}
+        >
+          Editar selecionados
+        </Button> */}
+        <Button
+          ml={2}
+          colorScheme={'red'}
+          onClick={handleDeleteSelectedClassesClick}
+        >
+          Excluir selecionados
+        </Button>
+      </Flex>
+      <Dialog
+        isOpen={isOpenDeleteClass}
+        onClose={onCloseDeleteClass}
+        onConfirm={handleDeleteClass}
+        title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.code}`}
+      />
+      <Dialog
+        isOpen={isOpenDeleteSelectedClasses}
+        onClose={onCloseDeleteSelectedClasses}
+        onConfirm={handleDeleteSelectedClasses}
+        title={`Deseja remover todas as turmas selecionadas`}
+        warningText='ATENÇÃO: QUALQUER TURMA SELECIONADA SERÁ PERDIDA!'
+      />
+      <DataTable
+        data={classes.map((cls, index) => ({ ...cls, index: index }))}
+        columns={columns}
+      />
+    </PageContent>
   );
 }
 

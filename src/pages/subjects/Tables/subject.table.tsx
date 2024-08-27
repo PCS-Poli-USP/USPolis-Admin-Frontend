@@ -2,14 +2,20 @@ import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { datetimeFormatter, subjectTypeFormatter } from 'utils/subjects/subjects.formatter';
+import {
+  datetimeFormatter,
+  subjectTypeFormatter,
+} from 'utils/subjects/subjects.formatter';
+import { FilterArray } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface SubjectColumnsProps {
   handleEditButton: (data: SubjectResponse) => void;
   handleDeleteButton: (data: SubjectResponse) => void;
 }
 
-export const getSubjectColumns = (props: SubjectColumnsProps): ColumnDef<SubjectResponse>[] => [
+export const getSubjectColumns = (
+  props: SubjectColumnsProps,
+): ColumnDef<SubjectResponse>[] => [
   {
     accessorKey: 'code',
     header: 'Código',
@@ -38,7 +44,11 @@ export const getSubjectColumns = (props: SubjectColumnsProps): ColumnDef<Subject
     ),
   },
   {
-    accessorFn: (row) => (row.buildings ? row.buildings : ['Não alocada']),
+    accessorFn: (row) =>
+      row.buildings
+        ? row.buildings.map((building) => building.name)
+        : ['Não alocada'],
+    filterFn: FilterArray,
     header: 'Prédios',
     cell: ({ row }) => (
       <Box>
@@ -99,4 +109,3 @@ export const getSubjectColumns = (props: SubjectColumnsProps): ColumnDef<Subject
     ),
   },
 ];
-

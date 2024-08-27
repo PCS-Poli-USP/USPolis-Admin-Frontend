@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import HttpService from './http.service';
 import {
+  CrawlSubject,
   CreateSubject,
   UpdateSubject,
 } from 'models/http/requests/subject.request.models';
@@ -32,14 +33,9 @@ export default class SubjectsService extends HttpService {
     return this.http.put(`/${id}`, data);
   }
 
-  crawl(
-    building_id: number,
-    subject_codes: string[],
-  ): Promise<AxiosResponse<any>> {
-    return this.http.post(
-      'crawl',
-      { subjects_list: subject_codes },
-      { headers: { 'building-id': String(building_id)} },
-    );
+  crawl(building_id: number, data: CrawlSubject): Promise<AxiosResponse<any>> {
+    return this.http.post('crawl', data, {
+      headers: { 'building-id': String(building_id) },
+    });
   }
 }

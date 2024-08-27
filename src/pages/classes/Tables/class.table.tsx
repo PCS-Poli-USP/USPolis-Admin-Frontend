@@ -11,18 +11,14 @@ import { ColumnDef, Row } from '@tanstack/react-table';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import {
   BsCalendarDateFill,
-  BsCalendarXFill,
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { BiSolidCalendarEdit } from 'react-icons/bi';
 import { getScheduleString } from 'utils/schedules/schedule.formatter';
 import {
   FilterArray,
-  FilterBoolean,
   FilterBuilding,
-  FilterClassroom,
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
@@ -33,33 +29,33 @@ interface ClassesColumnsProps {
   handleEditClick: (data: ClassResponse) => void;
   handleAllocationEditClick: (data: ClassResponse) => void;
   handleDeleteClassClick: (data: ClassResponse) => void;
-  handleDeleteAllocClick: (data: ClassResponse) => void;
+  handleEditOccurrencesClick: (data: ClassResponse) => void;
   checkMap: boolean[];
 }
 
 export const getClassesColumns = (
   props: ClassesColumnsProps,
 ): ColumnDef<ClassResponse>[] => [
-  // {
-  //   header: 'Marcar',
-  //   maxSize: 70,
-  //   meta: {
-  //     isCheckBox: true,
-  //     markAllClickFn: props.handleCheckAllClick,
-  //     dismarkAllClickFn: props.handleCheckAllClick,
-  //   },
-  //   cell: ({ row }) => (
-  //     <Box>
-  //       <Checkbox
-  //         isChecked={props.checkMap[row.index]}
-  //         ml={5}
-  //         onChange={(event) =>
-  //           props.handleCheckboxClick(row.original.id, event.target.checked)
-  //         }
-  //       />
-  //     </Box>
-  //   ),
-  // },
+  {
+    header: 'Marcar',
+    maxSize: 70,
+    meta: {
+      isCheckBox: true,
+      markAllClickFn: props.handleCheckAllClick,
+      dismarkAllClickFn: props.handleCheckAllClick,
+    },
+    cell: ({ row }) => (
+      <Box>
+        <Checkbox
+          isChecked={props.checkMap[row.index]}
+          ml={5}
+          onChange={(event) =>
+            props.handleCheckboxClick(row.original.id, event.target.checked)
+          }
+        />
+      </Box>
+    ),
+  },
   {
     accessorKey: 'subject_code',
     header: 'Disciplina',
@@ -68,7 +64,7 @@ export const getClassesColumns = (
   {
     accessorKey: 'subject_name',
     header: 'Nome da Disciplina',
-    maxSize: 300,
+    maxSize: 250,
     cell: ({ row }) => (
       <Box maxW={300}>
         <Tooltip label={<Text>{row.original.subject_name}</Text>}>
@@ -89,27 +85,25 @@ export const getClassesColumns = (
       </Box>
     ),
   },
-  // {
-  //   accessorKey: 'ignore_to_allocate',
-  //   header: 'Ignorar',
-  //   maxSize: 75,
-  //   meta: { isBoolean: true, isSelectable: true },
-  //   filterFn: FilterBoolean,
-  // },
   {
-    accessorFn: (row) => (row.schedules ? row.schedules : ['Não alocada']),
-    filterFn: FilterBuilding,
+    accessorFn: (row) =>
+      row.schedules
+        ? row.schedules.map((schedule) =>
+            schedule.building ? schedule.building : 'Não alocada',
+          )
+        : ['Não alocada'],
+    filterFn: FilterArray,
     header: 'Prédios',
     maxSize: 120,
     cell: ({ row }) => (
       <Box>
-        {row.original.schedules.map((schedule, index) =>
-          schedule.building ? (
-            <Text key={index}>{schedule.building}</Text>
-          ) : (
-            <Text key={index}>Não alocada</Text>
-          ),
-        )}
+        {row.original.schedules.map((schedule, index) => (
+          <Tooltip label={<Text>{schedule.building}</Text>} key={index}>
+            <Text maxW={120} overflowX={'hidden'} textOverflow={'ellipsis'}>
+              {schedule.building ? schedule.building : 'Não alocada'}
+            </Text>
+          </Tooltip>
+        ))}
       </Box>
     ),
   },
@@ -120,32 +114,30 @@ export const getClassesColumns = (
             schedule.classroom ? schedule.classroom : 'Não alocada',
           )
         : ['Não alocada'],
-    filterFn: FilterClassroom,
+    filterFn: FilterArray,
     header: 'Sala',
     maxSize: 120,
     cell: ({ row }) => (
       <Box>
-        {row.original.schedules.map((schedule, index) =>
-          schedule.classroom ? (
-            <Text key={index}>{schedule.classroom}</Text>
-          ) : (
-            <Text key={index}>Não alocada</Text>
-          ),
-        )}
+        {row.original.schedules.map((schedule, index) => (
+          <Tooltip label={<Text>{schedule.classroom}</Text>} key={index}>
+            <Text maxW={120} overflowX={'hidden'} textOverflow={'ellipsis'}>
+              {schedule.classroom ? schedule.classroom : 'Não alocada'}
+            </Text>
+          </Tooltip>
+        ))}
       </Box>
     ),
   },
   {
+    filterFn: FilterArray,
     accessorFn: (row) =>
       row.schedules.map(
         (schedule) =>
-          `${
-            schedule.week_day
-              ? WeekDay.translate(schedule.week_day)
-              : Recurrence.translate(schedule.recurrence)
-          }:
-          ${schedule.start_time.substring(0, 5)} - 
-          ${schedule.end_time.substring(0, 5)}`,
+          `${getScheduleString(schedule)} ${schedule.start_time.substring(
+            0,
+            5,
+          )} ~ ${schedule.end_time.substring(0, 5)}`,
       ),
     header: 'Horários',
     cell: ({ row }) => (
@@ -160,7 +152,6 @@ export const getClassesColumns = (
         ))}
       </Box>
     ),
-    filterFn: FilterArray,
   },
   {
     accessorFn: (row) =>
@@ -172,7 +163,11 @@ export const getClassesColumns = (
       <Box>
         {row.original.calendar_names.length > 0 ? (
           row.original.calendar_names.map((calendar, index) => (
-            <Text key={index}>{calendar}</Text>
+            <Tooltip label={<Text>{calendar}</Text>} key={index}>
+              <Text maxW={140} overflowX={'hidden'} textOverflow={'ellipsis'}>
+                {calendar}
+              </Text>
+            </Tooltip>
           ))
         ) : (
           <Text>Sem calendários</Text>
@@ -189,6 +184,7 @@ export const getClassesColumns = (
   {
     accessorKey: 'professors',
     header: 'Professores',
+    maxSize: 250,
     cell: ({ row }) => (
       <Box>
         {row.original.professors?.map((professor, index) => (
@@ -237,6 +233,16 @@ export const getClassesColumns = (
             onClick={() => props.handleAllocationEditClick(row.original)}
           />
         </Tooltip>
+        <Tooltip label='Editar Ocorrências'>
+          <IconButton
+            colorScheme='yellow'
+            size='sm'
+            variant='ghost'
+            aria-label='editar-ocorrencias'
+            icon={<BiSolidCalendarEdit />}
+            onClick={() => props.handleEditOccurrencesClick(row.original)}
+          />
+        </Tooltip>
         <Tooltip label='Excluir Turma'>
           <IconButton
             colorScheme='red'
@@ -247,16 +253,6 @@ export const getClassesColumns = (
             onClick={() => props.handleDeleteClassClick(row.original)}
           />
         </Tooltip>
-        {/* <Tooltip label='Excluir Alocação'>
-          <IconButton
-            colorScheme='red'
-            size='sm'
-            variant='ghost'
-            aria-label='excluir-alocacao'
-            icon={<BsCalendarXFill />}
-            onClick={() => props.handleDeleteAllocClick(row.original)}
-          />
-        </Tooltip> */}
       </HStack>
     ),
   },

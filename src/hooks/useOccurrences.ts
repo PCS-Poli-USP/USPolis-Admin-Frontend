@@ -39,7 +39,7 @@ const useOccurrences = () => {
       await service
         .allocate_many_schedules(data)
         .then((response) => {
-          showToast('Sucesso!', `${data.length} horários alocados`, 'success');
+          showToast('Sucesso!', `${data.length} horário(s) alocado(s)`, 'success');
         })
         .catch((error) => {
           showToast('Erro', 'Erro ao alocar horários', 'error');
