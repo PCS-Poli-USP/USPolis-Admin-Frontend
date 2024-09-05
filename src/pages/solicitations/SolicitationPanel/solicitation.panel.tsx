@@ -102,7 +102,9 @@ function SolicitationPanel({
                 <Text pt='2' fontSize='md'>
                   {`Prédio ${solicitation.building}, sala ${
                     solicitation.classroom
-                  } das ${moment(solicitation.start_time, 'HH:mm').format(
+                  } no dia ${moment(solicitation.date).format(
+                    'DD/MM/YYYY',
+                  )} das ${moment(solicitation.start_time, 'HH:mm').format(
                     'HH:mm',
                   )} até ${moment(solicitation.end_time, 'HH:mm').format(
                     'HH:mm',
