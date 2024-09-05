@@ -1,6 +1,6 @@
 // base template from https://chakra-templates.dev/navigation/navbar
 
-import { CloseIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { HamburgerIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,

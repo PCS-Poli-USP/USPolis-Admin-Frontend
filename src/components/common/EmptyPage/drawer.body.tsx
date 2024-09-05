@@ -9,7 +9,7 @@ import { MdAddChart, MdEvent } from 'react-icons/md';
 import { LuCalendarClock, LuCalendarSearch } from 'react-icons/lu';
 import { GiBookCover, GiTeacher } from 'react-icons/gi';
 import { PiChair } from 'react-icons/pi';
-import { BsCalendar3 } from 'react-icons/bs';
+import { BsCalendar3, BsEnvelopeCheck } from 'react-icons/bs';
 
 interface DrawerBodyProps {
   onClose: () => void;
@@ -142,6 +142,18 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           }}
         >
           Reservas
+        </Button>
+        <Button
+          leftIcon={<BsEnvelopeCheck />}
+          variant={'ghost'}
+          w={'full'}
+          fontWeight={'normal'}
+          justifyContent={'flex-start'}
+          onClick={() => {
+            navigate('/solicitations');
+          }}
+        >
+          Solicitações
         </Button>
       </VStack>
       <VStack w={'full'} alignItems={'flex-start'}>

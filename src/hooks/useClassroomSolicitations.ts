@@ -7,7 +7,7 @@ import { sortClassroomSolicitationResponse } from 'utils/solicitations/solicitat
 
 const service = new ClassroomSolicitationService();
 
-const useSolicitations = () => {
+const useClassroomsSolicitations = () => {
   const [loading, setLoading] = useState(false);
   const [solicitations, setSolicitations] = useState<
     ClassroomSolicitationResponse[]
@@ -107,4 +107,4 @@ const useSolicitations = () => {
   };
 };
 
-export default useSolicitations;
+export default useClassroomsSolicitations;

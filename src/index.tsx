@@ -28,6 +28,7 @@ import Subjects from 'pages/subjects/subjects';
 import Calendars from 'pages/calendars/';
 import Reservations from 'pages/reservations';
 import EmptyPage from 'components/common/EmptyPage';
+import Solicitations from 'pages/solicitations/solicitations';
 
 Amplify.configure(awsConfig);
 
@@ -60,6 +61,7 @@ root.render(
                     path='institutional-events'
                     element={<InstitutionalEvents />}
                   />
+                  <Route path='solicitations' element={<Solicitations />} />
                 </Route>
               </Route>
             </Routes>
