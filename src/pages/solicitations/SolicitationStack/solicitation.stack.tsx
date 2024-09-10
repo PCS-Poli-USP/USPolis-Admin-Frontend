@@ -72,9 +72,11 @@ function SolicitationStack({
               handleOnClick(solicitation);
             }}
           >
-            <Heading
-              size={'md'}
-            >{`Reserva de Sala - ${solicitation.classroom}`}</Heading>
+            <Heading size={'md'}>{`Reserva de Sala - ${
+              solicitation.classroom
+                ? solicitation.classroom
+                : 'Não especificada'
+            }`}</Heading>
             <HStack w={'full'}>
               <Text>{`Prédio - ${solicitation.building}`}</Text>
               <Spacer />

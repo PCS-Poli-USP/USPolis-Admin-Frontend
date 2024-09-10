@@ -1,5 +1,5 @@
 import useCustomToast from 'hooks/useCustomToast';
-import { CreateClassroomSolicitation } from 'models/http/requests/classroomSolicitation.request.models';
+import { ClassroomSolicitationAprove, CreateClassroomSolicitation } from 'models/http/requests/classroomSolicitation.request.models';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import ClassroomSolicitationService from 'services/api/classroomSolicitations.service';
@@ -52,10 +52,10 @@ const useClassroomsSolicitations = () => {
   );
 
   const approveSolicitation = useCallback(
-    async (id: number) => {
+    async (id: number, data: ClassroomSolicitationAprove) => {
       setLoading(true);
       await service
-        .approve(id)
+        .approve(id, data)
         .then((response) => {
           showToast('Sucesso', `Solicitação aprovada com sucesso!`, 'success');
           getSolicitations();

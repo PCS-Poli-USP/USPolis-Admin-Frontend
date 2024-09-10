@@ -51,25 +51,6 @@ export default class ClassroomsService extends HttpService {
   ): Promise<AxiosResponse<ClassroomResponse>> {
     return this.http.put(`/${id}`, data);
   }
-  // getAvailable(
-  //   week_day: string,
-  //   start_time: string,
-  //   end_time: string,
-  // ): Promise<AxiosResponse<AvailableClassroom[]>> {
-  //   return this.http.get('available', {
-  //     params: { week_day, start_time, end_time },
-  //   });
-  // }
-
-  // async getAvailableWithConflictIndicator(
-  //   data: GetAvailableWithConflictIndicatorProps,
-  // ): Promise<AxiosResponse<AvailableClassroom[]>> {
-  //   const response = await this.http.post(
-  //     'available-with-conflict-check',
-  //     data,
-  //   );
-  //   return response;
-  // }
 
   getWithConflictCount(
     schedule_id: number,
@@ -78,37 +59,10 @@ export default class ClassroomsService extends HttpService {
     return this.http.get(`with-conflict-count/${building_id}/${schedule_id}`);
   }
 
-  // getClassroomsByBuilding(
-  //   building: string,
-  // ): Promise<AxiosResponse<ClassroomResponse[]>> {
-  //   return this.http.get(`/${building}`);
-  // }
+  getClassroomsByBuildingId(
+    building_id: number,
+  ): Promise<AxiosResponse<ClassroomResponse[]>> {
+    return this.http.get(`/by-building/${building_id}`);
+  }
 
-  // getAllSchedules() {
-  //   return this.http.get('schedules');
-  // }
-
-  // getClassroomSchedule(
-  //   classroom: string,
-  //   building: string,
-  // ): Promise<AxiosResponse<ClassroomSchedule>> {
-  //   return this.http.get('/classroom-schedule', {
-  //     params: { classroom, building },
-  //   });
-  // }
-
-  // getClassroomsSchedulesByBuilding(
-  //   building: string,
-  // ): Promise<AxiosResponse<ClassroomSchedule[]>> {
-  //   return this.http.get(`/${building}/classrooms-schedules`);
-  // }
-
-  // async getManyClassroomsSchedules(
-  //   data: GetClassroomsSchedulesProps,
-  // ): Promise<AxiosResponse<ClassroomSchedule[]>> {
-  //   const response = await this.http.get('/many-classrooms-schedules', {
-  //     params: { classrooms: data.classrooms, buildings: data.buildings },
-  //   });
-  //   return response;
-  // }
 }

@@ -30,11 +30,11 @@ function Solicitations() {
         <GridItem overflow={'hidden'}>
           <SolicitationPanel
             solicitation={solicitation}
-            approve={async (id: number) => {
-              await approveSolicitation(id);
+            approve={async (id, data) => {
+              await approveSolicitation(id, data);
               setSolicitation(undefined);
             }}
-            deny={async (id: number) => {
+            deny={async (id) => {
               await denySolicitation(id);
               setSolicitation(undefined);
             }}

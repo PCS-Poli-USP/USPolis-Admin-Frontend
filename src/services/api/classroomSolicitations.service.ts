@@ -1,7 +1,10 @@
 import { AxiosResponse } from 'axios';
 import HttpService from './http.service';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
-import { CreateClassroomSolicitation } from 'models/http/requests/classroomSolicitation.request.models';
+import {
+  ClassroomSolicitationAprove,
+  CreateClassroomSolicitation,
+} from 'models/http/requests/classroomSolicitation.request.models';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
@@ -20,8 +23,11 @@ export default class ClassroomSolicitationService extends HttpService {
     return this.http.post('', data);
   }
 
-  approve(id: number): Promise<AxiosResponse<ClassroomSolicitationResponse>> {
-    return this.http.put(`/approve/${id}`);
+  approve(
+    id: number,
+    data: ClassroomSolicitationAprove,
+  ): Promise<AxiosResponse<ClassroomSolicitationResponse>> {
+    return this.http.put(`/approve/${id}`, data);
   }
 
   deny(id: number): Promise<AxiosResponse<ClassroomSolicitationResponse>> {

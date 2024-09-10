@@ -23,11 +23,14 @@ import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSo
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import moment from 'moment';
 import { useState } from 'react';
+import { ClassroomSolicitationAprove } from 'models/http/requests/classroomSolicitation.request.models';
+import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import { ReservationType } from 'utils/enums/reservations.enum';
 
 interface SolicitationPanelProps {
   solicitation?: ClassroomSolicitationResponse;
   loading: boolean;
-  approve: (id: number) => void;
+  approve: (id: number, data: ClassroomSolicitationAprove) => void;
   deny: (id: number) => void;
 }
 
@@ -40,6 +43,12 @@ function SolicitationPanel({
   const [openPopover, setOpenPopover] = useState<number | undefined>(undefined);
   const [justification, setJustification] = useState('');
   const [justificationError, setJustificationError] = useState(false);
+
+  const [classroom, setClassroom] = useState<ClassroomResponse | undefined>(
+    undefined,
+  );
+  const [start, setStart] = useState('');
+  const [end, setEnd] = useState('');
 
   function handleOpenPopover(id: number) {
     if (openPopover === id) {
@@ -54,9 +63,11 @@ function SolicitationPanel({
       {!!solicitation ? (
         <>
           <CardHeader>
-            <Heading
-              size={'lg'}
-            >{`Reserva de Sala - ${solicitation.classroom}`}</Heading>
+            <Heading size={'lg'}>{`Reserva de Sala - ${
+              solicitation.classroom
+                ? solicitation.classroom
+                : 'Não especificada'
+            }`}</Heading>
             <Heading
               size={'md'}
               textColor={
@@ -82,14 +93,14 @@ function SolicitationPanel({
                   Solicitante
                 </Heading>
                 <Text pt='2' fontSize='md'>
-                  Nome do usuário
+                  {solicitation.user}
                   <br />
-                  {solicitation?.email}
+                  {solicitation.email}
                 </Text>
               </Box>
               <Box>
                 <Heading size='sm' textTransform='uppercase'>
-                  Motivo
+                  {`Motivo - ${ReservationType.translate(solicitation.reservation_type)}`}
                 </Heading>
                 <Text pt='2' fontSize='md'>
                   {solicitation.reason}
@@ -97,18 +108,29 @@ function SolicitationPanel({
               </Box>
               <Box>
                 <Heading size='sm' textTransform='uppercase'>
-                  Local e Horário
+                  Local, Horário e Datas
                 </Heading>
                 <Text pt='2' fontSize='md'>
-                  {`Prédio ${solicitation.building}, sala ${
+                  {`Local: ${solicitation.building}, sala ${
                     solicitation.classroom
-                  } no dia ${moment(solicitation.date).format(
-                    'DD/MM/YYYY',
-                  )} das ${moment(solicitation.start_time, 'HH:mm').format(
-                    'HH:mm',
-                  )} até ${moment(solicitation.end_time, 'HH:mm').format(
-                    'HH:mm',
-                  )}`}
+                      ? solicitation.classroom
+                      : 'NÃO ESPECIFICADA'
+                  }`}
+                  <br />
+                  {`Início: ${
+                    solicitation.start_time
+                      ? moment(solicitation.start_time, 'HH:mm').format('HH:mm')
+                      : 'NÃO ESPECIFICADO'
+                  } - `}
+                  {`Fim: ${
+                    solicitation.end_time
+                      ? moment(solicitation.end_time, 'HH:mm').format('HH:mm')
+                      : 'NÃO ESPECIFICADO'
+                  }`}
+                  <br />
+                  {`Dias: ${solicitation.dates
+                    .map((date) => moment(date).format('DD/MM/YYYY'))
+                    .join(', ')}`}
                 </Text>
               </Box>
               <Box>
@@ -200,7 +222,21 @@ function SolicitationPanel({
                       </Text>
                       <Button
                         onClick={() => {
-                          approve(solicitation.id);
+                          if (!solicitation.classroom_id && !classroom) return;
+
+                          approve(solicitation.id, {
+                            classroom_id: solicitation.classroom_id
+                              ? solicitation.classroom_id
+                              : classroom
+                              ? classroom.id
+                              : 0,
+                            start_time: solicitation.start_time
+                              ? solicitation.start_time
+                              : start,
+                            end_time: solicitation.end_time
+                              ? solicitation.end_time
+                              : end,
+                          });
                           handleOpenPopover(2);
                         }}
                       >
