@@ -35,13 +35,14 @@ export function SelectInput({
     getValues,
   } = useFormContext();
 
-  const [selectedOption, setSelectedOption] = useState<Option>();
+  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
 
   useEffect(() => {
     const current: string | number = getValues(name);
     if (current) {
-      setSelectedOption(options.find((option) => option.value === current));
-    }
+      const option = options.find((option) => option.value === current);
+      setSelectedOption(option ? option : null);
+    } else setSelectedOption(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, options]);
 
@@ -62,10 +63,11 @@ export function SelectInput({
             // icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
             onChange={(option) => {
               if (onChange) onChange(option ? option : undefined);
-              setValue(name, option ? option.value : undefined);
-              setSelectedOption(
-                options.find((opt) => opt.value === option?.value),
+              setValue(name, option ? option.value : '');
+              const newOption = options.find(
+                (opt) => opt.value === option?.value,
               );
+              setSelectedOption(newOption ? newOption : null);
             }}
             options={options}
             classNames={{
@@ -75,25 +77,6 @@ export function SelectInput({
           />
         )}
       />
-      {/* <ChakraSelect
-        {...register(name)}
-        disabled={disabled || isLoading}
-        value={value}
-        placeholder={placeholder}
-        icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
-        onChange={onChange}
-      >
-        {placeholder ? (
-          undefined
-        ) : (
-          <option value={undefined}>Selecione uma opção</option>
-        )}
-        {options.map((opt, index) => (
-          <option key={index} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </ChakraSelect> */}
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
     </FormControl>
   );

@@ -8,4 +8,5 @@ export interface DateCalendarPickerProps {
   readOnly?: boolean;
   disabled?: boolean;
   helpText?: boolean;
+  header?: string;
 }
