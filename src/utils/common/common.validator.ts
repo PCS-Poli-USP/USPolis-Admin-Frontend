@@ -32,4 +32,24 @@ export default class CommonValidator {
     const end = moment(end_date, 'YYYY:MM:DD');
     return !start.isSameOrBefore(end);
   }
+
+  static isNegativeNumber(value: number) {
+    return value < 0;
+  }
+
+  static isPositiveNumber(value: number) {
+    return value > 0;
+  }
+
+  static isInvalidDayTime(value: string) {
+    const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
+    const timeRegex2 = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+    return !timeRegex.test(value) && !timeRegex2.test(value);
+  }
+
+  static isInvalidDayTimeOfering(start_time: string, end_time: string) {
+    const start = moment(start_time, 'HH:mm');
+    const end = moment(end_time, 'HH:mm');
+    return !start.isSameOrBefore(end);
+  }
 }
