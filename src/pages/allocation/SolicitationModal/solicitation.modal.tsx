@@ -93,52 +93,6 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
           <FormProvider {...form}>
             <form>
               <VStack alignItems={'flex-start'}>
-                <SelectInput
-                  label='Prédio'
-                  name='building_id'
-                  options={buildings.map((building) => ({
-                    label: building.name,
-                    value: building.id,
-                  }))}
-                  onChange={(option) => {
-                    if (option) {
-                      setSelectedBuilding(
-                        buildings.find(
-                          (building) => building.id === option.value,
-                        ),
-                      );
-                    } else setSelectedBuilding(undefined);
-                  }}
-                />
-
-                <SelectInput
-                  disabled={!selectedBuilding || optionalClassroom}
-                  label='Sala'
-                  name='classroom_id'
-                  options={
-                    selectedBuilding
-                      ? classrooms
-                          .filter(
-                            (classrom) =>
-                              classrom.building_id === selectedBuilding.id,
-                          )
-                          .map((val) => ({
-                            label: val.name,
-                            value: val.id,
-                          }))
-                      : []
-                  }
-                />
-                <CheckBox
-                  text='Não quero especificar sala'
-                  name='optional_classroom'
-                  onChange={(value) => {
-                    if (value) {
-                      resetField('classroom_id', { defaultValue: undefined });
-                    }
-                  }}
-                />
-
                 <HStack flex={'1'} w={'full'}>
                   <VStack h={'100%'} w={'100%'}>
                     <Input
@@ -209,6 +163,52 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                 </HStack>
 
                 <Textarea label='Motivo (Opcional)' name='reason' />
+                
+                <SelectInput
+                  label='Prédio'
+                  name='building_id'
+                  options={buildings.map((building) => ({
+                    label: building.name,
+                    value: building.id,
+                  }))}
+                  onChange={(option) => {
+                    if (option) {
+                      setSelectedBuilding(
+                        buildings.find(
+                          (building) => building.id === option.value,
+                        ),
+                      );
+                    } else setSelectedBuilding(undefined);
+                  }}
+                />
+
+                <SelectInput
+                  disabled={!selectedBuilding || optionalClassroom}
+                  label='Sala'
+                  name='classroom_id'
+                  options={
+                    selectedBuilding
+                      ? classrooms
+                          .filter(
+                            (classrom) =>
+                              classrom.building_id === selectedBuilding.id,
+                          )
+                          .map((val) => ({
+                            label: val.name,
+                            value: val.id,
+                          }))
+                      : []
+                  }
+                />
+                <CheckBox
+                  text='Não quero especificar sala'
+                  name='optional_classroom'
+                  onChange={(value) => {
+                    if (value) {
+                      resetField('classroom_id', { defaultValue: undefined });
+                    }
+                  }}
+                />
               </VStack>
             </form>
           </FormProvider>

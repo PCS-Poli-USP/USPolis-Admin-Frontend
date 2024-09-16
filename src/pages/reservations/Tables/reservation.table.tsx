@@ -37,14 +37,14 @@ export const getReservationsColumns = (
             <Text>
               {row.original.requester
                 ? row.original.requester
-                : row.original.created_by + "C"}
+                : row.original.created_by + 'C'}
             </Text>
           }
         >
           <Text maxW={300} overflowX={'hidden'} textOverflow={'ellipsis'}>
             {row.original.requester
               ? row.original.requester
-              : row.original.created_by + "C"}
+              : row.original.created_by}
           </Text>
         </Tooltip>
       </Box>
