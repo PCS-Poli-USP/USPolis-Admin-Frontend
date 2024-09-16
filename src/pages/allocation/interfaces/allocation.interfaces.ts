@@ -60,9 +60,9 @@ export interface ClassExtendedProps extends BaseExtendedProps {
 }
 
 export interface ReservationExtendedProps extends BaseExtendedProps {
-  name: string;
+  title: string;
   type: ReservationType;
-  description?: string;
+  reason?: string;
   created_by: string;
 }
 

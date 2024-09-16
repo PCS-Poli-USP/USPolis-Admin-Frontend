@@ -41,6 +41,28 @@ export const formFields = {
       ),
     defaultValue: 0,
   },
+  reason: {
+    validator: yup
+    .string()
+    .notRequired()
+    .nullable()
+    .test('is-valid-reason', 'Campo obrigatório', function (value) {
+      if (!value) return true;
+      return !SolicitationValidator.isEmptyString(value);
+    }),
+    defaultValue: undefined,
+  },
+  reservation_title: {
+    validator: yup
+      .string()
+      .required('Campo obrigatório')
+      .test(
+        'is-valid-title',
+        'Campo obrigatório',
+        (value) => !SolicitationValidator.isEmptyString(value),
+      ),
+    defaultValue: '',
+  },
   reservation_type: {
     validator: yup
       .string()
@@ -52,17 +74,7 @@ export const formFields = {
       ),
     defaultValue: '',
   },
-  reason: {
-    validator: yup
-      .string()
-      .required('Campo obrigatório')
-      .test(
-        'is-valid-reason',
-        'Campo obrigatório',
-        (value) => !SolicitationValidator.isInvalidReason(value),
-      ),
-    defaultValue: '',
-  },
+
   optional_time: {
     validator: yup.boolean().required(),
     defaultValue: false,
@@ -121,6 +133,7 @@ export const schema = yup.object<SolicitationForm>().shape({
   optional_time: formFields.optional_time.validator,
   start_time: formFields.start_time.validator,
   end_time: formFields.end_time.validator,
+  reservation_title: formFields.reservation_title.validator,
   reservation_type: formFields.reservation_type.validator,
   reason: formFields.reason.validator,
 });
@@ -133,6 +146,7 @@ export const defaultValues: SolicitationForm = {
   optional_time: formFields.optional_time.defaultValue,
   start_time: formFields.start_time.defaultValue,
   end_time: formFields.end_time.defaultValue,
+  reservation_title: formFields.reservation_title.defaultValue,
   reservation_type: formFields.reservation_type.defaultValue as ReservationType,
   reason: formFields.reason.defaultValue,
 };

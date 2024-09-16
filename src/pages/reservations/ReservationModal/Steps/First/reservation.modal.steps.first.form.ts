@@ -4,14 +4,14 @@ import { ReservationFirstForm } from './reservation.modal.steps.first.interface'
 import { ReservationType } from 'utils/enums/reservations.enum';
 
 export const formFields = {
-  name: {
+  title: {
     validator: yup
       .string()
       .required('Campo obrigatório')
       .test(
-        'is-valid-option',
+        'is-valid-title',
         'Campo obrigatório',
-        (value) => !ReservationValidator.isInvalidName(value),
+        (value) => !ReservationValidator.isInvalidTitle(value),
       ),
     defaultValue: '',
   },
@@ -26,12 +26,12 @@ export const formFields = {
       ),
     defaultValue: '',
   },
-  description: {
+  reason: {
     validator: yup
       .string()
       .notRequired()
       .nullable()
-      .test('is-valid-description', 'Campo obrigatório', function (value) {
+      .test('is-valid-reason', 'Campo obrigatório', function (value) {
         if (!value) return true;
         return !ReservationValidator.isEmptyString(value);
       }),
@@ -40,13 +40,13 @@ export const formFields = {
 };
 
 export const firstSchema = yup.object<ReservationFirstForm>().shape({
-  name: formFields.name.validator,
+  title: formFields.title.validator,
   type: formFields.type.validator,
-  description: formFields.description.validator,
+  reason: formFields.reason.validator,
 });
 
 export const firstDefaultValues: ReservationFirstForm = {
-  name: formFields.name.defaultValue,
+  title: formFields.title.defaultValue,
   type: formFields.type.defaultValue as ReservationType,
-  description: formFields.description.defaultValue,
+  reason: formFields.reason.defaultValue,
 };

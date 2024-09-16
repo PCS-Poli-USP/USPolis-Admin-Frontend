@@ -111,7 +111,7 @@ function Reservations() {
           onCloseDialog();
           setSelectedReservation(undefined);
         }}
-        title={`Excluir reserva ${selectedReservation?.name}`}
+        title={`Excluir reserva ${selectedReservation?.title}`}
         onConfirm={handleDeleteConfirm}
         warningText={'Essa ação é irreversível!'}
       />

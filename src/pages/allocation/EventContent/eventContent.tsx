@@ -144,16 +144,16 @@ function ToolTipLabel(eventInfo: EventContentArg) {
       {reservationData ? (
         <>
           <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
-            {`Reserva - ${reservationData.name}`}
+            {`Reserva - ${reservationData.title}`}
           </Text>
 
           <Box>
             <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
-              Descrição
+              Motivo
             </Text>
             <Text fontSize='lg' textColor='#408080'>
-              {reservationData.description
-                ? reservationData.description
+              {reservationData.reason
+                ? reservationData.reason
                 : 'Não informada'}
             </Text>
 

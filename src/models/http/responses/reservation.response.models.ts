@@ -3,12 +3,13 @@ import {
   ScheduleResponse,
   ScheduleFullResponse,
 } from './schedule.response.models';
+import { ClassroomSolicitationResponse } from './classroomSolicitation.response.models';
 
 export interface ReservationResponseBase {
   id: number;
-  name: string;
+  title: string;
   type: ReservationType;
-  description?: string;
+  reason?: string;
   updated_at: string;
 
   building_id: number;
@@ -21,6 +22,8 @@ export interface ReservationResponseBase {
 
   created_by_id: number;
   created_by: string;
+
+  requester?: string,
 }
 
 export interface ReservationResponse extends ReservationResponseBase {

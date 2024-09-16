@@ -6,6 +6,7 @@ import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { ReservationType } from 'utils/enums/reservations.enum';
 import { getScheduleString } from 'utils/schedules/schedule.formatter';
+import { FilterRequester } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface ReservationsColumnsProps {
   handleDuplicateClick: (data: ReservationResponse) => void;
@@ -25,8 +26,43 @@ export const getReservationsColumns = (
     header: 'Sala',
   },
   {
-    accessorKey: 'name',
-    header: 'Nome',
+    accessorKey: 'requester',
+    filterFn: FilterRequester,
+    header: 'Solicitante',
+    maxSize: 250,
+    cell: ({ row }) => (
+      <Box>
+        <Tooltip
+          label={
+            <Text>
+              {row.original.requester
+                ? row.original.requester
+                : row.original.created_by + "C"}
+            </Text>
+          }
+        >
+          <Text maxW={300} overflowX={'hidden'} textOverflow={'ellipsis'}>
+            {row.original.requester
+              ? row.original.requester
+              : row.original.created_by + "C"}
+          </Text>
+        </Tooltip>
+      </Box>
+    ),
+  },
+  {
+    accessorKey: 'title',
+    header: 'Título',
+    maxSize: 250,
+    cell: ({ row }) => (
+      <Box>
+        <Tooltip label={<Text>{row.original.title}</Text>}>
+          <Text maxW={300} overflowX={'hidden'} textOverflow={'ellipsis'}>
+            {row.original.title}
+          </Text>
+        </Tooltip>
+      </Box>
+    ),
   },
   {
     accessorFn: (row) => ReservationType.translate(row.type),
@@ -37,10 +73,6 @@ export const getReservationsColumns = (
         <Text>{ReservationType.translate(row.original.type)}</Text>
       </Box>
     ),
-  },
-  {
-    accessorKey: 'description',
-    header: 'Descrição',
   },
   {
     accessorKey: 'recurrence',

@@ -1,18 +1,17 @@
 import {
-  Alert,
-  AlertIcon,
-  Box,
   Checkbox,
   Heading,
   HStack,
-  Spacer,
+  Input,
+  InputGroup,
+  InputLeftElement,
   StackDivider,
-  Text,
   VStack,
 } from '@chakra-ui/react';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
-import moment from 'moment';
 import { useEffect, useState } from 'react';
+import { BsSearch } from 'react-icons/bs';
+import SolicitationStackBody from './solicitation.stack.body';
 
 interface SolicitationStackProps {
   solicitations: ClassroomSolicitationResponse[];
@@ -25,13 +24,49 @@ function SolicitationStack({
 }: SolicitationStackProps) {
   const [hidden, setHidden] = useState(true);
   const [current, setCurrent] = useState<ClassroomSolicitationResponse[]>([]);
+  const [filtered, setFiltered] = useState<ClassroomSolicitationResponse[]>([]);
+  const [buildingSearch, setBuildingSearch] = useState('');
+  const [classroomSearch, setClassroomSearch] = useState('');
+  const [requesterSearch, setRequesterSearch] = useState('');
+
+  function filterSolicitation(
+    building: string,
+    classroom: string,
+    requester: string,
+  ) {
+    let newCurrent = [...current];
+    if (building)
+      newCurrent = newCurrent.filter((val) =>
+        val.building.toLowerCase().includes(building.toLowerCase()),
+      );
+    if (classroom)
+      newCurrent = newCurrent.filter((val) =>
+        val.classroom
+          ? val.classroom.toLowerCase().includes(classroom)
+          : 'não especificada'.includes(classroom.toLowerCase()),
+      );
+    if (requester)
+      newCurrent = newCurrent.filter((val) =>
+        val.user.toLowerCase().includes(requester.toLowerCase()),
+      );
+    setFiltered(newCurrent);
+  }
+
   useEffect(() => {
     if (hidden) {
-      setCurrent([
+      const initial = [
         ...solicitations.filter((solicitation) => !solicitation.closed),
-      ]);
-    } else setCurrent([...solicitations]);
-  }, [hidden, setCurrent, solicitations]);
+      ];
+      setCurrent(initial);
+      setFiltered((prev) => prev.filter((val) => !val.closed));
+    } else {
+      setCurrent([...solicitations]);
+      setFiltered((prev) => {
+        // if (prev.length === 0) return [...solicitations];
+        return prev;
+      });
+    }
+  }, [hidden, solicitations]);
 
   return (
     <VStack
@@ -46,6 +81,62 @@ function SolicitationStack({
         Solicitações
       </Heading>
       <HStack>
+        <InputGroup>
+          <InputLeftElement pointerEvents='none'>
+            <BsSearch color='gray.300' />
+          </InputLeftElement>
+          <Input
+            type='text'
+            placeholder='Filtrar por Prédio'
+            value={buildingSearch}
+            onChange={(event) => {
+              setBuildingSearch(event.target.value);
+              filterSolicitation(
+                event.target.value,
+                classroomSearch,
+                requesterSearch,
+              );
+            }}
+          />
+        </InputGroup>
+        <InputGroup>
+          <InputLeftElement pointerEvents='none'>
+            <BsSearch color='gray.300' />
+          </InputLeftElement>
+          <Input
+            type='text'
+            placeholder='Filtrar por Sala'
+            value={classroomSearch}
+            onChange={(event) => {
+              setClassroomSearch(event.target.value);
+              filterSolicitation(
+                buildingSearch,
+                event.target.value,
+                requesterSearch,
+              );
+            }}
+          />
+        </InputGroup>
+        <InputGroup>
+          <InputLeftElement pointerEvents='none'>
+            <BsSearch color='gray.300' />
+          </InputLeftElement>
+          <Input
+            type='text'
+            placeholder='Filtrar por Solicitante'
+            value={requesterSearch}
+            onChange={(event) => {
+              setRequesterSearch(event.target.value);
+              filterSolicitation(
+                buildingSearch,
+                classroomSearch,
+                event.target.value,
+              );
+            }}
+          />
+        </InputGroup>
+      </HStack>
+      <HStack>
         <Checkbox
           isChecked={hidden}
           onChange={() => {
@@ -55,58 +146,14 @@ function SolicitationStack({
           Ocultar aprovados/negados
         </Checkbox>
       </HStack>
-      {current.length > 0 ? (
-        current.map((solicitation, index) => (
-          <Box
-            key={index}
-            w={'full'}
-            borderRadius='md'
-            cursor={false ? 'not-allowed' : 'pointer'}
-            transition='background 0.3s, opacity 0.3s'
-            opacity={solicitation.closed ? 0.6 : 1}
-            _hover={false ? {} : { bg: 'gray.100', opacity: 0.8 }}
-            _active={
-              solicitation.closed ? {} : { bg: 'gray.300', opacity: 0.6 }
-            }
-            onClick={() => {
-              handleOnClick(solicitation);
-            }}
-          >
-            <Heading size={'md'}>{`Reserva de Sala - ${
-              solicitation.classroom
-                ? solicitation.classroom
-                : 'Não especificada'
-            }`}</Heading>
-            <HStack w={'full'}>
-              <Text>{`Prédio - ${solicitation.building}`}</Text>
-              <Spacer />
-              <Text>
-                <Text as={'span'} fontWeight={'bold'}>{`${
-                  solicitation.approved
-                    ? 'Aprovado'
-                    : solicitation.denied
-                    ? 'Negado'
-                    : 'Solicitado'
-                }`}</Text>
-                {` às ${
-                  solicitation.approved || solicitation.denied
-                    ? moment(solicitation.updated_at).format(
-                        'DD/MM/YYYY, HH:mm',
-                      )
-                    : moment(solicitation.created_at).format(
-                        'DD/MM/YYYY, HH:mm',
-                      )
-                }`}
-              </Text>
-            </HStack>
-          </Box>
-        ))
-      ) : (
-        <Alert status='success'>
-          <AlertIcon />
-          Nenhuma solicitação pendente
-        </Alert>
-      )}
+      <SolicitationStackBody
+        solicitations={
+          buildingSearch || classroomSearch || requesterSearch
+            ? filtered
+            : current
+        }
+        handleOnClick={handleOnClick}
+      />
     </VStack>
   );
 }

@@ -7,7 +7,8 @@ export interface ClassroomSolicitationResponse {
   building_id: number;
   building: string;
   dates: string[];
-  reason: string;
+  reason?: string;
+  reservation_title: string;
   reservation_type: ReservationType;
   user_id: number;
   user: string;
@@ -18,6 +19,7 @@ export interface ClassroomSolicitationResponse {
   approved: boolean;
   denied: boolean;
   closed: boolean;
+  closed_by: string;
   created_at: string;
   updated_at: string;
 }

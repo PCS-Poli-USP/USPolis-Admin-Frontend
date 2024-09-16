@@ -11,6 +11,7 @@ export interface SolicitationForm {
   start_time?: string;
   end_time?: string;
   capacity: number;
-  reason: string;
+  reason?: string;
+  reservation_title: string;
   reservation_type: ReservationType;
 }

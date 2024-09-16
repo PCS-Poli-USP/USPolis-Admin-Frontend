@@ -71,9 +71,9 @@ function ReservationModal(props: ReservationModalProps) {
     const firstData = firstForm.getValues();
     const secondData = secondForm.getValues();
     const data: UpdateReservation | CreateReservation = {
-      name: firstData.name,
+      title: firstData.title,
       type: firstData.type,
-      description: firstData.description,
+      reason: firstData.reason,
       classroom_id: secondData.classroom_id,
       schedule_data: {
         reservation_id: props.selectedReservation
@@ -156,9 +156,9 @@ function ReservationModal(props: ReservationModalProps) {
   useEffect(() => {
     if (props.selectedReservation) {
       firstForm.reset({
-        name: props.selectedReservation.name,
+        title: props.selectedReservation.title,
         type: props.selectedReservation.type,
-        description: props.selectedReservation.description,
+        reason: props.selectedReservation.reason,
       });
       secondForm.reset({
         building_id: props.selectedReservation.building_id,

@@ -60,6 +60,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
       building_id: values.building_id,
       classroom_id: values.classroom_id,
       reason: values.reason,
+      reservation_title: values.reservation_title,
       reservation_type: values.reservation_type,
       capacity: values.capacity,
       start_time: values.start_time,
@@ -140,6 +141,11 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
 
                 <HStack flex={'1'} w={'full'}>
                   <VStack h={'100%'} w={'100%'}>
+                    <Input
+                      label={'Título'}
+                      name={'reservation_title'}
+                      placeholder='Título da Reserva'
+                    />
                     <SelectInput
                       label={'Tipo de reserva'}
                       name={'reservation_type'}
