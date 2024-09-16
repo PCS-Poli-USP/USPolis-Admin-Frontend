@@ -3,7 +3,6 @@ import {
   ScheduleResponse,
   ScheduleFullResponse,
 } from './schedule.response.models';
-import { ClassroomSolicitationResponse } from './classroomSolicitation.response.models';
 
 export interface ReservationResponseBase {
   id: number;

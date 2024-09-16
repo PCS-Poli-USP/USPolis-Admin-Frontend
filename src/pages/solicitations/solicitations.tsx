@@ -29,6 +29,7 @@ function Solicitations() {
         </GridItem>
         <GridItem overflow={'hidden'}>
           <SolicitationPanel
+            handleClose={() => setSolicitation(undefined)}
             solicitation={solicitation}
             approve={async (id, data) => {
               await approveSolicitation(id, data);

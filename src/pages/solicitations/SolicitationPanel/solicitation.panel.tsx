@@ -7,12 +7,16 @@ import {
   CardHeader,
   Heading,
   HStack,
+  IconButton,
+  Input,
   Popover,
   PopoverBody,
   PopoverCloseButton,
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
+  Spacer,
+  Select,
   Stack,
   StackDivider,
   Text,
@@ -32,6 +36,7 @@ interface SolicitationPanelProps {
   loading: boolean;
   approve: (id: number, data: ClassroomSolicitationAprove) => void;
   deny: (id: number) => void;
+  handleClose: () => void;
 }
 
 function SolicitationPanel({
@@ -39,6 +44,7 @@ function SolicitationPanel({
   loading,
   approve,
   deny,
+  handleClose,
 }: SolicitationPanelProps) {
   const [openPopover, setOpenPopover] = useState<number | undefined>(undefined);
   const [justification, setJustification] = useState('');
@@ -62,12 +68,23 @@ function SolicitationPanel({
     <Card w={'100%'} border={'2px solid lightgray'} hidden={!solicitation}>
       {!!solicitation ? (
         <>
-          <CardHeader>
-            <Heading size={'lg'}>{`Reserva de Sala - ${
-              solicitation.classroom
-                ? solicitation.classroom
-                : 'Não especificada'
-            }`}</Heading>
+          <CardHeader mb={-5}>
+            <HStack>
+              <Heading size={'lg'}>{`Reserva de Sala - ${
+                solicitation.classroom
+                  ? solicitation.classroom
+                  : 'Não especificada'
+              }`}</Heading>
+              <Spacer />
+              <IconButton
+                aria-label='close'
+                icon={<CloseIcon />}
+                variant={'ghost'}
+                onClick={() => {
+                  handleClose();
+                }}
+              />
+            </HStack>
             <Heading
               size={'md'}
               textColor={
@@ -93,17 +110,17 @@ function SolicitationPanel({
                   Solicitante
                 </Heading>
                 <Text pt='2' fontSize='md'>
-                  {solicitation.user}
-                  <br />
-                  {solicitation.email}
+                  {`${solicitation.user} - ${solicitation.email}`}
                 </Text>
               </Box>
               <Box>
                 <Heading size='sm' textTransform='uppercase'>
-                  {`Motivo - ${ReservationType.translate(solicitation.reservation_type)}`}
+                  {`Motivo - ${ReservationType.translate(
+                    solicitation.reservation_type,
+                  )}`}
                 </Heading>
                 <Text pt='2' fontSize='md'>
-                  {solicitation.reason}
+                  {solicitation.reason ? solicitation.reason : 'Não informado.'}
                 </Text>
               </Box>
               <Box>
@@ -141,8 +158,50 @@ function SolicitationPanel({
                   {`Capacidade para ${solicitation.capacity} pessoas`}
                 </Text>
               </Box>
+              {!solicitation.denied &&
+              (!solicitation.start_time || !solicitation.end_time) ? (
+                <Box>
+                  <Heading size={'sm'} textTransform='uppercase'>
+                    Horários
+                  </Heading>
+                  <HStack mt={2}>
+                    <Input
+                      type={'time'}
+                      placeholder='Horário de início'
+                      value={start}
+                      onChange={(event) => setStart(event.target.value)}
+                    />
+                    <Input
+                      type={'time'}
+                      placeholder='Horário de fim'
+                      value={end}
+                      onChange={(event) => setEnd(event.target.value)}
+                    />
+                  </HStack>
+                </Box>
+              ) : undefined}
+              {!solicitation.denied && !solicitation.classroom ? (
+                <Box>
+                  <Heading mb={2} size={'sm'} textTransform='uppercase'>
+                    Sala
+                  </Heading>
+                  <HStack w={'full'}>
+                    <Select
+                      placeholder='Selecione uma sala'
+                      disabled={
+                        (!solicitation.start_time && !start) ||
+                        (!solicitation.end_time && !end)
+                      }
+                    />
+                    <Button isDisabled={!classroom}>
+                      Visualizar disponibilidade
+                    </Button>
+                  </HStack>
+                </Box>
+              ) : undefined}
             </Stack>
           </CardBody>
+
           <CardFooter>
             <HStack>
               <Popover placement={'top'} isOpen={openPopover === 1}>
@@ -203,7 +262,12 @@ function SolicitationPanel({
                     isLoading={loading}
                     rightIcon={<CheckIcon />}
                     colorScheme='green'
-                    isDisabled={solicitation.closed}
+                    isDisabled={
+                      solicitation.closed ||
+                      (!solicitation.classroom && !classroom) ||
+                      (!solicitation.start_time && !start) ||
+                      (!solicitation.end_time && !end)
+                    }
                     onClick={() => handleOpenPopover(2)}
                   >
                     Aprovar

@@ -208,7 +208,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                   </VStack>
                 </HStack>
 
-                <Textarea label='Motivo' name='reason' />
+                <Textarea label='Motivo (Opcional)' name='reason' />
               </VStack>
             </form>
           </FormProvider>

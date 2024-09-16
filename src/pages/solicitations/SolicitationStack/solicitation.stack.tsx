@@ -42,7 +42,7 @@ function SolicitationStack({
     if (classroom)
       newCurrent = newCurrent.filter((val) =>
         val.classroom
-          ? val.classroom.toLowerCase().includes(classroom)
+          ? val.classroom.toLowerCase().includes(classroom.toLowerCase())
           : 'não especificada'.includes(classroom.toLowerCase()),
       );
     if (requester)
