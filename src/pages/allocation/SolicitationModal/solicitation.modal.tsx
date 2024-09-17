@@ -33,8 +33,13 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
     resolver: yupResolver(schema),
   });
 
-  const { dayClick, selectedDays, highlightedDays, occupiedDays } =
-    useDateCalendarPicker();
+  const {
+    dayClick,
+    setSelectedDays,
+    selectedDays,
+    highlightedDays,
+    occupiedDays,
+  } = useDateCalendarPicker();
 
   const { buildings } = useBuildings();
   const { classrooms } = useClassrooms();
@@ -67,15 +72,14 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
       end_time: values.end_time,
       dates: selectedDays,
     });
-    reset(defaultValues);
-    clearErrors();
-    onClose();
+    handleClose();
   }
 
   function handleClose() {
     reset(defaultValues);
     clearErrors();
     onClose();
+    setSelectedDays([]);
   }
 
   return (
@@ -163,7 +167,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                 </HStack>
 
                 <Textarea label='Motivo (Opcional)' name='reason' />
-                
+
                 <SelectInput
                   label='Prédio'
                   name='building_id'

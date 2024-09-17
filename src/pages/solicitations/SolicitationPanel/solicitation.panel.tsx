@@ -16,20 +16,22 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Spacer,
-  Select,
+  // Select,
   Stack,
   StackDivider,
   Text,
   Textarea,
   VStack,
 } from '@chakra-ui/react';
+import Select from 'react-select';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import moment from 'moment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ClassroomSolicitationAprove } from 'models/http/requests/classroomSolicitation.request.models';
 import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
 import { ReservationType } from 'utils/enums/reservations.enum';
+import useClassrooms from 'hooks/useClassrooms';
 
 interface SolicitationPanelProps {
   solicitation?: ClassroomSolicitationResponse;
@@ -46,10 +48,14 @@ function SolicitationPanel({
   deny,
   handleClose,
 }: SolicitationPanelProps) {
+  const { loading: loadingClassrooms, getClassroomsByBuilding } =
+    useClassrooms(false);
+
   const [openPopover, setOpenPopover] = useState<number | undefined>(undefined);
   const [justification, setJustification] = useState('');
   const [justificationError, setJustificationError] = useState(false);
 
+  const [classrooms, setClassrooms] = useState<ClassroomResponse[]>([]);
   const [classroom, setClassroom] = useState<ClassroomResponse | undefined>(
     undefined,
   );
@@ -63,6 +69,18 @@ function SolicitationPanel({
       setOpenPopover(id);
     }
   }
+
+  useEffect(() => {
+    const fetchClassrooms = async () => {
+      if (solicitation && !solicitation.closed) {
+        console.log('aqui');
+        const result = await getClassroomsByBuilding(solicitation?.building_id);
+        setClassrooms(result);
+        console.log(result);
+      }
+    };
+    fetchClassrooms();
+  }, [getClassroomsByBuilding, solicitation]);
 
   return (
     <Card w={'100%'} border={'2px solid lightgray'} hidden={!solicitation}>
@@ -186,13 +204,28 @@ function SolicitationPanel({
                     Sala
                   </Heading>
                   <HStack w={'full'}>
-                    <Select
-                      placeholder='Selecione uma sala'
-                      disabled={
-                        (!solicitation.start_time && !start) ||
-                        (!solicitation.end_time && !end)
-                      }
-                    />
+                    <Box w={'full'}>
+                      <Select
+                        isClearable
+                        placeholder='Selecione uma sala'
+                        isDisabled={
+                          (!solicitation.start_time && !start) ||
+                          (!solicitation.end_time && !end)
+                        }
+                        options={classrooms.map((val) => ({
+                          label: val.name,
+                          value: val.id,
+                        }))}
+                        onChange={(newValue) => {
+                          console.log(newValue);
+                          setClassroom(
+                            classrooms.find(
+                              (val) => val.id === newValue?.value,
+                            ),
+                          );
+                        }}
+                      />
+                    </Box>
                     <Button isDisabled={!classroom}>
                       Visualizar disponibilidade
                     </Button>
@@ -207,7 +240,7 @@ function SolicitationPanel({
               <Popover placement={'top'} isOpen={openPopover === 1}>
                 <PopoverTrigger>
                   <Button
-                    isLoading={loading}
+                    isLoading={loading || loadingClassrooms}
                     rightIcon={<CloseIcon />}
                     colorScheme='red'
                     isDisabled={solicitation.closed}
@@ -259,7 +292,7 @@ function SolicitationPanel({
               <Popover placement={'top'} isOpen={openPopover === 2}>
                 <PopoverTrigger>
                   <Button
-                    isLoading={loading}
+                    isLoading={loading || loadingClassrooms}
                     rightIcon={<CheckIcon />}
                     colorScheme='green'
                     isDisabled={

@@ -3,6 +3,7 @@ import {
   AlertIcon,
   Box,
   Heading,
+  Highlight,
   StackDivider,
   Text,
   VStack,
@@ -58,18 +59,31 @@ function SolicitationStackBody({
             </Text>
             {solicitation.approved || solicitation.denied ? (
               <Text>
-                <Text as={'span'}>{`${
-                  solicitation.approved
-                    ? `Situação: Aprovado por ${solicitation.closed_by}`
-                    : solicitation.denied
-                    ? `Negado por ${solicitation.closed_by}`
-                    : ''
-                }`}</Text>
-                {` às ${moment(solicitation.updated_at).format(
-                  'DD/MM/YYYY, HH:mm',
-                )}`}
+                <Highlight
+                  query={['aprovado', 'negado', solicitation.user]}
+                  styles={{ textColor: 'uspolis.blue', fontWeight: 'bold' }}
+                >
+                  {`${
+                    solicitation.approved
+                      ? `Situação: Aprovado por ${solicitation.closed_by}`
+                      : solicitation.denied
+                      ? `Situação: Negado por ${solicitation.closed_by}`
+                      : ''
+                  } às ${moment(solicitation.updated_at).format(
+                    'DD/MM/YYYY, HH:mm',
+                  )}`}
+                </Highlight>
               </Text>
-            ) : (<Text>Situação: Pendente</Text>)}
+            ) : (
+              <Text>
+                <Highlight
+                  query={'pendente'}
+                  styles={{ textColor: 'uspolis.blue', fontWeight: 'bold' }}
+                >
+                  Situação: Pendente
+                </Highlight>
+              </Text>
+            )}
 
             {/* </VStack> */}
           </Box>

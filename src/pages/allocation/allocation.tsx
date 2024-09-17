@@ -150,7 +150,6 @@ function Allocation() {
                       }
                     </PDFDownloadLink>
                   </MenuItem>
-                  <MenuItem>Solicitar Sala</MenuItem>
                 </MenuList>
               </Menu>
 
