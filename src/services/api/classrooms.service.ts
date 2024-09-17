@@ -12,16 +12,6 @@ import {
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
-interface GetAvailableWithConflictIndicatorProps {
-  events_ids: string[];
-  building_id: number;
-}
-
-interface GetClassroomsSchedulesProps {
-  classrooms: string[];
-  buildings: string[];
-}
-
 export default class ClassroomsService extends HttpService {
   constructor() {
     super(`${USPOLIS_SERVER_URL}/classrooms`);
@@ -31,9 +21,7 @@ export default class ClassroomsService extends HttpService {
     return this.http.get('');
   }
 
-  listOneFull(
-    id: number,
-  ): Promise<AxiosResponse<ClassroomFullResponse>> {
+  listOneFull(id: number): Promise<AxiosResponse<ClassroomFullResponse>> {
     return this.http.get(`/full/${id}`);
   }
 
@@ -62,7 +50,6 @@ export default class ClassroomsService extends HttpService {
   getClassroomsByBuildingId(
     building_id: number,
   ): Promise<AxiosResponse<ClassroomResponse[]>> {
-    return this.http.get(`/by-building/${building_id}`);
+    return this.http.get(`/building/${building_id}`);
   }
-
 }
