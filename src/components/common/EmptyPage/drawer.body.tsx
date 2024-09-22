@@ -1,9 +1,9 @@
 import { Button, Divider, VStack, HStack, Text, Icon } from '@chakra-ui/react';
 import { useContext } from 'react';
-import { FaRegCalendarTimes, FaRegUser } from 'react-icons/fa';
+import { FaList, FaRegCalendarTimes, FaRegUser } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { appContext } from 'context/AppContext';
-import { CalendarIcon, LockIcon } from '@chakra-ui/icons';
+import { CalendarIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
 import { LiaBuilding } from 'react-icons/lia';
 import { MdAddChart, MdEvent } from 'react-icons/md';
 import { LuCalendarClock, LuCalendarSearch } from 'react-icons/lu';
@@ -67,7 +67,26 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           </Button>
         </VStack>
       ) : undefined}
-
+      <VStack w={'full'} alignItems={'flex-start'}>
+        <HStack>
+          <Icon as={UnlockIcon} color={'uspolis.blue'} />
+          <Text color={'uspolis.blue'} fontWeight={'bold'}>
+            Público
+          </Text>
+        </HStack>
+        <Button
+          leftIcon={<FaList />}
+          variant={'ghost'}
+          w={'full'}
+          justifyContent={'flex-start'}
+          fontWeight={'normal'}
+          onClick={() => {
+            navigate('/my-solicitations');
+          }}
+        >
+          Minhas solicitações
+        </Button>
+      </VStack>
       <VStack w={'full'} alignItems={'flex-start'}>
         <HStack>
           <Icon as={LuCalendarClock} color={'uspolis.blue'} />

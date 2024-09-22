@@ -83,7 +83,12 @@ export default function DataTable<Data extends object>({
   }
 
   return (
-    <TableContainer border='1px' borderRadius='lg' borderColor='uspolis.blue' hidden={hidden}>
+    <TableContainer
+      border='1px'
+      borderRadius='lg'
+      borderColor='uspolis.blue'
+      hidden={hidden}
+    >
       {loading && <Progress size='xs' isIndeterminate />}
       <Table>
         <Thead>
@@ -205,7 +210,6 @@ function Filter({ column }: { column: Column<any, any> }) {
     // eslint-disable-next-line
     [column.getFacetedUniqueValues()],
   );
-
   return meta?.isSelectable ? (
     <Select
       id={column.id + 'list'}

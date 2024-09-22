@@ -1,5 +1,5 @@
 import { Auth, Hub } from 'aws-amplify';
-import { User } from 'models/common/user.common.model';
+import { UserResponse } from 'models/http/responses/user.response.models';
 import React, { createContext, useEffect, useState } from 'react';
 import SelfService from 'services/api/self.service';
 
@@ -7,7 +7,7 @@ interface AppContext {
   loading: boolean;
   setLoading: (value: boolean) => void;
   username: string;
-  loggedUser: User | null;
+  loggedUser: UserResponse | null;
   logout: () => void;
 }
 
@@ -26,7 +26,7 @@ export default function AppContextProvider({
 }: React.PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
-  const [loggedUser, setLoggedUser] = useState<User | null>(null);
+  const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
 
   const selfService = new SelfService();
 
@@ -48,7 +48,9 @@ export default function AppContextProvider({
     if (!userFromStorage) {
       await getSelfFromBackend();
     } else {
-      const parsedUser: User = JSON.parse(userFromStorage) as User;
+      const parsedUser: UserResponse = JSON.parse(
+        userFromStorage,
+      ) as UserResponse;
       setLoggedUser(parsedUser);
       console.log('Usuário logado (storage):');
       console.log(parsedUser);
@@ -63,6 +65,7 @@ export default function AppContextProvider({
   useEffect(() => {
     Auth.currentUserInfo().then((it) => setUsername(it?.username));
     getSelf();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -73,6 +76,7 @@ export default function AppContextProvider({
         data.payload.data.username + ' has ' + data.payload.event,
       );
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
