@@ -1,4 +1,4 @@
-import { ReservationType } from "utils/enums/reservations.enum";
+import { ReservationType } from 'utils/enums/reservations.enum';
 
 export interface CreateClassroomSolicitation {
   classroom_id?: number;
@@ -14,6 +14,11 @@ export interface CreateClassroomSolicitation {
 
 export interface ClassroomSolicitationAprove {
   classroom_id: number;
+  classroom_name: string;
   start_time: string;
   end_time: string;
+}
+
+export interface ClassroomSolicitationDeny {
+  justification: string;
 }

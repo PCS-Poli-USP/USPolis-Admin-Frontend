@@ -28,7 +28,10 @@ import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSo
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { ClassroomSolicitationAprove } from 'models/http/requests/classroomSolicitation.request.models';
+import {
+  ClassroomSolicitationAprove,
+  ClassroomSolicitationDeny,
+} from 'models/http/requests/classroomSolicitation.request.models';
 import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
 import { ReservationType } from 'utils/enums/reservations.enum';
 import useClassrooms from 'hooks/useClassrooms';
@@ -37,7 +40,7 @@ interface SolicitationPanelProps {
   solicitation?: ClassroomSolicitationResponse;
   loading: boolean;
   approve: (id: number, data: ClassroomSolicitationAprove) => void;
-  deny: (id: number) => void;
+  deny: (id: number, data: ClassroomSolicitationDeny) => void;
   handleClose: () => void;
 }
 
@@ -269,6 +272,9 @@ function SolicitationPanel({
                           setJustificationError(false);
                         }}
                       />
+                      <Text>{`Caracteres restantes: ${
+                        256 - justification.length
+                      }`}</Text>
                       <Text textColor={'red.500'} hidden={!justificationError}>
                         Campo obrigatório
                       </Text>
@@ -278,7 +284,7 @@ function SolicitationPanel({
                             setJustificationError(true);
                             return;
                           }
-                          deny(solicitation.id);
+                          deny(solicitation.id, { justification });
                           handleOpenPopover(1);
                         }}
                       >
@@ -327,6 +333,11 @@ function SolicitationPanel({
                               : classroom
                               ? classroom.id
                               : 0,
+                            classroom_name: solicitation.classroom
+                              ? solicitation.classroom
+                              : classroom
+                              ? classroom.name
+                              : 'Sem nome',
                             start_time: solicitation.start_time
                               ? solicitation.start_time
                               : start,

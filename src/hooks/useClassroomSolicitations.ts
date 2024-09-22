@@ -1,5 +1,5 @@
 import useCustomToast from 'hooks/useCustomToast';
-import { ClassroomSolicitationAprove, CreateClassroomSolicitation } from 'models/http/requests/classroomSolicitation.request.models';
+import { ClassroomSolicitationAprove, ClassroomSolicitationDeny, CreateClassroomSolicitation } from 'models/http/requests/classroomSolicitation.request.models';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import ClassroomSolicitationService from 'services/api/classroomSolicitations.service';
@@ -72,10 +72,10 @@ const useClassroomsSolicitations = () => {
   );
 
   const denySolicitation = useCallback(
-    async (id: number) => {
+    async (id: number, data: ClassroomSolicitationDeny) => {
       setLoading(true);
       await service
-        .deny(id)
+        .deny(id, data)
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao negar solicitação', 'success');
 

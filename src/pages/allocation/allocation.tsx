@@ -157,6 +157,10 @@ function Allocation() {
                 Solicitar Sala
               </Button>
 
+              <Button colorScheme='blue' onClick={() => {}}>
+                Minhas solicitações
+              </Button>
+
               <Spacer />
 
               <InputGroup w='fit-content'>

@@ -35,8 +35,8 @@ function Solicitations() {
               await approveSolicitation(id, data);
               setSolicitation(undefined);
             }}
-            deny={async (id) => {
-              await denySolicitation(id);
+            deny={async (id, data) => {
+              await denySolicitation(id, data);
               setSolicitation(undefined);
             }}
             loading={loading}

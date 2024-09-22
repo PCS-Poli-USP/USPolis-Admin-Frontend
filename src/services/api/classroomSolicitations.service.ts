@@ -3,6 +3,7 @@ import HttpService from './http.service';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 import {
   ClassroomSolicitationAprove,
+  ClassroomSolicitationDeny,
   CreateClassroomSolicitation,
 } from 'models/http/requests/classroomSolicitation.request.models';
 
@@ -30,8 +31,11 @@ export default class ClassroomSolicitationService extends HttpService {
     return this.http.put(`/approve/${id}`, data);
   }
 
-  deny(id: number): Promise<AxiosResponse<ClassroomSolicitationResponse>> {
-    return this.http.put(`/deny/${id}`);
+  deny(
+    id: number,
+    data: ClassroomSolicitationDeny,
+  ): Promise<AxiosResponse<ClassroomSolicitationResponse>> {
+    return this.http.put(`/deny/${id}`, data);
   }
 
   delete(id: number): Promise<AxiosResponse<undefined>> {
