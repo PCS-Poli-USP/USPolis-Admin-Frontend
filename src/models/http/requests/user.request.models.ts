@@ -3,7 +3,7 @@ export interface CreateUser {
   username: string;
   email: string;
   is_admin: boolean;
-  building_ids?: Array<string>;
+  building_ids?: Array<number>;
 }
 
 export interface UpdateUser {

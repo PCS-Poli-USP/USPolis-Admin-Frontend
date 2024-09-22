@@ -5,7 +5,6 @@ import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
 import UsersService from 'services/api/users.service';
-import { User, EditUser } from 'models/common/user.common.model';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { appContext } from 'context/AppContext';
@@ -15,13 +14,15 @@ import RegisterUserModal, {
   RegisterUserFormValues,
 } from 'components/users/register.modal';
 import PageContent from 'components/common/PageContent';
+import { UserResponse } from 'models/http/responses/user.response.models';
+import { UpdateUser } from 'models/http/requests/user.request.models';
 
 const Users = () => {
   const { setLoading } = useContext(appContext);
   const usersService = new UsersService();
 
-  const [users, setUsers] = useState<User[]>([]);
-  const [contextUser, setContextUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<UserResponse[]>([]);
+  const [contextUser, setContextUser] = useState<UserResponse | null>(null);
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [registerModalOpen, setRegisterModalOpen] = useState<boolean>(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
@@ -48,7 +49,7 @@ const Users = () => {
     });
   };
 
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<UserResponse>[] = [
     {
       accessorKey: 'id',
       header: 'ID',
@@ -116,6 +117,7 @@ const Users = () => {
 
   useEffect(() => {
     fetchUsers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchUsers() {
@@ -137,12 +139,12 @@ const Users = () => {
     setRegisterModalOpen(true);
   }
 
-  function handleEditButton(user: User) {
+  function handleEditButton(user: UserResponse) {
     setContextUser(user);
     setEditModalOpen(true);
   }
 
-  function handleDeleteButton(user: User) {
+  function handleDeleteButton(user: UserResponse) {
     setDeleteDialogOpen(true);
     setContextUser(user);
   }
@@ -150,7 +152,7 @@ const Users = () => {
   async function registerUser(form: RegisterUserFormValues) {
     try {
       setLoading(true);
-      const response = await usersService.create({
+      await usersService.create({
         name: form.name,
         email: form.email,
         username: form.username,
@@ -168,10 +170,10 @@ const Users = () => {
     fetchUsers();
   }
 
-  async function editUser(data: EditUser, user_id: string) {
+  async function editUser(user_id: number, data: UpdateUser) {
     setLoading(true);
     try {
-      await usersService.update(data, user_id);
+      await usersService.update(user_id, data);
       toastSuccess(`Usuário editado!`);
     } catch (err: any) {
       console.error(err);
@@ -181,7 +183,7 @@ const Users = () => {
     fetchUsers();
   }
 
-  async function deleteUser(user_id: string) {
+  async function deleteUser(user_id: number) {
     setLoading(true);
     try {
       await usersService.delete(user_id);
@@ -220,13 +222,10 @@ const Users = () => {
           username: contextUser?.username,
         }}
         onSave={(form) => {
-          editUser(
-            {
-              building_ids: form.buildings?.map((b) => b.value),
-              is_admin: form.is_admin,
-            },
-            contextUser!.id,
-          );
+          editUser(contextUser!.id, {
+            building_ids: form.buildings?.map((b) => b.value),
+            is_admin: form.is_admin ? form.is_admin : false,
+          });
         }}
       />
       <RegisterUserModal
