@@ -32,7 +32,7 @@ import {
   ClassroomSolicitationAprove,
   ClassroomSolicitationDeny,
 } from 'models/http/requests/classroomSolicitation.request.models';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import { ClassroomWithConflictCount } from 'models/http/responses/classroom.response.models';
 import { ReservationType } from 'utils/enums/reservations.enum';
 import useClassrooms from 'hooks/useClassrooms';
 
@@ -51,17 +51,19 @@ function SolicitationPanel({
   deny,
   handleClose,
 }: SolicitationPanelProps) {
-  const { loading: loadingClassrooms, getClassroomsByBuilding } =
+  const { loading: loadingClassrooms, getClassroomsWithConflictFromTime } =
     useClassrooms(false);
 
   const [openPopover, setOpenPopover] = useState<number | undefined>(undefined);
   const [justification, setJustification] = useState('');
   const [justificationError, setJustificationError] = useState(false);
 
-  const [classrooms, setClassrooms] = useState<ClassroomResponse[]>([]);
-  const [classroom, setClassroom] = useState<ClassroomResponse | undefined>(
-    undefined,
+  const [classrooms, setClassrooms] = useState<ClassroomWithConflictCount[]>(
+    [],
   );
+  const [classroom, setClassroom] = useState<
+    ClassroomWithConflictCount | undefined
+  >(undefined);
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
 
@@ -74,16 +76,27 @@ function SolicitationPanel({
   }
 
   useEffect(() => {
+    if (solicitation?.start_time && solicitation.end_time) {
+      setStart(solicitation.start_time);
+      setEnd(solicitation.end_time);
+    }
+  }, [solicitation?.start_time, solicitation?.end_time]);
+
+  useEffect(() => {
     const fetchClassrooms = async () => {
       if (solicitation && !solicitation.closed) {
-        console.log('aqui');
-        const result = await getClassroomsByBuilding(solicitation?.building_id);
-        setClassrooms(result);
-        console.log(result);
+        if (start && end) {
+          const result = await getClassroomsWithConflictFromTime(
+            start,
+            end,
+            solicitation?.building_id,
+          );
+          setClassrooms(result);
+        }
       }
     };
     fetchClassrooms();
-  }, [getClassroomsByBuilding, solicitation]);
+  }, [getClassroomsWithConflictFromTime, solicitation, end, start]);
 
   return (
     <Card w={'100%'} border={'2px solid lightgray'} hidden={!solicitation}>
@@ -185,20 +198,38 @@ function SolicitationPanel({
                   <Heading size={'sm'} textTransform='uppercase'>
                     Horários
                   </Heading>
-                  <HStack mt={2}>
+                  <HStack mt={2} w={'full'} flex={'1'}>
                     <Input
+                      w={'auto'}
                       type={'time'}
                       placeholder='Horário de início'
                       value={start}
                       onChange={(event) => setStart(event.target.value)}
                     />
                     <Input
+                      w={'auto'}
                       type={'time'}
                       placeholder='Horário de fim'
                       value={end}
                       onChange={(event) => setEnd(event.target.value)}
                     />
+                    {solicitation.classroom_id ? (
+                      <Button>Visualizar disponibilidade</Button>
+                    ) : undefined}
                   </HStack>
+                  {solicitation.classroom_id ? (
+                    <>
+                      <Text textColor={'red.500'} mt={2}>
+                        {`Esse horário gerará 
+                        ${
+                          classrooms.find(
+                            (room) => room.id === solicitation.classroom_id,
+                          )?.conflicts
+                        } conflitos.
+                      `}
+                      </Text>
+                    </>
+                  ) : undefined}
                 </Box>
               ) : undefined}
               {!solicitation.denied && !solicitation.classroom ? (
@@ -207,20 +238,31 @@ function SolicitationPanel({
                     Sala
                   </Heading>
                   <HStack w={'full'}>
-                    <Box w={'full'}>
+                    <Box w={'auto'}>
                       <Select
                         isClearable
+                        value={
+                          classroom
+                            ? {
+                                label: classroom.conflicts
+                                  ? `⚠️ ${classroom.name} (${classroom.conflicts} conflitos)`
+                                  : classroom.name,
+                                value: classroom.id,
+                              }
+                            : null
+                        }
                         placeholder='Selecione uma sala'
                         isDisabled={
                           (!solicitation.start_time && !start) ||
                           (!solicitation.end_time && !end)
                         }
                         options={classrooms.map((val) => ({
-                          label: val.name,
+                          label: val.conflicts
+                            ? `⚠️ ${val.name} (${val.conflicts} conflitos)`
+                            : val.name,
                           value: val.id,
                         }))}
                         onChange={(newValue) => {
-                          console.log(newValue);
                           setClassroom(
                             classrooms.find(
                               (val) => val.id === newValue?.value,
@@ -233,6 +275,12 @@ function SolicitationPanel({
                       Visualizar disponibilidade
                     </Button>
                   </HStack>
+                  <Text
+                    hidden={classroom ? classroom.conflicts === 0 : true}
+                    textColor={'red.500'}
+                  >
+                    Essa sala gerará conflitos!
+                  </Text>
                 </Box>
               ) : undefined}
             </Stack>

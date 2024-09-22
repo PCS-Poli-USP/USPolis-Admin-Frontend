@@ -1,9 +1,10 @@
 import { AxiosResponse } from 'axios';
-import { ClassroomWithConflictCount } from 'models/common/classroom.model';
+import { ClassroomWithConflictCount as ClassroomWithConflictCountOLD } from 'models/common/classroom.model';
 import HttpService from './http.service';
 import {
   ClassroomFullResponse,
   ClassroomResponse,
+  ClassroomWithConflictCount
 } from 'models/http/responses/classroom.response.models';
 import {
   CreateClassroom,
@@ -43,8 +44,19 @@ export default class ClassroomsService extends HttpService {
   getWithConflictCount(
     schedule_id: number,
     building_id: number,
-  ): Promise<AxiosResponse<ClassroomWithConflictCount[]>> {
+  ): Promise<AxiosResponse<ClassroomWithConflictCountOLD[]>> {
     return this.http.get(`with-conflict-count/${building_id}/${schedule_id}`);
+  }
+
+  getWithConflictCountFromTime(
+    start_time: string,
+    end_time: string,
+    building_id: number,
+  ): Promise<AxiosResponse<ClassroomWithConflictCount[]>> {
+    const params = new URLSearchParams();
+    params.append('start_time', start_time);
+    params.append('end_time', end_time);
+    return this.http.get(`with-conflict-count/${building_id}`, { params });
   }
 
   getClassroomsByBuildingId(

@@ -6,6 +6,7 @@ import {
 import {
   ClassroomResponse,
   ClassroomFullResponse,
+  ClassroomWithConflictCount,
 } from 'models/http/responses/classroom.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import ClassroomsService from 'services/api/classrooms.service';
@@ -59,30 +60,29 @@ const useClassrooms = (initialFetch: boolean = true) => {
     [showToast],
   );
 
-  // const getClassroomsWithConflict = useCallback(
-  //   async (building_id: number) => {
-  //     setLoading(true);
-  //     let current: ClassroomResponse[] = [];
-  //     await service
-  //       .getWithConflictCount(building_id)
-  //       .then((response) => {
-  //         current = response.data;
-  //         setClassrooms(current.sort(sortClassroomResponse));
-  //       })
-  //       .catch((error) => {
-  //         showToast(
-  //           'Erro',
-  //           `Erro ao carregar salas do prédio ${building_id}`,
-  //           'error',
-  //         );
-  //       })
-  //       .finally(() => {
-  //         setLoading(false);
-  //       });
-  //     return current;
-  //   },
-  //   [showToast],
-  // );
+  const getClassroomsWithConflictFromTime= useCallback(
+    async (start_time: string, end_time: string, building_id: number) => {
+      setLoading(true);
+      let current: ClassroomWithConflictCount[] = [];
+      await service
+        .getWithConflictCountFromTime(start_time, end_time, building_id)
+        .then((response) => {
+          current = response.data;
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao carregar salas do prédio ${building_id}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+      return current;
+    },
+    [showToast],
+  );
 
   const listOneFull = useCallback(async (id: number) => {
     let current: ClassroomFullResponse | undefined;
@@ -173,6 +173,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
     classrooms,
     getClassrooms,
     getClassroomsByBuilding,
+    getClassroomsWithConflictFromTime,
     listOneFull,
     createClassroom,
     updateClassroom,

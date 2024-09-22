@@ -21,3 +21,7 @@ export interface ClassroomFullResponse extends ClassroomResponse {
   schedules: ScheduleResponse[];
   occurrences: OccurrenceResponse[];
 }
+
+export interface ClassroomWithConflictCount extends ClassroomResponse {
+  conflicts: number;
+}
