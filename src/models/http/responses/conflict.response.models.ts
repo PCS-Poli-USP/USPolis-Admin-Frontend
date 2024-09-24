@@ -19,5 +19,5 @@ export default interface Conflict {
 interface ByClassroomConflict {
   id: number;
   name: string;
-  conflicts: OccurrenceConflict[][];
+  conflicts: { [key: string]: OccurrenceConflict[][] };
 }
