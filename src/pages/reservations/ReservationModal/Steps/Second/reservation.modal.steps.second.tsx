@@ -100,7 +100,13 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     const classroom = await listOneFull(id);
     setSelectedClassroom(classroom);
     setHighlightedDays(
-      classroom ? classroom.occurrences.map((occur) => occur.date) : [],
+      classroom
+        ? classroom.schedules.reduce<string[]>(
+            (acc, schedule) =>
+              acc.concat(schedule.occurrences.map((occur) => occur.date)),
+            [],
+          )
+        : [],
     );
   }
 

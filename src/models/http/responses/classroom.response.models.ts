@@ -1,5 +1,4 @@
-import { OccurrenceResponse } from "./occurrence.response.models";
-import { ScheduleResponse } from "./schedule.response.models";
+import { ScheduleFullResponse } from './schedule.response.models';
 
 export interface ClassroomResponse {
   id: number;
@@ -18,8 +17,7 @@ export interface ClassroomResponse {
 }
 
 export interface ClassroomFullResponse extends ClassroomResponse {
-  schedules: ScheduleResponse[];
-  occurrences: OccurrenceResponse[];
+  schedules: ScheduleFullResponse[];
 }
 
 export interface ClassroomWithConflictCount extends ClassroomResponse {
