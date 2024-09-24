@@ -21,6 +21,7 @@ import {
   StackDivider,
   Text,
   Textarea,
+  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import Select from 'react-select';
@@ -32,9 +33,13 @@ import {
   ClassroomSolicitationAprove,
   ClassroomSolicitationDeny,
 } from 'models/http/requests/classroomSolicitation.request.models';
-import { ClassroomWithConflictCount } from 'models/http/responses/classroom.response.models';
+import {
+  ClassroomFullResponse,
+  ClassroomWithConflictCount,
+} from 'models/http/responses/classroom.response.models';
 import { ReservationType } from 'utils/enums/reservations.enum';
 import useClassrooms from 'hooks/useClassrooms';
+import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classsroom.time.grid';
 
 interface SolicitationPanelProps {
   solicitation?: ClassroomSolicitationResponse;
@@ -51,8 +56,12 @@ function SolicitationPanel({
   deny,
   handleClose,
 }: SolicitationPanelProps) {
-  const { loading: loadingClassrooms, getClassroomsWithConflictFromTime } =
-    useClassrooms(false);
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    loading: loadingClassrooms,
+    getClassroomsWithConflictFromTime,
+    listOneFull,
+  } = useClassrooms(false);
 
   const [openPopover, setOpenPopover] = useState<number | undefined>(undefined);
   const [justification, setJustification] = useState('');
@@ -64,6 +73,8 @@ function SolicitationPanel({
   const [classroom, setClassroom] = useState<
     ClassroomWithConflictCount | undefined
   >(undefined);
+  const [classroomFull, setClassroomFull] = useState<ClassroomFullResponse>();
+
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
 
@@ -97,6 +108,22 @@ function SolicitationPanel({
     };
     fetchClassrooms();
   }, [getClassroomsWithConflictFromTime, solicitation, end, start]);
+
+  useEffect(() => {
+    const fetchClassroomOccurrences = async () => {
+      if (solicitation && !solicitation.closed) {
+        if (classroom) {
+          const result = await listOneFull(classroom.id);
+          setClassroomFull(result);
+        }
+        if (solicitation.classroom_id) {
+          const result = await listOneFull(solicitation.classroom_id);
+          setClassroomFull(result);
+        }
+      }
+    };
+    fetchClassroomOccurrences();
+  }, [listOneFull, classroom, solicitation]);
 
   return (
     <Card w={'100%'} border={'2px solid lightgray'} hidden={!solicitation}>
@@ -138,6 +165,11 @@ function SolicitationPanel({
           </CardHeader>
 
           <CardBody>
+            <ClassroomTimeGrid
+              isOpen={isOpen}
+              onClose={onClose}
+              clasroom={classroomFull}
+            />
             <Stack divider={<StackDivider />} spacing='4'>
               <Box>
                 <Heading size='sm' textTransform='uppercase'>
@@ -214,7 +246,9 @@ function SolicitationPanel({
                       onChange={(event) => setEnd(event.target.value)}
                     />
                     {solicitation.classroom_id ? (
-                      <Button>Visualizar disponibilidade</Button>
+                      <Button onClick={() => onOpen()}>
+                        Visualizar disponibilidade
+                      </Button>
                     ) : undefined}
                   </HStack>
                   {solicitation.classroom_id ? (
@@ -271,7 +305,7 @@ function SolicitationPanel({
                         }}
                       />
                     </Box>
-                    <Button isDisabled={!classroom}>
+                    <Button isDisabled={!classroom} onClick={() => onOpen()}>
                       Visualizar disponibilidade
                     </Button>
                   </HStack>
