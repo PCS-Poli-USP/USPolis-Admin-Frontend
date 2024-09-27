@@ -7,6 +7,7 @@ import {
   ClassroomWithConflictCount
 } from 'models/http/responses/classroom.response.models';
 import {
+  ClassroomConflictCheck,
   CreateClassroom,
   UpdateClassroom,
 } from 'models/http/requests/classroom.request.models';
@@ -49,13 +50,13 @@ export default class ClassroomsService extends HttpService {
   }
 
   getWithConflictCountFromTime(
-    start_time: string,
-    end_time: string,
+    data: ClassroomConflictCheck,
     building_id: number,
   ): Promise<AxiosResponse<ClassroomWithConflictCount[]>> {
     const params = new URLSearchParams();
-    params.append('start_time', start_time);
-    params.append('end_time', end_time);
+    params.append('start_time', data.start_time);
+    params.append('end_time', data.end_time);
+    data.dates.forEach((date) => params.append('dates', date));
     return this.http.get(`with-conflict-count/${building_id}`, { params });
   }
 
