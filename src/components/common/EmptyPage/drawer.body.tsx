@@ -75,6 +75,18 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           </Text>
         </HStack>
         <Button
+          leftIcon={<BsCalendar3 />}
+          variant={'ghost'}
+          w={'full'}
+          fontWeight={'normal'}
+          justifyContent={'flex-start'}
+          onClick={() => {
+            navigate('/allocation');
+          }}
+        >
+          Mapa de Salas
+        </Button>
+        <Button
           leftIcon={<FaList />}
           variant={'ghost'}
           w={'full'}
@@ -179,21 +191,10 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
         <HStack>
           <Icon as={LuCalendarSearch} color={'uspolis.blue'} />
           <Text color={'uspolis.blue'} fontWeight={'bold'}>
-            Mapa de Salas e Conflitos
+            Conflitos
           </Text>
         </HStack>
-        <Button
-          leftIcon={<BsCalendar3 />}
-          variant={'ghost'}
-          w={'full'}
-          fontWeight={'normal'}
-          justifyContent={'flex-start'}
-          onClick={() => {
-            navigate('/allocation');
-          }}
-        >
-          Mapa de Salas
-        </Button>
+
         <Button
           leftIcon={<FaRegCalendarTimes />}
           variant={'ghost'}
