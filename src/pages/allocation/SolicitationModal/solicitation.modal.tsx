@@ -9,6 +9,8 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  Tooltip,
+  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { SolicitationModalProps } from './solicitation.modal.interface';
@@ -17,7 +19,7 @@ import { defaultValues, schema } from './solicitation.modal.form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { CheckBox, Input, SelectInput, Textarea } from 'components/common';
 import useBuildings from 'hooks/useBuildings';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import useClassrooms from 'hooks/useClassrooms';
 import { ReservationType } from 'utils/enums/reservations.enum';
@@ -26,8 +28,19 @@ import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
 import DateCalendarPicker, {
   useDateCalendarPicker,
 } from 'components/common/DateCalendarPicker';
+import {
+  ClassroomFullResponse,
+  ClassroomWithConflictCount,
+} from 'models/http/responses/classroom.response.models';
+import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classsroom.time.grid';
 
 function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
+  const {
+    isOpen: isOpenCGrid,
+    onClose: onCloseCGrid,
+    onOpen: onOpenCGrid,
+  } = useDisclosure();
+
   const form = useForm({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
@@ -41,13 +54,27 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
     occupiedDays,
   } = useDateCalendarPicker();
 
-  const { buildings } = useBuildings();
-  const { classrooms } = useClassrooms();
+  const { loading: loadingB, buildings } = useBuildings();
+  const {
+    loading: loadingC,
+    classrooms,
+    getClassroomsWithConflictFromTime,
+    listOneFull,
+  } = useClassrooms();
   const { createSolicitation } = useClassroomsSolicitations();
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
+  const [classroomsWithConflict, setClassroomsWithConflict] =
+    useState<ClassroomWithConflictCount[]>();
+  const [selectedClassroom, setSelectedClassroom] =
+    useState<ClassroomFullResponse>();
   const [showDatesError, setShowDatesError] = useState(false);
+  const [start, setStart] = useState<string>('');
+  const [end, setEnd] = useState<string>('');
 
   const { trigger, reset, getValues, clearErrors, watch, resetField } = form;
+  const building_id = watch('building_id');
+  const classroom_id = watch('classroom_id');
+  const title = watch('reservation_title');
   const optionalClassroom = watch('optional_classroom');
   const optionalTime = watch('optional_time');
 
@@ -82,6 +109,44 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
     setSelectedDays([]);
   }
 
+  useEffect(() => {
+    const fetchClassrooms = async () => {
+      if (building_id && start && end && selectedDays.length > 0) {
+        const result = await getClassroomsWithConflictFromTime(
+          { start_time: start, end_time: end, dates: selectedDays },
+          building_id,
+        );
+        setClassroomsWithConflict(result);
+      }
+    };
+    fetchClassrooms();
+  }, [
+    building_id,
+    start,
+    end,
+    selectedDays,
+    getClassroomsWithConflictFromTime,
+  ]);
+
+  useEffect(() => {
+    const fetchSelectedClassroom = async () => {
+      if (classroom_id) {
+        const result = await listOneFull(classroom_id);
+        setSelectedClassroom(result);
+      }
+    };
+    fetchSelectedClassroom();
+  }, [classroom_id, listOneFull]);
+
+  console.log('Prédio: ', building_id, selectedBuilding);
+  console.log('Horario: ', optionalTime, start, end);
+  console.log('Dias: ', selectedDays);
+  console.log('Sala opcional? ', optionalClassroom);
+  console.log('Salas: ', classrooms);
+  console.log('Salas - C: ', classroomsWithConflict);
+  console.log('Sala selecionada: ', classroom_id, selectedClassroom);
+  console.log('');
+
   return (
     <Modal
       isOpen={isOpen}
@@ -94,6 +159,17 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
         <ModalHeader>Solicitar Reserva de Sala</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+          <ClassroomTimeGrid
+            isOpen={isOpenCGrid}
+            onClose={onCloseCGrid}
+            classroom={selectedClassroom}
+            preview={{
+              title: title,
+              dates: selectedDays,
+              start_time: start,
+              end_time: end,
+            }}
+          />
           <FormProvider {...form}>
             <form>
               <VStack alignItems={'flex-start'}>
@@ -125,6 +201,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                         placeholder='Horario de início da disciplina'
                         type='time'
                         disabled={optionalTime}
+                        onChange={(event) => setStart(event.target.value)}
                       />
                       <Input
                         label={'Horário de fim'}
@@ -132,6 +209,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                         placeholder='Horário de encerramento da disciplina'
                         type='time'
                         disabled={optionalTime}
+                        onChange={(event) => setEnd(event.target.value)}
                       />
                     </HStack>
                     <CheckBox
@@ -171,6 +249,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                 <SelectInput
                   label='Prédio'
                   name='building_id'
+                  isLoading={loadingB}
                   options={buildings.map((building) => ({
                     label: building.name,
                     value: building.id,
@@ -186,24 +265,83 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                   }}
                 />
 
-                <SelectInput
-                  disabled={!selectedBuilding || optionalClassroom}
-                  label='Sala'
-                  name='classroom_id'
-                  options={
-                    selectedBuilding
-                      ? classrooms
-                          .filter(
-                            (classrom) =>
-                              classrom.building_id === selectedBuilding.id,
-                          )
-                          .map((val) => ({
+                <HStack w={'full'}>
+                  <SelectInput
+                    disabled={
+                      !selectedBuilding ||
+                      optionalClassroom ||
+                      (!optionalTime &&
+                        !start &&
+                        !end &&
+                        selectedDays.length === 0)
+                    }
+                    isLoading={loadingC}
+                    label='Sala'
+                    name='classroom_id'
+                    placeholder={
+                      !selectedBuilding
+                        ? 'Selecione um prédio antes'
+                        : !optionalTime && !start && !end
+                        ? 'Selecione um horário primeiro'
+                        : selectedDays.length === 0
+                        ? 'Selecione as datas'
+                        : 'Selecione uma sala'
+                    }
+                    options={
+                      !selectedBuilding
+                        ? []
+                        : optionalTime
+                        ? classrooms.map((val) => ({
+                            value: val.id,
                             label: val.name,
+                          }))
+                        : selectedDays.length === 0
+                        ? []
+                        : start && end && classroomsWithConflict
+                        ? classroomsWithConflict.map((val) => ({
+                            label: val.conflicts
+                              ? `⚠️ ${val.name} (${val.conflicts} conflitos)`
+                              : val.name,
                             value: val.id,
                           }))
-                      : []
-                  }
-                />
+                        : []
+                      // selectedBuilding
+                      //   ? !optionalTime
+                      //     ? selectedDays.length > 0
+                      //       ? start && end && classroomsWithConflict
+                      //         ? classroomsWithConflict.map((val) => ({
+                      //             label: val.conflicts
+                      //               ? `⚠️ ${val.name} (${val.conflicts} conflitos)`
+                      //               : val.name,
+                      //             value: val.id,
+                      //           }))
+                      //         : []
+                      //       : []
+                      //     : classrooms.map((val) => ({
+                      //         label: val.name,
+                      //         value: val.id,
+                      //       }))
+                      //   : []
+                    }
+                  />
+                  <Tooltip
+                    label={
+                      !classroom_id
+                        ? 'Selecione uma sala'
+                        : selectedDays.length === 0
+                        ? 'Selecione os dias'
+                        : ''
+                    }
+                  >
+                    <Button
+                      mt={7}
+                      isDisabled={!classroom_id || selectedDays.length === 0}
+                      onClick={() => onOpenCGrid()}
+                    >
+                      Visualizar Disponibilidade
+                    </Button>
+                  </Tooltip>
+                </HStack>
                 <CheckBox
                   text='Não quero especificar sala'
                   name='optional_classroom'

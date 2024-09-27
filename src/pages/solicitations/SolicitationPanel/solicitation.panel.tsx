@@ -86,6 +86,7 @@ function SolicitationPanel({
     }
   }
 
+  // Set start and end time from solicitation
   useEffect(() => {
     if (solicitation?.start_time && solicitation.end_time) {
       setStart(solicitation.start_time);
@@ -93,13 +94,13 @@ function SolicitationPanel({
     }
   }, [solicitation?.start_time, solicitation?.end_time]);
 
+  // Fetch classrooms with conflicts count from time and dates
   useEffect(() => {
     const fetchClassrooms = async () => {
       if (solicitation && !solicitation.closed) {
         if (start && end) {
           const result = await getClassroomsWithConflictFromTime(
-            start,
-            end,
+            { start_time: start, end_time: end, dates: solicitation.dates },
             solicitation?.building_id,
           );
           setClassrooms(result);
@@ -109,6 +110,16 @@ function SolicitationPanel({
     fetchClassrooms();
   }, [getClassroomsWithConflictFromTime, solicitation, end, start]);
 
+  // Fetch selected classroom from solicitation
+  useEffect(() => {
+    if (solicitation?.classroom_id && classrooms.length > 0) {
+      setClassroom(
+        classrooms.find((room) => room.id === solicitation.classroom_id),
+      );
+    }
+  }, [solicitation, classrooms]);
+
+  // Fetch classroom occurrences from selected classroom
   useEffect(() => {
     const fetchClassroomOccurrences = async () => {
       if (solicitation && !solicitation.closed) {
@@ -168,7 +179,13 @@ function SolicitationPanel({
             <ClassroomTimeGrid
               isOpen={isOpen}
               onClose={onClose}
-              clasroom={classroomFull}
+              classroom={classroomFull}
+              preview={{
+                title: solicitation.reservation_title,
+                dates: solicitation.dates,
+                start_time: start,
+                end_time: end,
+              }}
             />
             <Stack divider={<StackDivider />} spacing='4'>
               <Box>
@@ -224,7 +241,9 @@ function SolicitationPanel({
                   {`Capacidade para ${solicitation.capacity} pessoas`}
                 </Text>
               </Box>
-              {!solicitation.denied &&
+
+              {/* Time inputs if soliciation haven't times */}
+              {!solicitation.closed &&
               (!solicitation.start_time || !solicitation.end_time) ? (
                 <Box>
                   <Heading size={'sm'} textTransform='uppercase'>
@@ -245,28 +264,31 @@ function SolicitationPanel({
                       value={end}
                       onChange={(event) => setEnd(event.target.value)}
                     />
-                    {solicitation.classroom_id ? (
-                      <Button onClick={() => onOpen()}>
-                        Visualizar disponibilidade
-                      </Button>
-                    ) : undefined}
+                    <Button isDisabled={!classroom} onClick={() => onOpen()}>
+                      Visualizar disponibilidade
+                    </Button>
                   </HStack>
-                  {solicitation.classroom_id ? (
+                  {classroom ? (
                     <>
-                      <Text textColor={'red.500'} mt={2}>
-                        {`Esse horário gerará 
-                        ${
-                          classrooms.find(
-                            (room) => room.id === solicitation.classroom_id,
-                          )?.conflicts
-                        } conflitos.
-                      `}
+                      <Text
+                        textColor={
+                          classroom && classroom.conflicts > 0
+                            ? 'red.500'
+                            : 'green.500'
+                        }
+                        mt={2}
+                      >
+                        {`Esse horário gerará ${
+                          classroom ? classroom.conflicts : '0'
+                        } conflito(s).`}
                       </Text>
                     </>
                   ) : undefined}
                 </Box>
               ) : undefined}
-              {!solicitation.denied && !solicitation.classroom ? (
+
+              {/* Classroom Input If solicitation haven't a classroom */}
+              {!solicitation.closed && !solicitation.classroom ? (
                 <Box>
                   <Heading mb={2} size={'sm'} textTransform='uppercase'>
                     Sala
@@ -316,6 +338,27 @@ function SolicitationPanel({
                     Essa sala gerará conflitos!
                   </Text>
                 </Box>
+              ) : undefined}
+
+              {/* If solicitation has a classroom show timegrid button */}
+              {!solicitation.closed && solicitation.classroom ? (
+                <>
+                  <Button onClick={() => onOpen()}>
+                    Visualizar disponibilidade
+                  </Button>
+                  <Text
+                    textColor={
+                      classroom && classroom.conflicts > 0
+                        ? 'red.500'
+                        : 'green.500'
+                    }
+                    mt={2}
+                  >
+                    {`Esse horário gerará ${
+                      classroom ? classroom.conflicts : '0'
+                    } conflito(s).`}
+                  </Text>
+                </>
               ) : undefined}
             </Stack>
           </CardBody>

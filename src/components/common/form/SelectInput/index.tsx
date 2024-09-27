@@ -61,6 +61,7 @@ export function SelectInput({
             placeholder={placeholder ? placeholder : 'Selecione uma opção'}
             isClearable={true}
             // icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
+            isLoading={isLoading}
             onChange={(option) => {
               if (onChange) onChange(option ? option : undefined);
               setValue(name, option ? option.value : '');
