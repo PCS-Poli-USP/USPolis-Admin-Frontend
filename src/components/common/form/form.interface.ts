@@ -7,6 +7,7 @@ export interface FieldPropsBase {
   ml?: string | number;
   mr?: string | number;
   mb?: string | number;
+  w?: string | number;
 }
 
 export interface FieldProps extends FieldPropsBase {

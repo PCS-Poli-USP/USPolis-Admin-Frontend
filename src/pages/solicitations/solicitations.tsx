@@ -25,10 +25,12 @@ function Solicitations() {
           <SolicitationStack
             solicitations={solicitations}
             handleOnClick={setSolicitation}
+            reset={() => setSolicitation(undefined)}
           />
         </GridItem>
-        <GridItem overflow={'hidden'}>
+        <GridItem overflow={'auto'}>
           <SolicitationPanel
+            reset={() => {}}
             handleClose={() => setSolicitation(undefined)}
             solicitation={solicitation}
             approve={async (id, data) => {

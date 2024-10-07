@@ -16,11 +16,13 @@ import SolicitationStackBody from './solicitation.stack.body';
 interface SolicitationStackProps {
   solicitations: ClassroomSolicitationResponse[];
   handleOnClick: (data: ClassroomSolicitationResponse) => void;
+  reset: () => void;
 }
 
 function SolicitationStack({
   solicitations,
   handleOnClick,
+  reset,
 }: SolicitationStackProps) {
   const [hidden, setHidden] = useState(true);
   const [current, setCurrent] = useState<ClassroomSolicitationResponse[]>([]);
@@ -147,6 +149,7 @@ function SolicitationStack({
         </Checkbox>
       </HStack>
       <SolicitationStackBody
+        reset={reset}
         solicitations={
           buildingSearch || classroomSearch || requesterSearch
             ? filtered

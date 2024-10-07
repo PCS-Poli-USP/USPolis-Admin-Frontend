@@ -26,6 +26,7 @@ export function SelectInput({
   mb = undefined,
   mr = undefined,
   ml = undefined,
+  w = undefined,
   onChange = undefined,
 }: SelectProps) {
   const {
@@ -47,7 +48,14 @@ export function SelectInput({
   }, [name, options]);
 
   return (
-    <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
+    <FormControl
+      isInvalid={!!errors[name]}
+      mt={mt}
+      mb={mb}
+      ml={ml}
+      mr={mr}
+      w={w}
+    >
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
       <Controller
         name={name}

@@ -4,6 +4,7 @@ export interface ClassroomSolicitationResponse {
   id: number;
   classroom_id?: number;
   classroom?: string;
+  required_classroom: boolean;
   building_id: number;
   building: string;
   dates: string[];

@@ -77,6 +77,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
   const title = watch('reservation_title');
   const optionalClassroom = watch('optional_classroom');
   const optionalTime = watch('optional_time');
+  const requiredClassroom = watch('required_classroom');
 
   async function handleSubmit() {
     const isValid = await trigger();
@@ -91,6 +92,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
     await createSolicitation({
       building_id: values.building_id,
       classroom_id: values.classroom_id,
+      required_classroom: values.required_classroom,
       reason: values.reason,
       reservation_title: values.reservation_title,
       reservation_type: values.reservation_type,
@@ -145,6 +147,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
   console.log('Salas: ', classrooms);
   console.log('Salas - C: ', classroomsWithConflict);
   console.log('Sala selecionada: ', classroom_id, selectedClassroom);
+  console.log('Sala: ', requiredClassroom);
   console.log('');
 
   return (
@@ -174,7 +177,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
             <form>
               <VStack alignItems={'flex-start'}>
                 <HStack flex={'1'} w={'full'}>
-                  <VStack h={'100%'} w={'100%'}>
+                  <VStack h={'100%'} w={'100%'} alignItems={'flex-start'}>
                     <Input
                       label={'Título'}
                       name={'reservation_title'}
@@ -245,28 +248,32 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                 </HStack>
 
                 <Textarea label='Motivo (Opcional)' name='reason' />
-
-                <SelectInput
-                  label='Prédio'
-                  name='building_id'
-                  isLoading={loadingB}
-                  options={buildings.map((building) => ({
-                    label: building.name,
-                    value: building.id,
-                  }))}
-                  onChange={(option) => {
-                    if (option) {
-                      setSelectedBuilding(
-                        buildings.find(
-                          (building) => building.id === option.value,
-                        ),
-                      );
-                    } else setSelectedBuilding(undefined);
-                  }}
-                />
+                <Text fontWeight={'bold'}>
+                  *A sala reservada pode ser diferente da solicitada.{' '}
+                </Text>
 
                 <HStack w={'full'}>
                   <SelectInput
+                    w={'auto'}
+                    label='Prédio'
+                    name='building_id'
+                    isLoading={loadingB}
+                    options={buildings.map((building) => ({
+                      label: building.name,
+                      value: building.id,
+                    }))}
+                    onChange={(option) => {
+                      if (option) {
+                        setSelectedBuilding(
+                          buildings.find(
+                            (building) => building.id === option.value,
+                          ),
+                        );
+                      } else setSelectedBuilding(undefined);
+                    }}
+                  />
+                  <SelectInput
+                    w={'auto'}
                     disabled={
                       !selectedBuilding ||
                       optionalClassroom ||
@@ -305,23 +312,6 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                             value: val.id,
                           }))
                         : []
-                      // selectedBuilding
-                      //   ? !optionalTime
-                      //     ? selectedDays.length > 0
-                      //       ? start && end && classroomsWithConflict
-                      //         ? classroomsWithConflict.map((val) => ({
-                      //             label: val.conflicts
-                      //               ? `⚠️ ${val.name} (${val.conflicts} conflitos)`
-                      //               : val.name,
-                      //             value: val.id,
-                      //           }))
-                      //         : []
-                      //       : []
-                      //     : classrooms.map((val) => ({
-                      //         label: val.name,
-                      //         value: val.id,
-                      //       }))
-                      //   : []
                     }
                   />
                   <Tooltip
@@ -334,7 +324,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                     }
                   >
                     <Button
-                      mt={7}
+                      mt={8}
                       isDisabled={!classroom_id || selectedDays.length === 0}
                       onClick={() => onOpenCGrid()}
                     >
@@ -342,15 +332,22 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                     </Button>
                   </Tooltip>
                 </HStack>
-                <CheckBox
-                  text='Não quero especificar sala'
-                  name='optional_classroom'
-                  onChange={(value) => {
-                    if (value) {
-                      resetField('classroom_id', { defaultValue: undefined });
-                    }
-                  }}
-                />
+                <HStack w={'full'} spacing={2}>
+                  <CheckBox
+                    text='Não quero especificar sala'
+                    name='optional_classroom'
+                    onChange={(value) => {
+                      if (value) {
+                        resetField('classroom_id', { defaultValue: undefined });
+                      }
+                    }}
+                  />
+                  <CheckBox
+                    disabled={!classroom_id}
+                    text='Quero necessariamente essa sala'
+                    name='required_classroom'
+                  />
+                </HStack>
               </VStack>
             </form>
           </FormProvider>

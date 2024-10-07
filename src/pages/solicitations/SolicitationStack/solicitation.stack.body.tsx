@@ -14,11 +14,13 @@ import moment from 'moment';
 interface SolicitationStackBodyProps {
   solicitations: ClassroomSolicitationResponse[];
   handleOnClick: (data: ClassroomSolicitationResponse) => void;
+  reset: () => void;
 }
 
 function SolicitationStackBody({
   solicitations,
   handleOnClick,
+  reset,
 }: SolicitationStackBodyProps) {
   return (
     <VStack w={'full'} divider={<StackDivider />}>
@@ -36,6 +38,7 @@ function SolicitationStackBody({
               solicitation.closed ? {} : { bg: 'gray.300', opacity: 0.6 }
             }
             onClick={() => {
+              reset();
               handleOnClick(solicitation);
             }}
           >

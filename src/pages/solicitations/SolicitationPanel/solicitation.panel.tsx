@@ -47,6 +47,7 @@ interface SolicitationPanelProps {
   approve: (id: number, data: ClassroomSolicitationAprove) => void;
   deny: (id: number, data: ClassroomSolicitationDeny) => void;
   handleClose: () => void;
+  reset: () => void;
 }
 
 function SolicitationPanel({
@@ -55,6 +56,7 @@ function SolicitationPanel({
   approve,
   deny,
   handleClose,
+  reset,
 }: SolicitationPanelProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
@@ -74,6 +76,7 @@ function SolicitationPanel({
     ClassroomWithConflictCount | undefined
   >(undefined);
   const [classroomFull, setClassroomFull] = useState<ClassroomFullResponse>();
+  const [editingClassroom, setEditingClassroom] = useState(false);
 
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
@@ -84,6 +87,10 @@ function SolicitationPanel({
     } else {
       setOpenPopover(id);
     }
+  }
+
+  function validateTime(start: string, end: string) {
+    return moment(start, 'HH:mm').isBefore(moment(end, 'HH:mm'));
   }
 
   // Set start and end time from solicitation
@@ -98,7 +105,7 @@ function SolicitationPanel({
   useEffect(() => {
     const fetchClassrooms = async () => {
       if (solicitation && !solicitation.closed) {
-        if (start && end) {
+        if (start && end && validateTime(start, end)) {
           const result = await getClassroomsWithConflictFromTime(
             { start_time: start, end_time: end, dates: solicitation.dates },
             solicitation?.building_id,
@@ -135,6 +142,17 @@ function SolicitationPanel({
     };
     fetchClassroomOccurrences();
   }, [listOneFull, classroom, solicitation]);
+
+  // Need when change between soliciations (the conclit count is not updated)
+  useEffect(() => {
+    if (classrooms && classroom) {
+      setClassroom(classrooms.find((val) => val.id === classroom.id));
+    }
+  }, [classroom, classrooms]);
+
+  useEffect(() => {
+    setEditingClassroom(false);
+  }, []);
 
   return (
     <Card w={'100%'} border={'2px solid lightgray'} hidden={!solicitation}>
@@ -203,7 +221,9 @@ function SolicitationPanel({
                   )}`}
                 </Heading>
                 <Text pt='2' fontSize='md'>
-                  {solicitation.reason ? solicitation.reason : 'Não informado.'}
+                  {solicitation.reason
+                    ? solicitation.reason
+                    : 'Descrição não informada.'}
                 </Text>
               </Box>
               <Box>
@@ -232,6 +252,39 @@ function SolicitationPanel({
                     .map((date) => moment(date).format('DD/MM/YYYY'))
                     .join(', ')}`}
                 </Text>
+                <HStack
+                  align={'center'}
+                  alignContent={'center'}
+                  alignItems={'center'}
+                  verticalAlign={'center'}
+                >
+                  {solicitation.classroom_id && (
+                    <Button
+                      mt={2}
+                      size={'sm'}
+                      isDisabled={solicitation.required_classroom}
+                      fontWeight={'bold'}
+                      textColor={editingClassroom ? 'red.500' : 'yellow.500'}
+                      onClick={() => {
+                        if (editingClassroom) {
+                          setClassroom(
+                            classrooms.find(
+                              (val) => val.id === solicitation.classroom_id,
+                            ),
+                          );
+                        }
+                        setEditingClassroom((prev) => !prev);
+                      }}
+                    >
+                      {editingClassroom ? 'Cancelar' : 'Alterar Sala'}
+                    </Button>
+                  )}
+                  <Text textColor={'red.500'} mt={1}>
+                    {solicitation.required_classroom
+                      ? 'Obrigatóriamente essa sala'
+                      : ''}
+                  </Text>
+                </HStack>
               </Box>
               <Box>
                 <Heading size='sm' textTransform='uppercase'>
@@ -255,6 +308,7 @@ function SolicitationPanel({
                       type={'time'}
                       placeholder='Horário de início'
                       value={start}
+                      isDisabled={loadingClassrooms}
                       onChange={(event) => setStart(event.target.value)}
                     />
                     <Input
@@ -263,11 +317,19 @@ function SolicitationPanel({
                       placeholder='Horário de fim'
                       value={end}
                       onChange={(event) => setEnd(event.target.value)}
+                      isDisabled={loadingClassrooms}
                     />
                     <Button isDisabled={!classroom} onClick={() => onOpen()}>
                       Visualizar disponibilidade
                     </Button>
                   </HStack>
+                  <Text
+                    hidden={validateTime(start, end)}
+                    textColor={'red.500'}
+                    mt={2}
+                  >
+                    Horário de início deve ser antes do horário de fim
+                  </Text>
                   {classroom ? (
                     <>
                       <Text
@@ -288,7 +350,8 @@ function SolicitationPanel({
               ) : undefined}
 
               {/* Classroom Input If solicitation haven't a classroom */}
-              {!solicitation.closed && !solicitation.classroom ? (
+              {(!solicitation.closed && !solicitation.classroom) ||
+              editingClassroom ? (
                 <Box>
                   <Heading mb={2} size={'sm'} textTransform='uppercase'>
                     Sala
@@ -297,6 +360,7 @@ function SolicitationPanel({
                     <Box w={'auto'}>
                       <Select
                         isClearable
+                        isLoading={loadingClassrooms}
                         value={
                           classroom
                             ? {
@@ -310,7 +374,8 @@ function SolicitationPanel({
                         placeholder='Selecione uma sala'
                         isDisabled={
                           (!solicitation.start_time && !start) ||
-                          (!solicitation.end_time && !end)
+                          (!solicitation.end_time && !end) ||
+                          loadingClassrooms
                         }
                         options={classrooms.map((val) => ({
                           label: val.conflicts
@@ -341,9 +406,16 @@ function SolicitationPanel({
               ) : undefined}
 
               {/* If solicitation has a classroom show timegrid button */}
-              {!solicitation.closed && solicitation.classroom ? (
+              {!solicitation.closed &&
+              solicitation.classroom &&
+              solicitation.start_time &&
+              solicitation.end_time ? (
                 <>
-                  <Button onClick={() => onOpen()}>
+                  <Button
+                    onClick={() => onOpen()}
+                    w={'fit-content'}
+                    isDisabled={loadingClassrooms}
+                  >
                     Visualizar disponibilidade
                   </Button>
                   <Text
@@ -430,7 +502,8 @@ function SolicitationPanel({
                       solicitation.closed ||
                       (!solicitation.classroom && !classroom) ||
                       (!solicitation.start_time && !start) ||
-                      (!solicitation.end_time && !end)
+                      (!solicitation.end_time && !end) ||
+                      !validateTime(start, end)
                     }
                     onClick={() => handleOpenPopover(2)}
                   >
@@ -453,15 +526,15 @@ function SolicitationPanel({
                           if (!solicitation.classroom_id && !classroom) return;
 
                           approve(solicitation.id, {
-                            classroom_id: solicitation.classroom_id
-                              ? solicitation.classroom_id
-                              : classroom
+                            classroom_id: classroom
                               ? classroom.id
+                              : solicitation.classroom_id
+                              ? solicitation.classroom_id
                               : 0,
-                            classroom_name: solicitation.classroom
-                              ? solicitation.classroom
-                              : classroom
+                            classroom_name: classroom
                               ? classroom.name
+                              : solicitation.classroom
+                              ? solicitation.classroom
                               : 'Sem nome',
                             start_time: solicitation.start_time
                               ? solicitation.start_time

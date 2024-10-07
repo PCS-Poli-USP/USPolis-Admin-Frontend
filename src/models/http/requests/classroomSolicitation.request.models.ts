@@ -2,6 +2,7 @@ import { ReservationType } from 'utils/enums/reservations.enum';
 
 export interface CreateClassroomSolicitation {
   classroom_id?: number;
+  required_classroom: boolean;
   building_id: number;
   reason?: string;
   reservation_title: string;

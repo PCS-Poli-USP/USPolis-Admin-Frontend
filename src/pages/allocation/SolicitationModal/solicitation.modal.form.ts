@@ -19,6 +19,10 @@ export const formFields = {
     validator: yup.boolean().required(),
     defaultValue: false,
   },
+  required_classroom: {
+    validator: yup.boolean().required(),
+    defaultValue: false,
+  },
   classroom_id: {
     validator: yup
       .number()
@@ -43,13 +47,13 @@ export const formFields = {
   },
   reason: {
     validator: yup
-    .string()
-    .notRequired()
-    .nullable()
-    .test('is-valid-reason', 'Campo obrigatório', function (value) {
-      if (!value) return true;
-      return !SolicitationValidator.isEmptyString(value);
-    }),
+      .string()
+      .notRequired()
+      .nullable()
+      .test('is-valid-reason', 'Campo obrigatório', function (value) {
+        if (!value) return true;
+        return !SolicitationValidator.isEmptyString(value);
+      }),
     defaultValue: undefined,
   },
   reservation_title: {
@@ -128,6 +132,7 @@ export const formFields = {
 export const schema = yup.object<SolicitationForm>().shape({
   building_id: formFields.building_id.validator,
   optional_classroom: formFields.optional_classroom.validator,
+  required_classroom: formFields.required_classroom.validator,
   classroom_id: formFields.classroom_id.validator,
   capacity: formFields.capacity.validator,
   optional_time: formFields.optional_time.validator,
@@ -141,6 +146,7 @@ export const schema = yup.object<SolicitationForm>().shape({
 export const defaultValues: SolicitationForm = {
   building_id: formFields.building_id.defaultValue,
   optional_classroom: formFields.optional_classroom.defaultValue,
+  required_classroom: formFields.required_classroom.defaultValue,
   classroom_id: formFields.classroom_id.defaultValue,
   capacity: formFields.capacity.defaultValue,
   optional_time: formFields.optional_time.defaultValue,

@@ -33,6 +33,7 @@ export function CheckBox({
 
   return (
     <FormControl
+      w={'auto'}
       isInvalid={!!errors[name]}
       hidden={hidden}
       mt={mt}
@@ -50,6 +51,7 @@ export function CheckBox({
           <ChakraCheckBox
             {...field}
             id={name}
+            w={'auto'}
             isDisabled={disabled}
             onChange={(event) => {
               if (onChange) onChange(event.target.checked);

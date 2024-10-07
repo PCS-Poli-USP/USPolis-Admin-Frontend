@@ -19,6 +19,7 @@ import {
 } from './classroom.time.grid.interface';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import ClassroomTimeGridEventContent from './classroom.time.grid.event.content';
+import moment from 'moment';
 
 function ClassroomTimeGrid({
   isOpen,
@@ -114,6 +115,14 @@ function ClassroomTimeGrid({
               <Text>Já alocado</Text>
               <CircleIcon color='#ff7300' />
               <Text>Solicitado</Text>
+            </HStack>
+            <HStack>
+              <Text fontWeight={'bold'}>Datas: </Text>
+              <Text>
+                {preview.dates
+                  .map((date) => moment(date).format('DD/MM/YYYY'))
+                  .join(', ')}
+              </Text>
             </HStack>
           </Box>
         </ModalBody>
