@@ -53,19 +53,48 @@ root.render(
                 <Route path='/index' element={<App />} />
                 <Route path='/login' element={<LoginPage />} />
                 {/* Private Routes */}
-              <Route path='users' element={<PrivateRoute element={<Users />} />} />
-                <Route path='buildings' element={<PrivateRoute element={<Buildings />} />} />
-                <Route path='subjects' element={<PrivateRoute element={<Subjects />} />} />
-                <Route path='calendars' element={<PrivateRoute element={<Calendars />} />} />
-                <Route path='classrooms' element={<PrivateRoute element={<Classrooms />} />} />
-                <Route path='classes' element={<PrivateRoute element={<Classes />} />} />
-                <Route path='allocation' element={<PrivateRoute element={<Allocation />} />} />
-                <Route path='reservations' element={<PrivateRoute element={<Reservations />} />} />
-                <Route path='conflicts' element={<PrivateRoute element={<ConflictsPage />} />} />
-                <Route
-                  path='institutional-events'
-                  element={<InstitutionalEvents />}
-                />
+                <Route path='/' element={<EmptyPage />}>
+                  <Route
+                    path='users'
+                    element={<PrivateRoute element={<Users />} />}
+                  />
+                  <Route
+                    path='buildings'
+                    element={<PrivateRoute element={<Buildings />} />}
+                  />
+                  <Route
+                    path='subjects'
+                    element={<PrivateRoute element={<Subjects />} />}
+                  />
+                  <Route
+                    path='calendars'
+                    element={<PrivateRoute element={<Calendars />} />}
+                  />
+                  <Route
+                    path='classrooms'
+                    element={<PrivateRoute element={<Classrooms />} />}
+                  />
+                  <Route
+                    path='classes'
+                    element={<PrivateRoute element={<Classes />} />}
+                  />
+                  <Route
+                    path='allocation'
+                    element={<PrivateRoute element={<Allocation />} />}
+                  />
+                  <Route
+                    path='reservations'
+                    element={<PrivateRoute element={<Reservations />} />}
+                  />
+                  <Route
+                    path='conflicts'
+                    element={<PrivateRoute element={<ConflictsPage />} />}
+                  />
+                  <Route
+                    path='institutional-events'
+                    element={<InstitutionalEvents />}
+                  />
+                </Route>
               </Routes>
             </Router>
           </LocalizationProvider>
