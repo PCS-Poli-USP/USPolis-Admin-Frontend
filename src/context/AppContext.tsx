@@ -1,6 +1,7 @@
 import { Auth, Hub } from 'aws-amplify';
 import { User } from 'models/common/user.common.model';
 import React, { createContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SelfService from 'services/api/self.service';
 
 interface AppContext {
@@ -56,8 +57,9 @@ export default function AppContextProvider({
   }
 
   async function logout() {
-    Auth.signOut();
     localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    window.location.href = '/login';
   }
 
   useEffect(() => {

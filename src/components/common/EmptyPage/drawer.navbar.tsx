@@ -20,6 +20,7 @@ import { ReactNode, useContext } from 'react';
 import { FaUser } from 'react-icons/fa';
 import Logo from 'assets/uspolis.logo.png';
 import { appContext } from 'context/AppContext';
+import { useNavigate } from 'react-router-dom';
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
