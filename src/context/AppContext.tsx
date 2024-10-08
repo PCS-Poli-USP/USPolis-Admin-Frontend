@@ -10,6 +10,7 @@ interface AppContext {
   username: string;
   loggedUser: User | null;
   logout: () => void;
+  getSelfFromBackend: () => void;
 }
 
 const DEFAULT_VALUE = {
@@ -18,6 +19,7 @@ const DEFAULT_VALUE = {
   username: '',
   loggedUser: null,
   logout: async () => {},
+  getSelfFromBackend: async () => {}
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -79,7 +81,7 @@ export default function AppContextProvider({
 
   return (
     <appContext.Provider
-      value={{ loading, setLoading, username, loggedUser, logout }}
+      value={{ loading, setLoading, username, loggedUser, logout, getSelfFromBackend }}
     >
       {children}
     </appContext.Provider>
