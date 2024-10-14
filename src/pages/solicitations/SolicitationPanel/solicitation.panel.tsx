@@ -134,7 +134,7 @@ function SolicitationPanel({
           const result = await listOneFull(classroom.id);
           setClassroomFull(result);
         }
-        if (solicitation.classroom_id) {
+        if (solicitation.classroom_id && !classroom) {
           const result = await listOneFull(solicitation.classroom_id);
           setClassroomFull(result);
         }
@@ -322,7 +322,7 @@ function SolicitationPanel({
                     <Button
                       isDisabled={!classroom}
                       onClick={() => onOpen()}
-                      hidden={!solicitation.classroom_id}
+                      hidden={!solicitation.classroom_id || editingClassroom}
                     >
                       Visualizar disponibilidade
                     </Button>
@@ -396,7 +396,11 @@ function SolicitationPanel({
                         }}
                       />
                     </Box>
-                    <Button isDisabled={!classroom} onClick={() => onOpen()}>
+                    <Button
+                      isDisabled={!classroom}
+                      isLoading={loadingClassrooms}
+                      onClick={() => onOpen()}
+                    >
                       Visualizar disponibilidade
                     </Button>
                   </HStack>
