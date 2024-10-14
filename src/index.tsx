@@ -19,7 +19,6 @@ import { ThemeProvider } from '@mui/material';
 import 'moment/locale/pt-br';
 import { Amplify } from 'aws-amplify';
 import awsConfig from 'aws-config';
-import AuthRoute from 'components/routes/auth.route';
 import AppContextProvider from 'context/AppContext';
 import Buildings from 'pages/buildings/buildings';
 import Users from 'pages/users/users';
@@ -31,9 +30,11 @@ import EmptyPage from 'components/common/EmptyPage';
 import Solicitations from 'pages/solicitations/solicitations';
 import MySolicitations from 'pages/mySolicitations/mySolicitations';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { LoginPage } from 'pages/login';
 import PrivateRoute from 'components/routes/private.route';
-import { RegisterPage } from 'pages/register';
+import AdminRoute from 'components/routes/admin.route';
+import Page404 from 'pages/page404';
+import { AuthPage } from 'pages/auth';
+import RestrictedRoute from 'components/routes/restricted.route';
 
 Amplify.configure(awsConfig);
 
@@ -54,55 +55,41 @@ root.render(
               <Routes>
                 <Route path='/' element={<Navigate to='/index' />} />
                 <Route path='/index' element={<App />} />
-                <Route path='/login' element={<LoginPage />} />
-                <Route path='/register' element={<RegisterPage />} />
-                {/* Private Routes */}
+                <Route path='/auth' element={<AuthPage />} />
                 <Route path='/' element={<EmptyPage />}>
-                  <Route
-                    path='users'
-                    element={<PrivateRoute element={<Users />} />}
-                  />
-                  <Route
-                    path='buildings'
-                    element={<PrivateRoute element={<Buildings />} />}
-                  />
-                  <Route
-                    path='subjects'
-                    element={<PrivateRoute element={<Subjects />} />}
-                  />
-                  <Route
-                    path='calendars'
-                    element={<PrivateRoute element={<Calendars />} />}
-                  />
-                  <Route
-                    path='classrooms'
-                    element={<PrivateRoute element={<Classrooms />} />}
-                  />
-                  <Route
-                    path='classes'
-                    element={<PrivateRoute element={<Classes />} />}
-                  />
-                  <Route
-                    path='allocation'
-                    element={<PrivateRoute element={<Allocation />} />}
-                  />
-                  <Route
-                    path='reservations'
-                    element={<PrivateRoute element={<Reservations />} />}
-                  />
-                  <Route
-                    path='conflicts'
-                    element={<PrivateRoute element={<ConflictsPage />} />}
-                  />
-                  <Route
-                    path='institutional-events'
-                    element={<InstitutionalEvents />}
-                  />
-                  <Route path='solicitations' element={<Solicitations />} />
-                  <Route
-                    path='my-solicitations'
-                    element={<MySolicitations />}
-                  />
+                  {/* Public routes */}
+                  <Route path='allocation' element={<Allocation />} />
+
+                  {/* Private routes */}
+                  <Route element={<PrivateRoute />}>
+                    <Route
+                      path='my-solicitations'
+                      element={<MySolicitations />}
+                    />
+                    
+                    {/* Restricted routes */}
+                    <Route element={<RestrictedRoute />}>
+                      <Route path='subjects' element={<Subjects />} />
+                      <Route path='calendars' element={<Calendars />} />
+                      <Route path='classrooms' element={<Classrooms />} />
+                      <Route path='classes' element={<Classes />} />
+                      <Route path='reservations' element={<Reservations />} />
+                      <Route path='conflicts' element={<ConflictsPage />} />
+                      <Route path='solicitations' element={<Solicitations />} />
+                    </Route>
+
+                    {/* Admin routes */}
+                    <Route path='' element={<AdminRoute />}>
+                      <Route path='users' element={<Users />} />
+                      <Route path='buildings' element={<Buildings />} />
+                      <Route
+                        path='institutional-events'
+                        element={<InstitutionalEvents />}
+                      />
+                    </Route>
+                  </Route>
+                  {/* Not found */}
+                  <Route path='*' element={<Page404 />} />
                 </Route>
               </Routes>
             </Router>

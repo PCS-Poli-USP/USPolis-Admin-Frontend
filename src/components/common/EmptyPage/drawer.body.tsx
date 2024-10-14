@@ -1,12 +1,12 @@
-import { Button, Divider, VStack, HStack, Text, Icon } from '@chakra-ui/react';
+import { Button, VStack, HStack, Text, Icon } from '@chakra-ui/react';
 import { useContext } from 'react';
 import { FaList, FaRegCalendarTimes, FaRegUser } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { appContext } from 'context/AppContext';
 import { CalendarIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
 import { LiaBuilding } from 'react-icons/lia';
 import { MdAddChart, MdEvent, MdOutlinePendingActions } from 'react-icons/md';
-import { LuCalendarClock, LuCalendarSearch } from 'react-icons/lu';
+import { LuCalendarClock } from 'react-icons/lu';
 import { GiBookCover, GiTeacher } from 'react-icons/gi';
 import { PiChair } from 'react-icons/pi';
 import { BsCalendar3, BsEnvelopeCheck } from 'react-icons/bs';
@@ -17,10 +17,13 @@ interface DrawerBodyProps {
 
 export default function DrawerBody({ onClose }: DrawerBodyProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { loggedUser } = useContext(appContext);
+  console.log('Usuario: ', loggedUser);
+  console.log('location: ', location);
 
   return (
-    <VStack divider={<Divider />} align={'start'} ml={4} spacing={2} mt={2}>
+    <VStack align={'start'} ml={4} spacing={4} mt={2}>
       {loggedUser ? (
         <>
           {loggedUser.is_admin ? (
@@ -68,7 +71,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                 Eventos
               </Button>
             </VStack>
-          ) : undefined}
+          ) : (
+            <></>
+          )}
 
           <VStack w={'full'} alignItems={'flex-start'}>
             <HStack>
@@ -84,7 +89,10 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
               fontWeight={'normal'}
               justifyContent={'flex-start'}
               onClick={() => {
-                navigate('/allocation');
+                navigate('/allocation', {
+                  replace: true,
+                  state: { from: location },
+                });
               }}
             >
               Mapa de Salas
@@ -105,114 +113,148 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
               justifyContent={'flex-start'}
               fontWeight={'normal'}
               onClick={() => {
-                navigate('/my-solicitations');
+                navigate('/my-solicitations', {
+                  replace: true,
+                  state: { from: location },
+                });
               }}
             >
               Minhas solicitações
             </Button>
-            <Button
-              leftIcon={<MdEvent />}
-              variant={'ghost'}
-              w={'full'}
-              fontWeight={'normal'}
-              justifyContent={'flex-start'}
-              onClick={() => {
-                navigate('/reservations');
-              }}
-            >
-              Reservas
-            </Button>
-            <Button
-              leftIcon={<BsEnvelopeCheck />}
-              variant={'ghost'}
-              w={'full'}
-              fontWeight={'normal'}
-              justifyContent={'flex-start'}
-              onClick={() => {
-                navigate('/solicitations');
-              }}
-            >
-              Solicitações
-            </Button>
+            {loggedUser.is_admin ||
+            (loggedUser.buildings && loggedUser.buildings.length > 0) ? (
+              <>
+                <Button
+                  leftIcon={<MdEvent />}
+                  variant={'ghost'}
+                  w={'full'}
+                  fontWeight={'normal'}
+                  justifyContent={'flex-start'}
+                  onClick={() => {
+                    navigate('/reservations', {
+                      replace: true,
+                      state: { from: location },
+                    });
+                  }}
+                >
+                  Reservas
+                </Button>
+                <Button
+                  leftIcon={<BsEnvelopeCheck />}
+                  variant={'ghost'}
+                  w={'full'}
+                  fontWeight={'normal'}
+                  justifyContent={'flex-start'}
+                  onClick={() => {
+                    navigate('/solicitations', {
+                      replace: true,
+                      state: { from: location },
+                    });
+                  }}
+                >
+                  Solicitações
+                </Button>
+              </>
+            ) : undefined}
           </VStack>
 
-          <VStack w={'full'} alignItems={'flex-start'}>
-            <HStack>
-              <Icon as={LuCalendarClock} color={'uspolis.blue'} />
-              <Text color={'uspolis.blue'} fontWeight={'bold'}>
-                Datas e Feriados
-              </Text>
-            </HStack>
-            <Button
-              leftIcon={<CalendarIcon />}
-              variant={'ghost'}
-              w={'full'}
-              fontWeight={'normal'}
-              justifyContent={'flex-start'}
-              onClick={() => {
-                navigate('/calendars');
-              }}
-            >
-              Calendários
-            </Button>
-          </VStack>
+          {loggedUser.is_admin ||
+          (loggedUser.buildings && loggedUser.buildings.length > 0) ? (
+            <>
+              <VStack w={'full'} alignItems={'flex-start'}>
+                <HStack>
+                  <Icon as={LuCalendarClock} color={'uspolis.blue'} />
+                  <Text color={'uspolis.blue'} fontWeight={'bold'}>
+                    Datas e Feriados
+                  </Text>
+                </HStack>
+                <Button
+                  leftIcon={<CalendarIcon />}
+                  variant={'ghost'}
+                  w={'full'}
+                  fontWeight={'normal'}
+                  justifyContent={'flex-start'}
+                  onClick={() => {
+                    navigate('/calendars', {
+                      replace: true,
+                      state: { from: location },
+                    });
+                  }}
+                >
+                  Calendários
+                </Button>
+              </VStack>
 
-          <VStack w={'full'} alignItems={'flex-start'}>
-            <HStack>
-              <Icon as={MdAddChart} color={'uspolis.blue'} />
-              <Text color={'uspolis.blue'} fontWeight={'bold'}>
-                Oferecimentos
-              </Text>
-            </HStack>
-            <Button
-              leftIcon={<PiChair />}
-              variant={'ghost'}
-              w={'full'}
-              fontWeight={'normal'}
-              justifyContent={'flex-start'}
-              onClick={() => {
-                navigate('/classrooms');
-              }}
-            >
-              Salas
-            </Button>
-            <Button
-              leftIcon={<GiBookCover />}
-              variant={'ghost'}
-              w={'full'}
-              fontWeight={'normal'}
-              justifyContent={'flex-start'}
-              onClick={() => {
-                navigate('/subjects');
-              }}
-            >
-              Disciplinas
-            </Button>
-            <Button
-              leftIcon={<GiTeacher />}
-              variant={'ghost'}
-              w={'full'}
-              fontWeight={'normal'}
-              justifyContent={'flex-start'}
-              onClick={() => {
-                navigate('/classes');
-              }}
-            >
-              Turmas
-            </Button>
-            <Button
-              leftIcon={<FaRegCalendarTimes />}
-              variant={'ghost'}
-              w={'full'}
-              fontWeight={'normal'}
-              justifyContent={'flex-start'}
-              onClick={() => {
-                navigate('/conflicts');
-              }}
-            >
-              Conflitos
-            </Button>
-          </VStack>
+              <VStack w={'full'} alignItems={'flex-start'}>
+                <HStack>
+                  <Icon as={MdAddChart} color={'uspolis.blue'} />
+                  <Text color={'uspolis.blue'} fontWeight={'bold'}>
+                    Oferecimentos
+                  </Text>
+                </HStack>
+                <Button
+                  leftIcon={<PiChair />}
+                  variant={'ghost'}
+                  w={'full'}
+                  fontWeight={'normal'}
+                  justifyContent={'flex-start'}
+                  onClick={() => {
+                    navigate('/classrooms', {
+                      replace: true,
+                      state: { from: location },
+                    });
+                  }}
+                >
+                  Salas
+                </Button>
+                <Button
+                  leftIcon={<GiBookCover />}
+                  variant={'ghost'}
+                  w={'full'}
+                  fontWeight={'normal'}
+                  justifyContent={'flex-start'}
+                  onClick={() => {
+                    navigate('/subjects', {
+                      replace: true,
+                      state: { from: location },
+                    });
+                  }}
+                >
+                  Disciplinas
+                </Button>
+                <Button
+                  leftIcon={<GiTeacher />}
+                  variant={'ghost'}
+                  w={'full'}
+                  fontWeight={'normal'}
+                  justifyContent={'flex-start'}
+                  onClick={() => {
+                    navigate('/classes', {
+                      replace: true,
+                      state: { from: location },
+                    });
+                  }}
+                >
+                  Turmas
+                </Button>
+                <Button
+                  leftIcon={<FaRegCalendarTimes />}
+                  variant={'ghost'}
+                  w={'full'}
+                  fontWeight={'normal'}
+                  justifyContent={'flex-start'}
+                  onClick={() => {
+                    navigate('/conflicts', {
+                      replace: true,
+                      state: { from: location },
+                    });
+                  }}
+                >
+                  Conflitos
+                </Button>
+              </VStack>
+            </>
+          ) : undefined}
         </>
       ) : (
         <VStack w={'full'} alignItems={'flex-start'}>
@@ -229,7 +271,10 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
             fontWeight={'normal'}
             justifyContent={'flex-start'}
             onClick={() => {
-              navigate('/allocation');
+              navigate('/allocation', {
+                replace: true,
+                state: { from: location },
+              });
             }}
           >
             Mapa de Salas

@@ -7,7 +7,7 @@ interface AppContext {
   setLoading: (value: boolean) => void;
   username: string;
   loggedUser: UserResponse | null;
-  logout: () => void;
+  logout: () => Promise<void>;
   getSelfFromBackend: () => void;
 }
 
@@ -37,8 +37,8 @@ export default function AppContextProvider({
       setLoggedUser(self.data);
       localStorage.setItem('user', JSON.stringify(self.data));
     } catch (e: any) {
-      if(e.response.status === 403) {
-        throw new Error("User with this email not registered")
+      if (e.response.status === 403) {
+        throw new Error('User with this email not registered');
       }
     }
   }
@@ -48,7 +48,9 @@ export default function AppContextProvider({
     if (!userFromStorage) {
       await getSelfFromBackend();
     } else {
-      const parsedUser: UserResponse = JSON.parse(userFromStorage) as UserResponse;
+      const parsedUser: UserResponse = JSON.parse(
+        userFromStorage,
+      ) as UserResponse;
       setLoggedUser(parsedUser);
       console.log('Usuário logado (storage):');
       console.log(parsedUser);
@@ -58,7 +60,9 @@ export default function AppContextProvider({
   async function logout() {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
-    window.location.href = '/login';
+    setLoggedUser(null);
+    setUsername('');
+    setLoading(false);
   }
 
   useEffect(() => {

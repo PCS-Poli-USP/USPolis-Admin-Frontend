@@ -9,6 +9,7 @@ import { IconButton } from '@chakra-ui/react';
 import DrawerBody from './drawer.body';
 import { DrawerNavBar } from './drawer.navbar';
 import { Outlet } from 'react-router-dom';
+import { appContext } from 'context/AppContext';
 
 const drawerWidth = 300;
 
@@ -63,7 +64,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function EmptyPage() {
-  const [open, setOpen] = React.useState(true);
+  const { loggedUser } = React.useContext(appContext);
+  const [open, setOpen] = React.useState(!!loggedUser);
 
   const handleDrawerOpen = () => {
     setOpen(true);

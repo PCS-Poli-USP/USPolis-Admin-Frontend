@@ -15,6 +15,7 @@ import {
   Spacer,
   StackDivider,
   Text,
+  Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import { useDisclosure } from '@chakra-ui/react-use-disclosure';
@@ -36,11 +37,11 @@ import useAllocation from 'pages/allocation/hooks/useAllocation';
 import ClassesPDF from './pdf/ClassesPDF/classesPDF';
 import ClassroomsPDF from './pdf/ClassroomsPDF/classroomsPDF';
 import PageContent from 'components/common/PageContent';
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { ChevronDownIcon, LockIcon } from '@chakra-ui/icons';
 import SolicitationModal from './SolicitationModal/solicitation.modal';
 
 function Allocation() {
-  const { loading, setLoading } = useContext(appContext);
+  const { loading, setLoading, loggedUser } = useContext(appContext);
   const calendarRef = useRef<FullCalendar>(null!);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -51,7 +52,13 @@ function Allocation() {
 
   const [nameSearchValue, setNameSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
-  const { events, resources, classes, reservations } = useAllocation();
+  const {
+    loading: loadingAllocation,
+    events,
+    resources,
+    classes,
+    reservations,
+  } = useAllocation();
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
 
   function setCalendarDate(ISOdate: string) {
@@ -94,7 +101,10 @@ function Allocation() {
 
   return (
     <PageContent>
-      <Loading isOpen={loading} onClose={() => setLoading(false)} />
+      <Loading
+        isOpen={loading || loadingAllocation}
+        onClose={() => setLoading(false)}
+      />
 
       <Grid
         templateAreas={`"header"
@@ -153,9 +163,18 @@ function Allocation() {
                 </MenuList>
               </Menu>
 
-              <Button colorScheme='blue' onClick={() => onOpenSolicitation()}>
-                Solicitar Sala
-              </Button>
+              <Tooltip
+                label={loggedUser ? '' : 'Entre para poder fazer essa ação.'}
+              >
+                <Button
+                  colorScheme='blue'
+                  onClick={() => onOpenSolicitation()}
+                  leftIcon={loggedUser ? undefined : <LockIcon />}
+                  isDisabled={!loggedUser}
+                >
+                  Solicitar Sala
+                </Button>
+              </Tooltip>
 
               <Spacer />
 
@@ -192,7 +211,11 @@ function Allocation() {
           </VStack>
         </GridItem>
         <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
-          <Skeleton isLoaded={!loading} h='100vh' startColor='uspolis.blue'>
+          <Skeleton
+            isLoaded={!loading && !loadingAllocation}
+            h='100vh'
+            // startColor='uspolis.blue'
+          >
             <DatePickerModal
               isOpen={isOpen}
               onClose={onClose}

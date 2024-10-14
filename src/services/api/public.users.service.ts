@@ -1,9 +1,9 @@
-import {
-    CreateUser,
-    CreateUserResponse,
-    EditUser,
-    User,
-  } from 'models/common/user.common.model';
+// import {
+//     CreateUser,
+//     CreateUserResponse,
+//     EditUser,
+//     User,
+//   } from 'models/common/user.common.model';
   import HttpService from './http.service';
   import { AxiosResponse } from 'axios';
   

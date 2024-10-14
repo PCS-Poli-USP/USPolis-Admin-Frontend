@@ -61,7 +61,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
     getClassroomsWithConflictFromTime,
     listOneFull,
   } = useClassrooms();
-  const { createSolicitation } = useClassroomsSolicitations();
+  const { createSolicitation } = useClassroomsSolicitations(false);
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
   const [classroomsWithConflict, setClassroomsWithConflict] =
     useState<ClassroomWithConflictCount[]>();
@@ -139,16 +139,6 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
     };
     fetchSelectedClassroom();
   }, [classroom_id, listOneFull]);
-
-  console.log('Prédio: ', building_id, selectedBuilding);
-  console.log('Horario: ', optionalTime, start, end);
-  console.log('Dias: ', selectedDays);
-  console.log('Sala opcional? ', optionalClassroom);
-  console.log('Salas: ', classrooms);
-  console.log('Salas - C: ', classroomsWithConflict);
-  console.log('Sala selecionada: ', classroom_id, selectedClassroom);
-  console.log('Sala: ', requiredClassroom);
-  console.log('');
 
   return (
     <Modal

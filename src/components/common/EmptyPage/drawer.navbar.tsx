@@ -20,7 +20,7 @@ import { ReactNode, useContext } from 'react';
 import { FaUser } from 'react-icons/fa';
 import Logo from 'assets/uspolis.logo.png';
 import { appContext } from 'context/AppContext';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
@@ -45,23 +45,32 @@ interface DrawerNavBarProps {
 
 export function DrawerNavBar({ handleDrawerOpen, open }: DrawerNavBarProps) {
   const { loggedUser, logout } = useContext(appContext);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  function handleClickLogout() {
-    logout();
+  async function handleClickLogout() {
+    await logout();
+    navigate('/', {
+      replace: true,
+      state: { from: location },
+    });
   }
   return (
     <Box bg='uspolis.blue' color='white' px={4}>
       <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
         <HStack spacing={3} alignItems={'center'}>
-          <IconButton
-            size={'md'}
-            icon={<HamburgerIcon />}
-            hidden={open}
-            variant={'ghost'}
-            textColor={'white'}
-            aria-label={'open-menu'}
-            onClick={() => handleDrawerOpen()}
-          />
+          {loggedUser && (
+            <IconButton
+              size={'md'}
+              icon={<HamburgerIcon />}
+              hidden={open}
+              variant={'ghost'}
+              textColor={'white'}
+              aria-label={'open-menu'}
+              onClick={() => handleDrawerOpen()}
+            />
+          )}
+
           <NavLink to='/index'>
             <Image
               src={Logo}
@@ -74,26 +83,42 @@ export function DrawerNavBar({ handleDrawerOpen, open }: DrawerNavBarProps) {
           </NavLink>
         </HStack>
         <Flex alignItems={'center'}>
-          <Menu>
-            <MenuButton
-              as={Button}
-              rounded={'full'}
-              variant={'link'}
-              cursor={'pointer'}
-              minW={0}
-              colorScheme='dark'
-            >
-              <Flex alignItems={'center'} gap='1'>
-                <Text>{loggedUser?.name}</Text>
-                <Icon as={FaUser} />
-              </Flex>
-            </MenuButton>
-            <MenuList>
-              <MenuItem onClick={handleClickLogout} color='black'>
-                Sair
-              </MenuItem>
-            </MenuList>
-          </Menu>
+          {loggedUser ? (
+            <Menu>
+              <MenuButton
+                as={Button}
+                rounded={'full'}
+                variant={'link'}
+                cursor={'pointer'}
+                minW={0}
+                colorScheme='dark'
+              >
+                <Flex alignItems={'center'} gap='1'>
+                  <Text>{loggedUser?.name}</Text>
+                  <Icon as={FaUser} />
+                </Flex>
+              </MenuButton>
+              <MenuList>
+                <MenuItem onClick={handleClickLogout} color='black'>
+                  Sair
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          ) : (
+            <HStack>
+              <Button
+                variant={'ghost'}
+                onClick={() =>
+                  navigate('/auth', {
+                    replace: true,
+                    state: { from: location },
+                  })
+                }
+              >
+                Entrar / Registrar
+              </Button>
+            </HStack>
+          )}
         </Flex>
       </Flex>
     </Box>

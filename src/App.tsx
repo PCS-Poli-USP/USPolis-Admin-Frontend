@@ -24,7 +24,7 @@ import {
   FaUsers,
 } from 'react-icons/fa';
 import './App.css';
-import { LockIcon } from '@chakra-ui/icons';
+import { LockIcon, UnlockIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
 
 // TODO: uspolis page
@@ -48,9 +48,10 @@ function App() {
               (PAAS) por meio de uma formulação matemática. As alocações podem
               ser visualizadas no app para Android ou IOS abaixo.
             </Text>
-            <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
+            <Stack direction={{ base: 'column', md: 'column' }} spacing={4}>
               <Link href='https://play.google.com/store/apps/details?id=uspolis.lunadros'>
                 <Button
+                  w={'full'}
                   rounded='full'
                   colorScheme='blue'
                   _hover={{
@@ -72,6 +73,7 @@ function App() {
               <Link href='https://apps.apple.com/br/app/uspolis/id1451455075'>
                 <Button
                   rounded='full'
+                  w={'full'}
                   colorScheme='blue'
                   leftIcon={<FaAppStore />}
                   _hover={{
@@ -81,6 +83,17 @@ function App() {
                   App Store
                 </Button>
               </Link>
+              <Button
+                rounded='full'
+                colorScheme='blue'
+                leftIcon={<UnlockIcon />}
+                _hover={{
+                  textDecoration: 'none',
+                }}
+                onClick={() => navigate('/allocation')}
+              >
+                Mapa de Salas
+              </Button>
               <Button
                 rounded='full'
                 colorScheme='blue'

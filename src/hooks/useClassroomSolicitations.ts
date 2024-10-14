@@ -1,5 +1,9 @@
 import useCustomToast from 'hooks/useCustomToast';
-import { ClassroomSolicitationAprove, ClassroomSolicitationDeny, CreateClassroomSolicitation } from 'models/http/requests/classroomSolicitation.request.models';
+import {
+  ClassroomSolicitationAprove,
+  ClassroomSolicitationDeny,
+  CreateClassroomSolicitation,
+} from 'models/http/requests/classroomSolicitation.request.models';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import ClassroomSolicitationService from 'services/api/classroomSolicitations.service';
@@ -7,7 +11,7 @@ import { sortClassroomSolicitationResponse } from 'utils/solicitations/solicitat
 
 const service = new ClassroomSolicitationService();
 
-const useClassroomsSolicitations = () => {
+const useClassroomsSolicitations = (initialFetch = true) => {
   const [loading, setLoading] = useState(false);
   const [solicitations, setSolicitations] = useState<
     ClassroomSolicitationResponse[]
@@ -93,7 +97,7 @@ const useClassroomsSolicitations = () => {
   );
 
   useEffect(() => {
-    getSolicitations();
+    if (initialFetch) getSolicitations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
