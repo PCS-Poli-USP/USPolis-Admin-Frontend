@@ -33,5 +33,5 @@ export default class UsersService extends HttpService {
 
   async delete(user_id: number): Promise<AxiosResponse<any>> {
     return this.http.delete(`/${user_id}`);
-  }
+  } 
 }

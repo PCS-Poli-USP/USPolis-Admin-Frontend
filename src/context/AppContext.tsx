@@ -1,4 +1,3 @@
-import { Auth, Hub } from 'aws-amplify';
 import { UserResponse } from 'models/http/responses/user.response.models';
 import React, { createContext, useEffect, useState } from 'react';
 import SelfService from 'services/api/self.service';
@@ -9,6 +8,7 @@ interface AppContext {
   username: string;
   loggedUser: UserResponse | null;
   logout: () => void;
+  getSelfFromBackend: () => void;
 }
 
 const DEFAULT_VALUE = {
@@ -17,6 +17,7 @@ const DEFAULT_VALUE = {
   username: '',
   loggedUser: null,
   logout: async () => {},
+  getSelfFromBackend: async () => {},
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -32,14 +33,13 @@ export default function AppContextProvider({
 
   async function getSelfFromBackend() {
     try {
-      await Auth.currentUserInfo();
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
-      console.log('Usuário logado:');
-      console.log(self.data);
       localStorage.setItem('user', JSON.stringify(self.data));
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if(e.response.status === 403) {
+        throw new Error("User with this email not registered")
+      }
     }
   }
 
@@ -48,9 +48,7 @@ export default function AppContextProvider({
     if (!userFromStorage) {
       await getSelfFromBackend();
     } else {
-      const parsedUser: UserResponse = JSON.parse(
-        userFromStorage,
-      ) as UserResponse;
+      const parsedUser: UserResponse = JSON.parse(userFromStorage) as UserResponse;
       setLoggedUser(parsedUser);
       console.log('Usuário logado (storage):');
       console.log(parsedUser);
@@ -58,30 +56,25 @@ export default function AppContextProvider({
   }
 
   async function logout() {
-    Auth.signOut();
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    window.location.href = '/login';
   }
 
   useEffect(() => {
-    Auth.currentUserInfo().then((it) => setUsername(it?.username));
     getSelf();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    Hub.listen('auth', (data) => {
-      getSelf();
-      console.log(
-        'A new auth event has happened: ',
-        data.payload.data.username + ' has ' + data.payload.event,
-      );
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <appContext.Provider
-      value={{ loading, setLoading, username, loggedUser, logout }}
+      value={{
+        loading,
+        setLoading,
+        username,
+        loggedUser,
+        logout,
+        getSelfFromBackend,
+      }}
     >
       {children}
     </appContext.Provider>

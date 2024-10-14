@@ -30,6 +30,10 @@ import Reservations from 'pages/reservations';
 import EmptyPage from 'components/common/EmptyPage';
 import Solicitations from 'pages/solicitations/solicitations';
 import MySolicitations from 'pages/mySolicitations/mySolicitations';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { LoginPage } from 'pages/login';
+import PrivateRoute from 'components/routes/private.route';
+import { RegisterPage } from 'pages/register';
 
 Amplify.configure(awsConfig);
 
@@ -40,24 +44,56 @@ root.render(
   // <React.StrictMode>
   <ThemeProvider theme={muiTheme}>
     <ChakraProvider theme={chakraTheme}>
-      <AppContextProvider>
-        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale='pt-br'>
-          <Router>
-            <Routes>
-              <Route path='/' element={<Navigate to='/index' />} />
-              <Route path='/index' element={<App />} />
-              {/* Private Routes */}
-              <Route path='/' element={<EmptyPage />}>
-                <Route path='/allocation' element={<Allocation />} />
-                <Route path='/' element={<AuthRoute />}>
-                  <Route path='users' element={<Users />} />
-                  <Route path='buildings' element={<Buildings />} />
-                  <Route path='subjects' element={<Subjects />} />
-                  <Route path='calendars' element={<Calendars />} />
-                  <Route path='classrooms' element={<Classrooms />} />
-                  <Route path='classes' element={<Classes />} />
-                  <Route path='reservations' element={<Reservations />} />
-                  <Route path='conflicts' element={<ConflictsPage />} />
+      <GoogleOAuthProvider clientId='903358108153-kj9u7e4liu19cm73lr6hlhi876smdscj.apps.googleusercontent.com'>
+        <AppContextProvider>
+          <LocalizationProvider
+            dateAdapter={AdapterMoment}
+            adapterLocale='pt-br'
+          >
+            <Router>
+              <Routes>
+                <Route path='/' element={<Navigate to='/index' />} />
+                <Route path='/index' element={<App />} />
+                <Route path='/login' element={<LoginPage />} />
+                <Route path='/register' element={<RegisterPage />} />
+                {/* Private Routes */}
+                <Route path='/' element={<EmptyPage />}>
+                  <Route
+                    path='users'
+                    element={<PrivateRoute element={<Users />} />}
+                  />
+                  <Route
+                    path='buildings'
+                    element={<PrivateRoute element={<Buildings />} />}
+                  />
+                  <Route
+                    path='subjects'
+                    element={<PrivateRoute element={<Subjects />} />}
+                  />
+                  <Route
+                    path='calendars'
+                    element={<PrivateRoute element={<Calendars />} />}
+                  />
+                  <Route
+                    path='classrooms'
+                    element={<PrivateRoute element={<Classrooms />} />}
+                  />
+                  <Route
+                    path='classes'
+                    element={<PrivateRoute element={<Classes />} />}
+                  />
+                  <Route
+                    path='allocation'
+                    element={<PrivateRoute element={<Allocation />} />}
+                  />
+                  <Route
+                    path='reservations'
+                    element={<PrivateRoute element={<Reservations />} />}
+                  />
+                  <Route
+                    path='conflicts'
+                    element={<PrivateRoute element={<ConflictsPage />} />}
+                  />
                   <Route
                     path='institutional-events'
                     element={<InstitutionalEvents />}
@@ -68,11 +104,11 @@ root.render(
                     element={<MySolicitations />}
                   />
                 </Route>
-              </Route>
-            </Routes>
-          </Router>
-        </LocalizationProvider>
-      </AppContextProvider>
+              </Routes>
+            </Router>
+          </LocalizationProvider>
+        </AppContextProvider>
+      </GoogleOAuthProvider>
     </ChakraProvider>
   </ThemeProvider>,
   // {/* </React.StrictMode>, */}
