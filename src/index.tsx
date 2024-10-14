@@ -47,15 +47,15 @@ root.render(
               <Route path='/' element={<Navigate to='/index' />} />
               <Route path='/index' element={<App />} />
               {/* Private Routes */}
-              <Route path='/' element={<AuthRoute />}>
-                <Route path='/' element={<EmptyPage />}>
+              <Route path='/' element={<EmptyPage />}>
+                <Route path='/allocation' element={<Allocation />} />
+                <Route path='/' element={<AuthRoute />}>
                   <Route path='users' element={<Users />} />
                   <Route path='buildings' element={<Buildings />} />
                   <Route path='subjects' element={<Subjects />} />
                   <Route path='calendars' element={<Calendars />} />
                   <Route path='classrooms' element={<Classrooms />} />
                   <Route path='classes' element={<Classes />} />
-                  <Route path='allocation' element={<Allocation />} />
                   <Route path='reservations' element={<Reservations />} />
                   <Route path='conflicts' element={<ConflictsPage />} />
                   <Route
@@ -63,7 +63,10 @@ root.render(
                     element={<InstitutionalEvents />}
                   />
                   <Route path='solicitations' element={<Solicitations />} />
-                  <Route path='my-solicitations' element={<MySolicitations />} />
+                  <Route
+                    path='my-solicitations'
+                    element={<MySolicitations />}
+                  />
                 </Route>
               </Route>
             </Routes>
