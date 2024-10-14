@@ -319,7 +319,11 @@ function SolicitationPanel({
                       onChange={(event) => setEnd(event.target.value)}
                       isDisabled={loadingClassrooms}
                     />
-                    <Button isDisabled={!classroom} onClick={() => onOpen()}>
+                    <Button
+                      isDisabled={!classroom}
+                      onClick={() => onOpen()}
+                      hidden={!solicitation.classroom_id}
+                    >
                       Visualizar disponibilidade
                     </Button>
                   </HStack>

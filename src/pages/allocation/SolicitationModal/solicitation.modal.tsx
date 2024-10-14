@@ -254,7 +254,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
 
                 <HStack w={'full'}>
                   <SelectInput
-                    w={'auto'}
+                    w={300}
                     label='Prédio'
                     name='building_id'
                     isLoading={loadingB}
@@ -273,7 +273,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                     }}
                   />
                   <SelectInput
-                    w={'auto'}
+                    w={300}
                     disabled={
                       !selectedBuilding ||
                       optionalClassroom ||
@@ -289,7 +289,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                       !selectedBuilding
                         ? 'Selecione um prédio antes'
                         : !optionalTime && !start && !end
-                        ? 'Selecione um horário primeiro'
+                        ? 'Selecione um horário antes'
                         : selectedDays.length === 0
                         ? 'Selecione as datas'
                         : 'Selecione uma sala'
@@ -334,6 +334,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                 </HStack>
                 <HStack w={'full'} spacing={2}>
                   <CheckBox
+                    disabled={requiredClassroom}
                     text='Não quero especificar sala'
                     name='optional_classroom'
                     onChange={(value) => {
@@ -343,7 +344,8 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                     }}
                   />
                   <CheckBox
-                    disabled={!classroom_id}
+                    ml={10}
+                    disabled={!classroom_id || optionalClassroom}
                     text='Quero necessariamente essa sala'
                     name='required_classroom'
                   />
