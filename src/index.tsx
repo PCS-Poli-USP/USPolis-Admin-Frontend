@@ -31,6 +31,7 @@ import EmptyPage from 'components/common/EmptyPage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { LoginPage } from 'pages/login';
 import PrivateRoute from 'components/routes/private.route';
+import { RegisterPage } from 'pages/register';
 
 Amplify.configure(awsConfig);
 
@@ -52,6 +53,7 @@ root.render(
                 <Route path='/' element={<Navigate to='/index' />} />
                 <Route path='/index' element={<App />} />
                 <Route path='/login' element={<LoginPage />} />
+                <Route path='/register' element={<RegisterPage />} />
                 {/* Private Routes */}
                 <Route path='/' element={<EmptyPage />}>
                   <Route

@@ -8,10 +8,15 @@ const LoginPage = () => {
 
   const { getSelfFromBackend } = useContext(appContext);
 
-  const handleLogin = (token: string) => {
+  const handleLogin = async (token: string) => {
     localStorage.setItem('token', token);
-    getSelfFromBackend();
-    navigate('/classes');
+    try {
+      await getSelfFromBackend();
+      navigate('/classes');
+    } catch(e: any) {
+      localStorage.removeItem("token");
+      alert(e.message);
+    }
   };
 
   return (

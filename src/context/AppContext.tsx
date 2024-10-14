@@ -1,7 +1,5 @@
-import { Auth, Hub } from 'aws-amplify';
 import { User } from 'models/common/user.common.model';
 import React, { createContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import SelfService from 'services/api/self.service';
 
 interface AppContext {
@@ -19,7 +17,7 @@ const DEFAULT_VALUE = {
   username: '',
   loggedUser: null,
   logout: async () => {},
-  getSelfFromBackend: async () => {}
+  getSelfFromBackend: async () => {},
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -35,14 +33,13 @@ export default function AppContextProvider({
 
   async function getSelfFromBackend() {
     try {
-      await Auth.currentUserInfo();
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
-      console.log('Usuário logado:');
-      console.log(self.data);
       localStorage.setItem('user', JSON.stringify(self.data));
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if(e.response.status === 403) {
+        throw new Error("User with this email not registered")
+      }
     }
   }
 
@@ -60,28 +57,24 @@ export default function AppContextProvider({
 
   async function logout() {
     localStorage.removeItem('user');
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     window.location.href = '/login';
   }
 
   useEffect(() => {
-    Auth.currentUserInfo().then((it) => setUsername(it?.username));
     getSelf();
-  }, []);
-
-  useEffect(() => {
-    Hub.listen('auth', (data) => {
-      getSelf();
-      console.log(
-        'A new auth event has happened: ',
-        data.payload.data.username + ' has ' + data.payload.event,
-      );
-    });
   }, []);
 
   return (
     <appContext.Provider
-      value={{ loading, setLoading, username, loggedUser, logout, getSelfFromBackend }}
+      value={{
+        loading,
+        setLoading,
+        username,
+        loggedUser,
+        logout,
+        getSelfFromBackend,
+      }}
     >
       {children}
     </appContext.Provider>

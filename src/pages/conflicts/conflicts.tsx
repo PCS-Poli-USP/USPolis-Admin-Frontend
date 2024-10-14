@@ -197,7 +197,7 @@ const ConflictsPage = () => {
                                       <C.Flex direction={'column'} flex={1}>
                                         {event.subject_code ? (
                                           <C.Text fontSize={'md'}>
-                                            Disciplina: {event.subject_code}
+                                            {event.subject_code}
                                           </C.Text>
                                         ) : undefined}
                                         {event.reservation_name ? (
@@ -209,14 +209,7 @@ const ConflictsPage = () => {
                                       <C.Flex direction={'column'} flex={1}>
                                         {event.class_code ? (
                                           <C.Text fontSize={'md'}>
-                                            Código de turma: {event.class_code}
-                                          </C.Text>
-                                        ) : undefined}
-
-                                        {event.subject_code ? (
-                                          <C.Text fontSize={'md'}>
-                                            Código de disciplina:{' '}
-                                            {event.subject_code}
+                                            Turma: {event.class_code}
                                           </C.Text>
                                         ) : undefined}
                                       </C.Flex>

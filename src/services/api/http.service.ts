@@ -9,6 +9,7 @@ export default abstract class HttpService {
     this.http = axios.create({ baseURL, ...options });
     this.http.interceptors.request.use(async function (config) {
       const access_token = localStorage.getItem("token");
+      console.log(access_token);
       config.headers!["Authorization"] = `Bearer ${access_token}`;
       return config;
     });
