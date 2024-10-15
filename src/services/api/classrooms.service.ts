@@ -4,7 +4,7 @@ import HttpService from './http.service';
 import {
   ClassroomFullResponse,
   ClassroomResponse,
-  ClassroomWithConflictCount
+  ClassroomWithConflictCount,
 } from 'models/http/responses/classroom.response.models';
 import {
   ClassroomConflictCheck,
@@ -16,37 +16,43 @@ const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
 export default class ClassroomsService extends HttpService {
   constructor() {
-    super(`${USPOLIS_SERVER_URL}/classrooms`);
+    super(`${USPOLIS_SERVER_URL}`);
   }
 
-  list(): Promise<AxiosResponse<Array<ClassroomResponse>>> {
-    return this.http.get('');
+  getAll(): Promise<AxiosResponse<Array<ClassroomResponse>>> {
+    return this.http.get('/classrooms');
   }
 
-  listOneFull(id: number): Promise<AxiosResponse<ClassroomFullResponse>> {
-    return this.http.get(`/full/${id}`);
+  getMyClassrooms(): Promise<AxiosResponse<Array<ClassroomResponse>>> {
+    return this.http.get('/users/my-classrooms');
+  }
+
+  getOneFull(id: number): Promise<AxiosResponse<ClassroomFullResponse>> {
+    return this.http.get(`/classrooms/full/${id}`);
   }
 
   create(data: CreateClassroom): Promise<AxiosResponse<ClassroomResponse>> {
-    return this.http.post('', data);
+    return this.http.post('/classrooms', data);
   }
 
   delete(id: number): Promise<AxiosResponse<undefined>> {
-    return this.http.delete(`/${id}`);
+    return this.http.delete(`/classrooms/${id}`);
   }
 
   update(
     id: number,
     data: UpdateClassroom,
   ): Promise<AxiosResponse<ClassroomResponse>> {
-    return this.http.put(`/${id}`, data);
+    return this.http.put(`/classrooms/${id}`, data);
   }
 
   getWithConflictCount(
     schedule_id: number,
     building_id: number,
   ): Promise<AxiosResponse<ClassroomWithConflictCountOLD[]>> {
-    return this.http.get(`with-conflict-count/${building_id}/${schedule_id}`);
+    return this.http.get(
+      `/classrooms/with-conflict-count/${building_id}/${schedule_id}`,
+    );
   }
 
   getWithConflictCountFromTime(
@@ -57,12 +63,14 @@ export default class ClassroomsService extends HttpService {
     params.append('start_time', data.start_time);
     params.append('end_time', data.end_time);
     data.dates.forEach((date) => params.append('dates', date));
-    return this.http.get(`with-conflict-count/${building_id}`, { params });
+    return this.http.get(`/classrooms/with-conflict-count/${building_id}`, {
+      params,
+    });
   }
 
   getClassroomsByBuildingId(
     building_id: number,
   ): Promise<AxiosResponse<ClassroomResponse[]>> {
-    return this.http.get(`/building/${building_id}`);
+    return this.http.get(`/classrooms/building/${building_id}`);
   }
 }

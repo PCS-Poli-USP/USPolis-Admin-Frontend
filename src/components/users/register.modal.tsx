@@ -77,11 +77,12 @@ export default function RegisterUserModal(props: RegisterModalProps) {
 
   useEffect(() => {
     fetchBuildings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchBuildings() {
     try {
-      const response = await buildingsService.list();
+      const response = await buildingsService.getAll();
       console.log(response.data);
       setBuildings(response.data);
       setIsLoadingBuildings(false);

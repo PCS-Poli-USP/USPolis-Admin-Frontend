@@ -21,10 +21,25 @@ const useClassrooms = (initialFetch: boolean = true) => {
 
   const showToast = useCustomToast();
 
+  const getAllClassrooms = useCallback(async () => {
+    setLoading(true);
+    await service
+      .getAll()
+      .then((response) => {
+        setClassrooms(response.data.sort(sortClassroomResponse));
+      })
+      .catch((error) => {
+        showToast('Erro', 'Erro ao carregar salas', 'error');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [showToast]);
+
   const getClassrooms = useCallback(async () => {
     setLoading(true);
     await service
-      .list()
+      .getMyClassrooms()
       .then((response) => {
         setClassrooms(response.data.sort(sortClassroomResponse));
       })
@@ -88,7 +103,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
   const listOneFull = useCallback(async (id: number) => {
     let current: ClassroomFullResponse | undefined;
     await service
-      .listOneFull(id)
+      .getOneFull(id)
       .then((response) => {
         current = response.data;
       })

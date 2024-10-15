@@ -123,7 +123,6 @@ const useClasses = (initialFetch: boolean = true) => {
 
   const deleteManyClass = useCallback(
     async (ids: number[]) => {
-      console.log('Enviei', ids);
       setLoading(true);
       await service
         .deleteMany(ids)

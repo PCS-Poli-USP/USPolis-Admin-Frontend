@@ -54,7 +54,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
     occupiedDays,
   } = useDateCalendarPicker();
 
-  const { loading: loadingB, buildings } = useBuildings();
+  const { loading: loadingB, buildings, getAllBuildings } = useBuildings(false);
   const {
     loading: loadingC,
     classrooms,
@@ -139,6 +139,11 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
     };
     fetchSelectedClassroom();
   }, [classroom_id, listOneFull]);
+
+  useEffect(() => {
+    getAllBuildings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Modal

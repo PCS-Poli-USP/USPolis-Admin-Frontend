@@ -19,8 +19,6 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { loggedUser } = useContext(appContext);
-  console.log('Usuario: ', loggedUser);
-  console.log('location: ', location);
 
   return (
     <VStack align={'start'} ml={4} spacing={4} mt={2}>

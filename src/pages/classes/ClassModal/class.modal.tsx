@@ -268,7 +268,6 @@ function ClassModal(props: ClassModalProps) {
   }
 
   function loadSchedulesFromClass(data: ClassResponse) {
-    console.log(data);
     const newSchedules: ScheduleData[] = data.schedules.map((schedule) => ({
       recurrence: schedule.recurrence,
       start_date: schedule.start_date,
