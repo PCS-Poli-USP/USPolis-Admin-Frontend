@@ -21,6 +21,7 @@ import {
 import { useDisclosure } from '@chakra-ui/react-use-disclosure';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
+import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import rrulePlugin from '@fullcalendar/rrule';
 import { PDFDownloadLink } from '@react-pdf/renderer';
@@ -221,16 +222,20 @@ function Allocation() {
               onClose={onClose}
               onSelectDate={setCalendarDate}
             />
-            <SolicitationModal
-              isOpen={isOpenSolicitation}
-              onClose={onCloseSolicitation}
-            />
+            {loggedUser && (
+              <SolicitationModal
+                isOpen={isOpenSolicitation}
+                onClose={onCloseSolicitation}
+              />
+            )}
+
             <Box paddingBottom={4}>
               <FullCalendar
                 ref={calendarRef}
                 schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
                 plugins={[
                   timeGridPlugin,
+                  resourceTimeGridPlugin,
                   resourceTimelinePlugin,
                   rrulePlugin,
                   // eventsByClassroomsPlugin,
@@ -249,6 +254,7 @@ function Allocation() {
                 buttonText={{
                   // eventsByClassrooms: 'Salas',
                   resourceTimelineDay: 'Sala / Dia',
+                  // resourceTimeGridDay: 'Dia',
                   // eventsByWeek: 'Sala / Semana',
                   timeGridWeek: 'Geral',
                   today: 'Hoje',
@@ -264,6 +270,17 @@ function Allocation() {
                     slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
                     eventMaxStack: 1,
                     titleFormat: { year: 'numeric', month: 'long' },
+                  },
+                  resourceTimeGridDay: {
+                    slotDuration: '00:30',
+                    slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
+                    eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
+                    titleFormat: {
+                      weekday: 'long',
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
+                    },
                   },
                   resourceTimelineDay: {
                     slotDuration: '01:00',
