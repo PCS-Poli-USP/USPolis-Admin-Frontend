@@ -10,9 +10,6 @@ import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { appContext } from 'context/AppContext';
 import EditUserModal from 'components/users/edit.modal';
 import Dialog from 'components/common/Dialog/dialog.component';
-import RegisterUserModal, {
-  RegisterUserFormValues,
-} from 'components/users/register.modal';
 import PageContent from 'components/common/PageContent';
 import { UserResponse } from 'models/http/responses/user.response.models';
 import { UpdateUser } from 'models/http/requests/user.request.models';
@@ -24,7 +21,6 @@ const Users = () => {
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [contextUser, setContextUser] = useState<UserResponse | null>(null);
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
-  const [registerModalOpen, setRegisterModalOpen] = useState<boolean>(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
   const toast = C.useToast();
@@ -57,10 +53,6 @@ const Users = () => {
     {
       accessorKey: 'name',
       header: 'Nome',
-    },
-    {
-      accessorKey: 'username',
-      header: 'Username',
     },
     {
       accessorKey: 'email',
@@ -135,10 +127,6 @@ const Users = () => {
     }
   }
 
-  function handleCreateButton() {
-    setRegisterModalOpen(true);
-  }
-
   function handleEditButton(user: UserResponse) {
     setContextUser(user);
     setEditModalOpen(true);
@@ -147,27 +135,6 @@ const Users = () => {
   function handleDeleteButton(user: UserResponse) {
     setDeleteDialogOpen(true);
     setContextUser(user);
-  }
-
-  async function registerUser(form: RegisterUserFormValues) {
-    try {
-      setLoading(true);
-      await usersService.create({
-        name: form.name,
-        email: form.email,
-        username: form.username,
-        is_admin: form.is_admin,
-        building_ids: form.is_admin
-          ? undefined
-          : form.buildings.map((it) => it.value),
-      });
-      toastSuccess(`Usuário cadastrado!`);
-    } catch (err: any) {
-      toastError(`Erro ao cadastrar usuário:\n${err.response.data.message}`);
-      console.error(err);
-      setLoading(false);
-    }
-    fetchUsers();
   }
 
   async function editUser(user_id: number, data: UpdateUser) {
@@ -202,9 +169,6 @@ const Users = () => {
         <C.Text fontSize='4xl' mb={4}>
           Usuários
         </C.Text>
-        <C.Button onClick={handleCreateButton} colorScheme={'blue'}>
-          Cadastrar
-        </C.Button>
       </C.Flex>
       <DataTable columns={columns} data={users} />
       <EditUserModal
@@ -219,20 +183,12 @@ const Users = () => {
         }}
         otherData={{
           email: contextUser?.email,
-          username: contextUser?.username,
         }}
         onSave={(form) => {
           editUser(contextUser!.id, {
             building_ids: form.buildings?.map((b) => b.value),
             is_admin: form.is_admin ? form.is_admin : false,
           });
-        }}
-      />
-      <RegisterUserModal
-        isOpen={registerModalOpen}
-        onClose={() => setRegisterModalOpen(false)}
-        onSave={(form) => {
-          registerUser(form);
         }}
       />
       <Dialog
@@ -244,7 +200,7 @@ const Users = () => {
           deleteUser(contextUser!.id);
           setDeleteDialogOpen(false);
         }}
-        title={`Deseja deletar o usuário "${contextUser?.username}"`}
+        title={`Deseja deletar o usuário "${contextUser?.name}"`}
       />
     </PageContent>
   );

@@ -45,7 +45,9 @@ root.render(
   // <React.StrictMode>
   <ThemeProvider theme={muiTheme}>
     <ChakraProvider theme={chakraTheme}>
-      <GoogleOAuthProvider clientId='903358108153-kj9u7e4liu19cm73lr6hlhi876smdscj.apps.googleusercontent.com'>
+      <GoogleOAuthProvider
+        clientId={process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID!}
+      >
         <AppContextProvider>
           <LocalizationProvider
             dateAdapter={AdapterMoment}
@@ -66,7 +68,7 @@ root.render(
                       path='my-solicitations'
                       element={<MySolicitations />}
                     />
-                    
+
                     {/* Restricted routes */}
                     <Route element={<RestrictedRoute />}>
                       <Route path='subjects' element={<Subjects />} />

@@ -21,10 +21,6 @@ export const getUsersColumns = (
     header: 'Nome',
   },
   {
-    accessorKey: 'username',
-    header: 'Username',
-  },
-  {
     accessorKey: 'email',
     header: 'Email',
   },
