@@ -26,6 +26,7 @@ import {
 import './App.css';
 import { LockIcon, UnlockIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
+import { BsCalendar3 } from 'react-icons/bs';
 
 // TODO: uspolis page
 function App() {
@@ -86,7 +87,7 @@ function App() {
               <Button
                 rounded='full'
                 colorScheme='blue'
-                leftIcon={<UnlockIcon />}
+                leftIcon={<BsCalendar3 />}
                 _hover={{
                   textDecoration: 'none',
                 }}
