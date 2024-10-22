@@ -40,8 +40,11 @@ import ClassroomsPDF from './pdf/ClassroomsPDF/classroomsPDF';
 import PageContent from 'components/common/PageContent';
 import { ChevronDownIcon, LockIcon } from '@chakra-ui/icons';
 import SolicitationModal from './SolicitationModal/solicitation.modal';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function Allocation() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { loading, setLoading, loggedUser } = useContext(appContext);
   const calendarRef = useRef<FullCalendar>(null!);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -169,9 +172,16 @@ function Allocation() {
               >
                 <Button
                   colorScheme='blue'
-                  onClick={() => onOpenSolicitation()}
+                  onClick={() => {
+                    if (!loggedUser) {
+                      navigate('/auth', {
+                        replace: true,
+                        state: { from: location },
+                      });
+                    }
+                    onOpenSolicitation();
+                  }}
                   leftIcon={loggedUser ? undefined : <LockIcon />}
-                  isDisabled={!loggedUser}
                 >
                   Solicitar Sala
                 </Button>

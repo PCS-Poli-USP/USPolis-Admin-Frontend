@@ -38,7 +38,7 @@ const AuthPage = () => {
           alt='USPolis Logo'
           objectFit='cover'
           src={Logo}
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/allocation')}
         />
         <Heading size={'4xl'}>USPolis</Heading>
       </HStack>
