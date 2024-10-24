@@ -1,10 +1,14 @@
 import { Box, Button, Flex, Heading, Image, Text } from '@chakra-ui/react';
 import Header from './Header';
+import USPolisPhone from './Images/USPolisPhone.png';
 import USPolisPhoneLaptop from './Images/USPolisPhoneLaptop.png';
-import { FaMobileAlt } from 'react-icons/fa';
-import { MdOutlineAdminPanelSettings } from 'react-icons/md';
 import VerticalCarousel from './VerticalCarousel';
 import { items } from './carousel.items';
+
+import { FaApple, FaMobileAlt } from 'react-icons/fa';
+import { MdOutlineAdminPanelSettings } from 'react-icons/md';
+import { IoLogoGooglePlaystore } from 'react-icons/io5';
+import { RiAppleLine } from 'react-icons/ri';
 
 function Home() {
   return (
@@ -61,12 +65,67 @@ function Home() {
       <Box id='section2' h={'auto'}>
         <VerticalCarousel items={items} />
       </Box>
-      <Flex h={'200px'} bg={'teal'} align={'center'} justify={'center'}>
+      <Flex
+        id='section4'
+        h={'200px'}
+        bg={'teal'}
+        align={'center'}
+        justify={'center'}
+      >
         <Heading textColor={'white'} size={'2xl'}>
           Baixe o App
         </Heading>
       </Flex>
-      <Box id='section3' bg={'grey'} h={'600px'}></Box>
+      <Box h={'calc(100vh - 250px)'}>
+        <Flex
+          w={'auto'}
+          h={'full'}
+          direction={'row'}
+          align={'center'}
+          justify={'center'}
+        >
+          <Flex direction={'column'} maxW={'500px'} gap={5}>
+            <Heading size={'2xl'}>Aplicativo USPolis</Heading>
+            <Text fontSize={'xl'}>
+              Utilize o nosso aplicativo para ter acesso a todas as informações
+              do nosso sistema. Monte sua grade, veja as salas disponíveis e
+              muito mais.
+            </Text>
+            <Flex direction={'row'} gap={10}>
+              <Button
+                size={'lg'}
+                leftIcon={<IoLogoGooglePlaystore />}
+                mt={5}
+                bg={'black'}
+                textColor={'white'}
+              >
+                <Text noOfLines={2}>
+                  Disponível no <br />
+                  Google Play
+                </Text>
+              </Button>
+              <Button
+                size={'lg'}
+                leftIcon={<FaApple />}
+                mt={5}
+                bg={'black'}
+                textColor={'white'}
+              >
+                <Text noOfLines={2}>
+                  Disponível na <br />
+                  Apple Store
+                </Text>
+              </Button>
+            </Flex>
+          </Flex>
+          <Image
+            src={USPolisPhone}
+            alt='USPolisPhone'
+            objectFit={'contain'}
+            boxSize={'500px'}
+          />
+        </Flex>
+      </Box>
       <Flex h={'200px'} bg={'teal'} align={'center'} justify={'center'}>
         <Heading textColor={'white'} size={'2xl'}>
           Sobre
