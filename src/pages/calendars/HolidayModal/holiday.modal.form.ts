@@ -17,7 +17,7 @@ export const formFields = {
   name: {
     validator: yup
       .string()
-      .required()
+      .required('Campo obrigatório')
       .test(
         'is-valid-name',
         'Nome inválido',
