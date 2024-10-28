@@ -3,13 +3,9 @@ import {
   HStack,
   Text,
   Image,
-  VStack,
   Card,
-  CardHeader,
   CardBody,
   Flex,
-  StackDivider,
-  Spacer,
 } from '@chakra-ui/react';
 import { GoogleLogin } from '@react-oauth/google';
 import { appContext } from 'context/AppContext';
