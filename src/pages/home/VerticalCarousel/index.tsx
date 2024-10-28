@@ -72,10 +72,11 @@ function VerticalCarousel({ items }: VerticalCarouselProps) {
                 fontWeight={'bold'}
                 size={'xl'}
                 color={'black'}
+                textAlign={'center'}
               >
                 {item.title}
               </Heading>
-              <Text maxW={'400px'} fontSize={'xl'}>
+              <Text maxW={'400px'} fontSize={'xl'} textAlign={'justify'}>
                 {item.description}
               </Text>
             </Flex>

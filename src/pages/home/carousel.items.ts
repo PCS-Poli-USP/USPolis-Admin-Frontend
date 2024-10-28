@@ -72,7 +72,7 @@ export const items: VerticalCarouselItem[] = [
   {
     title: 'Visualização de Conflitos',
     description:
-      'Alunos e professores podem solicitar reservas de salas de aula para eventos acadêmicos. Agilize o processo e receba a resposta diretamente no seu e-mail.',
+      'Utilize o sistema de visualização de conflitos para evitar a alocação de salas de aula em horários que já estão ocupados por outras disciplinas.',
     image: USPolisConflicts,
     alt: 'USPolisMySolicitations',
   },
