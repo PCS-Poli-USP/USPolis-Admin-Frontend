@@ -53,6 +53,8 @@ function HolidayModal(props: HolidayModalProps) {
 
   async function handleCreateSubmit() {
     if (isMultipleHolidays) {
+      const isValid = await trigger(['name', 'category_id']);
+      if (!isValid) return;
       const values = getValues();
       await createManyHolidays({
         category_id: values.category_id,

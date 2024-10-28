@@ -15,10 +15,23 @@ const chakraTheme = extendTheme({
   },
   styles: {
     global: {
+      html: {
+        overflow: 'auto',
+        height: '100%',
+      },
       body: {
+        margin: 0,
+        padding: 0,
+        height: '100%',
         color: 'uspolis.blue',
         fontFamily: 'Ubuntu, sans-serif',
       },
+      // '*::-webkit-scrollbar': {
+      //   display: 'none', // Oculta a barra de rolagem em navegadores WebKit
+      // },
+      // '*': {
+      //   scrollbarWidth: 'none', // Oculta a barra de rolagem em Firefox
+      // },
     },
   },
 });
