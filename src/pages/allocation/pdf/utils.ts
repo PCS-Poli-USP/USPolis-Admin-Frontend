@@ -79,7 +79,7 @@ function getScheduleMap(
     schedulesMap.push([
       reservation.building_name,
       reservation.classroom_name,
-      `${reservation.name}`,
+      `${reservation.title}`,
       reservation.schedule,
     ]),
   );

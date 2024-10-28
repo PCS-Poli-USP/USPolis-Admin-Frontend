@@ -1,4 +1,3 @@
-import { Auth } from 'aws-amplify';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 export default abstract class HttpService {
@@ -7,9 +6,20 @@ export default abstract class HttpService {
   constructor(protected baseURL: string, options: AxiosRequestConfig = {}) {
     this.http = axios.create({ baseURL, ...options });
     this.http.interceptors.request.use(async function (config) {
-      const access_token = (await Auth.currentSession()).getAccessToken().getJwtToken();
-      config.headers!["Authorization"] = `Bearer ${access_token}`;
+      const access_token = localStorage.getItem('token');
+      config.headers!['Authorization'] = `Bearer ${access_token}`;
       return config;
     });
+    this.http.interceptors.response.use(
+      (response) => {
+        return response;
+      },
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          localStorage.removeItem('token');
+        }
+        return Promise.reject(error);
+      },
+    );
   }
 }

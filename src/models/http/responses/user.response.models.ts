@@ -1,7 +1,8 @@
 import { BuildingResponse } from './building.response.models';
+import { ClassroomSolicitationResponse } from './classroomSolicitation.response.models';
 
 export interface UserResponse {
-  id: string;
+  id: number;
   username: string;
   email: string;
   is_admin: boolean;
@@ -9,4 +10,5 @@ export interface UserResponse {
   created_by: string;
   buildings?: BuildingResponse[];
   updated_at: string;
+  solicitations: Array<ClassroomSolicitationResponse>;
 }

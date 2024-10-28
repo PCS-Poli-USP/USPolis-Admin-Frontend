@@ -1,5 +1,8 @@
 import { AxiosResponse } from 'axios';
-import { CreateBuilding, UpdateBuilding } from 'models/http/requests/building.request.models';
+import {
+  CreateBuilding,
+  UpdateBuilding,
+} from 'models/http/requests/building.request.models';
 import HttpService from './http.service';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 
@@ -10,8 +13,12 @@ export default class BuildingsService extends HttpService {
     super(`${USPOLIS_SERVER_URL}`);
   }
 
-  list(): Promise<AxiosResponse<Array<BuildingResponse>>> {
+  getAll(): Promise<AxiosResponse<Array<BuildingResponse>>> {
     return this.http.get('/buildings');
+  }
+
+  getMyBuildings(): Promise<AxiosResponse<Array<BuildingResponse>>> {
+    return this.http.get('/users/my-buildings');
   }
 
   create(data: CreateBuilding): Promise<AxiosResponse<BuildingResponse>> {
@@ -22,7 +29,10 @@ export default class BuildingsService extends HttpService {
     return this.http.delete(`/admin/buildings/${id}`);
   }
 
-  update(id: number, data: UpdateBuilding): Promise<AxiosResponse<BuildingResponse>> {
+  update(
+    id: number,
+    data: UpdateBuilding,
+  ): Promise<AxiosResponse<BuildingResponse>> {
     return this.http.put(`/admin/buildings/${id}`, data);
   }
 }

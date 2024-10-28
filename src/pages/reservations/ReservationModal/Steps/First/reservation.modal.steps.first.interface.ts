@@ -6,7 +6,7 @@ export interface ReservationModalFirstStepProps {
   form: UseFormReturn<ReservationFirstForm, any, ReservationFirstForm>;
 }
 export interface ReservationFirstForm {
-  name: string;
+  title: string;
   type: ReservationType;
-  description?: string;
+  reason?: string;
 }

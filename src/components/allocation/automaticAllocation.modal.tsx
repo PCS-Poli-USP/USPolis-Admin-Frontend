@@ -134,7 +134,6 @@ export default function AutomaticAllocationModal({
     eventsService
       .editAllocations(newAllocatedEvents, newUnallocatedEvents)
       .then((it) => {
-        console.log('Editei a alocação!');
       })
       .catch((error) => {
         toastError(`Erro ao salvar alocação: ${error}`);

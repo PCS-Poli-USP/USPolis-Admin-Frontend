@@ -17,7 +17,7 @@ const useAllowedBuildings = () => {
       setLoading(true);
       if (loggedUser) {
         if (loggedUser.is_admin) {
-          await buildingsService.list().then((response) => {
+          await buildingsService.getMyBuildings().then((response) => {
             setAllowedBuildings(response.data.sort(sortBuildingsResponse));
           });
         } else {

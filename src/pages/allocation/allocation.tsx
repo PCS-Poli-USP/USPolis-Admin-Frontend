@@ -7,13 +7,21 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Skeleton,
+  Spacer,
   StackDivider,
   Text,
+  Tooltip,
+  VStack,
 } from '@chakra-ui/react';
 import { useDisclosure } from '@chakra-ui/react-use-disclosure';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
+import resourceTimeGridPlugin from '@fullcalendar/resource-timegrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import rrulePlugin from '@fullcalendar/rrule';
 import { PDFDownloadLink } from '@react-pdf/renderer';
@@ -30,15 +38,31 @@ import useAllocation from 'pages/allocation/hooks/useAllocation';
 import ClassesPDF from './pdf/ClassesPDF/classesPDF';
 import ClassroomsPDF from './pdf/ClassroomsPDF/classroomsPDF';
 import PageContent from 'components/common/PageContent';
+import { ChevronDownIcon, LockIcon } from '@chakra-ui/icons';
+import SolicitationModal from './SolicitationModal/solicitation.modal';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function Allocation() {
-  const { loading, setLoading } = useContext(appContext);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { loading, setLoading, loggedUser } = useContext(appContext);
   const calendarRef = useRef<FullCalendar>(null!);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenSolicitation,
+    onOpen: onOpenSolicitation,
+    onClose: onCloseSolicitation,
+  } = useDisclosure();
 
   const [nameSearchValue, setNameSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
-  const { events, resources, classes, reservations } = useAllocation();
+  const {
+    loading: loadingAllocation,
+    events,
+    resources,
+    classes,
+    reservations,
+  } = useAllocation();
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
 
   function setCalendarDate(ISOdate: string) {
@@ -81,7 +105,10 @@ function Allocation() {
 
   return (
     <PageContent>
-      <Loading isOpen={loading} onClose={() => setLoading(false)} />
+      <Loading
+        isOpen={loading || loadingAllocation}
+        onClose={() => setLoading(false)}
+      />
 
       <Grid
         templateAreas={`"header"
@@ -89,44 +116,79 @@ function Allocation() {
         gridTemplateRows={'1 1fr'}
         gridTemplateColumns={'1fr'}
       >
-        <GridItem p={4} area={'header'} display='flex' alignItems='center'>
-          <Text fontSize='4xl'>Alocações</Text>
-          <Button ml={4} colorScheme='blue'>
-            <PDFDownloadLink
-              document={<ClassesPDF classes={classes} />}
-              fileName='disciplinas.pdf'
+        <GridItem p={2} area={'header'} display='flex' alignItems='center'>
+          <VStack alignItems={'flex-start'} spacing={2} w={'100%'}>
+            <Text fontSize='4xl'>Mapa de Salas</Text>
+            <HStack
+              mb={4}
+              divider={<StackDivider />}
+              justifyContent='flex-end'
+              spacing={4}
+              w={'full'}
             >
-              {(params) =>
-                params.loading
-                  ? 'Carregando PDF...'
-                  : 'Baixar alocação das disciplinas'
-              }
-            </PDFDownloadLink>
-          </Button>
-          <Button ml={4} colorScheme='blue'>
-            <PDFDownloadLink
-              document={
-                <ClassroomsPDF classes={classes} reservations={reservations} />
-              }
-              fileName='salas.pdf'
-            >
-              {(params) =>
-                params.loading
-                  ? 'Carregando PDF...'
-                  : 'Baixar alocação das salas'
-              }
-            </PDFDownloadLink>
-          </Button>
-        </GridItem>
-        <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
-          <Skeleton isLoaded={!loading} h='100vh' startColor='uspolis.blue'>
-            <DatePickerModal
-              isOpen={isOpen}
-              onClose={onClose}
-              onSelectDate={setCalendarDate}
-            />
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rightIcon={<ChevronDownIcon />}
+                  colorScheme='blue'
+                >
+                  Opções
+                </MenuButton>
+                <MenuList zIndex={99999}>
+                  <MenuItem>
+                    <PDFDownloadLink
+                      document={<ClassesPDF classes={classes} />}
+                      fileName='disciplinas.pdf'
+                    >
+                      {(params) =>
+                        params.loading
+                          ? 'Carregando PDF...'
+                          : 'Baixar alocação das disciplinas'
+                      }
+                    </PDFDownloadLink>
+                  </MenuItem>
+                  <MenuItem>
+                    <PDFDownloadLink
+                      document={
+                        <ClassroomsPDF
+                          classes={classes}
+                          reservations={reservations}
+                        />
+                      }
+                      fileName='salas.pdf'
+                    >
+                      {(params) =>
+                        params.loading
+                          ? 'Carregando PDF...'
+                          : 'Baixar alocação das salas'
+                      }
+                    </PDFDownloadLink>
+                  </MenuItem>
+                </MenuList>
+              </Menu>
 
-            <HStack mb={4} divider={<StackDivider />} justifyContent='flex-end'>
+              <Tooltip
+                label={loggedUser ? '' : 'Entre para poder fazer essa ação.'}
+              >
+                <Button
+                  colorScheme='blue'
+                  onClick={() => {
+                    if (!loggedUser) {
+                      navigate('/auth', {
+                        replace: true,
+                        state: { from: location },
+                      });
+                    }
+                    onOpenSolicitation();
+                  }}
+                  leftIcon={loggedUser ? undefined : <LockIcon />}
+                >
+                  Solicitar Sala
+                </Button>
+              </Tooltip>
+
+              <Spacer />
+
               <InputGroup w='fit-content'>
                 <InputLeftElement pointerEvents='none'>
                   <BsSearch color='gray.300' />
@@ -157,12 +219,33 @@ function Allocation() {
                 />
               </InputGroup>
             </HStack>
+          </VStack>
+        </GridItem>
+        <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
+          <Skeleton
+            isLoaded={!loading && !loadingAllocation}
+            h='100vh'
+            // startColor='uspolis.blue'
+          >
+            <DatePickerModal
+              isOpen={isOpen}
+              onClose={onClose}
+              onSelectDate={setCalendarDate}
+            />
+            {loggedUser && (
+              <SolicitationModal
+                isOpen={isOpenSolicitation}
+                onClose={onCloseSolicitation}
+              />
+            )}
+
             <Box paddingBottom={4}>
               <FullCalendar
                 ref={calendarRef}
                 schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
                 plugins={[
                   timeGridPlugin,
+                  resourceTimeGridPlugin,
                   resourceTimelinePlugin,
                   rrulePlugin,
                   // eventsByClassroomsPlugin,
@@ -181,6 +264,7 @@ function Allocation() {
                 buttonText={{
                   // eventsByClassrooms: 'Salas',
                   resourceTimelineDay: 'Sala / Dia',
+                  // resourceTimeGridDay: 'Dia',
                   // eventsByWeek: 'Sala / Semana',
                   timeGridWeek: 'Geral',
                   today: 'Hoje',
@@ -196,6 +280,17 @@ function Allocation() {
                     slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
                     eventMaxStack: 1,
                     titleFormat: { year: 'numeric', month: 'long' },
+                  },
+                  resourceTimeGridDay: {
+                    slotDuration: '00:30',
+                    slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
+                    eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
+                    titleFormat: {
+                      weekday: 'long',
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
+                    },
                   },
                   resourceTimelineDay: {
                     slotDuration: '01:00',

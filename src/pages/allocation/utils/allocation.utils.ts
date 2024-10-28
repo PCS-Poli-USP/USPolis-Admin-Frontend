@@ -123,7 +123,7 @@ export function EventsFromReservations(
       acc.concat(
         reservation.schedule.occurrences.map<Event>((occur) => ({
           id: String(occur.id), // Must be unique por every occurence
-          title: `Reserva - ${reservation.name}`,
+          title: `Reserva - ${reservation.title}`,
           start: `${occur.date}T${occur.start_time}`,
           end: `${occur.date}T${occur.end_time}`,
           allDay: reservation.schedule.all_day,
@@ -136,7 +136,7 @@ export function EventsFromReservations(
               classroom: reservation.schedule.classroom
                 ? reservation.schedule.classroom
                 : AllocationEnum.UNALLOCATED,
-              name: reservation.name,
+              title: reservation.title,
               type: reservation.type,
               recurrence: reservation.schedule.recurrence,
               week_day: reservation.schedule.week_day,
@@ -145,7 +145,7 @@ export function EventsFromReservations(
               end_time: reservation.schedule.end_time,
               start_date: reservation.schedule.start_date,
               end_date: reservation.schedule.end_date,
-              description: reservation.description,
+              description: reservation.reason,
               created_by: reservation.created_by,
             },
           },

@@ -1,4 +1,5 @@
 import { Row } from '@tanstack/react-table';
+import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 
 export function FilterBoolean(row: Row<any>, columnId: string, value: string) {
   const booleanFromStringValue = value === 'true';
@@ -43,4 +44,16 @@ export function FilterBuilding(row: Row<any>, columnId: string, value: string) {
   return arrayValue.some((it) =>
     it.toLowerCase().includes(value.toLowerCase()),
   );
+}
+
+export function FilterRequester(
+  row: Row<ReservationResponse>,
+  columnId: string,
+  value: string,
+) {
+  const requester: string = row.getValue(columnId);
+  if (!requester) {
+    return row.original.created_by.toLowerCase().includes(value.toLowerCase());
+  }
+  return requester.toLowerCase().includes(value.toLowerCase());
 }

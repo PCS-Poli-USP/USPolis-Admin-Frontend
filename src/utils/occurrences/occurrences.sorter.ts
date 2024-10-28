@@ -1,7 +1,7 @@
 import { OccurrenceResponse } from 'models/http/responses/occurrence.response.models';
 import moment from 'moment';
 
-export function sortOccurrencesResponse(
+export function sortOccurrenceResponse(
   A: OccurrenceResponse,
   B: OccurrenceResponse,
 ) {

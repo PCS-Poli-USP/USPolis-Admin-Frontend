@@ -14,7 +14,6 @@ export default class ScheduleService extends HttpService {
     id: number,
     data: ScheduleUpdateOccurences,
   ): Promise<AxiosResponse<ScheduleFullResponse>> {
-    console.log(data);
     return this.http.patch(`/${id}/edit-occurrences`, data);
   }
 }

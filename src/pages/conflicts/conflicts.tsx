@@ -7,6 +7,7 @@ import EventsService from 'services/api/events.service';
 import moment from 'moment';
 import PageContent from 'components/common/PageContent';
 import { AllocateClassModal } from 'pages/classes/AllocateClassModal';
+import { Collapsable } from 'components/common/Collapsable';
 const ConflictsPage = () => {
   const eventsService = new EventsService();
   const conflictsService = new ConflictsService();
@@ -139,80 +140,95 @@ const ConflictsPage = () => {
                       flexDirection='column'
                       gap={4}
                     >
-                      {classroom.conflicts.map((event_group, index) => (
-                        <C.Flex
-                          key={index}
-                          direction={'column'}
-                          justifyContent={'space-between'}
-                          gap={4}
-                          border={'1px solid'}
-                          boxShadow={'md'}
-                          borderColor={'gray.200'}
-                          borderRadius={4}
-                          padding={4}
-                        >
-                          <C.Heading size='md'>
-                            {moment(event_group[0].date).format('DD/MM/YYYY')}
-                          </C.Heading>
-                          {event_group.map((event) => (
-                            <C.Flex
-                              key={event.id}
-                              direction={'row'}
-                              justifyContent={'space-between'}
-                              border={'1px solid'}
-                              borderColor={'gray.200'}
-                              borderRadius={4}
-                              padding={4}
-                            >
-                              <C.Flex direction={'column'} flex={1}>
-                                <C.Text fontSize={'md'}>
-                                  <strong>
-                                    Início: {event.start_time.toLocaleString()}
-                                  </strong>
-                                </C.Text>
-                                <C.Text fontSize={'md'}>
-                                  <strong>
-                                    Fim: {event.end_time.toLocaleString()}
-                                  </strong>
-                                </C.Text>
-                              </C.Flex>
-                              <C.Flex direction={'column'} flex={1}>
-                                {event.subject_code ? (
-                                  <C.Text fontSize={'md'}>
-                                    Disciplina: {event.subject_code}
-                                  </C.Text>
-                                ) : undefined}
-                                {event.reservation_name ? (
-                                  <C.Text fontSize={'md'}>
-                                    Reserva: {event.reservation_name}
-                                  </C.Text>
-                                ) : undefined}
-                              </C.Flex>
-                              <C.Flex direction={'column'} flex={1}>
-                                {event.class_code ? (
-                                  <C.Text fontSize={'md'}>
-                                    Código de turma: {event.class_code}
-                                  </C.Text>
-                                ) : undefined}
-
-                                {event.subject_code ? (
-                                  <C.Text fontSize={'md'}>
-                                    Código de disciplina: {event.subject_code}
-                                  </C.Text>
-                                ) : undefined}
-                              </C.Flex>
-                              <C.Button
-                                onClick={() => {
-                                  setSelectedClassId(event.class_id);
-                                  setIsOpenAllocate(true);
-                                }}
-                              >
-                                Editar Alocação
-                              </C.Button>
-                            </C.Flex>
-                          ))}
-                        </C.Flex>
-                      ))}
+                      {Object.entries(classroom.conflicts).map(
+                        ([identifier, event_groups], index) => (
+                          <C.Flex
+                            key={index}
+                            direction={'column'}
+                            justifyContent={'space-between'}
+                            gap={4}
+                            border={'1px solid'}
+                            boxShadow={'md'}
+                            borderColor={'gray.200'}
+                            borderRadius={4}
+                            padding={4}
+                          >
+                            <Collapsable title={identifier}>
+                              {event_groups.map((event_group, index) => (
+                                <C.Flex
+                                  key={index}
+                                  direction={'column'}
+                                  justifyContent={'space-between'}
+                                  border={'1px solid'}
+                                  borderColor={'gray.200'}
+                                  borderRadius={4}
+                                  padding={4}
+                                  margin={4}
+                                >
+                                  <C.Heading size='md'>
+                                    {moment(event_group[0].date).format(
+                                      'DD/MM/YYYY',
+                                    )}
+                                  </C.Heading>
+                                  {event_group.map((event) => (
+                                    <C.Flex
+                                      key={event.id}
+                                      direction={'row'}
+                                      justifyContent={'space-between'}
+                                      border={'1px solid'}
+                                      borderColor={'gray.200'}
+                                      borderRadius={4}
+                                      padding={4}
+                                    >
+                                      <C.Flex direction={'column'} flex={1}>
+                                        <C.Text fontSize={'md'}>
+                                          <strong>
+                                            Início:{' '}
+                                            {event.start_time.toLocaleString()}
+                                          </strong>
+                                        </C.Text>
+                                        <C.Text fontSize={'md'}>
+                                          <strong>
+                                            Fim:{' '}
+                                            {event.end_time.toLocaleString()}
+                                          </strong>
+                                        </C.Text>
+                                      </C.Flex>
+                                      <C.Flex direction={'column'} flex={1}>
+                                        {event.subject_code ? (
+                                          <C.Text fontSize={'md'}>
+                                            {event.subject_code}
+                                          </C.Text>
+                                        ) : undefined}
+                                        {event.reservation_name ? (
+                                          <C.Text fontSize={'md'}>
+                                            Reserva: {event.reservation_name}
+                                          </C.Text>
+                                        ) : undefined}
+                                      </C.Flex>
+                                      <C.Flex direction={'column'} flex={1}>
+                                        {event.class_code ? (
+                                          <C.Text fontSize={'md'}>
+                                            Turma: {event.class_code}
+                                          </C.Text>
+                                        ) : undefined}
+                                      </C.Flex>
+                                      <C.Button
+                                        onClick={() => {
+                                          setSelectedClassId(event.class_id);
+                                          setIsOpenAllocate(true);
+                                        }}
+                                      >
+                                        Editar Alocação
+                                      </C.Button>
+                                    </C.Flex>
+                                  ))}
+                                </C.Flex>
+                              ))}
+                            </Collapsable>
+                          </C.Flex>
+                        ),
+                      )}
                     </C.AccordionPanel>
                   </C.AccordionItem>
                 ))

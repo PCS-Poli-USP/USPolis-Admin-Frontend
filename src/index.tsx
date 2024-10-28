@@ -19,7 +19,6 @@ import { ThemeProvider } from '@mui/material';
 import 'moment/locale/pt-br';
 import { Amplify } from 'aws-amplify';
 import awsConfig from 'aws-config';
-import AuthRoute from 'components/routes/auth.route';
 import AppContextProvider from 'context/AppContext';
 import Buildings from 'pages/buildings/buildings';
 import Users from 'pages/users/users';
@@ -28,6 +27,14 @@ import Subjects from 'pages/subjects/subjects';
 import Calendars from 'pages/calendars/';
 import Reservations from 'pages/reservations';
 import EmptyPage from 'components/common/EmptyPage';
+import Solicitations from 'pages/solicitations/solicitations';
+import MySolicitations from 'pages/mySolicitations/mySolicitations';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import PrivateRoute from 'components/routes/private.route';
+import AdminRoute from 'components/routes/admin.route';
+import Page404 from 'pages/page404';
+import { AuthPage } from 'pages/auth';
+import RestrictedRoute from 'components/routes/restricted.route';
 
 Amplify.configure(awsConfig);
 
@@ -38,34 +45,57 @@ root.render(
   // <React.StrictMode>
   <ThemeProvider theme={muiTheme}>
     <ChakraProvider theme={chakraTheme}>
-      <AppContextProvider>
-        <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale='pt-br'>
-          <Router>
-            <Routes>
-              <Route path='/' element={<Navigate to='/index' />} />
-              <Route path='/index' element={<App />} />
-              {/* Private Routes */}
-              <Route path='/' element={<AuthRoute />}>
+      <GoogleOAuthProvider clientId='903358108153-kj9u7e4liu19cm73lr6hlhi876smdscj.apps.googleusercontent.com'>
+        <AppContextProvider>
+          <LocalizationProvider
+            dateAdapter={AdapterMoment}
+            adapterLocale='pt-br'
+          >
+            <Router>
+              <Routes>
+                <Route path='/' element={<Navigate to='/index' />} />
+                <Route path='/index' element={<App />} />
+                <Route path='/auth' element={<AuthPage />} />
                 <Route path='/' element={<EmptyPage />}>
-                  <Route path='users' element={<Users />} />
-                  <Route path='buildings' element={<Buildings />} />
-                  <Route path='subjects' element={<Subjects />} />
-                  <Route path='calendars' element={<Calendars />} />
-                  <Route path='classrooms' element={<Classrooms />} />
-                  <Route path='classes' element={<Classes />} />
+                  {/* Public routes */}
                   <Route path='allocation' element={<Allocation />} />
-                  <Route path='reservations' element={<Reservations />} />
-                  <Route path='conflicts' element={<ConflictsPage />} />
-                  <Route
-                    path='institutional-events'
-                    element={<InstitutionalEvents />}
-                  />
+
+                  {/* Private routes */}
+                  <Route element={<PrivateRoute />}>
+                    <Route
+                      path='my-solicitations'
+                      element={<MySolicitations />}
+                    />
+                    
+                    {/* Restricted routes */}
+                    <Route element={<RestrictedRoute />}>
+                      <Route path='subjects' element={<Subjects />} />
+                      <Route path='calendars' element={<Calendars />} />
+                      <Route path='classrooms' element={<Classrooms />} />
+                      <Route path='classes' element={<Classes />} />
+                      <Route path='reservations' element={<Reservations />} />
+                      <Route path='conflicts' element={<ConflictsPage />} />
+                      <Route path='solicitations' element={<Solicitations />} />
+                    </Route>
+
+                    {/* Admin routes */}
+                    <Route path='' element={<AdminRoute />}>
+                      <Route path='users' element={<Users />} />
+                      <Route path='buildings' element={<Buildings />} />
+                      <Route
+                        path='institutional-events'
+                        element={<InstitutionalEvents />}
+                      />
+                    </Route>
+                  </Route>
+                  {/* Not found */}
+                  <Route path='*' element={<Page404 />} />
                 </Route>
-              </Route>
-            </Routes>
-          </Router>
-        </LocalizationProvider>
-      </AppContextProvider>
+              </Routes>
+            </Router>
+          </LocalizationProvider>
+        </AppContextProvider>
+      </GoogleOAuthProvider>
     </ChakraProvider>
   </ThemeProvider>,
   // {/* </React.StrictMode>, */}

@@ -74,7 +74,7 @@ export default function MultipleEditAccordion({
     if (loggedUser) {
       if (loggedUser.is_admin) {
         setBuildingsLoading(true);
-        buildingsService.list().then((response) => {
+        buildingsService.getAll().then((response) => {
           setBuildingsList(response.data);
           setBuildingsLoading(false);
         });

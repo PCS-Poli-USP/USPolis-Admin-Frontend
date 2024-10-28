@@ -9,7 +9,7 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
     <VStack w={'full'} align={'stretch'}>
       <FormProvider {...props.form}>
         <form>
-          <Input label={'Nome'} name={'name'} />
+          <Input label={'Título'} name={'title'} />
           <SelectInput
             mt={4}
             label={'Tipo'}
@@ -19,7 +19,7 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
               label: ReservationType.translate(value),
             }))}
           />
-          <Textarea mt={4} label='Descrição (Opcional)' name='description' />
+          <Textarea mt={4} label='Motivo (Opcional)' name='reason' />
         </form>
       </FormProvider>
     </VStack>

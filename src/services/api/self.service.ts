@@ -1,6 +1,6 @@
-import { User } from 'models/common/user.common.model';
 import HttpService from './http.service';
 import { AxiosResponse } from 'axios';
+import { UserResponse } from 'models/http/responses/user.response.models';
 
 const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
 
@@ -9,7 +9,7 @@ export default class SelfService extends HttpService {
     super(`${USPOLIS_SERVER_URL}/users`);
   }
 
-  getSelf(): Promise<AxiosResponse<User>> {
+  getSelf(): Promise<AxiosResponse<UserResponse>> {
     return this.http.get('');
   }
 }

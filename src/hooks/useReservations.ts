@@ -39,7 +39,7 @@ const useReservations = () => {
         .then((response) => {
           showToast(
             'Sucesso',
-            `Reserva ${data.name} criado com sucesso!`,
+            `Reserva ${data.title} criado com sucesso!`,
             'success',
           );
           getReservations();
@@ -67,7 +67,7 @@ const useReservations = () => {
         .catch((error) => {
           showToast(
             'Erro',
-            `Erro ao atualizar o reserva ${data.name}: ${error}`,
+            `Erro ao atualizar o reserva ${data.title}: ${error}`,
             'error',
           );
         })

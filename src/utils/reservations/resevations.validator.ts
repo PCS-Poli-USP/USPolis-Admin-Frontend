@@ -1,7 +1,7 @@
 import CommonValidator from 'utils/common/common.validator';
 
 export class ReservationValidator extends CommonValidator {
-  static isInvalidName(value: string) {
+  static isInvalidTitle(value: string) {
     return this.isEmptyString(value);
   }
 

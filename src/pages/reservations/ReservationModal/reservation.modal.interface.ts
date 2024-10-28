@@ -15,9 +15,9 @@ export interface ReservationModalProps extends ModalProps {
 }
 
 export interface ReservationForm {
-  name: string;
+  title: string;
   type: string;
-  description?: string;
+  reason?: string;
 
   building_id: number;
   classroom_id: number;

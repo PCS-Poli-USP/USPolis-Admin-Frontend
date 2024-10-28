@@ -5,13 +5,13 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react';
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { FieldPropsBase } from '../form.interface';
 
 interface CheckBoxProps extends FieldPropsBase {
   text?: string;
   label?: string;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onChange?: (value: boolean) => void;
 }
 
 export function CheckBox({
@@ -20,7 +20,6 @@ export function CheckBox({
   text = undefined,
   disabled = false,
   hidden = false,
-  placeholder = undefined,
   mt = undefined,
   mb = undefined,
   mr = undefined,
@@ -28,12 +27,13 @@ export function CheckBox({
   onChange = undefined,
 }: CheckBoxProps) {
   const {
-    register,
+    control,
     formState: { errors },
   } = useFormContext();
 
   return (
     <FormControl
+      w={'auto'}
       isInvalid={!!errors[name]}
       hidden={hidden}
       mt={mt}
@@ -44,15 +44,24 @@ export function CheckBox({
       <FormLabel alignSelf='flex-start' hidden={label ? false : true}>
         {label}
       </FormLabel>
-      <ChakraCheckBox
-        {...register(name)}
-        disabled={disabled}
-        placeholder={placeholder}
-        hidden={hidden}
-        onChange={onChange}
-      >
-        {text}
-      </ChakraCheckBox>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <ChakraCheckBox
+            {...field}
+            id={name}
+            w={'auto'}
+            isDisabled={disabled}
+            onChange={(event) => {
+              if (onChange) onChange(event.target.checked);
+              field.onChange(event);
+            }}
+          >
+            {text}
+          </ChakraCheckBox>
+        )}
+      />
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
     </FormControl>
   );

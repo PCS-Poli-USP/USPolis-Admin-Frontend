@@ -16,7 +16,12 @@ export interface ScheduleResponseBase {
   all_day: boolean;
 
   class_id?: number;
+  subject?: string;
+  class_code?: string;
+
   reservation_id?: number;
+  reservation?: string;
+
   classroom_id?: number;
   classroom?: string;
   building_id?: number;

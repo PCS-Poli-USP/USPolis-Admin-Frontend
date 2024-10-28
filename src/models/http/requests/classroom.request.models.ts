@@ -10,3 +10,9 @@ export interface CreateClassroom {
 }
 
 export interface UpdateClassroom extends CreateClassroom {}
+
+export interface ClassroomConflictCheck {
+  start_time: string;
+  end_time: string;
+  dates: string[];
+}

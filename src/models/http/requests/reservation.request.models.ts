@@ -2,9 +2,9 @@ import { ReservationType } from 'utils/enums/reservations.enum';
 import { CreateSchedule, UpdateSchedule } from './schedule.request.models';
 
 export interface ReservationBase {
-  name: string;
+  title: string;
   type: ReservationType;
-  description?: string;
+  reason?: string;
   classroom_id: number;
 }
 

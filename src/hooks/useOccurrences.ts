@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import OccurrencesService, {
   AllocateManySchedulesData,
 } from 'services/api/occurrences.service';
-import { sortOccurrencesResponse } from 'utils/occurrences/occurrences.sorter';
+import { sortOccurrenceResponse } from 'utils/occurrences/occurrences.sorter';
 
 const service = new OccurrencesService();
 
@@ -20,7 +20,7 @@ const useOccurrences = () => {
     await service
       .list()
       .then((response) => {
-        newOccurrences = response.data.sort(sortOccurrencesResponse);
+        newOccurrences = response.data.sort(sortOccurrenceResponse);
         setOccurrences(newOccurrences);
       })
       .catch((error) => {

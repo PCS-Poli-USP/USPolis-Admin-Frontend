@@ -105,7 +105,11 @@ function ClassroomCalendar({ classroom, h, w }: ClassroomCalendarProps) {
 
   useEffect(() => {
     if (classroom) {
-      const filteredOccurrences = classroom.occurrences.filter(
+      const occurrences = classroom.schedules.reduce<OccurrenceResponse[]>(
+        (acc, schedule) => acc.concat(schedule.occurrences),
+        [],
+      );
+      const filteredOccurrences = occurrences.filter(
         (occur) => occur.date === currentDate.format('YYYY-MM-DD'),
       );
       setOccurrencesByTime(getOccurrencesByTime(filteredOccurrences));
