@@ -1,5 +1,3 @@
-import USPolisLaptop from './Images/USPolisLaptop.png';
-import USPolisPhoneLaptop from './Images/USPolisPhoneLaptop.png';
 import USPolisAllocation from './Images/USPolisAllocation.png';
 import USPolisReservations from './Images/USPolisReservations.png';
 import USPolisMySolicitations from './Images/USPolisMySolicitations.png';
