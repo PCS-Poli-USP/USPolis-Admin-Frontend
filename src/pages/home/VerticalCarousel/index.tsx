@@ -15,7 +15,7 @@ interface VerticalCarouselProps {
 
 function VerticalCarousel({ items }: VerticalCarouselProps) {
   const imageGap = 100;
-  const imageH = 500;
+  const imageH = 600;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -29,12 +29,14 @@ function VerticalCarousel({ items }: VerticalCarouselProps) {
       const scrollY = window.scrollY;
       const { top } = containerRef.current.getBoundingClientRect();
       const componentTop = top + scrollY;
-      if (scrollY >= componentTop + (items.length - 1) * (imageH + imageGap))
+      if (
+        scrollY >=
+        componentTop + (items.length - 1) * (imageH + imageGap / 4)
+      )
         return;
 
       const index = Math.floor(
-        (scrollY - componentTop + (imageH + imageGap) / 2) /
-          (imageH + imageGap),
+        (scrollY - componentTop + (imageH + imageGap) / 2) / imageH,
       );
       if (index >= 0 && index < items.length && index !== currentImageIndex) {
         setCurrentImageIndex(index);
@@ -65,17 +67,24 @@ function VerticalCarousel({ items }: VerticalCarouselProps) {
               align={'center'}
               justify={'center'}
             >
-              <Heading fontWeight={'bold'} size={'xl'} color={'black'}>
+              <Heading
+                maxW={'400px'}
+                fontWeight={'bold'}
+                size={'xl'}
+                color={'black'}
+              >
                 {item.title}
               </Heading>
-              <Text>{item.description}</Text>
+              <Text maxW={'400px'} fontSize={'xl'}>
+                {item.description}
+              </Text>
             </Flex>
           ))}
         </VStack>
         <Box
-          borderRadius={'lg'}
+          // borderRadius={'lg'}
           overflow={'hidden'}
-          maxH={300}
+          maxH={`${imageH}px`}
           w={'full'}
           mt={relativeScroll > 0 ? relativeScroll + 60 + imageGap : imageGap}
         >
@@ -86,6 +95,9 @@ function VerticalCarousel({ items }: VerticalCarouselProps) {
             maxH={`${imageH}px`}
             maxW={imageH}
             width='100%' // Para garantir que a imagem preencha o Box
+            borderRadius={'lg'}
+            border={'2px solid'}
+            borderColor={'black'}
           />
         </Box>
       </Flex>

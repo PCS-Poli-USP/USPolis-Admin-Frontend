@@ -35,13 +35,17 @@ function Home() {
           </Text>
           <Flex direction={'column'} gap={5} mt={10}>
             <Button
+              as={'a'}
               fontSize={'xl'}
               colorScheme='teal'
               leftIcon={<FaMobileAlt />}
+              href='#section4'
             >
               Mobile
             </Button>
             <Button
+              as={'a'}
+              href='#section2'
               fontSize={'xl'}
               colorScheme='teal'
               leftIcon={<MdOutlineAdminPanelSettings />}
@@ -131,7 +135,7 @@ function Home() {
           Sobre
         </Heading>
       </Flex>
-      <Box id='section5' bg={'grey'} h={'600px'}></Box>
+      <Box id='section5' bg={'white'} h={'600px'}></Box>
     </Flex>
   );
 }

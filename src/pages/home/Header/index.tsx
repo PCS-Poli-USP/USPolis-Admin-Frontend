@@ -1,7 +1,11 @@
 import { Button, Flex, HStack, Image, Text, Link } from '@chakra-ui/react';
 import Logo from 'assets/uspolis.logo.png';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Header() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   return (
     <Flex
       direction={'row'}
@@ -14,7 +18,7 @@ function Header() {
       gap={4}
       h={'60px'}
       bg={'white'}
-      zIndex={10000}
+      zIndex={100}
     >
       <Link
         href='#section1'
@@ -80,6 +84,41 @@ function Header() {
       >
         Sobre
       </Button>
+      <Flex direction={'row'} justify={'center'} gap={2} align={'center'}>
+        <Button
+          ml={'100px'}
+          // as={'a'}
+          variant={'solid'}
+          colorScheme={'teal'}
+          size={'md'}
+          onClick={() => {
+            navigate('/allocation', {
+              replace: true,
+              state: { from: location },
+            });
+          }}
+        >
+          Entrar
+        </Button>
+        <Text fontSize={'3xl'}>|</Text>
+        <Button
+          as={'a'}
+          variant={'link'}
+          color={'teal'}
+          _hover={{
+            textDecoration: 'none',
+            color: 'teal',
+          }}
+          onClick={() => {
+            navigate('/allocation', {
+              replace: true,
+              state: { from: location },
+            });
+          }}
+        >
+          Mapa de Salas
+        </Button>
+      </Flex>
     </Flex>
   );
 }
