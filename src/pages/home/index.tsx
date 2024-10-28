@@ -223,7 +223,7 @@ function Home() {
           Contato:
         </Heading>
         <Text textColor={'white'} fontSize={'lg'}>
-          www.uspolis@usp.br
+          uspolis@usp.br
         </Text>
       </Box>
     </Flex>
