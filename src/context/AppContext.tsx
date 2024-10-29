@@ -7,7 +7,7 @@ interface AppContext {
   setLoading: (value: boolean) => void;
   loggedUser: UserResponse | null;
   logout: () => Promise<void>;
-  getSelfFromBackend: () => void;
+  getSelfFromBackend: () => Promise<void>;
 }
 
 const DEFAULT_VALUE = {
@@ -56,7 +56,7 @@ export default function AppContextProvider({
 
   async function logout() {
     localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
     setLoggedUser(null);
     setLoading(false);
   }

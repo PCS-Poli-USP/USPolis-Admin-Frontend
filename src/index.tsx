@@ -35,6 +35,7 @@ import AdminRoute from 'components/routes/admin.route';
 import Page404 from 'pages/page404';
 import { AuthPage } from 'pages/auth';
 import RestrictedRoute from 'components/routes/restricted.route';
+import { AuthCallbackPage } from 'pages/auth/auth-callback';
 
 Amplify.configure(awsConfig);
 
@@ -58,6 +59,7 @@ root.render(
                 <Route path='/' element={<Navigate to='/index' />} />
                 <Route path='/index' element={<App />} />
                 <Route path='/auth' element={<AuthPage />} />
+                <Route path='auth-callback' element={<AuthCallbackPage />} />
                 <Route path='/' element={<EmptyPage />}>
                   {/* Public routes */}
                   <Route path='allocation' element={<Allocation />} />
