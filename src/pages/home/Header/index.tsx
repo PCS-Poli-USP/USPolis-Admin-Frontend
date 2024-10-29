@@ -102,12 +102,13 @@ function Header() {
         </Button>
         <Text fontSize={'3xl'}>|</Text>
         <Button
-          as={'a'}
+          // as={'a'}
           variant={'link'}
           color={'teal'}
           _hover={{
             textDecoration: 'none',
             color: 'teal',
+            cursor: 'pointer',
           }}
           onClick={() => {
             navigate('/allocation', {

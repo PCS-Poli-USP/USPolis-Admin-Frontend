@@ -46,7 +46,7 @@ const AuthPage = () => {
       align={'center'}
       direction={'column'}
     >
-      <Card mb={'200px'}>
+      <Card mb={'200px'} boxShadow={'dark-lg'}>
         <CardBody maxW={'600px'}>
           <Flex
             padding={30}

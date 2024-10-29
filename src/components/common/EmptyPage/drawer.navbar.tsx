@@ -71,7 +71,7 @@ export function DrawerNavBar({ handleDrawerOpen, open }: DrawerNavBarProps) {
             />
           )}
 
-          <NavLink to='/allocation'>
+          <NavLink to='/index'>
             <Image
               src={Logo}
               alt='USPolis'
