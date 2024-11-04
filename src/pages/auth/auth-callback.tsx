@@ -37,7 +37,7 @@ const AuthCallbackPage = () => {
   return (
     <div>
       {error == null ? (
-        <p>Logado com sucesso, aguarde redirecionamento....</p>
+        <p>Login efetuado com sucesso, aguarde redirecionamento....</p>
       ) : (
         <>
           <h1>Um erro aconteceu:</h1>

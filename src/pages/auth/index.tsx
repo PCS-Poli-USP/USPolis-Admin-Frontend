@@ -48,7 +48,15 @@ const AuthPage = () => {
             </Heading>
             <Heading size={'lg'}>Faça login para continuar</Heading>
             <Text fontSize={'lg'}>Utilize seu email USP</Text>
-            <Button onClick={() => login()}>Sign in with Google 🚀</Button>;
+            <Button onClick={() => login()}>
+              <HStack gap={2}>
+                <Image
+                  src='https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA'
+                  width={5}
+                />
+                <span>Google Sign In</span>
+              </HStack>
+            </Button>
           </Flex>
         </CardBody>
       </Card>

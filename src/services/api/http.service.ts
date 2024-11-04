@@ -29,7 +29,6 @@ export default abstract class HttpService {
           const refreshToken: string | null =
             localStorage.getItem('refresh_token');
           if (refreshToken == null) {
-            alert('No access token, please login again!');
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             Promise.reject(error);
