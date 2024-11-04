@@ -10,7 +10,6 @@ import {
   Route,
   Routes,
 } from 'react-router-dom';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -36,6 +35,7 @@ import Page404 from 'pages/page404';
 import { AuthPage } from 'pages/auth';
 import RestrictedRoute from 'components/routes/restricted.route';
 import { AuthCallbackPage } from 'pages/auth/auth-callback';
+import Home from 'pages/home';
 
 Amplify.configure(awsConfig);
 
@@ -57,7 +57,7 @@ root.render(
             <Router>
               <Routes>
                 <Route path='/' element={<Navigate to='/index' />} />
-                <Route path='/index' element={<App />} />
+                <Route path='/index' element={<Home />} />
                 <Route path='/auth' element={<AuthPage />} />
                 <Route path='auth-callback' element={<AuthCallbackPage />} />
                 <Route path='/' element={<EmptyPage />}>

@@ -37,6 +37,9 @@ export default function AppContextProvider({
       if (e.response.status === 403) {
         throw new Error('User with this email not registered');
       }
+      if (e.response.status === 401 && e.response.detail === 'Token expired') {
+        logout();
+      }
     }
   }
 
