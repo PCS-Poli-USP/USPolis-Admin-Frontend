@@ -34,6 +34,7 @@ import AdminRoute from 'components/routes/admin.route';
 import Page404 from 'pages/page404';
 import { AuthPage } from 'pages/auth';
 import RestrictedRoute from 'components/routes/restricted.route';
+import { AuthCallbackPage } from 'pages/auth/auth-callback';
 import Home from 'pages/home';
 
 Amplify.configure(awsConfig);
@@ -45,7 +46,9 @@ root.render(
   // <React.StrictMode>
   <ThemeProvider theme={muiTheme}>
     <ChakraProvider theme={chakraTheme}>
-      <GoogleOAuthProvider clientId='903358108153-kj9u7e4liu19cm73lr6hlhi876smdscj.apps.googleusercontent.com'>
+      <GoogleOAuthProvider
+        clientId={process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID!}
+      >
         <AppContextProvider>
           <LocalizationProvider
             dateAdapter={AdapterMoment}
@@ -56,6 +59,7 @@ root.render(
                 <Route path='/' element={<Navigate to='/index' />} />
                 <Route path='/index' element={<Home />} />
                 <Route path='/auth' element={<AuthPage />} />
+                <Route path='auth-callback' element={<AuthCallbackPage />} />
                 <Route path='/' element={<EmptyPage />}>
                   {/* Public routes */}
                   <Route path='allocation' element={<Allocation />} />

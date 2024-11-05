@@ -33,7 +33,6 @@ interface EditUserFormValues {
 }
 
 interface EditUserOtherData {
-  username?: string;
   email?: string;
 }
 
@@ -98,10 +97,6 @@ export default function EditUserModal(props: EditModalProps) {
         <ModalCloseButton />
         <ModalBody pb={6}>
           <Flex direction={'column'} gap={4}>
-            <Flex direction={'column'}>
-              <FormLabel>Username</FormLabel>
-              <Input value={props.otherData?.username} disabled />
-            </Flex>
             <Flex direction={'column'}>
               <FormLabel>Email</FormLabel>
               <Input value={props.otherData?.email} disabled />

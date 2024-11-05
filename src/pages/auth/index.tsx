@@ -1,42 +1,17 @@
-import {
-  Heading,
-  HStack,
-  Text,
-  Image,
-  Card,
-  CardBody,
-  Flex,
-} from '@chakra-ui/react';
-import { GoogleLogin } from '@react-oauth/google';
-import { appContext } from 'context/AppContext';
-import { useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Heading, HStack, Text, Image, Button } from '@chakra-ui/react';
+import { useGoogleLogin } from '@react-oauth/google';
+import { Card, CardBody, Flex } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import Logo from 'assets/uspolis.logo.png';
-
-interface LocationState {
-  from: {
-    pathname: string;
-  };
-}
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const state = location.state as LocationState;
-  const from = state ? state.from.pathname : '/';
 
-  const { getSelfFromBackend } = useContext(appContext);
-
-  const handleLogin = async (token: string) => {
-    localStorage.setItem('token', token);
-    try {
-      await getSelfFromBackend();
-      navigate(from, { replace: true });
-    } catch (e: any) {
-      localStorage.removeItem('token');
-      alert(e.message);
-    }
-  };
+  const login = useGoogleLogin({
+    redirect_uri: 'http://localhost:3000/auth-callback',
+    ux_mode: 'redirect',
+    flow: 'auth-code',
+  });
 
   return (
     <Flex
@@ -73,14 +48,15 @@ const AuthPage = () => {
             </Heading>
             <Heading size={'lg'}>Faça login para continuar</Heading>
             <Text fontSize={'lg'}>Utilize seu email USP</Text>
-            <GoogleLogin
-              onSuccess={(credentials) => {
-                handleLogin(credentials.credential!);
-              }}
-              onError={() => {
-                alert('Login failed');
-              }}
-            />
+            <Button onClick={() => login()}>
+              <HStack gap={2}>
+                <Image
+                  src='https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA'
+                  width={5}
+                />
+                <span>Google Sign In</span>
+              </HStack>
+            </Button>
           </Flex>
         </CardBody>
       </Card>

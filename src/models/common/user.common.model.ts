@@ -3,7 +3,6 @@ import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSo
 
 export interface User {
   id: string;
-  username: string;
   name?: string;
   is_admin: boolean;
   email: string;

@@ -5,16 +5,14 @@ import SelfService from 'services/api/self.service';
 interface AppContext {
   loading: boolean;
   setLoading: (value: boolean) => void;
-  username: string;
   loggedUser: UserResponse | null;
   logout: () => Promise<void>;
-  getSelfFromBackend: () => void;
+  getSelfFromBackend: () => Promise<void>;
 }
 
 const DEFAULT_VALUE = {
   loading: false,
   setLoading: () => {},
-  username: '',
   loggedUser: null,
   logout: async () => {},
   getSelfFromBackend: async () => {},
@@ -26,7 +24,6 @@ export default function AppContextProvider({
   children,
 }: React.PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(false);
-  const [username, setUsername] = useState('');
   const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
 
   const selfService = new SelfService();
@@ -62,9 +59,8 @@ export default function AppContextProvider({
 
   async function logout() {
     localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
     setLoggedUser(null);
-    setUsername('');
     setLoading(false);
   }
 
@@ -77,7 +73,6 @@ export default function AppContextProvider({
       value={{
         loading,
         setLoading,
-        username,
         loggedUser,
         logout,
         getSelfFromBackend,
