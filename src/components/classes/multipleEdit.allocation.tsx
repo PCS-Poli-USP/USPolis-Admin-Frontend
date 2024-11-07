@@ -1,19 +1,19 @@
 import { HStack, Text, Box } from '@chakra-ui/react';
 import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
-import { Building } from 'models/building.model';
 import { Capitalize } from 'utils/formatters';
-import { ClassroomSchedule } from 'models/classroom.model';
+import { ClassroomSchedule } from 'models/common/classroom.model';
 import { useEffect, useState } from 'react';
-import { WeekDaysShortText } from 'models/enums/weekDays.enum';
+import { WeekDaysShortText } from 'utils/enums/weekDays.enum';
 import { ConflictCalculator } from 'utils/conflict.calculator';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 interface MultipleEditAllocationProps {
   eventID: string;
   weekDay: string;
   startTime: string;
   endTime: string;
-  buildingsList: Building[];
+  buildingsList: BuildingResponse[];
   scheduleList: ClassroomSchedule[];
   isLoadingSchedules: boolean;
   isUpdatingSchedules: boolean;
@@ -37,7 +37,7 @@ interface MultipleEditAllocationProps {
     end_time: string,
   ) => void;
   onSelectBuilding: (
-    building_id: string,
+    building_id: number,
     building_name: string,
     event_id: string,
   ) => void;
@@ -67,7 +67,7 @@ export function MultipleEditAllocation({
   const [filteredSchedules, setFilteredSchedules] =
     useState<ClassroomSchedule[]>();
 
-  const [selectedBuilding, setSelectedBuilding] = useState<Building>();
+  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
 
   const [hasConflict, setHasConflict] = useState(false);
 
@@ -147,7 +147,7 @@ export function MultipleEditAllocation({
     }
   }
 
-  async function handleSelectBuilding(building: Building) {
+  async function handleSelectBuilding(building: BuildingResponse) {
     setSelectedBuilding(building);
     onSelectBuilding(building.id, building.name, eventID);
   }
@@ -178,7 +178,7 @@ export function MultipleEditAllocation({
             placeholder='Selecionar prédio'
             onChange={(event) => {
               const newBuilding = buildingsList.find(
-                (it) => it.id === event.target.value,
+                (it) => it.id === Number(event.target.value),
               );
               if (newBuilding) {
                 // Já estava alocado agora tem que remover do calendário antigo

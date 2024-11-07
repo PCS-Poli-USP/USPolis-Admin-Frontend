@@ -13,13 +13,11 @@ import {
 import { CalendarIcon } from '@chakra-ui/icons';
 import { BsBookHalf, BsHouseFill, BsFillPenFill } from 'react-icons/bs';
 
-import Classroom from 'models/classroom.model';
-import Event from 'models/event.model';
+import Classroom from 'models/common/classroom.model';
+import Event from 'models/common/event.model';
 
 import { useEffect, useState } from 'react';
-import { weekDaysFormatter } from 'utils/classes/classes.formatter';
-import ClassroomsService from 'services/classrooms.service';
-import { sortClassrooms, sortEventsBySubjectAndClass } from 'utils/sorter';
+import ClassroomsService from 'services/api/classrooms.service';
 
 interface AutomaticAllocationAccordionProps {
   onEdit: (event: Event) => void;
@@ -38,20 +36,20 @@ export default function AutomaticAllocationAccordion({
   const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    if (classrooms.length <= 0) fetchClassrooms();
+    // if (classrooms.length <= 0) fetchClassrooms();
     if (allocated) setAllocatedEvents(allocated);
     if (unallocated) setUnallocatedEvents(unallocated);
   }, [classrooms, allocated, unallocated]);
 
-  function fetchClassrooms() {
-    classroomService.list().then((it) => {
-      it.data.sort(sortClassrooms);
-      setClassrooms(it.data);
-    });
-  }
+  // function fetchClassrooms() {
+  //   classroomService.list().then((it) => {
+  //     it.data.sort(sortClassrooms);
+  //     setClassrooms(it.data);
+  //   });
+  // }
 
-  allocatedEvents.sort(sortEventsBySubjectAndClass);
-  unallocatedEvents.sort(sortEventsBySubjectAndClass);
+  // allocatedEvents.sort(sortEventsBySubjectAndClass);
+  // unallocatedEvents.sort(sortEventsBySubjectAndClass);
 
   return (
     <Accordion
@@ -75,7 +73,7 @@ export default function AutomaticAllocationAccordion({
               <BsBookHalf />
               <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
               <CalendarIcon />
-              <Text>{`${weekDaysFormatter(value.week_day)}, ${
+              <Text>{`${(value.week_day)}, ${
                 value.start_time
               } às ${value.end_time}`}</Text>
               <BsHouseFill />
@@ -107,7 +105,7 @@ export default function AutomaticAllocationAccordion({
                 <BsBookHalf />
                 <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
                 <CalendarIcon />
-                <Text>{`${weekDaysFormatter(value.week_day)}, ${
+                <Text>{`${(value.week_day)}, ${
                   value.start_time
                 } às ${value.end_time}`}</Text>
                 <Button
@@ -142,10 +140,10 @@ export default function AutomaticAllocationAccordion({
                 <BsHouseFill />
                 {value.ignore_to_allocate ? (
                   <Text>
-                    {`${value.classroom_name} - ${value.capacity} capacidade (Ignorada)`}
+                    {`${value.name} - ${value.capacity} capacidade (Ignorada)`}
                   </Text>
                 ) : (
-                  <Text>{`${value.classroom_name} - ${value.capacity} capacidade`}</Text>
+                  <Text>{`${value.name} - ${value.capacity} capacidade`}</Text>
                 )}
               </HStack>
             ))

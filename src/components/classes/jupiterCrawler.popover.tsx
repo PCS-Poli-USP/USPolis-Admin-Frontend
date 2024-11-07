@@ -16,7 +16,7 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Spacer,
-  Select,
+  Select as CSelect,
   UnorderedList,
   useDisclosure,
   Spinner,
@@ -24,53 +24,49 @@ import {
   VStack,
   HStack,
 } from '@chakra-ui/react';
-import { appContext } from 'context/AppContext';
-import { Building } from 'models/building.model';
-import { useContext, useEffect, useRef, useState } from 'react';
-import BuildingsService from 'services/buildings.service';
+import Select from 'react-select';
+import useBuildings from 'hooks/useBuildings';
+import useCalendars from 'hooks/useCalendars';
+import { useEffect, useRef, useState } from 'react';
 
 interface JupiterCrawlerPopoverPrpos {
   subjects?: string[];
-  onSave: (subjectsList: string[], building_id: string) => void;
+  onSave: (subjectsList: string[], building_id: number, calendar_ids: number[]) => void;
 }
 
 export default function JupiterCrawlerPopover({
   subjects = [],
   onSave,
 }: JupiterCrawlerPopoverPrpos) {
-  const { loggedUser } = useContext(appContext);
-
-  const buildingsService = new BuildingsService();
+  const { buildings, loading: buildingsLoading } = useBuildings();
+  const { calendars, loading: calendarsLoading } = useCalendars();
 
   const [subjectsList, setSubjectsList] = useState(subjects);
   const [subjectInput, setSubjectInput] = useState('');
   const [multSubjectInput, setMultSubjectInput] = useState('');
   const [buildingIdSelection, setBuildingIdSelection] = useState<
-    string | undefined
+    number | undefined
   >(undefined);
-  const [buildingsList, setBuildingsList] = useState<Building[]>([]);
+  const [calendarIds, setCalendarIds] = useState<number[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const initialFocusRef = useRef(null);
-  const [buildingsLoading, setBuildingsLoading] = useState(true);
 
   useEffect(() => {
-    if (buildingsList.length === 1) {
-      setBuildingIdSelection(buildingsList[0].id);
+    if (buildings.length === 1) {
+      setBuildingIdSelection(buildings[0].id);
     }
-  }, [buildingsList]);
-
-  useEffect(() => {
-    getBuildingsList();
-  }, [loggedUser]);
+  }, [buildings]);
 
   function handleAddClick() {
     if (subjectInput.length === 7 && !subjectsList.includes(subjectInput)) {
-      setSubjectsList((prev) => [...prev, subjectInput.replace(' ', '')]);
+      setSubjectsList((prev) => [...prev, subjectInput.replaceAll(' ', '')]);
       setSubjectInput('');
     }
-    if (multSubjectInput.length > 6) {
+    if (multSubjectInput.length >= 7) {
       const formatedInput = multSubjectInput.replaceAll(' ', '');
-      const subjects = formatedInput.split(',').filter((value) => (value.length === 7 && !subjectsList.includes(value)));
+      const subjects = formatedInput
+        .split(',')
+        .filter((value) => value.length === 7 && !subjectsList.includes(value));
       setSubjectsList((prev) => prev.concat(subjects));
       setMultSubjectInput('');
     }
@@ -83,22 +79,8 @@ export default function JupiterCrawlerPopover({
   function handleConfirmClick() {
     if (buildingIdSelection !== undefined && subjectsList.length > 0) {
       setSubjectsList([]);
-      onSave(subjectsList, buildingIdSelection);
+      onSave(subjectsList, buildingIdSelection, calendarIds);
       onClose();
-    }
-  }
-
-  function getBuildingsList() {
-    if (loggedUser) {
-      if (loggedUser.isAdmin) {
-        setBuildingsLoading(true);
-        buildingsService.list().then((response) => {
-          setBuildingsList(response.data);
-          setBuildingsLoading(false);
-        });
-      } else {
-        setBuildingsList(loggedUser.buildings);
-      }
     }
   }
 
@@ -116,19 +98,36 @@ export default function JupiterCrawlerPopover({
         <PopoverCloseButton />
         <PopoverHeader>Disciplinas</PopoverHeader>
         <PopoverBody>
-          {buildingsList.length !== 1 && (
-            <Select
+          {buildings.length !== 1 && (
+            <CSelect
               placeholder='Selecionar prédio'
-              onChange={(event) => setBuildingIdSelection(event.target.value)}
+              onChange={(event) =>
+                setBuildingIdSelection(Number(event.target.value))
+              }
               icon={buildingsLoading ? <Spinner size='sm' /> : undefined}
             >
-              {buildingsList.map((it) => (
+              {buildings.map((it) => (
                 <option key={it.id} value={it.id}>
                   {it.name}
                 </option>
               ))}
-            </Select>
+            </CSelect>
           )}
+        </PopoverBody>
+        <PopoverBody>
+          <Text mb={2}>Calendários das turmas:</Text>
+          <Select
+            placeholder='Selecione os calendários'
+            isMulti
+            options={calendars.map((calendar) => ({
+              label: calendar.name,
+              value: calendar.id,
+            }))}
+            onChange={(selectedOptions) =>
+              setCalendarIds(selectedOptions.map((option) => option.value))
+            }
+            isLoading={calendarsLoading}
+          />
         </PopoverBody>
         <PopoverBody maxH='xl' overflowY='auto'>
           <Text mb={2}>Adicionar manualmente:</Text>
@@ -146,7 +145,7 @@ export default function JupiterCrawlerPopover({
             />
             <InputRightElement>
               <IconButton
-                aria-label='Add subbject'
+                aria-label='adicionar-disciplina'
                 size='sm'
                 colorScheme='blue'
                 icon={<AddIcon />}
@@ -169,7 +168,7 @@ export default function JupiterCrawlerPopover({
             />
             <InputRightElement>
               <IconButton
-                aria-label='Add subbject'
+                aria-label='adicionar-disciplina'
                 size='sm'
                 colorScheme='blue'
                 icon={<AddIcon />}
@@ -193,7 +192,7 @@ export default function JupiterCrawlerPopover({
         </PopoverBody>
         {subjectsList.length > 0 &&
           buildingIdSelection !== undefined &&
-          buildingIdSelection !== '' && (
+          buildingIdSelection !== 0 && (
             <PopoverFooter>
               <VStack>
                 {subjectsList.length > 10 ? (

@@ -1,35 +1,73 @@
-import { FormLabel, Select as ChakraSelect, FormControl, FormErrorMessage } from '@chakra-ui/react';
-import { FieldProps } from 'models/interfaces';
-import { useFormContext } from 'react-hook-form';
+import { ChevronDownIcon } from '@chakra-ui/icons';
+import {
+  FormLabel,
+  Select as ChakraSelect,
+  FormControl,
+  FormErrorMessage,
+  Spinner,
+} from '@chakra-ui/react';
+import { FieldProps } from '../form.interface';
+import { Controller, useFormContext } from 'react-hook-form';
 
 type Option = {
   label: string;
-  value: string;
+  value: string | number;
 };
 
 interface SelectProps extends FieldProps {
   options: Option[];
+  value?: string | number;
+  onChange?: React.ChangeEventHandler<HTMLSelectElement>;
 }
 
-export function Select({ label, name, options, disabled = false }: SelectProps) {
+export function Select({
+  label,
+  name,
+  options,
+  disabled = false,
+  placeholder = undefined,
+  isLoading = false,
+  mt = undefined,
+  mb = undefined,
+  mr = undefined,
+  ml = undefined,
+  onChange = undefined,
+}: SelectProps) {
   const {
-    register,
+    control,
     formState: { errors },
   } = useFormContext();
-
   return (
-    <FormControl isInvalid={!!errors[name]}>
+    <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
-      <ChakraSelect {...register(name)} disabled={disabled}>
-        <option disabled selected>
-          Selecione uma opção
-        </option>
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </ChakraSelect>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <ChakraSelect
+            {...field}
+            id={name}
+            value={field.value || field.value === 0 ? field.value : ''}
+            disabled={disabled || isLoading}
+            icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
+            onChange={(event) => {
+              if (onChange) onChange(event);
+              field.onChange(event.target.value);
+            }}
+          >
+            {placeholder ? (
+              <option value={''}>{placeholder}</option>
+            ) : (
+              <option value={''}>Selecione uma opção</option>
+            )}
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </ChakraSelect>
+        )}
+      />
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
     </FormControl>
   );

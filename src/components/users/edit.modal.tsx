@@ -4,7 +4,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  HStack,
   Input,
   Modal,
   ModalBody,
@@ -13,14 +12,12 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  NumberInput,
-  NumberInputField,
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import { Building } from 'models/building.model';
 
 import { useEffect, useState } from 'react';
-import BuildingsService from 'services/buildings.service';
+import BuildingsService from 'services/api/buildings.service';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 interface EditModalProps {
   isOpen: boolean;
@@ -32,16 +29,15 @@ interface EditModalProps {
 
 interface EditUserFormValues {
   buildings?: BuildingOption[];
-  isAdmin?: boolean;
+  is_admin?: boolean;
 }
 
 interface EditUserOtherData {
-  username?: string;
   email?: string;
 }
 
 interface BuildingOption {
-  value: string;
+  value: number;
   label: string;
 }
 
@@ -50,11 +46,11 @@ export default function EditUserModal(props: EditModalProps) {
 
   const initialForm: EditUserFormValues = {
     buildings: [],
-    isAdmin: false,
+    is_admin: false,
   };
 
   const [isLoadingBuildings, setIsLoadingBuildings] = useState(false);
-  const [buildings, setBuildings] = useState<Building[]>([]);
+  const [buildings, setBuildings] = useState<BuildingResponse[]>([]);
   const [form, setForm] = useState<EditUserFormValues>(initialForm);
 
   useEffect(() => {
@@ -67,7 +63,7 @@ export default function EditUserModal(props: EditModalProps) {
 
   async function fetchBuildings() {
     try {
-      const response = await buildingsService.list();
+      const response = await buildingsService.getAll();
       console.log(response.data);
       setBuildings(response.data);
       setIsLoadingBuildings(false);
@@ -102,32 +98,40 @@ export default function EditUserModal(props: EditModalProps) {
         <ModalBody pb={6}>
           <Flex direction={'column'} gap={4}>
             <Flex direction={'column'}>
-              <FormLabel>Username</FormLabel>
-              <Input value={props.otherData?.username} disabled />
-            </Flex>
-            <Flex direction={'column'}>
               <FormLabel>Email</FormLabel>
               <Input value={props.otherData?.email} disabled />
             </Flex>
             <FormControl>
               <Checkbox
-                isChecked={form.isAdmin}
-                onChange={(e) => setForm((prev) => ({ ...prev, isAdmin: e.target.checked }))}
+                isChecked={form.is_admin}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, is_admin: e.target.checked }))
+                }
               >
                 Administrador
               </Checkbox>
             </FormControl>
-            {!form.isAdmin && (
+            {!form.is_admin && (
               <FormControl>
                 <FormLabel>Prédios</FormLabel>
                 <Select
-                  placeholder={isLoadingBuildings ? 'Carregando...' : 'Selecione um ou mais'}
+                  placeholder={
+                    isLoadingBuildings
+                      ? 'Carregando...'
+                      : 'Selecione um ou mais'
+                  }
                   isLoading={isLoadingBuildings}
                   isMulti
-                  options={buildings.map((it) => ({ value: it.id, label: it.name }))}
+                  options={buildings.map((it) => ({
+                    value: it.id,
+                    label: it.name,
+                  }))}
                   onChange={(selected) => {
                     const selectedBuildings = selected as BuildingOption[];
-                    setForm((prev) => ({ ...prev, buildings: selectedBuildings }));
+                    setForm((prev) => ({
+                      ...prev,
+                      buildings: selectedBuildings,
+                    }));
                   }}
                   value={form.buildings}
                 />

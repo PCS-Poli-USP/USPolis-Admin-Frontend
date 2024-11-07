@@ -1,22 +1,21 @@
-import { Auth, Hub } from 'aws-amplify';
-import { User } from 'models/user.model';
+import { UserResponse } from 'models/http/responses/user.response.models';
 import React, { createContext, useEffect, useState } from 'react';
-import SelfService from 'services/self.service';
+import SelfService from 'services/api/self.service';
 
 interface AppContext {
   loading: boolean;
   setLoading: (value: boolean) => void;
-  username: string;
-  loggedUser: User | null;
-  logout: () => void;
+  loggedUser: UserResponse | null;
+  logout: () => Promise<void>;
+  getSelfFromBackend: () => Promise<void>;
 }
 
 const DEFAULT_VALUE = {
   loading: false,
   setLoading: () => {},
-  username: '',
   loggedUser: null,
   logout: async () => {},
+  getSelfFromBackend: async () => {},
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -25,21 +24,22 @@ export default function AppContextProvider({
   children,
 }: React.PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(false);
-  const [username, setUsername] = useState('');
-  const [loggedUser, setLoggedUser] = useState<User | null>(null);
+  const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
 
   const selfService = new SelfService();
 
   async function getSelfFromBackend() {
     try {
-      await Auth.currentUserInfo();
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
-      console.log('Usuário logado:');
-      console.log(self.data);
       localStorage.setItem('user', JSON.stringify(self.data));
-    } catch (error) {
-      console.error(error);
+    } catch (e: any) {
+      if (e.response.status === 403) {
+        throw new Error('User with this email not registered');
+      }
+      if (e.response.status === 401 && e.response.detail === 'Token expired') {
+        logout();
+      }
     }
   }
 
@@ -48,7 +48,9 @@ export default function AppContextProvider({
     if (!userFromStorage) {
       await getSelfFromBackend();
     } else {
-      const parsedUser: User = JSON.parse(userFromStorage) as User;
+      const parsedUser: UserResponse = JSON.parse(
+        userFromStorage,
+      ) as UserResponse;
       setLoggedUser(parsedUser);
       console.log('Usuário logado (storage):');
       console.log(parsedUser);
@@ -56,28 +58,25 @@ export default function AppContextProvider({
   }
 
   async function logout() {
-    Auth.signOut();
     localStorage.removeItem('user');
+    localStorage.removeItem('access_token');
+    setLoggedUser(null);
+    setLoading(false);
   }
 
   useEffect(() => {
-    Auth.currentUserInfo().then((it) => setUsername(it?.username));
     getSelf();
-  }, []);
-
-  useEffect(() => {
-    Hub.listen('auth', (data) => {
-      getSelf();
-      console.log(
-        'A new auth event has happened: ',
-        data.payload.data.username + ' has ' + data.payload.event,
-      );
-    });
   }, []);
 
   return (
     <appContext.Provider
-      value={{ loading, setLoading, username, loggedUser, logout }}
+      value={{
+        loading,
+        setLoading,
+        loggedUser,
+        logout,
+        getSelfFromBackend,
+      }}
     >
       {children}
     </appContext.Provider>

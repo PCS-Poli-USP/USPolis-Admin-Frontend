@@ -20,15 +20,15 @@ import {
 } from '@chakra-ui/react';
 import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
-import Dialog from 'components/common/dialog.component';
+import Dialog from 'components/common/Dialog/dialog.component';
 import { appContext } from 'context/AppContext';
-import { Building } from 'models/building.model';
-import { AvailableClassroom } from 'models/classroom.model';
-import { EventByClassrooms } from 'models/event.model';
+import { AvailableClassroom } from 'models/common/classroom.model';
+import { EventByClassrooms } from 'models/common/event.model';
 import { useContext, useEffect, useState } from 'react';
-import BuildingsService from 'services/buildings.service';
-import ClassroomsService from 'services/classrooms.service';
+import BuildingsService from 'services/api/buildings.service';
+import ClassroomsService from 'services/api/classrooms.service';
 import { Capitalize } from 'utils/formatters';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
 
 interface ClassroomOption {
   value: string;
@@ -41,7 +41,7 @@ interface EditEventModalProps {
   onSave: (
     events_ids: string[],
     newClassroom: string,
-    building_id: string,
+    building_id: number,
   ) => void;
   onDelete: (subjectCode: string, classCode: string) => void;
   classEvents: EventByClassrooms[];
@@ -65,8 +65,8 @@ export default function EditEventModal({
   >([]);
   const [selectedClassroom, setSelectedClassroom] =
     useState<AvailableClassroom>();
-  const [selectedBuilding, setSelectedBuilding] = useState<Building>();
-  const [buildingsList, setBuildingsList] = useState<Building[]>([]);
+  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
+  const [buildingsList, setBuildingsList] = useState<BuildingResponse[]>([]);
   const [buildingsLoading, setBuildingsLoading] = useState(true);
   const [classroomsLoading, setClassroomsLoading] = useState(false);
   const checkBoxHook = useCheckboxGroup();
@@ -98,12 +98,12 @@ export default function EditEventModal({
   useEffect(() => {
     resetClassroomsDropdown();
     getAvailableClassrooms();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkedEvents]);
 
   useEffect(() => {
     setCheckedEvents(classEvents.map((it) => it.id ?? ''));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classEvents]);
 
   async function getAvailableClassrooms() {
@@ -118,13 +118,13 @@ export default function EditEventModal({
   }
 
   async function tryGetAvailableClassrooms() {
-    setSelectedClassroom(undefined);
-    const response = await classroomsService.getAvailableWithConflictIndicator({
-      events_ids: classEvents.map((it) => it.id!),
-      building_id: selectedBuilding?.id!,
-    });
-    setAndSortAvailableClassrooms(response.data);
-    setClassroomsLoading(false);
+    // setSelectedClassroom(undefined);
+    // const response = await classroomsService.getAvailableWithConflictIndicator({
+    //   events_ids: classEvents.map((it) => it.id!),
+    //   building_id: selectedBuilding?.id!,
+    // });
+    // setAndSortAvailableClassrooms(response.data);
+    // setClassroomsLoading(false);
   }
 
   function setAndSortAvailableClassrooms(value: AvailableClassroom[]) {
@@ -141,14 +141,14 @@ export default function EditEventModal({
 
   function getBuildingsList() {
     if (loggedUser) {
-      if (loggedUser.isAdmin) {
+      if (loggedUser.is_admin) {
         setBuildingsLoading(true);
-        buildingsService.list().then((response) => {
+        buildingsService.getAll().then((response) => {
           setBuildingsList(response.data);
           setBuildingsLoading(false);
         });
       } else {
-        setBuildingsList(loggedUser.buildings);
+        setBuildingsList(loggedUser.buildings || []);
       }
     }
   }
@@ -255,7 +255,7 @@ export default function EditEventModal({
                   placeholder='Selecionar prédio'
                   onChange={(event) => {
                     setSelectedBuilding(
-                      buildingsList.find((it) => it.id === event.target.value),
+                      buildingsList.find((it) => it.id === Number(event.target.value)),
                     );
                   }}
                   icon={buildingsLoading ? <Spinner size='sm' /> : undefined}

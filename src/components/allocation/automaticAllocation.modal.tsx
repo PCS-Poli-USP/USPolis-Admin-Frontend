@@ -15,11 +15,10 @@ import {
 } from '@chakra-ui/react';
 
 import AutomaticAllocationAccordion from './automaticAllocation.accordion';
-import Event, { EventByClassrooms } from 'models/event.model';
+import Event, { EventByClassrooms } from 'models/common/event.model';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import { useEffect, useState } from 'react';
-import { EventToEventByClassroom } from 'utils/classes/classes.formatter';
-import EventsService from 'services/events.service';
+import EventsService from 'services/api/events.service';
 
 interface AutomaticAllocationModalProps {
   isOpen: boolean;
@@ -88,14 +87,14 @@ export default function AutomaticAllocationModal({
   }, [allocatedEvents, unallocatedEvents]);
 
   function handleEditEventClick(event: Event) {
-    setSelectedEvent(EventToEventByClassroom(event));
+    // setSelectedEvent(EventToEventByClassroom(event));
     onOpenEditEventModal();
   }
 
   function handleEditEvent(
     events_ids: string[],
     newClassroom: string,
-    building_id: string,
+    building_id: number,
   ) {
     eventsService
       .editManyAllocations({
@@ -110,11 +109,10 @@ export default function AutomaticAllocationModal({
         toastError(`Erro ao editar alocação: ${error}`);
       });
     let index = allocatedEventsList.findIndex(
-      (value) => (
+      (value) =>
         value.id === events_ids[0] &&
         value.week_day === selectedEvent.week_day &&
-        value.start_time === selectedEvent.start_time
-      ),
+        value.start_time === selectedEvent.start_time,
     );
 
     const newAllocatedEvents = [...allocatedEventsList];
@@ -123,11 +121,10 @@ export default function AutomaticAllocationModal({
       newAllocatedEvents[index].classroom = newClassroom;
     } else {
       index = unallocatedEventsList.findIndex(
-        (value) => (
+        (value) =>
           value.id === events_ids[0] &&
           value.week_day === selectedEvent.week_day &&
-          value.start_time === selectedEvent.start_time
-        ),
+          value.start_time === selectedEvent.start_time,
       );
       const event = newUnallocatedEvents.splice(index, 1);
       newAllocatedEvents.push(event[0]);
@@ -137,7 +134,6 @@ export default function AutomaticAllocationModal({
     eventsService
       .editAllocations(newAllocatedEvents, newUnallocatedEvents)
       .then((it) => {
-        console.log('Editei a alocação!');
       })
       .catch((error) => {
         toastError(`Erro ao salvar alocação: ${error}`);
@@ -167,12 +163,11 @@ export default function AutomaticAllocationModal({
       const newAllocatedEvents = [...allocatedEventsList];
       const newUnallocatedEvents = [...unallocatedEventsList];
       const index = allocatedEventsList.findIndex(
-        (value) => (
+        (value) =>
           value.subject_code === subjectCode &&
           value.class_code === classCode &&
           value.week_day === selectedEvent.week_day &&
-          value.start_time === selectedEvent.start_time
-        ),
+          value.start_time === selectedEvent.start_time,
       );
       if (index >= 0) {
         const event = newAllocatedEvents.splice(index, 1);

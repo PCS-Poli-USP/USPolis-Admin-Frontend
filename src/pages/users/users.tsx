@@ -4,26 +4,23 @@ import * as C from '@chakra-ui/react';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 
 import { ColumnDef } from '@tanstack/react-table';
-import Navbar from 'components/common/navbar.component';
-import UsersService from 'services/users.service';
-import { User, EditUser } from 'models/user.model';
-import DataTable from 'components/common/dataTable.component';
+import UsersService from 'services/api/users.service';
+import DataTable from 'components/common/DataTable/dataTable.component';
 import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { appContext } from 'context/AppContext';
 import EditUserModal from 'components/users/edit.modal';
-import Dialog from 'components/common/dialog.component';
-import RegisterUserModal, {
-  RegisterUserFormValues,
-} from 'components/users/register.modal';
+import Dialog from 'components/common/Dialog/dialog.component';
+import PageContent from 'components/common/PageContent';
+import { UserResponse } from 'models/http/responses/user.response.models';
+import { UpdateUser } from 'models/http/requests/user.request.models';
 
 const Users = () => {
   const { setLoading } = useContext(appContext);
   const usersService = new UsersService();
 
-  const [users, setUsers] = useState<User[]>([]);
-  const [contextUser, setContextUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<UserResponse[]>([]);
+  const [contextUser, setContextUser] = useState<UserResponse | null>(null);
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
-  const [registerModalOpen, setRegisterModalOpen] = useState<boolean>(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
   const toast = C.useToast();
@@ -48,7 +45,7 @@ const Users = () => {
     });
   };
 
-  const columns: ColumnDef<User>[] = [
+  const columns: ColumnDef<UserResponse>[] = [
     {
       accessorKey: 'id',
       header: 'ID',
@@ -58,15 +55,11 @@ const Users = () => {
       header: 'Nome',
     },
     {
-      accessorKey: 'username',
-      header: 'Username',
-    },
-    {
       accessorKey: 'email',
       header: 'Email',
     },
     {
-      accessorKey: 'isAdmin',
+      accessorKey: 'is_admin',
       header: 'Admin',
       meta: { isBoolean: true },
       filterFn: FilterBoolean,
@@ -80,7 +73,7 @@ const Users = () => {
       header: 'Criado por',
     },
     {
-      accessorFn: (row) => row.buildings.map((b) => b.name).join(', '),
+      accessorFn: (row) => row.buildings?.map((b) => b.name).join(', '),
       header: 'Prédios',
     },
     {
@@ -98,7 +91,7 @@ const Users = () => {
               onClick={() => handleEditButton(row.original)}
             />
           </C.Tooltip>
-       
+
           <C.Tooltip label='Deletar'>
             <C.IconButton
               colorScheme='red'
@@ -116,6 +109,7 @@ const Users = () => {
 
   useEffect(() => {
     fetchUsers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchUsers() {
@@ -133,45 +127,20 @@ const Users = () => {
     }
   }
 
-  function handleCreateButton() {
-    setRegisterModalOpen(true);
-  }
-
-  function handleEditButton(user: User) {
+  function handleEditButton(user: UserResponse) {
     setContextUser(user);
     setEditModalOpen(true);
   }
 
-  function handleDeleteButton(user: User) {
+  function handleDeleteButton(user: UserResponse) {
     setDeleteDialogOpen(true);
     setContextUser(user);
   }
 
-  async function registerUser(form: RegisterUserFormValues) {
-    try {
-      setLoading(true);
-      const response = await usersService.create({
-        name: form.name,
-        email: form.email,
-        username: form.username,
-        isAdmin: form.isAdmin,
-        building_ids: form.isAdmin
-          ? undefined
-          : form.buildings.map((it) => it.value),
-      });
-      toastSuccess(`Usuário cadastrado!`);
-    } catch (err: any) {
-      toastError(`Erro ao cadastrar usuário:\n${err.response.data.message}`);
-      console.error(err);
-      setLoading(false);
-    }
-    fetchUsers();
-  }
-
-  async function editUser(data: EditUser, user_id: string) {
+  async function editUser(user_id: number, data: UpdateUser) {
     setLoading(true);
     try {
-      await usersService.update(data, user_id);
+      await usersService.update(user_id, data);
       toastSuccess(`Usuário editado!`);
     } catch (err: any) {
       console.error(err);
@@ -181,7 +150,7 @@ const Users = () => {
     fetchUsers();
   }
 
-  async function deleteUser(user_id: string) {
+  async function deleteUser(user_id: number) {
     setLoading(true);
     try {
       await usersService.delete(user_id);
@@ -195,46 +164,31 @@ const Users = () => {
   }
 
   return (
-    <>
-      <Navbar />
-      <C.Flex paddingX={4} direction={'column'}>
-        <C.Flex justifyContent={'space-between'} alignItems={'center'}>
-          <C.Text fontSize='4xl' mb={4}>
-            Usuários
-          </C.Text>
-          <C.Button onClick={handleCreateButton}>Cadastrar</C.Button>
-        </C.Flex>
-        <DataTable columns={columns} data={users} />
+    <PageContent>
+      <C.Flex justifyContent={'space-between'} alignItems={'center'}>
+        <C.Text fontSize='4xl' mb={4}>
+          Usuários
+        </C.Text>
       </C.Flex>
+      <DataTable columns={columns} data={users} />
       <EditUserModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         formData={{
-          buildings: contextUser?.buildings.map((b) => ({
+          buildings: contextUser?.buildings?.map((b) => ({
             label: b.name,
             value: b.id,
           })),
-          isAdmin: contextUser?.isAdmin,
+          is_admin: contextUser?.is_admin,
         }}
         otherData={{
           email: contextUser?.email,
-          username: contextUser?.username,
         }}
         onSave={(form) => {
-          editUser(
-            {
-              building_ids: form.buildings?.map((b) => b.value),
-              isAdmin: form.isAdmin,
-            },
-            contextUser!.id,
-          );
-        }}
-      />
-      <RegisterUserModal
-        isOpen={registerModalOpen}
-        onClose={() => setRegisterModalOpen(false)}
-        onSave={(form) => {
-          registerUser(form);
+          editUser(contextUser!.id, {
+            building_ids: form.buildings?.map((b) => b.value),
+            is_admin: form.is_admin ? form.is_admin : false,
+          });
         }}
       />
       <Dialog
@@ -246,9 +200,9 @@ const Users = () => {
           deleteUser(contextUser!.id);
           setDeleteDialogOpen(false);
         }}
-        title={`Deseja deletar o usuário "${contextUser?.username}"`}
+        title={`Deseja deletar o usuário "${contextUser?.name}"`}
       />
-    </>
+    </PageContent>
   );
 };
 

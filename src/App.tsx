@@ -1,4 +1,16 @@
-import { Box, Button, Center, Flex, Heading, Icon, Image, Link, SimpleGrid, Stack, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  Heading,
+  Icon,
+  Image,
+  Link,
+  SimpleGrid,
+  Stack,
+  Text,
+} from '@chakra-ui/react';
 import Logo from 'assets/uspolis.logo.png';
 import { ReactElement } from 'react';
 import {
@@ -12,9 +24,13 @@ import {
   FaUsers,
 } from 'react-icons/fa';
 import './App.css';
+import { LockIcon, UnlockIcon } from '@chakra-ui/icons';
+import { useNavigate } from 'react-router-dom';
+import { BsCalendar3 } from 'react-icons/bs';
 
 // TODO: uspolis page
 function App() {
+  const navigate = useNavigate();
   return (
     <Box bg='uspolis.grey'>
       <Stack direction={{ base: 'column', md: 'row' }}>
@@ -23,17 +39,20 @@ function App() {
             <Heading fontSize={{ base: '3xl', md: '4xl', lg: '5xl' }}>
               <Text>USPolis</Text>
               <Text fontSize={{ base: 'lg', md: 'xl', lg: '2xl' }}>
-                Sistema Open-Source para alocação e visualização de salas de aula
+                Sistema Open-Source para alocação e visualização de salas de
+                aula
               </Text>
             </Heading>
             <Text fontSize={{ base: 'md', lg: 'lg' }}>
-              Sistema centralizado para alocação e visualização de salas de aula com propósito de resolver o Problema de
-              Alocação de Aulas às Salas (PAAS) por meio de uma formulação matemática. As alocações podem ser
-              visualizadas no app para Android ou IOS abaixo.
+              Sistema centralizado para alocação e visualização de salas de aula
+              com propósito de resolver o Problema de Alocação de Aulas às Salas
+              (PAAS) por meio de uma formulação matemática. As alocações podem
+              ser visualizadas no app para Android ou IOS abaixo.
             </Text>
-            <Stack direction={{ base: 'column', md: 'row' }} spacing={4}>
+            <Stack direction={{ base: 'column', md: 'column' }} spacing={4}>
               <Link href='https://play.google.com/store/apps/details?id=uspolis.lunadros'>
                 <Button
+                  w={'full'}
                   rounded='full'
                   colorScheme='blue'
                   _hover={{
@@ -55,6 +74,7 @@ function App() {
               <Link href='https://apps.apple.com/br/app/uspolis/id1451455075'>
                 <Button
                   rounded='full'
+                  w={'full'}
                   colorScheme='blue'
                   leftIcon={<FaAppStore />}
                   _hover={{
@@ -64,6 +84,28 @@ function App() {
                   App Store
                 </Button>
               </Link>
+              <Button
+                rounded='full'
+                colorScheme='blue'
+                leftIcon={<BsCalendar3 />}
+                _hover={{
+                  textDecoration: 'none',
+                }}
+                onClick={() => navigate('/allocation')}
+              >
+                Mapa de Salas
+              </Button>
+              <Button
+                rounded='full'
+                colorScheme='blue'
+                leftIcon={<LockIcon />}
+                _hover={{
+                  textDecoration: 'none',
+                }}
+                onClick={() => navigate('/subjects')}
+              >
+                Área Administrativa
+              </Button>
               {/* </Tooltip> */}
             </Stack>
           </Stack>
@@ -120,7 +162,15 @@ const Feature = ({ title, text, icon }: FeatureProps) => {
   return (
     <Stack>
       <Center>
-        <Flex w={16} h={16} align='center' justify='center' rounded='full' bg='gray.100' mb={1}>
+        <Flex
+          w={16}
+          h={16}
+          align='center'
+          justify='center'
+          rounded='full'
+          bg='gray.100'
+          mb={1}
+        >
           {icon}
         </Flex>
       </Center>

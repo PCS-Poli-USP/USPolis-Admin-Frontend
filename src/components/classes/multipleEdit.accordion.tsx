@@ -12,21 +12,21 @@ import {
   Skeleton,
   StackDivider,
 } from '@chakra-ui/react';
-import Class from 'models/class.model';
-import BuildingsService from 'services/buildings.service';
+import BuildingsService from 'services/api/buildings.service';
 import { useContext, useEffect, useState } from 'react';
-import { Building } from 'models/building.model';
 import { appContext } from 'context/AppContext';
 import { MultipleEditAllocation } from './multipleEdit.allocation';
-import { ClassroomSchedule } from 'models/classroom.model';
+import { ClassroomSchedule } from 'models/common/classroom.model';
+import { BuildingResponse } from 'models/http/responses/building.response.models';
+import { ClassResponse } from 'models/http/responses/class.response.models';
 
 interface MultipleEditAccordionProps {
-  subjectsMap: [string, Class[]][];
+  subjectsMap: [string, ClassResponse[]][];
   schedulesMap: [string, string, ClassroomSchedule][];
   isLoadingSchedules: boolean;
   isUpdatingSchedules: boolean;
   handleSelectBuilding: (
-    building_id: string,
+    building_id: number,
     building_name: string,
     event_id: string,
   ) => void;
@@ -60,7 +60,7 @@ export default function MultipleEditAccordion({
 }: MultipleEditAccordionProps) {
   const { loggedUser } = useContext(appContext);
 
-  const [buildingsList, setBuildingsList] = useState<Building[]>([]);
+  const [buildingsList, setBuildingsList] = useState<BuildingResponse[]>([]);
   const [buildingsLoading, setBuildingsLoading] = useState(true);
 
   const buildingsService = new BuildingsService();
@@ -72,14 +72,14 @@ export default function MultipleEditAccordion({
 
   function getBuildingsList() {
     if (loggedUser) {
-      if (loggedUser.isAdmin) {
+      if (loggedUser.is_admin) {
         setBuildingsLoading(true);
-        buildingsService.list().then((response) => {
+        buildingsService.getAll().then((response) => {
           setBuildingsList(response.data);
           setBuildingsLoading(false);
         });
       } else {
-        setBuildingsList(loggedUser.buildings);
+        setBuildingsList(loggedUser.buildings || []);
       }
     }
   }
@@ -122,7 +122,7 @@ export default function MultipleEditAccordion({
                     alignSelf={'flex-start'}
                     alignItems={'flex-start'}
                   >
-                    <Text as={'b'} mt={4}>
+                    {/* <Text as={'b'} mt={4}>
                       {`Turma ${cl.class_code.slice(-2)} - ${
                         cl.vacancies
                       } vagas: `}
@@ -150,7 +150,7 @@ export default function MultipleEditAccordion({
                           onRemoveClassroom={handleRemoveClassroom}
                         />
                       ))}
-                    </VStack>
+                    </VStack> */}
                   </VStack>
                 ))}
               </VStack>
