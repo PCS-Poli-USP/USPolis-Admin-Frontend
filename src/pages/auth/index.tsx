@@ -8,7 +8,9 @@ const AuthPage = () => {
   const navigate = useNavigate();
 
   const login = useGoogleLogin({
-    redirect_uri: 'http://localhost:3000/auth-callback',
+    redirect_uri:
+      process.env.REACT_APP_REDIRECT_URI ??
+      'http://localhost:3000/auth-callback',
     ux_mode: 'redirect',
     flow: 'auth-code',
   });
