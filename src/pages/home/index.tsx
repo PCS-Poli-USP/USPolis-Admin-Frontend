@@ -12,7 +12,7 @@ import Header from './Header';
 import USPolisPhone from './Images/USPolisPhone.png';
 import USPolisPhoneLaptop from './Images/USPolisPhoneLaptop.png';
 import VerticalCarousel from './VerticalCarousel';
-import { items } from './carousel.items';
+import { items, icons } from './carousel.items';
 
 import { FaApple, FaMobileAlt } from 'react-icons/fa';
 import { MdOutlineAdminPanelSettings } from 'react-icons/md';
@@ -75,7 +75,7 @@ function Home() {
         </Heading>
       </Flex>
       <Box id='section2' h={'auto'}>
-        <VerticalCarousel items={items} />
+        <VerticalCarousel items={items} icons={icons} />
       </Box>
       <Flex
         id='section4'
@@ -166,11 +166,7 @@ function Home() {
             gap={5}
             mr={30}
           >
-            <Text
-              fontSize={'xl'}
-              textColor={'black'}
-              textAlign={'justify'}
-            >
+            <Text fontSize={'xl'} textColor={'black'} textAlign={'justify'}>
               O USPolis foi inicialmente desenvolvido como projeto de formatura
               no PCS, contando com um sistema de alocação automático de salas.
               Ao longo do tempo outros projetos de formatura continuaram seu

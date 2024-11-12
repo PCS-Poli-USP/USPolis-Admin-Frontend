@@ -50,7 +50,7 @@ function Header() {
       </Button>
       <Button
         as={'a'}
-        href='#section3'
+        href='#section2'
         variant={'link'}
         color={'black'}
         _hover={{

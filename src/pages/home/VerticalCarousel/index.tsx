@@ -2,19 +2,19 @@ import {
   Box,
   Flex,
   Heading,
+  HStack,
   Icon,
   Image,
+  Link,
   Text,
   Tooltip,
   VStack,
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { IconType } from 'react-icons';
-import { BsCalendar3 } from 'react-icons/bs';
-import { LuCalendarClock } from 'react-icons/lu';
-import { MdAddChart, MdOutlinePendingActions } from 'react-icons/md';
 
 export interface VerticalCarouselItem {
+  icon: CarouselIconProps;
   title: string;
   description: string;
   image: string;
@@ -22,27 +22,40 @@ export interface VerticalCarouselItem {
 }
 
 interface VerticalCarouselProps {
+  icons: CarouselIconProps[];
   items: VerticalCarouselItem[];
   fadeDuration?: number;
 }
 
-interface CarouselIconProps {
+export interface CarouselIconProps {
+  id: string;
   text: string;
   icon: IconType;
 }
 
-function CarouselIcon({ text, icon }: CarouselIconProps) {
+function CarouselIcon({ id, text, icon }: CarouselIconProps) {
   return (
-    <Flex direction={'row'} justify={'center'} align={'center'} gap={2}>
-      <Icon as={icon} boxSize={'40px'} />
-      <Text textColor={'black'} fontSize={'lg'}>{text}</Text>
-    </Flex>
+    <Link href={`#${id}`} _hover={{ textDecoration: 'none' }}>
+      <Flex
+        direction={'row'}
+        justify={'center'}
+        align={'center'}
+        gap={2}
+        _hover={{ cursor: 'pointer' }}
+      >
+        <Icon as={icon} boxSize={'40px'} />
+        <Text textColor={'black'} fontSize={'lg'}>
+          {text}
+        </Text>
+      </Flex>
+    </Link>
   );
 }
 
-function VerticalCarousel({ items }: VerticalCarouselProps) {
+function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
   const boxH = 200;
-  const imageH = 800;
+  const imageH = 401;
+  const imageW = 800;
   const textH = 500;
   const textGap = 100;
 
@@ -92,10 +105,9 @@ function VerticalCarousel({ items }: VerticalCarouselProps) {
           align={'center'}
           gap={10}
         >
-          <CarouselIcon icon={BsCalendar3} text='Mapa de salas' />
-          <CarouselIcon icon={MdOutlinePendingActions} text='Reservas e Solicitações' />
-          <CarouselIcon icon={LuCalendarClock} text='Datas e Calendários' />
-          <CarouselIcon icon={MdAddChart} text='Oferecimentos' />
+          {icons.map((icon, index) => (
+            <CarouselIcon key={index} {...icon} />
+          ))}
         </Flex>
       </Box>
       <Flex direction={'row'} justify={'center'} align={'start'} gap={100}>
@@ -107,29 +119,33 @@ function VerticalCarousel({ items }: VerticalCarouselProps) {
         >
           {items.map((item, index) => (
             <Flex
+              id={item.icon.id}
               key={index}
               h={`${textH}px`}
-              gap={10}
+              gap={5}
               w={'full'}
               direction={'column'}
               align={'center'}
               justify={'center'}
             >
-              <Heading
-                maxW={'400px'}
-                fontWeight={'bold'}
-                size={'xl'}
-                color={'black'}
-                textAlign={'center'}
-              >
-                {item.title}
-              </Heading>
+              <HStack w={'strech'} spacing={2}>
+                <Icon as={item.icon.icon} boxSize={'40px'} />
+                <Heading
+                  w={'100%'}
+                  maxW={'450px'}
+                  fontWeight={'bold'}
+                  size={'xl'}
+                  color={'black'}
+                  textAlign={'center'}
+                >
+                  {item.title}
+                </Heading>
+              </HStack>
               <Text maxW={'400px'} fontSize={'xl'} textAlign={'justify'}>
                 {item.description}
               </Text>
             </Flex>
           ))}
-          <Box h={0}></Box>
         </VStack>
         <Box
           // borderRadius={'lg'}
@@ -153,8 +169,8 @@ function VerticalCarousel({ items }: VerticalCarouselProps) {
               src={items[currentImageIndex].image}
               alt={items[currentImageIndex].alt}
               objectFit={'fill'}
-              maxH={`${textH + textGap}px`}
-              maxW={imageH}
+              maxH={`${imageH}px`}
+              maxW={`${imageW}px`}
               w='100%' // Para garantir que a imagem preencha o Box
               h={'100%'}
               borderRadius={'lg'}
