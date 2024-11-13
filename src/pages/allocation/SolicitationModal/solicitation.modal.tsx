@@ -58,9 +58,11 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
   const {
     loading: loadingC,
     classrooms,
+    getAllClassrooms,
     getClassroomsWithConflictFromTime,
     listOneFull,
-  } = useClassrooms();
+  } = useClassrooms(false);
+
   const { createSolicitation } = useClassroomsSolicitations(false);
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
   const [classroomsWithConflict, setClassroomsWithConflict] =
@@ -141,6 +143,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
   }, [classroom_id, listOneFull]);
 
   useEffect(() => {
+    getAllClassrooms();
     getAllBuildings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -293,10 +296,14 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                       !selectedBuilding
                         ? []
                         : optionalTime
-                        ? classrooms.map((val) => ({
-                            value: val.id,
-                            label: val.name,
-                          }))
+                        ? classrooms
+                            .filter(
+                              (val) => val.building_id === selectedBuilding.id,
+                            )
+                            .map((val) => ({
+                              value: val.id,
+                              label: val.name,
+                            }))
                         : selectedDays.length === 0
                         ? []
                         : start && end && classroomsWithConflict
