@@ -59,16 +59,17 @@ function MobileCarousel({ items }: VerticalCarouselProps) {
           <Text maxW={`${textW}`} fontSize={'xl'} textAlign={'justify'}>
             {item.description}
           </Text>
-          <Box overflow={'hidden'} h={`${textH + textGap - 60}px`} w={'auto'}>
+          <Box overflow={'hidden'}>
             <Image
               transition='transform 0.3s, opacity 0.3s'
               src={item.image}
               alt={item.alt}
               objectFit={'fill'}
+              aspectRatio={1919 / 964}
               // maxH={`${imageH}px`}
               // maxW={`${imageW}px`}
-              w='100%' // Para garantir que a imagem preencha o Box
-              h={'100%'}
+              // w='100%' // Para garantir que a imagem preencha o Box
+              // h={'100%'}
               borderRadius={'lg'}
               border={'2px solid'}
               borderColor={'black'}

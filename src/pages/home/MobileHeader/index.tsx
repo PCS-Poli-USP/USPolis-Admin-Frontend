@@ -54,6 +54,21 @@ function MobileHeader() {
       >
         <Button
           // as={'a'}
+          variant={'solid'}
+          colorScheme={'teal'}
+          size={'md'}
+          onClick={() => {
+            navigate('/allocation', {
+              replace: true,
+              state: { from: location },
+            });
+          }}
+        >
+          Entrar
+        </Button>
+        <Text fontSize={'3xl'}>|</Text>
+        <Button
+          // as={'a'}
           variant={'link'}
           color={'teal'}
           _hover={{
