@@ -76,9 +76,11 @@ function Allocation() {
     if (name && classroom) {
       setFilteredEvents(
         events.filter((event) => {
-          const nameFilterResult = event.title
-            .toLowerCase()
-            .includes(nameValue);
+          const nameFilterResult =
+            event.title.toLowerCase().includes(nameValue) ||
+            event.extendedProps.class_data?.subject_name
+              .toLowerCase()
+              .includes(nameValue);
           const data =
             event.extendedProps.class_data ||
             event.extendedProps.reservation_data;
@@ -89,7 +91,13 @@ function Allocation() {
       );
     } else if (name && !classroom) {
       setFilteredEvents(
-        events.filter((event) => event.title.toLowerCase().includes(nameValue)),
+        events.filter(
+          (event) =>
+            event.title.toLowerCase().includes(nameValue) ||
+            event.extendedProps.class_data?.subject_name
+              .toLowerCase()
+              .includes(nameValue),
+        ),
       );
     } else if (!name && classroom) {
       setFilteredEvents(

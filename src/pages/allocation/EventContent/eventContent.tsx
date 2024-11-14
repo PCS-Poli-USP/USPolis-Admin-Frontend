@@ -30,7 +30,10 @@ export default function EventContent(eventInfo: EventContentArg) {
             </Heading>
             {isTimeGridView && (
               <>
-                <Text noOfLines={1}>{'Professores: '}{classData.professors.join(', ')}</Text>
+                <Text noOfLines={1}>
+                  {'Professores: '}
+                  {classData.professors.join(', ')}
+                </Text>
                 <Text noOfLines={1}>
                   {`Local: ${classData.building} - ${classData.classroom}`}
                 </Text>
@@ -82,9 +85,14 @@ function ToolTipLabel(eventInfo: EventContentArg) {
     >
       {classData ? (
         <>
-          <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
-            {`${classData.subject_code} - Turma ${classData.code}`}
-          </Text>
+          <VStack spacing={'2px'} alignItems='start'>
+            <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
+              {`${classData.subject_code} - Turma ${classData.code}`}
+            </Text>
+            <Text fontSize='lg' textColor='#408080'>
+              {`${classData.subject_name}`}
+            </Text>
+          </VStack>
           <Box>
             <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
               Professores
@@ -101,9 +109,7 @@ function ToolTipLabel(eventInfo: EventContentArg) {
               Informações
             </Text>
             <Text fontSize='lg' textColor='#408080'>{`Sala: ${
-              classData.classroom
-                ? classData.classroom
-                : 'NÃO ALOCADA'
+              classData.classroom ? classData.classroom : 'NÃO ALOCADA'
             }`}</Text>
 
             <Text fontSize='lg' textColor='#408080'>
