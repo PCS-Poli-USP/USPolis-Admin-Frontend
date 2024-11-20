@@ -22,7 +22,7 @@ interface VerticalCarouselProps {
 function MobileCarousel({ items }: VerticalCarouselProps) {
   const textH = 500;
   const textW = '90vw';
-  const textGap = 50;
+  const textGap = 0;
 
   return (
     <VStack
@@ -31,7 +31,7 @@ function MobileCarousel({ items }: VerticalCarouselProps) {
       p={10}
       alignItems={'center'}
       alignSelf={'center'}
-      spacing={textGap}
+      spacing={0}
       mb={10}
     >
       {items.map((item, index) => (
@@ -39,6 +39,7 @@ function MobileCarousel({ items }: VerticalCarouselProps) {
           key={index}
           h={`${textH}px`}
           w={`${textW}`}
+          mb={`${textGap}px`}
           gap={5}
           direction={'column'}
           align={'center'}

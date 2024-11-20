@@ -7,6 +7,7 @@ import {
   Heading,
   ListItem,
   UnorderedList,
+  Highlight,
 } from '@chakra-ui/react';
 
 import MobileHeader from '../MobileHeader';
@@ -36,7 +37,9 @@ function HomeMobileView() {
         <Flex direction={'column'} w={'full'} gap={5}>
           <Box bg={'white'} h={'60px'} w={'full'} />
           <Heading textColor={'black'} fontWeight={'bold'} size={'2xl'}>
-            Uspolis: solução para alocação de salas.
+            <Highlight query={'uspolis:'} styles={{ textColor: 'uspolis.blue' }}>
+              USPolis: solução para alocação de salas.
+            </Highlight>
           </Heading>
           <Text textColor={'black'}>
             Administre seus espaços e agendas, encontre os horários e as salas
