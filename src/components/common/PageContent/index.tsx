@@ -9,8 +9,8 @@ const PageContent: React.FC<PageContentProps> = ({ children }) => {
   return (
     <Flex
       direction='column'
-      width='100vw'
-      height='100vh'
+      width='100%'
+      height='100%'
       // overflow={'auto'}
       // bg={'pink'}
       mt={'60px'}
