@@ -13,7 +13,7 @@ import {
 import reportWebVitals from './reportWebVitals';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { chakraTheme, muiTheme } from 'utils/chakra.theme';
+import { chakraTheme, muiTheme } from 'utils/theme';
 import { ThemeProvider } from '@mui/material';
 import 'moment/locale/pt-br';
 import { Amplify } from 'aws-amplify';

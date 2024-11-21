@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   Heading,
+  Highlight,
   Image,
   ListItem,
   Text,
@@ -34,7 +35,12 @@ function HomeDesktopView() {
       >
         <Flex direction={'column'} w={'500px'} gap={5}>
           <Heading textColor={'black'} fontWeight={'bold'} size={'2xl'}>
-            Uspolis: solução para alocação de salas.
+            <Highlight
+              query={'uspolis:'}
+              styles={{ textColor: 'uspolis.blue' }}
+            >
+              USPolis: solução para alocação de salas.
+            </Highlight>
           </Heading>
           <Text textColor={'black'}>
             Administre seus espaços e agendas, encontre os horários e as salas

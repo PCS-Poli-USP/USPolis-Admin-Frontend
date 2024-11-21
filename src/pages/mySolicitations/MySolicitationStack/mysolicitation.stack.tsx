@@ -111,12 +111,16 @@ function SolicitationStack({
             isClearable={true}
             isSearchable={true}
             options={buildingOptions}
-            onChange={(option) => {
+            onChange={(option: Option | null) => {
               if (option) {
                 setBuildingSearch(option.value);
                 if (selectRef.current) selectRef.current.clearValue();
                 setClassroomSearch(undefined);
                 filterSolicitation(option.value, undefined);
+              } else {
+                setBuildingSearch('');
+                setClassroomSearch(undefined);
+                if (selectRef.current) selectRef.current.clearValue();
               }
             }}
           />
@@ -134,10 +138,13 @@ function SolicitationStack({
             isSearchable={true}
             isDisabled={buildingSearch === ''}
             options={classroomOptions}
-            onChange={(option) => {
+            onChange={(option: Option | null) => {
               if (option) {
                 setClassroomSearch(option.value);
                 filterSolicitation(buildingSearch, option.value);
+              } else {
+                setClassroomSearch(undefined);
+                filterSolicitation(buildingSearch, undefined);
               }
             }}
           />

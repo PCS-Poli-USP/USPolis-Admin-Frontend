@@ -1,5 +1,5 @@
 import { Tooltip, HStack, Text, VStack } from '@chakra-ui/react';
-import { EventContentArg } from '@fullcalendar/react';
+import { EventContentArg } from '@fullcalendar/core';
 import { CalendarEventExtendedProps } from './calendarView.modal.interface';
 
 export default function CalendarViewEventContent(eventInfo: EventContentArg) {
