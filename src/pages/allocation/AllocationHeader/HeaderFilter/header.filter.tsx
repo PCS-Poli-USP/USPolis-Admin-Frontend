@@ -28,7 +28,7 @@ function HeaderFilter({
   setNameSearchValue,
   classSearchValue,
   setClassSearchValue,
-  filterEvents,
+  // filterEvents,
   events,
   resources,
 }: AllocationHeaderProps) {
@@ -109,20 +109,20 @@ function HeaderFilter({
             onChange={(option: OptionType) => {
               if (option) {
                 setBuildingSearchValue(option.value);
-                filterEvents(
-                  option.value,
-                  classroomSearchValue,
-                  nameSearchValue,
-                  classSearchValue,
-                );
+                // filterEvents(
+                //   option.value,
+                //   classroomSearchValue,
+                //   nameSearchValue,
+                //   classSearchValue,
+                // );
               } else {
                 setBuildingSearchValue('');
-                filterEvents(
-                  '',
-                  classroomSearchValue,
-                  nameSearchValue,
-                  classSearchValue,
-                );
+                // filterEvents(
+                //   '',
+                //   classroomSearchValue,
+                //   nameSearchValue,
+                //   classSearchValue,
+                // );
               }
             }}
           />
@@ -140,20 +140,20 @@ function HeaderFilter({
             onChange={(option: OptionType) => {
               if (option) {
                 setClassroomSearchValue(option.value);
-                filterEvents(
-                  buildingSearchValue,
-                  option.value,
-                  nameSearchValue,
-                  classSearchValue,
-                );
+                // filterEvents(
+                //   buildingSearchValue,
+                //   option.value,
+                //   nameSearchValue,
+                //   classSearchValue,
+                // );
               } else {
                 setClassroomSearchValue('');
-                filterEvents(
-                  buildingSearchValue,
-                  '',
-                  nameSearchValue,
-                  classSearchValue,
-                );
+                // filterEvents(
+                //   buildingSearchValue,
+                //   '',
+                //   nameSearchValue,
+                //   classSearchValue,
+                // );
               }
             }}
           />
@@ -173,16 +173,16 @@ function HeaderFilter({
             onChange={(option: OptionType) => {
               if (option) {
                 setNameSearchValue(option.value);
-                filterEvents(
-                  buildingSearchValue,
-                  classroomSearchValue,
-                  option.value,
-                  classSearchValue,
-                );
+                // filterEvents(
+                //   buildingSearchValue,
+                //   classroomSearchValue,
+                //   option.value,
+                //   classSearchValue,
+                // );
               } else {
                 setNameSearchValue('');
                 setClassSearchValue('');
-                filterEvents(buildingSearchValue, classroomSearchValue, '', '');
+                // filterEvents(buildingSearchValue, classroomSearchValue, '', '');
               }
             }}
           />
@@ -202,20 +202,20 @@ function HeaderFilter({
             onChange={(option: OptionType | null) => {
               if (option) {
                 setClassSearchValue(option.value);
-                filterEvents(
-                  buildingSearchValue,
-                  classroomSearchValue,
-                  nameSearchValue,
-                  option.value,
-                );
+                // filterEvents(
+                //   buildingSearchValue,
+                //   classroomSearchValue,
+                //   nameSearchValue,
+                //   option.value,
+                // );
               } else {
                 setClassSearchValue('');
-                filterEvents(
-                  buildingSearchValue,
-                  classroomSearchValue,
-                  nameSearchValue,
-                  '',
-                );
+                // filterEvents(
+                //   buildingSearchValue,
+                //   classroomSearchValue,
+                //   nameSearchValue,
+                //   '',
+                // );
               }
             }}
           />

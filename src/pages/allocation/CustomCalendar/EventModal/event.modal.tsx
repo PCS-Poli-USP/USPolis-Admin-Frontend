@@ -61,6 +61,9 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
                   <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
                     Informações
                   </Text>
+                  <Text fontSize='lg' textColor='#408080'>{`Prédio: ${
+                    classData.building ? classData.building : 'NÃO ALOCADA'
+                  }`}</Text>
                   <Text fontSize='lg' textColor='#408080'>{`Sala: ${
                     classData.classroom ? classData.classroom : 'NÃO ALOCADA'
                   }`}</Text>

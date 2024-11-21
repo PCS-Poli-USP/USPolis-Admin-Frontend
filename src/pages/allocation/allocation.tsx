@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react';
 import Loading from 'components/common/Loading/loading.component';
 import { appContext } from 'context/AppContext';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Event } from './interfaces/allocation.interfaces';
 import useAllocation from 'pages/allocation/hooks/useAllocation';
 import PageContent from 'components/common/PageContent';
@@ -26,7 +26,7 @@ function Allocation() {
     onClose: onCloseSolicitation,
   } = useDisclosure();
 
-  const [buildingSearchValue, setBuildingSearchValue] = useState('Biênio');
+  const [buildingSearchValue, setBuildingSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
   const [nameSearchValue, setNameSearchValue] = useState('');
   const [classSearchValue, setClassSearchValue] = useState('');
@@ -94,6 +94,28 @@ function Allocation() {
     setFilteredEvents(newEvents);
   }
 
+  useEffect(() => {
+    if (
+      buildingSearchValue ||
+      classroomSearchValue ||
+      nameSearchValue ||
+      classSearchValue
+    ) {
+      filterEvents(
+        buildingSearchValue,
+        classroomSearchValue,
+        nameSearchValue,
+        classSearchValue,
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    buildingSearchValue,
+    classroomSearchValue,
+    nameSearchValue,
+    classSearchValue,
+  ]);
+
   return (
     <PageContent>
       <Loading
@@ -126,7 +148,7 @@ function Allocation() {
             setNameSearchValue={setNameSearchValue}
             classSearchValue={classSearchValue}
             setClassSearchValue={setClassSearchValue}
-            filterEvents={filterEvents}
+            // filterEvents={filterEvents}
             events={events}
             resources={resources}
           />

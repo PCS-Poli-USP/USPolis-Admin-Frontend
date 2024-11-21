@@ -24,12 +24,12 @@ export interface AllocationHeaderProps {
   events: Event[];
   resources: Resource[];
 
-  filterEvents: (
-    building: string,
-    classroom: string,
-    name: string,
-    class_: string,
-  ) => void;
+  // filterEvents: (
+  //   building: string,
+  //   classroom: string,
+  //   name: string,
+  //   class_: string,
+  // ) => void;
 }
 
 function AllocationHeader({
@@ -44,7 +44,7 @@ function AllocationHeader({
   setNameSearchValue,
   classSearchValue,
   setClassSearchValue,
-  filterEvents,
+  // filterEvents,
   events,
   resources,
 }: AllocationHeaderProps) {
@@ -63,7 +63,7 @@ function AllocationHeader({
       setNameSearchValue={setNameSearchValue}
       classSearchValue={classSearchValue}
       setClassSearchValue={setClassSearchValue}
-      filterEvents={filterEvents}
+      // filterEvents={filterEvents}
       events={events}
       resources={resources}
     />
@@ -80,7 +80,7 @@ function AllocationHeader({
       setNameSearchValue={setNameSearchValue}
       classSearchValue={classSearchValue}
       setClassSearchValue={setClassSearchValue}
-      filterEvents={filterEvents}
+      // filterEvents={filterEvents}
       events={events}
       resources={resources}
     />

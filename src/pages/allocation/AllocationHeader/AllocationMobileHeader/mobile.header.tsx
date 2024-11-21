@@ -28,7 +28,7 @@ function AllocationMobileHeader({
   setNameSearchValue,
   classSearchValue,
   setClassSearchValue,
-  filterEvents,
+  // filterEvents,
   events,
   resources,
 }: AllocationHeaderProps) {
@@ -89,7 +89,7 @@ function AllocationMobileHeader({
               setNameSearchValue={setNameSearchValue}
               classSearchValue={classSearchValue}
               setClassSearchValue={setClassSearchValue}
-              filterEvents={filterEvents}
+              // filterEvents={filterEvents}
               events={events}
               resources={resources}
             />
