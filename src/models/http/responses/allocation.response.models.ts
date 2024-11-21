@@ -1,4 +1,3 @@
-import { EventResponse } from 'models/http/responses/allocation.response.models';
 import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { ReservationType } from 'utils/enums/reservations.enum';
@@ -24,13 +23,18 @@ export interface RecurrenceRule {
 }
 
 // See https://fullcalendar.io/docs/event-parsing
-export interface Event extends EventResponse {
-  backgroundColor?: string;
-  borderColor?: string;
-  textColor?: string;
+export interface EventResponse {
+  id: string;
+  title: string;
+  start: string; // Must be YYYY-MM-DDTHH:mm:ss
+  end: string; // Must be YYYY-MM-DDTHH:mm:ss
+  rrule?: RecurrenceRule; // Used when is unallocated
+  allDay: boolean;
+  resourceId: string;
+  extendedProps: EventExtendedProps;
 }
 
-export interface BaseExtendedProps {
+export interface BaseExtendedData {
   building: string;
   classroom: string;
   recurrence: Recurrence;
@@ -42,17 +46,16 @@ export interface BaseExtendedProps {
   end_date?: string;
 }
 
-export interface ClassExtendedProps extends BaseExtendedProps {
+export interface ClassExtendedData extends BaseExtendedData {
   code: string;
   subject_code: string;
   subject_name: string;
   allocated: boolean;
   professors: string[];
-  week_day?: WeekDay;
   subscribers: number;
 }
 
-export interface ReservationExtendedProps extends BaseExtendedProps {
+export interface ReservationExtendedData extends BaseExtendedData {
   title: string;
   type: ReservationType;
   reason?: string;
@@ -60,6 +63,6 @@ export interface ReservationExtendedProps extends BaseExtendedProps {
 }
 
 export interface EventExtendedProps {
-  class_data?: ClassExtendedProps;
-  reservation_data?: ReservationExtendedProps;
+  class_data?: ClassExtendedData;
+  reservation_data?: ReservationExtendedData;
 }
