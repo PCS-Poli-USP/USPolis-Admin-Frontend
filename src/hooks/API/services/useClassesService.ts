@@ -16,6 +16,13 @@ const useClassesService = () => {
   const list = (): Promise<AxiosResponse<Array<ClassResponse>>> => {
     return axios.get(PREFIX);
   };
+
+  const listBySubject = (
+    subject_id: number,
+  ): Promise<AxiosResponse<Array<ClassResponse>>> => {
+    return axios.get(`${PREFIX}/subject/${subject_id}`);
+  };
+
   const listFull = (): Promise<AxiosResponse<Array<ClassFullResponse>>> => {
     return axios.get(`${PREFIX}/full/`);
   };
@@ -56,6 +63,7 @@ const useClassesService = () => {
 
   return {
     list,
+    listBySubject,
     listFull,
     listOneFull,
     getById,
