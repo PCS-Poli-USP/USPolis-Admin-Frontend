@@ -35,6 +35,25 @@ const useClasses = (initialFetch: boolean = true) => {
       });
   }, [showToast]);
 
+  const getClassesBySubject = useCallback(
+    async (subject_id: number) => {
+      setLoading(true);
+      await service
+        .listBySubject(subject_id)
+        .then((response) => {
+          setClasses(response.data.sort(sortClassResponse));
+        })
+        .catch((error) => {
+          showToast('Erro', 'Erro ao carregar turmas', 'error');
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast],
+  );
+
   const getClassFull = useCallback(async (id: number) => {
     setLoading(true);
     let full: ClassFullResponse | undefined = undefined;
@@ -154,6 +173,7 @@ const useClasses = (initialFetch: boolean = true) => {
     loading,
     classes,
     getClasses,
+    getClassesBySubject,
     getClassFull,
     createClass,
     updateClass,
