@@ -10,12 +10,17 @@ const customStyles: StylesConfig<OptionType, false> = {
     ...provided,
     maxHeight: '200px', // Altura máxima do menu
     overflowY: 'auto', // Permite o scroll vertical
+    zIndex: 99999,
   }),
   menuList: (provided) => ({
     ...provided,
     maxHeight: '200px', // Altura máxima da lista
     overflowY: 'auto', // Ativa o scroll
-    zIndex: 7,
+    zIndex: 99999,
+  }),
+  menuPortal: (base) => ({
+    ...base,
+    zIndex: 99999, // Dinamicamente ajusta o z-index
   }),
 };
 
@@ -28,7 +33,6 @@ function HeaderFilter({
   setNameSearchValue,
   classSearchValue,
   setClassSearchValue,
-  // filterEvents,
   events,
   resources,
 }: AllocationHeaderProps) {
@@ -97,6 +101,8 @@ function HeaderFilter({
       <Flex direction={'row'} gap={2} w={'full'}>
         <Box w={'50%'}>
           <Select
+            styles={customStyles}
+            menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
             selectedOptionColorScheme={'purple'}
             placeholder='Prédio'
             isClearable={true}
@@ -109,26 +115,16 @@ function HeaderFilter({
             onChange={(option: OptionType) => {
               if (option) {
                 setBuildingSearchValue(option.value);
-                // filterEvents(
-                //   option.value,
-                //   classroomSearchValue,
-                //   nameSearchValue,
-                //   classSearchValue,
-                // );
               } else {
                 setBuildingSearchValue('');
-                // filterEvents(
-                //   '',
-                //   classroomSearchValue,
-                //   nameSearchValue,
-                //   classSearchValue,
-                // );
               }
             }}
           />
         </Box>
         <Box w={'50%'}>
           <Select
+            styles={customStyles}
+            menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
             placeholder='Sala'
             isClearable={true}
             options={classroomsOptions}
@@ -140,20 +136,8 @@ function HeaderFilter({
             onChange={(option: OptionType) => {
               if (option) {
                 setClassroomSearchValue(option.value);
-                // filterEvents(
-                //   buildingSearchValue,
-                //   option.value,
-                //   nameSearchValue,
-                //   classSearchValue,
-                // );
               } else {
                 setClassroomSearchValue('');
-                // filterEvents(
-                //   buildingSearchValue,
-                //   '',
-                //   nameSearchValue,
-                //   classSearchValue,
-                // );
               }
             }}
           />
@@ -162,6 +146,8 @@ function HeaderFilter({
       <Flex direction={'column'} gap={2} w={'full'}>
         <Box w={'100%'}>
           <Select
+            styles={customStyles}
+            menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
             placeholder='Disciplina'
             isClearable={true}
             value={
@@ -173,16 +159,9 @@ function HeaderFilter({
             onChange={(option: OptionType) => {
               if (option) {
                 setNameSearchValue(option.value);
-                // filterEvents(
-                //   buildingSearchValue,
-                //   classroomSearchValue,
-                //   option.value,
-                //   classSearchValue,
-                // );
               } else {
                 setNameSearchValue('');
                 setClassSearchValue('');
-                // filterEvents(buildingSearchValue, classroomSearchValue, '', '');
               }
             }}
           />
@@ -190,6 +169,7 @@ function HeaderFilter({
         <Box w={'100%'} h={'fit-content'}>
           <Select
             styles={customStyles}
+            menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
             isDisabled={!nameSearchValue}
             placeholder='Turma'
             isClearable={true}
@@ -202,20 +182,8 @@ function HeaderFilter({
             onChange={(option: OptionType | null) => {
               if (option) {
                 setClassSearchValue(option.value);
-                // filterEvents(
-                //   buildingSearchValue,
-                //   classroomSearchValue,
-                //   nameSearchValue,
-                //   option.value,
-                // );
               } else {
                 setClassSearchValue('');
-                // filterEvents(
-                //   buildingSearchValue,
-                //   classroomSearchValue,
-                //   nameSearchValue,
-                //   '',
-                // );
               }
             }}
           />

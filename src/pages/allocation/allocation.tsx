@@ -26,6 +26,7 @@ function Allocation() {
     onClose: onCloseSolicitation,
   } = useDisclosure();
 
+  const [hasInitialFilter, setHasInitialFilter] = useState(false);
   const [buildingSearchValue, setBuildingSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
   const [nameSearchValue, setNameSearchValue] = useState('');
@@ -115,6 +116,15 @@ function Allocation() {
     nameSearchValue,
     classSearchValue,
   ]);
+
+  useEffect(() => {
+    return () => {
+      if (!hasInitialFilter) {
+        setBuildingSearchValue('Biênio');
+        setHasInitialFilter(true);
+      }
+    };
+  }, [hasInitialFilter]);
 
   return (
     <PageContent>
