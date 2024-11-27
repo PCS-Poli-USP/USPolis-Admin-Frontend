@@ -1,7 +1,8 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import Select, { StylesConfig } from 'react-select';
+import Select, { SelectInstance, StylesConfig } from 'react-select';
 import { AllocationHeaderProps } from '..';
 import { AllocationEnum } from 'utils/enums/allocation.enum';
+import { useRef } from 'react';
 
 type OptionType = { value: string; label: string };
 
@@ -36,6 +37,8 @@ function HeaderFilter({
   events,
   resources,
 }: AllocationHeaderProps) {
+  const selectRef = useRef<SelectInstance<OptionType>>(null);
+
   const buildingOptions = events
     .map((event) => ({
       value:
@@ -162,12 +165,14 @@ function HeaderFilter({
               } else {
                 setNameSearchValue('');
                 setClassSearchValue('');
+                if (selectRef.current) selectRef.current.clearValue();
               }
             }}
           />
         </Box>
         <Box w={'100%'} h={'fit-content'}>
           <Select
+            ref={selectRef}
             styles={customStyles}
             menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
             isDisabled={!nameSearchValue}

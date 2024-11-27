@@ -156,6 +156,7 @@ const useClasses = (initialFetch: boolean = true) => {
     loading,
     classes,
     getClasses,
+    getClassesBySubject,
     getClassFull,
     createClass,
     updateClass,

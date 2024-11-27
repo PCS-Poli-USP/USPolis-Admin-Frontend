@@ -14,6 +14,8 @@ interface AppContext {
   getSelfFromBackend: () => Promise<void>;
   persist: boolean;
   setPersist: (value: boolean) => void;
+  isAuthenticaded: boolean;
+  setIsAuthenticaded: (value: boolean) => void;
 }
 
 const DEFAULT_VALUE = {
@@ -27,7 +29,9 @@ const DEFAULT_VALUE = {
   logout: async () => {},
   getSelfFromBackend: async () => {},
   persist: false,
-  setPersist: (value: boolean) => {},
+  setPersist: () => {},
+  isAuthenticaded: false,
+  setIsAuthenticaded: () => {},
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -51,7 +55,7 @@ export default function AppContextProvider({
       console.log('Access token no get self:', accessToken);
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
-      // localStorage.setItem('user', JSON.stringify(self.data));
+      setIsAuthenticaded(true);
     } catch (e: any) {
       if (e.response.status === 403) {
         throw new Error('User with this email not registered');
@@ -62,28 +66,18 @@ export default function AppContextProvider({
     }
   }
 
-  async function getSelf() {
-    await selfService
-      .getSelf()
-      .then((response) => {
-        setLoggedUser(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log('E agora zé?');
-      });
-  }
-
   async function logout() {
+    localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setLoggedUser(null);
     setAccessToken('');
     setIsAuthenticated(false);
     setLoading(false);
+    setIsAuthenticaded(false);
   }
 
   useEffect(() => {
-    // getSelf();
+    // getSelfFromBackend();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -99,8 +93,10 @@ export default function AppContextProvider({
         setIsAuthenticated,
         logout,
         getSelfFromBackend,
-        setPersist,
         persist,
+        setPersist,
+        setIsAuthenticaded,
+        isAuthenticaded,
       }}
     >
       {children}

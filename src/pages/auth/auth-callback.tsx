@@ -2,6 +2,8 @@ import { appContext } from 'context/AppContext';
 import { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthHttpService } from 'services/auth/auth.service';
+import LoadingRedirect from './loadingRedirect';
+import RedirectError from './redirectError';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -17,6 +19,7 @@ const AuthCallbackPage = () => {
   useEffect(() => {
     const code = query.get('code');
     redirect(code);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   async function redirect(code: string | null): Promise<void> {
@@ -37,14 +40,7 @@ const AuthCallbackPage = () => {
 
   return (
     <div>
-      {error == null ? (
-        <p>Login efetuado com sucesso, aguarde redirecionamento....</p>
-      ) : (
-        <>
-          <h1>Um erro aconteceu:</h1>
-          <p>{error}</p>
-        </>
-      )}
+      {error == null ? <LoadingRedirect /> : <RedirectError error={error} />}
     </div>
   );
 };
