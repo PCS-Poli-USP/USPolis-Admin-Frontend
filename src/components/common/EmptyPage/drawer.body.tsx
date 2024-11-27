@@ -10,7 +10,7 @@ import { useContext } from 'react';
 import { FaList, FaRegCalendarTimes, FaRegUser } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { appContext } from 'context/AppContext';
-import { CalendarIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
+import { CalendarIcon, LockIcon, Search2Icon, UnlockIcon } from '@chakra-ui/icons';
 import { LiaBuilding } from 'react-icons/lia';
 import { MdAddChart, MdEvent, MdOutlinePendingActions } from 'react-icons/md';
 import { LuCalendarClock } from 'react-icons/lu';
@@ -110,6 +110,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                 Público
               </Text>
             </HStack>
+            <DrawerButton
+              icon={<Search2Icon />}
+              to='/find-classes'
+              text='Encontre suas aulas'
+              replace_location={true}
+              onClose={onClose}
+            />
             <DrawerButton
               icon={<BsCalendar3 />}
               to='/allocation'

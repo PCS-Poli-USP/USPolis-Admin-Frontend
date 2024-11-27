@@ -36,6 +36,7 @@ import { AuthPage } from 'pages/auth';
 import RestrictedRoute from 'components/routes/restricted.route';
 import { AuthCallbackPage } from 'pages/auth/auth-callback';
 import Home from 'pages/home';
+import FindClasses from 'pages/findClasses';
 
 Amplify.configure(awsConfig);
 
@@ -70,6 +71,7 @@ root.render(
                       path='my-solicitations'
                       element={<MySolicitations />}
                     />
+                    <Route path='find-classes' element={<FindClasses />} />
 
                     {/* Restricted routes */}
                     <Route element={<RestrictedRoute />}>
