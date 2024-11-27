@@ -11,12 +11,12 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import Select from 'react-select';
+import Select, { SelectInstance } from 'react-select';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import ClassesPDF from '../../pdf/ClassesPDF/classesPDF';
 import ClassroomsPDF from '../../pdf/ClassroomsPDF/classroomsPDF';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useRef } from 'react';
 import { appContext } from 'context/AppContext';
 import { AllocationHeaderProps } from '..';
 import { AllocationEnum } from 'utils/enums/allocation.enum';
@@ -35,9 +35,10 @@ function AllocationDesktopHeader({
   setNameSearchValue,
   classSearchValue,
   setClassSearchValue,
-  // filterEvents,
   events,
 }: AllocationHeaderProps) {
+  const selectRef = useRef<SelectInstance<OptionType>>(null);
+
   const location = useLocation();
   const navigate = useNavigate();
   const { loggedUser } = useContext(appContext);
@@ -174,20 +175,8 @@ function AllocationDesktopHeader({
             onChange={(option: OptionType) => {
               if (option) {
                 setBuildingSearchValue(option.value);
-                // filterEvents(
-                //   option.value,
-                //   classroomSearchValue,
-                //   nameSearchValue,
-                //   classSearchValue,
-                // );
               } else {
                 setBuildingSearchValue('');
-                // filterEvents(
-                //   '',
-                //   classroomSearchValue,
-                //   nameSearchValue,
-                //   classSearchValue,
-                // );
               }
             }}
           />
@@ -206,20 +195,8 @@ function AllocationDesktopHeader({
             onChange={(option: OptionType) => {
               if (option) {
                 setClassroomSearchValue(option.value);
-                // filterEvents(
-                //   buildingSearchValue,
-                //   option.value,
-                //   nameSearchValue,
-                //   classSearchValue,
-                // );
               } else {
                 setClassroomSearchValue('');
-                // filterEvents(
-                //   buildingSearchValue,
-                //   '',
-                //   nameSearchValue,
-                //   classSearchValue,
-                // );
               }
             }}
           />
@@ -238,16 +215,10 @@ function AllocationDesktopHeader({
             onChange={(option: OptionType) => {
               if (option) {
                 setNameSearchValue(option.value);
-                // filterEvents(
-                //   buildingSearchValue,
-                //   classroomSearchValue,
-                //   option.value,
-                //   classSearchValue,
-                // );
               } else {
                 setNameSearchValue('');
                 setClassSearchValue('');
-                // filterEvents(buildingSearchValue, classroomSearchValue, '', '');
+                if (selectRef.current) selectRef.current.clearValue();
               }
             }}
           />
@@ -255,6 +226,7 @@ function AllocationDesktopHeader({
 
         <Box w={'250px'}>
           <Select
+            ref={selectRef}
             isDisabled={!nameSearchValue}
             placeholder='Turma'
             isClearable={true}
@@ -267,20 +239,8 @@ function AllocationDesktopHeader({
             onChange={(option: OptionType | null) => {
               if (option) {
                 setClassSearchValue(option.value);
-                // filterEvents(
-                //   buildingSearchValue,
-                //   classroomSearchValue,
-                //   nameSearchValue,
-                //   option.value,
-                // );
               } else {
                 setClassSearchValue('');
-                // filterEvents(
-                //   buildingSearchValue,
-                //   classroomSearchValue,
-                //   nameSearchValue,
-                //   '',
-                // );
               }
             }}
           />

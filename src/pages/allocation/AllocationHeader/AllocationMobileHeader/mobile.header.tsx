@@ -89,7 +89,6 @@ function AllocationMobileHeader({
               setNameSearchValue={setNameSearchValue}
               classSearchValue={classSearchValue}
               setClassSearchValue={setClassSearchValue}
-              // filterEvents={filterEvents}
               events={events}
               resources={resources}
             />
