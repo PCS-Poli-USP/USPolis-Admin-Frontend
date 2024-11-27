@@ -19,6 +19,12 @@ export default class ClassesService extends HttpService {
   list(): Promise<AxiosResponse<Array<ClassResponse>>> {
     return this.http.get('');
   }
+  listBySubject(
+    subject_id: number,
+  ): Promise<AxiosResponse<Array<ClassResponse>>> {
+    return this.http.get(`/subject/${subject_id}`);
+  }
+
   listFull(): Promise<AxiosResponse<Array<ClassFullResponse>>> {
     return this.http.get('/full/');
   }
