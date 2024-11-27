@@ -12,7 +12,6 @@ const PersistLogin = () => {
   const context = useContext(appContext);
 
   useEffect(() => {
-    console.log(context, 'in persist login');
     if (OVERRIDE === 'true') {
       setIsLoading(false);
       return;
@@ -29,9 +28,12 @@ const PersistLogin = () => {
         setIsLoading(false);
       }
     };
-    !context.isAuthenticaded ? verifyRefreshToken() : setIsLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    !context.isAuthenticaded && context.persist
+      ? verifyRefreshToken()
+      : setIsLoading(false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context]);
+
   return (
     <>{!context.persist ? <Outlet /> : isLoading ? <Spinner /> : <Outlet />}</>
   );

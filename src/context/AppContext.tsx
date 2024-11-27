@@ -57,6 +57,7 @@ export default function AppContextProvider({
 
   async function logout() {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     setLoggedUser(null);
     setLoading(false);
   }
