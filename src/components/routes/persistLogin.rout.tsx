@@ -12,6 +12,7 @@ const PersistLogin = () => {
   const context = useContext(appContext);
 
   useEffect(() => {
+    console.log('PersistLogin', context);
     if (OVERRIDE === 'true') {
       setIsLoading(false);
       return;
@@ -21,17 +22,17 @@ const PersistLogin = () => {
         const refresh = localStorage.getItem('refresh_token');
         const response = await service.refreshToken(refresh || '');
         localStorage.setItem('access_token', response.data.access_token);
-        context.setIsAuthenticaded(true);
+        context.getSelfFromBackend();
       } catch (error) {
         console.log(error);
       } finally {
         setIsLoading(false);
       }
     };
-    !context.isAuthenticaded && context.persist
+    context.persist && !context.isAuthenticaded
       ? verifyRefreshToken()
       : setIsLoading(false);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context]);
 
   return (

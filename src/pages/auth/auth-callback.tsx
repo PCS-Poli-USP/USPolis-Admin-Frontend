@@ -19,7 +19,7 @@ const AuthCallbackPage = () => {
   useEffect(() => {
     const code = query.get('code');
     redirect(code);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   async function redirect(code: string | null): Promise<void> {

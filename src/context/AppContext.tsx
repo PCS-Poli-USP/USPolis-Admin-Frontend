@@ -44,7 +44,7 @@ export default function AppContextProvider({
     try {
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
-      // localStorage.setItem('user', JSON.stringify(self.data));
+      setIsAuthenticaded(true);
     } catch (e: any) {
       if (e.response.status === 403) {
         throw new Error('User with this email not registered');
@@ -60,10 +60,11 @@ export default function AppContextProvider({
     localStorage.removeItem('refresh_token');
     setLoggedUser(null);
     setLoading(false);
+    setIsAuthenticaded(false);
   }
 
   useEffect(() => {
-    getSelfFromBackend();
+    // getSelfFromBackend();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
