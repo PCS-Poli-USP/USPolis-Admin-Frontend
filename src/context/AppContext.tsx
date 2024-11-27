@@ -32,7 +32,7 @@ export default function AppContextProvider({
     try {
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
-      localStorage.setItem('user', JSON.stringify(self.data));
+      // localStorage.setItem('user', JSON.stringify(self.data));
     } catch (e: any) {
       if (e.response.status === 403) {
         throw new Error('User with this email not registered');
@@ -43,29 +43,15 @@ export default function AppContextProvider({
     }
   }
 
-  async function getSelf() {
-    const userFromStorage = localStorage.getItem('user');
-    if (!userFromStorage) {
-      await getSelfFromBackend();
-    } else {
-      const parsedUser: UserResponse = JSON.parse(
-        userFromStorage,
-      ) as UserResponse;
-      setLoggedUser(parsedUser);
-      console.log('Usuário logado (storage):');
-      console.log(parsedUser);
-    }
-  }
-
   async function logout() {
-    localStorage.removeItem('user');
     localStorage.removeItem('access_token');
     setLoggedUser(null);
     setLoading(false);
   }
 
   useEffect(() => {
-    getSelf();
+    getSelfFromBackend();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

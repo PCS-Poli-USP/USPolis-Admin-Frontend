@@ -37,6 +37,8 @@ import RestrictedRoute from 'components/routes/restricted.route';
 import { AuthCallbackPage } from 'pages/auth/auth-callback';
 import Home from 'pages/home';
 import FindClasses from 'pages/findClasses';
+import LoadingRedirect from 'pages/auth/loadingRedirect';
+import RedirectError from 'pages/auth/redirectError';
 
 Amplify.configure(awsConfig);
 
@@ -61,6 +63,14 @@ root.render(
                 <Route path='/index' element={<Home />} />
                 <Route path='/auth' element={<AuthPage />} />
                 <Route path='auth-callback' element={<AuthCallbackPage />} />
+                <Route
+                  path='/test-auth-callback'
+                  element={<LoadingRedirect />}
+                />
+                <Route
+                  path='/test-auth-callback-error'
+                  element={<RedirectError error='Mock error bro' />}
+                />
                 <Route path='/' element={<EmptyPage />}>
                   {/* Public routes */}
                   <Route path='allocation' element={<Allocation />} />

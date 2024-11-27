@@ -1,11 +1,13 @@
+import { appContext } from 'context/AppContext';
+import { useContext } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 const OVERRIDE = process.env.REACT_APP_OVERRIDE_AUTH;
 
 const PrivateRoute: React.FC = () => {
   const location = useLocation();
-  const token = localStorage.getItem('access_token'); // Check for token in localStorage or sessionStorage
-  return token || OVERRIDE === 'true' ? (
+  const context = useContext(appContext);
+  return !!context.loggedUser || OVERRIDE === 'true' ? (
     <Outlet />
   ) : (
     <Navigate to='/auth' replace={true} state={{ from: location }} /> // To redirects after login

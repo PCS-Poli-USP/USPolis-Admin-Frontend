@@ -95,36 +95,29 @@ function Allocation() {
     setFilteredEvents(newEvents);
   }
 
+
   useEffect(() => {
-    if (
-      buildingSearchValue ||
-      classroomSearchValue ||
-      nameSearchValue ||
-      classSearchValue
-    ) {
-      filterEvents(
-        buildingSearchValue,
-        classroomSearchValue,
-        nameSearchValue,
-        classSearchValue,
-      );
+    if (!hasInitialFilter && events.length > 0) {
+      setBuildingSearchValue('Biênio');
+      setHasInitialFilter(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasInitialFilter, events]);
+
+  useEffect(() => {
+    filterEvents(
+      buildingSearchValue,
+      classroomSearchValue,
+      nameSearchValue,
+      classSearchValue,
+    );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    events,
     buildingSearchValue,
     classroomSearchValue,
     nameSearchValue,
     classSearchValue,
   ]);
-
-  useEffect(() => {
-    return () => {
-      if (!hasInitialFilter) {
-        setBuildingSearchValue('Biênio');
-        setHasInitialFilter(true);
-      }
-    };
-  }, [hasInitialFilter]);
 
   return (
     <PageContent>
