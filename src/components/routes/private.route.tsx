@@ -7,7 +7,8 @@ const OVERRIDE = process.env.REACT_APP_OVERRIDE_AUTH;
 const PrivateRoute: React.FC = () => {
   const location = useLocation();
   const context = useContext(appContext);
-  return !!context.loggedUser || OVERRIDE === 'true' ? (
+  console.log('COntexto no private route: ', context);
+  return context.isAuthenticaded || OVERRIDE === 'true' ? (
     <Outlet />
   ) : (
     <Navigate to='/auth' replace={true} state={{ from: location }} /> // To redirects after login

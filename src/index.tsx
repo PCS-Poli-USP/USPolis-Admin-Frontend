@@ -39,6 +39,7 @@ import Home from 'pages/home';
 import FindClasses from 'pages/findClasses';
 import LoadingRedirect from 'pages/auth/loadingRedirect';
 import RedirectError from 'pages/auth/redirectError';
+import PersistLogin from 'components/routes/persistLogin.rout';
 
 Amplify.configure(awsConfig);
 
@@ -71,37 +72,42 @@ root.render(
                   path='/test-auth-callback-error'
                   element={<RedirectError error='Mock error bro' />}
                 />
-                <Route path='/' element={<EmptyPage />}>
-                  {/* Public routes */}
-                  <Route path='allocation' element={<Allocation />} />
-
-                  {/* Private routes */}
-                  <Route element={<PrivateRoute />}>
-                    <Route
-                      path='my-solicitations'
-                      element={<MySolicitations />}
-                    />
+                <Route element={<PersistLogin />}>
+                  <Route path='/' element={<EmptyPage />}>
+                    {/* Public routes */}
+                    <Route path='allocation' element={<Allocation />} />
                     <Route path='find-classes' element={<FindClasses />} />
 
-                    {/* Restricted routes */}
-                    <Route element={<RestrictedRoute />}>
-                      <Route path='subjects' element={<Subjects />} />
-                      <Route path='calendars' element={<Calendars />} />
-                      <Route path='classrooms' element={<Classrooms />} />
-                      <Route path='classes' element={<Classes />} />
-                      <Route path='reservations' element={<Reservations />} />
-                      <Route path='conflicts' element={<ConflictsPage />} />
-                      <Route path='solicitations' element={<Solicitations />} />
-                    </Route>
-
-                    {/* Admin routes */}
-                    <Route path='' element={<AdminRoute />}>
-                      <Route path='users' element={<Users />} />
-                      <Route path='buildings' element={<Buildings />} />
+                    {/* Private routes */}
+                    <Route element={<PrivateRoute />}>
                       <Route
-                        path='institutional-events'
-                        element={<InstitutionalEvents />}
+                        path='my-solicitations'
+                        element={<MySolicitations />}
                       />
+
+                      {/* Restricted routes */}
+                      <Route element={<RestrictedRoute />}>
+                        <Route path='subjects' element={<Subjects />} />
+                        <Route path='calendars' element={<Calendars />} />
+                        <Route path='classrooms' element={<Classrooms />} />
+                        <Route path='classes' element={<Classes />} />
+                        <Route path='reservations' element={<Reservations />} />
+                        <Route path='conflicts' element={<ConflictsPage />} />
+                        <Route
+                          path='solicitations'
+                          element={<Solicitations />}
+                        />
+                      </Route>
+
+                      {/* Admin routes */}
+                      <Route path='' element={<AdminRoute />}>
+                        <Route path='users' element={<Users />} />
+                        <Route path='buildings' element={<Buildings />} />
+                        <Route
+                          path='institutional-events'
+                          element={<InstitutionalEvents />}
+                        />
+                      </Route>
                     </Route>
                   </Route>
                   {/* Not found */}

@@ -8,6 +8,10 @@ interface AppContext {
   loggedUser: UserResponse | null;
   logout: () => Promise<void>;
   getSelfFromBackend: () => Promise<void>;
+  persist: boolean;
+  setPersist: (value: boolean) => void;
+  isAuthenticaded: boolean;
+  setIsAuthenticaded: (value: boolean) => void;
 }
 
 const DEFAULT_VALUE = {
@@ -16,6 +20,10 @@ const DEFAULT_VALUE = {
   loggedUser: null,
   logout: async () => {},
   getSelfFromBackend: async () => {},
+  persist: false,
+  setPersist: () => {},
+  isAuthenticaded: false,
+  setIsAuthenticaded: () => {},
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -25,6 +33,10 @@ export default function AppContextProvider({
 }: React.PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(false);
   const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
+  const [isAuthenticaded, setIsAuthenticaded] = useState<boolean>(false);
+  const [persist, setPersist] = useState<boolean>(
+    JSON.parse(localStorage.getItem('persist') || 'false') || false,
+  );
 
   const selfService = new SelfService();
 
@@ -51,7 +63,7 @@ export default function AppContextProvider({
 
   useEffect(() => {
     getSelfFromBackend();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -62,6 +74,10 @@ export default function AppContextProvider({
         loggedUser,
         logout,
         getSelfFromBackend,
+        persist,
+        setPersist,
+        setIsAuthenticaded,
+        isAuthenticaded,
       }}
     >
       {children}
