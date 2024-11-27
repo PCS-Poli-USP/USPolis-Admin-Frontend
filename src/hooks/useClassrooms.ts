@@ -10,12 +10,11 @@ import {
   ClassroomWithConflictCount,
 } from 'models/http/responses/classroom.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import ClassroomsService from 'services/api/classrooms.service';
 import { sortClassroomResponse } from 'utils/classrooms/classrooms.sorter';
-
-const service = new ClassroomsService();
+import useClassroomsService from './API/services/useClassroomsService';
 
 const useClassrooms = (initialFetch: boolean = true) => {
+  const service = useClassroomsService();
   const [loading, setLoading] = useState(false);
   const [classrooms, setClassrooms] = useState<ClassroomResponse[]>([]);
 
@@ -34,7 +33,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
   const getClassrooms = useCallback(async () => {
     setLoading(true);
@@ -49,7 +48,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
   const getClassroomsByBuilding = useCallback(
     async (building_id: number) => {
@@ -73,7 +72,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
         });
       return current;
     },
-    [showToast],
+    [showToast, service],
   );
 
   const getClassroomsWithConflictFromTime = useCallback(
@@ -97,21 +96,24 @@ const useClassrooms = (initialFetch: boolean = true) => {
         });
       return current;
     },
-    [showToast],
+    [showToast, service],
   );
 
-  const listOneFull = useCallback(async (id: number) => {
-    let current: ClassroomFullResponse | undefined;
-    await service
-      .getOneFull(id)
-      .then((response) => {
-        current = response.data;
-      })
-      .catch((error) => {
-        current = undefined;
-      });
-    return current;
-  }, []);
+  const listOneFull = useCallback(
+    async (id: number) => {
+      let current: ClassroomFullResponse | undefined;
+      await service
+        .getOneFull(id)
+        .then((response) => {
+          current = response.data;
+        })
+        .catch((error) => {
+          current = undefined;
+        });
+      return current;
+    },
+    [service],
+  );
 
   const createClassroom = useCallback(
     async (data: CreateClassroom) => {
@@ -134,7 +136,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
-    [getClassrooms, showToast],
+    [getClassrooms, showToast, service],
   );
 
   const updateClassroom = useCallback(
@@ -157,14 +159,14 @@ const useClassrooms = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
-    [getClassrooms, showToast],
+    [getClassrooms, showToast, service],
   );
 
   const deleteClassroom = useCallback(
     async (id: number) => {
       setLoading(true);
       await service
-        .delete(id)
+        .deleteById(id)
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao remover sala', 'success');
           getClassrooms();
@@ -177,7 +179,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
-    [getClassrooms, showToast],
+    [getClassrooms, showToast, service],
   );
 
   useEffect(() => {

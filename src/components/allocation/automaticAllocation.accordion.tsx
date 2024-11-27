@@ -17,7 +17,7 @@ import Classroom from 'models/common/classroom.model';
 import Event from 'models/common/event.model';
 
 import { useEffect, useState } from 'react';
-import ClassroomsService from 'services/api/classrooms.service';
+import useClassesService from 'hooks/API/services/useClassesService';
 
 interface AutomaticAllocationAccordionProps {
   onEdit: (event: Event) => void;
@@ -30,7 +30,7 @@ export default function AutomaticAllocationAccordion({
   allocated,
   unallocated,
 }: AutomaticAllocationAccordionProps) {
-  const classroomService = new ClassroomsService();
+  const classroomService = useClassesService();
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [allocatedEvents, setAllocatedEvents] = useState<Event[]>([]);
   const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);
@@ -73,9 +73,7 @@ export default function AutomaticAllocationAccordion({
               <BsBookHalf />
               <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
               <CalendarIcon />
-              <Text>{`${(value.week_day)}, ${
-                value.start_time
-              } às ${value.end_time}`}</Text>
+              <Text>{`${value.week_day}, ${value.start_time} às ${value.end_time}`}</Text>
               <BsHouseFill />
               <Text>{`${value.classroom}`}</Text>
               <Button
@@ -105,9 +103,7 @@ export default function AutomaticAllocationAccordion({
                 <BsBookHalf />
                 <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
                 <CalendarIcon />
-                <Text>{`${(value.week_day)}, ${
-                  value.start_time
-                } às ${value.end_time}`}</Text>
+                <Text>{`${value.week_day}, ${value.start_time} às ${value.end_time}`}</Text>
                 <Button
                   leftIcon={<BsFillPenFill />}
                   variant={'ghost'}

@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
-import ConflictsService from '../../services/api/conflicts.service';
 import * as C from '@chakra-ui/react';
 import { useToast } from '@chakra-ui/react';
 import Conflict from 'models/http/responses/conflict.response.models';
-import EventsService from 'services/api/events.service';
 import moment from 'moment';
 import PageContent from 'components/common/PageContent';
 import { AllocateClassModal } from 'pages/classes/AllocateClassModal';
 import { Collapsable } from 'components/common/Collapsable';
+import useConflictsService from 'hooks/API/services/useConflictsService';
+import useEventsService from 'hooks/API/services/useEventsService';
+
 const ConflictsPage = () => {
-  const eventsService = new EventsService();
-  const conflictsService = new ConflictsService();
+  const eventsService = useEventsService();
+  const conflictsService = useConflictsService();
 
   const [conflicts, setConflicts] = useState<Conflict[] | null>(null);
   const [buildingNames, setBuildingNames] = useState<string[] | null>(null);
