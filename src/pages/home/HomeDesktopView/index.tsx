@@ -216,17 +216,29 @@ function HomeDesktopView() {
       </Box>
       <Box
         bg={'teal'}
-        h={'150px'}
+        h={'200px'}
         alignContent={'center'}
         justifyContent={'center'}
-        p={10}
+        p={5}
       >
-        <Heading textColor={'white'} size={'lg'}>
-          Contato:
-        </Heading>
-        <Text textColor={'white'} fontSize={'lg'}>
-          uspolis@usp.br
-        </Text>
+        <Flex direction={'row'} gap={'50px'}>
+          <Flex direction={'column'}>
+            <Heading textColor={'white'} size={'lg'}>
+              Contato:
+            </Heading>
+            <Text textColor={'white'} fontSize={'lg'}>
+              uspolis@usp.br
+            </Text>
+          </Flex>
+          <Flex direction={'column'}>
+            <Heading textColor={'white'} size={'lg'}>
+              Repositório:
+            </Heading>
+            <Text as={'a'} textColor={'white'} fontSize={'lg'}>
+              https://github.com/PCS-Poli-USP
+            </Text>
+          </Flex>
+        </Flex>
       </Box>
     </Flex>
   );

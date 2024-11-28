@@ -48,7 +48,7 @@ function Header() {
       >
         Recursos
       </Button>
-      <Button
+      {/* <Button
         as={'a'}
         href='#section2'
         variant={'link'}
@@ -59,7 +59,7 @@ function Header() {
         }}
       >
         Funcionalidades
-      </Button>
+      </Button> */}
       <Button
         as={'a'}
         href='#section4'
