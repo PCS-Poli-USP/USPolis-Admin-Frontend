@@ -1,144 +1,75 @@
 import useCustomToast from 'hooks/useCustomToast';
-import { ClassFullResponse } from 'models/http/responses/class.response.models';
-import { ReservationFullResponse } from 'models/http/responses/reservation.response.models';
-import {
-  AllocationResourcesFromClasses,
-  AllocationResourcesFromReservations,
-  EventsFromClasses,
-  EventsFromReservations,
-} from 'pages/allocation/utils/allocation.utils';
 import { useCallback, useEffect, useState } from 'react';
-import ClassesService from 'services/api/classes.service';
-import ReservationsService from 'services/api/reservations.service';
-import { sortClassResponse } from 'utils/classes/classes.sorter';
-import { sortReservationsResponse } from 'utils/reservations/reservations.sorter';
+import AllocationService from 'services/api/allocations.service';
 import { Resource, Event } from '../interfaces/allocation.interfaces';
 
-const classService = new ClassesService();
-const reservationService = new ReservationsService();
+const allocationService = new AllocationService();
 
 const useAllocation = () => {
-  const [loadingClasses, setLoadingClasses] = useState(false);
-  const [loadingReservations, setLoadingReservations] = useState(false);
-  const [loadingEvents, setLoadingEvents] = useState(false);
-  const [loagindResources, setLoadingResources] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [classes, setClasses] = useState<
-    ClassFullResponse[]
-  >([]);
-  const [reservations, setReservations] = useState<
-    ReservationFullResponse[]
-  >([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
 
   const showToast = useCustomToast();
 
-  const getClassesFull = useCallback(async () => {
-    setLoadingClasses(true);
-    let classesF: ClassFullResponse[] = [];
-    await classService
-      .listFull()
-      .then((response) => {
-        classesF = response.data.sort(sortClassResponse);
-        setClasses(classesF);
-      })
-      .catch((error) => {
-        showToast('Erro', 'Erro ao carregar turmas com ocorrências', 'error');
-        console.log(error);
-      })
-      .finally(() => {
-        setLoadingClasses(false);
-      });
-    return classesF;
-  }, [showToast]);
-
-  const getReservationsFull= useCallback(async () => {
-    setLoadingReservations(true);
-    let reservations: ReservationFullResponse[] = [];
-    await reservationService
-      .listFull()
-      .then((response) => {
-        reservations = response.data.sort(sortReservationsResponse);
-        setReservations(reservations);
-      })
-      .catch((error) => {
-        showToast('Erro', 'Erro ao carregar reservas com ocorrências', 'error');
-        console.log(error);
-      })
-      .finally(() => {
-        setLoadingReservations(false);
-      });
-    return reservations;
-  }, [showToast]);
-
-  const getEvents = useCallback(async () => {
-    setLoadingEvents(true);
-    const classes = await getClassesFull();
-    const reservations = await getReservationsFull();
-    const classEvents = EventsFromClasses(classes);
-    const reservationEvents = EventsFromReservations(reservations);
-    const allEvents = [...classEvents, ...reservationEvents];
-    setEvents(allEvents);
-    setLoadingEvents(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getResources = useCallback(async () => {
-    setLoadingResources(true);
-    const classes = await getClassesFull();
-    const reservations = await getReservationsFull();
-
-    const classResources = AllocationResourcesFromClasses(
-      classes,
-    );
-    const reservationResources = AllocationResourcesFromReservations(
-      reservations,
-    );
-    setResources(
-      Array.from(new Set([...classResources, ...reservationResources])),
-    );
-    setLoadingResources(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getAllocation = useCallback(async () => {
+  const getEvents = useCallback(async (start?: string, end?: string) => {
     setLoading(true);
-    const classes = await getClassesFull();
-    const reservations = await getReservationsFull();
+    let allEvents: Event[] = [];
+    try {
+      const response = await allocationService.list(start, end);
+      allEvents = response.data;
+      setEvents(allEvents);
+      getResources(allEvents);
+    } catch (error) {
+      showToast('Erro', 'Erro ao carregar eventos', 'error');
+      console.log(error);
+      allEvents = [];
+    } finally {
+      setLoading(false);
+    }
+    return allEvents;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    const classEvents = EventsFromClasses(classes);
-    const reservationEvents = EventsFromReservations(reservations);
-    setEvents([...classEvents, ...reservationEvents]);
-
-    const classResources = AllocationResourcesFromClasses(classes);
-    const reservationsResources =
-      AllocationResourcesFromReservations(reservations);
-    setResources(
-      Array.from(new Set([...classResources, ...reservationsResources])),
+  const getResources = (events: Event[]) => {
+    const buildingResources: Resource[] = [];
+    const classroomResources: Resource[] = [];
+    events.forEach((event) => {
+      const data = event.resourceId.split('-');
+      buildingResources.push({ id: data[0], title: data[0] });
+      classroomResources.push({
+        id: event.resourceId,
+        title: data[1],
+        parentId: data[0],
+      });
+    });
+    const uniqueBuildingResources = Array.from(
+      new Map(buildingResources.map((obj) => [obj.id, obj])).values(),
     );
-    setLoading(false);
+    const uniqueClassroomResources = Array.from(
+      new Map(classroomResources.map((obj) => [obj.id, obj])).values(),
+    );
+    const resources = Array.from(
+      new Set([...uniqueBuildingResources, ...uniqueClassroomResources]),
+    );
+    setResources(resources);
+  };
+
+  const getAllocation = useCallback(async (start?: string, end?: string) => {
+    await getEvents(start, end);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    getAllocation();
-  }, [getAllocation]);
+    getEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     loading,
-    loadingClasses,
-    loadingReservations,
-    loadingEvents,
-    loagindResources,
-    classes,
-    reservations,
     events,
     resources,
-    getClassesFull,
-    getReservationsFull,
     getEvents,
-    getResources,
     getAllocation,
   };
 };

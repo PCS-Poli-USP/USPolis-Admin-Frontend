@@ -249,7 +249,7 @@ export function MultipleEditAllocation({
                 )
               : undefined
           }
-          onChange={(selected) => {
+          onChange={(selected: ClassroomOption) => {
             const selectedClassroomOp = selected as ClassroomOption;
 
             const classroomSchedule = filteredSchedules

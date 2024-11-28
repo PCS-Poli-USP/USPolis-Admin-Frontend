@@ -94,7 +94,8 @@ const useSubjects = () => {
 
   useEffect(() => {
     getSubjects();
-  }, [getSubjects]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     loading,

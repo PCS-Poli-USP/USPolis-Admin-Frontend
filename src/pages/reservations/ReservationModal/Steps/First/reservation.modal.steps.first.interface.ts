@@ -3,7 +3,7 @@ import { ReservationType } from 'utils/enums/reservations.enum';
 
 export interface ReservationModalFirstStepProps {
   isUpdate: boolean;
-  form: UseFormReturn<ReservationFirstForm, any, ReservationFirstForm>;
+  form: UseFormReturn<ReservationFirstForm, any, undefined>;
 }
 export interface ReservationFirstForm {
   title: string;

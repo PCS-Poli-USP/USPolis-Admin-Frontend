@@ -41,6 +41,8 @@ import { ReservationType } from 'utils/enums/reservations.enum';
 import useClassrooms from 'hooks/useClassrooms';
 import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classsroom.time.grid';
 
+type OptionType = { value: number; label: string };
+
 interface SolicitationPanelProps {
   solicitation?: ClassroomSolicitationResponse;
   loading: boolean;
@@ -387,7 +389,7 @@ function SolicitationPanel({
                             : val.name,
                           value: val.id,
                         }))}
-                        onChange={(newValue) => {
+                        onChange={(newValue: OptionType) => {
                           setClassroom(
                             classrooms.find(
                               (val) => val.id === newValue?.value,

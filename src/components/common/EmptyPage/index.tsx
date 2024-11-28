@@ -3,49 +3,49 @@ import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Divider from '@mui/material/Divider';
 import { CloseIcon } from '@chakra-ui/icons';
-import { IconButton } from '@chakra-ui/react';
+import { IconButton, useMediaQuery } from '@chakra-ui/react';
 import DrawerBody from './drawer.body';
 import { DrawerNavBar } from './drawer.navbar';
 import { Outlet } from 'react-router-dom';
-import { appContext } from 'context/AppContext';
 
 const drawerWidth = 300;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
   open?: boolean;
-}>(({ theme, open }) => ({
+  isMobile: boolean;
+}>(({ theme, open, isMobile }) => ({
   flexGrow: 1,
-  padding: theme.spacing(3),
+  padding: isMobile ? theme.spacing(0) : theme.spacing(3),
   transition: theme.transitions.create('margin', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  marginLeft: `-${drawerWidth}px`,
+  marginLeft: isMobile ? '-100vw' : `-${drawerWidth}px`,
   ...(open && {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    marginLeft: 0,
+    marginLeft: isMobile ? '-100vw' : '0px',
   }),
 }));
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
+  isMobile: boolean;
 }
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open }) => ({
+})<AppBarProps>(({ theme, open, isMobile }) => ({
   transition: theme.transitions.create(['margin', 'width'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
   ...(open && {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: `${drawerWidth}px`,
+    width: isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`,
+    marginLeft: isMobile ? '0px' : `${drawerWidth}px`,
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
@@ -64,8 +64,8 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function EmptyPage() {
-  const { loggedUser } = React.useContext(appContext);
-  const [open, setOpen] = React.useState(!!loggedUser);
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
+  const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -77,15 +77,19 @@ export default function EmptyPage() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <AppBar position='fixed' open={open}>
-        <DrawerNavBar open={open} handleDrawerOpen={handleDrawerOpen} />
+      <AppBar position='fixed' open={open} isMobile={isMobile}>
+        <DrawerNavBar
+          open={open}
+          handleDrawerOpen={handleDrawerOpen}
+          isMobile={isMobile}
+        />
       </AppBar>
       <Drawer
         sx={{
-          width: drawerWidth,
+          width: isMobile ? '100vw' : drawerWidth,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
+            width: isMobile ? '100vw' : drawerWidth,
             boxSizing: 'border-box',
           },
         }}
@@ -103,10 +107,9 @@ export default function EmptyPage() {
             onClick={() => handleDrawerClose()}
           />
         </DrawerHeader>
-        <Divider />
         <DrawerBody onClose={handleDrawerClose} />
       </Drawer>
-      <Main open={open}>
+      <Main open={open} isMobile={isMobile}>
         <Outlet />
       </Main>
     </Box>

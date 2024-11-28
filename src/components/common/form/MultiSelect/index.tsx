@@ -72,7 +72,7 @@ export function MultiSelect({
             isDisabled={disabled}
             placeholder={placeholder}
             isMulti={true}
-            onChange={(selectedOption) => {
+            onChange={(selectedOption: Option[]) => {
               const values = selectedOption.map(
                 (option: Option) => option.value,
               );

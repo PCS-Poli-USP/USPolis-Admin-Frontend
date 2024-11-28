@@ -290,7 +290,7 @@ export default function EditEventModal({
                       label: `${it.classroom_name} - ${it.capacity}`,
                     },
               )}
-              onChange={(selected) => {
+              onChange={(selected: ClassroomOption) => {
                 const selectedClassroom = selected as ClassroomOption;
                 setSelectedClassroom(
                   availableClassrooms.find(

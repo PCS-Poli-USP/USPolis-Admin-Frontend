@@ -187,6 +187,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
   return {
     loading,
     classrooms,
+    getAllClassrooms,
     getClassrooms,
     getClassroomsByBuilding,
     getClassroomsWithConflictFromTime,

@@ -70,7 +70,7 @@ export function SelectInput({
             isClearable={true}
             // icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
             isLoading={isLoading}
-            onChange={(option) => {
+            onChange={(option: Option | null) => {
               if (onChange) onChange(option ? option : undefined);
               setValue(name, option ? option.value : '');
               const newOption = options.find(
@@ -80,7 +80,7 @@ export function SelectInput({
             }}
             options={options}
             classNames={{
-              control: (state) =>
+              control: (state: any) =>
                 state.isFocused ? 'border-red-600' : 'border-grey-300',
             }}
           />

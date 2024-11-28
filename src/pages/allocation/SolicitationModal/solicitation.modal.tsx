@@ -1,5 +1,6 @@
 import {
   Button,
+  Flex,
   HStack,
   Modal,
   ModalBody,
@@ -34,7 +35,11 @@ import {
 } from 'models/http/responses/classroom.response.models';
 import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classsroom.time.grid';
 
-function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
+function SolicitationModal({
+  isOpen,
+  onClose,
+  isMobile,
+}: SolicitationModalProps) {
   const {
     isOpen: isOpenCGrid,
     onClose: onCloseCGrid,
@@ -58,9 +63,11 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
   const {
     loading: loadingC,
     classrooms,
+    getAllClassrooms,
     getClassroomsWithConflictFromTime,
     listOneFull,
-  } = useClassrooms();
+  } = useClassrooms(false);
+
   const { createSolicitation } = useClassroomsSolicitations(false);
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
   const [classroomsWithConflict, setClassroomsWithConflict] =
@@ -141,6 +148,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
   }, [classroom_id, listOneFull]);
 
   useEffect(() => {
+    getAllClassrooms();
     getAllBuildings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -221,7 +229,7 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                       }}
                     />
                   </VStack>
-                  <VStack spacing={0}>
+                  <VStack spacing={0} hidden={isMobile}>
                     <DateCalendarPicker
                       header={'Selecione as datas'}
                       dayClick={(day) => {
@@ -243,11 +251,37 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                 </HStack>
 
                 <Textarea label='Motivo (Opcional)' name='reason' />
+
+                <VStack spacing={0} hidden={!isMobile} mt={'10px'} mb={'10px'}>
+                  <DateCalendarPicker
+                    header={'Selecione as datas'}
+                    dayClick={(day) => {
+                      setShowDatesError(false);
+                      dayClick(day);
+                    }}
+                    selectedDays={selectedDays}
+                    highlightedDays={highlightedDays}
+                    occupiedDays={occupiedDays}
+                    helpText={true}
+                  />
+                  <Text
+                    fontSize={'sm'}
+                    textColor={'red.500'}
+                    hidden={!showDatesError}
+                  >
+                    Selecione pelo menos uma data
+                  </Text>
+                </VStack>
+
                 <Text fontWeight={'bold'}>
                   *A sala reservada pode ser diferente da solicitada.{' '}
                 </Text>
 
-                <HStack w={'full'}>
+                <Flex
+                  w={'full'}
+                  direction={isMobile ? 'column' : 'row'}
+                  gap={isMobile ? '5px' : '0px'}
+                >
                   <SelectInput
                     w={300}
                     label='Prédio'
@@ -293,10 +327,14 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                       !selectedBuilding
                         ? []
                         : optionalTime
-                        ? classrooms.map((val) => ({
-                            value: val.id,
-                            label: val.name,
-                          }))
+                        ? classrooms
+                            .filter(
+                              (val) => val.building_id === selectedBuilding.id,
+                            )
+                            .map((val) => ({
+                              value: val.id,
+                              label: val.name,
+                            }))
                         : selectedDays.length === 0
                         ? []
                         : start && end && classroomsWithConflict
@@ -319,15 +357,20 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                     }
                   >
                     <Button
-                      mt={8}
+                      mt={isMobile ? 4 : 8}
                       isDisabled={!classroom_id || selectedDays.length === 0}
                       onClick={() => onOpenCGrid()}
                     >
                       Visualizar Disponibilidade
                     </Button>
                   </Tooltip>
-                </HStack>
-                <HStack w={'full'} spacing={2}>
+                </Flex>
+
+                <Flex
+                  w={'full'}
+                  gap={2}
+                  direction={isMobile ? 'column' : 'row'}
+                >
                   <CheckBox
                     disabled={requiredClassroom}
                     text='Não quero especificar sala'
@@ -339,12 +382,12 @@ function SolicitationModal({ isOpen, onClose }: SolicitationModalProps) {
                     }}
                   />
                   <CheckBox
-                    ml={10}
+                    ml={isMobile ? 0 : 10}
                     disabled={!classroom_id || optionalClassroom}
                     text='Quero necessariamente essa sala'
                     name='required_classroom'
                   />
-                </HStack>
+                </Flex>
               </VStack>
             </form>
           </FormProvider>

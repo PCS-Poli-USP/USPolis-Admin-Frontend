@@ -8,6 +8,10 @@ interface AppContext {
   loggedUser: UserResponse | null;
   logout: () => Promise<void>;
   getSelfFromBackend: () => Promise<void>;
+  persist: boolean;
+  setPersist: (value: boolean) => void;
+  isAuthenticaded: boolean;
+  setIsAuthenticaded: (value: boolean) => void;
 }
 
 const DEFAULT_VALUE = {
@@ -16,6 +20,10 @@ const DEFAULT_VALUE = {
   loggedUser: null,
   logout: async () => {},
   getSelfFromBackend: async () => {},
+  persist: false,
+  setPersist: () => {},
+  isAuthenticaded: false,
+  setIsAuthenticaded: () => {},
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -25,6 +33,10 @@ export default function AppContextProvider({
 }: React.PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(false);
   const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
+  const [isAuthenticaded, setIsAuthenticaded] = useState<boolean>(false);
+  const [persist, setPersist] = useState<boolean>(
+    JSON.parse(localStorage.getItem('persist') || 'false') || false,
+  );
 
   const selfService = new SelfService();
 
@@ -32,7 +44,7 @@ export default function AppContextProvider({
     try {
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
-      localStorage.setItem('user', JSON.stringify(self.data));
+      setIsAuthenticaded(true);
     } catch (e: any) {
       if (e.response.status === 403) {
         throw new Error('User with this email not registered');
@@ -43,29 +55,17 @@ export default function AppContextProvider({
     }
   }
 
-  async function getSelf() {
-    const userFromStorage = localStorage.getItem('user');
-    if (!userFromStorage) {
-      await getSelfFromBackend();
-    } else {
-      const parsedUser: UserResponse = JSON.parse(
-        userFromStorage,
-      ) as UserResponse;
-      setLoggedUser(parsedUser);
-      console.log('Usuário logado (storage):');
-      console.log(parsedUser);
-    }
-  }
-
   async function logout() {
-    localStorage.removeItem('user');
     localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     setLoggedUser(null);
     setLoading(false);
+    setIsAuthenticaded(false);
   }
 
   useEffect(() => {
-    getSelf();
+    // getSelfFromBackend();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -76,6 +76,10 @@ export default function AppContextProvider({
         loggedUser,
         logout,
         getSelfFromBackend,
+        persist,
+        setPersist,
+        setIsAuthenticaded,
+        isAuthenticaded,
       }}
     >
       {children}
