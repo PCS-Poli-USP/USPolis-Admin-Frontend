@@ -104,7 +104,7 @@ function AllocationDesktopHeader({
 
   return (
     <Flex direction={'column'} alignItems={'flex-start'} gap={2} w={'100%'}>
-      <Text fontSize={'2xl'}>Mapa de Salas</Text>
+      <Text fontSize={'4xl'}>Mapa de Salas</Text>
       <Flex
         mb={4}
         // divider={<StackDivider />}
@@ -120,7 +120,7 @@ function AllocationDesktopHeader({
             colorScheme='blue'
             ml={'0px'}
           >
-            Opções
+            Baixar
           </MenuButton>
           <MenuList zIndex={99999}>
             <MenuItem>

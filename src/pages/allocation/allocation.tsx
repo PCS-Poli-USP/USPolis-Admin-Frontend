@@ -95,7 +95,6 @@ function Allocation() {
     setFilteredEvents(newEvents);
   }
 
-
   useEffect(() => {
     if (!hasInitialFilter && events.length > 0) {
       setBuildingSearchValue('Biênio');
@@ -110,7 +109,7 @@ function Allocation() {
       nameSearchValue,
       classSearchValue,
     );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     events,
     buildingSearchValue,
@@ -132,13 +131,7 @@ function Allocation() {
         gridTemplateRows={'1 1fr'}
         gridTemplateColumns={'1fr'}
       >
-        <GridItem
-          p={2}
-          area={'header'}
-          display='flex'
-          alignItems='center'
-          zIndex={100}
-        >
+        <GridItem p={2} area={'header'} display='flex' alignItems='center'>
           <AllocationHeader
             isOpen={isOpenSolicitation}
             onOpen={onOpenSolicitation}
@@ -151,23 +144,12 @@ function Allocation() {
             setNameSearchValue={setNameSearchValue}
             classSearchValue={classSearchValue}
             setClassSearchValue={setClassSearchValue}
-            // filterEvents={filterEvents}
             events={events}
             resources={resources}
           />
         </GridItem>
-        <GridItem
-          px='2'
-          pb='2'
-          area={'main'}
-          justifyContent='flex-end'
-          zIndex={1}
-        >
-          <Skeleton
-            isLoaded={!loading && !loadingAllocation}
-            h='100vh'
-            // startColor='uspolis.blue'
-          >
+        <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
+          <Skeleton isLoaded={!loading && !loadingAllocation} h='100vh'>
             {loggedUser && (
               <SolicitationModal
                 isMobile={isMobile}
