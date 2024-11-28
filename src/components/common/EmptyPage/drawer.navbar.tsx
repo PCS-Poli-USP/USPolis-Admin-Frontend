@@ -49,7 +49,7 @@ export function DrawerNavBar({
   open,
   isMobile,
 }: DrawerNavBarProps) {
-  const { loggedUser, logout } = useContext(appContext);
+  const { isAuthenticated, loggedUser, logout } = useContext(appContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -64,7 +64,7 @@ export function DrawerNavBar({
     <Box bg='uspolis.blue' color='white' px={4}>
       <Flex h={'60px'} alignItems={'center'} justifyContent={'space-between'}>
         <HStack spacing={3} alignItems={'center'}>
-          {loggedUser && (
+          {isAuthenticated && (
             <IconButton
               size={'md'}
               icon={<HamburgerIcon />}
@@ -88,7 +88,7 @@ export function DrawerNavBar({
           </NavLink>
         </HStack>
         <Flex alignItems={'center'}>
-          {loggedUser ? (
+          {isAuthenticated ? (
             <Menu>
               <MenuButton
                 as={Button}
@@ -99,7 +99,9 @@ export function DrawerNavBar({
                 colorScheme='dark'
               >
                 <Flex alignItems={'center'} gap='10px'>
-                  {!isMobile && <Text>{loggedUser?.name}</Text>}
+                  {!isMobile && (
+                    <Text>{loggedUser ? loggedUser.name : 'Logando...'}</Text>
+                  )}
                   <Icon as={FaUser} boxSize={'20px'} />
                 </Flex>
               </MenuButton>

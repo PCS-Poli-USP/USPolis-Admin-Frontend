@@ -1,29 +1,56 @@
 import { Outlet } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
-import { Spinner } from '@chakra-ui/react';
 import { appContext } from 'context/AppContext';
-import useSelfService from 'hooks/API/services/useSelfService';
+import { AuthHttpService } from 'services/auth/auth.service';
+import LoadingPage from 'components/common/LoadingPage';
 
-const MOCK_AUTH = process.env.REACT_APP_MOCK_AUTH;
+const OVERRIDE = process.env.REACT_APP_OVERRIDE_AUTH;
 
 const PersistLogin = () => {
-  const service = useSelfService();
-
   const [isLoading, setIsLoading] = useState(true);
+  const service = new AuthHttpService();
   const context = useContext(appContext);
 
   useEffect(() => {
-    console.log(context.loggedUser, 'in persist login');
-    if (MOCK_AUTH) {
+    if (OVERRIDE === 'true') {
       setIsLoading(false);
       return;
     }
 
-    !context.accessToken ? context.getSelfFromBackend() : setIsLoading(false);
+    const verifyRefreshToken = async () => {
+      try {
+        const refresh = localStorage.getItem('refresh_token');
+
+        if (!refresh) {
+          setIsLoading(false);
+          return;
+        }
+
+        await service.refreshToken(refresh).then(async (response) => {
+          context.setAccessToken(response.data.access_token);
+          context.setIsAuthenticated(true);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (context.persist && !context.isAuthenticated) {
+      verifyRefreshToken();
+    } else {
+      setIsLoading(false);
+    }
+
+    // Cleanup opcional (se necessário)
+    return () => {
+      console.log('PersistLogin cleanup');
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [context.persist, context.isAuthenticated]);
+
   return (
-    <>{!context.persist ? <Outlet /> : isLoading ? <Spinner /> : <Outlet />}</>
+    <>{!context.persist ? <Outlet /> : isLoading ? <LoadingPage /> : <Outlet />}</>
   );
 };
 

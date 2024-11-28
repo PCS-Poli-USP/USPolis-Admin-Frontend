@@ -8,7 +8,7 @@ const PrivateRoute: React.FC = () => {
   const location = useLocation();
   const context = useContext(appContext);
   console.log('COntexto no private route: ', context);
-  return context.isAuthenticaded || OVERRIDE === 'true' ? (
+  return context.isAuthenticated || OVERRIDE === 'true' ? (
     <Outlet />
   ) : (
     <Navigate to='/auth' replace={true} state={{ from: location }} /> // To redirects after login
