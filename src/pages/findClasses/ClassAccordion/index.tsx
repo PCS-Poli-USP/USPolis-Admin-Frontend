@@ -49,7 +49,7 @@ function ClassAccordion({ classes }: ClassAccordionProps) {
               {classData.schedules.map((schedule, index) => (
                 <Box key={`B-${index}}`}>
                   <Text>{scheduleToString(schedule)}</Text>
-                  <Text>{`Prédio: ${
+                  <Text fontWeight={'bold'}>{`Prédio: ${
                     schedule.building || AllocationEnum.UNALLOCATED
                   } - Sala: ${
                     schedule.classroom || AllocationEnum.UNALLOCATED
