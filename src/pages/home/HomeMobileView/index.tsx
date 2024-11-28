@@ -8,6 +8,7 @@ import {
   ListItem,
   UnorderedList,
   Highlight,
+  Link,
 } from '@chakra-ui/react';
 
 import MobileHeader from '../MobileHeader';
@@ -37,7 +38,10 @@ function HomeMobileView() {
         <Flex direction={'column'} w={'full'} gap={5}>
           <Box bg={'white'} h={'60px'} w={'full'} />
           <Heading textColor={'black'} fontWeight={'bold'} size={'2xl'}>
-            <Highlight query={'uspolis:'} styles={{ textColor: 'uspolis.blue' }}>
+            <Highlight
+              query={'uspolis:'}
+              styles={{ textColor: 'uspolis.blue' }}
+            >
               USPolis: solução para alocação de salas.
             </Highlight>
           </Heading>
@@ -212,17 +216,33 @@ function HomeMobileView() {
       </Box>
       <Box
         bg={'teal'}
-        h={'120px'}
+        h={'200px'}
         alignContent={'center'}
         justifyContent={'center'}
         p={5}
       >
-        <Heading textColor={'white'} size={'lg'}>
-          Contato:
-        </Heading>
-        <Text textColor={'white'} fontSize={'lg'}>
-          uspolis@usp.br
-        </Text>
+        <Flex direction={'column'} gap={'20px'}>
+          <Flex direction={'column'}>
+            <Heading textColor={'white'} size={'lg'}>
+              Contato:
+            </Heading>
+            <Text textColor={'white'} fontSize={'lg'}>
+              uspolis@usp.br
+            </Text>
+          </Flex>
+          <Flex direction={'column'}>
+            <Heading textColor={'white'} size={'lg'}>
+              Repositório:
+            </Heading>
+            <Link
+              href='https://github.com/PCS-Poli-USP'
+              textColor={'white'}
+              fontSize={'lg'}
+            >
+              https://github.com/PCS-Poli-USP
+            </Link>
+          </Flex>
+        </Flex>
       </Box>
     </Flex>
   );
