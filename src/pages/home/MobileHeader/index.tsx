@@ -58,7 +58,7 @@ function MobileHeader() {
           colorScheme={'teal'}
           size={'md'}
           onClick={() => {
-            navigate('/allocation', {
+            navigate('/auth', {
               replace: true,
               state: { from: location },
             });
