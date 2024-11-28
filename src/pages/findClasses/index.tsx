@@ -10,7 +10,6 @@ import {
 import Select from 'react-select';
 import { useRef, useState } from 'react';
 import useSubjects from 'hooks/useSubjetcts';
-import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { SelectInstance } from 'react-select';
 import ClassAccordion from './ClassAccordion';
 import useClasses from 'hooks/useClasses';
@@ -27,7 +26,6 @@ function FindClasses() {
   const { classes, getClassesBySubject, loading } = useClasses(false);
   const [subjectOption, setSubjectOption] = useState<OptionType>();
   const [classOption, setClassOption] = useState<OptionType>();
-  const [selectedSubject, setSelectedSubject] = useState<SubjectResponse>();
 
   return (
     <PageContent>
@@ -55,42 +53,37 @@ function FindClasses() {
                   getClassesBySubject(option.value);
                 } else {
                   setSubjectOption(undefined);
-                  setSelectedSubject(undefined);
                   if (selectRef.current) selectRef.current.clearValue();
                 }
               }}
             />
           </Box>
 
-          <Box hidden={true} w={isMobile ? '100%' : '400px'}>
+          <Box hidden={!subjectOption} w={isMobile ? '100%' : '400px'}>
             <Text>Turma: </Text>
             <Select
               ref={selectRef}
               value={classOption}
               isClearable={true}
               placeholder={
-                !selectedSubject
+                !subjectOption
                   ? 'Selecione uma disciplina primeiro'
                   : 'Selecione uma turma'
               }
               options={
-                selectedSubject
-                  ? selectedSubject.classes
-                    ? selectedSubject.classes.map<OptionType>((c) => ({
-                        value: c.id,
-                        label: c.code.slice(-2),
-                      }))
-                    : []
+                classes
+                  ? classes.map<OptionType>((c) => ({
+                      value: c.id,
+                      label: c.code.slice(-2),
+                    }))
                   : []
               }
-              isDisabled={!selectedSubject}
+              isDisabled={!subjectOption}
               onChange={(option: OptionType | null) => {
                 if (option) {
                   setClassOption(option);
-                  // setSelectedClass(option.value);
                 } else {
                   setClassOption(undefined);
-                  // setSelectedClass(undefined);
                 }
               }}
             />
@@ -106,7 +99,14 @@ function FindClasses() {
             <Box>
               <Text fontSize='2xl'>Turmas: </Text>
               {subjectOption ? (
-                <ClassAccordion classes={classes} loading={loading} />
+                <ClassAccordion
+                  classes={
+                    classOption
+                      ? classes.filter((cls) => cls.id === classOption.value)
+                      : classes
+                  }
+                  loading={loading}
+                />
               ) : undefined}
             </Box>
           )}
