@@ -1,6 +1,8 @@
-import { Flex, Spinner, Text } from '@chakra-ui/react';
+import { Flex, Spinner, Text, useMediaQuery } from '@chakra-ui/react';
 
 function LoadingRedirect() {
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
+
   return (
     <Flex
       justify={'center'}
@@ -10,7 +12,7 @@ function LoadingRedirect() {
       h={'100vh'}
       gap={'30px'}
     >
-      <Text textAlign={'justify'} w={'80%'}>
+      <Text textAlign={'center'} w={isMobile ? '80%' : '30%'}>
         Login efetuado com sucesso, aguarde redirecionamento....
       </Text>
       <Spinner size={'xl'} />
