@@ -39,9 +39,7 @@ export default function AppContextProvider({
   const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
   const [accessToken, setAccessToken] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [persist, setPersist] = useState<boolean>(
-    JSON.parse(localStorage.getItem('persist') || 'true') || true,
-  );
+  const [persist, setPersist] = useState<boolean>(true);
 
   const selfService = useSelfService();
 
@@ -61,6 +59,7 @@ export default function AppContextProvider({
   }
 
   async function logout() {
+    console.log('Logging out...');
     localStorage.removeItem('refresh_token');
     setLoggedUser(null);
     setAccessToken('');
