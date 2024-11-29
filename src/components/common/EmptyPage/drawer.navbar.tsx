@@ -99,9 +99,14 @@ export function DrawerNavBar({
                 colorScheme='dark'
               >
                 <Flex alignItems={'center'} gap='10px'>
-                  {!isMobile && (
-                    <Text>{loggedUser ? loggedUser.name : 'Logando...'}</Text>
-                  )}
+                  <Text
+                    overflowX={'auto'}
+                    textOverflow={'ellipsis'}
+                    w={'auto'}
+                    hidden={isMobile}
+                  >
+                    {loggedUser ? loggedUser.name : 'Logando...'}
+                  </Text>
                   <Icon as={FaUser} boxSize={'20px'} />
                 </Flex>
               </MenuButton>

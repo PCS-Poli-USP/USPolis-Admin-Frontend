@@ -11,13 +11,11 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 
 import DataTable from 'components/common/DataTable/dataTable.component';
 import { getMySolicitationsColumns } from './Tables/mySolicitations.table';
 import PageContent from 'components/common/PageContent';
-import { UserResponse } from 'models/http/responses/user.response.models';
-import useUsers from 'hooks/useUsers';
 import { CloseIcon } from '@chakra-ui/icons';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 import SolicitationStack from './MySolicitationStack/mysolicitation.stack';

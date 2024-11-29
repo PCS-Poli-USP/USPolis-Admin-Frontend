@@ -78,6 +78,9 @@ root.render(
                 <Route element={<AxiosInterceptorRoute />}>
                   <Route element={<PersistLogin />}>
                     <Route path='/' element={<EmptyPage />}>
+                      {/* Not found */}
+                      <Route path='*' element={<Page404 />} />
+
                       {/* Public routes */}
                       <Route path='allocation' element={<Allocation />} />
                       <Route path='find-classes' element={<FindClasses />} />
@@ -118,8 +121,6 @@ root.render(
                       </Route>
                     </Route>
                   </Route>
-                  {/* Not found */}
-                  <Route path='*' element={<Page404 />} />
                 </Route>
               </Routes>
             </Router>
