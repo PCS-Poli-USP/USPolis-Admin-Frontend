@@ -18,7 +18,7 @@ import AutomaticAllocationAccordion from './automaticAllocation.accordion';
 import Event, { EventByClassrooms } from 'models/common/event.model';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import { useEffect, useState } from 'react';
-import EventsService from 'services/api/events.service';
+import useEventsService from 'hooks/API/services/useEventsService';
 
 interface AutomaticAllocationModalProps {
   isOpen: boolean;
@@ -57,7 +57,7 @@ export default function AutomaticAllocationModal({
   const [allocatedEventsList, setAllocatedEvents] = useState<Event[]>([]);
   const [unallocatedEventsList, setUnallocatedEvents] = useState<Event[]>([]);
 
-  const eventsService = new EventsService();
+  const eventsService = useEventsService();
 
   const toast = useToast();
   const toastSuccess = (message: string) => {

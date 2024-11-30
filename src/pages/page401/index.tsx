@@ -1,13 +1,22 @@
-import { Heading, VStack } from '@chakra-ui/react';
+import { Flex, Heading, Text } from '@chakra-ui/react';
 import PageContent from 'components/common/PageContent';
 
 function Page401() {
   return (
     <PageContent>
-      <VStack p={40}>
+      <Flex
+        gap={'40px'}
+        direction={'column'}
+        justify={'center'}
+        align={'center'}
+        verticalAlign={'center'}
+        h={'100%'} // 60px header + 8px de padding top e bot
+      >
         <Heading size={'3xl'}>Erro 401</Heading>
-        <Heading>Você não tem permissão para acessar essa página.</Heading>
-      </VStack>
+        <Text fontSize={'2xl'} textAlign={'center'}>
+          Você não tem permissão para acessar essa página.
+        </Text>
+      </Flex>
     </PageContent>
   );
 }

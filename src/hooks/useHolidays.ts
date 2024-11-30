@@ -7,12 +7,11 @@ import {
 import { HolidayResponse } from 'models/http/responses/holiday.response.models';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
-import HolidaysService from 'services/api/holiday.service';
 import { sortHolidaysResponse } from 'utils/holidays/holidays.sorter';
-
-const service = new HolidaysService();
+import useHolidaysService from './API/services/useHolidayService';
 
 const useHolidays = () => {
+  const service = useHolidaysService();
   const [loading, setLoading] = useState(false);
   const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
 
@@ -31,7 +30,7 @@ const useHolidays = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
   const createHoliday = useCallback(
     async (data: CreateHoliday) => {
@@ -41,7 +40,9 @@ const useHolidays = () => {
         .then((response) => {
           showToast(
             'Sucesso',
-            `Feriado do dia ${moment(data.date).format('DD/MM/YYYY')} criado com sucesso!`,
+            `Feriado do dia ${moment(data.date).format(
+              'DD/MM/YYYY',
+            )} criado com sucesso!`,
             'success',
           );
           getHolidays();
@@ -53,7 +54,7 @@ const useHolidays = () => {
           setLoading(false);
         });
     },
-    [getHolidays, showToast],
+    [getHolidays, showToast, service],
   );
 
   const createManyHolidays = useCallback(
@@ -76,34 +77,37 @@ const useHolidays = () => {
           setLoading(false);
         });
     },
-    [getHolidays, showToast],
+    [getHolidays, showToast, service],
   );
 
-  const updateHoliday = useCallback(async (id: number, data: UpdateHoliday) => {
-    setLoading(true);
-    await service
-      .update(id, data)
-      .then((response) => {
-        showToast('Sucesso', `Feriado atualizado com sucesso!`, 'success');
-        getHolidays();
-      })
-      .catch((error) => {
-        showToast(
-          'Erro',
-          `Erro ao atualizar o feriado ${data.date}: ${error}`,
-          'error',
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [getHolidays, showToast]);
+  const updateHoliday = useCallback(
+    async (id: number, data: UpdateHoliday) => {
+      setLoading(true);
+      await service
+        .update(id, data)
+        .then((response) => {
+          showToast('Sucesso', `Feriado atualizado com sucesso!`, 'success');
+          getHolidays();
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao atualizar o feriado ${data.date}: ${error}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [getHolidays, showToast, service],
+  );
 
   const deleteHoliday = useCallback(
     async (id: number) => {
       setLoading(true);
       await service
-        .delete(id)
+        .deleteById(id)
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao remover feriado', 'success');
           getHolidays();
@@ -116,7 +120,7 @@ const useHolidays = () => {
           setLoading(false);
         });
     },
-    [getHolidays, showToast],
+    [getHolidays, showToast, service],
   );
 
   useEffect(() => {

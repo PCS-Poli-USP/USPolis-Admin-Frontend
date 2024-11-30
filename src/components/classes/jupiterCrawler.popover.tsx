@@ -123,7 +123,7 @@ export default function JupiterCrawlerPopover({
               label: calendar.name,
               value: calendar.id,
             }))}
-            onChange={(selectedOptions) =>
+            onChange={(selectedOptions: {value: number, label: string}[]) =>
               setCalendarIds(selectedOptions.map((option) => option.value))
             }
             isLoading={calendarsLoading}

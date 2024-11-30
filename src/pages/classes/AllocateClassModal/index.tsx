@@ -16,9 +16,9 @@ import AllocateSingleScheduleSection, {
   AllocateSingleScheduleSectionRef,
 } from './allocateSingleScheduleSection';
 import { useEffect, useRef, useState } from 'react';
-import { AllocateManySchedulesData } from 'services/api/occurrences.service';
 import useOccurrences from 'hooks/useOccurrences';
-import ClassesService from 'services/api/classes.service';
+import useClassesService from 'hooks/API/services/useClassesService';
+import { AllocateManySchedulesData } from 'hooks/API/services/useOccurrencesService';
 
 interface props {
   isOpen: boolean;
@@ -35,7 +35,7 @@ export function AllocateClassModal({
   class_,
   class_id,
 }: props) {
-  const classesService = new ClassesService();
+  const classesService = useClassesService();
   const [inputClass, setInputClass] = useState<ClassResponse>();
 
   const { allocateManySchedules } = useOccurrences();
@@ -58,7 +58,7 @@ export function AllocateClassModal({
       }
     }
     use();
-  }, [class_, class_id]);
+  }, [class_, class_id, classesService]);
 
   async function handleSave() {
     const data: AllocateManySchedulesData[] = [];
@@ -83,7 +83,8 @@ export function AllocateClassModal({
         {inputClass ? (
           <>
             <ModalHeader>
-              Alocar Turma: {inputClass.subject_code} - {inputClass.code.slice(-2)}
+              Alocar Turma: {inputClass.subject_code} -{' '}
+              {inputClass.code.slice(-2)}
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody>

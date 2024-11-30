@@ -6,12 +6,11 @@ import {
 } from 'models/http/requests/classroomSolicitation.request.models';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import ClassroomSolicitationService from 'services/api/classroomSolicitations.service';
 import { sortClassroomSolicitationResponse } from 'utils/solicitations/solicitation.sorter';
-
-const service = new ClassroomSolicitationService();
+import useClassroomSolicitationsService from './API/services/useClassroomSolicitationsService';
 
 const useClassroomsSolicitations = (initialFetch = true) => {
+  const service = useClassroomSolicitationsService();
   const [loading, setLoading] = useState(false);
   const [solicitations, setSolicitations] = useState<
     ClassroomSolicitationResponse[]
@@ -33,7 +32,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
   const createSolicitation = useCallback(
     async (data: CreateClassroomSolicitation) => {
@@ -52,7 +51,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
           setLoading(false);
         });
     },
-    [getSolicitations, showToast],
+    [getSolicitations, showToast, service],
   );
 
   const approveSolicitation = useCallback(
@@ -72,7 +71,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
           setLoading(false);
         });
     },
-    [getSolicitations, showToast],
+    [getSolicitations, showToast, service],
   );
 
   const denySolicitation = useCallback(
@@ -93,7 +92,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
           setLoading(false);
         });
     },
-    [getSolicitations, showToast],
+    [getSolicitations, showToast, service],
   );
 
   useEffect(() => {

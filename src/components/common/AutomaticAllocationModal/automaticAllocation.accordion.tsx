@@ -17,7 +17,7 @@ import Classroom from 'models/common/classroom.model';
 import Event from 'models/common/event.model';
 
 import { useEffect, useState } from 'react';
-import ClassroomsService from 'services/api/classrooms.service';
+import useClassroomsService from 'hooks/API/services/useClassroomsService';
 
 interface AutomaticAllocationAccordionProps {
   onEdit: (event: Event) => void;
@@ -30,7 +30,7 @@ export default function AutomaticAllocationAccordion({
   allocated,
   unallocated,
 }: AutomaticAllocationAccordionProps) {
-  const classroomService = new ClassroomsService();
+  const classroomService = useClassroomsService();
   const [classrooms, setClassrooms] = useState<Classroom[]>([]);
   const [allocatedEvents, setAllocatedEvents] = useState<Event[]>([]);
   const [unallocatedEvents, setUnallocatedEvents] = useState<Event[]>([]);

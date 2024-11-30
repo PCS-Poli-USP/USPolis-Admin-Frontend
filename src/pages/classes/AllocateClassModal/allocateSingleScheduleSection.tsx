@@ -6,6 +6,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import useClassroomsService from 'hooks/API/services/useClassroomsService';
 import useAllowedBuildings from 'hooks/useAllowedBuildings';
 import Classroom, {
   ClassroomWithConflictCount,
@@ -13,7 +14,6 @@ import Classroom, {
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import ClassroomsService from 'services/api/classrooms.service';
 import { sortClassroomResponse } from 'utils/classrooms/classrooms.sorter';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
@@ -51,6 +51,7 @@ const AllocateSingleScheduleSection = forwardRef<
   }));
 
   // hooks
+  const classroomsService = useClassroomsService();
   const { allowedBuildings, loading: loadingBuildings } = useAllowedBuildings();
 
   // data
@@ -88,7 +89,6 @@ const AllocateSingleScheduleSection = forwardRef<
 
   useEffect(() => {
     if (!selectedBuilding || !schedule) return;
-    const classroomsService = new ClassroomsService();
     setClassroomsLoading(true);
     classroomsService
       .getWithConflictCount(schedule.id, selectedBuilding?.id)
@@ -98,7 +98,7 @@ const AllocateSingleScheduleSection = forwardRef<
       .finally(() => {
         setClassroomsLoading(false);
       });
-  }, [selectedBuilding, schedule]);
+  }, [selectedBuilding, schedule, classroomsService]);
 
   function reset() {
     setRemoveAllocation(false);

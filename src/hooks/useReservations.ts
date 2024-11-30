@@ -5,12 +5,11 @@ import {
 } from 'models/http/requests/reservation.request.models';
 import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import ReservationsService from 'services/api/reservations.service';
 import { sortReservationsResponse } from 'utils/reservations/reservations.sorter';
-
-const service = new ReservationsService();
+import useReservationsService from './API/services/useReservationsService';
 
 const useReservations = () => {
+  const service = useReservationsService();
   const [loading, setLoading] = useState(false);
   const [reservations, setReservations] = useState<ReservationResponse[]>([]);
 
@@ -29,7 +28,7 @@ const useReservations = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
   const createReservation = useCallback(
     async (data: CreateReservation) => {
@@ -52,7 +51,7 @@ const useReservations = () => {
           setLoading(false);
         });
     },
-    [getReservations, showToast],
+    [getReservations, showToast, service],
   );
 
   const updateReservation = useCallback(
@@ -75,14 +74,14 @@ const useReservations = () => {
           setLoading(false);
         });
     },
-    [getReservations, showToast],
+    [getReservations, showToast, service],
   );
 
   const deleteReservation = useCallback(
     async (id: number) => {
       setLoading(true);
       await service
-        .delete(id)
+        .deleteById(id)
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao remover reserva', 'success');
 
@@ -96,7 +95,7 @@ const useReservations = () => {
           setLoading(false);
         });
     },
-    [getReservations, showToast],
+    [getReservations, showToast, service],
   );
 
   useEffect(() => {

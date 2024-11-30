@@ -41,10 +41,15 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
 interface DrawerNavBarProps {
   handleDrawerOpen: () => void;
   open: boolean;
+  isMobile: boolean;
 }
 
-export function DrawerNavBar({ handleDrawerOpen, open }: DrawerNavBarProps) {
-  const { loggedUser, logout } = useContext(appContext);
+export function DrawerNavBar({
+  handleDrawerOpen,
+  open,
+  isMobile,
+}: DrawerNavBarProps) {
+  const { isAuthenticated, loggedUser, logout } = useContext(appContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -57,9 +62,9 @@ export function DrawerNavBar({ handleDrawerOpen, open }: DrawerNavBarProps) {
   }
   return (
     <Box bg='uspolis.blue' color='white' px={4}>
-      <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+      <Flex h={'60px'} alignItems={'center'} justifyContent={'space-between'}>
         <HStack spacing={3} alignItems={'center'}>
-          {loggedUser && (
+          {isAuthenticated && (
             <IconButton
               size={'md'}
               icon={<HamburgerIcon />}
@@ -83,7 +88,7 @@ export function DrawerNavBar({ handleDrawerOpen, open }: DrawerNavBarProps) {
           </NavLink>
         </HStack>
         <Flex alignItems={'center'}>
-          {loggedUser ? (
+          {isAuthenticated ? (
             <Menu>
               <MenuButton
                 as={Button}
@@ -93,9 +98,16 @@ export function DrawerNavBar({ handleDrawerOpen, open }: DrawerNavBarProps) {
                 minW={0}
                 colorScheme='dark'
               >
-                <Flex alignItems={'center'} gap='1'>
-                  <Text>{loggedUser?.name}</Text>
-                  <Icon as={FaUser} />
+                <Flex alignItems={'center'} gap='10px'>
+                  <Text
+                    overflowX={'auto'}
+                    textOverflow={'ellipsis'}
+                    w={'auto'}
+                    hidden={isMobile}
+                  >
+                    {loggedUser ? loggedUser.name : 'Logando...'}
+                  </Text>
+                  <Icon as={FaUser} boxSize={'20px'} />
                 </Flex>
               </MenuButton>
               <MenuList>

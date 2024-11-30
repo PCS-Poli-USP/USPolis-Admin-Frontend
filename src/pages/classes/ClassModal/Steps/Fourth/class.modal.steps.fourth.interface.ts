@@ -2,7 +2,7 @@ import { ClassModalStepsProps } from '../class.modal.steps.interface';
 import { UseFormReturn } from 'react-hook-form';
 
 export interface ClassModalFourthStepProps extends ClassModalStepsProps {
-  form: UseFormReturn<ClassFourthForm, any, ClassFourthForm>;
+  form: UseFormReturn<ClassFourthForm, any, undefined>;
   onNext: (data: ClassFourthForm) => void;
 }
 export interface ClassFourthForm {

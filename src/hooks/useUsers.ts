@@ -7,14 +7,14 @@ import {
 
 import { UserResponse } from 'models/http/responses/user.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import SelfService from 'services/api/self.service';
-import UsersService from 'services/api/users.service';
 import { sortUsersResponse } from 'utils/users/users.sorter';
-
-const service = new UsersService();
-const selfService = new SelfService();
+import useUsersService from './API/services/useUsersService';
+import useSelfService from './API/services/useSelfService';
 
 const useUsers = (initialFetch: boolean = true) => {
+  const service = useUsersService();
+  const selfService = useSelfService();
+
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<UserResponse[]>([]);
 
@@ -33,7 +33,7 @@ const useUsers = (initialFetch: boolean = true) => {
       setLoading(false);
     }
     return self;
-  }, [showToast]);
+  }, [showToast, selfService]);
 
   const getUsers = useCallback(async () => {
     setLoading(true);
@@ -48,7 +48,7 @@ const useUsers = (initialFetch: boolean = true) => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
   const createUser = useCallback(
     async (data: CreateUser) => {
@@ -70,7 +70,7 @@ const useUsers = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
-    [getUsers, showToast],
+    [getUsers, showToast, service],
   );
 
   const updateUser = useCallback(
@@ -89,14 +89,14 @@ const useUsers = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
-    [getUsers, showToast],
+    [getUsers, showToast, service],
   );
 
   const deleteUser = useCallback(
     async (id: number) => {
       setLoading(true);
       await service
-        .delete(id)
+        .deleteById(id)
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao remover usuário', 'success');
 
@@ -110,7 +110,7 @@ const useUsers = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
-    [getUsers, showToast],
+    [getUsers, showToast, service],
   );
 
   useEffect(() => {

@@ -5,12 +5,11 @@ import {
 } from 'models/http/requests/building.request.models';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import BuildingsService from 'services/api/buildings.service';
 import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
-
-const service = new BuildingsService();
+import useBuildingsService from './API/services/useBuildingsService';
 
 const useBuildings = (initialFetch = true) => {
+  const service = useBuildingsService();
   const [loading, setLoading] = useState(false);
   const [buildings, setBuildings] = useState<BuildingResponse[]>([]);
 
@@ -29,7 +28,7 @@ const useBuildings = (initialFetch = true) => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
   const getBuildings = useCallback(async () => {
     setLoading(true);
@@ -44,7 +43,7 @@ const useBuildings = (initialFetch = true) => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
   const createBuilding = useCallback(
     async (data: CreateBuilding) => {
@@ -66,7 +65,7 @@ const useBuildings = (initialFetch = true) => {
           setLoading(false);
         });
     },
-    [getBuildings, showToast],
+    [getBuildings, showToast, service],
   );
 
   const updateBuilding = useCallback(
@@ -89,14 +88,14 @@ const useBuildings = (initialFetch = true) => {
           setLoading(false);
         });
     },
-    [getBuildings, showToast],
+    [getBuildings, showToast, service],
   );
 
   const deleteBuilding = useCallback(
     async (id: number) => {
       setLoading(true);
       await service
-        .delete(id)
+        .deleteById(id)
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao remover prédio', 'success');
 
@@ -110,7 +109,7 @@ const useBuildings = (initialFetch = true) => {
           setLoading(false);
         });
     },
-    [getBuildings, showToast],
+    [getBuildings, showToast, service],
   );
 
   useEffect(() => {

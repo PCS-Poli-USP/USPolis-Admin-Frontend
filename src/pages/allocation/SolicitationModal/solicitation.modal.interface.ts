@@ -1,7 +1,9 @@
 import { ModalProps } from 'models/interfaces';
 import { ReservationType } from 'utils/enums/reservations.enum';
 
-export interface SolicitationModalProps extends ModalProps {}
+export interface SolicitationModalProps extends ModalProps {
+  isMobile: boolean;
+}
 
 export interface SolicitationForm {
   building_id: number;

@@ -48,9 +48,9 @@ function Header() {
       >
         Recursos
       </Button>
-      <Button
+      {/* <Button
         as={'a'}
-        href='#section3'
+        href='#section2'
         variant={'link'}
         color={'black'}
         _hover={{
@@ -59,7 +59,7 @@ function Header() {
         }}
       >
         Funcionalidades
-      </Button>
+      </Button> */}
       <Button
         as={'a'}
         href='#section4'
@@ -92,7 +92,7 @@ function Header() {
           colorScheme={'teal'}
           size={'md'}
           onClick={() => {
-            navigate('/allocation', {
+            navigate('/auth', {
               replace: true,
               state: { from: location },
             });

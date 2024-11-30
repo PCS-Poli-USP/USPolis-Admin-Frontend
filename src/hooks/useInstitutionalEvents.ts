@@ -5,11 +5,10 @@ import {
 } from 'models/http/requests/institutionalEvent.request.models';
 import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import InstutionalEventsService from 'services/api/institutionalEvents.service';
-
-const service = new InstutionalEventsService();
+import useInstitutionalEventsService from './API/services/useInstitutionalEventsService';
 
 const useInstitutionalEvents = () => {
+  const service = useInstitutionalEventsService();
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState<InstitutionalEventResponse[]>([]);
 
@@ -28,7 +27,7 @@ const useInstitutionalEvents = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
   const createEvent = useCallback(
     async (data: CreateInstitutionalEvent) => {
@@ -54,7 +53,7 @@ const useInstitutionalEvents = () => {
           setLoading(false);
         });
     },
-    [getEvents, showToast],
+    [getEvents, showToast, service],
   );
 
   const updateEvent = useCallback(
@@ -81,14 +80,14 @@ const useInstitutionalEvents = () => {
           setLoading(false);
         });
     },
-    [getEvents, showToast],
+    [getEvents, showToast, service],
   );
 
   const deleteEvent = useCallback(
     async (id: number) => {
       setLoading(true);
       await service
-        .delete(id)
+        .deleteById(id)
         .then((response) => {
           showToast(
             'Sucesso!',
@@ -106,7 +105,7 @@ const useInstitutionalEvents = () => {
           setLoading(false);
         });
     },
-    [getEvents, showToast],
+    [getEvents, showToast, service],
   );
 
   useEffect(() => {

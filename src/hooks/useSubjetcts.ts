@@ -1,13 +1,15 @@
 import useCustomToast from 'hooks/useCustomToast';
-import { CreateSubject, UpdateSubject } from 'models/http/requests/subject.request.models';
+import {
+  CreateSubject,
+  UpdateSubject,
+} from 'models/http/requests/subject.request.models';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import subjectsService from 'services/api/subjects.service';
 import { sortSubjectsResponse } from 'utils/subjects/subjects.sorter';
-
-const service = new subjectsService();
+import useSubjectsService from './API/services/useSubjectsService';
 
 const useSubjects = () => {
+  const service = useSubjectsService();
   const [loading, setLoading] = useState(false);
   const [subjects, setSubjects] = useState<SubjectResponse[]>([]);
 
@@ -26,7 +28,7 @@ const useSubjects = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
   const createSubject = useCallback(
     async (data: CreateSubject) => {
@@ -48,34 +50,37 @@ const useSubjects = () => {
           setLoading(false);
         });
     },
-    [getSubjects, showToast],
+    [getSubjects, showToast, service],
   );
 
-  const updateSubject = useCallback(async (id: number, data: UpdateSubject) => {
-    setLoading(true);
-    await service
-      .update(id, data)
-      .then((response) => {
-        showToast('Sucesso', `Disciplina atualizada com sucesso!`, 'success');
-        getSubjects();
-      })
-      .catch((error) => {
-        showToast(
-          'Erro',
-          `Erro ao atualizar a disciplina ${data.name}: ${error}`,
-          'error',
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [getSubjects, showToast]);
+  const updateSubject = useCallback(
+    async (id: number, data: UpdateSubject) => {
+      setLoading(true);
+      await service
+        .update(id, data)
+        .then((response) => {
+          showToast('Sucesso', `Disciplina atualizada com sucesso!`, 'success');
+          getSubjects();
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao atualizar a disciplina ${data.name}: ${error}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [getSubjects, showToast, service],
+  );
 
   const deleteSubject = useCallback(
     async (id: number) => {
       setLoading(true);
       await service
-        .delete(id)
+        .deleteById(id)
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao remover disciplina', 'success');
 
@@ -89,12 +94,13 @@ const useSubjects = () => {
           setLoading(false);
         });
     },
-    [getSubjects, showToast],
+    [getSubjects, showToast, service],
   );
 
   useEffect(() => {
     getSubjects();
-  }, [getSubjects]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     loading,
