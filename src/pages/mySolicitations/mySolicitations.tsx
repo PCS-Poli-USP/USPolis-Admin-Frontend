@@ -11,23 +11,20 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 
 import DataTable from 'components/common/DataTable/dataTable.component';
 import { getMySolicitationsColumns } from './Tables/mySolicitations.table';
 import PageContent from 'components/common/PageContent';
-import { UserResponse } from 'models/http/responses/user.response.models';
-import useUsers from 'hooks/useUsers';
 import { CloseIcon } from '@chakra-ui/icons';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 import SolicitationStack from './MySolicitationStack/mysolicitation.stack';
 import MySolicitationModal from './MySolicitationModal/mysolicitation.modal';
+import { appContext } from 'context/AppContext';
 
 const MySolicitations = () => {
-  // const { loggedUser } = useContext(appContext);
+  const { loggedUser } = useContext(appContext);
   const [isMobile] = useMediaQuery('(max-width: 800px)');
-  const { getSelf } = useUsers(false);
-  const [loggedUser, setLoggedUser] = useState<UserResponse>();
 
   const [hiddenAlert, setHiddenAlert] = useState(false);
   const [selectedSolicitation, setSelectedSolicitation] =
@@ -35,14 +32,6 @@ const MySolicitations = () => {
   const { isOpen, onClose, onToggle } = useDisclosure();
 
   const columns = getMySolicitationsColumns({});
-
-  useEffect(() => {
-    const fetch = async () => {
-      const self = await getSelf();
-      setLoggedUser(self);
-    };
-    fetch();
-  }, [getSelf]);
 
   return (
     <PageContent>

@@ -25,10 +25,10 @@ import { appContext } from 'context/AppContext';
 import { AvailableClassroom } from 'models/common/classroom.model';
 import { EventByClassrooms } from 'models/common/event.model';
 import { useContext, useEffect, useState } from 'react';
-import BuildingsService from 'services/api/buildings.service';
-import ClassroomsService from 'services/api/classrooms.service';
 import { Capitalize } from 'utils/formatters';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
+import useClassroomsService from 'hooks/API/services/useClassroomsService';
+import useBuildingsService from 'hooks/API/services/useBuildingsService';
 
 interface ClassroomOption {
   value: string;
@@ -74,8 +74,8 @@ export default function EditEventModal({
   const setCheckedEvents = checkBoxHook.setValue;
   const getCheckboxProps = checkBoxHook.getCheckboxProps;
 
-  const classroomsService = new ClassroomsService();
-  const buildingsService = new BuildingsService();
+  const classroomsService = useClassroomsService();
+  const buildingsService = useBuildingsService();
 
   const classData = classEvents[0];
 
@@ -255,7 +255,9 @@ export default function EditEventModal({
                   placeholder='Selecionar prédio'
                   onChange={(event) => {
                     setSelectedBuilding(
-                      buildingsList.find((it) => it.id === Number(event.target.value)),
+                      buildingsList.find(
+                        (it) => it.id === Number(event.target.value),
+                      ),
                     );
                   }}
                   icon={buildingsLoading ? <Spinner size='sm' /> : undefined}

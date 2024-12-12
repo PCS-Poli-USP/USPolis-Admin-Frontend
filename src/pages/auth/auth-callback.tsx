@@ -10,10 +10,10 @@ function useQuery() {
 }
 
 const AuthCallbackPage = () => {
+  const authService = new AuthHttpService();
   const [error, setError] = useState<string | null>(null);
   const query = useQuery();
-  const authService = new AuthHttpService();
-  const { getSelfFromBackend } = useContext(appContext);
+  const { getSelfFromBackend, setAccessToken, setIsAuthenticated } = useContext(appContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,11 +29,14 @@ const AuthCallbackPage = () => {
       );
       return;
     }
+    console.log('Redirecting with code:', code);
     const response = await authService.getTokens(code);
     const { access_token, refresh_token } = response.data;
-    localStorage.setItem('access_token', access_token);
+    console.log('Access token:', access_token);
+    setAccessToken(access_token);
+    setIsAuthenticated(true);
     localStorage.setItem('refresh_token', refresh_token);
-    await getSelfFromBackend();
+    // await getSelfFromBackend(); // Not use like this, let useEffect in appContext fetch the user (axios interceptor isn`t fast enough to get the token)
     navigate('/allocation');
   }
 

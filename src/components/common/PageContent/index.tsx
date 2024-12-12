@@ -1,22 +1,22 @@
 import React, { ReactNode } from 'react';
-import { Box, Center, Flex } from '@chakra-ui/react';
+import { Box, Center, Flex, useMediaQuery } from '@chakra-ui/react';
 
 interface PageContentProps {
   children?: ReactNode;
 }
 
 const PageContent: React.FC<PageContentProps> = ({ children }) => {
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
   return (
     <Flex
       direction='column'
       width='100%'
-      height='100%'
+      height='calc(100vh - 60px)'
       // overflow={'auto'}
-      // bg={'pink'}
       mt={'60px'}
     >
       <Center>
-        <Box p={'8px'} w={'100%'} h={'100%'}>
+        <Box p={isMobile ? '8px' : '16px'} w={'100%'} h={'100%'}>
           {children}
         </Box>
       </Center>

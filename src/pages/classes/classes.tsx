@@ -8,7 +8,6 @@ import Loading from 'components/common/Loading/loading.component';
 import { appContext } from 'context/AppContext';
 import { useContext, useState } from 'react';
 import { EventByClassrooms } from 'models/common/event.model';
-import CrawlerService from 'services/api/crawler.service';
 import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
 import MultipleEditModal from 'components/classes/multipleEdit.modal';
 import { getClassesColumns } from './Tables/class.table';
@@ -21,11 +20,11 @@ import { Row } from '@tanstack/react-table';
 import AllocateScheduleModal from './AllocateClassModal/allocateSingleScheduleSection';
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
 import { AllocateClassModal } from './AllocateClassModal';
-import SubjectsService from 'services/api/subjects.service';
 import { AxiosError } from 'axios';
 import useCustomToast from 'hooks/useCustomToast';
 import ClassOccurrencesModal from './ClassOccurrencesModal';
 import PageContent from 'components/common/PageContent';
+import useSubjectsService from 'hooks/API/services/useSubjectsService';
 
 function Classes() {
   const showToast = useCustomToast();
@@ -64,6 +63,8 @@ function Classes() {
     onOpen: onOpenMultipleEdit,
     onClose: onCloseMultipleEdit,
   } = useDisclosure();
+  
+  const subjectsService = useSubjectsService();
 
   const [selectedClass, setSelectedClass] = useState<ClassResponse>();
   const [selectedSchedule, setSelectedSchedule] = useState<ScheduleResponse>();
@@ -143,7 +144,6 @@ function Classes() {
     calendar_ids: number[],
   ) {
     setLoading(true);
-    const subjectsService = new SubjectsService();
     setIsCrawling(true);
     await subjectsService
       .crawl(building_id, { subject_codes: subjectsList, calendar_ids })

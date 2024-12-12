@@ -1,13 +1,21 @@
-import { Heading, VStack } from '@chakra-ui/react';
+import { Flex, Heading, Text } from '@chakra-ui/react';
 import PageContent from 'components/common/PageContent';
 
 function Page404() {
   return (
     <PageContent>
-      <VStack p={40}>
+      <Flex
+        gap={'40px'}
+        direction={'column'}
+        justify={'center'}
+        align={'center'}
+        verticalAlign={'center'}
+      >
         <Heading size={'3xl'}>Erro 404</Heading>
-        <Heading>Página não encontrada.</Heading>
-      </VStack>
+        <Text fontSize={'2xl'} textAlign={'center'}>
+          Página não encontrada.
+        </Text>
+      </Flex>
     </PageContent>
   );
 }

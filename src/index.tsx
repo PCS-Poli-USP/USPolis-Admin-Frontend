@@ -39,7 +39,9 @@ import Home from 'pages/home';
 import FindClasses from 'pages/findClasses';
 import LoadingRedirect from 'pages/auth/loadingRedirect';
 import RedirectError from 'pages/auth/redirectError';
-import PersistLogin from 'components/routes/persistLogin.rout';
+import PersistLogin from 'components/routes/persistLogin.route';
+import AxiosInterceptorRoute from 'components/routes/axiosInterceptor.route';
+import LoadingPage from 'components/common/LoadingPage';
 
 Amplify.configure(awsConfig);
 
@@ -72,46 +74,53 @@ root.render(
                   path='/test-auth-callback-error'
                   element={<RedirectError error='Mock error bro' />}
                 />
-                <Route element={<PersistLogin />}>
-                  <Route path='/' element={<EmptyPage />}>
-                    {/* Public routes */}
-                    <Route path='allocation' element={<Allocation />} />
-                    <Route path='find-classes' element={<FindClasses />} />
+                <Route path='/loading-page' element={<LoadingPage />} />
+                <Route element={<AxiosInterceptorRoute />}>
+                  <Route element={<PersistLogin />}>
+                    <Route path='/' element={<EmptyPage />}>
+                      {/* Not found */}
+                      <Route path='*' element={<Page404 />} />
 
-                    {/* Private routes */}
-                    <Route element={<PrivateRoute />}>
-                      <Route
-                        path='my-solicitations'
-                        element={<MySolicitations />}
-                      />
+                      {/* Public routes */}
+                      <Route path='allocation' element={<Allocation />} />
+                      <Route path='find-classes' element={<FindClasses />} />
 
-                      {/* Restricted routes */}
-                      <Route element={<RestrictedRoute />}>
-                        <Route path='subjects' element={<Subjects />} />
-                        <Route path='calendars' element={<Calendars />} />
-                        <Route path='classrooms' element={<Classrooms />} />
-                        <Route path='classes' element={<Classes />} />
-                        <Route path='reservations' element={<Reservations />} />
-                        <Route path='conflicts' element={<ConflictsPage />} />
+                      {/* Private routes */}
+                      <Route element={<PrivateRoute />}>
                         <Route
-                          path='solicitations'
-                          element={<Solicitations />}
+                          path='my-solicitations'
+                          element={<MySolicitations />}
                         />
-                      </Route>
 
-                      {/* Admin routes */}
-                      <Route path='' element={<AdminRoute />}>
-                        <Route path='users' element={<Users />} />
-                        <Route path='buildings' element={<Buildings />} />
-                        <Route
-                          path='institutional-events'
-                          element={<InstitutionalEvents />}
-                        />
+                        {/* Restricted routes */}
+                        <Route element={<RestrictedRoute />}>
+                          <Route path='subjects' element={<Subjects />} />
+                          <Route path='calendars' element={<Calendars />} />
+                          <Route path='classrooms' element={<Classrooms />} />
+                          <Route path='classes' element={<Classes />} />
+                          <Route
+                            path='reservations'
+                            element={<Reservations />}
+                          />
+                          <Route path='conflicts' element={<ConflictsPage />} />
+                          <Route
+                            path='solicitations'
+                            element={<Solicitations />}
+                          />
+                        </Route>
+
+                        {/* Admin routes */}
+                        <Route path='' element={<AdminRoute />}>
+                          <Route path='users' element={<Users />} />
+                          <Route path='buildings' element={<Buildings />} />
+                          <Route
+                            path='institutional-events'
+                            element={<InstitutionalEvents />}
+                          />
+                        </Route>
                       </Route>
                     </Route>
                   </Route>
-                  {/* Not found */}
-                  <Route path='*' element={<Page404 />} />
                 </Route>
               </Routes>
             </Router>
@@ -120,7 +129,7 @@ root.render(
       </GoogleOAuthProvider>
     </ChakraProvider>
   </ThemeProvider>,
-  // {/* </React.StrictMode>, */}
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

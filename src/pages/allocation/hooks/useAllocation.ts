@@ -1,11 +1,10 @@
 import useCustomToast from 'hooks/useCustomToast';
 import { useCallback, useEffect, useState } from 'react';
-import AllocationService from 'services/api/allocations.service';
 import { Resource, Event } from '../interfaces/allocation.interfaces';
-
-const allocationService = new AllocationService();
+import useALlocationsService from 'hooks/API/services/useAllocationService';
 
 const useAllocation = () => {
+  const allocationService = useALlocationsService();
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);

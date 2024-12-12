@@ -19,8 +19,8 @@ import { useNavigate } from 'react-router-dom';
 import Event, { EventByClassrooms } from 'models/common/event.model';
 import EditEventModal from 'components/allocation/editEvent.modal';
 import { useEffect, useState } from 'react';
+import useEventsService from 'hooks/API/services/useEventsService';
 // import { EventToEventByClassroom } from 'utils/classes/classes.formatter';
-import EventsService from 'services/api/events.service';
 
 interface AutomaticAllocationModalProps {
   isOpen: boolean;
@@ -59,7 +59,7 @@ export default function AutomaticAllocationModal({
   const [allocatedEventsList, setAllocatedEvents] = useState<Event[]>([]);
   const [unallocatedEventsList, setUnallocatedEvents] = useState<Event[]>([]);
 
-  const eventsService = new EventsService();
+  const eventsService = useEventsService();
   const navigate = useNavigate();
 
   const toast = useToast();

@@ -8,12 +8,11 @@ import {
   ClassResponse,
 } from 'models/http/responses/class.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import ClassesService from 'services/api/classes.service';
 import { sortClassResponse } from 'utils/classes/classes.sorter';
-
-const service = new ClassesService();
+import useClassesService from './API/services/useClassesService';
 
 const useClasses = (initialFetch: boolean = true) => {
+  const service = useClassesService();
   const [loading, setLoading] = useState(false);
   const [classes, setClasses] = useState<ClassResponse[]>([]);
 
@@ -33,43 +32,43 @@ const useClasses = (initialFetch: boolean = true) => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
-  const getClassesBySubject = useCallback(
-    async (subject_id: number) => {
-      setLoading(true);
-      await service
-        .listBySubject(subject_id)
-        .then((response) => {
-          setClasses(response.data.sort(sortClassResponse));
-        })
-        .catch((error) => {
-          showToast('Erro', 'Erro ao carregar turmas', 'error');
-          console.log(error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    },
-    [showToast],
-  );
-
-  const getClassFull = useCallback(async (id: number) => {
+  const getClassesBySubject = useCallback(async (subject_id: number) => {
     setLoading(true);
-    let full: ClassFullResponse | undefined = undefined;
     await service
-      .listOneFull(id)
+      .listBySubject(subject_id)
       .then((response) => {
-        full = response.data;
+        setClasses(response.data.sort(sortClassResponse));
       })
       .catch((error) => {
+        showToast('Erro', 'Erro ao carregar turmas', 'error');
         console.log(error);
       })
       .finally(() => {
         setLoading(false);
       });
-    return full;
-  }, []);
+  }, [showToast, service]);
+
+  const getClassFull = useCallback(
+    async (id: number) => {
+      setLoading(true);
+      let full: ClassFullResponse | undefined = undefined;
+      await service
+        .listOneFull(id)
+        .then((response) => {
+          full = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+      return full;
+    },
+    [service],
+  );
 
   const createClass = useCallback(
     async (data: CreateClass) => {
@@ -92,7 +91,7 @@ const useClasses = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
-    [getClasses, showToast],
+    [getClasses, showToast, service],
   );
 
   const updateClass = useCallback(
@@ -116,14 +115,14 @@ const useClasses = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
-    [getClasses, showToast],
+    [getClasses, showToast, service],
   );
 
   const deleteClass = useCallback(
     async (id: number) => {
       setLoading(true);
       await service
-        .delete(id)
+        .deleteById(id)
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao remover turma', 'success');
 
@@ -137,7 +136,7 @@ const useClasses = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
-    [getClasses, showToast],
+    [getClasses, showToast, service],
   );
 
   const deleteManyClass = useCallback(
@@ -162,7 +161,7 @@ const useClasses = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
-    [getClasses, showToast],
+    [getClasses, showToast, service],
   );
 
   useEffect(() => {
