@@ -1,3 +1,4 @@
+import { EventResponse } from 'models/http/responses/allocation.response.models';
 import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { ReservationType } from 'utils/enums/reservations.enum';
@@ -23,18 +24,10 @@ export interface RecurrenceRule {
 }
 
 // See https://fullcalendar.io/docs/event-parsing
-export interface Event {
-  id: string;
-  title: string;
-  start: string; // Must be YYYY-MM-DDTHH:mm:ss
-  end: string; // Must be YYYY-MM-DDTHH:mm:ss
-  rrule?: RecurrenceRule; // Used when is unallocated
-  allDay: boolean;
-  resourceId: string;
+export interface Event extends EventResponse {
   backgroundColor?: string;
   borderColor?: string;
   textColor?: string;
-  extendedProps: EventExtendedProps;
 }
 
 export interface BaseExtendedProps {

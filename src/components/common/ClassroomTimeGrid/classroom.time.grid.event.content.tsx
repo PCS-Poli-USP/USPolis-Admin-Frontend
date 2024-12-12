@@ -1,5 +1,5 @@
 import { Tooltip, Text, VStack } from '@chakra-ui/react';
-import { EventContentArg } from '@fullcalendar/react';
+import { EventContentArg } from '@fullcalendar/core';
 import { ClassroomEventExtendedProps } from './classroom.time.grid.interface';
 import moment from 'moment';
 const TIME_FORMAT = 'HH:mm';

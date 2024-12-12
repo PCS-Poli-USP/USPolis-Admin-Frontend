@@ -4,7 +4,7 @@ import {
   ScheduleResponse,
 } from './schedule.response.models';
 
-export interface ClassResponseBase {
+export interface ClassUnfetchResponseBase {
   id: number;
   start_date: string;
   end_date: string;
@@ -22,9 +22,10 @@ export interface ClassResponseBase {
   updated_at: string;
 
   subject_id: number;
+}
+export interface ClassResponseBase extends ClassUnfetchResponseBase {
   subject_name: string;
   subject_code: string;
-  schedules: ScheduleResponse[];
   calendar_ids: number[];
   calendar_names: string[];
 }
@@ -37,6 +38,6 @@ export interface ClassFullResponse extends ClassResponseBase {
   schedules: ScheduleFullResponse[];
 }
 
-export interface ClassUnfetchResponse extends ClassResponseBase {
+export interface ClassUnfetchResponse extends ClassUnfetchResponseBase {
   subject_id: number;
 }

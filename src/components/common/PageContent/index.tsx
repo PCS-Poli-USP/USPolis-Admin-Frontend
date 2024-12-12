@@ -12,10 +12,11 @@ const PageContent: React.FC<PageContentProps> = ({ children }) => {
       width='100%'
       height='100%'
       // overflow={'auto'}
-      mt={10}
+      // bg={'pink'}
+      mt={'60px'}
     >
       <Center>
-        <Box p={4} w={'100%'}>
+        <Box p={'8px'} w={'100%'} h={'100%'}>
           {children}
         </Box>
       </Center>

@@ -126,7 +126,7 @@ export default function EditUserModal(props: EditModalProps) {
                     value: it.id,
                     label: it.name,
                   }))}
-                  onChange={(selected) => {
+                  onChange={(selected: BuildingOption[]) => {
                     const selectedBuildings = selected as BuildingOption[];
                     setForm((prev) => ({
                       ...prev,

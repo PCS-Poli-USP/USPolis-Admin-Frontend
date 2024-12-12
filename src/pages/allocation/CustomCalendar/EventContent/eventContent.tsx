@@ -1,8 +1,8 @@
 import { Box, Heading, Tooltip, Stack, Text, VStack } from '@chakra-ui/react';
-import { EventContentArg } from '@fullcalendar/react';
+import { EventContentArg } from '@fullcalendar/core';
 import moment from 'moment';
 import { getEventScheduleText } from 'pages/allocation/utils/allocation.formatter';
-import { EventExtendedProps } from '../interfaces/allocation.interfaces';
+import { EventExtendedProps } from '../../interfaces/allocation.interfaces';
 
 export default function EventContent(eventInfo: EventContentArg) {
   const eventData = eventInfo.event._def;
@@ -10,13 +10,17 @@ export default function EventContent(eventInfo: EventContentArg) {
   const classData = extendedProps.class_data;
   const reservationData = extendedProps.reservation_data;
   const isTimeGridView = eventInfo.view.type.includes('timeGrid');
+  const isTimeGridDay = eventInfo.view.type.includes('timeGridDay');
+  const isTimeGridWeek = eventInfo.view.type.includes('timeGridWeek');
 
   return (
     <>
       {classData ? (
         <Tooltip
           bg='white'
-          placement={isTimeGridView ? 'right-end' : undefined}
+          placement={
+            isTimeGridWeek ? 'right-end' : isTimeGridDay ? 'top' : 'auto'
+          }
           label={ToolTipLabel(eventInfo)}
         >
           <Stack spacing={0}>
@@ -30,7 +34,10 @@ export default function EventContent(eventInfo: EventContentArg) {
             </Heading>
             {isTimeGridView && (
               <>
-                <Text noOfLines={1}>{'Professores: '}{classData.professors.join(', ')}</Text>
+                <Text noOfLines={1}>
+                  {'Professores: '}
+                  {classData.professors.join(', ')}
+                </Text>
                 <Text noOfLines={1}>
                   {`Local: ${classData.building} - ${classData.classroom}`}
                 </Text>
@@ -82,9 +89,14 @@ function ToolTipLabel(eventInfo: EventContentArg) {
     >
       {classData ? (
         <>
-          <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
-            {`${classData.subject_code} - Turma ${classData.code}`}
-          </Text>
+          <VStack spacing={'2px'} alignItems='start'>
+            <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
+              {`${classData.subject_code} - Turma ${classData.code.slice(-2)}`}
+            </Text>
+            <Text fontSize='lg' textColor='#408080'>
+              {`${classData.subject_name}`}
+            </Text>
+          </VStack>
           <Box>
             <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
               Professores
@@ -101,9 +113,7 @@ function ToolTipLabel(eventInfo: EventContentArg) {
               Informações
             </Text>
             <Text fontSize='lg' textColor='#408080'>{`Sala: ${
-              classData.classroom
-                ? classData.classroom
-                : 'NÃO ALOCADA'
+              classData.classroom ? classData.classroom : 'NÃO ALOCADA'
             }`}</Text>
 
             <Text fontSize='lg' textColor='#408080'>

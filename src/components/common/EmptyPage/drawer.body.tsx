@@ -1,27 +1,72 @@
-import { Button, VStack, HStack, Text, Icon } from '@chakra-ui/react';
+import {
+  Button,
+  VStack,
+  HStack,
+  Text,
+  Icon,
+  useMediaQuery,
+} from '@chakra-ui/react';
 import { useContext } from 'react';
 import { FaList, FaRegCalendarTimes, FaRegUser } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { appContext } from 'context/AppContext';
-import { CalendarIcon, LockIcon, UnlockIcon } from '@chakra-ui/icons';
+import { CalendarIcon, LockIcon, Search2Icon, UnlockIcon } from '@chakra-ui/icons';
 import { LiaBuilding } from 'react-icons/lia';
 import { MdAddChart, MdEvent, MdOutlinePendingActions } from 'react-icons/md';
 import { LuCalendarClock } from 'react-icons/lu';
 import { GiBookCover, GiTeacher } from 'react-icons/gi';
 import { PiChair } from 'react-icons/pi';
 import { BsCalendar3, BsEnvelopeCheck } from 'react-icons/bs';
+import { IconType } from 'react-icons';
 
 interface DrawerBodyProps {
   onClose: () => void;
 }
 
-export default function DrawerBody({ onClose }: DrawerBodyProps) {
+interface DrawerButtonProps {
+  text: string;
+  to: string;
+  replace_location: boolean;
+  icon: React.ReactElement<IconType>;
+  onClose: () => void;
+}
+
+function DrawerButton({
+  text,
+  to,
+  icon,
+  replace_location,
+  onClose,
+}: DrawerButtonProps) {
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
   const navigate = useNavigate();
   const location = useLocation();
+
+  return (
+    <Button
+      leftIcon={icon}
+      variant={'ghost'}
+      w={'full'}
+      justifyContent={'flex-start'}
+      fontWeight={'normal'}
+      onClick={() => {
+        if (replace_location) {
+          navigate(to, { replace: true, state: { from: location } });
+        } else navigate(to);
+
+        if (isMobile) onClose();
+      }}
+    >
+      {text}
+    </Button>
+  );
+}
+
+export default function DrawerBody({ onClose }: DrawerBodyProps) {
   const { loggedUser } = useContext(appContext);
 
   return (
-    <VStack align={'start'} ml={4} spacing={4} mt={2}>
+    <VStack align={'start'} p={'10px'} spacing={4} maxH={'900px'}>
       {loggedUser ? (
         <>
           {loggedUser.is_admin ? (
@@ -32,42 +77,27 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   Admin
                 </Text>
               </HStack>
-              <Button
-                leftIcon={<LiaBuilding />}
-                variant={'ghost'}
-                w={'full'}
-                justifyContent={'flex-start'}
-                fontWeight={'normal'}
-                onClick={() => {
-                  navigate('/buildings');
-                }}
-              >
-                Prédios
-              </Button>
-              <Button
-                leftIcon={<FaRegUser />}
-                variant={'ghost'}
-                w={'full'}
-                justifyContent={'flex-start'}
-                fontWeight={'normal'}
-                onClick={() => {
-                  navigate('/users');
-                }}
-              >
-                Usuários
-              </Button>
-              <Button
-                leftIcon={<MdEvent />}
-                variant={'ghost'}
-                w={'full'}
-                justifyContent={'flex-start'}
-                fontWeight={'normal'}
-                onClick={() => {
-                  navigate('/institutional-events');
-                }}
-              >
-                Eventos
-              </Button>
+              <DrawerButton
+                icon={<LiaBuilding />}
+                to='/buildings'
+                text='Prédios'
+                replace_location={false}
+                onClose={onClose}
+              />
+              <DrawerButton
+                icon={<FaRegUser />}
+                to='/users'
+                text='Usuários'
+                replace_location={false}
+                onClose={onClose}
+              />
+              <DrawerButton
+                icon={<MdEvent />}
+                to='/institutional-events'
+                text='Eventos'
+                replace_location={false}
+                onClose={onClose}
+              />
             </VStack>
           ) : (
             <></>
@@ -80,21 +110,20 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                 Público
               </Text>
             </HStack>
-            <Button
-              leftIcon={<BsCalendar3 />}
-              variant={'ghost'}
-              w={'full'}
-              fontWeight={'normal'}
-              justifyContent={'flex-start'}
-              onClick={() => {
-                navigate('/allocation', {
-                  replace: true,
-                  state: { from: location },
-                });
-              }}
-            >
-              Mapa de Salas
-            </Button>
+            <DrawerButton
+              icon={<Search2Icon />}
+              to='/find-classes'
+              text='Encontre suas aulas'
+              replace_location={true}
+              onClose={onClose}
+            />
+            <DrawerButton
+              icon={<BsCalendar3 />}
+              to='/allocation'
+              text='Mapa de Salas'
+              replace_location={true}
+              onClose={onClose}
+            />
           </VStack>
 
           <VStack w={'full'} alignItems={'flex-start'}>
@@ -104,54 +133,30 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                 Solicitações e reservas
               </Text>
             </HStack>
-            <Button
-              leftIcon={<FaList />}
-              variant={'ghost'}
-              w={'full'}
-              justifyContent={'flex-start'}
-              fontWeight={'normal'}
-              onClick={() => {
-                navigate('/my-solicitations', {
-                  replace: true,
-                  state: { from: location },
-                });
-              }}
-            >
-              Minhas solicitações
-            </Button>
+            <DrawerButton
+              icon={<FaList />}
+              to='/my-solicitations'
+              text='Minhas solicitações'
+              replace_location={true}
+              onClose={onClose}
+            />
             {loggedUser.is_admin ||
             (loggedUser.buildings && loggedUser.buildings.length > 0) ? (
               <>
-                <Button
-                  leftIcon={<MdEvent />}
-                  variant={'ghost'}
-                  w={'full'}
-                  fontWeight={'normal'}
-                  justifyContent={'flex-start'}
-                  onClick={() => {
-                    navigate('/reservations', {
-                      replace: true,
-                      state: { from: location },
-                    });
-                  }}
-                >
-                  Reservas
-                </Button>
-                <Button
-                  leftIcon={<BsEnvelopeCheck />}
-                  variant={'ghost'}
-                  w={'full'}
-                  fontWeight={'normal'}
-                  justifyContent={'flex-start'}
-                  onClick={() => {
-                    navigate('/solicitations', {
-                      replace: true,
-                      state: { from: location },
-                    });
-                  }}
-                >
-                  Solicitações
-                </Button>
+                <DrawerButton
+                  icon={<MdEvent />}
+                  to='/reservations'
+                  text='Reservas'
+                  replace_location={true}
+                  onClose={onClose}
+                />
+                <DrawerButton
+                  icon={<BsEnvelopeCheck />}
+                  to='/solicitations'
+                  text='Solicitações'
+                  replace_location={true}
+                  onClose={onClose}
+                />
               </>
             ) : undefined}
           </VStack>
@@ -166,21 +171,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                     Datas e Feriados
                   </Text>
                 </HStack>
-                <Button
-                  leftIcon={<CalendarIcon />}
-                  variant={'ghost'}
-                  w={'full'}
-                  fontWeight={'normal'}
-                  justifyContent={'flex-start'}
-                  onClick={() => {
-                    navigate('/calendars', {
-                      replace: true,
-                      state: { from: location },
-                    });
-                  }}
-                >
-                  Calendários
-                </Button>
+                <DrawerButton
+                  icon={<CalendarIcon />}
+                  to='/calendars'
+                  text='Calendários'
+                  replace_location={true}
+                  onClose={onClose}
+                />
               </VStack>
 
               <VStack w={'full'} alignItems={'flex-start'}>
@@ -190,66 +187,34 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                     Oferecimentos
                   </Text>
                 </HStack>
-                <Button
-                  leftIcon={<PiChair />}
-                  variant={'ghost'}
-                  w={'full'}
-                  fontWeight={'normal'}
-                  justifyContent={'flex-start'}
-                  onClick={() => {
-                    navigate('/classrooms', {
-                      replace: true,
-                      state: { from: location },
-                    });
-                  }}
-                >
-                  Salas
-                </Button>
-                <Button
-                  leftIcon={<GiBookCover />}
-                  variant={'ghost'}
-                  w={'full'}
-                  fontWeight={'normal'}
-                  justifyContent={'flex-start'}
-                  onClick={() => {
-                    navigate('/subjects', {
-                      replace: true,
-                      state: { from: location },
-                    });
-                  }}
-                >
-                  Disciplinas
-                </Button>
-                <Button
-                  leftIcon={<GiTeacher />}
-                  variant={'ghost'}
-                  w={'full'}
-                  fontWeight={'normal'}
-                  justifyContent={'flex-start'}
-                  onClick={() => {
-                    navigate('/classes', {
-                      replace: true,
-                      state: { from: location },
-                    });
-                  }}
-                >
-                  Turmas
-                </Button>
-                <Button
-                  leftIcon={<FaRegCalendarTimes />}
-                  variant={'ghost'}
-                  w={'full'}
-                  fontWeight={'normal'}
-                  justifyContent={'flex-start'}
-                  onClick={() => {
-                    navigate('/conflicts', {
-                      replace: true,
-                      state: { from: location },
-                    });
-                  }}
-                >
-                  Conflitos
-                </Button>
+                <DrawerButton
+                  icon={<PiChair />}
+                  to='/classrooms'
+                  text='Salas'
+                  replace_location={true}
+                  onClose={onClose}
+                />
+                <DrawerButton
+                  icon={<GiBookCover />}
+                  to='/subjects'
+                  text='Disciplinas'
+                  replace_location={true}
+                  onClose={onClose}
+                />
+                <DrawerButton
+                  icon={<GiTeacher />}
+                  to='/classes'
+                  text='Turmas'
+                  replace_location={true}
+                  onClose={onClose}
+                />
+                <DrawerButton
+                  icon={<FaRegCalendarTimes />}
+                  to='/conflicts'
+                  text='Conflitos'
+                  replace_location={true}
+                  onClose={onClose}
+                />
               </VStack>
             </>
           ) : undefined}
@@ -262,21 +227,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
               Público
             </Text>
           </HStack>
-          <Button
-            leftIcon={<BsCalendar3 />}
-            variant={'ghost'}
-            w={'full'}
-            fontWeight={'normal'}
-            justifyContent={'flex-start'}
-            onClick={() => {
-              navigate('/allocation', {
-                replace: true,
-                state: { from: location },
-              });
-            }}
-          >
-            Mapa de Salas
-          </Button>
+          <DrawerButton
+            icon={<BsCalendar3 />}
+            to='/allocation'
+            text='Mapa de Salas'
+            replace_location={true}
+            onClose={onClose}
+          />
         </VStack>
       )}
     </VStack>

@@ -1,10 +1,21 @@
-import { Heading, HStack, Text, Image, Button } from '@chakra-ui/react';
+import {
+  Heading,
+  HStack,
+  Text,
+  Image,
+  Button,
+  Checkbox,
+} from '@chakra-ui/react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { Card, CardBody, Flex } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import Logo from 'assets/uspolis.logo.png';
+import { useContext, useState } from 'react';
+import { appContext } from 'context/AppContext';
 
 const AuthPage = () => {
+  const context = useContext(appContext);
+  const [checked, setChecked] = useState(context.persist);
   const navigate = useNavigate();
 
   const login = useGoogleLogin({
@@ -48,7 +59,9 @@ const AuthPage = () => {
             <Heading size={'xl'} textColor={'teal'}>
               USPolis
             </Heading>
-            <Heading size={'lg'}>Faça login para continuar</Heading>
+            <Heading size={'lg'} textAlign={'center'}>
+              Faça login para continuar
+            </Heading>
             <Text fontSize={'lg'}>Utilize seu email USP</Text>
             <Button onClick={() => login()}>
               <HStack gap={2}>
@@ -59,6 +72,15 @@ const AuthPage = () => {
                 <span>Google Sign In</span>
               </HStack>
             </Button>
+            <Checkbox
+              isChecked={checked}
+              onChange={(event) => {
+                localStorage.setItem('persist', String(event.target.checked));
+                setChecked(event.target.checked);
+              }}
+            >
+              Lembrar desse dispositivo
+            </Checkbox>
           </Flex>
         </CardBody>
       </Card>
