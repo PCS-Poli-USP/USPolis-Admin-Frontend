@@ -12,13 +12,13 @@ import {
   Skeleton,
   StackDivider,
 } from '@chakra-ui/react';
-import BuildingsService from 'services/api/buildings.service';
 import { useContext, useEffect, useState } from 'react';
 import { appContext } from 'context/AppContext';
 import { MultipleEditAllocation } from './multipleEdit.allocation';
 import { ClassroomSchedule } from 'models/common/classroom.model';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { ClassResponse } from 'models/http/responses/class.response.models';
+import useBuildingsService from 'hooks/API/services/useBuildingsService';
 
 interface MultipleEditAccordionProps {
   subjectsMap: [string, ClassResponse[]][];
@@ -63,7 +63,7 @@ export default function MultipleEditAccordion({
   const [buildingsList, setBuildingsList] = useState<BuildingResponse[]>([]);
   const [buildingsLoading, setBuildingsLoading] = useState(true);
 
-  const buildingsService = new BuildingsService();
+  const buildingsService = useBuildingsService();
 
   useEffect(() => {
     getBuildingsList();

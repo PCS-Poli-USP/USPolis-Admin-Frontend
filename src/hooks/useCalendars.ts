@@ -5,12 +5,11 @@ import {
 } from 'models/http/requests/calendar.request.models';
 import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
 import { useCallback, useEffect, useState } from 'react';
-import CalendarsService from 'services/api/calendars.service';
 import { sortCalendarResponse } from 'utils/calendars/calendar.sorter';
-
-const service = new CalendarsService();
+import useCalendarsService from './API/services/useCalendarsService';
 
 const useCalendars = () => {
+  const service = useCalendarsService();
   const [loading, setLoading] = useState(false);
   const [calendars, setCalendars] = useState<CalendarResponse[]>([]);
 
@@ -30,7 +29,7 @@ const useCalendars = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast]);
+  }, [showToast, service]);
 
   const createCalendar = useCallback(
     async (data: CreateCalendar) => {
@@ -53,7 +52,7 @@ const useCalendars = () => {
           setLoading(false);
         });
     },
-    [getCalendars, showToast],
+    [getCalendars, showToast, service],
   );
 
   const updateCalendar = useCallback(
@@ -77,14 +76,14 @@ const useCalendars = () => {
           setLoading(false);
         });
     },
-    [getCalendars, showToast],
+    [getCalendars, showToast, service],
   );
 
   const deleteCalendar = useCallback(
     async (id: number) => {
       setLoading(true);
       await service
-        .delete(id)
+        .deleteById(id)
         .then((response) => {
           showToast('Sucesso!', 'Sucesso ao remover calendário', 'success');
 
@@ -98,7 +97,7 @@ const useCalendars = () => {
           setLoading(false);
         });
     },
-    [getCalendars, showToast],
+    [getCalendars, showToast, service],
   );
 
   useEffect(() => {

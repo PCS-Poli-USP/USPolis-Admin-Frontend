@@ -1,14 +1,14 @@
 import useCustomToast from 'hooks/useCustomToast';
 import { OccurrenceResponse } from 'models/http/responses/occurrence.response.models';
 import { useCallback, useState } from 'react';
-import OccurrencesService, {
-  AllocateManySchedulesData,
-} from 'services/api/occurrences.service';
-import { sortOccurrenceResponse } from 'utils/occurrences/occurrences.sorter';
 
-const service = new OccurrencesService();
+import { sortOccurrenceResponse } from 'utils/occurrences/occurrences.sorter';
+import useOcurrencesService, {
+  AllocateManySchedulesData,
+} from './API/services/useOccurrencesService';
 
 const useOccurrences = () => {
+  const service = useOcurrencesService();
   const [loading, setLoading] = useState(false);
   const [occurrences, setOccurrences] = useState<OccurrenceResponse[]>([]);
 
@@ -31,7 +31,7 @@ const useOccurrences = () => {
         setLoading(false);
       });
     return newOccurrences;
-  }, [showToast]);
+  }, [showToast, service]);
 
   const allocateManySchedules = useCallback(
     async (data: AllocateManySchedulesData[]) => {
@@ -39,7 +39,11 @@ const useOccurrences = () => {
       await service
         .allocate_many_schedules(data)
         .then((response) => {
-          showToast('Sucesso!', `${data.length} horário(s) alocado(s)`, 'success');
+          showToast(
+            'Sucesso!',
+            `${data.length} horário(s) alocado(s)`,
+            'success',
+          );
         })
         .catch((error) => {
           showToast('Erro', 'Erro ao alocar horários', 'error');
@@ -49,7 +53,7 @@ const useOccurrences = () => {
           setLoading(false);
         });
     },
-    [showToast],
+    [showToast, service],
   );
 
   return {

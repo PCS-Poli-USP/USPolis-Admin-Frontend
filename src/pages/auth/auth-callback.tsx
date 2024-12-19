@@ -2,21 +2,24 @@ import { appContext } from 'context/AppContext';
 import { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthHttpService } from 'services/auth/auth.service';
+import LoadingRedirect from './loadingRedirect';
+import RedirectError from './redirectError';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
 const AuthCallbackPage = () => {
+  const authService = new AuthHttpService();
   const [error, setError] = useState<string | null>(null);
   const query = useQuery();
-  const authService = new AuthHttpService();
-  const { getSelfFromBackend } = useContext(appContext);
+  const { getSelfFromBackend, setAccessToken, setIsAuthenticated } = useContext(appContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     const code = query.get('code');
     redirect(code);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   async function redirect(code: string | null): Promise<void> {
@@ -26,24 +29,20 @@ const AuthCallbackPage = () => {
       );
       return;
     }
+    console.log('Redirecting with code:', code);
     const response = await authService.getTokens(code);
     const { access_token, refresh_token } = response.data;
-    localStorage.setItem('access_token', access_token);
+    console.log('Access token:', access_token);
+    setAccessToken(access_token);
+    setIsAuthenticated(true);
     localStorage.setItem('refresh_token', refresh_token);
-    await getSelfFromBackend();
-    navigate('/classes');
+    // await getSelfFromBackend(); // Not use like this, let useEffect in appContext fetch the user (axios interceptor isn`t fast enough to get the token)
+    navigate('/allocation');
   }
 
   return (
     <div>
-      {error == null ? (
-        <p>Login efetuado com sucesso, aguarde redirecionamento....</p>
-      ) : (
-        <>
-          <h1>Um erro aconteceu:</h1>
-          <p>{error}</p>
-        </>
-      )}
+      {error == null ? <LoadingRedirect /> : <RedirectError error={error} />}
     </div>
   );
 };

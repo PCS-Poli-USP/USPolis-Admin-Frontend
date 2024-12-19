@@ -27,9 +27,7 @@ function scheduleToRRule(schedule: ScheduleResponse): RecurrenceRule {
 }
 
 // See docs https://fullcalendar.io/docs/v5/event-parsing
-export function EventsFromClasses(
-  classes: ClassFullResponse[],
-): Event[] {
+export function EventsFromClasses(classes: ClassFullResponse[]): Event[] {
   const events: Event[] = [];
   classes.forEach((cls) => {
     const classEvents: Event[] = [];
@@ -187,8 +185,12 @@ export function AllocationResourcesFromClasses(
       });
     });
   });
-  const uniqueBuildingResources = Array.from(new Set(buildingResources));
-  const uniqueClassroomResources = Array.from(new Set(classroomResources));
+  const uniqueBuildingResources = Array.from(
+    new Map(buildingResources.map((obj) => [obj.id, obj])).values(),
+  );
+  const uniqueClassroomResources = Array.from(
+    new Map(classroomResources.map((obj) => [obj.id, obj])).values(),
+  );
   return [...uniqueBuildingResources, ...uniqueClassroomResources];
 }
 

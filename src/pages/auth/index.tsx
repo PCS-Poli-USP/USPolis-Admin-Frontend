@@ -48,7 +48,9 @@ const AuthPage = () => {
             <Heading size={'xl'} textColor={'teal'}>
               USPolis
             </Heading>
-            <Heading size={'lg'}>Faça login para continuar</Heading>
+            <Heading size={'lg'} textAlign={'center'}>
+              Faça login para continuar
+            </Heading>
             <Text fontSize={'lg'}>Utilize seu email USP</Text>
             <Button onClick={() => login()}>
               <HStack gap={2}>

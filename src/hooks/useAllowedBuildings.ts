@@ -1,10 +1,11 @@
 import { appContext } from 'context/AppContext';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { useContext, useEffect, useState } from 'react';
-import BuildingsService from 'services/api/buildings.service';
 import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
+import useBuildingsService from './API/services/useBuildingsService';
 
 const useAllowedBuildings = () => {
+  const buildingsService = useBuildingsService();
   const [loading, setLoading] = useState(false);
   const [allowedBuildings, setAllowedBuildings] = useState<
     Array<BuildingResponse>
@@ -12,7 +13,6 @@ const useAllowedBuildings = () => {
   const { loggedUser } = useContext(appContext);
 
   useEffect(() => {
-    const buildingsService = new BuildingsService();
     const getAllowedBuildings = async () => {
       setLoading(true);
       if (loggedUser) {
@@ -27,7 +27,7 @@ const useAllowedBuildings = () => {
       setLoading(false);
     };
     getAllowedBuildings();
-  }, [loggedUser]);
+  }, [loggedUser, buildingsService]);
 
   return { allowedBuildings, loading };
 };

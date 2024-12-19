@@ -2,11 +2,10 @@ import useCustomToast from 'hooks/useCustomToast';
 import { ScheduleUpdateOccurences } from 'models/http/requests/schedule.request.models';
 import { ScheduleFullResponse } from 'models/http/responses/schedule.response.models';
 import { useCallback, useState } from 'react';
-import ScheduleService from 'services/api/schedule.service';
-
-const service = new ScheduleService();
+import useScheduleService from './API/services/useSchedulesService';
 
 const useSchedules = () => {
+  const service = useScheduleService();
   const [loading, setLoading] = useState(false);
 
   const showToast = useCustomToast();
@@ -26,7 +25,7 @@ const useSchedules = () => {
       setLoading(false);
       return schedule;
     },
-    [showToast],
+    [showToast, service],
   );
 
   return {

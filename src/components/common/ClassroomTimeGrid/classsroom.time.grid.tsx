@@ -11,6 +11,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import FullCalendar from '@fullcalendar/react';
 import {
@@ -20,6 +21,8 @@ import {
 import timeGridPlugin from '@fullcalendar/timegrid';
 import ClassroomTimeGridEventContent from './classroom.time.grid.event.content';
 import moment from 'moment';
+import { useState } from 'react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 
 function ClassroomTimeGrid({
   isOpen,
@@ -27,6 +30,9 @@ function ClassroomTimeGrid({
   classroom,
   preview,
 }: ClassroomTimeGridProps) {
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
+  const [showWeekends, setShowWeekends] = useState(false);
+
   function handleCloseModal() {
     onClose();
   }
@@ -89,17 +95,50 @@ function ClassroomTimeGrid({
         } capacidade`}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+          <Button
+            mb={'10px'}
+            onClick={() => setShowWeekends((prev) => !prev)}
+            leftIcon={showWeekends ? <ViewOffIcon /> : <ViewIcon />}
+          >
+            {showWeekends ? 'Ocultar' : 'Exibir'} finais de semana
+          </Button>
           <Box w={'full'} h={'full'}>
+            {isMobile && (
+              <Box mb={'10px'}>
+                <HStack>
+                  <Text fontWeight={'bold'}>Legenda: </Text>
+                  <CircleIcon />
+                  <Text>Já alocado</Text>
+                  <CircleIcon color='#ff7300' />
+                  <Text>Solicitado</Text>
+                </HStack>
+                <HStack>
+                  <Text fontWeight={'bold'}>Datas: </Text>
+                  <Text>
+                    {preview.dates
+                      .map((date) => moment(date).format('DD/MM/YYYY'))
+                      .join(', ')}
+                  </Text>
+                </HStack>
+              </Box>
+            )}
             <FullCalendar
               plugins={[timeGridPlugin]}
               initialView='timeGridWeek'
+              initialDate={
+                preview.dates.length > 0 ? preview.dates[0] : undefined
+              }
               locale={'pt-br'}
-              slotMinTime='06:00'
+              height={'auto'}
+              firstDay={1}
+              slotMinTime='07:00'
               views={{
                 timeGridWeek: {
                   slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
                   eventMaxStack: 1,
-                  titleFormat: { year: 'numeric', month: 'long' },
+                  titleFormat: isMobile
+                    ? { year: 'numeric', month: 'short' }
+                    : { year: 'numeric', month: 'long' },
                 },
               }}
               eventColor='#408080'
@@ -108,22 +147,28 @@ function ClassroomTimeGrid({
               displayEventEnd={false}
               validRange={{ start: `${year}-01-01`, end: `${year}-12-31` }} // Limita ao ano atual
               events={events}
+              // weekends={showWeekends}
+              hiddenDays={showWeekends ? [1, 2, 3, 4, 5] : [0, 6]}
             />
-            <HStack>
-              <Text fontWeight={'bold'}>Legenda: </Text>
-              <CircleIcon />
-              <Text>Já alocado</Text>
-              <CircleIcon color='#ff7300' />
-              <Text>Solicitado</Text>
-            </HStack>
-            <HStack>
-              <Text fontWeight={'bold'}>Datas: </Text>
-              <Text>
-                {preview.dates
-                  .map((date) => moment(date).format('DD/MM/YYYY'))
-                  .join(', ')}
-              </Text>
-            </HStack>
+            {!isMobile && (
+              <>
+                <HStack>
+                  <Text fontWeight={'bold'}>Legenda: </Text>
+                  <CircleIcon />
+                  <Text>Já alocado</Text>
+                  <CircleIcon color='#ff7300' />
+                  <Text>Solicitado</Text>
+                </HStack>
+                <HStack>
+                  <Text fontWeight={'bold'}>Datas: </Text>
+                  <Text>
+                    {preview.dates
+                      .map((date) => moment(date).format('DD/MM/YYYY'))
+                      .join(', ')}
+                  </Text>
+                </HStack>
+              </>
+            )}
           </Box>
         </ModalBody>
 

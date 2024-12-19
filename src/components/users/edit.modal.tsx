@@ -16,8 +16,8 @@ import {
 import Select from 'react-select';
 
 import { useEffect, useState } from 'react';
-import BuildingsService from 'services/api/buildings.service';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
+import useBuildingsService from 'hooks/API/services/useBuildingsService';
 
 interface EditModalProps {
   isOpen: boolean;
@@ -42,7 +42,7 @@ interface BuildingOption {
 }
 
 export default function EditUserModal(props: EditModalProps) {
-  const buildingsService = new BuildingsService();
+  const buildingsService = useBuildingsService();
 
   const initialForm: EditUserFormValues = {
     buildings: [],
@@ -59,6 +59,7 @@ export default function EditUserModal(props: EditModalProps) {
 
   useEffect(() => {
     fetchBuildings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchBuildings() {
@@ -126,7 +127,7 @@ export default function EditUserModal(props: EditModalProps) {
                     value: it.id,
                     label: it.name,
                   }))}
-                  onChange={(selected) => {
+                  onChange={(selected: BuildingOption[]) => {
                     const selectedBuildings = selected as BuildingOption[];
                     setForm((prev) => ({
                       ...prev,

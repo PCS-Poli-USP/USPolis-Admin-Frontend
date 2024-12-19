@@ -22,13 +22,13 @@ import MultipleEditAccordion from './multipleEdit.accordion';
 import { useEffect, useState } from 'react';
 import { CalendarIcon } from '@chakra-ui/icons';
 import { BsSearch } from 'react-icons/bs';
-import EventsService from 'services/api/events.service';
 import { ClassesBySubject } from 'utils/classes/classes.mapper';
 import { ConflictCalculator } from 'utils/conflict.calculator';
 import { ClassroomSchedule } from 'models/common/classroom.model';
-import ClassroomsService from 'services/api/classrooms.service';
 import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
 import { ClassResponse } from 'models/http/responses/class.response.models';
+import useEventsService from 'hooks/API/services/useEventsService';
+import useClassroomsService from 'hooks/API/services/useClassroomsService';
 
 interface MultipleEditModalProps {
   isOpen: boolean;
@@ -62,8 +62,8 @@ export default function MultipleEditModal({
   const [isLoadingSchedules, setIsLoadingSchedules] = useState(false);
   const [isUpdatingSchedules, setIsUpdatingSchedules] = useState(false);
 
-  const eventsService = new EventsService();
-  const classroomsService = new ClassroomsService();
+  const eventsService = useEventsService();
+  const classroomsService = useClassroomsService();
 
   const toast = useToast();
   const toastSuccess = (message: string) => {
