@@ -115,7 +115,8 @@ const useUsers = (initialFetch: boolean = true) => {
 
   useEffect(() => {
     if (initialFetch) getUsers();
-  }, [getUsers, initialFetch]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialFetch]);
 
   return {
     loading,

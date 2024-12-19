@@ -100,7 +100,8 @@ const useReservations = () => {
 
   useEffect(() => {
     getReservations();
-  }, [getReservations]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     loading,

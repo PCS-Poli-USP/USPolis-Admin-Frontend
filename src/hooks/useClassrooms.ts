@@ -184,7 +184,8 @@ const useClassrooms = (initialFetch: boolean = true) => {
 
   useEffect(() => {
     if (initialFetch) getClassrooms();
-  }, [getClassrooms, initialFetch]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialFetch]);
 
   return {
     loading,

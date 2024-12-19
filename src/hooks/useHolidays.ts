@@ -125,7 +125,8 @@ const useHolidays = () => {
 
   useEffect(() => {
     getHolidays();
-  }, [getHolidays]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     loading,

@@ -99,11 +99,11 @@ const useClasses = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .update(id, data)
-        .then((response) => {
-          showToast('Sucesso', `Turma atualizado com sucesso!`, 'success');
+        .then(() => {
+          showToast('Sucesso', `Turma atualizada com sucesso!`, 'success');
           getClasses();
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.log(error);
           showToast(
             'Erro',
@@ -123,12 +123,12 @@ const useClasses = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response) => {
+        .then((response: any) => {
           showToast('Sucesso!', 'Sucesso ao remover turma', 'success');
 
           getClasses();
         })
-        .catch((error) => {
+        .catch((error: any) => {
           showToast('Erro!', 'Erro ao remover turma', 'error');
           console.log(error);
         })
@@ -144,7 +144,7 @@ const useClasses = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .deleteMany(ids)
-        .then((response) => {
+        .then((response: any) => {
           showToast(
             'Sucesso!',
             `Sucesso ao remover ${ids.length} turmas`,
@@ -153,7 +153,7 @@ const useClasses = (initialFetch: boolean = true) => {
 
           getClasses();
         })
-        .catch((error) => {
+        .catch((error: any) => {
           showToast('Erro!', 'Erro ao remover turmas', 'error');
           console.log(error);
         })
@@ -166,7 +166,8 @@ const useClasses = (initialFetch: boolean = true) => {
 
   useEffect(() => {
     if (initialFetch) getClasses();
-  }, [getClasses, initialFetch]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialFetch]);
 
   return {
     loading,
