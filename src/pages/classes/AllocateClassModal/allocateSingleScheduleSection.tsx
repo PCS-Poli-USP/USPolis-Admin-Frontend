@@ -98,7 +98,8 @@ const AllocateSingleScheduleSection = forwardRef<
       .finally(() => {
         setClassroomsLoading(false);
       });
-  }, [selectedBuilding, schedule, classroomsService]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedBuilding, schedule]);
 
   function reset() {
     setRemoveAllocation(false);
