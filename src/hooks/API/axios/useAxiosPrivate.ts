@@ -62,7 +62,7 @@ const useAxiosPrivate = () => {
           } catch (refreshError) {
             console.error('Error refreshing token!', refreshError);
             alert('Error refreshing token! Please, login again!');
-            await context.logout();
+            context.logout();
             return Promise.reject(error);
           }
         }
@@ -70,7 +70,7 @@ const useAxiosPrivate = () => {
         // Caso o erro seja 403, faz o logout
         if (error.response && error.response.status === 403) {
           alert('Error using access token! Please, login again!');
-          await context.logout();
+          context.logout();
           return Promise.reject(error);
         }
 
