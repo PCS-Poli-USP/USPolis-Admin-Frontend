@@ -22,7 +22,7 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
           </Text>
         </>
       ) : undefined}
-      <Box h={'fit-content'} mb={-10}>
+      <Box h={'fit-content'} mb={0}>
         <DateCalendar
           disabled={props.disabled}
           readOnly={props.readOnly}
