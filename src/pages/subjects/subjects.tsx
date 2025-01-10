@@ -13,6 +13,7 @@ function Subjects() {
   const columns = getSubjectColumns({
     handleEditButton: handleEditSubjectButton,
     handleDeleteButton: handleDeleteSubjectButton,
+    handleDuplicateClick: handleDuplicateClick,
   });
 
   const { subjects, getSubjects, deleteSubject } = useSubjects();
@@ -56,6 +57,12 @@ function Subjects() {
     if (!selectedSubject) return;
     deleteSubject(selectedSubject.id);
     getSubjects();
+  }
+
+  function handleDuplicateClick(data: SubjectResponse) {
+    setIsUpdateSubject(false);
+    setSelectedSubject(data);
+    onOpenRegisterSubjectModal();
   }
 
   return (

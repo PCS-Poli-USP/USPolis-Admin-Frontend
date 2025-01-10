@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 import { appContext } from 'context/AppContext';
 import { AuthHttpService } from 'services/auth/auth.service';
@@ -8,6 +8,7 @@ const OVERRIDE = process.env.REACT_APP_OVERRIDE_AUTH;
 
 const PersistLogin = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
   const service = new AuthHttpService();
   const context = useContext(appContext);
 
@@ -32,6 +33,8 @@ const PersistLogin = () => {
         });
       } catch (error) {
         console.log(error);
+        context.logout();
+        navigate('/auth');
       }
     };
 
@@ -50,7 +53,9 @@ const PersistLogin = () => {
   }, [context.persist, context.isAuthenticated]);
 
   return (
-    <>{!context.persist ? <Outlet /> : isLoading ? <LoadingPage /> : <Outlet />}</>
+    <>
+      {!context.persist ? <Outlet /> : isLoading ? <LoadingPage /> : <Outlet />}
+    </>
   );
 };
 

@@ -7,7 +7,6 @@ const OVERRIDE = process.env.REACT_APP_OVERRIDE_AUTH;
 const PrivateRoute: React.FC = () => {
   const location = useLocation();
   const context = useContext(appContext);
-  console.log('COntexto no private route: ', context);
   return context.isAuthenticated || OVERRIDE === 'true' ? (
     <Outlet />
   ) : (

@@ -129,7 +129,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
           getClassrooms();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao criar sala: ${error}`, 'error');
+          showToast('Erro', `Erro ao criar sala ${data.name}: ${error}`, 'error');
           console.log(error);
         })
         .finally(() => {

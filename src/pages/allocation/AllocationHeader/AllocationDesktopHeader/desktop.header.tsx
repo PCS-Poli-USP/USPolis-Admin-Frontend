@@ -1,6 +1,5 @@
 import { ChevronDownIcon, LockIcon } from '@chakra-ui/icons';
 import {
-  Box,
   Button,
   Flex,
   Menu,
@@ -11,17 +10,14 @@ import {
   Text,
   Tooltip,
 } from '@chakra-ui/react';
-import Select, { SelectInstance } from 'react-select';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import ClassesPDF from '../../pdf/ClassesPDF/classesPDF';
 import ClassroomsPDF from '../../pdf/ClassroomsPDF/classroomsPDF';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useContext, useRef } from 'react';
+import { useContext } from 'react';
 import { appContext } from 'context/AppContext';
 import { AllocationHeaderProps } from '..';
-import { AllocationEnum } from 'utils/enums/allocation.enum';
-
-type OptionType = { value: string; label: string };
+import HeaderFilter from '../HeaderFilter/header.filter';
 
 function AllocationDesktopHeader({
   isOpen,
@@ -36,71 +32,11 @@ function AllocationDesktopHeader({
   classSearchValue,
   setClassSearchValue,
   events,
+  resources,
 }: AllocationHeaderProps) {
-  const selectRef = useRef<SelectInstance<OptionType>>(null);
-
   const location = useLocation();
   const navigate = useNavigate();
   const { loggedUser } = useContext(appContext);
-
-  const buildingOptions = events
-    .map((event) => ({
-      value:
-        event.extendedProps.class_data?.building ||
-        AllocationEnum.UNALLOCATED_BUILDING_ID,
-      label:
-        event.extendedProps.class_data?.building ||
-        AllocationEnum.UNALLOCATED_BUILDING_ID,
-    }))
-    .filter(
-      (value, index, self) =>
-        self.findIndex((v) => v.value === value.value) === index,
-    )
-    .sort((a, b) => a.value.localeCompare(b.value));
-
-  const classroomsOptions = events
-    .map((event) => ({
-      value:
-        event.extendedProps.class_data?.classroom ||
-        AllocationEnum.UNALLOCATED_CLASSROOM_ID,
-      label:
-        event.extendedProps.class_data?.classroom ||
-        AllocationEnum.UNALLOCATED_CLASSROOM_ID,
-    }))
-    .filter(
-      (value, index, self) =>
-        self.findIndex((v) => v.value === value.value) === index,
-    )
-    .sort((a, b) => a.value.localeCompare(b.value));
-
-  const subjectOptions = events
-    .map((event) => ({
-      value: event.extendedProps.class_data?.subject_name || event.title,
-      label: event.extendedProps.class_data
-        ? `${event.extendedProps.class_data?.subject_code} - ${event.extendedProps.class_data?.subject_name}`
-        : event.title,
-    }))
-    .filter(
-      (value, index, self) =>
-        self.findIndex((v) => v.value === value.value) === index,
-    )
-    .sort((a, b) => a.value.localeCompare(b.value));
-
-  const classOptions = events
-    .filter(
-      (event) =>
-        event.extendedProps.class_data &&
-        event.extendedProps.class_data.subject_name === nameSearchValue,
-    )
-    .map((event) => ({
-      value: event.extendedProps.class_data?.code || '',
-      label: event.extendedProps.class_data?.code.slice(-2) || '',
-    }))
-    .filter(
-      (value, index, self) =>
-        self.findIndex((v) => v.value === value.value) === index,
-    )
-    .sort((a, b) => a.value.localeCompare(b.value));
 
   return (
     <Flex direction={'column'} alignItems={'flex-start'} gap={2} w={'100%'}>
@@ -161,90 +97,21 @@ function AllocationDesktopHeader({
 
         <Spacer />
 
-        <Box w={'250px'}>
-          <Select
-            selectedOptionColorScheme={'purple'}
-            placeholder='Prédio'
-            isClearable={true}
-            options={buildingOptions}
-            value={
-              buildingSearchValue
-                ? { value: buildingSearchValue, label: buildingSearchValue }
-                : undefined
-            }
-            onChange={(option: OptionType) => {
-              if (option) {
-                setBuildingSearchValue(option.value);
-              } else {
-                setBuildingSearchValue('');
-              }
-            }}
-          />
-        </Box>
-
-        <Box w={'250px'}>
-          <Select
-            placeholder='Sala'
-            isClearable={true}
-            options={classroomsOptions}
-            value={
-              classroomSearchValue
-                ? { value: classroomSearchValue, label: classroomSearchValue }
-                : undefined
-            }
-            onChange={(option: OptionType) => {
-              if (option) {
-                setClassroomSearchValue(option.value);
-              } else {
-                setClassroomSearchValue('');
-              }
-            }}
-          />
-        </Box>
-
-        <Box w={'250px'}>
-          <Select
-            placeholder='Disciplina'
-            isClearable={true}
-            value={
-              nameSearchValue
-                ? { value: nameSearchValue, label: nameSearchValue }
-                : undefined
-            }
-            options={subjectOptions}
-            onChange={(option: OptionType) => {
-              if (option) {
-                setNameSearchValue(option.value);
-              } else {
-                setNameSearchValue('');
-                setClassSearchValue('');
-                if (selectRef.current) selectRef.current.clearValue();
-              }
-            }}
-          />
-        </Box>
-
-        <Box w={'250px'}>
-          <Select
-            ref={selectRef}
-            isDisabled={!nameSearchValue}
-            placeholder='Turma'
-            isClearable={true}
-            value={
-              classSearchValue
-                ? { value: classSearchValue, label: classSearchValue }
-                : undefined
-            }
-            options={classOptions}
-            onChange={(option: OptionType | null) => {
-              if (option) {
-                setClassSearchValue(option.value);
-              } else {
-                setClassSearchValue('');
-              }
-            }}
-          />
-        </Box>
+        <HeaderFilter
+          isOpen={isOpen}
+          onOpen={onOpen}
+          onClose={onClose}
+          buildingSearchValue={buildingSearchValue}
+          setBuildingSearchValue={setBuildingSearchValue}
+          classroomSearchValue={classroomSearchValue}
+          setClassroomSearchValue={setClassroomSearchValue}
+          nameSearchValue={nameSearchValue}
+          setNameSearchValue={setNameSearchValue}
+          classSearchValue={classSearchValue}
+          setClassSearchValue={setClassSearchValue}
+          events={events}
+          resources={resources}
+        />
       </Flex>
     </Flex>
   );

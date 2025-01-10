@@ -13,7 +13,7 @@ const AuthCallbackPage = () => {
   const authService = new AuthHttpService();
   const [error, setError] = useState<string | null>(null);
   const query = useQuery();
-  const { getSelfFromBackend, setAccessToken, setIsAuthenticated } = useContext(appContext);
+  const { setAccessToken, setIsAuthenticated } = useContext(appContext);
   const navigate = useNavigate();
 
   useEffect(() => {
