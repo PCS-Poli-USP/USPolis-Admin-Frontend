@@ -1,3 +1,4 @@
+import { CopyIcon } from '@chakra-ui/icons';
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
@@ -11,6 +12,7 @@ import { FilterArray } from 'utils/tanstackTableHelpers/tableFiltersFns';
 interface SubjectColumnsProps {
   handleEditButton: (data: SubjectResponse) => void;
   handleDeleteButton: (data: SubjectResponse) => void;
+  handleDuplicateClick: (data: SubjectResponse) => void;
 }
 
 export const getSubjectColumns = (
@@ -84,6 +86,16 @@ export const getSubjectColumns = (
     header: 'Opções',
     cell: ({ row }) => (
       <HStack spacing='0px'>
+        <Tooltip label='Duplicar Turma'>
+                  <IconButton
+                    colorScheme='cyan'
+                    size='sm'
+                    variant='ghost'
+                    aria-label='duplicar-turma'
+                    icon={<CopyIcon />}
+                    onClick={() => props.handleDuplicateClick(row.original)}
+                  />
+                </Tooltip>
         <Tooltip label='Editar Disciplina'>
           <IconButton
             colorScheme='yellow'
