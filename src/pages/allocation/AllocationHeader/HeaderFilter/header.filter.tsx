@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text, useMediaQuery } from '@chakra-ui/react';
 import Select, { SelectInstance, StylesConfig } from 'react-select';
 import { AllocationHeaderProps } from '..';
 import { AllocationEnum } from 'utils/enums/allocation.enum';
@@ -37,6 +37,7 @@ function HeaderFilter({
   events,
   resources,
 }: AllocationHeaderProps) {
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
   const selectRef = useRef<SelectInstance<OptionType>>(null);
 
   const buildingOptions = events
@@ -98,103 +99,205 @@ function HeaderFilter({
     )
     .sort((a, b) => a.value.localeCompare(b.value));
 
+  console.log(isMobile)
   return (
-    <Flex direction={'column'} gap={2}>
-      <Text fontWeight={'bold'}>Filtros: </Text>
-      <Flex direction={'row'} gap={2} w={'full'}>
-        <Box w={'50%'}>
-          <Select
-            styles={customStyles}
-            menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
-            selectedOptionColorScheme={'purple'}
-            placeholder='Prédio'
-            isClearable={true}
-            options={buildingOptions}
-            value={
-              buildingSearchValue
-                ? { value: buildingSearchValue, label: buildingSearchValue }
-                : undefined
-            }
-            onChange={(option: OptionType) => {
-              if (option) {
-                setBuildingSearchValue(option.value);
-              } else {
-                setBuildingSearchValue('');
+    <>
+      {isMobile ? (
+        <Flex direction={'column'} gap={2}>
+          <Text fontWeight={'bold'}>Filtros: </Text>
+          <Flex direction={'row'} gap={2} w={'full'}>
+            <Box w={'50%'}>
+              <Select
+                styles={customStyles}
+                menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
+                selectedOptionColorScheme={'purple'}
+                placeholder='Prédio'
+                isClearable={true}
+                options={buildingOptions}
+                value={
+                  buildingSearchValue
+                    ? { value: buildingSearchValue, label: buildingSearchValue }
+                    : undefined
+                }
+                onChange={(option: OptionType) => {
+                  if (option) {
+                    setBuildingSearchValue(option.value);
+                  } else {
+                    setBuildingSearchValue('');
+                  }
+                }}
+              />
+            </Box>
+            <Box w={'50%'}>
+              <Select
+                styles={customStyles}
+                menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
+                placeholder='Sala'
+                isClearable={true}
+                options={classroomsOptions}
+                value={
+                  classroomSearchValue
+                    ? {
+                        value: classroomSearchValue,
+                        label: classroomSearchValue,
+                      }
+                    : undefined
+                }
+                onChange={(option: OptionType) => {
+                  if (option) {
+                    setClassroomSearchValue(option.value);
+                  } else {
+                    setClassroomSearchValue('');
+                  }
+                }}
+              />
+            </Box>
+          </Flex>
+          <Flex direction={'column'} gap={2} w={'full'}>
+            <Box w={'100%'}>
+              <Select
+                styles={customStyles}
+                menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
+                placeholder='Disciplina'
+                isClearable={true}
+                value={
+                  nameSearchValue
+                    ? { value: nameSearchValue, label: nameSearchValue }
+                    : undefined
+                }
+                options={subjectOptions}
+                onChange={(option: OptionType) => {
+                  if (option) {
+                    setNameSearchValue(option.value);
+                  } else {
+                    setNameSearchValue('');
+                    setClassSearchValue('');
+                    if (selectRef.current) selectRef.current.clearValue();
+                  }
+                }}
+              />
+            </Box>
+            <Box w={'100%'} h={'fit-content'}>
+              <Select
+                ref={selectRef}
+                styles={customStyles}
+                menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
+                isDisabled={!nameSearchValue}
+                placeholder='Turma'
+                isClearable={true}
+                value={
+                  classSearchValue
+                    ? {
+                        value: classSearchValue,
+                        label: classSearchValue.slice(-2),
+                      }
+                    : undefined
+                }
+                options={classOptions}
+                onChange={(option: OptionType | null) => {
+                  if (option) {
+                    setClassSearchValue(option.value);
+                  } else {
+                    setClassSearchValue('');
+                  }
+                }}
+              />
+            </Box>
+          </Flex>
+        </Flex>
+      ) : (
+        <Flex direction={'row'} gap={'10px'}>
+          <Box w={'250px'}>
+            <Select
+              styles={customStyles}
+              selectedOptionColorScheme={'purple'}
+              placeholder='Prédio'
+              isClearable={true}
+              options={buildingOptions}
+              value={
+                buildingSearchValue
+                  ? { value: buildingSearchValue, label: buildingSearchValue }
+                  : undefined
               }
-            }}
-          />
-        </Box>
-        <Box w={'50%'}>
-          <Select
-            styles={customStyles}
-            menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
-            placeholder='Sala'
-            isClearable={true}
-            options={classroomsOptions}
-            value={
-              classroomSearchValue
-                ? { value: classroomSearchValue, label: classroomSearchValue }
-                : undefined
-            }
-            onChange={(option: OptionType) => {
-              if (option) {
-                setClassroomSearchValue(option.value);
-              } else {
-                setClassroomSearchValue('');
+              onChange={(option: OptionType) => {
+                if (option) {
+                  setBuildingSearchValue(option.value);
+                } else {
+                  setBuildingSearchValue('');
+                }
+              }}
+            />
+          </Box>
+
+          <Box w={'250px'}>
+            <Select
+              styles={customStyles}
+              placeholder='Sala'
+              isClearable={true}
+              options={classroomsOptions}
+              value={
+                classroomSearchValue
+                  ? { value: classroomSearchValue, label: classroomSearchValue }
+                  : undefined
               }
-            }}
-          />
-        </Box>
-      </Flex>
-      <Flex direction={'column'} gap={2} w={'full'}>
-        <Box w={'100%'}>
-          <Select
-            styles={customStyles}
-            menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
-            placeholder='Disciplina'
-            isClearable={true}
-            value={
-              nameSearchValue
-                ? { value: nameSearchValue, label: nameSearchValue }
-                : undefined
-            }
-            options={subjectOptions}
-            onChange={(option: OptionType) => {
-              if (option) {
-                setNameSearchValue(option.value);
-              } else {
-                setNameSearchValue('');
-                setClassSearchValue('');
-                if (selectRef.current) selectRef.current.clearValue();
+              onChange={(option: OptionType) => {
+                if (option) {
+                  setClassroomSearchValue(option.value);
+                } else {
+                  setClassroomSearchValue('');
+                }
+              }}
+            />
+          </Box>
+
+          <Box w={'250px'}>
+            <Select
+              styles={customStyles}
+              placeholder='Disciplina'
+              isClearable={true}
+              value={
+                nameSearchValue
+                  ? { value: nameSearchValue, label: nameSearchValue }
+                  : undefined
               }
-            }}
-          />
-        </Box>
-        <Box w={'100%'} h={'fit-content'}>
-          <Select
-            ref={selectRef}
-            styles={customStyles}
-            menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
-            isDisabled={!nameSearchValue}
-            placeholder='Turma'
-            isClearable={true}
-            value={
-              classSearchValue
-                ? { value: classSearchValue, label: classSearchValue }
-                : undefined
-            }
-            options={classOptions}
-            onChange={(option: OptionType | null) => {
-              if (option) {
-                setClassSearchValue(option.value);
-              } else {
-                setClassSearchValue('');
+              options={subjectOptions}
+              onChange={(option: OptionType) => {
+                if (option) {
+                  setNameSearchValue(option.value);
+                } else {
+                  setNameSearchValue('');
+                  setClassSearchValue('');
+                  if (selectRef.current) selectRef.current.clearValue();
+                }
+              }}
+            />
+          </Box>
+
+          <Box w={'250px'}>
+            <Select
+              styles={customStyles}
+              ref={selectRef}
+              isDisabled={!nameSearchValue}
+              placeholder='Turma'
+              isClearable={true}
+              value={
+                classSearchValue
+                  ? { value: classSearchValue, label: classSearchValue.slice(-2) }
+                  : undefined
               }
-            }}
-          />
-        </Box>
-      </Flex>
-    </Flex>
+              options={classOptions}
+              onChange={(option: OptionType | null) => {
+                if (option) {
+                  setClassSearchValue(option.value);
+                } else {
+                  setClassSearchValue('');
+                }
+              }}
+            />
+          </Box>
+        </Flex>
+      )}
+    </>
   );
 }
 
