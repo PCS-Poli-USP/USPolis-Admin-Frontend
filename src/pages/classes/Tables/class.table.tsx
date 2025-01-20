@@ -19,6 +19,7 @@ import { getScheduleString } from 'utils/schedules/schedule.formatter';
 import {
   FilterArray,
   FilterBuilding,
+  FilterClassCode,
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
@@ -79,6 +80,7 @@ export const getClassesColumns = (
     accessorKey: 'code',
     header: 'Turma',
     maxSize: 120,
+    filterFn: FilterClassCode,
     cell: ({ row }) => (
       <Box>
         <Text>{row.original.code.slice(-2)}</Text>

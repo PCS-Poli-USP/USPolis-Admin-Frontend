@@ -28,9 +28,9 @@ function AllocationMobileHeader({
   setNameSearchValue,
   classSearchValue,
   setClassSearchValue,
-  // filterEvents,
   events,
-  resources,
+  buildingResources,
+  classroomResources,
 }: AllocationHeaderProps) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -90,7 +90,8 @@ function AllocationMobileHeader({
               classSearchValue={classSearchValue}
               setClassSearchValue={setClassSearchValue}
               events={events}
-              resources={resources}
+              buildingResources={buildingResources}
+              classroomResources={classroomResources}
             />
           </Flex>
         </Box>

@@ -1,4 +1,5 @@
 import { Row } from '@tanstack/react-table';
+import { ClassResponse } from 'models/http/responses/class.response.models';
 import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 
 export function FilterBoolean(row: Row<any>, columnId: string, value: string) {
@@ -44,6 +45,16 @@ export function FilterBuilding(row: Row<any>, columnId: string, value: string) {
   return arrayValue.some((it) =>
     it.toLowerCase().includes(value.toLowerCase()),
   );
+}
+
+export function FilterClassCode(
+  row: Row<ClassResponse>,
+  columnId: string,
+  value: string,
+) {
+  const code: string = row.getValue(columnId);
+  if (code.length === 0) return true;
+  return code.slice(-2).toLowerCase().includes(value.toLowerCase());
 }
 
 export function FilterRequester(

@@ -32,7 +32,8 @@ function AllocationDesktopHeader({
   classSearchValue,
   setClassSearchValue,
   events,
-  resources,
+  buildingResources,
+  classroomResources,
 }: AllocationHeaderProps) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -110,7 +111,8 @@ function AllocationDesktopHeader({
           classSearchValue={classSearchValue}
           setClassSearchValue={setClassSearchValue}
           events={events}
-          resources={resources}
+          buildingResources={buildingResources}
+          classroomResources={classroomResources}
         />
       </Flex>
     </Flex>

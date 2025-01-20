@@ -15,10 +15,9 @@ const useAllocation = () => {
     setLoading(true);
     let allEvents: Event[] = [];
     try {
-      const response = await allocationService.list(start, end);
+      const response = await allocationService.listEvents(start, end);
       allEvents = response.data;
       setEvents(allEvents);
-      getResources(allEvents);
     } catch (error) {
       showToast('Erro', 'Erro ao carregar eventos', 'error');
       console.log(error);
@@ -30,37 +29,34 @@ const useAllocation = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getResources = (events: Event[]) => {
-    const buildingResources: Resource[] = [];
-    const classroomResources: Resource[] = [];
-    events.forEach((event) => {
-      const data = event.resourceId.split('-');
-      buildingResources.push({ id: data[0], title: data[0] });
-      classroomResources.push({
-        id: event.resourceId,
-        title: data[1],
-        parentId: data[0],
+  const getResources = useCallback(async () => {
+    setLoading(true);
+    await allocationService
+      .listResources()
+      .then((response) => {
+        const data = response.data;
+        setResources(data);
+      })
+      .catch((error) => {
+        showToast('Erro', 'Erro ao carregar recursos', 'error');
+        console.log(error);
+        setResources([]);
+      })
+      .finally(() => {
+        // setLoading(false);
       });
-    });
-    const uniqueBuildingResources = Array.from(
-      new Map(buildingResources.map((obj) => [obj.id, obj])).values(),
-    );
-    const uniqueClassroomResources = Array.from(
-      new Map(classroomResources.map((obj) => [obj.id, obj])).values(),
-    );
-    const resources = Array.from(
-      new Set([...uniqueBuildingResources, ...uniqueClassroomResources]),
-    );
-    setResources(resources);
-  };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getAllocation = useCallback(async (start?: string, end?: string) => {
+    await getResources();
     await getEvents(start, end);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    getEvents();
+    getAllocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

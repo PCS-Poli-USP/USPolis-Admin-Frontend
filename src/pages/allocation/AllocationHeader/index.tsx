@@ -22,7 +22,8 @@ export interface AllocationHeaderProps {
   setClassSearchValue: (value: string) => void;
 
   events: Event[];
-  resources: Resource[];
+  buildingResources: Resource[];
+  classroomResources: Resource[];
 
   // filterEvents: (
   //   building: string,
@@ -46,7 +47,8 @@ function AllocationHeader({
   setClassSearchValue,
   // filterEvents,
   events,
-  resources,
+  buildingResources,
+  classroomResources,
 }: AllocationHeaderProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
 
@@ -65,7 +67,8 @@ function AllocationHeader({
       setClassSearchValue={setClassSearchValue}
       // filterEvents={filterEvents}
       events={events}
-      resources={resources}
+      buildingResources={buildingResources}
+      classroomResources={classroomResources}
     />
   ) : (
     <AllocationDesktopHeader
@@ -82,7 +85,8 @@ function AllocationHeader({
       setClassSearchValue={setClassSearchValue}
       // filterEvents={filterEvents}
       events={events}
-      resources={resources}
+      buildingResources={buildingResources}
+      classroomResources={classroomResources}
     />
   );
 }
