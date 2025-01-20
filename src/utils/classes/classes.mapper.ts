@@ -9,7 +9,7 @@ export function ClassesBySubject(classes: ClassResponse[]) {
       : group.set(subject_code, [cl]);
 
     return group;
-  }, new Map());
+  }, new Map<string, ClassResponse[]>());
 
   // order by class_code
   mapData.forEach((value) =>
@@ -21,4 +21,3 @@ export function ClassesBySubject(classes: ClassResponse[]) {
     subjectA.localeCompare(subjectB),
   );
 }
-

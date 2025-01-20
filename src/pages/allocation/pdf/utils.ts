@@ -1,5 +1,5 @@
-import { ClassFullResponse } from 'models/http/responses/class.response.models';
-import { ReservationFullResponse } from 'models/http/responses/reservation.response.models';
+import { ClassResponse } from 'models/http/responses/class.response.models';
+import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 import { ScheduleResponseBase } from 'models/http/responses/schedule.response.models';
 import { AllocationEnum } from 'utils/enums/allocation.enum';
 import { sortScheduleResponse } from 'utils/schedules/schedules.sorter';
@@ -13,8 +13,8 @@ type ScheduleExtended = [string, ScheduleResponseBase];
 type ClassroomSchedules = [string, string, ScheduleExtended[]];
 
 export function getSchedulesGroupedByClassroom(
-  classes: ClassFullResponse[],
-  reservations: ReservationFullResponse[],
+  classes: ClassResponse[],
+  reservations: ReservationResponse[],
 ) {
   const schedulesMap = getScheduleMap(classes, reservations);
   const schedulesGroup = schedulesMap.reduce(
@@ -53,16 +53,20 @@ export function getSchedulesGroupedByClassroom(
   const schedulesByClassroom: ClassroomSchedules[] = [];
   schedulesGroup.forEach((classroomMap, building) => {
     const classroomData = Array.from(classroomMap);
-    classroomData.forEach((data) => {
-      schedulesByClassroom.push([building, data[0], data[1]]);
+    classroomData.forEach((data: any) => {
+      schedulesByClassroom.push([
+        building,
+        data[0] as string,
+        data[1] as ScheduleExtended[],
+      ]);
     });
   });
   return schedulesByClassroom;
 }
 
 function getScheduleMap(
-  classes: ClassFullResponse[],
-  reservations: ReservationFullResponse[],
+  classes: ClassResponse[],
+  reservations: ReservationResponse[],
 ): ScheduleMap[] {
   const schedulesMap: ScheduleMap[] = [];
   classes.forEach((cls) =>

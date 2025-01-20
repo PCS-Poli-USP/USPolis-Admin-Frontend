@@ -2,11 +2,11 @@ import { Document, Page, Text, View } from '@react-pdf/renderer';
 import { ClassesBySubject } from 'utils/classes/classes.mapper';
 import { AllocationEnum } from 'utils/enums/allocation.enum';
 import { getScheduleTime } from 'utils/schedules/schedule.formatter';
-import { ClassFullResponse } from 'models/http/responses/class.response.models';
+import { ClassResponse } from 'models/http/responses/class.response.models';
 import { classStyles as styles } from './styles';
 
 interface ClassesPDFProps {
-  classes: ClassFullResponse[];
+  classes: ClassResponse[];
 }
 
 const ClassesPDF = ({ classes }: ClassesPDFProps) => {

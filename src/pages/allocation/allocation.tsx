@@ -44,7 +44,8 @@ function Allocation() {
     getEvents,
   } = useAllocation();
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
-  const [filteredResources, setFilteredResources] = useState<Resource[]>(resources);
+  const [filteredResources, setFilteredResources] =
+    useState<Resource[]>(resources);
 
   function filterEvents(
     building: string,
@@ -163,9 +164,9 @@ function Allocation() {
             classSearchValue={classSearchValue}
             setClassSearchValue={setClassSearchValue}
             events={events}
-            buildingResources={resources.filter(
-              (resource) => !resource.parentId,
-            )}
+            buildingResources={resources
+              .filter((resource) => !resource.parentId)
+              .sort((a, b) => a.title.localeCompare(b.title))}
             classroomResources={resources.filter(
               (resource) => !!resource.parentId,
             )}

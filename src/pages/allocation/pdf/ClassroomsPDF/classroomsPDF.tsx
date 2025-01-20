@@ -1,14 +1,14 @@
 import { Document, Page, Text, View } from '@react-pdf/renderer';
 import { styles } from './styles';
 import { getScheduleWithTimeString } from 'utils/schedules/schedule.formatter';
-import { ClassFullResponse } from 'models/http/responses/class.response.models';
-import { ReservationFullResponse } from 'models/http/responses/reservation.response.models';
+import { ClassResponse } from 'models/http/responses/class.response.models';
+import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import { getSchedulesGroupedByClassroom } from '../utils';
 
 interface ClassroomPDFProps {
-  classes: ClassFullResponse[];
-  reservations: ReservationFullResponse[];
+  classes: ClassResponse[];
+  reservations: ReservationResponse[];
 }
 
 const ClassroomsPDF = ({ classes, reservations }: ClassroomPDFProps) => {
@@ -23,7 +23,9 @@ const ClassroomsPDF = ({ classes, reservations }: ClassroomPDFProps) => {
                 <Text style={styles.header}>
                   {classroomMap[0]} {'\n'}
                 </Text>
-                <Text style={styles.subheader}>{`Sala - ${classroomMap[1]}`}</Text>
+                <Text
+                  style={styles.subheader}
+                >{`Sala - ${classroomMap[1]}`}</Text>
               </View>
             </View>
             <View style={styles.tableRow}>

@@ -55,7 +55,12 @@ function AllocationMobileHeader({
         <Box rounded='md' w={'calc(100vw - 48px)'}>
           <Flex mb={4} gap={2} direction={'column'} w={'100%'}>
             <Flex direction={'row'} gap={5} w={'full'}>
-              <HeaderPDFOptions />
+              <HeaderPDFOptions
+                buildings={buildingResources.map((resource) => ({
+                  label: resource.title,
+                  value: resource.id,
+                }))}
+              />
               <Tooltip
                 label={loggedUser ? '' : 'Entre para poder fazer essa ação.'}
               >
