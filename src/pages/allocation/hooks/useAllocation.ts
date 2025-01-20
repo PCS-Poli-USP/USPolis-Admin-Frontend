@@ -34,90 +34,52 @@ const useAllocation = () => {
 
   const showToast = useCustomToast();
 
-  const getClassesFull = useCallback(async () => {
-    setLoadingClasses(true);
-    let classesF: ClassFullResponse[] = [];
-    await classService
-      .listFull()
-      .then((response) => {
-        classesF = response.data.sort(sortClassResponse);
-        setClasses(classesF);
-      })
-      .catch((error) => {
-        showToast('Erro', 'Erro ao carregar turmas com ocorrências', 'error');
-        console.log(error);
-      })
-      .finally(() => {
-        setLoadingClasses(false);
-      });
-    return classesF;
-  }, [showToast]);
-
-  const getReservationsFull= useCallback(async () => {
-    setLoadingReservations(true);
-    let reservations: ReservationFullResponse[] = [];
-    await reservationService
-      .listFull()
-      .then((response) => {
-        reservations = response.data.sort(sortReservationsResponse);
-        setReservations(reservations);
-      })
-      .catch((error) => {
-        showToast('Erro', 'Erro ao carregar reservas com ocorrências', 'error');
-        console.log(error);
-      })
-      .finally(() => {
-        setLoadingReservations(false);
-      });
-    return reservations;
-  }, [showToast]);
-
-  const getEvents = useCallback(async () => {
-    setLoadingEvents(true);
-    const classes = await getClassesFull();
-    const reservations = await getReservationsFull();
-    const classEvents = EventsFromClasses(classes);
-    const reservationEvents = EventsFromReservations(reservations);
-    const allEvents = [...classEvents, ...reservationEvents];
-    setEvents(allEvents);
-    setLoadingEvents(false);
+  const getEvents = useCallback(async (start?: string, end?: string) => {
+    setLoading(true);
+    let allEvents: Event[] = [];
+    try {
+      const response = await allocationService.listEvents(start, end);
+      allEvents = response.data;
+      setEvents(allEvents);
+    } catch (error) {
+      showToast('Erro', 'Erro ao carregar eventos', 'error');
+      console.log(error);
+      allEvents = [];
+    } finally {
+      setLoading(false);
+    }
+    return allEvents;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getResources = useCallback(async () => {
-    setLoadingResources(true);
-    const classes = await getClassesFull();
-    const reservations = await getReservationsFull();
+    setLoading(true);
+    await allocationService
+      .listResources()
+      .then((response) => {
+        const data = response.data;
+        setResources(data);
+      })
+      .catch((error) => {
+        showToast('Erro', 'Erro ao carregar recursos', 'error');
+        console.log(error);
+        setResources([]);
+      })
+      .finally(() => {
+        // setLoading(false);
+      });
 
-    const classResources = AllocationResourcesFromClasses(
-      classes,
-    );
-    const reservationResources = AllocationResourcesFromReservations(
-      reservations,
-    );
-    setResources(
-      Array.from(new Set([...classResources, ...reservationResources])),
-    );
-    setLoadingResources(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getAllocation = useCallback(async () => {
-    setLoading(true);
-    const classes = await getClassesFull();
-    const reservations = await getReservationsFull();
+  const getAllocation = useCallback(async (start?: string, end?: string) => {
+    await getResources();
+    await getEvents(start, end);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    const classEvents = EventsFromClasses(classes);
-    const reservationEvents = EventsFromReservations(reservations);
-    setEvents([...classEvents, ...reservationEvents]);
-
-    const classResources = AllocationResourcesFromClasses(classes);
-    const reservationsResources =
-      AllocationResourcesFromReservations(reservations);
-    setResources(
-      Array.from(new Set([...classResources, ...reservationsResources])),
-    );
-    setLoading(false);
+  useEffect(() => {
+    getAllocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

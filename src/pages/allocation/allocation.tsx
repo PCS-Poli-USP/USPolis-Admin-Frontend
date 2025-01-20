@@ -30,6 +30,11 @@ import useAllocation from 'pages/allocation/hooks/useAllocation';
 import ClassesPDF from './pdf/ClassesPDF/classesPDF';
 import ClassroomsPDF from './pdf/ClassroomsPDF/classroomsPDF';
 import PageContent from 'components/common/PageContent';
+import SolicitationModal from './SolicitationModal/solicitation.modal';
+import CustomCalendar from './CustomCalendar';
+import AllocationHeader from './AllocationHeader';
+import moment from 'moment';
+import { Resource } from 'models/http/responses/allocation.response.models';
 
 function Allocation() {
   const { loading, setLoading } = useContext(appContext);
@@ -41,43 +46,95 @@ function Allocation() {
   const { events, resources, classes, reservations } = useAllocation();
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
 
-  function setCalendarDate(ISOdate: string) {
-    const calendarApi = calendarRef.current.getApi();
-    calendarApi.gotoDate(ISOdate);
-  }
-
-  function FilterEvents(name: string, classroom: string) {
-    const nameValue = name.toLowerCase();
+  function filterEvents(
+    building: string,
+    classroom: string,
+    name: string,
+    class_: string,
+  ) {
+    let newEvents = events;
+    const buildingValue = building.toLowerCase();
     const classroomValue = classroom.toLowerCase();
-    if (name && classroom) {
-      setFilteredEvents(
-        events.filter((event) => {
-          const nameFilterResult = event.title
+    const nameValue = name.toLowerCase();
+    const classValue = class_.toLowerCase();
+
+    if (building) {
+      newEvents = newEvents.filter((event) => {
+        const data =
+          event.extendedProps.class_data ||
+          event.extendedProps.reservation_data;
+        return data && data.building.toLowerCase().includes(buildingValue);
+      });
+    }
+    if (classroom) {
+      newEvents = newEvents.filter((event) => {
+        const data =
+          event.extendedProps.class_data ||
+          event.extendedProps.reservation_data;
+        return data && data.classroom.toLowerCase().includes(classroomValue);
+      });
+    }
+    if (name) {
+      newEvents = newEvents.filter((event) => {
+        const nameFilterResult =
+          event.title.toLowerCase().includes(nameValue) ||
+          event.extendedProps.class_data?.subject_name
             .toLowerCase()
             .includes(nameValue);
-          const data =
-            event.extendedProps.class_data ||
-            event.extendedProps.reservation_data;
-          const classroomFilterResult =
-            data && data.classroom.toLowerCase().includes(classroomValue);
-          return nameFilterResult && classroomFilterResult;
-        }),
-      );
-    } else if (name && !classroom) {
-      setFilteredEvents(
-        events.filter((event) => event.title.toLowerCase().includes(nameValue)),
-      );
-    } else if (!name && classroom) {
-      setFilteredEvents(
-        events.filter((event) => {
-          const data =
-            event.extendedProps.class_data ||
-            event.extendedProps.reservation_data;
-          return data && data.classroom.toLowerCase().includes(classroomValue);
-        }),
-      );
+        return nameFilterResult;
+      });
     }
+    if (classValue) {
+      newEvents = newEvents.filter((event) => {
+        const classFilterResult =
+          event.extendedProps.class_data &&
+          event.extendedProps.class_data?.code
+            .toLowerCase()
+            .includes(classValue);
+        return classFilterResult;
+      });
+    }
+    setFilteredEvents(newEvents);
   }
+
+  useEffect(() => {
+    if (!hasInitialFilter && resources.length > 0) {
+      setBuildingSearchValue(resources[0].title);
+      setHasInitialFilter(true);
+    }
+  }, [hasInitialFilter, resources]);
+
+  useEffect(() => {
+    if (buildingSearchValue) {
+      const filtered = resources.filter(
+        (resource) =>
+          resource.title
+            .toLowerCase()
+            .includes(buildingSearchValue.toLowerCase()) ||
+          (resource.parentId &&
+            resource.parentId
+              .toLowerCase()
+              .includes(buildingSearchValue.toLowerCase())),
+      );
+      setFilteredResources(filtered);
+    }
+  }, [buildingSearchValue, resources]);
+
+  useEffect(() => {
+    filterEvents(
+      buildingSearchValue,
+      classroomSearchValue,
+      nameSearchValue,
+      classSearchValue,
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    events,
+    buildingSearchValue,
+    classroomSearchValue,
+    nameSearchValue,
+    classSearchValue,
+  ]);
 
   return (
     <PageContent>
@@ -89,147 +146,56 @@ function Allocation() {
         gridTemplateRows={'1 1fr'}
         gridTemplateColumns={'1fr'}
       >
-        <GridItem p={4} area={'header'} display='flex' alignItems='center'>
-          <Text fontSize='4xl'>Alocações</Text>
-          <Button ml={4} colorScheme='blue'>
-            <PDFDownloadLink
-              document={<ClassesPDF classes={classes} />}
-              fileName='disciplinas.pdf'
-            >
-              {(params) =>
-                params.loading
-                  ? 'Carregando PDF...'
-                  : 'Baixar alocação das disciplinas'
-              }
-            </PDFDownloadLink>
-          </Button>
-          <Button ml={4} colorScheme='blue'>
-            <PDFDownloadLink
-              document={
-                <ClassroomsPDF classes={classes} reservations={reservations} />
-              }
-              fileName='salas.pdf'
-            >
-              {(params) =>
-                params.loading
-                  ? 'Carregando PDF...'
-                  : 'Baixar alocação das salas'
-              }
-            </PDFDownloadLink>
-          </Button>
+        <GridItem p={2} area={'header'} display='flex' alignItems='center'>
+          <AllocationHeader
+            isOpen={isOpenSolicitation}
+            onOpen={onOpenSolicitation}
+            onClose={onCloseSolicitation}
+            buildingSearchValue={buildingSearchValue}
+            setBuildingSearchValue={setBuildingSearchValue}
+            classroomSearchValue={classroomSearchValue}
+            setClassroomSearchValue={setClassroomSearchValue}
+            nameSearchValue={nameSearchValue}
+            setNameSearchValue={setNameSearchValue}
+            classSearchValue={classSearchValue}
+            setClassSearchValue={setClassSearchValue}
+            events={events}
+            buildingResources={resources.filter(
+              (resource) => !resource.parentId,
+            )}
+            classroomResources={resources.filter(
+              (resource) => !!resource.parentId,
+            )}
+          />
         </GridItem>
         <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
-          <Skeleton isLoaded={!loading} h='100vh' startColor='uspolis.blue'>
-            <DatePickerModal
-              isOpen={isOpen}
-              onClose={onClose}
-              onSelectDate={setCalendarDate}
-            />
-
-            <HStack mb={4} divider={<StackDivider />} justifyContent='flex-end'>
-              <InputGroup w='fit-content'>
-                <InputLeftElement pointerEvents='none'>
-                  <BsSearch color='gray.300' />
-                </InputLeftElement>
-                <Input
-                  type='text'
-                  placeholder='Filtrar por nome'
-                  value={nameSearchValue}
-                  onChange={(event) => {
-                    setNameSearchValue(event.target.value);
-                    FilterEvents(event.target.value, classroomSearchValue);
-                  }}
-                />
-              </InputGroup>
-
-              <InputGroup w='fit-content'>
-                <InputLeftElement pointerEvents='none'>
-                  <BsSearch color='gray.300' />
-                </InputLeftElement>
-                <Input
-                  type='text'
-                  placeholder='Filtrar salas'
-                  value={classroomSearchValue}
-                  onChange={(event) => {
-                    setClassroomSearchValue(event.target.value);
-                    FilterEvents(nameSearchValue, event.target.value);
-                  }}
-                />
-              </InputGroup>
-            </HStack>
-            <Box paddingBottom={4}>
-              <FullCalendar
-                ref={calendarRef}
-                schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
-                plugins={[
-                  timeGridPlugin,
-                  resourceTimelinePlugin,
-                  rrulePlugin,
-                  // eventsByClassroomsPlugin,
-                  // eventsByWeekPlugin,
-                ]}
-                initialView='resourceTimelineDay'
-                locale='pt-br'
-                height='auto'
-                slotMinTime='06:00'
-                firstDay={1}
-                headerToolbar={{
-                  left: 'resourceTimelineDay timeGridWeek',
-                  center: 'title',
-                  right: 'goToDate prev,next today',
-                }}
-                buttonText={{
-                  // eventsByClassrooms: 'Salas',
-                  resourceTimelineDay: 'Sala / Dia',
-                  // eventsByWeek: 'Sala / Semana',
-                  timeGridWeek: 'Geral',
-                  today: 'Hoje',
-                }}
-                customButtons={{
-                  goToDate: {
-                    text: 'Escolher data',
-                    click: (_ev, _el) => onOpen(),
-                  },
-                }}
-                views={{
-                  timeGridWeek: {
-                    slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
-                    eventMaxStack: 1,
-                    titleFormat: { year: 'numeric', month: 'long' },
-                  },
-                  resourceTimelineDay: {
-                    slotDuration: '01:00',
-                    slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
-                    eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
-                    titleFormat: {
-                      weekday: 'long',
-                      day: '2-digit',
-                      month: 'long',
-                      year: 'numeric',
-                    },
-                  },
-                  // eventsByClassrooms: {
-                  //   duration: { weeks: 1 },
-                  // },
-                  // eventsByWeek: {
-                  //   duration: { weeks: 1 },
-                  // },
-                }}
-                events={
-                  nameSearchValue || classroomSearchValue
-                    ? filteredEvents
-                    : events
-                }
-                eventContent={EventContent}
-                eventColor='#408080'
-                displayEventTime
-                resources={resources}
-                filterResourcesWithEvents={!!classroomSearchValue}
-                resourceAreaWidth='10%'
-                resourceGroupField='building'
-                resourceAreaHeaderContent='Salas'
+          <Skeleton isLoaded={!loading && !loadingAllocation} h='100vh'>
+            {loggedUser && (
+              <SolicitationModal
+                isMobile={isMobile}
+                isOpen={isOpenSolicitation}
+                onClose={onCloseSolicitation}
               />
-            </Box>
+            )}
+
+            <CustomCalendar
+              events={
+                buildingSearchValue ||
+                classroomSearchValue ||
+                nameSearchValue ||
+                classSearchValue
+                  ? filteredEvents
+                  : events
+              }
+              resources={buildingSearchValue ? filteredResources : resources}
+              hasFilter={!!classroomSearchValue}
+              update={async (start, end) => {
+                if (loadingAllocation) return;
+                await getEvents(start, end);
+              }}
+              date={currentDate}
+              setDate={setCurrentDate}
+            />
           </Skeleton>
         </GridItem>
       </Grid>

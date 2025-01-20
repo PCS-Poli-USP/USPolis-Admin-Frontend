@@ -61,19 +61,11 @@ export default function AppContextProvider({
   }
 
   useEffect(() => {
-    Auth.currentUserInfo().then((it) => setUsername(it?.username));
-    getSelf();
-  }, []);
-
-  useEffect(() => {
-    Hub.listen('auth', (data) => {
-      getSelf();
-      console.log(
-        'A new auth event has happened: ',
-        data.payload.data.username + ' has ' + data.payload.event,
-      );
-    });
-  }, []);
+    if (accessToken && !loggedUser) {
+      getSelfFromBackend();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken, loggedUser]);
 
   return (
     <appContext.Provider

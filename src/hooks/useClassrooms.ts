@@ -31,18 +31,72 @@ const useClassrooms = () => {
       });
   }, [showToast]);
 
-  const listOneFull = useCallback(async (id: number) => {
-    let current: ClassroomFullResponse | undefined;
-    await service
-      .listOneFull(id)
-      .then((response) => {
-        current = response.data;
-      })
-      .catch((error) => {
-        current = undefined;
-      });
-    return current;
-  }, []);
+  const getClassroomsByBuilding = useCallback(
+    async (building_id: number) => {
+      setLoading(true);
+      let current: ClassroomResponse[] = [];
+      await service
+        .getClassroomsByBuildingId(building_id)
+        .then((response) => {
+          current = response.data;
+          setClassrooms(current.sort(sortClassroomResponse));
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao carregar salas do prédio ${building_id}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+      return current;
+    },
+    [showToast, service],
+  );
+
+  const getClassroomsWithConflictFromTime = useCallback(
+    async (data: ClassroomConflictCheck, building_id: number) => {
+      setLoading(true);
+      let current: ClassroomWithConflictCount[] = [];
+      await service
+        .getWithConflictCountFromTime(data, building_id)
+        .then((response) => {
+          current = response.data.sort(sortClassroomResponse);
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao carregar salas do prédio ${building_id}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+      return current;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const listOneFull = useCallback(
+    async (id: number) => {
+      let current: ClassroomFullResponse | undefined;
+      await service
+        .getOneFull(id)
+        .then((response) => {
+          current = response.data;
+        })
+        .catch((error) => {
+          current = undefined;
+        });
+      return current;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   const createClassroom = useCallback(
     async (data: CreateClassroom) => {
