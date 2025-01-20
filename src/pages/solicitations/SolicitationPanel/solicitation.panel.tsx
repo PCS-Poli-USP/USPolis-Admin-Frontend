@@ -117,7 +117,8 @@ function SolicitationPanel({
       }
     };
     fetchClassrooms();
-  }, [getClassroomsWithConflictFromTime, solicitation, end, start]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [solicitation, end, start]);
 
   // Fetch selected classroom from solicitation
   useEffect(() => {
@@ -157,7 +158,7 @@ function SolicitationPanel({
   }, []);
 
   return (
-    <Card w={'100%'} border={'2px solid lightgray'} hidden={!solicitation}>
+    <Card w={'100%'} border={'2px solid lightgray'} hidden={!solicitation} p={'4px'}>
       {!!solicitation ? (
         <>
           <CardHeader mb={-5}>

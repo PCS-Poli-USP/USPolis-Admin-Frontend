@@ -34,6 +34,13 @@ export interface EventResponse {
   extendedProps: EventExtendedProps;
 }
 
+// See https://fullcalendar.io/docs/resource-data
+export interface ResourceResponse {
+  id: string;
+  parentId?: string;
+  title: string;
+}
+
 export interface BaseExtendedData {
   building: string;
   classroom: string;

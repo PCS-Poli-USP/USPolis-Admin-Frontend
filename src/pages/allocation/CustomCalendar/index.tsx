@@ -86,6 +86,14 @@ function CustomCalendar({
     }
   };
 
+  const formatedResources = resources.map((res) => {
+    if (res.parentId === null) {
+      const { parentId, ...rest } = res;
+      return rest;
+    }
+    return res;
+  });
+
   return (
     <Box paddingBottom={4} zIndex={-1}>
       <DatePickerModal
@@ -198,11 +206,11 @@ function CustomCalendar({
         }}
         eventColor='#408080'
         displayEventTime
-        resources={resources}
+        resources={formatedResources}
         filterResourcesWithEvents={hasFilter}
-        resourceAreaWidth='10%'
-        resourceGroupField='building'
-        resourceAreaHeaderContent='Salas'
+        resourcesInitiallyExpanded={false}
+        resourceAreaWidth='150px'
+        resourceAreaHeaderContent='Prédios / Salas'
         datesSet={handleDatesSet}
       />
     </Box>

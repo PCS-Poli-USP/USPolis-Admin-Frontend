@@ -15,6 +15,7 @@ import SolicitationModal from './SolicitationModal/solicitation.modal';
 import CustomCalendar from './CustomCalendar';
 import AllocationHeader from './AllocationHeader';
 import moment from 'moment';
+import { Resource } from 'models/http/responses/allocation.response.models';
 
 function Allocation() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
@@ -43,6 +44,7 @@ function Allocation() {
     getEvents,
   } = useAllocation();
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
+  const [filteredResources, setFilteredResources] = useState<Resource[]>(resources);
 
   function filterEvents(
     building: string,
@@ -96,11 +98,27 @@ function Allocation() {
   }
 
   useEffect(() => {
-    if (!hasInitialFilter && events.length > 0) {
-      setBuildingSearchValue('Biênio');
+    if (!hasInitialFilter && resources.length > 0) {
+      setBuildingSearchValue(resources[0].title);
       setHasInitialFilter(true);
     }
-  }, [hasInitialFilter, events]);
+  }, [hasInitialFilter, resources]);
+
+  useEffect(() => {
+    if (buildingSearchValue) {
+      const filtered = resources.filter(
+        (resource) =>
+          resource.title
+            .toLowerCase()
+            .includes(buildingSearchValue.toLowerCase()) ||
+          (resource.parentId &&
+            resource.parentId
+              .toLowerCase()
+              .includes(buildingSearchValue.toLowerCase())),
+      );
+      setFilteredResources(filtered);
+    }
+  }, [buildingSearchValue, resources]);
 
   useEffect(() => {
     filterEvents(
@@ -145,7 +163,12 @@ function Allocation() {
             classSearchValue={classSearchValue}
             setClassSearchValue={setClassSearchValue}
             events={events}
-            resources={resources}
+            buildingResources={resources.filter(
+              (resource) => !resource.parentId,
+            )}
+            classroomResources={resources.filter(
+              (resource) => !!resource.parentId,
+            )}
           />
         </GridItem>
         <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
@@ -167,7 +190,7 @@ function Allocation() {
                   ? filteredEvents
                   : events
               }
-              resources={resources}
+              resources={buildingSearchValue ? filteredResources : resources}
               hasFilter={!!classroomSearchValue}
               update={async (start, end) => {
                 if (loadingAllocation) return;

@@ -45,9 +45,7 @@ const PersistLogin = () => {
     }
 
     // Cleanup opcional (se necessário)
-    return () => {
-      console.log('PersistLogin cleanup');
-    };
+    return () => {};
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context.persist, context.isAuthenticated]);

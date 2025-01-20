@@ -28,7 +28,7 @@ function Solicitations() {
             reset={() => setSolicitation(undefined)}
           />
         </GridItem>
-        <GridItem overflow={'auto'}>
+        <GridItem overflow={'auto'} w={'100%'} p={'0px 20px 0px 0px'}>
           <SolicitationPanel
             reset={() => {}}
             handleClose={() => setSolicitation(undefined)}

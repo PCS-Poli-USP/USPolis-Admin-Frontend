@@ -70,7 +70,6 @@ export default function AppContextProvider({
 
   useEffect(() => {
     if (accessToken && !loggedUser) {
-      console.log('Pegando eu mesmo...');
       getSelfFromBackend();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

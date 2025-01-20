@@ -96,7 +96,8 @@ const useClassrooms = (initialFetch: boolean = true) => {
         });
       return current;
     },
-    [showToast, service],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   const listOneFull = useCallback(
@@ -112,7 +113,8 @@ const useClassrooms = (initialFetch: boolean = true) => {
         });
       return current;
     },
-    [service],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   const createClassroom = useCallback(

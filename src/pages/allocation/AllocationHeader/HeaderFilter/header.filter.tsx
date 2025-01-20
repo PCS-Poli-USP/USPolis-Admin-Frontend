@@ -1,7 +1,6 @@
 import { Box, Flex, Text, useMediaQuery } from '@chakra-ui/react';
 import Select, { SelectInstance, StylesConfig } from 'react-select';
 import { AllocationHeaderProps } from '..';
-import { AllocationEnum } from 'utils/enums/allocation.enum';
 import { useRef } from 'react';
 
 type OptionType = { value: string; label: string };
@@ -11,17 +10,17 @@ const customStyles: StylesConfig<OptionType, false> = {
     ...provided,
     maxHeight: '200px', // Altura máxima do menu
     overflowY: 'auto', // Permite o scroll vertical
-    zIndex: 99999,
+    zIndex: 1000,
   }),
   menuList: (provided) => ({
     ...provided,
     maxHeight: '200px', // Altura máxima da lista
     overflowY: 'auto', // Ativa o scroll
-    zIndex: 99999,
+    zIndex: 1000,
   }),
   menuPortal: (base) => ({
     ...base,
-    zIndex: 99999, // Dinamicamente ajusta o z-index
+    zIndex: 1000, // Dinamicamente ajusta o z-index
   }),
 };
 
@@ -35,39 +34,30 @@ function HeaderFilter({
   classSearchValue,
   setClassSearchValue,
   events,
-  resources,
+  buildingResources,
+  classroomResources,
 }: AllocationHeaderProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const selectRef = useRef<SelectInstance<OptionType>>(null);
 
-  const buildingOptions = events
-    .map((event) => ({
-      value:
-        event.extendedProps.class_data?.building ||
-        AllocationEnum.UNALLOCATED_BUILDING_ID,
-      label:
-        event.extendedProps.class_data?.building ||
-        AllocationEnum.UNALLOCATED_BUILDING_ID,
+  const buildingOptions = buildingResources
+    .map((resource) => ({
+      value: resource.title,
+
+      label: resource.title,
     }))
-    .filter(
-      (value, index, self) =>
-        self.findIndex((v) => v.value === value.value) === index,
-    )
     .sort((a, b) => a.value.localeCompare(b.value));
 
-  const classroomsOptions = events
-    .map((event) => ({
-      value:
-        event.extendedProps.class_data?.classroom ||
-        AllocationEnum.UNALLOCATED_CLASSROOM_ID,
-      label:
-        event.extendedProps.class_data?.classroom ||
-        AllocationEnum.UNALLOCATED_CLASSROOM_ID,
-    }))
+  const classroomsOptions = classroomResources
     .filter(
-      (value, index, self) =>
-        self.findIndex((v) => v.value === value.value) === index,
+      (resource) =>
+        !buildingSearchValue ||
+        (resource.parentId && resource.parentId.includes(buildingSearchValue)),
     )
+    .map((resource) => ({
+      value: resource.title,
+      label: resource.title,
+    }))
     .sort((a, b) => a.value.localeCompare(b.value));
 
   const subjectOptions = events
@@ -99,7 +89,6 @@ function HeaderFilter({
     )
     .sort((a, b) => a.value.localeCompare(b.value));
 
-  console.log(isMobile)
   return (
     <>
       {isMobile ? (
@@ -282,7 +271,10 @@ function HeaderFilter({
               isClearable={true}
               value={
                 classSearchValue
-                  ? { value: classSearchValue, label: classSearchValue.slice(-2) }
+                  ? {
+                      value: classSearchValue,
+                      label: classSearchValue.slice(-2),
+                    }
                   : undefined
               }
               options={classOptions}
