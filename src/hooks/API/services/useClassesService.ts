@@ -23,6 +23,12 @@ const useClassesService = () => {
     return axios.get(`${PREFIX}/subject/${subject_id}`);
   };
 
+  const listByBuildingName = (
+    building_name: string,
+  ): Promise<AxiosResponse<Array<ClassResponse>>> => {
+    return axios.get(`${PREFIX}/building/${building_name}`);
+  };
+
   const listFull = (): Promise<AxiosResponse<Array<ClassFullResponse>>> => {
     return axios.get(`${PREFIX}/full/`);
   };
@@ -64,6 +70,7 @@ const useClassesService = () => {
   return {
     list,
     listBySubject,
+    listByBuildingName,
     listFull,
     listOneFull,
     getById,

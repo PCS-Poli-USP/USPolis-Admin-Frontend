@@ -1,10 +1,12 @@
 import { AxiosResponse } from 'axios';
-import { EventResponse, ResourceResponse } from 'models/http/responses/allocation.response.models';
-import useAxiosPrivate from '../axios/useAxiosPrivate';
+import {
+  EventResponse,
+  ResourceResponse,
+} from 'models/http/responses/allocation.response.models';
+import axios from 'services/api/axios';
 
 const useALlocationsService = () => {
   const PREFIX = '/allocations';
-  const axios = useAxiosPrivate();
 
   const listEvents = (
     start?: string,

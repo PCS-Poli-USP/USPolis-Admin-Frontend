@@ -34,21 +34,47 @@ const useClasses = (initialFetch: boolean = true) => {
       });
   }, [showToast, service]);
 
-  const getClassesBySubject = useCallback(async (subject_id: number) => {
-    setLoading(true);
-    await service
-      .listBySubject(subject_id)
-      .then((response) => {
-        setClasses(response.data.sort(sortClassResponse));
-      })
-      .catch((error) => {
-        showToast('Erro', 'Erro ao carregar turmas', 'error');
-        console.log(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [showToast, service]);
+  const getClassesBySubject = useCallback(
+    async (subject_id: number) => {
+      setLoading(true);
+      await service
+        .listBySubject(subject_id)
+        .then((response) => {
+          setClasses(response.data.sort(sortClassResponse));
+        })
+        .catch((error) => {
+          showToast('Erro', 'Erro ao carregar turmas', 'error');
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
+
+  const getClassesByBuildingName = useCallback(
+    async (building_name: string) => {
+      setLoading(true);
+      await service
+        .listByBuildingName(building_name)
+        .then((response) => {
+          setClasses(response.data.sort(sortClassResponse));
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao carregar turmas do prédio ${building_name}`,
+            'error',
+          );
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
 
   const getClassFull = useCallback(
     async (id: number) => {
@@ -166,7 +192,7 @@ const useClasses = (initialFetch: boolean = true) => {
 
   useEffect(() => {
     if (initialFetch) getClasses();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFetch]);
 
   return {
@@ -174,6 +200,7 @@ const useClasses = (initialFetch: boolean = true) => {
     classes,
     getClasses,
     getClassesBySubject,
+    getClassesByBuildingName,
     getClassFull,
     createClass,
     updateClass,
