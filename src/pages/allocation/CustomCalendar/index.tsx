@@ -208,7 +208,7 @@ function CustomCalendar({
         displayEventTime
         resources={formatedResources}
         filterResourcesWithEvents={hasFilter}
-        resourcesInitiallyExpanded={false}
+        resourcesInitiallyExpanded={true}
         resourceAreaWidth='150px'
         resourceAreaHeaderContent='Prédios / Salas'
         datesSet={handleDatesSet}

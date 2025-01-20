@@ -1,23 +1,11 @@
-import { ChevronDownIcon, LockIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Flex,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Spacer,
-  Text,
-  Tooltip,
-} from '@chakra-ui/react';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import ClassesPDF from '../../pdf/ClassesPDF/classesPDF';
-import ClassroomsPDF from '../../pdf/ClassroomsPDF/classroomsPDF';
+import { LockIcon } from '@chakra-ui/icons';
+import { Button, Flex, Spacer, Text, Tooltip } from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { appContext } from 'context/AppContext';
 import { AllocationHeaderProps } from '..';
 import HeaderFilter from '../HeaderFilter/header.filter';
+import HeaderPDFOptions from '../HeaderPDFOptions/headerPDF.options';
 
 function AllocationDesktopHeader({
   isOpen,
@@ -44,40 +32,17 @@ function AllocationDesktopHeader({
       <Text fontSize={'4xl'}>Mapa de Salas</Text>
       <Flex
         mb={4}
-        // divider={<StackDivider />}
         justifyContent='flex-end'
         gap={4}
         direction={'row'}
         w={'full'}
       >
-        <Menu>
-          <MenuButton
-            as={Button}
-            rightIcon={<ChevronDownIcon />}
-            colorScheme='blue'
-            ml={'0px'}
-          >
-            Baixar
-          </MenuButton>
-          <MenuList zIndex={99999}>
-            <MenuItem>
-              <PDFDownloadLink
-                document={<ClassesPDF classes={[]} />}
-                fileName='disciplinas.pdf'
-              >
-                Baixar mapa de disciplinas
-              </PDFDownloadLink>
-            </MenuItem>
-            <MenuItem>
-              <PDFDownloadLink
-                document={<ClassroomsPDF classes={[]} reservations={[]} />}
-                fileName='salas.pdf'
-              >
-                Baixar mapa de salas
-              </PDFDownloadLink>
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        <HeaderPDFOptions
+          buildings={buildingResources.map((resource) => ({
+            label: resource.title,
+            value: resource.id,
+          }))}
+        />
         <Tooltip label={loggedUser ? '' : 'Entre para poder fazer essa ação.'}>
           <Button
             colorScheme='blue'

@@ -59,7 +59,7 @@ export default function EditUserModal(props: EditModalProps) {
 
   useEffect(() => {
     fetchBuildings();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchBuildings() {
@@ -84,10 +84,6 @@ export default function EditUserModal(props: EditModalProps) {
 
   function handleCloseModal() {
     props.onClose();
-  }
-
-  function isEmpty(value: string) {
-    return value.length <= 0;
   }
 
   return (
