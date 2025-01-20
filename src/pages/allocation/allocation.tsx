@@ -44,6 +44,7 @@ function Allocation() {
     getEvents,
   } = useAllocation();
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
+  const [filteredResources, setFilteredResources] = useState<Resource[]>(resources);
 
   function filterEvents(
     building: string,

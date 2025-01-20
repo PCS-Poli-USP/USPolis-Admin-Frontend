@@ -117,7 +117,7 @@ function SolicitationPanel({
       }
     };
     fetchClassrooms();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solicitation, end, start]);
 
   // Fetch selected classroom from solicitation
@@ -158,12 +158,7 @@ function SolicitationPanel({
   }, []);
 
   return (
-    <Card
-      w={'100%'}
-      border={'2px solid lightgray'}
-      hidden={!solicitation}
-      p={'4px'}
-    >
+    <Card w={'100%'} border={'2px solid lightgray'} hidden={!solicitation} p={'4px'}>
       {!!solicitation ? (
         <>
           <CardHeader mb={-5}>
