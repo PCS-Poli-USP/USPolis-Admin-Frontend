@@ -14,6 +14,7 @@ import Classroom, {
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { formatClassroomForSelection } from 'utils/classrooms/classroom.formatter';
 import { sortClassroomResponse } from 'utils/classrooms/classrooms.sorter';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
@@ -204,9 +205,7 @@ const AllocateSingleScheduleSection = forwardRef<
                 >
                   {classrooms.map((classroom) => (
                     <option key={classroom.id} value={Number(classroom.id)}>
-                      {classroom.conflicts > 0
-                        ? `⚠️ ${classroom.name} (${classroom.conflicts} conflitos)`
-                        : classroom.name}
+                      {formatClassroomForSelection(classroom)}
                     </option>
                   ))}
                 </Select>
