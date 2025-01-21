@@ -21,6 +21,7 @@ import {
   FilterBuilding,
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 
 interface ClassesColumnsProps {
   handleCheckAllClick: (data: Row<ClassResponse>[], value: boolean) => void;
@@ -81,7 +82,7 @@ export const getClassesColumns = (
     maxSize: 120,
     cell: ({ row }) => (
       <Box>
-        <Text>{row.original.code.slice(-2)}</Text>
+        <Text>{classNumberFromClassCode(row.original.code)}</Text>
       </Box>
     ),
   },
