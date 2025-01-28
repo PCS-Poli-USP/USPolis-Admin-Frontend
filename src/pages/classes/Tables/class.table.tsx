@@ -38,6 +38,7 @@ export const getClassesColumns = (
   props: ClassesColumnsProps,
 ): ColumnDef<ClassResponse>[] => [
   {
+    id: 'mark',
     header: 'Marcar',
     maxSize: 70,
     meta: {
@@ -58,9 +59,22 @@ export const getClassesColumns = (
     ),
   },
   {
+    id: 'subject_code',
     accessorKey: 'subject_code',
     header: 'Disciplina',
     maxSize: 120,
+  },
+  {
+    id: 'code',
+    accessorKey: 'code',
+    header: 'Turma',
+    maxSize: 120,
+    filterFn: FilterClassCode,
+    cell: ({ row }) => (
+      <Box>
+        <Text>{row.original.code.slice(-2)}</Text>
+      </Box>
+    ),
   },
   {
     accessorKey: 'subject_name',
@@ -73,17 +87,6 @@ export const getClassesColumns = (
             {row.original.subject_name}
           </Text>
         </Tooltip>
-      </Box>
-    ),
-  },
-  {
-    accessorKey: 'code',
-    header: 'Turma',
-    maxSize: 120,
-    filterFn: FilterClassCode,
-    cell: ({ row }) => (
-      <Box>
-        <Text>{row.original.code.slice(-2)}</Text>
       </Box>
     ),
   },

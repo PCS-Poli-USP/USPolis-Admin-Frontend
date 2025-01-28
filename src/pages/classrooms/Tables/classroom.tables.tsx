@@ -24,51 +24,60 @@ export function getClassroomColumns(
   const { loggedUser } = useContext(appContext);
   const columns: ColumnDef<ClassroomResponse>[] = [
     {
+      id: 'name',
       accessorKey: 'name',
       header: 'Nome',
     },
     {
+      id: 'building',
       accessorKey: 'building',
       header: 'Prédio',
       meta: { isSelectable: true },
     },
     {
+      id: 'floor',
       accessorKey: 'floor',
       header: 'Andar',
       meta: { isSelectable: true },
       filterFn: FilterNumber,
     },
     {
+      id: 'capacity',
       accessorKey: 'capacity',
       header: 'Capacidade',
       meta: { isSelectable: true },
       filterFn: FilterNumber,
     },
     {
+      id: 'ignore_to_allocate',
       accessorKey: 'ignore_to_allocate',
       header: 'Ignorar',
       meta: { isBoolean: true, isSelectable: true },
       filterFn: FilterBoolean,
     },
     {
+      id: 'air_conditioning',
       accessorKey: 'air_conditioning',
       header: 'Ar condicionado',
       meta: { isBoolean: true, isSelectable: true },
       filterFn: FilterBoolean,
     },
     {
+      id: 'projector',
       accessorKey: 'projector',
       header: 'Projetor',
       meta: { isBoolean: true, isSelectable: true },
       filterFn: FilterBoolean,
     },
     {
+      id: 'accessibility',
       accessorKey: 'accessibility',
       header: 'Acessibilidade',
       meta: { isBoolean: true, isSelectable: true },
       filterFn: FilterBoolean,
     },
     {
+      id: 'updated_at',
       accessorKey: 'updated_at',
       header: 'Atualizado em',
       cell: ({ row }) => (
@@ -121,6 +130,7 @@ export function getClassroomColumns(
   ];
   if (loggedUser && loggedUser.is_admin) {
     columns.unshift({
+      id: 'created_by',
       accessorKey: 'created_by',
       header: 'Usuário',
     });
