@@ -60,16 +60,16 @@ export default function JupiterCrawlerPopover({
   function handleAddClick() {
     if (subjectInput.length === 7 && !subjectsList.includes(subjectInput)) {
       setSubjectsList((prev) => [...prev, subjectInput.replaceAll(' ', '')]);
-      setSubjectInput('');
     }
+    setSubjectInput('');
     if (multSubjectInput.length >= 7) {
       const formatedInput = multSubjectInput.replaceAll(' ', '');
       const subjects = formatedInput
         .split(',')
         .filter((value) => value.length === 7 && !subjectsList.includes(value));
       setSubjectsList((prev) => prev.concat(subjects));
-      setMultSubjectInput('');
     }
+    setMultSubjectInput('');
   }
 
   function handleCleanClick() {
