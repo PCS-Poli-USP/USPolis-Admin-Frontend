@@ -29,6 +29,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
       })
       .catch((error) => {
         showToast('Erro', 'Erro ao carregar salas', 'error');
+        console.log(error);
       })
       .finally(() => {
         setLoading(false);
