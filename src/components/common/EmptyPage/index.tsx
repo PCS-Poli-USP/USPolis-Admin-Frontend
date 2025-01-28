@@ -76,7 +76,7 @@ export default function EmptyPage() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex' }} width={'100vw'} height={'100vh'}>
       <AppBar position='fixed' open={open} isMobile={isMobile}>
         <DrawerNavBar
           open={open}
