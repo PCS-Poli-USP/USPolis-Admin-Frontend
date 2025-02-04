@@ -119,7 +119,7 @@ export default function DataTable<Data extends object>({
       direction={'column'}
       w={'full'}
       maxW={'calc(100vw - 40px)'}
-      maxH={'calc(100vh - 180px)'}
+      maxH={'calc(100vh - 160px)'}
       gap={'5px'}
     >
       <TableContainer
@@ -130,8 +130,7 @@ export default function DataTable<Data extends object>({
         overflow={'auto'}
         overflowY={'auto'}
         maxW={'calc(100vw - 40px)'}
-        maxH={'calc(100vh - 200px)'}
-        h={'calc(100vh - 200px)'}
+        maxH={'calc(100vh - 160px)'}
       >
         {loading && <Progress size='xs' isIndeterminate />}
         <Table>
@@ -156,7 +155,11 @@ export default function DataTable<Data extends object>({
                       isNumeric={meta?.isNumeric}
                       pb='2'
                       color='uspolis.blue'
-                      maxW={header.column.columnDef.maxSize}
+                      maxW={
+                        header.column.columnDef.maxSize
+                          ? `${header.column.columnDef.maxSize}px`
+                          : undefined
+                      }
                       style={{
                         boxShadow: isLastLeftPinnedColumn
                           ? '-4px 0 4px -4px gray inset'
@@ -261,7 +264,7 @@ export default function DataTable<Data extends object>({
                       isNumeric={meta?.isNumeric}
                       maxW={
                         cell.column.columnDef.maxSize
-                          ? cell.column.columnDef.maxSize
+                          ? `${cell.column.columnDef.maxSize}px`
                           : 'auto'
                       }
                       style={{
@@ -308,7 +311,13 @@ export default function DataTable<Data extends object>({
         </Table>
       </TableContainer>
 
-      <Flex direction={'row'} w={'full'} gap={'5px'} align={'center'} h={'40px'}>
+      <Flex
+        direction={'row'}
+        w={'full'}
+        gap={'5px'}
+        align={'center'}
+        h={'40px'}
+      >
         <IconButton
           aria-label='fast-step-back'
           icon={<FaFastBackward />}

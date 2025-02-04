@@ -259,6 +259,7 @@ function Classes() {
         onClose={onCloseDeleteClass}
         onConfirm={handleDeleteClass}
         title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.code}`}
+        warningText='ATENÇÃO: TODOS OS DADOS DA TURMA SERÃO PERDIDOS, ASSIM COMO AS INFORMAÇÕES NO APLICATIVO'
       />
       <Dialog
         isOpen={isOpenDeleteSelectedClasses}
@@ -275,7 +276,7 @@ function Classes() {
         data={classes.map((cls, index) => ({ ...cls, index: index }))}
         columns={columns}
         columnPinning={{
-          left: ['mark', 'subject_code', 'code'],
+          left: ['id', 'mark', 'subject_code', 'code'],
           right: ['options'],
         }}
       />
