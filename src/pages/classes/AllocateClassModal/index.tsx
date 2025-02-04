@@ -19,6 +19,8 @@ import { useEffect, useRef, useState } from 'react';
 import useOccurrences from 'hooks/useOccurrences';
 import useClassesService from 'hooks/API/services/useClassesService';
 import { AllocateManySchedulesData } from 'hooks/API/services/useOccurrencesService';
+import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+import useAllowedBuildings from 'hooks/useAllowedBuildings';
 
 interface props {
   isOpen: boolean;
@@ -39,6 +41,7 @@ export function AllocateClassModal({
   const [inputClass, setInputClass] = useState<ClassResponse>();
 
   const { allocateManySchedules } = useOccurrences();
+  const { allowedBuildings, loading } = useAllowedBuildings();
 
   const sectionsRefs = useRef<(AllocateSingleScheduleSectionRef | null)[]>([]);
 
@@ -58,7 +61,8 @@ export function AllocateClassModal({
       }
     }
     use();
-  }, [class_, class_id, classesService]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [class_, class_id]);
 
   async function handleSave() {
     const data: AllocateManySchedulesData[] = [];
@@ -84,7 +88,7 @@ export function AllocateClassModal({
           <>
             <ModalHeader>
               Alocar Turma: {inputClass.subject_code} -{' '}
-              {inputClass.code.slice(-2)}
+              {classNumberFromClassCode(inputClass.code)}
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
@@ -96,6 +100,13 @@ export function AllocateClassModal({
                         key={schedule.id}
                         ref={(ref) => (sectionsRefs.current[index] = ref)}
                         schedule={schedule}
+                        allowedBuildings={allowedBuildings}
+                        loadingBuildings={loading}
+                        initialBuildingId={
+                          inputClass.subject_building_ids.length === 1
+                            ? inputClass.subject_building_ids[0]
+                            : undefined
+                        }
                       />
                       <Divider />
                     </Box>

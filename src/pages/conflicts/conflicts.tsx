@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import * as C from '@chakra-ui/react';
-import { useToast } from '@chakra-ui/react';
 import Conflict from 'models/http/responses/conflict.response.models';
 import moment from 'moment';
 import PageContent from 'components/common/PageContent';
 import { AllocateClassModal } from 'pages/classes/AllocateClassModal';
 import { Collapsable } from 'components/common/Collapsable';
 import useConflictsService from 'hooks/API/services/useConflictsService';
-import useEventsService from 'hooks/API/services/useEventsService';
+import useCustomToast from 'hooks/useCustomToast';
 
 const ConflictsPage = () => {
-  const eventsService = useEventsService();
+  const showToast = useCustomToast();
+
   const conflictsService = useConflictsService();
 
   const [conflicts, setConflicts] = useState<Conflict[] | null>(null);
@@ -19,30 +19,9 @@ const ConflictsPage = () => {
   const [isOpenAllocate, setIsOpenAllocate] = useState<boolean>(false);
   const [selectedClassId, setSelectedClassId] = useState<number>(0);
 
-  const toast = useToast();
-  const toastSuccess = (message: string) => {
-    toast({
-      position: 'top-left',
-      title: 'Sucesso!',
-      description: message,
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-  const toastError = (message: string) => {
-    toast({
-      position: 'top-left',
-      title: 'Erro!',
-      description: message,
-      status: 'error',
-      duration: 3000,
-      isClosable: true,
-    });
-  };
-
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -57,46 +36,7 @@ const ConflictsPage = () => {
       })
       .catch((err) => {
         console.error(err);
-        alert('Erro ao carregar conflitos');
-      });
-  }
-
-  useEffect(() => {
-    console.log(conflicts);
-  }, [conflicts]);
-
-  function handleAllocationEdit(
-    events_ids: string[],
-    newClassroom: string,
-    building_id: number,
-  ) {
-    eventsService
-      .editManyAllocations({
-        events_ids,
-        building_id,
-        classroom: newClassroom,
-      })
-      .then(() => {
-        toastSuccess('Alocação editada com sucesso!');
-        fetchData();
-      })
-      .catch((error) => {
-        toastError(`Erro ao editar alocação: ${error}`);
-      });
-  }
-
-  function handleAllocationDelete(subjectCode: string, classCode: string) {
-    eventsService
-      .deleteClassAllocation(subjectCode, classCode)
-      .then((it) => {
-        toastSuccess(
-          `Alocação de ${subjectCode} - ${classCode}  deletada com sucesso!`,
-        );
-      })
-      .catch((error) => {
-        toastError(
-          `Erro ao deletar alocação de ${subjectCode} - ${classCode}: ${error}`,
-        );
+        showToast('Erro', 'Erro ao carregar conflitos', 'error');
       });
   }
 
