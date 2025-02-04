@@ -24,6 +24,7 @@ export interface ClassUnfetchResponseBase {
   subject_id: number;
 }
 export interface ClassResponseBase extends ClassUnfetchResponseBase {
+  subject_building_ids: number[];
   subject_name: string;
   subject_code: string;
   calendar_ids: number[];
