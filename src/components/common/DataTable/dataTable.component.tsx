@@ -119,7 +119,7 @@ export default function DataTable<Data extends object>({
       direction={'column'}
       w={'full'}
       maxW={'calc(100vw - 40px)'}
-      maxH={'calc(100vh - 160px)'}
+      maxH={'calc(100vh - 180px)'}
       gap={'5px'}
     >
       <TableContainer
@@ -308,7 +308,7 @@ export default function DataTable<Data extends object>({
         </Table>
       </TableContainer>
 
-      <Flex direction={'row'} w={'full'} gap={'5px'} align={'center'}>
+      <Flex direction={'row'} w={'full'} gap={'5px'} align={'center'} h={'40px'}>
         <IconButton
           aria-label='fast-step-back'
           icon={<FaFastBackward />}

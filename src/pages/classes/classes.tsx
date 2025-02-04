@@ -271,7 +271,6 @@ function Classes() {
           checkMap.filter((val) => val).length
         } TURMAS SERÃO REMOVIDAS!`}
       />
-      {/* <Box maxW={'100vw'}> */}
       <DataTable
         data={classes.map((cls, index) => ({ ...cls, index: index }))}
         columns={columns}
@@ -280,7 +279,6 @@ function Classes() {
           right: ['options'],
         }}
       />
-      {/* </Box> */}
     </PageContent>
   );
 }

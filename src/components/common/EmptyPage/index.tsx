@@ -109,9 +109,11 @@ export default function EmptyPage() {
         </DrawerHeader>
         <DrawerBody onClose={handleDrawerClose} />
       </Drawer>
-      <Main open={open} isMobile={isMobile}>
-        <Outlet />
-      </Main>
+      <Box width={isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`}>
+        <Main open={open} isMobile={isMobile}>
+          <Outlet />
+        </Main>
+      </Box>
     </Box>
   );
 }
