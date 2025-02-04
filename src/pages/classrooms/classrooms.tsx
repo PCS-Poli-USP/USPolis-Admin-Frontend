@@ -103,7 +103,11 @@ function Classrooms() {
             Cadastrar
           </Button>
         </Flex>
-        <DataTable data={classrooms} columns={columns} />
+        <DataTable
+          data={classrooms}
+          columns={columns}
+          columnPinning={{ left: ['name'], right: ['options'] }}
+        />
       </Box>
     </PageContent>
   );

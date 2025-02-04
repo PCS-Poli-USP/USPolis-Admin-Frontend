@@ -76,7 +76,7 @@ export default function EmptyPage() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex' }} width={'100vw'} height={'100vh'}>
       <AppBar position='fixed' open={open} isMobile={isMobile}>
         <DrawerNavBar
           open={open}
@@ -109,9 +109,11 @@ export default function EmptyPage() {
         </DrawerHeader>
         <DrawerBody onClose={handleDrawerClose} />
       </Drawer>
-      <Main open={open} isMobile={isMobile}>
-        <Outlet />
-      </Main>
+      <Box width={isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`}>
+        <Main open={open} isMobile={isMobile}>
+          <Outlet />
+        </Main>
+      </Box>
     </Box>
   );
 }

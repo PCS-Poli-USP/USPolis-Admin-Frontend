@@ -17,6 +17,7 @@ interface CustomCalendarProps {
   events: Event[];
   resources: Resource[];
   hasFilter: boolean;
+  hasBuildingFilter: boolean;
   update: (start: string, end: string) => Promise<void>;
   date: string;
   setDate: (date: string) => void;
@@ -37,6 +38,7 @@ function CustomCalendar({
   events,
   resources,
   hasFilter,
+  hasBuildingFilter,
   update,
   date,
   setDate,
@@ -208,7 +210,7 @@ function CustomCalendar({
         displayEventTime
         resources={formatedResources}
         filterResourcesWithEvents={hasFilter}
-        resourcesInitiallyExpanded={true}
+        resourcesInitiallyExpanded={hasBuildingFilter}
         resourceAreaWidth='150px'
         resourceAreaHeaderContent='Prédios / Salas'
         datesSet={handleDatesSet}

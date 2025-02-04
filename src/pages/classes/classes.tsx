@@ -1,4 +1,11 @@
-import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Spacer,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
 
 import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
 import EditEventModal from 'components/allocation/editEvent.modal';
@@ -63,7 +70,7 @@ function Classes() {
     onOpen: onOpenMultipleEdit,
     onClose: onCloseMultipleEdit,
   } = useDisclosure();
-  
+
   const subjectsService = useSubjectsService();
 
   const [selectedClass, setSelectedClass] = useState<ClassResponse>();
@@ -229,21 +236,6 @@ function Classes() {
           }}
         />
       )}
-      {/* 
-      <JupiterCrawlerModal
-        isOpen={isOpenJupiterModal}
-        onClose={onCloseJupiterModal}
-        successSubjects={successSubjects}
-        failedSubjects={failedSubjects}
-      /> */}
-      {/* <MultipleEditModal
-        isOpen={isOpenMultipleEdit}
-        onClose={() => {
-          onCloseMultipleEdit();
-        }}
-        classes={getCheckedClasses()}
-        onRefresh={() => fetchData()}
-      /> */}
       <Flex align='center'>
         <Text fontSize='4xl' mb={4}>
           Turmas
@@ -253,15 +245,7 @@ function Classes() {
           Adicionar Turma
         </Button>
         <JupiterCrawlerPopover onSave={handleCrawlerSave} />
-        {/* <Button
-          ml={2}
-          colorScheme={'blue'}
-          onClick={() => {
-            onOpenMultipleEdit();
-          }}
-        >
-          Editar selecionados
-        </Button> */}
+
         <Button
           ml={2}
           colorScheme={'red'}
@@ -280,12 +264,20 @@ function Classes() {
         isOpen={isOpenDeleteSelectedClasses}
         onClose={onCloseDeleteSelectedClasses}
         onConfirm={handleDeleteSelectedClasses}
-        title={`Deseja remover todas as turmas selecionadas`}
-        warningText='ATENÇÃO: QUALQUER TURMA SELECIONADA SERÁ PERDIDA!'
+        title={`Deseja remover todas as turmas selecionadas (${
+          checkMap.filter((val) => val).length
+        })`}
+        warningText={`ATENÇÃO: QUALQUER TURMA SELECIONADA SERÁ PERDIDA! ${
+          checkMap.filter((val) => val).length
+        } TURMAS SERÃO REMOVIDAS!`}
       />
       <DataTable
         data={classes.map((cls, index) => ({ ...cls, index: index }))}
         columns={columns}
+        columnPinning={{
+          left: ['mark', 'subject_code', 'code'],
+          right: ['options'],
+        }}
       />
     </PageContent>
   );

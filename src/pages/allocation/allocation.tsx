@@ -27,7 +27,6 @@ function Allocation() {
     onClose: onCloseSolicitation,
   } = useDisclosure();
 
-  const [hasInitialFilter, setHasInitialFilter] = useState(false);
   const [buildingSearchValue, setBuildingSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
   const [nameSearchValue, setNameSearchValue] = useState('');
@@ -97,13 +96,6 @@ function Allocation() {
     }
     setFilteredEvents(newEvents);
   }
-
-  useEffect(() => {
-    if (!hasInitialFilter && resources.length > 0) {
-      setBuildingSearchValue(resources[0].title);
-      setHasInitialFilter(true);
-    }
-  }, [hasInitialFilter, resources]);
 
   useEffect(() => {
     if (buildingSearchValue) {
@@ -193,6 +185,7 @@ function Allocation() {
               }
               resources={buildingSearchValue ? filteredResources : resources}
               hasFilter={!!classroomSearchValue}
+              hasBuildingFilter={!!buildingSearchValue}
               update={async (start, end) => {
                 if (loadingAllocation) return;
                 await getEvents(start, end);
