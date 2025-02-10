@@ -1,4 +1,4 @@
-import { StyleSheet } from "@react-pdf/renderer";
+import { StyleSheet } from '@react-pdf/renderer';
 
 export const styles = StyleSheet.create({
   body: {
@@ -7,6 +7,13 @@ export const styles = StyleSheet.create({
   header: {
     color: 'red',
     fontSize: 36,
+    fontWeight: 'bold',
+    marginHorizontal: 'auto',
+    marginVertical: 6,
+  },
+  footer: {
+    color: 'black',
+    fontSize: 20,
     fontWeight: 'bold',
     marginHorizontal: 'auto',
     marginVertical: 6,
@@ -28,6 +35,7 @@ export const styles = StyleSheet.create({
   tableRow: {
     margin: 'auto',
     flexDirection: 'row',
+    width: '100%',
   },
   tableColHeader: {
     width: '100%',
@@ -37,15 +45,17 @@ export const styles = StyleSheet.create({
     borderTopWidth: 0,
   },
   tableColWeekDay: {
-    width: '20%',
+    width: '18%',
     borderStyle: 'solid',
+    fontWeight: 'bold',
     borderWidth: 1,
     borderLeftWidth: 0,
     borderTopWidth: 0,
   },
   tableColSchedule: {
-    width: '40%',
+    width: '10%',
     borderStyle: 'solid',
+    fontWeight: 'bold',
     borderWidth: 1,
     borderLeftWidth: 0,
     borderTopWidth: 0,
@@ -61,6 +71,12 @@ export const styles = StyleSheet.create({
     margin: 'auto',
     fontSize: 10,
     paddingVertical: 4,
+  },
+  tableCellEmpty: {
+    margin: 'auto',
+    fontSize: 10,
+    paddingVertical: 4,
+    color: 'red',
   },
   tableCellHeader: {
     margin: 'auto',
