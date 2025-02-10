@@ -17,11 +17,11 @@ const useClassroomsService = () => {
   const axiosCommon = service.default;
   const axios = useAxiosPrivate();
 
-  const getAll = (): Promise<AxiosResponse<Array<ClassroomResponse>>> => {
+  const get = (): Promise<AxiosResponse<Array<ClassroomResponse>>> => {
     return axiosCommon.get('/classrooms');
   };
 
-  const getMyClassrooms = (): Promise<
+  const getMine = (): Promise<
     AxiosResponse<Array<ClassroomResponse>>
   > => {
     return axios.get('/users/my-classrooms');
@@ -79,8 +79,8 @@ const useClassroomsService = () => {
   };
 
   return {
-    getAll,
-    getMyClassrooms,
+    get,
+    getMine,
     getOneFull,
     create,
     deleteById,

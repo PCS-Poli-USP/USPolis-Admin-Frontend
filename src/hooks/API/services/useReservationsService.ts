@@ -13,11 +13,15 @@ const useReservationsService = () => {
   const PREFIX = '/reservations';
   const axios = useAxiosPrivate();
 
-  const list = (): Promise<AxiosResponse<Array<ReservationResponse>>> => {
+  const getMine = (): Promise<AxiosResponse<Array<ReservationResponse>>> => {
+    return axios.get(`/users/my-reservations`);
+  };
+
+  const get = (): Promise<AxiosResponse<Array<ReservationResponse>>> => {
     return axios.get(PREFIX);
   };
 
-  const listFull = (): Promise<
+  const getFull = (): Promise<
     AxiosResponse<Array<ReservationFullResponse>>
   > => {
     return axios.get(`${PREFIX}}/full/`);
@@ -40,7 +44,7 @@ const useReservationsService = () => {
     return axios.put(`${PREFIX}/${id}`, data);
   };
 
-  return { list, listFull, create, deleteById, update };
+  return { getMine, get, getFull, create, deleteById, update };
 };
 
 export default useReservationsService;
