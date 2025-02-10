@@ -21,13 +21,13 @@ const useClassroomsSolicitations = (initialFetch = true) => {
   const getSolicitations = useCallback(async () => {
     setLoading(true);
     await service
-      .list()
+      .get()
       .then((response) => {
         setSolicitations(response.data.sort(sortClassroomSolicitationResponse));
       })
       .catch((error) => {
         console.log(error);
-        showToast('Erro', 'Erro ao carregar solicitações', 'error');
+        showToast('Erro', 'Erro ao carregar as solicitações', 'error');
       })
       .finally(() => {
         setLoading(false);

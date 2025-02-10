@@ -18,15 +18,31 @@ const useClasses = (initialFetch: boolean = true) => {
 
   const showToast = useCustomToast();
 
-  const getClasses = useCallback(async () => {
+  const getAllClasses = useCallback(async () => {
     setLoading(true);
     await service
-      .list()
+      .get()
       .then((response) => {
         setClasses(response.data.sort(sortClassResponse));
       })
       .catch((error) => {
-        showToast('Erro', 'Erro ao carregar turmas', 'error');
+        showToast('Erro', 'Erro ao carregar todas as turmas', 'error');
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [showToast, service]);
+
+  const getClasses = useCallback(async () => {
+    setLoading(true);
+    await service
+      .getMine()
+      .then((response) => {
+        setClasses(response.data.sort(sortClassResponse));
+      })
+      .catch((error) => {
+        showToast('Erro', 'Erro ao carregar suas turmas', 'error');
         console.log(error);
       })
       .finally(() => {
@@ -38,7 +54,7 @@ const useClasses = (initialFetch: boolean = true) => {
     async (subject_id: number) => {
       setLoading(true);
       await service
-        .listBySubject(subject_id)
+        .getBySubject(subject_id)
         .then((response) => {
           setClasses(response.data.sort(sortClassResponse));
         })
@@ -57,7 +73,7 @@ const useClasses = (initialFetch: boolean = true) => {
     async (building_name: string) => {
       setLoading(true);
       await service
-        .listByBuildingName(building_name)
+        .getByBuildingName(building_name)
         .then((response) => {
           setClasses(response.data.sort(sortClassResponse));
         })
@@ -81,7 +97,7 @@ const useClasses = (initialFetch: boolean = true) => {
       setLoading(true);
       let full: ClassFullResponse | undefined = undefined;
       await service
-        .listOneFull(id)
+        .getOneFull(id)
         .then((response) => {
           full = response.data;
         })
@@ -111,7 +127,11 @@ const useClasses = (initialFetch: boolean = true) => {
         })
         .catch((error) => {
           console.log(error);
-          showToast('Erro', `Erro ao criar turma: ${error}`, 'error');
+          showToast(
+            'Erro',
+            `Erro ao criar turma: ${error.response.detail}`,
+            'error',
+          );
         })
         .finally(() => {
           setLoading(false);
@@ -133,7 +153,7 @@ const useClasses = (initialFetch: boolean = true) => {
           console.log(error);
           showToast(
             'Erro',
-            `Erro ao atualizar a turma ${data.code}: ${error}`,
+            `Erro ao atualizar a turma ${data.code}: ${error.response.detail}`,
             'error',
           );
         })
@@ -155,7 +175,11 @@ const useClasses = (initialFetch: boolean = true) => {
           getClasses();
         })
         .catch((error: any) => {
-          showToast('Erro!', 'Erro ao remover turma', 'error');
+          showToast(
+            'Erro!',
+            `Erro ao remover turma: ${error.response.detail}`,
+            'error',
+          );
           console.log(error);
         })
         .finally(() => {
@@ -180,7 +204,11 @@ const useClasses = (initialFetch: boolean = true) => {
           getClasses();
         })
         .catch((error: any) => {
-          showToast('Erro!', 'Erro ao remover turmas', 'error');
+          showToast(
+            'Erro!',
+            `Erro ao remover turma: ${error.response.detail}`,
+            'error',
+          );
           console.log(error);
         })
         .finally(() => {
@@ -199,6 +227,7 @@ const useClasses = (initialFetch: boolean = true) => {
     loading,
     classes,
     getClasses,
+    getAllClasses,
     getClassesBySubject,
     getClassesByBuildingName,
     getClassFull,
