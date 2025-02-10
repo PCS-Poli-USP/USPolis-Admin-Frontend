@@ -67,8 +67,8 @@ const useAxiosPrivate = () => {
           }
         }
 
-        // Caso o erro seja 403, faz o logout
-        if (error.response && error.response.status === 403) {
+        // Caso o erro seja 401, faz o logout
+        if (error.response && error.response.status === 401) {
           alert('Error using access token! Please, login again!');
           context.logout();
           return Promise.reject(error);
