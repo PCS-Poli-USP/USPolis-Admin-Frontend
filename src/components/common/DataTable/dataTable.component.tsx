@@ -109,6 +109,7 @@ export default function DataTable<Data extends object>({
     // eslint-disable-next-line
   }, [table.getState().columnFilters[0]?.id]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function getFilteredData() {
     const filteredData = table.getFilteredRowModel().rows;
     return filteredData;
@@ -119,7 +120,7 @@ export default function DataTable<Data extends object>({
       direction={'column'}
       w={'full'}
       maxW={'calc(100vw - 40px)'}
-      maxH={'calc(100vh - 160px)'}
+      maxH={'calc(100vh - 170px)'}
       gap={'5px'}
     >
       <TableContainer
