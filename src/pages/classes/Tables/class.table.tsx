@@ -41,7 +41,6 @@ export const getClassesColumns = (
   props: ClassesColumnsProps,
 ): ColumnDef<ClassResponse>[] => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { loggedUser } = useContext(appContext);
   const columns: ColumnDef<ClassResponse>[] = [
     {
       id: 'mark',
@@ -270,12 +269,5 @@ export const getClassesColumns = (
       ),
     },
   ];
-  if (loggedUser && loggedUser.is_admin) {
-    columns.unshift({
-      accessorKey: 'id',
-      header: 'Id',
-      maxSize: 50,
-    });
-  }
   return columns;
 };

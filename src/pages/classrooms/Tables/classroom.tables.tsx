@@ -94,15 +94,15 @@ export function getClassroomColumns(
       cell: ({ row }) => (
         <HStack spacing='0px'>
           <Tooltip label='Duplicar Sala'>
-          <IconButton
-            colorScheme='cyan'
-            size='sm'
-            variant='ghost'
-            aria-label='duplicar-sala'
-            icon={<CopyIcon />}
-            onClick={() => props.handleDuplicateClick(row.original)}
-          />
-        </Tooltip>
+            <IconButton
+              colorScheme='cyan'
+              size='sm'
+              variant='ghost'
+              aria-label='duplicar-sala'
+              icon={<CopyIcon />}
+              onClick={() => props.handleDuplicateClick(row.original)}
+            />
+          </Tooltip>
           <Tooltip label='Editar'>
             <IconButton
               colorScheme='yellow'
