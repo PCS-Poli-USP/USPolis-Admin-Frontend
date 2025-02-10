@@ -50,7 +50,6 @@ export namespace WeekDay {
     [WeekDay.SUNDAY]: 'Sunday',
   };
 
-
   const translations: { [key in WeekDay]: string } = {
     [WeekDay.MONDAY]: 'Segunda',
     [WeekDay.TUESDAY]: 'Terça',
@@ -104,6 +103,16 @@ export namespace WeekDay {
       WeekDay.FRIDAY,
       WeekDay.SATURDAY,
       WeekDay.SUNDAY,
+    ];
+  }
+
+  export function getShortValues(): WeekDay[] {
+    return [
+      WeekDay.MONDAY,
+      WeekDay.TUESDAY,
+      WeekDay.WEDNESDAY,
+      WeekDay.THURSDAY,
+      WeekDay.FRIDAY,
     ];
   }
 

@@ -76,7 +76,11 @@ function Subjects() {
           Cadastrar
         </Button>
       </Flex>
-      <DataTable data={subjects} columns={columns} />
+      <DataTable
+        data={subjects}
+        columns={columns}
+        columnPinning={{ left: ['id', 'code'], right: ['options'] }}
+      />
       <SubjectModal
         buildings={buildings}
         isOpen={isOpenRegisterSubjectModal}

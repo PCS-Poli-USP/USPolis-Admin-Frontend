@@ -17,6 +17,18 @@ import AllocationHeader from './AllocationHeader';
 import moment from 'moment';
 import { Resource } from 'models/http/responses/allocation.response.models';
 
+type ViewOption = {
+  value: string;
+  label: string;
+};
+
+const viewOptions: ViewOption[] = [
+  { value: 'resourceTimelineDay', label: 'Sala / Dia' },
+  { value: 'resourceTimelineWeek', label: 'Sala / Semana' },
+  { value: 'timeGridDay', label: 'Dia' },
+  { value: 'timeGridWeek', label: 'Geral' },
+];
+
 function Allocation() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { loading, setLoading, loggedUser } = useContext(appContext);
@@ -35,6 +47,8 @@ function Allocation() {
   const [currentDate, setCurrentDate] = useState<string>(
     moment().format('YYYY-MM-DD'),
   );
+
+  const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[0]);
 
   const {
     loading: loadingAllocation,
@@ -129,6 +143,10 @@ function Allocation() {
     classSearchValue,
   ]);
 
+  useEffect(() => {
+    if (isMobile) setCurrentView(viewOptions[2]);
+  }, [isMobile]);
+
   return (
     <PageContent>
       <Loading
@@ -192,6 +210,9 @@ function Allocation() {
               }}
               date={currentDate}
               setDate={setCurrentDate}
+              view={currentView}
+              setView={setCurrentView}
+              isMobile={isMobile}
             />
           </Skeleton>
         </GridItem>

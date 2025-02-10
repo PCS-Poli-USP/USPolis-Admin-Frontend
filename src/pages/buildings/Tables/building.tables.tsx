@@ -12,6 +12,11 @@ export const getBuildingsColumns = (
   props: BuildingsColumnsProps,
 ): ColumnDef<BuildingResponse>[] => [
   {
+    accessorKey: 'id',
+    header: 'ID',
+    maxSize: 40,
+  },
+  {
     accessorKey: 'name',
     header: 'Nome',
   },

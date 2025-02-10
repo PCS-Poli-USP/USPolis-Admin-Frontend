@@ -38,7 +38,7 @@ function HeaderPDFOptions({ buildings }: PDFOptionsProps) {
           Baixar
         </Button>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent borderWidth={'2px'}>
         <PopoverCloseButton />
         <PopoverHeader>Baixe alocações e relatórios</PopoverHeader>
         <Stack
@@ -67,7 +67,7 @@ function HeaderPDFOptions({ buildings }: PDFOptionsProps) {
           </Box>
 
           <Heading size={'md'} ml={'5px'}>
-            Alocações
+            Alocações gerais
           </Heading>
 
           <Box w={'full'}>
@@ -103,6 +103,15 @@ function HeaderPDFOptions({ buildings }: PDFOptionsProps) {
               </Button>
             </PDFDownloadLink>
           </Box>
+
+          {/* <Heading size={'md'} ml={'5px'}>
+            Alocações semanais
+          </Heading>
+
+          <Box w={'full'}>
+            <Text>Selecione uma semana:</Text>
+            <Input type='date' disabled={!selectedBuilding} />
+          </Box> */}
         </Stack>
       </PopoverContent>
     </Popover>
