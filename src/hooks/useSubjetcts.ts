@@ -15,15 +15,30 @@ const useSubjects = () => {
 
   const showToast = useCustomToast();
 
-  const getSubjects = useCallback(async () => {
+  const getAllSubjects = useCallback(async () => {
     setLoading(true);
     await service
-      .list()
+      .get()
       .then((response) => {
         setSubjects(response.data.sort(sortSubjectsResponse));
       })
       .catch((error) => {
-        showToast('Erro', 'Erro ao carregar Disciplinas', 'error');
+        showToast('Erro', 'Erro ao carregar todas disciplinas', 'error');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [showToast, service]);
+
+  const getSubjects = useCallback(async () => {
+    setLoading(true);
+    await service
+      .getMine()
+      .then((response) => {
+        setSubjects(response.data.sort(sortSubjectsResponse));
+      })
+      .catch((error) => {
+        showToast('Erro', 'Erro ao carregar suas disciplinas', 'error');
       })
       .finally(() => {
         setLoading(false);
@@ -99,12 +114,13 @@ const useSubjects = () => {
 
   useEffect(() => {
     getSubjects();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
     loading,
     subjects,
+    getAllSubjects,
     getSubjects,
     createSubject,
     updateSubject,

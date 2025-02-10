@@ -11,8 +11,12 @@ const useSubjectsService = () => {
   const PREFIX = '/subjects';
   const axios = useAxiosPrivate();
 
-  const list = (): Promise<AxiosResponse<Array<SubjectResponse>>> => {
+  const get = (): Promise<AxiosResponse<Array<SubjectResponse>>> => {
     return axios.get(PREFIX);
+  };
+
+  const getMine = (): Promise<AxiosResponse<Array<SubjectResponse>>> => {
+    return axios.get(`/users/my-subjects`);
   };
 
   const create = (
@@ -41,7 +45,7 @@ const useSubjectsService = () => {
     });
   };
 
-  return { list, create, deleteById, update, crawl };
+  return { get, getMine, create, deleteById, update, crawl };
 };
 
 export default useSubjectsService;

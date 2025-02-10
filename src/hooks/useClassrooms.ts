@@ -23,12 +23,12 @@ const useClassrooms = (initialFetch: boolean = true) => {
   const getAllClassrooms = useCallback(async () => {
     setLoading(true);
     await service
-      .getAll()
+      .get()
       .then((response) => {
         setClassrooms(response.data.sort(sortClassroomResponse));
       })
       .catch((error) => {
-        showToast('Erro', 'Erro ao carregar salas', 'error');
+        showToast('Erro', 'Erro ao carregar todas as salas', 'error');
         console.log(error);
       })
       .finally(() => {
@@ -39,12 +39,12 @@ const useClassrooms = (initialFetch: boolean = true) => {
   const getClassrooms = useCallback(async () => {
     setLoading(true);
     await service
-      .getMyClassrooms()
+      .getMine()
       .then((response) => {
         setClassrooms(response.data.sort(sortClassroomResponse));
       })
       .catch((error) => {
-        showToast('Erro', 'Erro ao carregar salas', 'error');
+        showToast('Erro', 'Erro ao carregar suas salas', 'error');
       })
       .finally(() => {
         setLoading(false);

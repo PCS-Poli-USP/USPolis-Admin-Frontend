@@ -13,33 +13,38 @@ const useClassesService = () => {
   const PREFIX = '/classes';
   const axios = useAxiosPrivate();
 
-  const list = (): Promise<AxiosResponse<Array<ClassResponse>>> => {
+  const get = (): Promise<AxiosResponse<Array<ClassResponse>>> => {
     return axios.get(PREFIX);
   };
 
-  const listBySubject = (
+  const getBySubject = (
     subject_id: number,
   ): Promise<AxiosResponse<Array<ClassResponse>>> => {
     return axios.get(`${PREFIX}/subject/${subject_id}`);
   };
 
-  const listByBuildingName = (
+  const getByBuildingName = (
     building_name: string,
   ): Promise<AxiosResponse<Array<ClassResponse>>> => {
     return axios.get(`${PREFIX}/building/${building_name}`);
   };
 
-  const listFull = (): Promise<AxiosResponse<Array<ClassFullResponse>>> => {
+  const getFull = (): Promise<AxiosResponse<Array<ClassFullResponse>>> => {
     return axios.get(`${PREFIX}/full/`);
   };
 
-  const listOneFull = (
+  const getOneFull = (
     id: number,
   ): Promise<AxiosResponse<ClassFullResponse>> => {
     return axios.get(`${PREFIX}/${id}/full/`);
   };
+
   const getById = (id: number): Promise<AxiosResponse<ClassResponse>> => {
     return axios.get(`${PREFIX}/${id}`);
+  };
+
+  const getMine = (): Promise<AxiosResponse<Array<ClassResponse>>> => {
+    return axios.get(`/users/my-classes`);
   };
 
   const create = (data: CreateClass): Promise<AxiosResponse<ClassResponse>> => {
@@ -68,12 +73,13 @@ const useClassesService = () => {
   };
 
   return {
-    list,
-    listBySubject,
-    listByBuildingName,
-    listFull,
-    listOneFull,
+    get,
+    getBySubject,
+    getByBuildingName,
+    getFull,
+    getOneFull,
     getById,
+    getMine,
     create,
     update,
     deleteById,

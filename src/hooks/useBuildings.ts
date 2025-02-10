@@ -38,7 +38,7 @@ const useBuildings = (initialFetch = true) => {
         setBuildings(response.data.sort(sortBuildingsResponse));
       })
       .catch((error) => {
-        showToast('Erro', 'Erro ao carregar prédios', 'error');
+        showToast('Erro', 'Erro ao carregar seus prédios', 'error');
       })
       .finally(() => {
         setLoading(false);

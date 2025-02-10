@@ -15,15 +15,38 @@ const useReservations = () => {
 
   const showToast = useCustomToast();
 
-  const getReservations = useCallback(async () => {
+  const getAllReservations = useCallback(async () => {
     setLoading(true);
     await service
-      .list()
+      .get()
       .then((response) => {
         setReservations(response.data.sort(sortReservationsResponse));
       })
       .catch((error) => {
-        showToast('Erro', 'Erro ao carregar reservas', 'error');
+        showToast(
+          'Erro',
+          `Erro ao carregar todas reservas: ${error.response.detail}`,
+          'error',
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [showToast, service]);
+
+  const getReservations = useCallback(async () => {
+    setLoading(true);
+    await service
+      .getMine()
+      .then((response) => {
+        setReservations(response.data.sort(sortReservationsResponse));
+      })
+      .catch((error) => {
+        showToast(
+          'Erro',
+          `Erro ao carregar suas reservas: ${error.response.detail}`,
+          'error',
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -100,12 +123,13 @@ const useReservations = () => {
 
   useEffect(() => {
     getReservations();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
     loading,
     reservations,
+    getAllReservations,
     getReservations,
     createReservation,
     updateReservation,
