@@ -1,4 +1,4 @@
-import { Box, useDisclosure, useMediaQuery } from '@chakra-ui/react';
+import { Box, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
@@ -13,6 +13,17 @@ import { Resource, Event } from '../interfaces/allocation.interfaces';
 import EventModal from './EventModal/event.modal';
 import moment from 'moment';
 
+type ViewOption = {
+  value: string;
+  label: string;
+};
+
+const viewOptions: ViewOption[] = [
+  { value: 'resourceTimelineDay', label: 'Sala / Dia' },
+  { value: 'resourceTimelineWeek', label: 'Sala / Semana' },
+  { value: 'timeGridDay', label: 'Dia' },
+  { value: 'timeGridWeek', label: 'Geral' },
+];
 interface CustomCalendarProps {
   events: Event[];
   resources: Resource[];
@@ -21,18 +32,10 @@ interface CustomCalendarProps {
   update: (start: string, end: string) => Promise<void>;
   date: string;
   setDate: (date: string) => void;
+  view: ViewOption;
+  setView: (view: ViewOption) => void;
+  isMobile: boolean;
 }
-
-type ViewOption = {
-  value: string;
-  label: string;
-};
-
-const options: ViewOption[] = [
-  { value: 'resourceTimelineDay', label: 'Sala / Dia' },
-  { value: 'timeGridDay', label: 'Dia' },
-  { value: 'timeGridWeek', label: 'Geral' },
-];
 
 function CustomCalendar({
   events,
@@ -42,10 +45,11 @@ function CustomCalendar({
   update,
   date,
   setDate,
+  isMobile,
+  view,
+  setView,
 }: CustomCalendarProps) {
-  const [isMobile] = useMediaQuery('(max-width: 800px)');
   const calendarRef = useRef<FullCalendar>(null!);
-  const [currentView, setCurrentView] = useState<ViewOption>(options[0]);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -70,16 +74,6 @@ function CustomCalendar({
     calendarAPI.changeView(view);
   }
 
-  useEffect(() => {
-    if (isMobile) {
-      setCurrentView(options[1]);
-      setCalendarView(options[1].value);
-    } else {
-      setCurrentView(options[0]);
-      setCalendarView(options[0].value);
-    }
-  }, [isMobile]);
-
   const handleDatesSet = async (info: DatesSetArg) => {
     const actual = moment(info.startStr).format('YYYY-MM-DD');
     if (date !== actual) {
@@ -87,6 +81,22 @@ function CustomCalendar({
       update(actual, actual);
     }
   };
+
+  const goNext = () => {
+    if (calendarRef.current) {
+      calendarRef.current.getApi().next();
+    }
+  };
+
+  const goPrev = () => {
+    if (calendarRef.current) {
+      calendarRef.current.getApi().prev();
+    }
+  };
+
+  useEffect(() => {
+    setCalendarView(view.value);
+  }, [view]);
 
   const formatedResources = resources.map((res) => {
     if (res.parentId === null) {
@@ -106,11 +116,11 @@ function CustomCalendar({
       <ViewPickerModal
         isOpen={isOpenViewPicker}
         onClose={onCloseViewPicker}
-        options={options}
-        view={currentView}
+        options={viewOptions}
+        view={view}
         onSelectView={(view) => {
-          setCurrentView(view);
-          setCalendarView(view.value);
+          // setCalendarView(view.value);
+          setView(view);
         }}
       />
       <EventModal
@@ -123,7 +133,7 @@ function CustomCalendar({
         ref={calendarRef}
         schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
         plugins={[timeGridPlugin, resourceTimelinePlugin, rrulePlugin]}
-        initialView={isMobile ? 'timeGridDay' : 'resourceTimelineDay'}
+        initialView={view.value}
         locale='pt-br'
         height='auto'
         slotMinTime='07:00'
@@ -133,28 +143,48 @@ function CustomCalendar({
             ? {
                 left: 'goToView goToDate',
                 center: 'title',
-                right: 'prev,next',
+                right: 'customPrev,customNext',
               }
             : {
-                left: 'resourceTimelineDay timeGridDay timeGridWeek',
+                left: 'resourceTLDayView resourceTLWeekView timeGridDayView timeGridWeekView',
                 center: 'title',
-                right: 'goToDate prev,next today',
+                right: 'goToView goToDate customPrev,customNext today',
               }
         }
-        buttonText={{
-          resourceTimelineDay: 'Sala / Dia',
-          timeGridDay: 'Dia',
-          timeGridWeek: 'Geral',
-          today: 'Hoje',
-        }}
         customButtons={{
           goToView: {
-            text: currentView.label,
-            click: (_ev, _el) => onOpenViewPicker(),
+            text: isMobile ? view.label : 'Escolher visualização',
+            click: (_ev, _el) => {
+              onOpenViewPicker();
+            },
+          },
+          resourceTLDayView: {
+            text: 'Sala / Dia',
+            click: (_ev, _el) => setView(viewOptions[0]),
+          },
+          resourceTLWeekView: {
+            text: 'Sala / Semana',
+            click: (_ev, _el) => setView(viewOptions[1]),
+          },
+          timeGridDayView: {
+            text: 'Dia',
+            click: (_ev, _el) => setView(viewOptions[2]),
+          },
+          timeGridWeekView: {
+            text: 'Geral',
+            click: (_ev, _el) => setView(viewOptions[3]),
           },
           goToDate: {
             text: isMobile ? 'Data' : 'Escolher data',
             click: (_ev, _el) => onOpen(),
+          },
+          customPrev: {
+            text: '<',
+            click: goPrev, // Usa a função customizada
+          },
+          customNext: {
+            text: '>',
+            click: goNext, // Usa a função customizada
           },
         }}
         views={{
@@ -180,6 +210,23 @@ function CustomCalendar({
               : {
                   day: '2-digit',
                   month: 'short',
+                  year: 'numeric',
+                },
+          },
+          resouceTimeLineWeek: {
+            slotDuration: '01:00',
+            duration: { days: 5 },
+            slotLabelFormat: { hour: 'numeric', minute: 'numeric' },
+            eventTimeFormat: { hour: '2-digit', minute: '2-digit' },
+            titleFormat: isMobile
+              ? {
+                  day: '2-digit',
+                  month: 'short',
+                }
+              : {
+                  weekday: 'long',
+                  day: '2-digit',
+                  month: 'long',
                   year: 'numeric',
                 },
           },
