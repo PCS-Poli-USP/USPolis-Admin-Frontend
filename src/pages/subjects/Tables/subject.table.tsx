@@ -1,9 +1,7 @@
 import { CopyIcon } from '@chakra-ui/icons';
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { appContext } from 'context/AppContext';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
-import { useContext } from 'react';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import {
   datetimeFormatter,
@@ -21,7 +19,6 @@ export const getSubjectColumns = (
   props: SubjectColumnsProps,
 ): ColumnDef<SubjectResponse>[] => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { loggedUser } = useContext(appContext);
   const columns: ColumnDef<SubjectResponse>[] = [
     {
       accessorKey: 'code',
@@ -135,12 +132,5 @@ export const getSubjectColumns = (
       ),
     },
   ];
-  if (loggedUser && loggedUser.is_admin) {
-    columns.unshift({
-      accessorKey: 'id',
-      header: 'ID',
-      maxSize: 50,
-    });
-  }
   return columns;
 };
