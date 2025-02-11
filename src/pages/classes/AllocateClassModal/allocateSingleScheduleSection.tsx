@@ -91,6 +91,7 @@ const AllocateSingleScheduleSection = forwardRef<
 
     useEffect(() => {
       if (
+        !schedule.building_id &&
         !hasSetInitialBuilding &&
         initialBuildingId &&
         allowedBuildings.length > 0
@@ -102,11 +103,11 @@ const AllocateSingleScheduleSection = forwardRef<
         );
         setHasSetInitialBuilding(true);
       }
-    }, [hasSetInitialBuilding, initialBuildingId, allowedBuildings]);
+    }, [schedule, hasSetInitialBuilding, initialBuildingId, allowedBuildings]);
 
     useEffect(() => {
       if (!schedule) return;
-      if (resetClassroomsOnceLoaded) {
+      if (resetClassroomsOnceLoaded && classrooms.length > 0) {
         setSelectedClassroom(
           classrooms.find(
             (classroom) => classroom.id === schedule.classroom_id,
@@ -131,6 +132,7 @@ const AllocateSingleScheduleSection = forwardRef<
     }, [selectedBuilding, schedule]);
 
     function reset() {
+      console.log('Reseting...');
       setRemoveAllocation(false);
       if (schedule) {
         if (schedule.classroom_id) {
