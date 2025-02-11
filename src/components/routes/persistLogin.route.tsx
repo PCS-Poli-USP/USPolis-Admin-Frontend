@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
 import { appContext } from 'context/AppContext';
 import { AuthHttpService } from 'services/auth/auth.service';
@@ -8,6 +8,7 @@ const OVERRIDE = process.env.REACT_APP_OVERRIDE_AUTH;
 
 const PersistLogin = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
   const navigate = useNavigate();
   const service = new AuthHttpService();
   const context = useContext(appContext);
@@ -32,9 +33,9 @@ const PersistLogin = () => {
           context.setIsAuthenticated(true);
         });
       } catch (error) {
-        console.log(error);
         context.logout();
-        navigate('/auth');
+        if (location.pathname !== '/index') navigate('/auth');
+        else setIsLoading(false);
       }
     };
 
