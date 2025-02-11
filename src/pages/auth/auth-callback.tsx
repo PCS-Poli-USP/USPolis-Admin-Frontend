@@ -1,3 +1,8 @@
+/*
+* Page that is called on callback from google login.
+* here, our API is called for getting and setting ACCESS and REFRESH TOKENS
+*/
+
 import { appContext } from 'context/AppContext';
 import { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -32,8 +37,9 @@ const AuthCallbackPage = () => {
     console.log('Redirecting with code:', code);
     const response = await authService.getTokens(code);
     const { access_token, refresh_token } = response.data;
+    // setAccessToken(access_token);
+    setAccessToken("Token Invalido!");
     console.log('Access token:', access_token);
-    setAccessToken(access_token);
     setIsAuthenticated(true);
     localStorage.setItem('refresh_token', refresh_token);
     // await getSelfFromBackend(); // Not use like this, let useEffect in appContext fetch the user (axios interceptor isn`t fast enough to get the token)

@@ -1,8 +1,16 @@
+/*
+* Login page.
+* here, we redirect the user to google domain
+* google will redirect the user back to our domain at /auth-callback (see the other component)
+*/
+
 import { Heading, HStack, Text, Image, Button } from '@chakra-ui/react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { Card, CardBody, Flex } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import Logo from 'assets/uspolis.logo.png';
+
+const GOOGLE_LOGO_URL='https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA'
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -55,7 +63,7 @@ const AuthPage = () => {
             <Button onClick={() => login()}>
               <HStack gap={2}>
                 <Image
-                  src='https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA'
+                  src={GOOGLE_LOGO_URL}
                   width={5}
                 />
                 <span>Google Sign In</span>

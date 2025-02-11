@@ -49,10 +49,10 @@ export default function AppContextProvider({
       setLoggedUser(self.data);
       setIsAuthenticated(true);
     } catch (e: any) {
-      if (e.response.status === 403) {
+      if (e?.response.status === 403) {
         throw new Error('User with this email not registered');
       }
-      if (e.response.status === 401 && e.response.detail === 'Token expired') {
+      if (e?.response.status === 401 && e.response.detail === 'Token expired') {
         logout();
       }
     }
@@ -73,7 +73,7 @@ export default function AppContextProvider({
       getSelfFromBackend();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken, loggedUser]);
+  }, [accessToken]);
 
   return (
     <appContext.Provider

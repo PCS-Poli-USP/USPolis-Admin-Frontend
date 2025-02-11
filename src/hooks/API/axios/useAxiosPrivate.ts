@@ -12,7 +12,6 @@ const useAxiosPrivate = () => {
     if (!context.accessToken) {
       return;
     }
-    // Ejetar interceptores antigos antes de adicionar novos
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config) => {
         // Use o accessToken mais recente do contexto
@@ -27,6 +26,13 @@ const useAxiosPrivate = () => {
       (error) => Promise.reject(error),
     );
 
+    /*
+    * Intention:
+    * Refresh the token, and then retry the request
+    * 
+    * Solution until now:
+    * refresh token and reject the promise
+    */
     const responseIntercept = axiosPrivate.interceptors.response.use(
       (response) => {
         return response;
@@ -38,6 +44,7 @@ const useAxiosPrivate = () => {
           error.response.status === 401 &&
           !originalRequest._retry
         ) {
+          console.log("Interceptando 401...")
           originalRequest._retry = true; // Prevent looping retries
           const refreshToken: string | null =
             localStorage.getItem('refresh_token');
@@ -53,25 +60,19 @@ const useAxiosPrivate = () => {
             const newAccessToken = response.data.access_token;
             context.setAccessToken(newAccessToken);
 
-            originalRequest.headers[
-              'Authorization'
-            ] = `Bearer ${newAccessToken}`;
+            // originalRequest.headers[
+            //   'Authorization'
+            // ] = `Bearer ${newAccessToken}`;
 
-            const retryResponse = await axiosPrivate(originalRequest);
-            return retryResponse;
+            // const retryResponse = await axiosPrivate(originalRequest);
+
+            return Promise.reject();
           } catch (refreshError) {
             console.error('Error refreshing token!', refreshError);
             alert('Error refreshing token! Please, login again!');
             context.logout();
             return Promise.reject(error);
           }
-        }
-
-        // Caso o erro seja 401, faz o logout
-        if (error.response && error.response.status === 401) {
-          alert('Error using access token! Please, login again!');
-          context.logout();
-          return Promise.reject(error);
         }
 
         return Promise.reject(error); // Retorna erro caso não seja 401 ou 403
