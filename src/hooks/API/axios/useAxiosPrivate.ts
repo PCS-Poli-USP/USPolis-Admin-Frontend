@@ -14,7 +14,11 @@ const useAxiosPrivate = () => {
     }
     // Ejetar interceptores antigos antes de adicionar novos
     const requestIntercept = axiosPrivate.interceptors.request.use(
-      (config) => {
+      (config: any) => {
+        // If request is being retried, don't add the context acessToken, the request already has it and the context is`nt updated yet
+        if (config._retry) {
+          return config;
+        }
         // Use o accessToken mais recente do contexto
         if (context.accessToken) {
           if (!config.headers) {
@@ -31,7 +35,7 @@ const useAxiosPrivate = () => {
       (response) => {
         return response;
       },
-      async (error) => {
+      async (error: any) => {
         const originalRequest = error.config;
         if (
           error.response &&
@@ -44,6 +48,7 @@ const useAxiosPrivate = () => {
 
           // Se não houver refresh token, remover e retornar erro
           if (!refreshToken) {
+            console.log('No refresh token found!');
             localStorage.removeItem('refresh_token');
             return Promise.reject(error);
           }
@@ -51,30 +56,24 @@ const useAxiosPrivate = () => {
           try {
             const response = await authHttpService.refreshToken(refreshToken);
             const newAccessToken = response.data.access_token;
+
+            // If the error is due to getSelf not set acessToken in context because this will trigger a duplicated request
             context.setAccessToken(newAccessToken);
 
             originalRequest.headers[
               'Authorization'
             ] = `Bearer ${newAccessToken}`;
-
             const retryResponse = await axiosPrivate(originalRequest);
             return retryResponse;
-          } catch (refreshError) {
-            console.error('Error refreshing token!', refreshError);
+          } catch (refreshError: any) {
+            console.log('Error refreshing access token!', refreshError);
             alert('Error refreshing token! Please, login again!');
             context.logout();
             return Promise.reject(error);
           }
         }
 
-        // Caso o erro seja 401, faz o logout
-        if (error.response && error.response.status === 401) {
-          alert('Error using access token! Please, login again!');
-          context.logout();
-          return Promise.reject(error);
-        }
-
-        return Promise.reject(error); // Retorna erro caso não seja 401 ou 403
+        return Promise.reject(error); // Retorna erro caso não seja 401
       },
     );
 

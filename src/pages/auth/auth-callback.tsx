@@ -32,7 +32,6 @@ const AuthCallbackPage = () => {
     console.log('Redirecting with code:', code);
     const response = await authService.getTokens(code);
     const { access_token, refresh_token } = response.data;
-    console.log('Access token:', access_token);
     setAccessToken(access_token);
     setIsAuthenticated(true);
     localStorage.setItem('refresh_token', refresh_token);

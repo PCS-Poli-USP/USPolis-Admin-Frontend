@@ -36,6 +36,7 @@ export default function AppContextProvider({
   children,
 }: React.PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(false);
+  const [loadingUser, setLoadingUser] = useState(false);
   const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
   const [accessToken, setAccessToken] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -45,6 +46,7 @@ export default function AppContextProvider({
 
   async function getSelfFromBackend() {
     try {
+      setLoadingUser(true);
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
       setIsAuthenticated(true);
@@ -53,8 +55,11 @@ export default function AppContextProvider({
         throw new Error('User with this email not registered');
       }
       if (e.response.status === 401 && e.response.detail === 'Token expired') {
+        console.log('Token expired, logging out... (from getSelf)');
         logout();
       }
+    } finally {
+      setLoadingUser(false);
     }
   }
 
@@ -69,11 +74,11 @@ export default function AppContextProvider({
   }
 
   useEffect(() => {
-    if (accessToken && !loggedUser) {
+    if (accessToken && !loggedUser && !loadingUser) {
       getSelfFromBackend();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken, loggedUser]);
+  }, [accessToken, loggedUser, loadingUser]);
 
   return (
     <appContext.Provider
