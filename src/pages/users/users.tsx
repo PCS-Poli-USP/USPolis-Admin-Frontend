@@ -15,7 +15,7 @@ import { UpdateUser } from 'models/http/requests/user.request.models';
 import useUsersService from 'hooks/API/services/useUsersService';
 
 const Users = () => {
-  const { setLoading } = useContext(appContext);
+  const { loading, setLoading } = useContext(appContext);
   const usersService = useUsersService();
 
   const [users, setUsers] = useState<UserResponse[]>([]);
@@ -170,7 +170,7 @@ const Users = () => {
           Usuários
         </C.Text>
       </C.Flex>
-      <DataTable columns={columns} data={users} />
+      <DataTable loading={loading} columns={columns} data={users} />
       <EditUserModal
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}

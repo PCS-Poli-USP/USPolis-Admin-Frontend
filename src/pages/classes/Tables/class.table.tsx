@@ -23,8 +23,6 @@ import {
   FilterNumber,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
-import { useContext } from 'react';
-import { appContext } from 'context/AppContext';
 
 interface ClassesColumnsProps {
   handleCheckAllClick: (data: Row<ClassResponse>[], value: boolean) => void;
@@ -188,8 +186,20 @@ export const getClassesColumns = (
       ),
     },
     {
+      accessorKey: 'vacancies',
+      header: 'Vagas',
+      maxSize: 100,
+      filterFn: FilterNumber,
+    },
+    {
       accessorKey: 'subscribers',
-      header: 'Nº Alunos',
+      header: 'Inscritos',
+      maxSize: 100,
+      filterFn: FilterNumber,
+    },
+    {
+      accessorKey: 'pendings',
+      header: 'Pendentes',
       maxSize: 100,
       filterFn: FilterNumber,
     },

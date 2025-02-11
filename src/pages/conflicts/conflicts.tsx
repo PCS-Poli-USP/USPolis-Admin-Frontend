@@ -7,6 +7,12 @@ import { AllocateClassModal } from 'pages/classes/AllocateClassModal';
 import { Collapsable } from 'components/common/Collapsable';
 import useConflictsService from 'hooks/API/services/useConflictsService';
 import useCustomToast from 'hooks/useCustomToast';
+import Select from 'react-select';
+
+type Option = {
+  value: string;
+  label: string;
+};
 
 const ConflictsPage = () => {
   const showToast = useCustomToast();
@@ -14,6 +20,7 @@ const ConflictsPage = () => {
   const conflictsService = useConflictsService();
 
   const [conflicts, setConflicts] = useState<Conflict[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [buildingNames, setBuildingNames] = useState<string[] | null>(null);
   const [selectedBuildingName, setSelectedBuildingName] = useState<string>('');
   const [isOpenAllocate, setIsOpenAllocate] = useState<boolean>(false);
@@ -29,6 +36,7 @@ const ConflictsPage = () => {
   }, [conflicts]);
 
   function fetchData() {
+    setLoading(true);
     conflictsService
       .list()
       .then((res) => {
@@ -37,6 +45,9 @@ const ConflictsPage = () => {
       .catch((err) => {
         console.error(err);
         showToast('Erro', 'Erro ao carregar conflitos', 'error');
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 
@@ -49,16 +60,19 @@ const ConflictsPage = () => {
         <C.Flex direction={'row'} gap={4} mb={4}>
           <C.Flex direction={'column'} flex={1}>
             <C.Text fontSize={'md'}>Prédio:</C.Text>
-            <C.Select
-              placeholder='Selecione o prédio'
-              onChange={(e) => setSelectedBuildingName(e.target.value)}
-            >
-              {buildingNames?.map((buildingName) => (
-                <option key={buildingName} value={buildingName}>
-                  {buildingName}
-                </option>
-              ))}
-            </C.Select>
+            <Select
+              placeholder={'Selecione o prédio'}
+              options={
+                buildingNames
+                  ? buildingNames.map((it) => ({ value: it, label: it }))
+                  : []
+              }
+              onChange={(e: Option | null) => {
+                if (e) setSelectedBuildingName(e.value);
+                else setSelectedBuildingName('');
+              }}
+              isLoading={loading}
+            />
           </C.Flex>
         </C.Flex>
         <C.Flex direction={'column'}>
