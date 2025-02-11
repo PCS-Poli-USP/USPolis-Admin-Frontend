@@ -6,11 +6,20 @@ import {
   Text,
   Link,
   Spacer,
+  Menu,
+  MenuButton,
+  Icon,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
 import Logo from 'assets/uspolis.logo.png';
+import { appContext } from 'context/AppContext';
+import { useContext } from 'react';
+import { FaUser } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function MobileHeader() {
+  const context = useContext(appContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -54,21 +63,7 @@ function MobileHeader() {
       >
         <Button
           // as={'a'}
-          variant={'solid'}
-          colorScheme={'teal'}
-          size={'md'}
-          onClick={() => {
-            navigate('/auth', {
-              replace: true,
-              state: { from: location },
-            });
-          }}
-        >
-          Entrar
-        </Button>
-        <Text fontSize={'3xl'}>|</Text>
-        <Button
-          // as={'a'}
+          ml={'50px'}
           variant={'link'}
           color={'teal'}
           _hover={{
@@ -85,6 +80,52 @@ function MobileHeader() {
         >
           Mapa de Salas
         </Button>
+        <Text fontSize={'3xl'}>|</Text>
+        {context.loggedUser ? (
+          <Menu>
+            <MenuButton
+              as={Button}
+              rounded={'full'}
+              variant={'link'}
+              cursor={'pointer'}
+              minW={0}
+              colorScheme='dark'
+            >
+              <Flex alignItems={'center'} gap='1'>
+                <Text
+                  textColor={'uspolis.blue'}
+                  overflow={'hidden'}
+                  textOverflow={'ellipsis'}
+                  maxW={'100px'}
+                >
+                  {context.loggedUser.name.split(' ')[0]}
+                </Text>
+                <Icon as={FaUser} />
+              </Flex>
+            </MenuButton>
+            <MenuList>
+              <MenuItem onClick={() => context.logout()} color='black'>
+                Sair
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        ) : (
+          <Button
+            hidden={context.isAuthenticated}
+            // as={'a'}
+            variant={'solid'}
+            colorScheme={'teal'}
+            size={'md'}
+            onClick={() => {
+              navigate('/auth', {
+                replace: true,
+                state: { from: location },
+              });
+            }}
+          >
+            Entrar
+          </Button>
+        )}
       </Flex>
     </Flex>
   );
