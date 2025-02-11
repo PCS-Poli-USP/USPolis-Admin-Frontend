@@ -110,7 +110,7 @@ function InstitutionalEvents() {
           </Button>
         </HStack>
 
-        <DataTable data={events} columns={columns} />
+        <DataTable loading={loading} data={events} columns={columns} />
       </Flex>
     </PageContent>
   );

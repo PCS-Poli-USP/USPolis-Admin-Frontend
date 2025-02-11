@@ -83,7 +83,7 @@ function Classes() {
 
   const { subjects, getSubjects } = useSubjects();
   const { calendars } = useCalendars();
-  const { classes, getClasses, deleteClass, deleteManyClass } = useClasses();
+  const { loading, classes, getClasses, deleteClass, deleteManyClass } = useClasses();
 
   const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
 
@@ -273,6 +273,7 @@ function Classes() {
         } TURMAS SERÃO REMOVIDAS!`}
       />
       <DataTable
+        loading={loading}
         data={classes.map((cls, index) => ({ ...cls, index: index }))}
         columns={columns}
         columnPinning={{

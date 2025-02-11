@@ -16,7 +16,7 @@ function Subjects() {
     handleDuplicateClick: handleDuplicateClick,
   });
 
-  const { subjects, getSubjects, deleteSubject } = useSubjects();
+  const { loading, subjects, getSubjects, deleteSubject } = useSubjects();
 
   const {
     isOpen: isOpenRegisterSubjectModal,
@@ -77,6 +77,7 @@ function Subjects() {
         </Button>
       </Flex>
       <DataTable
+        loading={loading}
         data={subjects}
         columns={columns}
         columnPinning={{ left: ['id', 'code'], right: ['options'] }}

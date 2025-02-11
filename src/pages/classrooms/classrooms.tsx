@@ -33,7 +33,8 @@ function Classrooms() {
     useState<ClassroomResponse>();
   const [isUpdate, setIsUpdate] = useState(false);
   const { buildings } = useBuildings();
-  const { classrooms, getClassrooms, deleteClassroom } = useClassrooms();
+  const { loading, classrooms, getClassrooms, deleteClassroom } =
+    useClassrooms();
 
   const columns = getClassroomColumns({
     handleDuplicateClick: handleDuplicateClick,
@@ -104,6 +105,7 @@ function Classrooms() {
           </Button>
         </Flex>
         <DataTable
+          loading={loading}
           data={classrooms}
           columns={columns}
           columnPinning={{ left: ['name'], right: ['options'] }}

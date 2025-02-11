@@ -41,8 +41,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { appContext } from 'context/AppContext';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {  useEffect, useMemo, useRef, useState } from 'react';
 import {
   FaFastBackward,
   FaFastForward,
@@ -57,6 +56,7 @@ type ColumnPinning = {
 };
 
 export type DataTableProps<Data extends object> = {
+  loading?: boolean;
   data: Data[];
   columns: ColumnDef<Data, any>[];
   columnPinning?: ColumnPinning;
@@ -68,6 +68,7 @@ export default function DataTable<Data extends object>({
   data,
   columns,
   hidden,
+  loading = false,
   columnPinning = { left: [], right: [] },
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -78,8 +79,6 @@ export default function DataTable<Data extends object>({
   });
   const pageRef = useRef(pagination);
   const pageSizes = [10, 20, 30, 40, 50];
-
-  const { loading } = useContext(appContext);
 
   const table = useReactTable({
     columns,

@@ -87,7 +87,7 @@ const AllocateSingleScheduleSection = forwardRef<
     useEffect(() => {
       reset();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [allowedBuildings, schedule, classrooms]);
+    }, [allowedBuildings, schedule]);
 
     useEffect(() => {
       if (
@@ -120,7 +120,7 @@ const AllocateSingleScheduleSection = forwardRef<
       if (!selectedBuilding || !schedule) return;
       setClassroomsLoading(true);
       classroomsService
-        .getWithConflictCount(schedule.id, selectedBuilding?.id)
+        .getWithConflictCount(schedule.id, selectedBuilding.id)
         .then((response) => {
           setClassrooms(response.data.sort(sortClassroomResponse));
         })
@@ -203,7 +203,6 @@ const AllocateSingleScheduleSection = forwardRef<
                     placeholder='Selecione o prédio'
                     icon={loadingBuildings ? <Spinner /> : undefined}
                     onChange={(e) => {
-                      console.log('Set building on select: ');
                       setSelectedBuilding(
                         allowedBuildings.find(
                           (building) => building.id === Number(e.target.value),
@@ -222,7 +221,6 @@ const AllocateSingleScheduleSection = forwardRef<
                     placeholder='Selecione a sala'
                     icon={classroomsLoading ? <Spinner /> : undefined}
                     onChange={(e) => {
-                      console.log('Set classroom on select: ');
                       setSelectedClassroom(
                         classrooms.find(
                           (classroom) =>

@@ -20,7 +20,7 @@ const Buildings = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
-  const { buildings, createBuilding, updateBuilding, deleteBuilding } =
+  const { loading, buildings, createBuilding, updateBuilding, deleteBuilding } =
     useBuildings();
 
   const columns = getBuildingsColumns({
@@ -62,7 +62,7 @@ const Buildings = () => {
           Cadastrar
         </Button>
       </Flex>
-      <DataTable columns={columns} data={buildings} />
+      <DataTable loading={loading} columns={columns} data={buildings} />
       <RegisterModal
         isOpen={registerModalOpen}
         onClose={() => {

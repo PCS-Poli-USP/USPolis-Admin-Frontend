@@ -1,10 +1,4 @@
-import {
-  Button,
-  Flex,
-  Spacer,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Loading from 'components/common/Loading/loading.component';
@@ -32,7 +26,7 @@ function Reservations() {
 
   const { buildings } = useBuildings();
   const { classrooms } = useClassrooms();
-  const { reservations, getReservations, deleteReservation } =
+  const { loading, reservations, getReservations, deleteReservation } =
     useReservations();
 
   const [selectedReservation, setSelectedReservation] =
@@ -104,7 +98,7 @@ function Reservations() {
         selectedReservation={selectedReservation}
         refetch={getReservations}
       />
-      <DataTable data={reservations} columns={columns} />
+      <DataTable loading={loading} data={reservations} columns={columns} />
       <Dialog
         isOpen={isOpenDialog}
         onClose={() => {
