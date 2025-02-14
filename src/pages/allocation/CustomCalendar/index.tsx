@@ -1,4 +1,4 @@
-import { Box, useDisclosure } from '@chakra-ui/react';
+import { Box, Progress, useDisclosure } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
@@ -35,6 +35,7 @@ interface CustomCalendarProps {
   view: ViewOption;
   setView: (view: ViewOption) => void;
   isMobile: boolean;
+  loading?: boolean;
 }
 
 function CustomCalendar({
@@ -48,6 +49,7 @@ function CustomCalendar({
   isMobile,
   view,
   setView,
+  loading = false,
 }: CustomCalendarProps) {
   const calendarRef = useRef<FullCalendar>(null!);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
@@ -128,6 +130,8 @@ function CustomCalendar({
         onClose={onCloseModal}
         event={selectedEvent}
       />
+      {loading && <Progress size='sm' mb={'10px'} isIndeterminate />}
+
       <FullCalendar
         initialDate={date}
         ref={calendarRef}

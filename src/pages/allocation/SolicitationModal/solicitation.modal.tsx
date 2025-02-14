@@ -129,13 +129,8 @@ function SolicitationModal({
       }
     };
     fetchClassrooms();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    building_id,
-    start,
-    end,
-    selectedDays,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [building_id, start, end, selectedDays]);
 
   useEffect(() => {
     const fetchSelectedClassroom = async () => {
@@ -145,7 +140,7 @@ function SolicitationModal({
       }
     };
     fetchSelectedClassroom();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classroom_id]);
 
   useEffect(() => {
@@ -399,6 +394,7 @@ function SolicitationModal({
             Fechar
           </Button>
           <Button
+            isLoading={loadingC || loadingB}
             colorScheme='blue'
             onClick={async () => {
               await handleSubmit();
