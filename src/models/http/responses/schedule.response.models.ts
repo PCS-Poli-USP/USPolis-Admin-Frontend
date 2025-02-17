@@ -17,6 +17,7 @@ export interface ScheduleResponseBase {
 
   class_id?: number;
   subject?: string;
+  subject_code?: string;
   class_code?: string;
 
   reservation_id?: number;

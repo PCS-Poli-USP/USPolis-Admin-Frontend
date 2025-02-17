@@ -5,6 +5,10 @@ export interface CrawlSubject {
   calendar_ids: number[];
 }
 
+export interface UpdateCrawlSubject {
+  subject_codes: string[];
+}
+
 export interface CreateSubject {
   building_ids: number[];
   code: string;
