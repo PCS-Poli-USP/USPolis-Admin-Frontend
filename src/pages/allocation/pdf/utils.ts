@@ -25,7 +25,10 @@ type ClassClassroomMap = Map<string, ClassResponse[]>;
 type TimeRange = [string, string];
 
 // time range - class
-type OccupationMap = Map<TimeRange, string>;
+export type OccupationMap = Map<TimeRange, string>;
+
+// Classroom - schedules
+type SchedulesClassroomMap = Map<string, ScheduleResponse[]>;
 
 // weekday - ocuppation map
 export type WeekDayOccupationMap = Map<string, OccupationMap>;
@@ -35,20 +38,29 @@ type ClassroomOccupationMap = Map<string, WeekDayOccupationMap>;
 
 export const OCCUPATION_EMPTY = 'LIVRE';
 
-export function getTimeRanges(start: number) {
-  const ranges: TimeRange[] = [];
-  for (let i = start; i < 23; i++) {
-    if (i < 10) {
-      if (i === 9) {
-        ranges.push([`0${i}:00`, `${i + 1}:00`]);
-      } else ranges.push([`0${i}:00`, `0${i + 1}:00`]);
-    } else ranges.push([`${i}:00`, `${i + 1}:00`]);
+function sortTimeRange(A: TimeRange, B: TimeRange) {
+  const diff = moment(A[0], 'HH:mm').diff(moment(B[0], 'HH:mm'));
+  if (diff === 0) {
+    return moment(A[1], 'HH:mm').diff(moment(B[1], 'HH:mm'));
   }
-  return ranges;
+  return diff;
 }
 
-function getEmptyOccupationMap(): OccupationMap {
-  const timeRanges = getTimeRanges(7);
+export function getTimeRangesFromSchedules(
+  schedules: ScheduleResponse[],
+): TimeRange[] {
+  const ranges = schedules.map<TimeRange>((schedule) => [
+    schedule.start_time.substring(0, 5),
+    schedule.end_time.substring(0, 5),
+  ]);
+  const uniqueTimeRanges: TimeRange[] = Array.from(
+    new Set(ranges.map((range) => JSON.stringify(range))),
+  ).map((str) => JSON.parse(str) as TimeRange);
+  return uniqueTimeRanges.sort(sortTimeRange);
+}
+
+function getEmptyOccupationMap(schedules: ScheduleResponse[]): OccupationMap {
+  const timeRanges = getTimeRangesFromSchedules(schedules);
   const occupationMap = new Map<TimeRange, string>();
   timeRanges.forEach((timeRange) => {
     occupationMap.set(timeRange, OCCUPATION_EMPTY);
@@ -56,11 +68,14 @@ function getEmptyOccupationMap(): OccupationMap {
   return occupationMap;
 }
 
-function getEmptyWeekDayOccupationMap(): WeekDayOccupationMap {
+function getEmptyWeekDayOccupationMap(
+  schedules: ScheduleResponse[],
+): WeekDayOccupationMap {
   const map = new Map<string, OccupationMap>();
   const weekDays = WeekDay.getShortValues();
   weekDays.forEach((weekDay) => {
-    map.set(WeekDay.translate(weekDay), getEmptyOccupationMap());
+    const translated = WeekDay.translate(weekDay);
+    map.set(translated, getEmptyOccupationMap(schedules));
   });
   return map;
 }
@@ -88,43 +103,63 @@ function insertClassInOccupationMap(
   });
 }
 
+function getSchedulesFromClasses(classes: ClassResponse[]): ScheduleResponse[] {
+  return classes.reduce<ScheduleResponse[]>((acc, cls) => {
+    return acc.concat(cls.schedules);
+  }, []);
+}
+
+function getSchedulesByClassroom(
+  schedules: ScheduleResponse[],
+): SchedulesClassroomMap {
+  const map = new Map<string, ScheduleResponse[]>();
+  schedules.forEach((schedule) => {
+    const classroom = schedule.classroom;
+    if (classroom) {
+      const classroomSchedules = map.get(classroom);
+      if (classroomSchedules) {
+        classroomSchedules.push(schedule);
+        map.set(classroom, classroomSchedules);
+      } else {
+        map.set(classroom, [schedule]);
+      }
+    }
+  });
+  return map;
+}
+
 export function getClassroomOccupationMap(
   classes: ClassResponse[],
 ): ClassroomOccupationMap {
+  const schedulesByClassroom = getSchedulesByClassroom(
+    getSchedulesFromClasses(classes),
+  );
   const map = new Map<string, WeekDayOccupationMap>();
-  classes.forEach((cls) => {
-    const schedules = cls.schedules;
-    schedules.forEach((schedule) => {
-      const classroom = schedule.classroom;
-      const weekDay =
-        schedule.week_day !== undefined
-          ? WeekDay.translate(schedule.week_day)
-          : undefined;
-      if (weekDay && classroom) {
-        const weekDayOccupationMap = map.get(classroom);
-        if (weekDayOccupationMap) {
-          const occupationMap = weekDayOccupationMap.get(weekDay);
-          if (occupationMap) {
-            insertClassInOccupationMap(
-              `${cls.subject_code} T${classNumberFromClassCode(cls.code)}`,
-              schedule,
-              occupationMap,
-            );
-          }
-        } else {
-          const newWeekDayOccupationMap = getEmptyWeekDayOccupationMap();
-          const occupationMap = newWeekDayOccupationMap.get(weekDay);
-          if (occupationMap) {
-            insertClassInOccupationMap(
-              `${cls.subject_code} T${classNumberFromClassCode(cls.code)}`,
-              schedule,
-              occupationMap,
-            );
-          }
-          map.set(classroom, newWeekDayOccupationMap);
-        }
-      }
-    });
+  const classrooms = Array.from(schedulesByClassroom.keys());
+  classrooms.forEach((classroom) => {
+    const schedules = schedulesByClassroom.get(classroom);
+    if (schedules) {
+      const weekDayOccupationMap = getEmptyWeekDayOccupationMap(schedules);
+      weekDayOccupationMap.forEach((occupationMap, weekDay) => {
+        const weekDaySchedules = schedules.filter(
+          (schedule) =>
+            schedule.week_day !== undefined &&
+            WeekDay.translate(schedule.week_day) === weekDay,
+        );
+        weekDaySchedules.forEach((schedule) => {
+          insertClassInOccupationMap(
+            `${schedule.subject_code} T${
+              schedule.class_code
+                ? classNumberFromClassCode(schedule.class_code)
+                : ''
+            }`,
+            schedule,
+            occupationMap,
+          );
+        });
+      });
+      map.set(classroom, weekDayOccupationMap);
+    }
   });
   const aux = Array.from(map).sort((a, b) => a[0].localeCompare(b[0]));
   return new Map(aux);

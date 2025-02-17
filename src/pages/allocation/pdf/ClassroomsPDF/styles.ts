@@ -28,8 +28,6 @@ export const styles = StyleSheet.create({
     width: 'auto',
     borderStyle: 'solid',
     borderWidth: 1,
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
     margin: 12,
   },
   tableRow: {

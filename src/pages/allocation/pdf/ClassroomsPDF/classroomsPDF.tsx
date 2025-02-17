@@ -4,20 +4,24 @@ import { ClassResponse } from 'models/http/responses/class.response.models';
 import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 import {
   getClassroomOccupationMap,
-  getTimeRanges,
   OCCUPATION_EMPTY,
+  OccupationMap,
   WeekDayOccupationMap,
 } from '../utils';
 import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
-import { getScheduleString } from 'utils/schedules/schedule.formatter';
+import { WeekDay } from 'utils/enums/weekDays.enum';
 
 interface ClassroomPDFProps {
   classes: ClassResponse[];
   reservations: ReservationResponse[];
+  subtitle?: string;
 }
 
-const ClassroomsPDF = ({ classes, reservations }: ClassroomPDFProps) => {
-  const ranges = getTimeRanges(7);
+const ClassroomsPDF = ({
+  classes,
+  reservations,
+  subtitle,
+}: ClassroomPDFProps) => {
   const map = getClassroomOccupationMap(classes);
   const group = Array.from(map.entries());
 
@@ -30,20 +34,31 @@ const ClassroomsPDF = ({ classes, reservations }: ClassroomPDFProps) => {
       const values = Array.from(day[1].values());
       values.forEach((value) => unique.add(value));
     });
-    return classes.filter((cls) =>
+    const values = classes.filter((cls) =>
       unique.has(`${cls.subject_code} T${classNumberFromClassCode(cls.code)}`),
     );
+    return values;
+  }
+
+  function getTimeRangeFromClassroomMap(map: [string, WeekDayOccupationMap]) {
+    const occupationMap = map[1];
+    const mondayMap = occupationMap.get(
+      WeekDay.translate(WeekDay.MONDAY),
+    ) as OccupationMap;
+    const ranges = Array.from(mondayMap.keys());
+    return ranges;
   }
   return (
     <Document>
-      {group.map((classroomMap) => (
-        <Page style={styles.body} key={classroomMap[0]}>
+      {group.map((classroomMap, index) => (
+        <Page style={styles.body} key={classroomMap[0] + index + 'page'}>
           <View style={styles.table}>
             <View style={styles.tableRow}>
               <View style={styles.tableColHeader}>
                 <Text style={styles.header}>
                   Sala {classroomMap[0]} {'\n'}
                 </Text>
+                {subtitle && <Text style={styles.subheader}>{subtitle}</Text>}
               </View>
             </View>
             <View style={styles.tableRow}>
@@ -71,7 +86,7 @@ const ClassroomsPDF = ({ classes, reservations }: ClassroomPDFProps) => {
                 <Text style={styles.tableCellHeader}>Sexta</Text>
               </View>
             </View>
-            {ranges.map((time, index) => {
+            {getTimeRangeFromClassroomMap(classroomMap).map((time, index) => {
               const days = Array.from(classroomMap[1]);
               return (
                 <View
@@ -80,7 +95,7 @@ const ClassroomsPDF = ({ classes, reservations }: ClassroomPDFProps) => {
                 >
                   <View style={styles.tableColSchedule}>
                     <Text style={styles.tableCell}>
-                      {time[0]} {time[1]}
+                      {time[0]} às {time[1]}
                     </Text>
                   </View>
                   {days.map((day, idx) => {
@@ -113,14 +128,19 @@ const ClassroomsPDF = ({ classes, reservations }: ClassroomPDFProps) => {
             {getUniqueClassesFromClassroomMap(classroomMap).map((cls) => (
               <View style={styles.tableRow}>
                 <Text style={styles.tableCell}>
-                  {cls.subject_code} T{classNumberFromClassCode(cls.code)} {cls.schedules.map((schedule) => (`${getScheduleString(
-                  schedule,
-                )} (${schedule.start_time.substring(
-                  0,
-                  5,
-                )} ~ ${schedule.end_time.substring(0, 5)})`)).join(', ')}
+                  {cls.subject_code} T{classNumberFromClassCode(cls.code)} -{' '}
+                  {cls.schedules
+                    .map(
+                      (schedule) =>
+                        `${WeekDay.translate(
+                          schedule.week_day as WeekDay,
+                        )} (${schedule.start_time.substring(
+                          0,
+                          5,
+                        )} ~ ${schedule.end_time.substring(0, 5)})`,
+                    )
+                    .join(', ')}
                 </Text>
-   
               </View>
             ))}
           </View>
