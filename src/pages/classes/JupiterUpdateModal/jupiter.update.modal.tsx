@@ -125,6 +125,7 @@ function JupiterUpdateModal({
           <Button
             colorScheme={'blue'}
             isLoading={loading}
+            disabled={selectionMap.filter((it) => it.selected).length < 1}
             onClick={() =>
               handleConfirm(
                 selectionMap.filter((it) => it.selected).map((it) => it.code),
