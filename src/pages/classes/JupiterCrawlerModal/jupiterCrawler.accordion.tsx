@@ -13,11 +13,15 @@ import { useEffect, useState } from 'react';
 interface JupiterCrawlerAccordionProps {
   success: string[];
   failed: string[];
+  erros: string[];
+  update: boolean;
 }
 
 export default function JupiterCrawlerAccordion({
   success,
   failed,
+  erros,
+  update,
 }: JupiterCrawlerAccordionProps) {
   const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
   const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
@@ -26,9 +30,6 @@ export default function JupiterCrawlerAccordion({
     if (success.length > 0) setSuccessSubjects(success);
     if (failed.length > 0) setFailedSubjects(failed);
   }, [success, failed]);
-
-  success.sort((a, b) => a.localeCompare(b));
-  failed.sort((a, b) => a.localeCompare(b));
 
   return (
     <Accordion
@@ -42,7 +43,9 @@ export default function JupiterCrawlerAccordion({
           fontWeight={'bold'}
         >
           <Box as='span' flex='1' textAlign='left'>
-            Disciplinas Carregadas ({successSubjects.length})
+            {`Disciplinas ${update ? 'Atualizadas' : 'Carregadas'} (${
+              successSubjects.length
+            })`}
           </Box>
           <AccordionIcon />
         </AccordionButton>
@@ -59,14 +62,18 @@ export default function JupiterCrawlerAccordion({
         <AccordionItem>
           <AccordionButton bg={'red.500'} color={'black'} fontWeight={'bold'}>
             <Box as='span' flex='1' textAlign='left'>
-              Disciplinas Não Carregadas ({failedSubjects.length})
+              {`Disciplinas Não ${update ? 'Atualizadas' : 'Carregadas'} (${
+                failedSubjects.length
+              })`}
             </Box>
             <AccordionIcon />
           </AccordionButton>
           <AccordionPanel pb={4}>
             <UnorderedList>
               {failedSubjects.map((value, index) => (
-                <ListItem key={index}>{value}</ListItem>
+                <ListItem key={index}>
+                  {value} - {erros[index]}
+                </ListItem>
               ))}
             </UnorderedList>
           </AccordionPanel>
