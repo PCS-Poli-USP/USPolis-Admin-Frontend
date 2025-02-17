@@ -1,22 +1,10 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Spacer,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 
-import JupiterCrawlerPopover from 'components/classes/jupiterCrawler.popover';
-import EditEventModal from 'components/allocation/editEvent.modal';
+import JupiterCrawlerPopover from 'pages/classes/JupiterCrawlerModal/jupiterCrawler.popover';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
 import Loading from 'components/common/Loading/loading.component';
-import { appContext } from 'context/AppContext';
-import { useContext, useState } from 'react';
-import { EventByClassrooms } from 'models/common/event.model';
-import JupiterCrawlerModal from 'components/classes/jupiterCrawler.modal';
-import MultipleEditModal from 'components/classes/multipleEdit.modal';
+import { useState } from 'react';
 import { getClassesColumns } from './Tables/class.table';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import useClasses from 'hooks/useClasses';
@@ -24,17 +12,15 @@ import ClassModal from './ClassModal/class.modal';
 import useSubjects from 'hooks/useSubjetcts';
 import useCalendars from 'hooks/useCalendars';
 import { Row } from '@tanstack/react-table';
-import AllocateScheduleModal from './AllocateClassModal/allocateSingleScheduleSection';
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
 import { AllocateClassModal } from './AllocateClassModal';
-import { AxiosError } from 'axios';
-import useCustomToast from 'hooks/useCustomToast';
 import ClassOccurrencesModal from './ClassOccurrencesModal';
 import PageContent from 'components/common/PageContent';
-import useSubjectsService from 'hooks/API/services/useSubjectsService';
+import JupiterUpdateModal from './JupiterUpdateModal/jupiter.update.modal';
+import JupiterCrawlerModal from './JupiterCrawlerModal/jupiterCrawler.modal';
+import useCrawler from 'hooks/useCrawler';
 
 function Classes() {
-  const showToast = useCustomToast();
   const {
     isOpen: isOpenDeleteClass,
     onOpen: onOpenDeleteClass,
@@ -61,29 +47,25 @@ function Classes() {
     onClose: onCloseClassModal,
   } = useDisclosure();
   const {
+    isOpen: isOpenJupiterUpdateModal,
+    onOpen: onOpenJupiterUpdateModal,
+    onClose: onCloseJupiterUpdateModal,
+  } = useDisclosure();
+  const {
     isOpen: isOpenJupiterModal,
     onOpen: onOpenJupiterModal,
     onClose: onCloseJupiterModal,
   } = useDisclosure();
-  const {
-    isOpen: isOpenMultipleEdit,
-    onOpen: onOpenMultipleEdit,
-    onClose: onCloseMultipleEdit,
-  } = useDisclosure();
-
-  const subjectsService = useSubjectsService();
 
   const [selectedClass, setSelectedClass] = useState<ClassResponse>();
-  const [selectedSchedule, setSelectedSchedule] = useState<ScheduleResponse>();
+  const [, setSelectedSchedule] = useState<ScheduleResponse>();
   const [isUpdateClass, setIsUpdateClass] = useState(false);
-  const { setLoading } = useContext(appContext);
-  const [isCrawling, setIsCrawling] = useState(false);
-  const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
-  const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
 
   const { subjects, getSubjects } = useSubjects();
   const { calendars } = useCalendars();
-  const { loading, classes, getClasses, deleteClass, deleteManyClass } = useClasses();
+  const { loading, classes, getClasses, deleteClass, deleteManyClass } =
+    useClasses();
+  const { loading: isCrawling, result, create, update } = useCrawler();
 
   const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
 
@@ -150,25 +132,10 @@ function Classes() {
     building_id: number,
     calendar_ids: number[],
   ) {
-    setLoading(true);
-    setIsCrawling(true);
-    await subjectsService
-      .crawl(building_id, { subject_codes: subjectsList, calendar_ids })
-      .then((it) => {
-        setSuccessSubjects(it.data.sucess);
-        setFailedSubjects(it.data.failed);
-        onOpenJupiterModal();
-        getClasses();
-        getSubjects();
-        showToast('Sucesso!', 'Disciplinas carregadas com sucesso!', 'success');
-      })
-      .catch(({ response }: AxiosError<any>) =>
-        showToast('Erro!', `${response?.data.detail}`, 'error'),
-      )
-      .finally(() => {
-        setLoading(false);
-        setIsCrawling(false);
-      });
+    await create(building_id, { subject_codes: subjectsList, calendar_ids });
+    onOpenJupiterModal();
+    getClasses();
+    getSubjects();
   }
 
   function handleDeleteSelectedClassesClick() {
@@ -202,9 +169,16 @@ function Classes() {
     setCheckMap(newCheckMap);
   }
 
+  async function handleUpdateJupiterConfirm(codes: string[]) {
+    await update({ subject_codes: codes });
+    onCloseJupiterUpdateModal();
+    onOpenJupiterModal();
+    getClasses();
+  }
+
   return (
     <PageContent>
-      <Loading isOpen={isCrawling} onClose={() => setIsCrawling(false)} />
+      <Loading isOpen={isCrawling} onClose={() => {}} />
       <ClassModal
         isOpen={isOpenClassModal}
         onClose={() => {
@@ -217,6 +191,20 @@ function Classes() {
         subjects={subjects}
         calendars={calendars}
         selectedClass={selectedClass}
+      />
+      <JupiterUpdateModal
+        codes={classes
+          .map((cls) => cls.subject_code)
+          .filter((value, index, self) => self.indexOf(value) === index)}
+        isOpen={isOpenJupiterUpdateModal}
+        onClose={onCloseJupiterUpdateModal}
+        handleConfirm={handleUpdateJupiterConfirm}
+        loading={isCrawling}
+      />
+      <JupiterCrawlerModal
+        isOpen={isOpenJupiterModal}
+        onClose={onCloseJupiterModal}
+        data={result}
       />
       {selectedClass && (
         <AllocateClassModal
@@ -245,6 +233,14 @@ function Classes() {
           Adicionar Turma
         </Button>
         <JupiterCrawlerPopover onSave={handleCrawlerSave} />
+
+        <Button
+          ml={'5px'}
+          colorScheme={'blue'}
+          onClick={onOpenJupiterUpdateModal}
+        >
+          Atualizar pelo JupiterWeb
+        </Button>
 
         <Button
           ml={2}
