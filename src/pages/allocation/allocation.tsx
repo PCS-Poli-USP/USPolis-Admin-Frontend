@@ -1,7 +1,6 @@
 import {
   Grid,
   GridItem,
-  Skeleton,
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
@@ -183,38 +182,37 @@ function Allocation() {
           />
         </GridItem>
         <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
-          <Skeleton isLoaded={!loading && !loadingAllocation} h='100vh'>
-            {loggedUser && (
-              <SolicitationModal
-                isMobile={isMobile}
-                isOpen={isOpenSolicitation}
-                onClose={onCloseSolicitation}
-              />
-            )}
-
-            <CustomCalendar
-              events={
-                buildingSearchValue ||
-                classroomSearchValue ||
-                nameSearchValue ||
-                classSearchValue
-                  ? filteredEvents
-                  : events
-              }
-              resources={buildingSearchValue ? filteredResources : resources}
-              hasFilter={!!classroomSearchValue}
-              hasBuildingFilter={!!buildingSearchValue}
-              update={async (start, end) => {
-                if (loadingAllocation) return;
-                await getEvents(start, end);
-              }}
-              date={currentDate}
-              setDate={setCurrentDate}
-              view={currentView}
-              setView={setCurrentView}
+          {loggedUser && (
+            <SolicitationModal
               isMobile={isMobile}
+              isOpen={isOpenSolicitation}
+              onClose={onCloseSolicitation}
             />
-          </Skeleton>
+          )}
+
+          <CustomCalendar
+            events={
+              buildingSearchValue ||
+              classroomSearchValue ||
+              nameSearchValue ||
+              classSearchValue
+                ? filteredEvents
+                : events
+            }
+            resources={buildingSearchValue ? filteredResources : resources}
+            hasFilter={!!classroomSearchValue}
+            hasBuildingFilter={!!buildingSearchValue}
+            update={async (start, end) => {
+              if (loadingAllocation) return;
+              await getEvents(start, end);
+            }}
+            date={currentDate}
+            setDate={setCurrentDate}
+            view={currentView}
+            setView={setCurrentView}
+            isMobile={isMobile}
+            loading={loadingAllocation || loading}
+          />
         </GridItem>
       </Grid>
     </PageContent>

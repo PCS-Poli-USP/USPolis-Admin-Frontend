@@ -89,7 +89,13 @@ function HeaderPDFOptions({ buildings }: PDFOptionsProps) {
 
           <Box w={'full'}>
             <PDFDownloadLink
-              document={<ClassroomsPDF classes={classes} reservations={[]} />}
+              document={
+                <ClassroomsPDF
+                  classes={classes}
+                  reservations={[]}
+                  subtitle={'Alocação Planejada'}
+                />
+              }
               fileName='salas.pdf'
             >
               <Button

@@ -15,7 +15,7 @@ const useAxiosPrivate = () => {
     // Ejetar interceptores antigos antes de adicionar novos
     const requestIntercept = axiosPrivate.interceptors.request.use(
       (config: any) => {
-        // If request is being retried, don't add the context acessToken, the request already has it and the context is`nt updated yet
+        // If request is being retried, don't add the context acessToken, the request already has it and the context isn't updated yet
         if (config._retry) {
           return config;
         }
@@ -56,13 +56,12 @@ const useAxiosPrivate = () => {
           try {
             const response = await authHttpService.refreshToken(refreshToken);
             const newAccessToken = response.data.access_token;
-
-            // If the error is due to getSelf not set acessToken in context because this will trigger a duplicated request
             context.setAccessToken(newAccessToken);
 
             originalRequest.headers[
               'Authorization'
             ] = `Bearer ${newAccessToken}`;
+
             const retryResponse = await axiosPrivate(originalRequest);
             return retryResponse;
           } catch (refreshError: any) {

@@ -2,9 +2,13 @@ import { AxiosResponse } from 'axios';
 import {
   CrawlSubject,
   CreateSubject,
+  UpdateCrawlSubject,
   UpdateSubject,
 } from 'models/http/requests/subject.request.models';
-import { SubjectResponse } from 'models/http/responses/subject.response.models';
+import {
+  SubjectCrawlResponse,
+  SubjectResponse,
+} from 'models/http/responses/subject.response.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 const useSubjectsService = () => {
@@ -39,13 +43,19 @@ const useSubjectsService = () => {
   const crawl = (
     building_id: number,
     data: CrawlSubject,
-  ): Promise<AxiosResponse<any>> => {
+  ): Promise<AxiosResponse<SubjectCrawlResponse>> => {
     return axios.post(`${PREFIX}/crawl`, data, {
       headers: { 'building-id': String(building_id) },
     });
   };
 
-  return { get, getMine, create, deleteById, update, crawl };
+  const updateCrawl = (
+    data: UpdateCrawlSubject,
+  ): Promise<AxiosResponse<SubjectCrawlResponse>> => {
+    return axios.patch(`${PREFIX}/crawl`, data);
+  };
+
+  return { get, getMine, create, deleteById, update, crawl, updateCrawl };
 };
 
 export default useSubjectsService;

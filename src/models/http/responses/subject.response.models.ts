@@ -31,3 +31,11 @@ export interface SubjectUnfetchResponse {
   activation: string;
   desactivation?: string;
 }
+
+export interface SubjectCrawlResponse {
+  codes: string[];
+  sucess: string[];
+  failed: string[];
+  errors: string[];
+  update: boolean;
+}
