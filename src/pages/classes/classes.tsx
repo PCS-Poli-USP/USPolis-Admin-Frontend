@@ -7,7 +7,7 @@ import Loading from 'components/common/Loading/loading.component';
 import { useState } from 'react';
 import { getClassesColumns } from './Tables/class.table';
 import { ClassResponse } from 'models/http/responses/class.response.models';
-import useClasses from 'hooks/useClasses';
+import useClasses from 'hooks/classes/useClasses';
 import ClassModal from './ClassModal/class.modal';
 import useSubjects from 'hooks/useSubjetcts';
 import useCalendars from 'hooks/useCalendars';

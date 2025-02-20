@@ -17,7 +17,7 @@ import ClassesPDF from '../../pdf/ClassesPDF/classesPDF';
 import ClassroomsPDF from '../../pdf/ClassroomsPDF/classroomsPDF';
 import Select from 'react-select';
 import { useState } from 'react';
-import useClasses from 'hooks/useClasses';
+import useClasses from 'hooks/classes/useClasses';
 
 type Option = {
   value: string;

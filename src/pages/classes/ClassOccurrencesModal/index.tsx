@@ -14,7 +14,7 @@ import {
 import { ModalProps } from 'models/interfaces';
 import ScheduleAccordion from './schedule.accordion';
 import { useEffect, useState } from 'react';
-import useClasses from 'hooks/useClasses';
+import useClasses from 'hooks/classes/useClasses';
 
 interface ClassOccurrencesModalProps extends ModalProps {
   selectedClass: ClassResponse;

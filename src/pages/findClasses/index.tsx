@@ -12,7 +12,7 @@ import { useRef, useState } from 'react';
 import useSubjects from 'hooks/useSubjetcts';
 import { SelectInstance } from 'react-select';
 import ClassAccordion from './ClassAccordion';
-import useClasses from 'hooks/useClasses';
+import useClasses from 'hooks/classes/useClasses';
 
 type OptionType = {
   value: number;
