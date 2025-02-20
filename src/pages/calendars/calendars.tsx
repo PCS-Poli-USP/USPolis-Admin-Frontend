@@ -1,7 +1,7 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 import CalendarModal from './CalendarModal/calendar.modal';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
 import CalendarViewModal from './CalendarViewModal/calendarView.modal';
 import Dialog from 'components/common/Dialog/dialog.component';
@@ -10,8 +10,11 @@ import useHolidaysCategories from 'hooks/useHolidaysCategories';
 import CalendarAccordion from './CalendarAccordion/calendar.accordion';
 import HolidaysContentModal from './HolidaysContentModal/holidaysContent.modal';
 import PageContent from 'components/common/PageContent';
+import { appContext } from 'context/AppContext';
 
 function Calendars() {
+  const { loggedUser } = useContext(appContext);
+
   const {
     isOpen: isOpenHolidaysModal,
     onOpen: onOpenHolidaysModal,
@@ -108,6 +111,7 @@ function Calendars() {
         onCalendarView={handleViewCalendarButton}
         onCalendarUpdate={handleEditCalendarButton}
         onCalendarDelete={handleDeleteCalendarButton}
+        loggedUser={loggedUser}
       />
       <CalendarModal
         isUpdate={isUpdateCalendar}
@@ -141,6 +145,7 @@ function Calendars() {
           getHolidaysCategories();
           getCalendars();
         }}
+        loggedUser={loggedUser}
       />
       <Dialog
         title={`Deseja o calendário ${selectedCalendar?.name}`}

@@ -17,12 +17,14 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
+import { UserResponse } from 'models/http/responses/user.response.models';
 import { useEffect } from 'react';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { sortCalendarResponse } from 'utils/calendars/calendar.sorter';
 import { holidayCategoryToString } from 'utils/holidaysCategories/holidaysCategories.formatter';
 
 interface HolidayCategoryAccordionProps {
+  loggedUser: UserResponse | null;
   calendars: CalendarResponse[];
   onCalendarView: (data: CalendarResponse) => void;
   onCalendarUpdate: (data: CalendarResponse) => void;
@@ -71,6 +73,12 @@ export function CalendarAccordion(props: HolidayCategoryAccordionProps) {
                     Visualizar Calendário
                   </Button>
                   <Button
+                    hidden={
+                      props.loggedUser
+                        ? !props.loggedUser.is_admin &&
+                          props.loggedUser.id !== calendar.owner_id
+                        : true
+                    }
                     leftIcon={<BsFillPenFill />}
                     colorScheme={'yellow'}
                     size={'sm'}
@@ -80,6 +88,12 @@ export function CalendarAccordion(props: HolidayCategoryAccordionProps) {
                     Atualizar Calendário
                   </Button>
                   <Button
+                    hidden={
+                      props.loggedUser
+                        ? !props.loggedUser.is_admin &&
+                          props.loggedUser.id !== calendar.owner_id
+                        : true
+                    }
                     leftIcon={<BsFillTrashFill />}
                     colorScheme={'red'}
                     size={'sm'}

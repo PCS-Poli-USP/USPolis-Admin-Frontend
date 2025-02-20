@@ -123,6 +123,7 @@ function HolidaysContentModal(props: HolidaysContentModalProps) {
 
             <HolidayCategoryAccordion
               loading={props.isLoading || loadingHolidays}
+              loggedUser={props.loggedUser}
               categories={props.categories}
               onHolidayCategoryUpdate={handleEditHolidayCategoryButton}
               onHolidayCategoryDelete={handleDeleteHolidayCategoryButton}
