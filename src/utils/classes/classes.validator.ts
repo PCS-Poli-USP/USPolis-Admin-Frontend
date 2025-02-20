@@ -30,7 +30,7 @@ export class ClassValidator extends CommonValidator {
   }
 
   static isInvalidProfessorList(professors: string[]) {
-    if (this.isEmptyArray(professors)) return true;
+    if (this.isEmptyArray(professors)) return false;
     professors.forEach((professor) => {
       if (this.isInvalidProfessor(professor)) return true;
     });
