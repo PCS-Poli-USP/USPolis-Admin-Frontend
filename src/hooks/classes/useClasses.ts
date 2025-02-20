@@ -9,7 +9,12 @@ import {
 } from 'models/http/responses/class.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import { sortClassResponse } from 'utils/classes/classes.sorter';
-import useClassesService from './API/services/useClassesService';
+import useClassesService from '../API/services/useClassesService';
+import {
+  AxiosErrorResponse,
+  isAxiosErrorResponse,
+} from 'models/http/responses/common.response.models';
+import { ClassErrorParser } from './errors';
 
 const useClasses = (initialFetch: boolean = true) => {
   const service = useClassesService();
@@ -125,13 +130,9 @@ const useClasses = (initialFetch: boolean = true) => {
           );
           getClasses();
         })
-        .catch((error) => {
+        .catch((error: any) => {
           console.log(error);
-          showToast(
-            'Erro',
-            `Erro ao criar turma: ${error.response.detail}`,
-            'error',
-          );
+          showToast('Erro', ClassErrorParser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
@@ -150,12 +151,17 @@ const useClasses = (initialFetch: boolean = true) => {
           getClasses();
         })
         .catch((error: any) => {
-          console.log(error);
-          showToast(
-            'Erro',
-            `Erro ao atualizar a turma ${data.code}: ${error.response.detail}`,
-            'error',
-          );
+          if (isAxiosErrorResponse(error)) {
+            console.log(error);
+            showToast(
+              'Erro',
+              `Erro ao atualizar turma: ${error.response?.data.detail}`,
+              'error',
+            );
+          } else {
+            console.log(error);
+            showToast('Erro', `Erro inesperado ao atualizar turma`, 'error');
+          }
         })
         .finally(() => {
           setLoading(false);
@@ -175,12 +181,17 @@ const useClasses = (initialFetch: boolean = true) => {
           getClasses();
         })
         .catch((error: any) => {
-          showToast(
-            'Erro!',
-            `Erro ao remover turma: ${error.response.detail}`,
-            'error',
-          );
-          console.log(error);
+          if (isAxiosErrorResponse(error)) {
+            console.log(error);
+            showToast(
+              'Erro',
+              `Erro ao remover turma: ${error.response?.data.detail}`,
+              'error',
+            );
+          } else {
+            console.log(error);
+            showToast('Erro', `Erro inesperado ao remover turma`, 'error');
+          }
         })
         .finally(() => {
           setLoading(false);
@@ -194,7 +205,7 @@ const useClasses = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .deleteMany(ids)
-        .then((response: any) => {
+        .then(() => {
           showToast(
             'Sucesso!',
             `Sucesso ao remover ${ids.length} turmas`,
@@ -203,13 +214,18 @@ const useClasses = (initialFetch: boolean = true) => {
 
           getClasses();
         })
-        .catch((error: any) => {
-          showToast(
-            'Erro!',
-            `Erro ao remover turma: ${error.response.detail}`,
-            'error',
-          );
-          console.log(error);
+        .catch((error: AxiosErrorResponse) => {
+          if (isAxiosErrorResponse(error)) {
+            console.log(error);
+            showToast(
+              'Erro',
+              `Erro ao remover turmas: ${error.response?.data.detail}`,
+              'error',
+            );
+          } else {
+            console.log(error);
+            showToast('Erro', `Erro inesperado ao remover turmas`, 'error');
+          }
         })
         .finally(() => {
           setLoading(false);
