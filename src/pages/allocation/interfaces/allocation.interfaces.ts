@@ -33,6 +33,7 @@ export interface Event extends EventResponse {
 export interface BaseExtendedProps {
   building: string;
   classroom: string;
+  classroom_capacity?: number;
   recurrence: Recurrence;
   week_day?: WeekDay;
   month_week?: MonthWeek;

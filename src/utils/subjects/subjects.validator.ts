@@ -15,7 +15,7 @@ export default class SubjectValidator extends CommonValidator {
   }
 
   static isInvalidProfessorList(professors: string[]): boolean {
-    if (this.isEmptyArray(professors)) return true;
+    if (this.isEmptyArray(professors)) return false;
     professors.forEach((professor) => {
       if (this.isInvalidProfessor(professor)) return true;
     });

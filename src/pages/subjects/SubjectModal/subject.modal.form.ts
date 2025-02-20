@@ -19,11 +19,12 @@ export const formFields = {
   professors: {
     validator: yup
       .array()
+      .required('Campo obrigatório')
       .of(yup.string().required('Campo obrigatório'))
-      .min(1, 'Adicione pelo menos um professor')
+      .min(0)
       .test(
         'is-valid-array',
-        'Professores inválidos',
+        'Professores inválidos, nome deve conter no mínimo 3 caracteres',
         (value) => value && !SubjectValidator.isInvalidProfessorList(value),
       ),
     defaultValue: [],

@@ -61,7 +61,7 @@ import {
   CreateSchedule,
   UpdateSchedule,
 } from 'models/http/requests/schedule.request.models';
-import useClasses from 'hooks/useClasses';
+import useClasses from 'hooks/classes/useClasses';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import { ClassFourthForm } from './Steps/Fourth/class.modal.steps.fourth.interface';
 import {

@@ -28,8 +28,13 @@ export interface EventResponse {
   title: string;
   start: string; // Must be YYYY-MM-DDTHH:mm:ss
   end: string; // Must be YYYY-MM-DDTHH:mm:ss
+
+  classroom_id?: number;
+  classroom?: string;
+  classroom_capacity?: number;
   rrule?: RecurrenceRule; // Used when is unallocated
   allDay: boolean;
+
   resourceId: string;
   extendedProps: EventExtendedProps;
 }
@@ -44,6 +49,7 @@ export interface ResourceResponse {
 export interface BaseExtendedData {
   building: string;
   classroom: string;
+  classroom_capacity?: number;
   recurrence: Recurrence;
   week_day?: WeekDay;
   month_week?: MonthWeek;

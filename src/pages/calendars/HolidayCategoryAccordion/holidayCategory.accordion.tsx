@@ -22,9 +22,11 @@ import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { useEffect, useState } from 'react';
 import { sortAllHolidaysFromHolidaysCategories } from 'utils/holidaysCategories/holidaysCategories.sorter';
 import { HolidayResponse } from 'models/http/responses/holiday.response.models';
+import { UserResponse } from 'models/http/responses/user.response.models';
 
 interface HolidayCategoryAccordionProps {
   loading: boolean;
+  loggedUser: UserResponse | null;
   categories: HolidayCategoryResponse[];
   onHolidayCategoryUpdate: (data: HolidayCategoryResponse) => void;
   onHolidayCategoryDelete: (data: HolidayCategoryResponse) => void;
@@ -84,11 +86,23 @@ export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
                         size={'sm'}
                         variant={'ghost'}
                         onClick={() => props.onHolidayCategoryUpdate(category)}
+                        hidden={
+                          props.loggedUser
+                            ? !props.loggedUser.is_admin &&
+                              props.loggedUser.id !== category.owner_id
+                            : true
+                        }
                       >
                         Atualizar Categoria
                       </Button>
                       <Button
                         leftIcon={<BsFillTrashFill />}
+                        hidden={
+                          props.loggedUser
+                            ? !props.loggedUser.is_admin &&
+                              props.loggedUser.id !== category.owner_id
+                            : true
+                        }
                         colorScheme={'red'}
                         size={'sm'}
                         variant={'ghost'}
@@ -97,6 +111,12 @@ export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
                         Excluir Categoria
                       </Button>
                       <Button
+                        hidden={
+                          props.loggedUser
+                            ? !props.loggedUser.is_admin &&
+                              props.loggedUser.id !== category.owner_id
+                            : true
+                        }
                         leftIcon={<AddIcon />}
                         size={'sm'}
                         variant={'ghost'}
@@ -121,6 +141,12 @@ export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
                           holiday={holiday}
                           onHolidayUpdate={props.onHolidayUpdate}
                           onHolidayDelete={props.onHolidayDelete}
+                          isOwner={
+                            props.loggedUser
+                              ? props.loggedUser.is_admin ||
+                                props.loggedUser.id === category.owner_id
+                              : false
+                          }
                         />
                       ))}
                     </VStack>

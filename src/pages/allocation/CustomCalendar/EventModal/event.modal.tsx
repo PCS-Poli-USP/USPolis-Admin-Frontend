@@ -21,7 +21,9 @@ interface EventModalProps extends ModalProps {
 }
 
 function EventModal({ isOpen, onClose, event }: EventModalProps) {
-  const extendedProps: EventExtendedProps | undefined = event ? event?.extendedProps : undefined;
+  const extendedProps: EventExtendedProps | undefined = event
+    ? event?.extendedProps
+    : undefined;
   const classData = extendedProps ? extendedProps.class_data : undefined;
   const reservationData = extendedProps
     ? extendedProps.reservation_data
@@ -65,7 +67,9 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
                     classData.building ? classData.building : 'NÃO ALOCADA'
                   }`}</Text>
                   <Text fontSize='lg' textColor='#408080'>{`Sala: ${
-                    classData.classroom ? classData.classroom : 'NÃO ALOCADA'
+                    classData.classroom_capacity
+                      ? `${classData.classroom} [${classData.classroom_capacity} capacidade]`
+                      : classData.classroom
                   }`}</Text>
 
                   <Text fontSize='lg' textColor='#408080'>
