@@ -172,7 +172,14 @@ function Allocation() {
             setNameSearchValue={setNameSearchValue}
             classSearchValue={classSearchValue}
             setClassSearchValue={setClassSearchValue}
-            events={events}
+            events={
+              buildingSearchValue ||
+              classroomSearchValue ||
+              nameSearchValue ||
+              classSearchValue
+                ? filteredEvents
+                : events
+            }
             buildingResources={resources
               .filter((resource) => !resource.parentId)
               .sort((a, b) => a.title.localeCompare(b.title))}
