@@ -1,9 +1,4 @@
-import {
-  Grid,
-  GridItem,
-  useDisclosure,
-  useMediaQuery,
-} from '@chakra-ui/react';
+import { Grid, GridItem, useDisclosure, useMediaQuery } from '@chakra-ui/react';
 import Loading from 'components/common/Loading/loading.component';
 import { appContext } from 'context/AppContext';
 import { useContext, useEffect, useState } from 'react';
@@ -43,7 +38,10 @@ function Allocation() {
   const [nameSearchValue, setNameSearchValue] = useState('');
   const [classSearchValue, setClassSearchValue] = useState('');
 
-  const [currentDate, setCurrentDate] = useState<string>(
+  const [currentStartDate, setCurrentStartDate] = useState<string>(
+    moment().format('YYYY-MM-DD'),
+  );
+  const [currentEndDate, setCurrentEndDate] = useState<string>(
     moment().format('YYYY-MM-DD'),
   );
 
@@ -91,7 +89,7 @@ function Allocation() {
       newEvents = newEvents.filter((event) => {
         const nameFilterResult =
           event.title.toLowerCase().includes(nameValue) ||
-          event.extendedProps.class_data?.subject_name
+          event.extendedProps.class_data?.code
             .toLowerCase()
             .includes(nameValue);
         return nameFilterResult;
@@ -213,8 +211,10 @@ function Allocation() {
               if (loadingAllocation) return;
               await getEvents(start, end);
             }}
-            date={currentDate}
-            setDate={setCurrentDate}
+            start={currentStartDate}
+            setStart={setCurrentStartDate}
+            end={currentEndDate}
+            setEnd={setCurrentEndDate}
             view={currentView}
             setView={setCurrentView}
             isMobile={isMobile}

@@ -30,8 +30,10 @@ interface CustomCalendarProps {
   hasFilter: boolean;
   hasBuildingFilter: boolean;
   update: (start: string, end: string) => Promise<void>;
-  date: string;
-  setDate: (date: string) => void;
+  start: string;
+  setStart: (start: string) => void;
+  end: string;
+  setEnd: (end: string) => void;
   view: ViewOption;
   setView: (view: ViewOption) => void;
   isMobile: boolean;
@@ -44,8 +46,10 @@ function CustomCalendar({
   hasFilter,
   hasBuildingFilter,
   update,
-  date,
-  setDate,
+  start,
+  setStart,
+  end,
+  setEnd,
   isMobile,
   view,
   setView,
@@ -67,7 +71,8 @@ function CustomCalendar({
   } = useDisclosure();
 
   function setCalendarDate(ISOdate: string) {
-    setDate(ISOdate);
+    setStart(ISOdate);
+    setEnd(ISOdate);
     calendarRef.current.getApi().gotoDate(ISOdate);
   }
 
@@ -77,10 +82,14 @@ function CustomCalendar({
   }
 
   const handleDatesSet = async (info: DatesSetArg) => {
-    const actual = moment(info.startStr).format('YYYY-MM-DD');
-    if (date !== actual) {
-      setDate(actual);
-      update(actual, actual);
+    const newStart = moment(info.startStr).format('YYYY-MM-DD');
+    const newEnd = moment(info.endStr).subtract(1, 'days').format('YYYY-MM-DD');
+    console.log('actual', start);
+    console.log('end', end);
+    if (start !== newStart || end !== newEnd) {
+      setStart(newStart);
+      setEnd(newEnd);
+      update(newStart, newEnd);
     }
   };
 
@@ -133,7 +142,7 @@ function CustomCalendar({
       {loading && <Progress size='sm' mb={'10px'} isIndeterminate />}
 
       <FullCalendar
-        initialDate={date}
+        initialDate={start}
         ref={calendarRef}
         schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
         plugins={[timeGridPlugin, resourceTimelinePlugin, rrulePlugin]}
