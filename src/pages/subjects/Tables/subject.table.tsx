@@ -13,6 +13,7 @@ interface SubjectColumnsProps {
   handleEditButton: (data: SubjectResponse) => void;
   handleDeleteButton: (data: SubjectResponse) => void;
   handleDuplicateClick: (data: SubjectResponse) => void;
+  disableMap: boolean[];
 }
 
 export const getSubjectColumns = (
@@ -109,6 +110,7 @@ export const getSubjectColumns = (
           </Tooltip>
           <Tooltip label='Editar Disciplina'>
             <IconButton
+              disabled={props.disableMap[row.index]}
               colorScheme='yellow'
               size='xs'
               variant='ghost'
@@ -120,6 +122,7 @@ export const getSubjectColumns = (
 
           <Tooltip label='Excluir Disciplina'>
             <IconButton
+              disabled={props.disableMap[row.index]}
               colorScheme='red'
               size='xs'
               variant='ghost'
