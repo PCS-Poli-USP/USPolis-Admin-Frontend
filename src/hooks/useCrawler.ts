@@ -1,4 +1,3 @@
-import useCustomToast from 'hooks/useCustomToast';
 import { SubjectCrawlResponse } from 'models/http/responses/subject.response.models';
 import { useCallback, useState } from 'react';
 import useSubjectsService from './API/services/useSubjectsService';
@@ -12,8 +11,6 @@ const useCrawler = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SubjectCrawlResponse>();
 
-  const showToast = useCustomToast();
-
   const create = useCallback(
     async (building_id: number, data: CrawlSubject) => {
       setLoading(true);
@@ -24,17 +21,12 @@ const useCrawler = () => {
         })
         .catch((error) => {
           console.error(error);
-          showToast(
-            'Erro',
-            'Erro ao carregar disciplinas pelo JupiterWeb',
-            'error',
-          );
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [showToast, service],
+    [service],
   );
 
   const update = useCallback(
@@ -47,17 +39,12 @@ const useCrawler = () => {
         })
         .catch((error) => {
           console.error(error);
-          showToast(
-            'Erro',
-            'Erro ao atualizar disciplinas pelo JupiterWeb',
-            'error',
-          );
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [showToast, service],
+    [service],
   );
 
   return {

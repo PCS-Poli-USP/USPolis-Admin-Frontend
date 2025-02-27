@@ -33,6 +33,7 @@ interface ClassesColumnsProps {
   handleDeleteClassClick: (data: ClassResponse) => void;
   handleEditOccurrencesClick: (data: ClassResponse) => void;
   checkMap: boolean[];
+  disableMap: boolean[];
 }
 
 export const getClassesColumns = (
@@ -237,6 +238,7 @@ export const getClassesColumns = (
           </Tooltip>
           <Tooltip label='Editar Turma'>
             <IconButton
+              disabled={props.disableMap[row.index]}
               colorScheme='yellow'
               size='sm'
               variant='ghost'
@@ -247,6 +249,7 @@ export const getClassesColumns = (
           </Tooltip>
           <Tooltip label='Editar Alocação'>
             <IconButton
+              disabled={props.disableMap[row.index]}
               colorScheme='teal'
               size='sm'
               variant='ghost'
@@ -257,6 +260,7 @@ export const getClassesColumns = (
           </Tooltip>
           <Tooltip label='Editar Ocorrências'>
             <IconButton
+              disabled={props.disableMap[row.index]}
               colorScheme='yellow'
               size='sm'
               variant='ghost'
@@ -267,6 +271,7 @@ export const getClassesColumns = (
           </Tooltip>
           <Tooltip label='Excluir Turma'>
             <IconButton
+              disabled={props.disableMap[row.index]}
               colorScheme='red'
               size='sm'
               variant='ghost'
