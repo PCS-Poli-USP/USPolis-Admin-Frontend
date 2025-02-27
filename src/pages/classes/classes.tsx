@@ -4,7 +4,7 @@ import JupiterCrawlerPopover from 'pages/classes/JupiterCrawlerModal/jupiterCraw
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
 import Loading from 'components/common/Loading/loading.component';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { getClassesColumns } from './Tables/class.table';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import useClasses from 'hooks/classes/useClasses';
@@ -19,8 +19,12 @@ import PageContent from 'components/common/PageContent';
 import JupiterUpdateModal from './JupiterUpdateModal/jupiter.update.modal';
 import JupiterCrawlerModal from './JupiterCrawlerModal/jupiterCrawler.modal';
 import useCrawler from 'hooks/useCrawler';
+import { appContext } from 'context/AppContext';
+import { checkUserPermissionOnClass } from 'utils/tables/tables.utils';
 
 function Classes() {
+  const context = useContext(appContext);
+
   const {
     isOpen: isOpenDeleteClass,
     onOpen: onOpenDeleteClass,
@@ -68,6 +72,9 @@ function Classes() {
   const { loading: isCrawling, result, create, update } = useCrawler();
 
   const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
+  const disableMap = classes.map((cls) => {
+    return !checkUserPermissionOnClass(context.loggedUser, cls);
+  });
 
   const columns = getClassesColumns({
     handleCheckAllClick,
@@ -78,6 +85,7 @@ function Classes() {
     handleDeleteClassClick,
     handleEditOccurrencesClick,
     checkMap,
+    disableMap,
   });
 
   function handleRegisterClick() {

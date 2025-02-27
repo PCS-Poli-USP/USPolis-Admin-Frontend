@@ -38,7 +38,9 @@ function HeaderFilter({
   classroomResources,
 }: AllocationHeaderProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
-  const selectRef = useRef<SelectInstance<OptionType>>(null);
+  const classroomSelectRef = useRef<SelectInstance<OptionType>>(null);
+  const subjectSelectRef = useRef<SelectInstance<OptionType>>(null);
+  const classSelectRef = useRef<SelectInstance<OptionType>>(null);
 
   const buildingOptions = buildingResources
     .map((resource) => ({
@@ -62,7 +64,7 @@ function HeaderFilter({
 
   const subjectOptions = events
     .map((event) => ({
-      value: event.extendedProps.class_data?.subject_name || event.title,
+      value: event.extendedProps.class_data?.subject_code || event.title,
       label: event.extendedProps.class_data
         ? `${event.extendedProps.class_data?.subject_code} - ${event.extendedProps.class_data?.subject_name}`
         : event.title,
@@ -114,11 +116,21 @@ function HeaderFilter({
                   } else {
                     setBuildingSearchValue('');
                   }
+                  setClassroomSearchValue('');
+                  setNameSearchValue('');
+                  setClassSearchValue('');
+                  if (classroomSelectRef.current)
+                    classroomSelectRef.current.clearValue();
+                  if (subjectSelectRef.current)
+                    subjectSelectRef.current.clearValue();
+                  if (classSelectRef.current)
+                    classSelectRef.current.clearValue();
                 }}
               />
             </Box>
             <Box w={'50%'}>
               <Select
+                ref={classroomSelectRef}
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
                 placeholder='Sala'
@@ -138,6 +150,12 @@ function HeaderFilter({
                   } else {
                     setClassroomSearchValue('');
                   }
+                  setNameSearchValue('');
+                  setClassSearchValue('');
+                  if (subjectSelectRef.current)
+                    subjectSelectRef.current.clearValue();
+                  if (classSelectRef.current)
+                    classSelectRef.current.clearValue();
                 }}
               />
             </Box>
@@ -145,6 +163,7 @@ function HeaderFilter({
           <Flex direction={'column'} gap={2} w={'full'}>
             <Box w={'100%'}>
               <Select
+                ref={subjectSelectRef}
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
                 placeholder='Disciplina'
@@ -161,14 +180,15 @@ function HeaderFilter({
                   } else {
                     setNameSearchValue('');
                     setClassSearchValue('');
-                    if (selectRef.current) selectRef.current.clearValue();
+                    if (classSelectRef.current)
+                      classSelectRef.current.clearValue();
                   }
                 }}
               />
             </Box>
             <Box w={'100%'} h={'fit-content'}>
               <Select
-                ref={selectRef}
+                ref={classSelectRef}
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
                 isDisabled={!nameSearchValue}
@@ -214,12 +234,21 @@ function HeaderFilter({
                 } else {
                   setBuildingSearchValue('');
                 }
+                setClassroomSearchValue('');
+                setNameSearchValue('');
+                setClassSearchValue('');
+                if (classroomSelectRef.current)
+                  classroomSelectRef.current.clearValue();
+                if (subjectSelectRef.current)
+                  subjectSelectRef.current.clearValue();
+                if (classSelectRef.current) classSelectRef.current.clearValue();
               }}
             />
           </Box>
 
           <Box w={'250px'}>
             <Select
+              ref={classroomSelectRef}
               styles={customStyles}
               placeholder='Sala'
               isClearable={true}
@@ -235,12 +264,18 @@ function HeaderFilter({
                 } else {
                   setClassroomSearchValue('');
                 }
+                setNameSearchValue('');
+                setClassSearchValue('');
+                if (subjectSelectRef.current)
+                  subjectSelectRef.current.clearValue();
+                if (classSelectRef.current) classSelectRef.current.clearValue();
               }}
             />
           </Box>
 
           <Box w={'250px'}>
             <Select
+              ref={subjectSelectRef}
               styles={customStyles}
               placeholder='Disciplina'
               isClearable={true}
@@ -256,7 +291,8 @@ function HeaderFilter({
                 } else {
                   setNameSearchValue('');
                   setClassSearchValue('');
-                  if (selectRef.current) selectRef.current.clearValue();
+                  if (classSelectRef.current)
+                    classSelectRef.current.clearValue();
                 }
               }}
             />
@@ -264,8 +300,8 @@ function HeaderFilter({
 
           <Box w={'250px'}>
             <Select
+              ref={classSelectRef}
               styles={customStyles}
-              ref={selectRef}
               isDisabled={!nameSearchValue}
               placeholder='Turma'
               isClearable={true}

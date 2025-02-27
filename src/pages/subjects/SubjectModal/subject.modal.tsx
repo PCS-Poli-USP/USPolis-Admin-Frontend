@@ -44,9 +44,7 @@ export default function SubjectModal(props: SubjectModalProps) {
     const formated: SubjectResponse = {
       ...data,
       activation: data.activation,
-      desactivation: data.desactivation
-        ? data.desactivation
-        : undefined,
+      desactivation: data.desactivation ? data.desactivation : undefined,
     };
     return formated;
   }
@@ -87,9 +85,7 @@ export default function SubjectModal(props: SubjectModalProps) {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          {props.isUpdate
-            ? 'Editar Disciplina'
-            : 'Cadastrar Disciplina'}
+          {props.isUpdate ? 'Editar Disciplina' : 'Cadastrar Disciplina'}
         </ModalHeader>
         <ModalCloseButton />
         <FormProvider {...form}>
@@ -104,17 +100,6 @@ export default function SubjectModal(props: SubjectModalProps) {
                 <MultiSelect
                   label={'Prédios'}
                   name={'building_ids'}
-                  values={
-                    props.selectedSubject
-                      ? props.selectedSubject.building_ids.map(
-                          (val, index) => ({
-                            value: val,
-                            label: props.selectedSubject?.buildings[index]
-                              .name as string,
-                          }),
-                        )
-                      : undefined
-                  }
                   options={props.buildings.map((building) => ({
                     value: building.id,
                     label: building.name,

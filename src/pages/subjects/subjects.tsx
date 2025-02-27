@@ -1,6 +1,6 @@
 import DataTable from 'components/common/DataTable/dataTable.component';
 import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Dialog from 'components/common/Dialog/dialog.component';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { getSubjectColumns } from './Tables/subject.table';
@@ -8,15 +8,23 @@ import useSubjects from 'hooks/useSubjetcts';
 import SubjectModal from './SubjectModal/subject.modal';
 import useBuildings from 'hooks/useBuildings';
 import PageContent from 'components/common/PageContent';
+import { checkUserPermission } from 'utils/tables/tables.utils';
+import { appContext } from 'context/AppContext';
 
 function Subjects() {
+  const context = useContext(appContext);
+  const { loading, subjects, getSubjects, deleteSubject } = useSubjects();
+
+  const disableMap: boolean[] = subjects.map((subject) =>
+    !checkUserPermission(context.loggedUser, subject.building_ids),
+  );
+  
   const columns = getSubjectColumns({
     handleEditButton: handleEditSubjectButton,
     handleDeleteButton: handleDeleteSubjectButton,
     handleDuplicateClick: handleDuplicateClick,
+    disableMap: disableMap,
   });
-
-  const { loading, subjects, getSubjects, deleteSubject } = useSubjects();
 
   const {
     isOpen: isOpenRegisterSubjectModal,
