@@ -10,6 +10,7 @@ import {
 } from '../utils';
 import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 import { WeekDay } from 'utils/enums/weekDays.enum';
+import { sortClassResponse } from 'utils/classes/classes.sorter';
 
 interface ClassroomPDFProps {
   classes: ClassResponse[];
@@ -22,7 +23,7 @@ const ClassroomsPDF = ({
   reservations,
   subtitle,
 }: ClassroomPDFProps) => {
-  const map = getClassroomOccupationMap(classes);
+  const map = getClassroomOccupationMap(classes, reservations);
   const group = Array.from(map.entries());
 
   function getUniqueClassesFromClassroomMap(
@@ -36,6 +37,21 @@ const ClassroomsPDF = ({
     });
     const values = classes.filter((cls) =>
       unique.has(`${cls.subject_code} T${classNumberFromClassCode(cls.code)}`),
+    );
+    return values;
+  }
+
+  function getUniqueReservationsFromClassroomMap(
+    map: [string, WeekDayOccupationMap],
+  ) {
+    const days = Array.from(map[1].entries());
+    const unique = new Set<string>();
+    days.forEach((day) => {
+      const values = Array.from(day[1].values());
+      values.forEach((value) => unique.add(value));
+    });
+    const values = reservations.filter((reservation) =>
+      unique.has(`${reservation.title}`),
     );
     return values;
   }
@@ -123,24 +139,41 @@ const ClassroomsPDF = ({
                 <Text style={styles.footer}>Detalhes {'\n'}</Text>
               </View>
             </View>
-            {getUniqueClassesFromClassroomMap(classroomMap).map((cls) => (
-              <View style={styles.tableRow}>
-                <Text style={styles.tableCell}>
-                  {cls.subject_code} T{classNumberFromClassCode(cls.code)} -{' '}
-                  {cls.schedules
-                    .map(
-                      (schedule) =>
-                        `${WeekDay.translate(
-                          schedule.week_day as WeekDay,
-                        )} (${schedule.start_time.substring(
-                          0,
-                          5,
-                        )} ~ ${schedule.end_time.substring(0, 5)})`,
-                    )
-                    .join(', ')}
-                </Text>
-              </View>
-            ))}
+            {getUniqueClassesFromClassroomMap(classroomMap)
+              .sort(sortClassResponse)
+              .map((cls) => (
+                <View style={styles.tableRow}>
+                  <Text style={styles.tableCell}>
+                    {cls.subject_code} T{classNumberFromClassCode(cls.code)} -{' '}
+                    {cls.schedules
+                      .map(
+                        (schedule) =>
+                          `${WeekDay.translate(
+                            schedule.week_day as WeekDay,
+                          )} (${schedule.start_time.substring(
+                            0,
+                            5,
+                          )} ~ ${schedule.end_time.substring(0, 5)})`,
+                      )
+                      .join(', ')}
+                  </Text>
+                </View>
+              ))}
+            {getUniqueReservationsFromClassroomMap(classroomMap).map(
+              (reservation) => (
+                <View style={styles.tableRow}>
+                  <Text style={styles.tableCell}>
+                    {reservation.title} -{' '}
+                    {`${WeekDay.translate(
+                      reservation.schedule.week_day as WeekDay,
+                    )} (${reservation.schedule.start_time.substring(
+                      0,
+                      5,
+                    )} ~ ${reservation.schedule.end_time.substring(0, 5)})`}
+                  </Text>
+                </View>
+              ),
+            )}
           </View>
         </Page>
       ))}
