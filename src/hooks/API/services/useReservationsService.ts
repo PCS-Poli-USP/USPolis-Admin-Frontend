@@ -27,6 +27,12 @@ const useReservationsService = () => {
     return axios.get(`${PREFIX}}/full/`);
   };
 
+  const getByBuildingName = (
+    building_name: string,
+  ): Promise<AxiosResponse<Array<ReservationResponse>>> => {
+    return axios.get(`${PREFIX}/building/${building_name}`);
+  };
+
   const create = (
     data: CreateReservation,
   ): Promise<AxiosResponse<ReservationResponse>> => {
@@ -44,7 +50,15 @@ const useReservationsService = () => {
     return axios.put(`${PREFIX}/${id}`, data);
   };
 
-  return { getMine, get, getFull, create, deleteById, update };
+  return {
+    getMine,
+    get,
+    getFull,
+    getByBuildingName,
+    create,
+    deleteById,
+    update,
+  };
 };
 
 export default useReservationsService;
