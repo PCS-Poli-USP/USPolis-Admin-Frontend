@@ -132,7 +132,6 @@ const AllocateSingleScheduleSection = forwardRef<
     }, [selectedBuilding, schedule]);
 
     function reset() {
-      console.log('Reseting...');
       setRemoveAllocation(false);
       if (schedule) {
         if (schedule.classroom_id) {
