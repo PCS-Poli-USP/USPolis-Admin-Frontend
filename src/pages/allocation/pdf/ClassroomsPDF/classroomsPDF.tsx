@@ -42,9 +42,7 @@ const ClassroomsPDF = ({
 
   function getTimeRangeFromClassroomMap(map: [string, WeekDayOccupationMap]) {
     const occupationMap = map[1];
-    const mondayMap = occupationMap.get(
-      WeekDay.translate(WeekDay.MONDAY),
-    ) as OccupationMap;
+    const mondayMap = occupationMap.get(WeekDay.MONDAY) as OccupationMap;
     const ranges = Array.from(mondayMap.keys());
     return ranges;
   }
