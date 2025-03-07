@@ -19,9 +19,10 @@ export class ErrorParser {
     return error.isAxiosError && error.response !== undefined;
   }
 
-  static parseError(error: any) {
-    
+  static getDetailFromError(error: any): string {
+    if (this.isAxiosErrorResponse(error)) {
+      return error.response ? error.response.data.detail : 'Erro inesperado';
+    }
+    return 'Erro inesperado';
   }
-
-
 }

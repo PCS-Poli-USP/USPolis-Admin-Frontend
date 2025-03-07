@@ -31,7 +31,7 @@ export type OccupationMap = Map<TimeRange, string>;
 type SchedulesClassroomMap = Map<string, ScheduleResponse[]>;
 
 // weekday - ocuppation map
-export type WeekDayOccupationMap = Map<string, OccupationMap>;
+export type WeekDayOccupationMap = Map<WeekDay, OccupationMap>;
 
 // classroom - weeekday occupation map
 type ClassroomOccupationMap = Map<string, WeekDayOccupationMap>;
@@ -71,11 +71,10 @@ function getEmptyOccupationMap(schedules: ScheduleResponse[]): OccupationMap {
 function getEmptyWeekDayOccupationMap(
   schedules: ScheduleResponse[],
 ): WeekDayOccupationMap {
-  const map = new Map<string, OccupationMap>();
+  const map = new Map<WeekDay, OccupationMap>();
   const weekDays = WeekDay.getShortValues();
   weekDays.forEach((weekDay) => {
-    const translated = WeekDay.translate(weekDay);
-    map.set(translated, getEmptyOccupationMap(schedules));
+    map.set(weekDay, getEmptyOccupationMap(schedules));
   });
   return map;
 }
@@ -91,13 +90,16 @@ function insertClassInOccupationMap(
   timeRanges.forEach((timeRange, index) => {
     const rangeStart = moment(timeRange[0], 'HH:mm');
     const rangeEnd = moment(timeRange[1], 'HH:mm');
-    if (rangeStart.isSameOrAfter(start) && rangeStart.isSameOrBefore(end)) {
+    if (rangeStart.isSameOrBefore(start) && rangeEnd.isSameOrAfter(start)) {
       map.set(timeRange, text);
     }
-    if (rangeEnd.isAfter(start) && rangeEnd.isSameOrBefore(end)) {
+    if (rangeStart.isAfter(start) && rangeEnd.isSameOrBefore(end)) {
       map.set(timeRange, text);
     }
-    if (rangeStart.isSameOrAfter(start) && rangeStart.isSameOrBefore(end)) {
+    if (rangeStart.isBefore(end) && rangeEnd.isSameOrAfter(end)) {
+      map.set(timeRange, text);
+    }
+    if (rangeStart.isBefore(start) && rangeEnd.isAfter(end)) {
       map.set(timeRange, text);
     }
   });
@@ -142,9 +144,7 @@ export function getClassroomOccupationMap(
       const weekDayOccupationMap = getEmptyWeekDayOccupationMap(schedules);
       weekDayOccupationMap.forEach((occupationMap, weekDay) => {
         const weekDaySchedules = schedules.filter(
-          (schedule) =>
-            schedule.week_day !== undefined &&
-            WeekDay.translate(schedule.week_day) === weekDay,
+          (schedule) => schedule.week_day === weekDay,
         );
         weekDaySchedules.forEach((schedule) => {
           insertClassInOccupationMap(

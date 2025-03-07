@@ -37,7 +37,7 @@ export default function ScheduleAccordion(props: ScheduleAccordionProps) {
 
   const [oldDates, setOldDates] = useState<string[]>([]);
   const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
-  const { updateOccurrences } = useSchedules();
+  const { loading, updateOccurrences } = useSchedules();
 
   return (
     <Accordion borderColor={'blackAlpha.900'} allowToggle>
@@ -114,6 +114,7 @@ export default function ScheduleAccordion(props: ScheduleAccordionProps) {
                             }
                           }}
                           colorScheme={'blue'}
+                          disabled={loading}
                         >
                           Salvar
                         </Button>

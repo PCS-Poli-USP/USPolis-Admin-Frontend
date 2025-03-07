@@ -1,6 +1,11 @@
 import { ErrorParser } from 'hooks/errors';
 
 export class ClassErrorParser extends ErrorParser {
+  static parseGetError(error: any) {
+    const detail = this.getDetailFromError(error);
+    return `Erro ao buscar turmas: ${detail}`;
+  }
+
   static parseCreateError(error: any) {
     if (this.isAxiosErrorResponse(error)) {
       if (error.response?.status === 409) {
@@ -10,4 +15,8 @@ export class ClassErrorParser extends ErrorParser {
     }
     return 'Erro inesperado ao criar turma';
   }
+
+  static parseUpdateError(error: any) {}
+
+  static parseDeleteError(error: any) {}
 }

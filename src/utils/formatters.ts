@@ -22,3 +22,11 @@ export function FormatData(data: string) {
 export function datetimeToDate(date: string) {
   return moment(date).format('DD/MM/YYYY');
 }
+
+export function normalizeString(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(' ', '_');
+}

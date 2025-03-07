@@ -47,8 +47,8 @@ export default function JupiterCrawlerModal({
             <>
               {data.errors.length > 0 ? (
                 <Text fontSize='md' fontWeight='normal' mb={4}>
-                  Não foi possível carregar/atualizar todas as disciplinas, isso pode ter
-                  ocorrido por:
+                  Não foi possível carregar/atualizar todas as disciplinas, isso
+                  pode ter ocorrido por:
                   <OrderedList>
                     <ListItem fontWeight={'bold'}>
                       Código da disciplina digitado incorretamente ou não existe
@@ -56,12 +56,6 @@ export default function JupiterCrawlerModal({
                     </ListItem>
                     <ListItem fontWeight={'bold'}>
                       O jupiter web não segue a formatação esperada
-                    </ListItem>
-                    <ListItem fontWeight={'bold'}>
-                      Disciplinas e turmas já cadastradas no sistema
-                    </ListItem>
-                    <ListItem fontWeight={'bold'}>
-                      Quantidade de turmas atuais é diferente das do jupiter web
                     </ListItem>
                     <ListItem fontWeight={'bold'}>
                       Erro interno no sistema ao salvar informações, contate o
