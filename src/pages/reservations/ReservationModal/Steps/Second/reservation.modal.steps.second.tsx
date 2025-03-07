@@ -66,33 +66,31 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
 
   function handleChangeRecurrence(value: string) {
     if (value === Recurrence.MONTHLY) {
-      setIsCustom(false);
       setIsDayli(false);
       setIsMonthly(true);
-      setSelectedDays([]);
-      setIsSelecting(false);
     } else if (value === Recurrence.CUSTOM) {
       setIsCustom(true);
       setIsDayli(false);
       setIsMonthly(false);
-      setIsSelecting(true);
       resetField('month_week', { defaultValue: '' });
       resetField('week_day', { defaultValue: '' });
     } else if (value === Recurrence.DAILY) {
-      setIsCustom(false);
       setIsDayli(true);
       setIsMonthly(false);
-      setSelectedDays([]);
       setIsSelecting(false);
       resetField('month_week', { defaultValue: '' });
       resetField('week_day', { defaultValue: '' });
     } else {
-      setIsCustom(false);
       setIsDayli(false);
       setIsMonthly(false);
-      setSelectedDays([]);
-      setIsSelecting(false);
       resetField('month_week', { defaultValue: '' });
+    }
+
+    if (value !== Recurrence.CUSTOM) {
+      setSelectedDays([]);
+      props.setDates([]);
+      setIsSelecting(false);
+      setIsCustom(false);
     }
   }
 
@@ -114,6 +112,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     <VStack w={'full'} align={'strech'} h={'full'}>
       <FormProvider {...props.form}>
         <form>
+          <Text>{selectedDays.join(' ')}</Text>
           <Text fontSize={'lg'} fontWeight={'bold'}>
             Local e Disponibilidade
           </Text>
