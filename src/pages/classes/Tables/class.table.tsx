@@ -21,6 +21,7 @@ import {
   FilterBuilding,
   FilterClassCode,
   FilterNumber,
+  FilterString,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 
@@ -73,6 +74,7 @@ export const getClassesColumns = (
       accessorKey: 'code',
       header: 'Turma',
       maxSize: 120,
+      accessorFn: (row) => classNumberFromClassCode(row.code),
       filterFn: FilterClassCode,
       cell: ({ row }) => (
         <Box>
@@ -84,6 +86,7 @@ export const getClassesColumns = (
       accessorKey: 'subject_name',
       header: 'Nome da Disciplina',
       maxSize: 250,
+      filterFn: FilterString,
       cell: ({ row }) => (
         <Box maxW={300}>
           <Tooltip label={<Text>{row.original.subject_name}</Text>}>
@@ -104,6 +107,9 @@ export const getClassesColumns = (
       filterFn: FilterArray,
       header: 'Prédios',
       maxSize: 120,
+      meta: {
+        isSelectable: true,
+      },
       cell: ({ row }) => (
         <Box>
           {row.original.schedules.map((schedule, index) => (

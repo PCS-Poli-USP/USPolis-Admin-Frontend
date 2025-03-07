@@ -6,7 +6,7 @@ export interface OccurrenceConflict {
   subject_code?: string;
   class_code?: string;
   class_id: number;
-  reservation_name?: string;
+  reservation_title?: string;
   reservation_id?: number;
 }
 

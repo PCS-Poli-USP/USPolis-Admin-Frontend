@@ -79,7 +79,7 @@ function getEmptyWeekDayOccupationMap(
   return map;
 }
 
-function insertClassInOccupationMap(
+function insertScheduleInOccupationMap(
   text: string,
   schedule: ScheduleResponse,
   map: OccupationMap,
@@ -111,6 +111,14 @@ function getSchedulesFromClasses(classes: ClassResponse[]): ScheduleResponse[] {
   }, []);
 }
 
+function getSchedulesFromReservations(
+  reservations: ReservationResponse[],
+): ScheduleResponse[] {
+  return reservations.reduce<ScheduleResponse[]>((acc, reservation) => {
+    return acc.concat(reservation.schedule);
+  }, []);
+}
+
 function getSchedulesByClassroom(
   schedules: ScheduleResponse[],
 ): SchedulesClassroomMap {
@@ -132,9 +140,12 @@ function getSchedulesByClassroom(
 
 export function getClassroomOccupationMap(
   classes: ClassResponse[],
+  reservations: ReservationResponse[],
 ): ClassroomOccupationMap {
   const schedulesByClassroom = getSchedulesByClassroom(
-    getSchedulesFromClasses(classes),
+    getSchedulesFromClasses(classes).concat(
+      getSchedulesFromReservations(reservations),
+    ),
   );
   const map = new Map<string, WeekDayOccupationMap>();
   const classrooms = Array.from(schedulesByClassroom.keys());
@@ -147,12 +158,14 @@ export function getClassroomOccupationMap(
           (schedule) => schedule.week_day === weekDay,
         );
         weekDaySchedules.forEach((schedule) => {
-          insertClassInOccupationMap(
-            `${schedule.subject_code} T${
-              schedule.class_code
-                ? classNumberFromClassCode(schedule.class_code)
-                : ''
-            }`,
+          insertScheduleInOccupationMap(
+            schedule.subject
+              ? `${schedule.subject_code} T${
+                  schedule.class_code
+                    ? classNumberFromClassCode(schedule.class_code)
+                    : ''
+                }`
+              : `${schedule.reservation}`,
             schedule,
             occupationMap,
           );

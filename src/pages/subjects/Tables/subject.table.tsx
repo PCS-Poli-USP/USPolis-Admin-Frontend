@@ -7,7 +7,10 @@ import {
   datetimeFormatter,
   subjectTypeFormatter,
 } from 'utils/subjects/subjects.formatter';
-import { FilterArray } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import {
+  FilterArray,
+  FilterString,
+} from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface SubjectColumnsProps {
   handleEditButton: (data: SubjectResponse) => void;
@@ -29,6 +32,7 @@ export const getSubjectColumns = (
       accessorKey: 'name',
       header: 'Nome',
       maxSize: 300,
+      filterFn: FilterString,
       cell: ({ row }) => (
         <Tooltip label={row.original.name}>
           <Text maxW={300} overflowX={'hidden'} textOverflow={'ellipsis'}>
@@ -40,6 +44,7 @@ export const getSubjectColumns = (
     {
       accessorKey: 'professors',
       header: 'Professores',
+      filterFn: FilterArray,
       cell: ({ row }) => (
         <Box>
           {row.original.professors?.map((professor, index) => (
@@ -63,6 +68,7 @@ export const getSubjectColumns = (
           ? row.buildings.map((building) => building.name)
           : ['Não alocada'],
       filterFn: FilterArray,
+      meta: { isSelectable: true },
       header: 'Prédios',
       cell: ({ row }) => (
         <Box>

@@ -19,6 +19,8 @@ import Select from 'react-select';
 import { useState } from 'react';
 import useClasses from 'hooks/classes/useClasses';
 import { normalizeString } from 'utils/formatters';
+import useReservations from 'hooks/useReservations';
+import { Recurrence } from 'utils/enums/recurrence.enum';
 
 type Option = {
   value: string;
@@ -30,7 +32,16 @@ interface PDFOptionsProps {
 
 function HeaderPDFOptions({ buildings }: PDFOptionsProps) {
   const [selectedBuilding, setSelectedBuilding] = useState<Option | null>(null);
-  const { loading, classes, getClassesByBuildingName } = useClasses(false);
+  const {
+    loading: loadingC,
+    classes,
+    getClassesByBuildingName,
+  } = useClasses(false);
+  const {
+    loading: loadingR,
+    reservations,
+    getReservationsByBuildingName,
+  } = useReservations(false);
 
   return (
     <Popover placement='bottom-end'>
@@ -57,7 +68,10 @@ function HeaderPDFOptions({ buildings }: PDFOptionsProps) {
               isClearable={true}
               onChange={(option: Option | null) => {
                 setSelectedBuilding(option);
-                if (option) getClassesByBuildingName(option.label);
+                if (option) {
+                  getClassesByBuildingName(option.label);
+                  getReservationsByBuildingName(option.label);
+                }
               }}
             />
             {!selectedBuilding && (
@@ -82,7 +96,7 @@ function HeaderPDFOptions({ buildings }: PDFOptionsProps) {
             >
               <Button
                 w={'full'}
-                isLoading={loading}
+                isLoading={loadingC || loadingR}
                 disabled={!selectedBuilding}
                 variant={'outline'}
                 textColor={'uspolis.blue'}
@@ -102,7 +116,10 @@ function HeaderPDFOptions({ buildings }: PDFOptionsProps) {
                       (schedule) => schedule.allocated,
                     ),
                   }))}
-                  reservations={[]}
+                  reservations={reservations.filter(
+                    (reservation) =>
+                      reservation.schedule.recurrence !== Recurrence.CUSTOM,
+                  )}
                   subtitle={'Alocação Planejada'}
                 />
               }
@@ -114,7 +131,7 @@ function HeaderPDFOptions({ buildings }: PDFOptionsProps) {
             >
               <Button
                 w={'full'}
-                isLoading={loading}
+                isLoading={loadingC || loadingR}
                 disabled={!selectedBuilding}
                 variant={'outline'}
                 textColor={'uspolis.blue'}

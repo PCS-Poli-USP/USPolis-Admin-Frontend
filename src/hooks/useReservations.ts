@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { sortReservationsResponse } from 'utils/reservations/reservations.sorter';
 import useReservationsService from './API/services/useReservationsService';
 
-const useReservations = () => {
+const useReservations = (initialFetch = true) => {
   const service = useReservationsService();
   const [loading, setLoading] = useState(false);
   const [reservations, setReservations] = useState<ReservationResponse[]>([]);
@@ -52,6 +52,28 @@ const useReservations = () => {
         setLoading(false);
       });
   }, [showToast, service]);
+
+  const getReservationsByBuildingName = useCallback(
+    async (building_name: string) => {
+      setLoading(true);
+      await service
+        .getMine()
+        .then((response) => {
+          setReservations(response.data.sort(sortReservationsResponse));
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao carregar reservas do prédio ${building_name}: ${error.response.detail}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
 
   const createReservation = useCallback(
     async (data: CreateReservation) => {
@@ -122,15 +144,16 @@ const useReservations = () => {
   );
 
   useEffect(() => {
-    getReservations();
+    if (initialFetch) getReservations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [initialFetch]);
 
   return {
     loading,
     reservations,
     getAllReservations,
     getReservations,
+    getReservationsByBuildingName,
     createReservation,
     updateReservation,
     deleteReservation,

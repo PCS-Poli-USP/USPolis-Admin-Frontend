@@ -155,9 +155,9 @@ const ConflictsPage = () => {
                                             {event.subject_code}
                                           </C.Text>
                                         ) : undefined}
-                                        {event.reservation_name ? (
+                                        {event.reservation_title ? (
                                           <C.Text fontSize={'md'}>
-                                            Reserva: {event.reservation_name}
+                                            Reserva: {event.reservation_title}
                                           </C.Text>
                                         ) : undefined}
                                       </C.Flex>

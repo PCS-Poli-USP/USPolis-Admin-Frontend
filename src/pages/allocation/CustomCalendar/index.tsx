@@ -84,8 +84,6 @@ function CustomCalendar({
   const handleDatesSet = async (info: DatesSetArg) => {
     const newStart = moment(info.startStr).format('YYYY-MM-DD');
     const newEnd = moment(info.endStr).subtract(1, 'days').format('YYYY-MM-DD');
-    console.log('actual', start);
-    console.log('end', end);
     if (start !== newStart || end !== newEnd) {
       setStart(newStart);
       setEnd(newEnd);

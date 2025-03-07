@@ -1,6 +1,9 @@
 import { Row } from '@tanstack/react-table';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+import { filterString, filterStringArray } from 'utils/filters';
+import { normalizeString } from 'utils/formatters';
 
 export function FilterBoolean(row: Row<any>, columnId: string, value: string) {
   const booleanFromStringValue = value === 'true';
@@ -15,7 +18,7 @@ export function FilterNumber(row: Row<any>, columnId: string, value: string) {
 export function FilterArray(row: Row<any>, columnId: string, value: string) {
   const arrayValue: string[] = row.getValue(columnId);
   return arrayValue.some((it) =>
-    it.toLowerCase().includes(value.toLowerCase()),
+    normalizeString(it).includes(normalizeString(value)),
   );
 }
 
@@ -27,12 +30,10 @@ export function FilterClassroom(
   const arrayValue: string[] = row.getValue(columnId);
   if (
     arrayValue.length === 0 &&
-    'Não alocada'.toLowerCase().includes(value.toLowerCase())
+    normalizeString('Não alocada').includes(normalizeString(value))
   )
     return true;
-  return arrayValue.some((it) =>
-    it.toLowerCase().includes(value.toLowerCase()),
-  );
+  return filterStringArray(arrayValue, value);
 }
 
 export function FilterBuilding(row: Row<any>, columnId: string, value: string) {
@@ -42,9 +43,7 @@ export function FilterBuilding(row: Row<any>, columnId: string, value: string) {
     'Não alocada'.toLowerCase().includes(value.toLowerCase())
   )
     return true;
-  return arrayValue.some((it) =>
-    it.toLowerCase().includes(value.toLowerCase()),
-  );
+  return filterStringArray(arrayValue, value);
 }
 
 export function FilterClassCode(
@@ -52,9 +51,14 @@ export function FilterClassCode(
   columnId: string,
   value: string,
 ) {
-  const code: string = row.getValue(columnId);
+  const code: string = classNumberFromClassCode(row.getValue(columnId));
   if (code.length === 0) return true;
-  return code.slice(-2).toLowerCase().includes(value.toLowerCase());
+  return code.includes(value.toLowerCase());
+}
+
+export function FilterString(row: Row<any>, columnId: string, value: string) {
+  const str: string = row.getValue(columnId);
+  return filterString(str, value);
 }
 
 export function FilterRequester(
@@ -64,7 +68,7 @@ export function FilterRequester(
 ) {
   const requester: string = row.getValue(columnId);
   if (!requester) {
-    return row.original.created_by.toLowerCase().includes(value.toLowerCase());
+    return filterString(row.original.created_by, value);
   }
-  return requester.toLowerCase().includes(value.toLowerCase());
+  return filterString(requester, value);
 }

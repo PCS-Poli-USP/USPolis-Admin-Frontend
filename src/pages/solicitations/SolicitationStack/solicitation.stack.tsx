@@ -12,6 +12,7 @@ import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSo
 import { useEffect, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import SolicitationStackBody from './solicitation.stack.body';
+import { filterString } from 'utils/filters';
 
 interface SolicitationStackProps {
   solicitations: ClassroomSolicitationResponse[];
@@ -39,17 +40,17 @@ function SolicitationStack({
     let newCurrent = [...current];
     if (building)
       newCurrent = newCurrent.filter((val) =>
-        val.building.toLowerCase().includes(building.toLowerCase()),
+        filterString(val.building, building),
       );
     if (classroom)
       newCurrent = newCurrent.filter((val) =>
         val.classroom
-          ? val.classroom.toLowerCase().includes(classroom.toLowerCase())
-          : 'não especificada'.includes(classroom.toLowerCase()),
+          ? filterString(val.classroom, classroom)
+          : filterString('não especificada', classroom),
       );
     if (requester)
       newCurrent = newCurrent.filter((val) =>
-        val.user.toLowerCase().includes(requester.toLowerCase()),
+        filterString(val.user, requester),
       );
     setFiltered(newCurrent);
   }

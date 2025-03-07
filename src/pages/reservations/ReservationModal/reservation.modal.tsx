@@ -122,9 +122,10 @@ function ReservationModal(props: ReservationModalProps) {
     const isValid = await trigger();
     if (!isValid) return;
 
-    if (getValues('recurrence') === Recurrence.CUSTOM && dates.length === 0) {
+    if (getValues('recurrence') !== Recurrence.CUSTOM && dates.length !== 0)
       return;
-    }
+    if (getValues('recurrence') === Recurrence.CUSTOM && dates.length === 0)
+      return;
     handleSaveClick();
   }
 
@@ -233,7 +234,7 @@ function ReservationModal(props: ReservationModalProps) {
           <VStack w={'full'}>
             <Stepper size='lg' index={activeStep} alignItems={'center'}>
               {steps.map((step, index) => (
-                <Step key={index}>
+                <Step key={index} onClick={() => setActiveStep(index)}>
                   <StepIndicator>
                     <StepStatus
                       complete={<StepIcon />}

@@ -41,7 +41,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import {  useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   FaFastBackward,
   FaFastForward,
@@ -421,8 +421,19 @@ export default function DataTable<Data extends object>({
 function Filter({ column }: { column: Column<any, any> }) {
   const columnFilterValue = column.getFilterValue();
   const meta: any = column.columnDef.meta;
-  const sortedUniqueValues = useMemo(
-    () => Array.from(column.getFacetedUniqueValues().keys()).sort(),
+
+  const sortedUniqueValues: string[] = useMemo<string[]>(
+    () => {
+      const keys = Array.from(column.getFacetedUniqueValues().keys());
+      const unique = new Set(
+        keys.reduce<string[]>((acc, key) => {
+          if (Array.isArray(key)) return acc.concat(key);
+          acc.push(key);
+          return acc;
+        }, []),
+      );
+      return Array.from(unique).sort();
+    },
     // eslint-disable-next-line
     [column.getFacetedUniqueValues()],
   );
