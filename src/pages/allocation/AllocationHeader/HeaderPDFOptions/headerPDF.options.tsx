@@ -18,6 +18,7 @@ import ClassroomsPDF from '../../pdf/ClassroomsPDF/classroomsPDF';
 import Select from 'react-select';
 import { useState } from 'react';
 import useClasses from 'hooks/classes/useClasses';
+import { normalizeString } from 'utils/formatters';
 
 type Option = {
   value: string;
@@ -73,7 +74,11 @@ function HeaderPDFOptions({ buildings }: PDFOptionsProps) {
           <Box w={'full'}>
             <PDFDownloadLink
               document={<ClassesPDF classes={classes} />}
-              fileName='disciplinas.pdf'
+              fileName={
+                selectedBuilding
+                  ? `disciplinas-${normalizeString(selectedBuilding.label)}.pdf`
+                  : 'disciplinas.pdf'
+              }
             >
               <Button
                 w={'full'}
@@ -91,12 +96,21 @@ function HeaderPDFOptions({ buildings }: PDFOptionsProps) {
             <PDFDownloadLink
               document={
                 <ClassroomsPDF
-                  classes={classes}
+                  classes={classes.map((cls) => ({
+                    ...cls,
+                    schedules: cls.schedules.filter(
+                      (schedule) => schedule.allocated,
+                    ),
+                  }))}
                   reservations={[]}
                   subtitle={'Alocação Planejada'}
                 />
               }
-              fileName='salas.pdf'
+              fileName={
+                selectedBuilding
+                  ? `salas-${normalizeString(selectedBuilding.label)}.pdf`
+                  : 'salas.pdf'
+              }
             >
               <Button
                 w={'full'}
