@@ -65,7 +65,6 @@ export default function EditUserModal(props: EditModalProps) {
   async function fetchBuildings() {
     try {
       const response = await buildingsService.getAll();
-      console.log(response.data);
       setBuildings(response.data);
       setIsLoadingBuildings(false);
     } catch (err) {
