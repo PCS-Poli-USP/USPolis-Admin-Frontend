@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
+import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 import { AllocationEnum } from 'utils/enums/allocation.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
@@ -38,7 +39,7 @@ function ClassAccordion({ classes }: ClassAccordionProps) {
           <h2>
             <AccordionButton>
               <Box as='span' flex='1' textAlign='left' fontWeight={'bold'}>
-                {`Turma ${classData.code.slice(-2)}`}
+                {`Turma ${classNumberFromClassCode(classData.code)}`}
               </Box>
               <AccordionIcon />
             </AccordionButton>

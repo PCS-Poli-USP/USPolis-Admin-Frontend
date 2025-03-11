@@ -15,6 +15,7 @@ import { ModalProps } from 'models/interfaces';
 import ScheduleAccordion from './schedule.accordion';
 import { useEffect, useState } from 'react';
 import useClasses from 'hooks/classes/useClasses';
+import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 
 interface ClassOccurrencesModalProps extends ModalProps {
   selectedClass: ClassResponse;
@@ -45,7 +46,7 @@ export default function ClassOccurrencesModal({
       <ModalContent>
         <ModalHeader>{`Editar Ocorrências ${
           selectedClass.subject_code
-        } - ${selectedClass.code.slice(-2)}`}</ModalHeader>
+        } - ${classNumberFromClassCode(selectedClass.code)}`}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <ScheduleAccordion class={classFull} />
