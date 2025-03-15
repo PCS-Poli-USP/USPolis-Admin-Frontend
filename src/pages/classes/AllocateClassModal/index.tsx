@@ -15,12 +15,13 @@ import { ClassResponse } from 'models/http/responses/class.response.models';
 import AllocateSingleScheduleSection, {
   AllocateSingleScheduleSectionRef,
 } from './allocateSingleScheduleSection';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import useOccurrences from 'hooks/useOccurrences';
 import useClassesService from 'hooks/API/services/useClassesService';
 import { AllocateManySchedulesData } from 'hooks/API/services/useOccurrencesService';
 import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 import useAllowedBuildings from 'hooks/useAllowedBuildings';
+import { appContext } from 'context/AppContext';
 
 interface props {
   isOpen: boolean;
@@ -37,6 +38,7 @@ export function AllocateClassModal({
   class_,
   class_id,
 }: props) {
+  const { loggedUser } = useContext(appContext);
   const classesService = useClassesService();
   const [inputClass, setInputClass] = useState<ClassResponse>();
 
@@ -81,7 +83,7 @@ export function AllocateClassModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose}>
+    <Modal isOpen={isOpen} onClose={handleClose} size={'xl'}>
       <ModalOverlay />
       <ModalContent>
         {inputClass ? (
@@ -103,8 +105,11 @@ export function AllocateClassModal({
                         allowedBuildings={allowedBuildings}
                         loadingBuildings={loading}
                         initialBuildingId={
-                          inputClass.subject_building_ids.length === 1
-                            ? inputClass.subject_building_ids[0]
+                          loggedUser
+                            ? loggedUser.buildings &&
+                              loggedUser.buildings.length === 1
+                              ? loggedUser.buildings[0].id
+                              : undefined
                             : undefined
                         }
                       />
