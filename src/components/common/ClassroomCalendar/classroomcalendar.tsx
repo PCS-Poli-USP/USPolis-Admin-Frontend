@@ -21,7 +21,12 @@ import { CloseIcon } from '@chakra-ui/icons';
 import { OccurrenceResponse } from 'models/http/responses/occurrence.response.models';
 import { BsCalendarFill } from 'react-icons/bs';
 
-function ClassroomCalendar({ classroom, h, w }: ClassroomCalendarProps) {
+function ClassroomCalendar({
+  classroom,
+  h,
+  w,
+  initialDate,
+}: ClassroomCalendarProps) {
   const {
     isOpen: isOpenSelectDate,
     onOpen: onOpenSelectDate,
@@ -29,9 +34,10 @@ function ClassroomCalendar({ classroom, h, w }: ClassroomCalendarProps) {
   } = useDisclosure();
 
   const DATE_FORMAT = 'DD/MM/YYYY';
-  const [currentDate, setCurrentDate] = useState<Moment>(moment());
+  const [currentDate, setCurrentDate] = useState<Moment>(
+    initialDate ? moment(initialDate) : moment(),
+  );
   const defaultOccurrencesByTime: [string, string, OccurrenceResponse[]][] = [
-    ['06:00', '07:00', []],
     ['07:00', '08:00', []],
     ['08:00', '09:00', []],
     ['09:00', '10:00', []],
@@ -65,26 +71,26 @@ function ClassroomCalendar({ classroom, h, w }: ClassroomCalendarProps) {
         const occurrenceStartTime = moment(occur.start_time, 'HH:mm');
         const occurrenceEndTime = moment(occur.end_time, 'HH:mm');
         if (
-          occurrenceStartTime.isSameOrAfter(startTime) &&
-          occurrenceEndTime.isSameOrBefore(endTime)
+          startTime.isSameOrBefore(occurrenceStartTime) &&
+          endTime.isSameOrAfter(occurrenceStartTime)
         ) {
           return true;
         }
         if (
-          occurrenceStartTime.isSameOrBefore(startTime) &&
-          occurrenceEndTime.isSameOrBefore(endTime)
+          startTime.isAfter(occurrenceStartTime) &&
+          endTime.isSameOrBefore(occurrenceEndTime)
         ) {
           return true;
         }
         if (
-          occurrenceStartTime.isSameOrBefore(endTime) &&
-          occurrenceEndTime.isSameOrAfter(endTime)
+          startTime.isBefore(occurrenceEndTime) &&
+          endTime.isSameOrAfter(occurrenceEndTime)
         ) {
           return true;
         }
         if (
-          occurrenceStartTime.isSameOrBefore(startTime) &&
-          occurrenceEndTime.isSameOrAfter(endTime)
+          startTime.isBefore(occurrenceStartTime) &&
+          endTime.isAfter(occurrenceEndTime)
         ) {
           return true;
         }
