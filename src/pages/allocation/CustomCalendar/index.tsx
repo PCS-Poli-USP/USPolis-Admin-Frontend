@@ -28,7 +28,6 @@ const viewOptions: ViewOption[] = [
 interface CustomCalendarProps {
   events: Event[];
   resources: Resource[];
-  hasFilter: boolean;
   hasBuildingFilter: boolean;
   handleDateClick: (info: DateClickArg) => void;
   update: (start: string, end: string) => Promise<void>;
@@ -45,7 +44,6 @@ interface CustomCalendarProps {
 function CustomCalendar({
   events,
   resources,
-  hasFilter,
   hasBuildingFilter,
   handleDateClick,
   update,
@@ -284,7 +282,6 @@ function CustomCalendar({
         eventColor='#408080'
         displayEventTime
         resources={formatedResources}
-        filterResourcesWithEvents={hasFilter}
         resourcesInitiallyExpanded={hasBuildingFilter}
         resourceAreaWidth='150px'
         resourceAreaHeaderContent='Prédios / Salas'

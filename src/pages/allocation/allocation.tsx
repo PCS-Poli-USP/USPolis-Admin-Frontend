@@ -59,7 +59,7 @@ function Allocation() {
     moment().format('YYYY-MM-DD'),
   );
 
-  const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[0]);
+  const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[3]);
 
   const [clickedDate, setClickedDate] = useState<string>();
 
@@ -188,8 +188,9 @@ function Allocation() {
   }
 
   useEffect(() => {
+    let filtered = [...resources];
     if (buildingSearchValue) {
-      const filtered = resources.filter(
+      filtered = filtered.filter(
         (resource) =>
           resource.title
             .toLowerCase()
@@ -199,9 +200,17 @@ function Allocation() {
               .toLowerCase()
               .includes(buildingSearchValue.toLowerCase())),
       );
-      setFilteredResources(filtered);
     }
-  }, [buildingSearchValue, resources]);
+    if (classroomSearchValue) {
+      filtered = filtered.filter(
+        (resource) =>
+          resource.title
+            .toLowerCase()
+            .includes(classroomSearchValue.toLowerCase()) || !resource.parentId,
+      );
+    }
+    setFilteredResources(filtered);
+  }, [buildingSearchValue, classroomSearchValue, resources]);
 
   useEffect(() => {
     filterEvents(
@@ -218,10 +227,6 @@ function Allocation() {
     nameSearchValue,
     classSearchValue,
   ]);
-
-  useEffect(() => {
-    if (isMobile) setCurrentView(viewOptions[2]);
-  }, [isMobile]);
 
   useEffect(() => {
     if (loggedUser) {
@@ -301,16 +306,19 @@ function Allocation() {
 
           <CustomCalendar
             events={
-              buildingSearchValue ||
-              classroomSearchValue ||
-              nameSearchValue ||
-              classSearchValue
+              !!buildingSearchValue ||
+              !!classroomSearchValue ||
+              !!nameSearchValue ||
+              !!classSearchValue
                 ? filteredEvents
                 : events
             }
-            resources={buildingSearchValue ? filteredResources : resources}
+            resources={
+              !!buildingSearchValue || !!classroomSearchValue
+                ? filteredResources
+                : resources}
             handleDateClick={handleDateClick}
-            hasFilter={!!classroomSearchValue}
+            
             hasBuildingFilter={!!buildingSearchValue}
             update={async (start, end) => {
               if (loadingAllocation) return;
