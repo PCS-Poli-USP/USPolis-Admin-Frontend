@@ -1,4 +1,3 @@
-import moment from 'moment';
 import CommonValidator from 'utils/common/common.validator';
 import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { Recurrence } from 'utils/enums/recurrence.enum';
