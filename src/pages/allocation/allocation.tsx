@@ -10,6 +10,13 @@ import CustomCalendar from './CustomCalendar';
 import AllocationHeader from './AllocationHeader';
 import moment from 'moment';
 import { Resource } from 'models/http/responses/allocation.response.models';
+import { DateClickArg } from '@fullcalendar/interaction';
+import useBuildings from 'hooks/useBuildings';
+import useClassrooms from 'hooks/useClassrooms';
+import ReservationModal from 'pages/reservations/ReservationModal/reservation.modal';
+import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { Recurrence } from 'utils/enums/recurrence.enum';
+import { ReservationType } from 'utils/enums/reservations.enum';
 
 type ViewOption = {
   value: string;
@@ -33,6 +40,13 @@ function Allocation() {
     onClose: onCloseSolicitation,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenReservation,
+    onOpen: onOpenReservation,
+    onClose: onCloseReservation,
+  } = useDisclosure();
+  const [reservation, setReservation] = useState<ReservationResponse>();
+
   const [buildingSearchValue, setBuildingSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
   const [nameSearchValue, setNameSearchValue] = useState('');
@@ -47,12 +61,25 @@ function Allocation() {
 
   const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[0]);
 
+  const [clickedDate, setClickedDate] = useState<string>();
+
   const {
     loading: loadingAllocation,
     events,
     resources,
     getEvents,
   } = useAllocation();
+  const {
+    loading: loadingBuildings,
+    buildings,
+    getAllBuildings,
+  } = useBuildings(false);
+  const {
+    loading: loadingClassrooms,
+    classrooms,
+    getAllClassrooms,
+  } = useClassrooms(false);
+
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
   const [filteredResources, setFilteredResources] =
     useState<Resource[]>(resources);
@@ -108,6 +135,58 @@ function Allocation() {
     setFilteredEvents(newEvents);
   }
 
+  function handleDateClick(info: DateClickArg) {
+    if (!loggedUser) return;
+    const date = info.dateStr;
+    setClickedDate(moment(date).format('YYYY-MM-DD'));
+    const building = info.resource?._resource.parentId;
+    const classroom = info.resource?._resource.title;
+    if (building && classroom) {
+      setReservation({
+        id: 0,
+        title: '',
+        type: ReservationType.OTHER,
+        updated_at: '',
+        building_id:
+          buildings.find((building_) => building_.name === building)?.id || 0,
+        building_name: building,
+        classroom_id:
+          classrooms.find((classroom_) => classroom_.name === classroom)?.id ||
+          0,
+        classroom_name: classroom,
+        schedule_id: 0,
+        created_by_id: 0,
+        created_by: '',
+        has_solicitation: false,
+        solicitation_id: undefined,
+        schedule: {
+          id: 0,
+          week_day: undefined,
+          month_week: undefined,
+          start_date: moment(date).format('YYYY-MM-DD'),
+          end_date: moment(date).format('YYYY-MM-DD'),
+          start_time: moment(date).format('HH:mm'),
+          end_time: moment(date).add(1, 'hour').format('HH:mm'),
+          allocated: true,
+          all_day: false,
+          recurrence: Recurrence.CUSTOM,
+          occurrences: [
+            {
+              id: 0,
+              date: moment(date).format('YYYY-MM-DD'),
+              start_time: moment(date).format('HH:mm'),
+              end_time: moment(date).add(1, 'hour').format('HH:mm'),
+              classroom_id: 0,
+              classroom: classroom,
+            },
+          ],
+          logs: [],
+        },
+      });
+      onOpenReservation();
+    }
+  }
+
   useEffect(() => {
     if (buildingSearchValue) {
       const filtered = resources.filter(
@@ -143,6 +222,14 @@ function Allocation() {
   useEffect(() => {
     if (isMobile) setCurrentView(viewOptions[2]);
   }, [isMobile]);
+
+  useEffect(() => {
+    if (loggedUser) {
+      getAllBuildings();
+      getAllClassrooms();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loggedUser]);
 
   return (
     <PageContent>
@@ -192,6 +279,23 @@ function Allocation() {
               isMobile={isMobile}
               isOpen={isOpenSolicitation}
               onClose={onCloseSolicitation}
+              buildings={buildings}
+              classrooms={classrooms}
+              loadingBuildings={loadingBuildings}
+              loadingClassrooms={loadingClassrooms}
+            />
+          )}
+
+          {loggedUser && (
+            <ReservationModal
+              isUpdate={false}
+              classrooms={classrooms}
+              buildings={buildings}
+              refetch={() => {}}
+              isOpen={isOpenReservation}
+              onClose={onCloseReservation}
+              selectedReservation={reservation}
+              initialDate={clickedDate}
             />
           )}
 
@@ -205,6 +309,7 @@ function Allocation() {
                 : events
             }
             resources={buildingSearchValue ? filteredResources : resources}
+            handleDateClick={handleDateClick}
             hasFilter={!!classroomSearchValue}
             hasBuildingFilter={!!buildingSearchValue}
             update={async (start, end) => {

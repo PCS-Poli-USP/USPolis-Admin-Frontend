@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import { EventApi, DatesSetArg } from '@fullcalendar/core';
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import rrulePlugin from '@fullcalendar/rrule';
@@ -29,6 +30,7 @@ interface CustomCalendarProps {
   resources: Resource[];
   hasFilter: boolean;
   hasBuildingFilter: boolean;
+  handleDateClick: (info: DateClickArg) => void;
   update: (start: string, end: string) => Promise<void>;
   start: string;
   setStart: (start: string) => void;
@@ -45,6 +47,7 @@ function CustomCalendar({
   resources,
   hasFilter,
   hasBuildingFilter,
+  handleDateClick,
   update,
   start,
   setStart,
@@ -150,7 +153,14 @@ function CustomCalendar({
         initialDate={start}
         ref={calendarRef}
         schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
-        plugins={[timeGridPlugin, resourceTimelinePlugin, rrulePlugin]}
+        plugins={[
+          interactionPlugin,
+          timeGridPlugin,
+          resourceTimelinePlugin,
+          rrulePlugin,
+        ]}
+        selectable={true}
+        dateClick={handleDateClick}
         initialView={view.value}
         locale='pt-br'
         height='auto'
