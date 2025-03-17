@@ -50,8 +50,8 @@ const useAllocation = () => {
   }, []);
 
   const getAllocation = useCallback(async (start?: string, end?: string) => {
-    await getResources();
     await getEvents(start, end);
+    await getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
