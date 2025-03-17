@@ -149,10 +149,6 @@ function Allocation() {
     classSearchValue,
   ]);
 
-  useEffect(() => {
-    if (isMobile) setCurrentView(viewOptions[2]);
-  }, [isMobile]);
-
   return (
     <PageContent>
       <Loading
