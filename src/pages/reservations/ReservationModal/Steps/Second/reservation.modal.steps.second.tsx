@@ -26,7 +26,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     setHighlightedDays,
     setSelectedDays,
   } = useDateCalendarPicker();
-  const { listOneFull } = useClassrooms();
+  const { listOneFull } = useClassrooms(false);
+
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
   const [selectedClassroom, setSelectedClassroom] =
     useState<ClassroomFullResponse>();
@@ -35,7 +36,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   const [isCustom, setIsCustom] = useState(false);
   const [isSelecting, setIsSelecting] = useState(false);
 
-  const { resetField } = props.form;
+  const { resetField, setValue } = props.form;
 
   useEffect(() => {
     const { getValues } = props.form;
@@ -112,7 +113,6 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     <VStack w={'full'} align={'strech'} h={'full'}>
       <FormProvider {...props.form}>
         <form>
-          <Text>{selectedDays.join(' ')}</Text>
           <Text fontSize={'lg'} fontWeight={'bold'}>
             Local e Disponibilidade
           </Text>
@@ -162,7 +162,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             </VStack>
             <Spacer></Spacer>
             <VStack w={'auto'} h={'full'}>
-              <ClassroomCalendar classroom={selectedClassroom} h={130} />
+              <ClassroomCalendar
+                classroom={selectedClassroom}
+                h={130}
+                initialDate={props.initialDate}
+              />
             </VStack>
           </HStack>
 
@@ -234,12 +238,14 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   name={'start_date'}
                   placeholder='Data de inicio'
                   type='date'
+                  disabled={isCustom}
                 />
                 <Input
                   label={'Fim da agenda'}
                   name={'end_date'}
                   placeholder='Data de fim'
                   type='date'
+                  disabled={isCustom}
                 />
               </HStack>
 
@@ -267,11 +273,17 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                 dayClick={(day) => {
                   dayClick(day);
                   if (selectedDays.includes(day)) {
-                    const newDates = selectedDays.filter((val) => val !== day);
-                    newDates.sort(sortDates);
+                    const newDates = selectedDays
+                      .filter((val) => val !== day)
+                      .sort(sortDates);
                     props.setDates(newDates);
+                    setValue('start_date', newDates[0]);
+                    setValue('end_date', newDates[newDates.length - 1]);
                   } else {
-                    props.setDates([...selectedDays, day].sort(sortDates));
+                    const newDates = [...selectedDays, day].sort(sortDates);
+                    props.setDates(newDates);
+                    setValue('start_date', newDates[0]);
+                    setValue('end_date', newDates[newDates.length - 1]);
                   }
                 }}
                 readOnly={false}

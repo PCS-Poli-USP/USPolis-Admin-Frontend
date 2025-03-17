@@ -13,6 +13,7 @@ export interface ReservationModalSecondStepProps {
   setDates: (value: string[]) => void;
   form: UseFormReturn<ReservationSecondForm, any, undefined>;
   selectedReservation?: ReservationResponse;
+  initialDate?: string;
 }
 export interface ReservationSecondForm {
   building_id: number;

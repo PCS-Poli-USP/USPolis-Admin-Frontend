@@ -12,6 +12,7 @@ export interface ReservationModalProps extends ModalProps {
   buildings: BuildingResponse[];
   selectedReservation?: ReservationResponse;
   refetch: () => void;
+  initialDate?: string;
 }
 
 export interface ReservationForm {
