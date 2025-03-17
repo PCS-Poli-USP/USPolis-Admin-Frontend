@@ -107,6 +107,13 @@ function CustomCalendar({
     setCalendarView(view.value);
   }, [view]);
 
+  useEffect(() => {
+    if (calendarRef.current) {
+      calendarRef.current.getApi().refetchEvents();
+      calendarRef.current.getApi().refetchResources();
+    }
+  }, [events, resources]); // Executa sempre que os eventos ou resources mudam
+
   const formatedResources = resources.map((res) => {
     if (res.parentId === null) {
       const { parentId, ...rest } = res;
