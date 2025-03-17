@@ -13,19 +13,16 @@ const useAllocation = () => {
 
   const getEvents = useCallback(async (start?: string, end?: string) => {
     setLoading(true);
-    let allEvents: Event[] = [];
     try {
       const response = await allocationService.listEvents(start, end);
-      allEvents = response.data;
-      setEvents(allEvents);
+      setEvents(response.data);
     } catch (error) {
       showToast('Erro', 'Erro ao carregar eventos', 'error');
       console.log(error);
-      allEvents = [];
+      setEvents([]);
     } finally {
       setLoading(false);
     }
-    return allEvents;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -43,15 +40,15 @@ const useAllocation = () => {
         setResources([]);
       })
       .finally(() => {
-        // setLoading(false);
+        setLoading(false);
       });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getAllocation = useCallback(async (start?: string, end?: string) => {
-    await getResources();
     await getEvents(start, end);
+    await getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
