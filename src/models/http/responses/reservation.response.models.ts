@@ -23,6 +23,8 @@ export interface ReservationResponseBase {
   created_by: string;
 
   requester?: string,
+  has_solicitation: boolean;
+  solicitation_id?: number;
 }
 
 export interface ReservationResponse extends ReservationResponseBase {
