@@ -251,6 +251,7 @@ function HeaderFilter({
               ref={classroomSelectRef}
               styles={customStyles}
               placeholder='Sala'
+              isDisabled={!buildingSearchValue}
               isClearable={true}
               options={classroomsOptions}
               value={

@@ -27,7 +27,6 @@ const viewOptions: ViewOption[] = [
 interface CustomCalendarProps {
   events: Event[];
   resources: Resource[];
-  hasFilter: boolean;
   hasBuildingFilter: boolean;
   update: (start: string, end: string) => Promise<void>;
   start: string;
@@ -43,7 +42,6 @@ interface CustomCalendarProps {
 function CustomCalendar({
   events,
   resources,
-  hasFilter,
   hasBuildingFilter,
   update,
   start,
@@ -106,13 +104,6 @@ function CustomCalendar({
   useEffect(() => {
     setCalendarView(view.value);
   }, [view]);
-
-  useEffect(() => {
-    if (calendarRef.current) {
-      calendarRef.current.getApi().refetchEvents();
-      calendarRef.current.getApi().refetchResources();
-    }
-  }, [events, resources]); // Executa sempre que os eventos ou resources mudam
 
   const formatedResources = resources.map((res) => {
     if (res.parentId === null) {
@@ -274,7 +265,6 @@ function CustomCalendar({
         eventColor='#408080'
         displayEventTime
         resources={formatedResources}
-        filterResourcesWithEvents={hasFilter}
         resourcesInitiallyExpanded={hasBuildingFilter}
         resourceAreaWidth='150px'
         resourceAreaHeaderContent='Prédios / Salas'
