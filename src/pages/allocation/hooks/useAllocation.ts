@@ -3,7 +3,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { Resource, Event } from '../interfaces/allocation.interfaces';
 import useALlocationsService from 'hooks/API/services/useAllocationService';
 
-const useAllocation = () => {
+const useAllocation = (
+  initialFetchEvents: boolean = true,
+  initialFetchResources = true,
+  initialStart: string | undefined = undefined,
+  initialEnd: string | undefined = undefined,
+) => {
   const allocationService = useALlocationsService();
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
@@ -53,7 +58,8 @@ const useAllocation = () => {
   }, []);
 
   useEffect(() => {
-    getAllocation();
+    if (initialFetchEvents) getEvents(initialStart, initialEnd);
+    if (initialFetchResources) getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
