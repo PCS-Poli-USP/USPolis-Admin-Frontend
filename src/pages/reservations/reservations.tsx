@@ -98,7 +98,15 @@ function Reservations() {
         selectedReservation={selectedReservation}
         refetch={getReservations}
       />
-      <DataTable loading={loading} data={reservations} columns={columns} />
+      <DataTable
+        loading={loading}
+        data={reservations}
+        columns={columns}
+        columnPinning={{
+          left: [],
+          right: ['options'],
+        }}
+      />
       <Dialog
         isOpen={isOpenDialog}
         onClose={() => {
