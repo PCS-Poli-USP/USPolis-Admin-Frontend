@@ -1,6 +1,23 @@
 import { useCallback, useState } from 'react';
 import { sortDates } from 'utils/holidays/holidays.sorter';
 
+export interface DateCalendarPickerReturn {
+  dayClick: (day: string) => void;
+  selectedDays: string[];
+  setSelectedDays: (value: string[]) => void;
+  selectDay: (day: string) => void;
+  selectManyDays: (days: string[]) => void;
+  occupiedDays: string[];
+  setOccupiedDays: (value: string[]) => void;
+  occupyDay: (day: string) => void;
+  occupyManyDays: (days: string[]) => void;
+  highlightedDays: string[];
+  setHighlightedDays: (value: string[]) => void;
+  highlightDay: (day: string) => void;
+  hightlightManyDays: (days: string[]) => void;
+  removeManyHighlightDays: (days: string[]) => void;
+}
+
 export const useDateCalendarPicker = () => {
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const [highlightedDays, setHighlightedDays] = useState<string[]>([]);

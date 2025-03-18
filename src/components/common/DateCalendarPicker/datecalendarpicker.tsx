@@ -10,8 +10,13 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
   const maxDate = moment({ year: currentYear, month: 11, day: 31 }); // Dezembro 31 do ano atual
   return (
     <Flex direction={'column'} justify={'stretch'} h={'fit-content'}>
-      {props.header ? (
-        <>
+      <Flex direction={'row'} justify={'center'} align={'center'} gap={'5px'}>
+        {props.readOnly ? (
+          <Text fontSize={'sm'} fontWeight={'bold'}>
+            Apenas Visualização
+          </Text>
+        ) : undefined}
+        {props.header ? (
           <Text
             fontSize={'sm'}
             textAlign={'center'}
@@ -20,8 +25,8 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
           >
             {props.header}
           </Text>
-        </>
-      ) : undefined}
+        ) : undefined}
+      </Flex>
       <Box h={'fit-content'} mb={0}>
         <DateCalendar
           disabled={props.disabled}
@@ -51,13 +56,13 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
           }}
         />
       </Box>
-      {props.helpText ? (
-        <>
+      <Flex direction={'row'} justify={'center'} align={'center'} gap={'5px'}>
+        {props.helpText ? (
           <Text fontSize={'sm'}>
             Clique para selecionar, clique novamente para remover
           </Text>
-        </>
-      ) : undefined}
+        ) : undefined}
+      </Flex>
     </Flex>
   );
 }
