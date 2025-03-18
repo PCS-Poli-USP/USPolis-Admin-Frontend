@@ -222,10 +222,13 @@ function SolicitationPanel({
             <Stack divider={<StackDivider />} spacing='4'>
               <Box>
                 <Heading size='sm' textTransform='uppercase'>
-                  Solicitante
+                  Solicitante e Título
                 </Heading>
                 <Text pt='2' fontSize='md'>
                   {`${solicitation.user} - ${solicitation.email}`}
+                </Text>
+                <Text pt='2' fontSize='md' fontWeight={'bold'}>
+                  Título: {`${solicitation.reservation_title}`}
                 </Text>
               </Box>
               <Box>
