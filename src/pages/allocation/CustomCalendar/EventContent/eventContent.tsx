@@ -31,7 +31,7 @@ export default function EventContent(eventInfo: EventContentArg) {
               alignContent={'center'}
               textColor={classData.allocated ? 'white' : 'red.300'}
             >
-              {eventInfo.event.title}
+              {eventInfo.event.title} T{classNumberFromClassCode(classData.code)}
             </Heading>
             {isTimeGridView && (
               <>
