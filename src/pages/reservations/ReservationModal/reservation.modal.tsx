@@ -52,12 +52,9 @@ import {
 } from 'models/http/requests/reservation.request.models';
 import { useEffect, useState } from 'react';
 import { Recurrence } from 'utils/enums/recurrence.enum';
-import ReservationModalThirdStep from './Steps/Third/reservation.modal.steps.third';
-import { ReservationThirdForm } from './Steps/Third/reservation.modal.steps.third.interface';
-import {
-  thirdDefaultValues,
-  thirdSchema,
-} from './Steps/Third/reservation.modal.steps.third.form';
+import { useDateCalendarPicker } from 'components/common/DateCalendarPicker';
+import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
 
 function ReservationModal(props: ReservationModalProps) {
   const firstForm = useForm<ReservationFirstForm>({
@@ -70,30 +67,31 @@ function ReservationModal(props: ReservationModalProps) {
     resolver: yupResolver(secondSchema),
   });
 
-  const thirdForm = useForm<ReservationThirdForm>({
-    defaultValues: thirdDefaultValues,
-    resolver: yupResolver(thirdSchema),
-  });
+  const [stepsIsValid, setStepsIsValid] = useState<[boolean, boolean]>([
+    false,
+    false,
+  ]);
 
-  const [stepsIsValid, setStepsIsValid] = useState<[boolean, boolean, boolean]>(
-    [false, false, true],
-  );
-
-  const { createReservation, updateReservation } = useReservations(false);
+  const { loading, createReservation, updateReservation } =
+    useReservations(false);
+  const { loading: loadingSolicitations, solicitations } =
+    useClassroomsSolicitations();
 
   const [dates, setDates] = useState<string[]>([]);
+  const calendarPicker = useDateCalendarPicker();
+  const [vinculatedSolicitation, setVinculatedSolicitation] =
+    useState<ClassroomSolicitationResponse>();
 
   function getReservationData(): CreateReservation | UpdateReservation {
     const firstData = firstForm.getValues();
     const secondData = secondForm.getValues();
-    const thirdData = thirdForm.getValues();
     const data: UpdateReservation | CreateReservation = {
       title: firstData.title,
       type: firstData.type,
       reason: firstData.reason,
+      has_solicitation: firstData.has_solicitation,
+      solicitation_id: firstData.solicitation_id,
       classroom_id: secondData.classroom_id,
-      has_solicitation: thirdData.has_solicitation,
-      solicitation_id: thirdData.solicitation_id,
       schedule_data: {
         reservation_id: props.selectedReservation
           ? props.selectedReservation.id
@@ -132,7 +130,7 @@ function ReservationModal(props: ReservationModalProps) {
   async function handleFirstNextClick() {
     const { trigger } = firstForm;
     const isValid = await trigger();
-    setStepsIsValid([isValid, stepsIsValid[1], stepsIsValid[2]]);
+    setStepsIsValid([isValid, stepsIsValid[1]]);
     if (!isValid) return;
     setActiveStep(activeStep + 1);
   }
@@ -140,28 +138,19 @@ function ReservationModal(props: ReservationModalProps) {
   async function handleSecondNextClick() {
     const { trigger, getValues } = secondForm;
     const isValid = await trigger();
-    setStepsIsValid((prev) => [prev[0], isValid, prev[2]]);
+    setStepsIsValid((prev) => [prev[0], isValid]);
     if (!isValid) return;
 
     if (getValues('recurrence') !== Recurrence.CUSTOM && dates.length !== 0)
       return;
     if (getValues('recurrence') === Recurrence.CUSTOM && dates.length === 0)
       return;
-    setActiveStep(activeStep + 1);
-  }
-
-  async function handleThirdNextClick() {
-    const { trigger } = thirdForm;
-    const isValid = await trigger();
-    setStepsIsValid((prev) => [prev[0], prev[1], isValid]);
-    if (!isValid) return;
     handleSaveClick();
   }
 
   function handleNextClick() {
     if (activeStep === 0) handleFirstNextClick();
     if (activeStep === 1) handleSecondNextClick();
-    if (activeStep === 2) handleThirdNextClick();
   }
 
   function handlePreviousClick() {
@@ -190,6 +179,8 @@ function ReservationModal(props: ReservationModalProps) {
         title: props.selectedReservation.title,
         type: props.selectedReservation.type,
         reason: props.selectedReservation.reason,
+        has_solicitation: props.selectedReservation.has_solicitation,
+        solicitation_id: props.selectedReservation.solicitation_id,
       });
       secondForm.reset({
         building_id: props.selectedReservation.building_id,
@@ -202,11 +193,8 @@ function ReservationModal(props: ReservationModalProps) {
         week_day: props.selectedReservation.schedule.week_day,
         month_week: props.selectedReservation.schedule.month_week,
       });
-      thirdForm.reset({
-        has_solicitation: props.selectedReservation.has_solicitation,
-        solicitation_id: props.selectedReservation.solicitation_id,
-      })
-      setStepsIsValid([true, true, true]);
+
+      setStepsIsValid([true, true]);
       if (props.selectedReservation.schedule.occurrences) {
         setDates(
           props.selectedReservation.schedule.occurrences.map(
@@ -215,14 +203,25 @@ function ReservationModal(props: ReservationModalProps) {
         );
       }
     }
-  }, [props, firstForm, secondForm, thirdForm]);
+  }, [props, firstForm, secondForm]);
 
   const steps = [
     {
       title: 'Primeiro',
-      description: 'Informações',
+      description: 'Informações e Solicitação',
       content: (
-        <ReservationModalFirstStep isUpdate={props.isUpdate} form={firstForm} />
+        <ReservationModalFirstStep  
+          isUpdate={props.isUpdate}
+          form={firstForm}
+          secondForm={secondForm}
+          setDates={setDates}
+          {...calendarPicker}
+          selectedReservation={props.selectedReservation}
+          vinculatedSolicitation={vinculatedSolicitation}
+          setVinculatedSolicitation={setVinculatedSolicitation}
+          solicitations={solicitations}
+          loadingSolicitations={loadingSolicitations}
+        />
       ),
     },
     {
@@ -237,17 +236,8 @@ function ReservationModal(props: ReservationModalProps) {
           classrooms={props.classrooms}
           selectedReservation={props.selectedReservation}
           initialDate={props.initialDate}
-        />
-      ),
-    },
-    {
-      title: 'Terceiro',
-      description: 'Solicitação',
-      content: (
-        <ReservationModalThirdStep
-          form={thirdForm}
-          isUpdate={props.isUpdate}
-          selectedReservation={props.selectedReservation}
+          {...calendarPicker}
+          vinculatedSolicitation={vinculatedSolicitation}
         />
       ),
     },
@@ -339,9 +329,9 @@ function ReservationModal(props: ReservationModalProps) {
                   colorScheme={'blue'}
                   onClick={handleNextClick}
                   rightIcon={<DownloadIcon />}
-                  disabled={stepsIsValid.some((step) => !step)}
+                  isLoading={loading}
                 >
-                  Finalizar
+                  {loading ? 'Salvando...' : 'Finalizar'}
                 </Button>
               ) : (
                 <Button

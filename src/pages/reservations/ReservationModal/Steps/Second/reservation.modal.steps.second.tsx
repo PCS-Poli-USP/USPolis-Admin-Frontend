@@ -3,9 +3,7 @@ import { FormProvider } from 'react-hook-form';
 import { Input, Select } from 'components/common';
 import { ReservationModalSecondStepProps } from './reservation.modal.steps.second.interface';
 
-import DateCalendarPicker, {
-  useDateCalendarPicker,
-} from 'components/common/DateCalendarPicker';
+import DateCalendarPicker from 'components/common/DateCalendarPicker';
 import { useEffect, useState } from 'react';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { Recurrence } from 'utils/enums/recurrence.enum';
@@ -18,14 +16,6 @@ import useClassrooms from 'hooks/useClassrooms';
 import { sortDates } from 'utils/holidays/holidays.sorter';
 
 function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
-  const {
-    selectedDays,
-    occupiedDays,
-    highlightedDays,
-    dayClick,
-    setHighlightedDays,
-    setSelectedDays,
-  } = useDateCalendarPicker();
   const { listOneFull } = useClassrooms(false);
 
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
@@ -53,8 +43,12 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     }
 
     if (props.selectedReservation) {
-      if (props.selectedReservation.schedule.occurrences) {
-        setSelectedDays(
+      if (
+        props.selectedReservation.schedule.occurrences &&
+        props.selectedDays.length === 0
+      ) {
+        console.log('Carregando dias do schedule');
+        props.setSelectedDays(
           props.selectedReservation.schedule.occurrences.map(
             (occur) => occur.date,
           ),
@@ -88,7 +82,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     }
 
     if (value !== Recurrence.CUSTOM) {
-      setSelectedDays([]);
+      props.setSelectedDays([]);
       props.setDates([]);
       setIsSelecting(false);
       setIsCustom(false);
@@ -98,7 +92,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   async function handleSelectClassroom(id: number) {
     const classroom = await listOneFull(id);
     setSelectedClassroom(classroom);
-    setHighlightedDays(
+    props.setHighlightedDays(
       classroom
         ? classroom.schedules.reduce<string[]>(
             (acc, schedule) =>
@@ -183,7 +177,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               fontWeight={isSelecting ? 'bold' : 'thin'}
               color={
                 isSelecting
-                  ? selectedDays.length > 0
+                  ? props.selectedDays.length > 0
                     ? undefined
                     : 'red'
                   : 'gray'
@@ -208,6 +202,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     // clearErrors(['month_week', 'week_day']);
                     handleChangeRecurrence(event.target.value);
                   }}
+                  disabled={!!props.vinculatedSolicitation}
                 />
                 <Select
                   label={'Dia da semana'}
@@ -255,38 +250,48 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   name={'start_time'}
                   placeholder='Horario de início da disciplina'
                   type='time'
+                  disabled={
+                    !!props.vinculatedSolicitation &&
+                    !!props.vinculatedSolicitation.start_time
+                  }
                 />
                 <Input
                   label={'Horário de fim'}
                   name={'end_time'}
                   placeholder='Horário de encerramento da disciplina'
                   type='time'
+                  disabled={
+                    !!props.vinculatedSolicitation &&
+                    !!props.vinculatedSolicitation.end_time
+                  }
                 />
               </HStack>
             </VStack>
 
             <VStack h={'full'} spacing={0} mt={4} alignItems={'center'}>
               <DateCalendarPicker
-                selectedDays={selectedDays}
-                highlightedDays={highlightedDays}
-                occupiedDays={occupiedDays}
+                selectedDays={props.selectedDays}
+                highlightedDays={props.highlightedDays}
+                occupiedDays={props.occupiedDays}
                 dayClick={(day) => {
-                  dayClick(day);
-                  if (selectedDays.includes(day)) {
-                    const newDates = selectedDays
+                  props.dayClick(day);
+                  if (props.selectedDays.includes(day)) {
+                    const newDates = props.selectedDays
                       .filter((val) => val !== day)
                       .sort(sortDates);
                     props.setDates(newDates);
                     setValue('start_date', newDates[0]);
                     setValue('end_date', newDates[newDates.length - 1]);
                   } else {
-                    const newDates = [...selectedDays, day].sort(sortDates);
+                    const newDates = [...props.selectedDays, day].sort(
+                      sortDates,
+                    );
                     props.setDates(newDates);
                     setValue('start_date', newDates[0]);
                     setValue('end_date', newDates[newDates.length - 1]);
                   }
                 }}
-                readOnly={false}
+                readOnly={!!props.vinculatedSolicitation}
               />
             </VStack>
           </HStack>
