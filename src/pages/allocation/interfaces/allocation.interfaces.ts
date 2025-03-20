@@ -31,6 +31,7 @@ export interface Event extends EventResponse {
 }
 
 export interface BaseExtendedProps {
+  schedule_id: number;
   building: string;
   classroom: string;
   classroom_capacity?: number;
@@ -44,6 +45,7 @@ export interface BaseExtendedProps {
 }
 
 export interface ClassExtendedProps extends BaseExtendedProps {
+  class_id: number;
   code: string;
   subject_code: string;
   subject_name: string;
@@ -54,6 +56,7 @@ export interface ClassExtendedProps extends BaseExtendedProps {
 }
 
 export interface ReservationExtendedProps extends BaseExtendedProps {
+  reservation_id: number;
   title: string;
   type: ReservationType;
   reason?: string;
