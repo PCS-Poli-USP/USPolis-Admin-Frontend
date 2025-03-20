@@ -14,7 +14,9 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  StackDivider,
   Text,
+  VStack,
 } from '@chakra-ui/react';
 import { ReactNode, useContext } from 'react';
 import { FaUser } from 'react-icons/fa';
@@ -95,7 +97,7 @@ export function DrawerNavBar({
                 rounded={'full'}
                 variant={'link'}
                 cursor={'pointer'}
-                minW={0}
+                minW={'150px'}
                 colorScheme='dark'
               >
                 <Flex alignItems={'center'} gap='10px'>
@@ -111,9 +113,30 @@ export function DrawerNavBar({
                 </Flex>
               </MenuButton>
               <MenuList>
-                <MenuItem onClick={handleClickLogout} color='black'>
-                  Sair
-                </MenuItem>
+                <VStack divider={<StackDivider borderColor={'black.500'} />}>
+                  <MenuItem color='black' fontWeight={'bold'}  onClick={() => {}}>
+                    {loggedUser && loggedUser.is_admin
+                      ? 'Administrador'
+                      : loggedUser && loggedUser.buildings
+                      ? 'Responsável de Prédio'
+                      : 'Usuário Comum'}
+                  </MenuItem>
+                  {loggedUser &&
+                    !loggedUser.is_admin &&
+                    loggedUser.buildings &&
+                    loggedUser.buildings.length > 0 && (
+                      <MenuItem color='black' onClick={() => {}}>
+                        Prédios:{' '}
+                        {loggedUser.buildings
+                          .map((building) => building.name)
+                          .join(', ')}
+                      </MenuItem>
+                    )}
+
+                  <MenuItem onClick={handleClickLogout} color='black'>
+                    Sair
+                  </MenuItem>
+                </VStack>
               </MenuList>
             </Menu>
           ) : (
