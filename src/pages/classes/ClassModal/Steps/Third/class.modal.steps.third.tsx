@@ -364,7 +364,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
               handleDeleteScheduleClick={handleDeleteScheduleClick}
             />
             <Spacer />
-            <VStack alignContent={'strech'} maxH={320}>
+            <VStack alignContent={'strech'} maxH={320} mb={'30px'}>
               <Text fontSize={'md'} fontWeight={'bold'}>
                 {isSelecting
                   ? 'Selecione as datas'
