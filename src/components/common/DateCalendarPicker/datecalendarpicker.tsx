@@ -56,11 +56,19 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
           }}
         />
       </Box>
-      <Flex direction={'row'} justify={'center'} align={'center'} gap={'5px'}>
+      <Flex
+        direction={'column'}
+        justify={'center'}
+        align={'center'}
+        gap={'2px'}
+        maxW={'300px'}
+      >
         {props.helpText ? (
-          <Text fontSize={'sm'}>
-            Clique para selecionar, clique novamente para remover
-          </Text>
+          <>
+            <Text fontSize={'sm'} noOfLines={2}>
+              Clique para selecionar, clique de novo para remover.
+            </Text>
+          </>
         ) : undefined}
       </Flex>
     </Flex>
