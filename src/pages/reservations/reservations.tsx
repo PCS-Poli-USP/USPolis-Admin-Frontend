@@ -11,6 +11,7 @@ import useReservations from 'hooks/useReservations';
 import ReservationModal from './ReservationModal/reservation.modal';
 import Dialog from 'components/common/Dialog/dialog.component';
 import PageContent from 'components/common/PageContent';
+import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
 
 function Reservations() {
   const {
@@ -28,6 +29,8 @@ function Reservations() {
   const { classrooms } = useClassrooms();
   const { loading, reservations, getReservations, deleteReservation } =
     useReservations();
+  const { loading: loadingSolicitations, solicitations } =
+    useClassroomsSolicitations();
 
   const [selectedReservation, setSelectedReservation] =
     useState<ReservationResponse>();
@@ -96,7 +99,9 @@ function Reservations() {
         classrooms={classrooms}
         buildings={buildings}
         selectedReservation={selectedReservation}
-        refetch={getReservations}
+        refetch={() => getReservations()}
+        solicitations={solicitations}
+        loadingSolicitations={loadingSolicitations}
       />
       <DataTable
         loading={loading}
