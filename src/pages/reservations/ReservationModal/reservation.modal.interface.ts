@@ -1,5 +1,6 @@
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 import { ModalProps } from 'models/interfaces';
 import { MonthWeek } from 'utils/enums/monthWeek.enum';
@@ -11,6 +12,8 @@ export interface ReservationModalProps extends ModalProps {
   classrooms: ClassroomResponse[];
   buildings: BuildingResponse[];
   selectedReservation?: ReservationResponse;
+  solicitations: ClassroomSolicitationResponse[];
+  loadingSolicitations: boolean;
   refetch: () => void;
   initialDate?: string;
 }

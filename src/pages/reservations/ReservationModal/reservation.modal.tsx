@@ -54,7 +54,6 @@ import { useEffect, useState } from 'react';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { useDateCalendarPicker } from 'components/common/DateCalendarPicker';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
-import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
 
 function ReservationModal(props: ReservationModalProps) {
   const firstForm = useForm<ReservationFirstForm>({
@@ -74,8 +73,6 @@ function ReservationModal(props: ReservationModalProps) {
 
   const { loading, createReservation, updateReservation } =
     useReservations(false);
-  const { loading: loadingSolicitations, solicitations } =
-    useClassroomsSolicitations();
 
   const [dates, setDates] = useState<string[]>([]);
   const calendarPicker = useDateCalendarPicker();
@@ -122,6 +119,7 @@ function ReservationModal(props: ReservationModalProps) {
   function handleCloseModal() {
     firstForm.reset(firstDefaultValues);
     secondForm.reset(secondDefaultValues);
+    setVinculatedSolicitation(undefined);
     setActiveStep(0);
     setDates([]);
     props.onClose();
@@ -136,10 +134,11 @@ function ReservationModal(props: ReservationModalProps) {
   }
 
   async function handleSecondNextClick() {
+    const isValidFirst = await firstForm.trigger();
     const { trigger, getValues } = secondForm;
-    const isValid = await trigger();
-    setStepsIsValid((prev) => [prev[0], isValid]);
-    if (!isValid) return;
+    const isValidSecond = await trigger();
+    setStepsIsValid((prev) => [isValidFirst, isValidSecond]);
+    if (!isValidSecond) return;
 
     if (getValues('recurrence') !== Recurrence.CUSTOM && dates.length !== 0)
       return;
@@ -210,7 +209,7 @@ function ReservationModal(props: ReservationModalProps) {
       title: 'Primeiro',
       description: 'Informações e Solicitação',
       content: (
-        <ReservationModalFirstStep  
+        <ReservationModalFirstStep
           isUpdate={props.isUpdate}
           form={firstForm}
           secondForm={secondForm}
@@ -219,8 +218,8 @@ function ReservationModal(props: ReservationModalProps) {
           selectedReservation={props.selectedReservation}
           vinculatedSolicitation={vinculatedSolicitation}
           setVinculatedSolicitation={setVinculatedSolicitation}
-          solicitations={solicitations}
-          loadingSolicitations={loadingSolicitations}
+          solicitations={props.solicitations}
+          loadingSolicitations={props.loadingSolicitations}
         />
       ),
     },

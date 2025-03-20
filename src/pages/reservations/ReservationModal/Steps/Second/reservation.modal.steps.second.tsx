@@ -47,7 +47,6 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
         props.selectedReservation.schedule.occurrences &&
         props.selectedDays.length === 0
       ) {
-        console.log('Carregando dias do schedule');
         props.setSelectedDays(
           props.selectedReservation.schedule.occurrences.map(
             (occur) => occur.date,
@@ -55,6 +54,17 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
         );
       }
       handleChangeRecurrence(props.selectedReservation.schedule.recurrence);
+    }
+
+    if (props.vinculatedSolicitation) {
+      const vinculatedBuilding = props.buildings.find(
+        (building) => building.name === props.vinculatedSolicitation?.building,
+      );
+      setSelectedBuilding(vinculatedBuilding);
+
+      if (props.vinculatedSolicitation.classroom_id) {
+        handleSelectClassroom(props.vinculatedSolicitation.classroom_id);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -92,15 +102,6 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   async function handleSelectClassroom(id: number) {
     const classroom = await listOneFull(id);
     setSelectedClassroom(classroom);
-    props.setHighlightedDays(
-      classroom
-        ? classroom.schedules.reduce<string[]>(
-            (acc, schedule) =>
-              acc.concat(schedule.occurrences.map((occur) => occur.date)),
-            [],
-          )
-        : [],
-    );
   }
 
   return (
@@ -114,6 +115,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             <VStack w={'full'} alignSelf={'flex-start'}>
               <Select
                 mt={4}
+                disabled={!!props.vinculatedSolicitation}
                 label={'Prédio'}
                 name={'building_id'}
                 options={props.buildings.map((building) => ({
@@ -131,7 +133,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               <SelectInput
                 mt={4}
                 label={'Sala de Aula'}
-                disabled={!selectedBuilding}
+                disabled={
+                  !selectedBuilding ||
+                  (props.vinculatedSolicitation &&
+                    props.vinculatedSolicitation.required_classroom)
+                }
                 name={'classroom_id'}
                 options={
                   selectedBuilding
@@ -153,6 +159,18 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   }
                 }}
               />
+              <Text
+                textAlign={'left'}
+                w={'full'}
+                hidden={
+                  !(
+                    props.vinculatedSolicitation &&
+                    props.vinculatedSolicitation.required_classroom
+                  )
+                }
+              >
+                *A reserva vinculada quer necessariamente essa sala
+              </Text>
             </VStack>
             <Spacer></Spacer>
             <VStack w={'auto'} h={'full'}>
@@ -269,9 +287,14 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             </VStack>
 
             <VStack h={'full'} spacing={0} mt={4} alignItems={'center'}>
+              {isCustom && props.selectedDays.length === 0 ? (
+                <Text w={'full'} textAlign={'center'} textColor={'red.500'}>
+                  Nenhum dia selecionado
+                </Text>
+              ) : undefined}
               <DateCalendarPicker
                 selectedDays={props.selectedDays}
-                highlightedDays={props.highlightedDays}
+                highlightedDays={[]}
                 occupiedDays={props.occupiedDays}
                 dayClick={(day) => {
                   props.dayClick(day);
@@ -292,6 +315,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   }
                 }}
                 readOnly={!!props.vinculatedSolicitation}
+                helpText={true}
               />
             </VStack>
           </HStack>

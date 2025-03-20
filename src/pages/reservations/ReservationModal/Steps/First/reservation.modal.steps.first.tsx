@@ -1,4 +1,16 @@
-import { Text, VStack } from '@chakra-ui/react';
+import {
+  Flex,
+  Text,
+  VStack,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverArrow,
+  PopoverCloseButton,
+  IconButton,
+} from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
 import {
   CheckBox,
@@ -11,6 +23,7 @@ import { ReservationType } from 'utils/enums/reservations.enum';
 import { ReservationModalFirstStepProps } from './reservation.modal.steps.first.interface';
 import { sortDates } from 'utils/holidays/holidays.sorter';
 import moment from 'moment';
+import { QuestionIcon } from '@chakra-ui/icons';
 
 function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
   const has_solicitation = props.form.watch('has_solicitation');
@@ -20,46 +33,61 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
     <VStack w={'full'} align={'stretch'}>
       <FormProvider {...props.form}>
         <form>
-          <Input
-            label={'Título'}
-            name={'title'}
-            disabled={!!props.vinculatedSolicitation}
-          />
-          <SelectInput
-            mt={4}
-            label={'Tipo'}
-            name={'type'}
-            options={ReservationType.getValues().map((value) => ({
-              value: value,
-              label: ReservationType.translate(value),
-            }))}
-            disabled={!!props.vinculatedSolicitation}
-          />
-          <Textarea
-            mt={4}
-            label='Motivo (Opcional)'
-            name='reason'
-            disabled={!!props.vinculatedSolicitation}
-          />
-          <CheckBox
-            mt={'10px'}
-            label='Referente a uma solicitação?'
-            name='has_solicitation'
-            text='Vincular a uma solicitação'
-            mb={'10px'}
-            onChange={(value) => {
-              if (!value) {
-                resetField('solicitation_id', { defaultValue: undefined });
-                resetField('has_solicitation', { defaultValue: false });
-                props.setVinculatedSolicitation(undefined);
+          <Flex align={'center'}>
+            <CheckBox
+              label='Referente a uma solicitação?'
+              name='has_solicitation'
+              text='Vincular a uma solicitação'
+              mb={'10px'}
+              onChange={(value) => {
+                if (!value) {
+                  resetField('solicitation_id', { defaultValue: 0 });
+                  resetField('has_solicitation', { defaultValue: false });
+                  resetField('title', { defaultValue: '' });
+                  resetField('reason', { defaultValue: '' });
+                  resetField('type', { defaultValue: '' as ReservationType });
+                  props.setVinculatedSolicitation(undefined);
+                }
+              }}
+              disabled={
+                props.isUpdate &&
+                props.selectedReservation &&
+                props.selectedReservation.has_solicitation
               }
-            }}
-            disabled={
-              props.isUpdate &&
-              props.selectedReservation &&
-              props.selectedReservation.has_solicitation
-            }
-          />
+            />
+            <Popover placement='bottom'>
+              <PopoverTrigger>
+                <IconButton
+                  mt={'15px'}
+                  size={'sm'}
+                  colorScheme='blue'
+                  variant={'ghost'}
+                  icon={<QuestionIcon />}
+                  aria-label='vinculation-help'
+                />
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverHeader fontWeight={'bold'}>
+                  O que é vincular a uma solicitação?
+                </PopoverHeader>
+                <PopoverBody>
+                  <Text>
+                    As solicitações de reserva aparecem na página
+                    "Solicitações", são feitas pelo Mapa de Salas e chegam por
+                    e-mail para os responsáveis dos prédios.
+                  </Text>
+                  <Text mt={'5px'}>
+                    Ao vincular uma reserva a uma solicitação, você faz com que
+                    a reserva que está sendo feita é referente a uma solicitação
+                    pendente já existente. Assim, fechando a solicitação e
+                    enviando um e-mail para o solicitante.
+                  </Text>
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          </Flex>
           <Select
             name='solicitation_id'
             label='Solicitação'
@@ -101,6 +129,15 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                     'end_date',
                     solicitation.dates[solicitation.dates.length - 1],
                   );
+                  props.secondForm.setValue(
+                    'building_id',
+                    solicitation.building_id,
+                  );
+                  if (solicitation.classroom_id)
+                    props.secondForm.setValue(
+                      'classroom_id',
+                      solicitation.classroom_id,
+                    );
                 }
               }
             }}
@@ -145,7 +182,13 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                 <b>Local:</b> {props.vinculatedSolicitation.building},{' '}
                 {props.vinculatedSolicitation.classroom
                   ? props.vinculatedSolicitation.classroom
-                  : 'Sala não informada'}
+                  : 'Sala não informada'}{' '}
+                {props.vinculatedSolicitation &&
+                props.vinculatedSolicitation.required_classroom ? (
+                  <b> (Sala Obrigatóriamente essa)</b>
+                ) : (
+                  '(Pode ser alterada)'
+                )}
               </Text>
               <Text>
                 <b>Horários:</b>{' '}
@@ -165,11 +208,36 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                       .join(', ')
                   : 'Não informado'}
               </Text>
+              <Text>
+                <b>Capacidade:</b> {props.vinculatedSolicitation.capacity}
+              </Text>
               <Text hidden={props.vinculatedSolicitation === undefined}>
                 *O local e os horários da reserva vão depender da solicitação
               </Text>
             </>
           ) : undefined}
+          <Input
+            mt={'10px'}
+            label={'Título'}
+            name={'title'}
+            disabled={!!props.vinculatedSolicitation}
+          />
+          <SelectInput
+            mt={4}
+            label={'Tipo'}
+            name={'type'}
+            options={ReservationType.getValues().map((value) => ({
+              value: value,
+              label: ReservationType.translate(value),
+            }))}
+            disabled={!!props.vinculatedSolicitation}
+          />
+          <Textarea
+            mt={4}
+            label='Motivo (Opcional)'
+            name='reason'
+            disabled={!!props.vinculatedSolicitation}
+          />
         </form>
       </FormProvider>
     </VStack>
