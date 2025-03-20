@@ -9,6 +9,7 @@ export interface SolicitationModalProps extends ModalProps {
   classrooms: ClassroomResponse[];
   loadingBuildings: boolean;
   loadingClassrooms: boolean;
+  refetch: () => Promise<void>;
 }
 
 export interface SolicitationForm {

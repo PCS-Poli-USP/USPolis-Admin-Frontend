@@ -42,6 +42,7 @@ function SolicitationModal({
   isOpen,
   onClose,
   isMobile,
+  refetch,
 }: SolicitationModalProps) {
   const {
     isOpen: isOpenCGrid,
@@ -99,7 +100,7 @@ function SolicitationModal({
     await createSolicitation({
       building_id: values.building_id,
       classroom_id: values.classroom_id,
-      required_classroom: values.required_classroom,
+      required_classroom: requiredClassroom,
       reason: values.reason,
       reservation_title: values.reservation_title,
       reservation_type: values.reservation_type,
@@ -108,6 +109,7 @@ function SolicitationModal({
       end_time: values.end_time,
       dates: selectedDays,
     });
+    await refetch();
     handleClose();
   }
 
@@ -377,6 +379,7 @@ function SolicitationModal({
                     text='Quero necessariamente essa sala'
                     name='required_classroom'
                   />
+                  <Text>{requiredClassroom ? 'Obrigatŕoia' : 'Opcional'}</Text>
                 </Flex>
               </VStack>
             </form>
