@@ -37,7 +37,7 @@ function SolicitationStack({
     classroom: string,
     requester: string,
   ) {
-    let newCurrent = [...current];
+    let newCurrent = [...solicitations];
     if (building)
       newCurrent = newCurrent.filter((val) =>
         filterString(val.building, building),
@@ -52,6 +52,7 @@ function SolicitationStack({
       newCurrent = newCurrent.filter((val) =>
         filterString(val.user, requester),
       );
+    if (hidden) newCurrent = newCurrent.filter((val) => !val.closed);
     setFiltered(newCurrent);
   }
 
@@ -64,11 +65,9 @@ function SolicitationStack({
       setFiltered((prev) => prev.filter((val) => !val.closed));
     } else {
       setCurrent([...solicitations]);
-      setFiltered((prev) => {
-        // if (prev.length === 0) return [...solicitations];
-        return prev;
-      });
+      filterSolicitation(buildingSearch, classroomSearch, requesterSearch);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hidden, solicitations]);
 
   return (
