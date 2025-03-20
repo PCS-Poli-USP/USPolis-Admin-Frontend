@@ -114,23 +114,35 @@ export function DrawerNavBar({
               </MenuButton>
               <MenuList>
                 <VStack divider={<StackDivider borderColor={'black.500'} />}>
-                  <MenuItem color='black' fontWeight={'bold'}  onClick={() => {}}>
+                  <MenuItem
+                    color='black'
+                    fontWeight={'bold'}
+                    onClick={() => {}}
+                  >
                     {loggedUser && loggedUser.is_admin
                       ? 'Administrador'
                       : loggedUser && loggedUser.buildings
-                      ? 'Responsável de Prédio'
+                      ? 'Responsável por Prédio'
                       : 'Usuário Comum'}
                   </MenuItem>
                   {loggedUser &&
                     !loggedUser.is_admin &&
                     loggedUser.buildings &&
                     loggedUser.buildings.length > 0 && (
-                      <MenuItem color='black' onClick={() => {}}>
-                        Prédios:{' '}
-                        {loggedUser.buildings
-                          .map((building) => building.name)
-                          .join(', ')}
-                      </MenuItem>
+                      <>
+                        <MenuItem
+                          color='black'
+                          fontWeight={'bold'}
+                          onClick={() => {}}
+                        >
+                          Prédios:{' '}
+                        </MenuItem>
+                        {loggedUser.buildings.map((building, idx) => (
+                          <MenuItem key={idx} color='black' onClick={() => {}}>
+                            {building.name}
+                          </MenuItem>
+                        ))}
+                      </>
                     )}
 
                   <MenuItem onClick={handleClickLogout} color='black'>
