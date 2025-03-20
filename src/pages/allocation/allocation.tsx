@@ -16,6 +16,9 @@ import useClassrooms from 'hooks/useClassrooms';
 import ReservationModal from 'pages/reservations/ReservationModal/reservation.modal';
 import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 import { loadReservationForDataClick } from './utils/allocation.utils';
+import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
+import { EventDropArg } from '@fullcalendar/core';
+import EventDragModal from './EventDragModal';
 
 type ViewOption = {
   value: string;
@@ -44,8 +47,14 @@ function Allocation() {
     onOpen: onOpenReservation,
     onClose: onCloseReservation,
   } = useDisclosure();
-  const [reservation, setReservation] = useState<ReservationResponse>();
 
+  const {
+    isOpen: isOpenEventModal,
+    onOpen: onOpenEventModal,
+    onClose: onCloseEventModal,
+  } = useDisclosure();
+
+  const [reservation, setReservation] = useState<ReservationResponse>();
   const [buildingSearchValue, setBuildingSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
   const [nameSearchValue, setNameSearchValue] = useState('');
@@ -61,6 +70,7 @@ function Allocation() {
   const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[3]);
 
   const [clickedDate, setClickedDate] = useState<string>();
+  const [dragEvent, setDragEvent] = useState<EventDropArg>();
 
   const {
     loading: loadingAllocation,
@@ -78,6 +88,11 @@ function Allocation() {
     classrooms,
     getAllClassrooms,
   } = useClassrooms(false);
+  const {
+    loading: loadingSolicitations,
+    solicitations,
+    getSolicitations,
+  } = useClassroomsSolicitations();
 
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
   const [filteredResources, setFilteredResources] =
@@ -160,6 +175,52 @@ function Allocation() {
         onOpenReservation();
       }
     }
+  }
+
+  function handleEventDrop(arg: EventDropArg) {
+    if (
+      currentView.value !== 'resourceTimelineDay' &&
+      currentView.value !== 'resourceTimelineWeek'
+    ) {
+      arg.revert();
+      return;
+    }
+    if (!loggedUser) {
+      arg.revert();
+      return;
+    }
+    if (!loggedUser.is_admin && !loggedUser.buildings) {
+      arg.revert();
+      return;
+    }
+    if (!arg.event._def.resourceIds) {
+      arg.revert();
+      return;
+    }
+    const values = arg.event._def.resourceIds;
+    if (values.length === 0) {
+      arg.revert();
+      return;
+    }
+    const splited = values[0].split('-');
+    if (splited.length === 1) {
+      arg.revert();
+      return;
+    }
+    const building = splited[0];
+    if (!loggedUser.is_admin) {
+      if (
+        loggedUser.buildings &&
+        !loggedUser.buildings.find((val) => val.name === building)
+      ) {
+        arg.revert();
+        return;
+      }
+    }
+    console.log(arg);
+    setDragEvent(arg);
+    onOpenEventModal();
+    // arg.revert();
   }
 
   useEffect(() => {
@@ -263,6 +324,22 @@ function Allocation() {
               classrooms={classrooms}
               loadingBuildings={loadingBuildings}
               loadingClassrooms={loadingClassrooms}
+              refetch={async () => {
+                await getSolicitations();
+              }}
+            />
+          )}
+          {loggedUser && (
+            <EventDragModal
+              isOpen={isOpenEventModal}
+              onClose={onCloseEventModal}
+              dragEvent={dragEvent}
+              handleCancel={() => {
+                if (dragEvent) {
+                  dragEvent.revert();
+                  setDragEvent(undefined);
+                }
+              }}
             />
           )}
 
@@ -278,6 +355,14 @@ function Allocation() {
               onClose={onCloseReservation}
               selectedReservation={reservation}
               initialDate={clickedDate}
+              solicitations={solicitations.filter((val) => {
+                if (val.required_classroom && val.classroom && reservation) {
+                  if (val.classroom !== reservation.classroom_name)
+                    return false;
+                }
+                return true;
+              })}
+              loadingSolicitations={loadingSolicitations}
             />
           )}
 
@@ -296,6 +381,7 @@ function Allocation() {
                 : resources
             }
             handleDateClick={handleDateClick}
+            handleEventDrop={handleEventDrop}
             hasBuildingFilter={!!buildingSearchValue}
             update={async (start, end) => {
               if (loadingAllocation) return;
