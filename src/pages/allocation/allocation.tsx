@@ -61,10 +61,10 @@ function Allocation() {
   const [classSearchValue, setClassSearchValue] = useState('');
 
   const [currentStartDate, setCurrentStartDate] = useState<string>(
-    moment().format('YYYY-MM-DD'),
+    moment().startOf('isoWeek').format('YYYY-MM-DD'),
   );
   const [currentEndDate, setCurrentEndDate] = useState<string>(
-    moment().add(6, 'days').format('YYYY-MM-DD'),
+    moment().endOf('isoWeek').format('YYYY-MM-DD'),
   );
 
   const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[3]);
@@ -104,7 +104,7 @@ function Allocation() {
     name: string,
     class_: string,
   ) {
-    let newEvents = events;
+    let newEvents = [...events];
     const buildingValue = building.toLowerCase();
     const classroomValue = classroom.toLowerCase();
     const nameValue = name.toLowerCase();
@@ -189,9 +189,11 @@ function Allocation() {
       arg.revert();
       return;
     }
-    if (!loggedUser.is_admin && !loggedUser.buildings) {
-      arg.revert();
-      return;
+    if (!loggedUser.buildings) {
+      if (!loggedUser.is_admin) {
+        arg.revert();
+        return;
+      }
     }
     if (!arg.event._def.resourceIds) {
       arg.revert();
@@ -220,7 +222,6 @@ function Allocation() {
     console.log(arg);
     setDragEvent(arg);
     onOpenEventModal();
-    // arg.revert();
   }
 
   useEffect(() => {
@@ -339,6 +340,9 @@ function Allocation() {
                   dragEvent.revert();
                   setDragEvent(undefined);
                 }
+              }}
+              refetch={async () => {
+                await getEvents(currentStartDate, currentEndDate);
               }}
             />
           )}
