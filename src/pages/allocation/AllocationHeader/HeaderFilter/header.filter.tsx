@@ -2,6 +2,7 @@ import { Box, Flex, Text, useMediaQuery } from '@chakra-ui/react';
 import Select, { SelectInstance, StylesConfig } from 'react-select';
 import { AllocationHeaderProps } from '..';
 import { useRef } from 'react';
+import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 
 type OptionType = { value: string; label: string };
 
@@ -76,14 +77,17 @@ function HeaderFilter({
     .sort((a, b) => a.value.localeCompare(b.value));
 
   const classOptions = events
-    .filter(
-      (event) =>
+    .filter((event) => {
+      return (
         event.extendedProps.class_data &&
-        event.extendedProps.class_data.subject_name === nameSearchValue,
-    )
+        event.extendedProps.class_data.subject_code.includes(nameSearchValue)
+      );
+    })
     .map((event) => ({
       value: event.extendedProps.class_data?.code || '',
-      label: event.extendedProps.class_data?.code.slice(-2) || '',
+      label: event.extendedProps.class_data
+        ? classNumberFromClassCode(event.extendedProps.class_data?.code)
+        : '',
     }))
     .filter(
       (value, index, self) =>
@@ -198,7 +202,7 @@ function HeaderFilter({
                   classSearchValue
                     ? {
                         value: classSearchValue,
-                        label: classSearchValue.slice(-2),
+                        label: classNumberFromClassCode(classSearchValue),
                       }
                     : undefined
                 }
@@ -310,7 +314,7 @@ function HeaderFilter({
                 classSearchValue
                   ? {
                       value: classSearchValue,
-                      label: classSearchValue.slice(-2),
+                      label: classNumberFromClassCode(classSearchValue),
                     }
                   : undefined
               }

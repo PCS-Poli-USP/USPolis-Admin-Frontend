@@ -4,6 +4,7 @@ import { AllocationEnum } from 'utils/enums/allocation.enum';
 import { getScheduleTime } from 'utils/schedules/schedule.formatter';
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import { classStyles as styles } from './styles';
+import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 
 interface ClassesPDFProps {
   classes: ClassResponse[];
@@ -42,7 +43,9 @@ const ClassesPDF = ({ classes }: ClassesPDFProps) => {
             {classesList.map((cl) => (
               <View style={styles.tableRow} key={cl.code}>
                 <View style={styles.tableColClass}>
-                  <Text style={styles.tableCell}>{cl.code.slice(-2)}</Text>
+                  <Text style={styles.tableCell}>
+                    {classNumberFromClassCode(cl.code)}
+                  </Text>
                 </View>
                 <View style={styles.tableColClassroom}>
                   {cl.schedules.map((schedule, index) => (

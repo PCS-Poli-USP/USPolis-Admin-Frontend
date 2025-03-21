@@ -19,7 +19,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './solicitation.modal.form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { CheckBox, Input, SelectInput, Textarea } from 'components/common';
-import useBuildings from 'hooks/useBuildings';
 import { useEffect, useState } from 'react';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import useClassrooms from 'hooks/useClassrooms';
@@ -33,12 +32,17 @@ import {
   ClassroomFullResponse,
   ClassroomWithConflictCount,
 } from 'models/http/responses/classroom.response.models';
-import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classsroom.time.grid';
+import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classroom.time.grid';
 
 function SolicitationModal({
+  buildings,
+  classrooms,
+  loadingBuildings,
+  loadingClassrooms,
   isOpen,
   onClose,
   isMobile,
+  refetch,
 }: SolicitationModalProps) {
   const {
     isOpen: isOpenCGrid,
@@ -59,16 +63,13 @@ function SolicitationModal({
     occupiedDays,
   } = useDateCalendarPicker();
 
-  const { loading: loadingB, buildings, getAllBuildings } = useBuildings(false);
   const {
     loading: loadingC,
-    classrooms,
-    getAllClassrooms,
     getClassroomsWithConflictFromTime,
     listOneFull,
   } = useClassrooms(false);
 
-  const { createSolicitation } = useClassroomsSolicitations(false);
+  const { loading, createSolicitation } = useClassroomsSolicitations(false);
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
   const [classroomsWithConflict, setClassroomsWithConflict] =
     useState<ClassroomWithConflictCount[]>();
@@ -99,7 +100,7 @@ function SolicitationModal({
     await createSolicitation({
       building_id: values.building_id,
       classroom_id: values.classroom_id,
-      required_classroom: values.required_classroom,
+      required_classroom: requiredClassroom,
       reason: values.reason,
       reservation_title: values.reservation_title,
       reservation_type: values.reservation_type,
@@ -108,6 +109,7 @@ function SolicitationModal({
       end_time: values.end_time,
       dates: selectedDays,
     });
+    await refetch();
     handleClose();
   }
 
@@ -143,18 +145,12 @@ function SolicitationModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classroom_id]);
 
-  useEffect(() => {
-    getAllClassrooms();
-    getAllBuildings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
       closeOnOverlayClick={false}
-      size={'3xl'}
+      size={'4xl'}
     >
       <ModalOverlay />
       <ModalContent>
@@ -276,13 +272,13 @@ function SolicitationModal({
                 <Flex
                   w={'full'}
                   direction={isMobile ? 'column' : 'row'}
-                  gap={isMobile ? '5px' : '0px'}
+                  gap={isMobile ? '0px' : '5px'}
                 >
                   <SelectInput
                     w={300}
                     label='Prédio'
                     name='building_id'
-                    isLoading={loadingB}
+                    isLoading={loadingBuildings}
                     options={buildings.map((building) => ({
                       label: building.name,
                       value: building.id,
@@ -307,7 +303,7 @@ function SolicitationModal({
                         !end &&
                         selectedDays.length === 0)
                     }
-                    isLoading={loadingC}
+                    isLoading={loadingC || loadingClassrooms}
                     label='Sala'
                     name='classroom_id'
                     placeholder={
@@ -316,7 +312,7 @@ function SolicitationModal({
                         : !optionalTime && !start && !end
                         ? 'Selecione um horário antes'
                         : selectedDays.length === 0
-                        ? 'Selecione as datas'
+                        ? 'Selecione as datas primeiro'
                         : 'Selecione uma sala'
                     }
                     options={
@@ -378,11 +374,12 @@ function SolicitationModal({
                     }}
                   />
                   <CheckBox
-                    ml={isMobile ? 0 : 10}
+                    ml={isMobile ? 0 : 20}
                     disabled={!classroom_id || optionalClassroom}
                     text='Quero necessariamente essa sala'
                     name='required_classroom'
                   />
+                  <Text>{requiredClassroom ? 'Obrigatŕoia' : 'Opcional'}</Text>
                 </Flex>
               </VStack>
             </form>
@@ -394,7 +391,9 @@ function SolicitationModal({
             Fechar
           </Button>
           <Button
-            isLoading={loadingC || loadingB}
+            isLoading={
+              loadingBuildings || loadingClassrooms || loadingC || loading
+            }
             colorScheme='blue'
             onClick={async () => {
               await handleSubmit();

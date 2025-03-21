@@ -46,6 +46,9 @@ export const getUsersColumns = (
   {
     accessorFn: (row) => row.buildings?.map((b) => b.name).join(', '),
     header: 'Prédios',
+    meta: {
+      isSelectable: true,
+    },
   },
   {
     id: 'options',

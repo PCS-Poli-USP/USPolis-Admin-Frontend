@@ -20,6 +20,7 @@ import {
   StepSeparator,
   StepStatus,
   StepTitle,
+  Text,
   useSteps,
   VStack,
 } from '@chakra-ui/react';
@@ -51,6 +52,8 @@ import {
 } from 'models/http/requests/reservation.request.models';
 import { useEffect, useState } from 'react';
 import { Recurrence } from 'utils/enums/recurrence.enum';
+import { useDateCalendarPicker } from 'components/common/DateCalendarPicker';
+import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 
 function ReservationModal(props: ReservationModalProps) {
   const firstForm = useForm<ReservationFirstForm>({
@@ -63,9 +66,18 @@ function ReservationModal(props: ReservationModalProps) {
     resolver: yupResolver(secondSchema),
   });
 
-  const { createReservation, updateReservation } = useReservations();
+  const [stepsIsValid, setStepsIsValid] = useState<[boolean, boolean]>([
+    false,
+    false,
+  ]);
+
+  const { loading, createReservation, updateReservation } =
+    useReservations(false);
 
   const [dates, setDates] = useState<string[]>([]);
+  const calendarPicker = useDateCalendarPicker();
+  const [vinculatedSolicitation, setVinculatedSolicitation] =
+    useState<ClassroomSolicitationResponse>();
 
   function getReservationData(): CreateReservation | UpdateReservation {
     const firstData = firstForm.getValues();
@@ -74,6 +86,8 @@ function ReservationModal(props: ReservationModalProps) {
       title: firstData.title,
       type: firstData.type,
       reason: firstData.reason,
+      has_solicitation: firstData.has_solicitation,
+      solicitation_id: firstData.solicitation_id,
       classroom_id: secondData.classroom_id,
       schedule_data: {
         reservation_id: props.selectedReservation
@@ -105,6 +119,7 @@ function ReservationModal(props: ReservationModalProps) {
   function handleCloseModal() {
     firstForm.reset(firstDefaultValues);
     secondForm.reset(secondDefaultValues);
+    setVinculatedSolicitation(undefined);
     setActiveStep(0);
     setDates([]);
     props.onClose();
@@ -113,14 +128,17 @@ function ReservationModal(props: ReservationModalProps) {
   async function handleFirstNextClick() {
     const { trigger } = firstForm;
     const isValid = await trigger();
+    setStepsIsValid([isValid, stepsIsValid[1]]);
     if (!isValid) return;
     setActiveStep(activeStep + 1);
   }
 
   async function handleSecondNextClick() {
+    const isValidFirst = await firstForm.trigger();
     const { trigger, getValues } = secondForm;
-    const isValid = await trigger();
-    if (!isValid) return;
+    const isValidSecond = await trigger();
+    setStepsIsValid((prev) => [isValidFirst, isValidSecond]);
+    if (!isValidSecond) return;
 
     if (getValues('recurrence') !== Recurrence.CUSTOM && dates.length !== 0)
       return;
@@ -160,6 +178,8 @@ function ReservationModal(props: ReservationModalProps) {
         title: props.selectedReservation.title,
         type: props.selectedReservation.type,
         reason: props.selectedReservation.reason,
+        has_solicitation: props.selectedReservation.has_solicitation,
+        solicitation_id: props.selectedReservation.solicitation_id,
       });
       secondForm.reset({
         building_id: props.selectedReservation.building_id,
@@ -173,6 +193,7 @@ function ReservationModal(props: ReservationModalProps) {
         month_week: props.selectedReservation.schedule.month_week,
       });
 
+      setStepsIsValid([true, true]);
       if (props.selectedReservation.schedule.occurrences) {
         setDates(
           props.selectedReservation.schedule.occurrences.map(
@@ -186,9 +207,20 @@ function ReservationModal(props: ReservationModalProps) {
   const steps = [
     {
       title: 'Primeiro',
-      description: 'Informações',
+      description: 'Informações e Solicitação',
       content: (
-        <ReservationModalFirstStep isUpdate={props.isUpdate} form={firstForm} />
+        <ReservationModalFirstStep
+          isUpdate={props.isUpdate}
+          form={firstForm}
+          secondForm={secondForm}
+          setDates={setDates}
+          {...calendarPicker}
+          selectedReservation={props.selectedReservation}
+          vinculatedSolicitation={vinculatedSolicitation}
+          setVinculatedSolicitation={setVinculatedSolicitation}
+          solicitations={props.solicitations}
+          loadingSolicitations={props.loadingSolicitations}
+        />
       ),
     },
     {
@@ -202,6 +234,9 @@ function ReservationModal(props: ReservationModalProps) {
           buildings={props.buildings}
           classrooms={props.classrooms}
           selectedReservation={props.selectedReservation}
+          initialDate={props.initialDate}
+          {...calendarPicker}
+          vinculatedSolicitation={vinculatedSolicitation}
         />
       ),
     },
@@ -246,6 +281,12 @@ function ReservationModal(props: ReservationModalProps) {
                   <Box flexShrink='0'>
                     <StepTitle>{step.title}</StepTitle>
                     <StepDescription>{step.description}</StepDescription>
+                    <Text
+                      color={stepsIsValid[index] ? undefined : 'red'}
+                      hidden={stepsIsValid[index]}
+                    >
+                      Inválido
+                    </Text>
                   </Box>
 
                   <StepSeparator />
@@ -287,8 +328,9 @@ function ReservationModal(props: ReservationModalProps) {
                   colorScheme={'blue'}
                   onClick={handleNextClick}
                   rightIcon={<DownloadIcon />}
+                  isLoading={loading}
                 >
-                  Finalizar
+                  {loading ? 'Salvando...' : 'Finalizar'}
                 </Button>
               ) : (
                 <Button

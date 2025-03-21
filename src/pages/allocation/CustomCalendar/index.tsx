@@ -1,8 +1,9 @@
 import { Box, Progress, useDisclosure } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
-import { EventApi, DatesSetArg } from '@fullcalendar/core';
+import { EventApi, DatesSetArg, EventDropArg } from '@fullcalendar/core';
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import rrulePlugin from '@fullcalendar/rrule';
@@ -28,6 +29,8 @@ interface CustomCalendarProps {
   events: Event[];
   resources: Resource[];
   hasBuildingFilter: boolean;
+  handleDateClick: (info: DateClickArg) => void;
+  handleEventDrop: (arg: EventDropArg) => void;
   update: (start: string, end: string) => Promise<void>;
   start: string;
   setStart: (start: string) => void;
@@ -43,6 +46,8 @@ function CustomCalendar({
   events,
   resources,
   hasBuildingFilter,
+  handleDateClick,
+  handleEventDrop,
   update,
   start,
   setStart,
@@ -75,6 +80,9 @@ function CustomCalendar({
   }
 
   function setCalendarView(view: string) {
+    if (view === 'resourceTimelineDay' || view === 'timeGridDay') {
+      setCalendarDate(new Date().toISOString());
+    }
     const calendarAPI = calendarRef.current.getApi();
     calendarAPI.changeView(view);
   }
@@ -85,7 +93,7 @@ function CustomCalendar({
     if (start !== newStart || end !== newEnd) {
       setStart(newStart);
       setEnd(newEnd);
-      update(newStart, newEnd);
+      await update(newStart, newEnd);
     }
   };
 
@@ -101,10 +109,6 @@ function CustomCalendar({
     }
   };
 
-  useEffect(() => {
-    setCalendarView(view.value);
-  }, [view]);
-
   const formatedResources = resources.map((res) => {
     if (res.parentId === null) {
       const { parentId, ...rest } = res;
@@ -113,6 +117,7 @@ function CustomCalendar({
     return res;
   });
 
+  console.log(events.length);
   return (
     <Box paddingBottom={4} zIndex={-1}>
       <DatePickerModal
@@ -141,7 +146,19 @@ function CustomCalendar({
         initialDate={start}
         ref={calendarRef}
         schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
-        plugins={[timeGridPlugin, resourceTimelinePlugin, rrulePlugin]}
+        plugins={[
+          interactionPlugin,
+          timeGridPlugin,
+          resourceTimelinePlugin,
+          rrulePlugin,
+        ]}
+        selectable={true}
+        editable={true}
+        droppable={true}
+        eventOverlap={true}
+        nowIndicator={true}
+        dateClick={handleDateClick}
+        eventDrop={handleEventDrop}
         initialView={view.value}
         locale='pt-br'
         height='auto'
@@ -169,19 +186,31 @@ function CustomCalendar({
           },
           resourceTLDayView: {
             text: 'Sala / Dia',
-            click: (_ev, _el) => setView(viewOptions[0]),
+            click: (_ev, _el) => {
+              setCalendarView(viewOptions[0].value);
+              setView(viewOptions[0]);
+            },
           },
           resourceTLWeekView: {
             text: 'Sala / Semana',
-            click: (_ev, _el) => setView(viewOptions[1]),
+            click: (_ev, _el) => {
+              setCalendarView(viewOptions[1].value);
+              setView(viewOptions[1]);
+            },
           },
           timeGridDayView: {
             text: 'Dia',
-            click: (_ev, _el) => setView(viewOptions[2]),
+            click: (_ev, _el) => {
+              setCalendarView(viewOptions[2].value);
+              setView(viewOptions[2]);
+            },
           },
           timeGridWeekView: {
             text: 'Geral',
-            click: (_ev, _el) => setView(viewOptions[3]),
+            click: (_ev, _el) => {
+              setCalendarView(viewOptions[3].value);
+              setView(viewOptions[3]);
+            },
           },
           goToDate: {
             text: isMobile ? 'Data' : 'Escolher data',

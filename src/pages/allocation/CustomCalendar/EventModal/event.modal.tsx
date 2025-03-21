@@ -15,6 +15,7 @@ import { EventApi } from '@fullcalendar/core';
 import { EventExtendedProps } from 'pages/allocation/interfaces/allocation.interfaces';
 import moment from 'moment';
 import { getEventScheduleText } from 'pages/allocation/utils/allocation.formatter';
+import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 
 interface EventModalProps extends ModalProps {
   event?: EventApi;
@@ -43,7 +44,7 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
               <>
                 <VStack spacing={'2px'} alignItems='start'>
                   <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
-                    {`Turma ${classData.code.slice(-2)}`}
+                    {`Turma ${classNumberFromClassCode(classData.code)}`}
                   </Text>
                 </VStack>
                 <Box>

@@ -52,6 +52,7 @@ export function CheckBox({
             {...field}
             id={name}
             w={'auto'}
+            isChecked={field.value}
             isDisabled={disabled}
             onChange={(event) => {
               if (onChange) onChange(event.target.checked);

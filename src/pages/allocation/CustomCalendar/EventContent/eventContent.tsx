@@ -3,6 +3,7 @@ import { EventContentArg } from '@fullcalendar/core';
 import moment from 'moment';
 import { getEventScheduleText } from 'pages/allocation/utils/allocation.formatter';
 import { EventExtendedProps } from '../../interfaces/allocation.interfaces';
+import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 
 export default function EventContent(eventInfo: EventContentArg) {
   const eventData = eventInfo.event._def;
@@ -30,7 +31,7 @@ export default function EventContent(eventInfo: EventContentArg) {
               alignContent={'center'}
               textColor={classData.allocated ? 'white' : 'red.300'}
             >
-              {eventInfo.event.title}
+              {eventInfo.event.title} T{classNumberFromClassCode(classData.code)}
             </Heading>
             {isTimeGridView && (
               <>
@@ -91,7 +92,9 @@ function ToolTipLabel(eventInfo: EventContentArg) {
         <>
           <VStack spacing={'2px'} alignItems='start'>
             <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
-              {`${classData.subject_code} - Turma ${classData.code.slice(-2)}`}
+              {`${classData.subject_code} - Turma ${classNumberFromClassCode(
+                classData.code,
+              )}`}
             </Text>
             <Text fontSize='lg' textColor='#408080'>
               {`${classData.subject_name}`}

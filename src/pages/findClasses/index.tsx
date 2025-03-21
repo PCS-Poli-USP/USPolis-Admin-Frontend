@@ -13,6 +13,7 @@ import useSubjects from 'hooks/useSubjetcts';
 import { SelectInstance } from 'react-select';
 import ClassAccordion from './ClassAccordion';
 import useClasses from 'hooks/classes/useClasses';
+import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 
 type OptionType = {
   value: number;
@@ -74,7 +75,7 @@ function FindClasses() {
                 classes
                   ? classes.map<OptionType>((c) => ({
                       value: c.id,
-                      label: c.code.slice(-2),
+                      label: classNumberFromClassCode(c.code),
                     }))
                   : []
               }

@@ -17,6 +17,12 @@ const useClassroomSolicitationsService = () => {
     return axios.get(PREFIX);
   };
 
+  const getMySolicitations = (): Promise<
+    AxiosResponse<Array<ClassroomSolicitationResponse>>
+  > => {
+    return axios.get('/users/my-solicitations');
+  };
+
   const create = (
     data: CreateClassroomSolicitation,
   ): Promise<AxiosResponse<ClassroomSolicitationResponse>> => {
@@ -41,7 +47,7 @@ const useClassroomSolicitationsService = () => {
     return axios.delete(`${PREFIX}/${id}`);
   };
 
-  return { get, create, approve, deny, deleteById };
+  return { get, getMySolicitations, create, approve, deny, deleteById };
 };
 
 export default useClassroomSolicitationsService;

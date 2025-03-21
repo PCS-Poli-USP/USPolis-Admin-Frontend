@@ -47,6 +47,8 @@ export interface ResourceResponse {
 }
 
 export interface BaseExtendedData {
+  schedule_id: number;
+  occurrence_id?: number;
   building: string;
   classroom: string;
   classroom_capacity?: number;

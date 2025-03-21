@@ -5,14 +5,19 @@ import { Recurrence } from 'utils/enums/recurrence.enum';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
 import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { DateCalendarPickerReturn } from 'components/common/DateCalendarPicker/hooks/useDateCalendarPicker';
+import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 
-export interface ReservationModalSecondStepProps {
+export interface ReservationModalSecondStepProps
+  extends DateCalendarPickerReturn {
   isUpdate: boolean;
   buildings: BuildingResponse[];
   classrooms: ClassroomResponse[];
   setDates: (value: string[]) => void;
   form: UseFormReturn<ReservationSecondForm, any, undefined>;
   selectedReservation?: ReservationResponse;
+  initialDate?: string;
+  vinculatedSolicitation?: ClassroomSolicitationResponse;
 }
 export interface ReservationSecondForm {
   building_id: number;

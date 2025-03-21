@@ -39,7 +39,7 @@ import {
 } from 'models/http/responses/classroom.response.models';
 import { ReservationType } from 'utils/enums/reservations.enum';
 import useClassrooms from 'hooks/useClassrooms';
-import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classsroom.time.grid';
+import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classroom.time.grid';
 
 type OptionType = { value: number; label: string };
 
@@ -100,6 +100,9 @@ function SolicitationPanel({
     if (solicitation?.start_time && solicitation.end_time) {
       setStart(solicitation.start_time);
       setEnd(solicitation.end_time);
+    } else {
+      setStart('');
+      setEnd('');
     }
   }, [solicitation?.start_time, solicitation?.end_time]);
 
@@ -117,7 +120,7 @@ function SolicitationPanel({
       }
     };
     fetchClassrooms();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solicitation, end, start]);
 
   // Fetch selected classroom from solicitation
@@ -126,6 +129,8 @@ function SolicitationPanel({
       setClassroom(
         classrooms.find((room) => room.id === solicitation.classroom_id),
       );
+    } else {
+      setClassroom(undefined);
     }
   }, [solicitation, classrooms]);
 
@@ -158,7 +163,13 @@ function SolicitationPanel({
   }, []);
 
   return (
-    <Card w={'100%'} border={'2px solid lightgray'} hidden={!solicitation} p={'4px'}>
+    <Card
+      w={'100%'}
+      border={'2px solid lightgray'}
+      hidden={!solicitation}
+      p={'4px'}
+      zIndex={2}
+    >
       {!!solicitation ? (
         <>
           <CardHeader mb={-5}>
@@ -211,10 +222,13 @@ function SolicitationPanel({
             <Stack divider={<StackDivider />} spacing='4'>
               <Box>
                 <Heading size='sm' textTransform='uppercase'>
-                  Solicitante
+                  Solicitante e Título
                 </Heading>
                 <Text pt='2' fontSize='md'>
                   {`${solicitation.user} - ${solicitation.email}`}
+                </Text>
+                <Text pt='2' fontSize='md' fontWeight={'bold'}>
+                  Título: {`${solicitation.reservation_title}`}
                 </Text>
               </Box>
               <Box>

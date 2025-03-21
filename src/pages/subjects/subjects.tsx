@@ -8,17 +8,21 @@ import useSubjects from 'hooks/useSubjetcts';
 import SubjectModal from './SubjectModal/subject.modal';
 import useBuildings from 'hooks/useBuildings';
 import PageContent from 'components/common/PageContent';
-import { checkUserPermission } from 'utils/tables/tables.utils';
+import { UsersValidator } from 'utils/users/users.validator';
 import { appContext } from 'context/AppContext';
 
 function Subjects() {
   const context = useContext(appContext);
   const { loading, subjects, getSubjects, deleteSubject } = useSubjects();
 
-  const disableMap: boolean[] = subjects.map((subject) =>
-    !checkUserPermission(context.loggedUser, subject.building_ids),
+  const disableMap: boolean[] = subjects.map(
+    (subject) =>
+      !UsersValidator.checkUserPermission(
+        context.loggedUser,
+        subject.building_ids,
+      ),
   );
-  
+
   const columns = getSubjectColumns({
     handleEditButton: handleEditSubjectButton,
     handleDeleteButton: handleDeleteSubjectButton,

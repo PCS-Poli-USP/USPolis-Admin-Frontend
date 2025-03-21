@@ -13,6 +13,7 @@
     "@fontsource/roboto": "^5.0.13",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
     "@fullcalendar/resource": "^6.1.15",
     "@fullcalendar/resource-timegrid": "^6.1.15",

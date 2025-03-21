@@ -23,6 +23,7 @@ import ClassroomTimeGridEventContent from './classroom.time.grid.event.content';
 import moment from 'moment';
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
+import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 
 function ClassroomTimeGrid({
   isOpen,
@@ -62,8 +63,8 @@ function ClassroomTimeGrid({
             name: schedule.reservation || schedule.subject || '',
             type: schedule.reservation
               ? 'Reserva'
-              : schedule.subject
-              ? 'Turma'
+              : schedule.subject && schedule.class_code
+              ? `Turma ${classNumberFromClassCode(schedule.class_code)}`
               : 'Não indentificado',
             start: occurrence.start_time,
             end: occurrence.end_time,

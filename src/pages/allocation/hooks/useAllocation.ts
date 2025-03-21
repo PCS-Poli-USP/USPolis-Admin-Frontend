@@ -2,8 +2,14 @@ import useCustomToast from 'hooks/useCustomToast';
 import { useCallback, useEffect, useState } from 'react';
 import { Resource, Event } from '../interfaces/allocation.interfaces';
 import useALlocationsService from 'hooks/API/services/useAllocationService';
+import { EventUpdate } from 'models/http/requests/allocation.request.models';
 
-const useAllocation = () => {
+const useAllocation = (
+  initialFetchEvents: boolean = true,
+  initialFetchResources = true,
+  initialStart: string | undefined = undefined,
+  initialEnd: string | undefined = undefined,
+) => {
   const allocationService = useALlocationsService();
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
@@ -52,8 +58,26 @@ const useAllocation = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const updateEvent = useCallback(async (input: EventUpdate) => {
+    setLoading(true);
+    await allocationService
+      .update(input)
+      .then(() => {
+        showToast('Sucesso', 'Evento atualizado com sucesso', 'success');
+      })
+      .catch((error) => {
+        showToast('Erro', 'Erro ao atualizar evento', 'error');
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
-    getAllocation();
+    if (initialFetchEvents) getEvents(initialStart, initialEnd);
+    if (initialFetchResources) getResources();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -62,7 +86,9 @@ const useAllocation = () => {
     events,
     resources,
     getEvents,
+    getResources,
     getAllocation,
+    updateEvent,
   };
 };
 

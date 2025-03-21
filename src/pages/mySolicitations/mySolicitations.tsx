@@ -11,7 +11,7 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 
 import DataTable from 'components/common/DataTable/dataTable.component';
 import { getMySolicitationsColumns } from './Tables/mySolicitations.table';
@@ -20,10 +20,10 @@ import { CloseIcon } from '@chakra-ui/icons';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 import SolicitationStack from './MySolicitationStack/mysolicitation.stack';
 import MySolicitationModal from './MySolicitationModal/mysolicitation.modal';
-import { appContext } from 'context/AppContext';
+import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
 
 const MySolicitations = () => {
-  const { loggedUser } = useContext(appContext);
+  const { loading, solicitations } = useClassroomsSolicitations();
   const [isMobile] = useMediaQuery('(max-width: 800px)');
 
   const [hiddenAlert, setHiddenAlert] = useState(false);
@@ -53,16 +53,13 @@ const MySolicitations = () => {
           </HStack>
         </VStack>
       </Flex>
-      <Skeleton isLoaded={!!loggedUser}>
+      <Skeleton isLoaded={!loading}>
         {!isMobile ? (
-          <DataTable
-            columns={columns}
-            data={loggedUser ? loggedUser?.solicitations : []}
-          />
+          <DataTable columns={columns} data={solicitations} />
         ) : (
           <Box w={'100%'} h={'full'}>
             <SolicitationStack
-              solicitations={loggedUser ? loggedUser.solicitations : []}
+              solicitations={solicitations}
               handleOnClick={(data) => {
                 setSelectedSolicitation(data);
                 onToggle();

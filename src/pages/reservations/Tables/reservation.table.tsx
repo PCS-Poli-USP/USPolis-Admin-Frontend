@@ -20,6 +20,9 @@ export const getReservationsColumns = (
   {
     accessorKey: 'building_name',
     header: 'Prédio',
+    meta: {
+      isSelectable: true,
+    }
   },
   {
     accessorKey: 'classroom_name',
