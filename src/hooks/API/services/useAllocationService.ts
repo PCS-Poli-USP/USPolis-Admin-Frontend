@@ -3,10 +3,14 @@ import {
   EventResponse,
   ResourceResponse,
 } from 'models/http/responses/allocation.response.models';
+import { JSONResponse } from 'models/http/responses/common.response.models';
 import axios from 'services/api/axios';
+import useAxiosPrivate from '../axios/useAxiosPrivate';
+import { EventUpdate } from 'models/http/requests/allocation.request.models';
 
-const useALlocationsService = () => {
+const useAllocationsService = () => {
   const PREFIX = '/allocations';
+  const privateAxios = useAxiosPrivate();
 
   const listEvents = (
     start?: string,
@@ -21,7 +25,13 @@ const useALlocationsService = () => {
     return axios.get(`${PREFIX}/resources`);
   };
 
-  return { listEvents, listResources };
+  const update = (
+    event: EventUpdate,
+  ): Promise<AxiosResponse<JSONResponse>> => {
+    return privateAxios.patch(`${PREFIX}/events`, event);
+  };
+
+  return { listEvents, listResources, update };
 };
 
-export default useALlocationsService;
+export default useAllocationsService;
