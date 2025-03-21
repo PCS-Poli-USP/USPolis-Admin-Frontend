@@ -20,8 +20,7 @@ import JupiterUpdateModal from './JupiterUpdateModal/jupiter.update.modal';
 import JupiterCrawlerModal from './JupiterCrawlerModal/jupiterCrawler.modal';
 import useCrawler from 'hooks/useCrawler';
 import { appContext } from 'context/AppContext';
-import { checkUserPermissionOnClass } from 'utils/tables/tables.utils';
-
+import { UsersValidator } from 'utils/users/users.validator';
 function Classes() {
   const context = useContext(appContext);
 
@@ -73,7 +72,7 @@ function Classes() {
 
   const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
   const disableMap = classes.map((cls) => {
-    return !checkUserPermissionOnClass(context.loggedUser, cls);
+    return !UsersValidator.checkUserPermissionOnClass(context.loggedUser, cls);
   });
 
   const columns = getClassesColumns({
