@@ -42,6 +42,7 @@ import RedirectError from 'pages/auth/redirectError';
 import PersistLogin from 'components/routes/persistLogin.route';
 import AxiosInterceptorRoute from 'components/routes/axiosInterceptor.route';
 import LoadingPage from 'components/common/LoadingPage';
+import ClassroomCalendarPrintPage from 'pages/print';
 
 Amplify.configure(awsConfig);
 
@@ -62,6 +63,10 @@ root.render(
           >
             <Router>
               <Routes>
+                <Route
+                  path='/print/classroom-calendar'
+                  element={<ClassroomCalendarPrintPage />}
+                />
                 <Route path='/auth' element={<AuthPage />} />
                 <Route path='auth-callback' element={<AuthCallbackPage />} />
                 <Route

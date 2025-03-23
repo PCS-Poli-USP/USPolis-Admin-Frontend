@@ -1,0 +1,12 @@
+@media print {
+  .page-break {
+    page-break-before: always; /* Garante que cada div começa em uma nova página */
+    break-before: page; /* Compatível com navegadores mais modernos */
+    visibility: visible !important;
+    position: static !important; /* Retorna ao layout normal */
+  }
+  .fc-view-container {
+    transform: scale(0.95); /* Reduz levemente o tamanho do calendário */
+    transform-origin: top left; /* Mantém a escala proporcional */
+  }
+}
