@@ -18,7 +18,6 @@ import { sortClassroomResponse } from 'utils/classrooms/classrooms.sorter';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import AllocationLogHistory from './allocationLog.history';
-import moment from 'moment';
 
 export interface AllocateSingleScheduleSectionRef {
   reset(): void;
@@ -243,11 +242,8 @@ const AllocateSingleScheduleSection = forwardRef<
                 </>
               )}
               <AllocationLogHistory
-                logs={schedule.logs.sort((a, b) => {
-                  if (moment(a.modified_at).isBefore(b.modified_at)) return 1;
-                  if (moment(a.modified_at).isAfter(b.modified_at)) return -1;
-                  return 0;
-                })}
+                last_log={schedule.last_log}
+                schedule_id={schedule.id}
               />
             </VStack>
           </Flex>

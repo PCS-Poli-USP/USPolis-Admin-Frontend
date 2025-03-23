@@ -39,8 +39,19 @@ function AllocationMobileHeader({
   const { isOpen: isOpenOptions, onToggle } = useDisclosure({
     defaultIsOpen: true,
   });
+  const { isOpen: isOpenPDF, onClose: onClosePDF } = useDisclosure({
+    defaultIsOpen: true,
+  });
   return (
     <Flex direction={'column'} alignItems={'flex-start'} gap={5} w={'100%'}>
+      <HeaderPDFOptions
+        isOpen={isOpenPDF}
+        onClose={onClosePDF}
+        buildings={buildingResources.map((resource) => ({
+          label: resource.title,
+          value: resource.id,
+        }))}
+      />
       <Flex direction={'row'} gap={0} w={'100%'}>
         <Text fontSize={'2xl'}>Mapa de Salas</Text>
         <Button
@@ -55,12 +66,9 @@ function AllocationMobileHeader({
         <Box rounded='md' w={'calc(100vw - 48px)'}>
           <Flex mb={4} gap={2} direction={'column'} w={'100%'}>
             <Flex direction={'row'} gap={5} w={'full'}>
-              <HeaderPDFOptions
-                buildings={buildingResources.map((resource) => ({
-                  label: resource.title,
-                  value: resource.id,
-                }))}
-              />
+              <Button onClick={() => onOpen()} colorScheme='blue'>
+                Baixar
+              </Button>
               <Tooltip
                 label={loggedUser ? '' : 'Entre para poder fazer essa ação.'}
               >

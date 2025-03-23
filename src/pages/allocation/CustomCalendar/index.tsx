@@ -3,7 +3,10 @@ import { useRef, useState } from 'react';
 
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import { EventApi, DatesSetArg, EventDropArg } from '@fullcalendar/core';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
+import interactionPlugin, {
+  DateClickArg,
+  EventResizeDoneArg,
+} from '@fullcalendar/interaction';
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import rrulePlugin from '@fullcalendar/rrule';
@@ -31,6 +34,7 @@ interface CustomCalendarProps {
   hasBuildingFilter: boolean;
   handleDateClick: (info: DateClickArg) => void;
   handleEventDrop: (arg: EventDropArg) => void;
+  handleEventResize: (arg: EventResizeDoneArg) => void;
   update: (start: string, end: string) => Promise<void>;
   start: string;
   setStart: (start: string) => void;
@@ -48,6 +52,7 @@ function CustomCalendar({
   hasBuildingFilter,
   handleDateClick,
   handleEventDrop,
+  handleEventResize,
   update,
   start,
   setStart,
@@ -131,7 +136,7 @@ function CustomCalendar({
         options={viewOptions}
         view={view}
         onSelectView={(view) => {
-          // setCalendarView(view.value);
+          setCalendarView(view.value);
           setView(view);
         }}
       />
@@ -159,6 +164,7 @@ function CustomCalendar({
         nowIndicator={true}
         dateClick={handleDateClick}
         eventDrop={handleEventDrop}
+        eventResize={handleEventResize}
         initialView={view.value}
         locale='pt-br'
         height='auto'
