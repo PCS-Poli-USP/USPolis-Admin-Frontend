@@ -33,7 +33,7 @@ export interface ScheduleResponseBase {
 export interface ScheduleResponse extends ScheduleResponseBase {
   occurrences_ids?: number[];
   occurrences?: OccurrenceResponse[];
-  logs: AllocationLogResponse[];
+  last_log?: AllocationLogResponse;
 }
 
 export interface ScheduleFullResponse extends ScheduleResponseBase {
