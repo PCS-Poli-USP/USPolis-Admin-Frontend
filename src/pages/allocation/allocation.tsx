@@ -10,7 +10,7 @@ import CustomCalendar from './CustomCalendar';
 import AllocationHeader from './AllocationHeader';
 import moment from 'moment';
 import { Resource } from 'models/http/responses/allocation.response.models';
-import { DateClickArg } from '@fullcalendar/interaction';
+import { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction';
 import useBuildings from 'hooks/useBuildings';
 import useClassrooms from 'hooks/useClassrooms';
 import ReservationModal from 'pages/reservations/ReservationModal/reservation.modal';
@@ -19,6 +19,7 @@ import { loadReservationForDataClick } from './utils/allocation.utils';
 import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
 import { EventDropArg } from '@fullcalendar/core';
 import EventDragModal from './EventDragModal';
+import { EventDef } from '@fullcalendar/core/internal';
 
 type ViewOption = {
   value: string;
@@ -177,6 +178,25 @@ function Allocation() {
     }
   }
 
+  function checkUserAuthorization(event: EventDef) {
+    if (!loggedUser) return false;
+    if (!loggedUser.buildings && !loggedUser.is_admin) return false;
+    if (!event.resourceIds) return false;
+    const values = event.resourceIds;
+    if (values.length === 0) return false;
+    const splited = values[0].split('-');
+    if (splited.length === 1) return false;
+    const building = splited[0];
+    if (!loggedUser.is_admin) {
+      if (
+        loggedUser.buildings &&
+        !loggedUser.buildings.find((val) => val.name === building)
+      )
+        return false;
+    }
+    return true;
+  }
+
   function handleEventDrop(arg: EventDropArg) {
     if (
       currentView.value !== 'resourceTimelineDay' &&
@@ -185,43 +205,16 @@ function Allocation() {
       arg.revert();
       return;
     }
-    if (!loggedUser) {
+    if (!checkUserAuthorization(arg.event._def)) {
       arg.revert();
       return;
     }
-    if (!loggedUser.buildings) {
-      if (!loggedUser.is_admin) {
-        arg.revert();
-        return;
-      }
-    }
-    if (!arg.event._def.resourceIds) {
-      arg.revert();
-      return;
-    }
-    const values = arg.event._def.resourceIds;
-    if (values.length === 0) {
-      arg.revert();
-      return;
-    }
-    const splited = values[0].split('-');
-    if (splited.length === 1) {
-      arg.revert();
-      return;
-    }
-    const building = splited[0];
-    if (!loggedUser.is_admin) {
-      if (
-        loggedUser.buildings &&
-        !loggedUser.buildings.find((val) => val.name === building)
-      ) {
-        arg.revert();
-        return;
-      }
-    }
-    console.log(arg);
     setDragEvent(arg);
     onOpenEventModal();
+  }
+
+  function handleEventResize(arg: EventResizeDoneArg) {
+    arg.revert();
   }
 
   useEffect(() => {
@@ -386,6 +379,7 @@ function Allocation() {
             }
             handleDateClick={handleDateClick}
             handleEventDrop={handleEventDrop}
+            handleEventResize={handleEventResize}
             hasBuildingFilter={!!buildingSearchValue}
             update={async (start, end) => {
               if (loadingAllocation) return;
