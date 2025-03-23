@@ -65,7 +65,7 @@ const ClassroomsPDF = ({
   return (
     <Document>
       {group.map((classroomMap, index) => (
-        <Page style={styles.body} key={classroomMap[0] + index + 'page'}>
+        <Page style={styles.body} key={classroomMap[0] + index + 'pdf-page'}>
           <View style={styles.table}>
             <View style={styles.tableRow}>
               <View style={styles.tableColHeader}>

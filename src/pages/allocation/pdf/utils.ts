@@ -19,7 +19,10 @@ type ScheduleExtended = [string, ScheduleResponse];
 type ClassroomSchedules = [string, string, ScheduleExtended[]];
 
 // Classroom - Classes
-type ClassClassroomMap = Map<string, ClassResponse[]>;
+type ClassClassroomMap = Map<string, Set<ClassResponse>>;
+
+// Classroom - Reservations
+type ReservationClassroomMap = Map<string, ReservationResponse[]>;
 
 // start time - end time
 type TimeRange = [string, string];
@@ -105,13 +108,13 @@ function insertScheduleInOccupationMap(
   });
 }
 
-function getSchedulesFromClasses(classes: ClassResponse[]): ScheduleResponse[] {
+export function getSchedulesFromClasses(classes: ClassResponse[]): ScheduleResponse[] {
   return classes.reduce<ScheduleResponse[]>((acc, cls) => {
     return acc.concat(cls.schedules);
   }, []);
 }
 
-function getSchedulesFromReservations(
+export function getSchedulesFromReservations(
   reservations: ReservationResponse[],
 ): ScheduleResponse[] {
   return reservations.reduce<ScheduleResponse[]>((acc, reservation) => {
@@ -119,7 +122,7 @@ function getSchedulesFromReservations(
   }, []);
 }
 
-function getSchedulesByClassroom(
+export function getSchedulesByClassroom(
   schedules: ScheduleResponse[],
 ): SchedulesClassroomMap {
   const map = new Map<string, ScheduleResponse[]>();
@@ -181,25 +184,43 @@ export function getClassroomOccupationMap(
 export function getClassClassroomMap(
   classes: ClassResponse[],
 ): ClassClassroomMap {
-  const map = new Map<string, ClassResponse[]>();
+  const map = new Map<string, Set<ClassResponse>>();
   classes.forEach((cls) => {
     const classroom = cls.schedules[0].classroom;
     if (classroom) {
       const classList = map.get(classroom);
       if (classList) {
-        classList.push(cls);
+        classList.add(cls);
         map.set(classroom, classList);
       } else {
-        map.set(classroom, [cls]);
+        map.set(classroom, new Set([cls]));
       }
     } else {
       const unallocatedList = map.get(AllocationEnum.UNALLOCATED);
       if (unallocatedList) {
-        unallocatedList.push(cls);
+        unallocatedList.add(cls);
         map.set(AllocationEnum.UNALLOCATED, unallocatedList);
       } else {
-        map.set(AllocationEnum.UNALLOCATED, [cls]);
+        map.set(AllocationEnum.UNALLOCATED, new Set([cls]));
       }
+    }
+  });
+  const aux = Array.from(map).sort((a, b) => a[0].localeCompare(b[0]));
+  return new Map(aux);
+}
+
+export function getReservationClassroomMap(
+  reservations: ReservationResponse[],
+): ReservationClassroomMap {
+  const map = new Map<string, ReservationResponse[]>();
+  reservations.forEach((reservation) => {
+    const classroom = reservation.classroom_name;
+    const reservationList = map.get(classroom);
+    if (reservationList) {
+      reservationList.push(reservation);
+      map.set(classroom, reservationList);
+    } else {
+      map.set(classroom, [reservation]);
     }
   });
   const aux = Array.from(map).sort((a, b) => a[0].localeCompare(b[0]));
