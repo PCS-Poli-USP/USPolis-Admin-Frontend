@@ -1,5 +1,12 @@
 import { LockIcon } from '@chakra-ui/icons';
-import { Button, Flex, Spacer, Text, Tooltip } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  Spacer,
+  Text,
+  Tooltip,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { appContext } from 'context/AppContext';
@@ -26,9 +33,22 @@ function AllocationDesktopHeader({
   const location = useLocation();
   const navigate = useNavigate();
   const { loggedUser } = useContext(appContext);
+  const {
+    isOpen: isOpenPDF,
+    onClose: onClosePDF,
+    onOpen: onOpenPDF,
+  } = useDisclosure();
 
   return (
     <Flex direction={'column'} alignItems={'flex-start'} gap={2} w={'100%'}>
+      <HeaderPDFOptions
+        isOpen={isOpenPDF}
+        onClose={onClosePDF}
+        buildings={buildingResources.map((resource) => ({
+          label: resource.title,
+          value: resource.id,
+        }))}
+      />
       <Text fontSize={'4xl'}>Mapa de Salas</Text>
       <Flex
         mb={4}
@@ -37,12 +57,9 @@ function AllocationDesktopHeader({
         direction={'row'}
         w={'full'}
       >
-        <HeaderPDFOptions
-          buildings={buildingResources.map((resource) => ({
-            label: resource.title,
-            value: resource.id,
-          }))}
-        />
+        <Button colorScheme='blue' onClick={onOpenPDF}>
+          Baixar
+        </Button>
         <Tooltip label={loggedUser ? '' : 'Entre para poder fazer essa ação.'}>
           <Button
             colorScheme='blue'
