@@ -1,56 +1,67 @@
 import { ClassResponse } from 'models/http/responses/class.response.models';
 import { ReservationResponse } from 'models/http/responses/reservation.response.models';
 import {
-  getClassClassroomMap,
   getSchedulesByClassroom,
   getSchedulesFromClasses,
   getSchedulesFromReservations,
 } from '../utils';
-import { useRef, useState } from 'react';
 import { Button, Flex } from '@chakra-ui/react';
-import ClassroomCalendarPage from './classroom.calendar.page';
+import { useNavigate } from 'react-router-dom';
+import { Event } from 'pages/allocation/interfaces/allocation.interfaces';
+import { ClassroomCalendarEventsFromSchedules } from './utils';
+import { Recurrence } from 'utils/enums/recurrence.enum';
+
+export interface SavedClassroomCalendarPage {
+  classroom: string;
+  events: Event[];
+  index: number;
+}
 
 interface ClassroomsCalendarPDFProps {
   classes: ClassResponse[];
   reservations: ReservationResponse[];
   building: string;
   disabled: boolean;
+  loading: boolean;
 }
 
 function ClassroomsCalendarPDF(props: ClassroomsCalendarPDFProps) {
-  const [loading] = useState(false);
-  const calendarRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const navigate = useNavigate();
 
   const schedulesMap = getSchedulesByClassroom(
     getSchedulesFromClasses(props.classes).concat(
-      getSchedulesFromReservations(props.reservations),
+      getSchedulesFromReservations(
+        props.reservations.filter(
+          (val) => val.schedule.recurrence === Recurrence.WEEKLY,
+        ),
+      ),
     ),
   );
-  const classrooms = Array.from(getClassClassroomMap(props.classes).keys());
 
   const sendCalendarsToPrint = () => {
-    if (Array.from(calendarRefs.current.keys()).length === 0) {
+    if (Array.from(schedulesMap.keys()).length === 0) {
       alert('Nenhum calendário encontrado!');
       return;
     }
 
-    const calendarsHtml = calendarRefs.current
-      .filter((calendar) => calendar !== null)
-      .map((converted) => {
-        if (!converted) return '';
-        return converted.outerHTML;
-      });
+    const savedCalendars: SavedClassroomCalendarPage[] = [];
+    let index = 1;
+    schedulesMap.forEach((schedules, classroom) => {
+      const events = ClassroomCalendarEventsFromSchedules(schedules);
+      savedCalendars.push({ classroom, events, index });
+      index++;
+    });
 
-    localStorage.setItem('calendarsToPrint', JSON.stringify(calendarsHtml));
-    window.open('/print/classroom-calendar', '_blank');
+    localStorage.setItem('savedCalendars', JSON.stringify(savedCalendars));
+    navigate('/print/classroom-calendar');
   };
 
   return (
     <Flex direction={'column'} w={'100%'}>
       <Button
         onClick={sendCalendarsToPrint}
-        disabled={loading || props.disabled}
-        isLoading={loading}
+        disabled={props.loading || props.disabled}
+        isLoading={props.loading}
         fontWeight={'bold'}
         variant={'outline'}
         colorScheme={'blue'}
@@ -58,23 +69,6 @@ function ClassroomsCalendarPDF(props: ClassroomsCalendarPDFProps) {
       >
         Baixar mapa de salas (calendários)
       </Button>
-      <Flex direction={'column'} w={'100%'} display={'block'}>
-        {classrooms.map((classroom, index) => (
-          <div
-            id={`calendar-pdf-page-${index}`}
-            key={index}
-            ref={(ref) => {
-              calendarRefs.current[index] = ref;
-            }}
-          >
-            <ClassroomCalendarPage
-              index={1}
-              schedules={schedulesMap.get(classroom) || []}
-              classroom={classroom}
-            />
-          </div>
-        ))}
-      </Flex>
     </Flex>
   );
 }
