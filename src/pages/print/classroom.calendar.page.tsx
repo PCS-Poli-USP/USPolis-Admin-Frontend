@@ -1,22 +1,18 @@
 import { Heading } from '@chakra-ui/react';
 import FullCalendar from '@fullcalendar/react';
 import rrulePlugin from '@fullcalendar/rrule';
-import adaptivePlugin from '@fullcalendar/adaptive';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
-import { useRef } from 'react';
-import { ClassroomCalendarEventsFromSchedules } from './utils';
-import ClassroomCalendarEventContent from './classroom.calendar.event.content';
+import ClassroomCalendarEventContent from '../allocation/pdf/ClassroomsCalendarPDF/classroom.calendar.event.content';
+import { Event } from 'pages/allocation/interfaces/allocation.interfaces';
 
 interface ClassroomCalendarPageProps {
-  schedules: ScheduleResponse[];
+  events: Event[];
   classroom: string;
   index: number;
 }
 
 function ClassroomCalendarPage(props: ClassroomCalendarPageProps) {
-  const calendarRef = useRef<FullCalendar>(null!);
-  const events = ClassroomCalendarEventsFromSchedules(props.schedules);
+  const events = props.events;
 
   return (
     <div
@@ -24,10 +20,10 @@ function ClassroomCalendarPage(props: ClassroomCalendarPageProps) {
       className='page-break'
       style={{
         width: '100%',
-        maxHeight: '95vh',
+        maxWidth: '720px',
+        maxHeight: '100vh',
         overflow: 'hidden',
-        visibility: 'hidden',
-        position: 'absolute',
+        visibility: 'visible',
         color: 'black',
       }}
     >
@@ -35,9 +31,9 @@ function ClassroomCalendarPage(props: ClassroomCalendarPageProps) {
         Sala {props.classroom}
       </Heading>
       <FullCalendar
-        ref={calendarRef}
+        initialDate={events.length > 0 ? events[0].start : undefined}
         schedulerLicenseKey='GPL-My-Project-Is-Open-Source'
-        plugins={[timeGridPlugin, rrulePlugin, adaptivePlugin]}
+        plugins={[timeGridPlugin, rrulePlugin]}
         stickyHeaderDates={false}
         initialView='timeGridWeek'
         dayHeaderContent={(args) =>
@@ -57,13 +53,15 @@ function ClassroomCalendarPage(props: ClassroomCalendarPageProps) {
         slotMinTime='07:00'
         views={{
           timeGridWeek: {
+            slotMinTime: '07:00:00',
+            slotMaxTime: '24:00:00',
             slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
             eventMaxStack: 2,
             titleFormat: { weekday: 'long', day: 'numeric', month: 'long' },
           },
         }}
         eventColor='#000000'
-        eventBackgroundColor='#000000'
+        eventBackgroundColor='#ffffff'
         eventBorderColor='#000000'
         eventTextColor='#000000'
         eventContent={ClassroomCalendarEventContent}

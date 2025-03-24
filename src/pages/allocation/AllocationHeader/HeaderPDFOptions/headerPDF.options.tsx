@@ -154,6 +154,7 @@ function HeaderPDFOptions({ buildings, isOpen, onClose }: PDFOptionsProps) {
                 reservations={reservations}
                 building={selectedBuilding ? selectedBuilding.label : ''}
                 disabled={!selectedBuilding || loadingC || loadingR}
+                loading={loadingC || loadingR}
               />
             </Box>
           </Stack>

@@ -1,39 +1,48 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './index.css';
+import { Heading } from '@chakra-ui/react';
+import { SavedClassroomCalendarPage } from 'pages/allocation/pdf/ClassroomsCalendarPDF/classrooms.calendar.pdf';
+import ClassroomCalendarPage from 'pages/print/classroom.calendar.page';
 
 const ClassroomCalendarPrintPage = () => {
   const navigate = useNavigate();
-  const [calendarsHtml, setCalendarsHtml] = useState([]);
+  const [calendarsData, setCalendarsData] = useState<
+    SavedClassroomCalendarPage[]
+  >([]);
 
   useEffect(() => {
-    // Recupera os calendários do localStorage
-    const data = localStorage.getItem('calendarsToPrint');
-    if (!data) {
+    const storedCalendars = localStorage.getItem('savedCalendars');
+    if (storedCalendars) {
+      setCalendarsData(JSON.parse(storedCalendars));
+      setTimeout(() => {
+        window.print();
+        localStorage.removeItem('calendarsToPrint');
+        navigate(-1);
+      }, 1000);
+    } else {
       alert('Nenhum calendário encontrado para imprimir!');
-      navigate(-1); // Volta para a página anterior caso não haja calendários
-      return;
+      navigate(-1);
     }
-    const storedCalendars = JSON.parse(data) || [];
-    setCalendarsHtml(storedCalendars);
-
-    // Aguarda renderização e abre o print automaticamente
-    setTimeout(() => {
-      window.print();
-      localStorage.removeItem('calendarsToPrint');
-      window.close();
-    }, 500);
-  }, [navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div>
-      {calendarsHtml.map((html, index) => (
-        <div
-          key={index}
-          dangerouslySetInnerHTML={{ __html: html }}
-          className='page-break'
-        />
-      ))}
+      {calendarsData.length > 0 ? (
+        calendarsData.map((data) => (
+          <ClassroomCalendarPage
+            key={data.index}
+            classroom={data.classroom}
+            events={data.events}
+            index={data.index}
+          />
+        ))
+      ) : (
+        <Heading size={'lg'} w={'full'} textAlign={'center'}>
+          Carregando PDF...
+        </Heading>
+      )}
     </div>
   );
 };

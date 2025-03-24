@@ -8,23 +8,24 @@ import {
   UpdateReservation,
 } from 'models/http/requests/reservation.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
+import axios from 'services/api/axios';
 
 const useReservationsService = () => {
   const PREFIX = '/reservations';
-  const axios = useAxiosPrivate();
+  const axiosPrivate = useAxiosPrivate();
 
   const getMine = (): Promise<AxiosResponse<Array<ReservationResponse>>> => {
-    return axios.get(`/users/my-reservations`);
+    return axiosPrivate.get(`/users/my-reservations`);
   };
 
   const get = (): Promise<AxiosResponse<Array<ReservationResponse>>> => {
-    return axios.get(PREFIX);
+    return axiosPrivate.get(PREFIX);
   };
 
   const getFull = (): Promise<
     AxiosResponse<Array<ReservationFullResponse>>
   > => {
-    return axios.get(`${PREFIX}}/full/`);
+    return axiosPrivate.get(`${PREFIX}}/full/`);
   };
 
   const getByBuildingName = (
@@ -36,18 +37,18 @@ const useReservationsService = () => {
   const create = (
     data: CreateReservation,
   ): Promise<AxiosResponse<ReservationResponse>> => {
-    return axios.post(PREFIX, data);
+    return axiosPrivate.post(PREFIX, data);
   };
 
   const deleteById = (id: number): Promise<AxiosResponse<undefined>> => {
-    return axios.delete(`${PREFIX}/${id}`);
+    return axiosPrivate.delete(`${PREFIX}/${id}`);
   };
 
   const update = (
     id: number,
     data: UpdateReservation,
   ): Promise<AxiosResponse<ReservationResponse>> => {
-    return axios.put(`${PREFIX}/${id}`, data);
+    return axiosPrivate.put(`${PREFIX}/${id}`, data);
   };
 
   return {

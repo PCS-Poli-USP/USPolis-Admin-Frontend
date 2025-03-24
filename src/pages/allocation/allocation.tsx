@@ -75,6 +75,8 @@ function Allocation() {
 
   const {
     loading: loadingAllocation,
+    loadingE,
+    loadingR,
     events,
     resources,
     getEvents,
@@ -93,7 +95,7 @@ function Allocation() {
     loading: loadingSolicitations,
     solicitations,
     getSolicitations,
-  } = useClassroomsSolicitations();
+  } = useClassroomsSolicitations(false);
 
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
   const [filteredResources, setFilteredResources] =
@@ -262,6 +264,7 @@ function Allocation() {
     if (loggedUser) {
       getAllBuildings();
       getAllClassrooms();
+      getSolicitations();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedUser]);
@@ -392,7 +395,7 @@ function Allocation() {
             view={currentView}
             setView={setCurrentView}
             isMobile={isMobile}
-            loading={loadingAllocation || loading}
+            loading={loadingAllocation || loading || loadingE || loadingR}
           />
         </GridItem>
       </Grid>

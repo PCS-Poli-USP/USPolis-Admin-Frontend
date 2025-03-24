@@ -57,7 +57,7 @@ const useReservations = (initialFetch = true) => {
     async (building_name: string) => {
       setLoading(true);
       await service
-        .getMine()
+        .getByBuildingName(building_name)
         .then((response) => {
           setReservations(response.data.sort(sortReservationsResponse));
         })
