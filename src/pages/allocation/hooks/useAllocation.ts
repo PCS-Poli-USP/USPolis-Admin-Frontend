@@ -12,13 +12,15 @@ const useAllocation = (
 ) => {
   const allocationService = useALlocationsService();
   const [loading, setLoading] = useState(false);
+  const [loadingE, setLoadingE] = useState(false);
+  const [loadingR, setLoadingR] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
 
   const showToast = useCustomToast();
 
   const getEvents = useCallback(async (start?: string, end?: string) => {
-    setLoading(true);
+    setLoadingE(true);
     try {
       const response = await allocationService.listEvents(start, end);
       setEvents(response.data);
@@ -27,13 +29,13 @@ const useAllocation = (
       console.log(error);
       setEvents([]);
     } finally {
-      setLoading(false);
+      setLoadingE(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getResources = useCallback(async () => {
-    setLoading(true);
+    setLoadingR(true);
     await allocationService
       .listResources()
       .then((response) => {
@@ -46,7 +48,7 @@ const useAllocation = (
         setResources([]);
       })
       .finally(() => {
-        setLoading(false);
+        setLoadingR(false);
       });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,6 +85,8 @@ const useAllocation = (
 
   return {
     loading,
+    loadingE,
+    loadingR,
     events,
     resources,
     getEvents,

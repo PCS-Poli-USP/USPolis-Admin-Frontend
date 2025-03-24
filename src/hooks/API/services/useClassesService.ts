@@ -9,18 +9,20 @@ import {
 } from 'models/http/requests/class.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
+import axios from 'services/api/axios';
+
 const useClassesService = () => {
   const PREFIX = '/classes';
-  const axios = useAxiosPrivate();
+  const axiosPrivate = useAxiosPrivate();
 
   const get = (): Promise<AxiosResponse<Array<ClassResponse>>> => {
-    return axios.get(PREFIX);
+    return axiosPrivate.get(PREFIX);
   };
 
   const getBySubject = (
     subject_id: number,
   ): Promise<AxiosResponse<Array<ClassResponse>>> => {
-    return axios.get(`${PREFIX}/subject/${subject_id}`);
+    return axiosPrivate.get(`${PREFIX}/subject/${subject_id}`);
   };
 
   const getByBuildingName = (
@@ -30,25 +32,25 @@ const useClassesService = () => {
   };
 
   const getFull = (): Promise<AxiosResponse<Array<ClassFullResponse>>> => {
-    return axios.get(`${PREFIX}/full/`);
+    return axiosPrivate.get(`${PREFIX}/full/`);
   };
 
   const getOneFull = (
     id: number,
   ): Promise<AxiosResponse<ClassFullResponse>> => {
-    return axios.get(`${PREFIX}/${id}/full/`);
+    return axiosPrivate.get(`${PREFIX}/${id}/full/`);
   };
 
   const getById = (id: number): Promise<AxiosResponse<ClassResponse>> => {
-    return axios.get(`${PREFIX}/${id}`);
+    return axiosPrivate.get(`${PREFIX}/${id}`);
   };
 
   const getMine = (): Promise<AxiosResponse<Array<ClassResponse>>> => {
-    return axios.get(`/users/my-classes`);
+    return axiosPrivate.get(`/users/my-classes`);
   };
 
   const create = (data: CreateClass): Promise<AxiosResponse<ClassResponse>> => {
-    return axios.post(PREFIX, data);
+    return axiosPrivate.post(PREFIX, data);
   };
 
   // createMany(data: string[]): Promise<AxiosResponse<any>> {
@@ -56,18 +58,18 @@ const useClassesService = () => {
   // }
 
   const update = (id: number, data: UpdateClass) => {
-    return axios.put(`${PREFIX}/${id}`, data);
+    return axiosPrivate.put(`${PREFIX}/${id}`, data);
   };
 
   const deleteById = (id: number) => {
-    return axios.delete(`${PREFIX}/${id}`);
+    return axiosPrivate.delete(`${PREFIX}/${id}`);
   };
 
   const deleteMany = (ids: number[]) => {
     const params = new URLSearchParams();
     ids.forEach((id) => params.append('ids', id.toString()));
 
-    return axios.delete(`${PREFIX}/many/`, {
+    return axiosPrivate.delete(`${PREFIX}/many/`, {
       params: params,
     });
   };
