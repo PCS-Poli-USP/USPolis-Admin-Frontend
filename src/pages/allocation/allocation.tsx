@@ -94,7 +94,7 @@ function Allocation() {
   const {
     loading: loadingSolicitations,
     solicitations,
-    getSolicitations,
+    getBuildingSolicitations,
   } = useClassroomsSolicitations(false);
 
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
@@ -264,7 +264,9 @@ function Allocation() {
     if (loggedUser) {
       getAllBuildings();
       getAllClassrooms();
-      getSolicitations();
+      if (loggedUser.is_admin || loggedUser.buildings) {
+        getBuildingSolicitations();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedUser]);
@@ -322,7 +324,9 @@ function Allocation() {
               loadingBuildings={loadingBuildings}
               loadingClassrooms={loadingClassrooms}
               refetch={async () => {
-                await getSolicitations();
+                if (loggedUser.is_admin || loggedUser.buildings) {
+                  await getBuildingSolicitations();
+                }
               }}
             />
           )}
@@ -355,13 +359,7 @@ function Allocation() {
               onClose={onCloseReservation}
               selectedReservation={reservation}
               initialDate={clickedDate}
-              solicitations={solicitations.filter((val) => {
-                if (val.required_classroom && val.classroom && reservation) {
-                  if (val.classroom !== reservation.classroom_name)
-                    return false;
-                }
-                return true;
-              })}
+              solicitations={solicitations}
               loadingSolicitations={loadingSolicitations}
             />
           )}

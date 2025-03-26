@@ -4,7 +4,7 @@ import DataTable from 'components/common/DataTable/dataTable.component';
 import Loading from 'components/common/Loading/loading.component';
 import { getReservationsColumns } from './Tables/reservation.table';
 import { ReservationResponse } from 'models/http/responses/reservation.response.models';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useClassrooms from 'hooks/useClassrooms';
 import useBuildings from 'hooks/useBuildings';
 import useReservations from 'hooks/useReservations';
@@ -29,8 +29,11 @@ function Reservations() {
   const { classrooms } = useClassrooms();
   const { loading, reservations, getReservations, deleteReservation } =
     useReservations();
-  const { loading: loadingSolicitations, solicitations } =
-    useClassroomsSolicitations();
+  const {
+    loading: loadingSolicitations,
+    solicitations,
+    getBuildingSolicitations,
+  } = useClassroomsSolicitations(false);
 
   const [selectedReservation, setSelectedReservation] =
     useState<ReservationResponse>();
@@ -70,6 +73,11 @@ function Reservations() {
     onCloseDialog();
     setSelectedReservation(undefined);
   }
+
+  useEffect(() => {
+    getBuildingSolicitations();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <PageContent>
