@@ -18,12 +18,16 @@ interface SolicitationStackProps {
   solicitations: ClassroomSolicitationResponse[];
   handleOnClick: (data: ClassroomSolicitationResponse) => void;
   reset: () => void;
+  selectedIndex?: number;
+  setSelectedIndex: (index: number) => void;
 }
 
 function SolicitationStack({
   solicitations,
   handleOnClick,
   reset,
+  selectedIndex,
+  setSelectedIndex,
 }: SolicitationStackProps) {
   const [hidden, setHidden] = useState(true);
   const [current, setCurrent] = useState<ClassroomSolicitationResponse[]>([]);
@@ -150,6 +154,8 @@ function SolicitationStack({
       </HStack>
       <SolicitationStackBody
         reset={reset}
+        setSelectedIndex={setSelectedIndex}
+        selectedIndex={selectedIndex}
         solicitations={
           buildingSearch || classroomSearch || requesterSearch
             ? filtered

@@ -34,6 +34,26 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       });
   }, [showToast, service]);
 
+  const getBuildingSolicitations = useCallback(async () => {
+    setLoading(true);
+    await service
+      .get()
+      .then((response) => {
+        setSolicitations(response.data.sort(sortClassroomSolicitationResponse));
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast(
+          'Erro',
+          'Erro ao carregar as solicitações do seu prédio',
+          'error',
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [showToast, service]);
+
   const createSolicitation = useCallback(
     async (data: CreateClassroomSolicitation) => {
       setLoading(true);
@@ -104,6 +124,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
     loading,
     solicitations,
     getSolicitations,
+    getBuildingSolicitations,
     createSolicitation,
     approveSolicitation,
     denySolicitation,

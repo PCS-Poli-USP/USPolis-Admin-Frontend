@@ -15,12 +15,16 @@ interface SolicitationStackBodyProps {
   solicitations: ClassroomSolicitationResponse[];
   handleOnClick: (data: ClassroomSolicitationResponse) => void;
   reset: () => void;
+  selectedIndex?: number;
+  setSelectedIndex: (index: number) => void;
 }
 
 function SolicitationStackBody({
   solicitations,
   handleOnClick,
   reset,
+  selectedIndex,
+  setSelectedIndex,
 }: SolicitationStackBodyProps) {
   return (
     <VStack w={'full'} divider={<StackDivider />}>
@@ -30,6 +34,7 @@ function SolicitationStackBody({
             key={index}
             w={'full'}
             borderRadius='md'
+            border={selectedIndex === index ? '1px' : undefined}
             cursor={false ? 'not-allowed' : 'pointer'}
             transition='background 0.3s, opacity 0.3s'
             opacity={solicitation.closed ? 0.6 : 1}
@@ -39,6 +44,7 @@ function SolicitationStackBody({
             }
             onClick={() => {
               reset();
+              setSelectedIndex(index);
               handleOnClick(solicitation);
             }}
           >

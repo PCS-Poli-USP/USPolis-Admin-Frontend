@@ -71,12 +71,14 @@ function SolicitationPanel({
   const [justification, setJustification] = useState('');
   const [justificationError, setJustificationError] = useState(false);
 
+  const [isLoadingWithConflict, setIsLoadingWithConflict] = useState(false);
   const [classrooms, setClassrooms] = useState<ClassroomWithConflictCount[]>(
     [],
   );
   const [classroom, setClassroom] = useState<
     ClassroomWithConflictCount | undefined
   >(undefined);
+  const [isLoadingFull, setIsLoadingFull] = useState(false);
   const [classroomFull, setClassroomFull] = useState<ClassroomFullResponse>();
   const [editingClassroom, setEditingClassroom] = useState(false);
 
@@ -111,15 +113,20 @@ function SolicitationPanel({
     const fetchClassrooms = async () => {
       if (solicitation && !solicitation.closed) {
         if (start && end && validateTime(start, end)) {
-          const result = await getClassroomsWithConflictFromTime(
-            { start_time: start, end_time: end, dates: solicitation.dates },
-            solicitation?.building_id,
-          );
-          setClassrooms(result);
+          try {
+            setIsLoadingWithConflict(true);
+            const result = await getClassroomsWithConflictFromTime(
+              { start_time: start, end_time: end, dates: solicitation.dates },
+              solicitation?.building_id,
+            );
+            setClassrooms(result);
+          } finally {
+            setIsLoadingWithConflict(false);
+          }
         }
       }
     };
-    fetchClassrooms();
+    if (!isLoadingWithConflict) fetchClassrooms();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [solicitation, end, start]);
 
@@ -137,21 +144,39 @@ function SolicitationPanel({
   // Fetch classroom occurrences from selected classroom
   useEffect(() => {
     const fetchClassroomOccurrences = async () => {
+      if (!solicitation) return;
+      if (classroom && classroomFull && classroom.id === classroomFull.id) {
+        return;
+      }
+      
+      let id = -1;
       if (solicitation && !solicitation.closed) {
         if (classroom) {
-          const result = await listOneFull(classroom.id);
-          setClassroomFull(result);
+          id = classroom.id;
         }
         if (solicitation.classroom_id && !classroom) {
-          const result = await listOneFull(solicitation.classroom_id);
+          id = solicitation.classroom_id;
+        }
+      }
+
+      if (id > 0) {
+        try {
+          console.log('Buscando full');
+          setIsLoadingFull(true);
+          const result = await listOneFull(id);
           setClassroomFull(result);
+        } finally {
+          setIsLoadingFull(false);
         }
       }
     };
-    fetchClassroomOccurrences();
-  }, [listOneFull, classroom, solicitation]);
 
-  // Need when change between soliciations (the conclit count is not updated)
+    if (!isLoadingFull) {
+      fetchClassroomOccurrences();
+    }
+  }, [listOneFull, classroom, classroomFull, solicitation, isLoadingFull]);
+
+  // Need when change between solicitations (the conclit count is not updated)
   useEffect(() => {
     if (classrooms && classroom) {
       setClassroom(classrooms.find((val) => val.id === classroom.id));
@@ -508,6 +533,7 @@ function SolicitationPanel({
                           }
                           deny(solicitation.id, { justification });
                           handleOpenPopover(1);
+                          reset();
                         }}
                       >
                         Confirmar
@@ -569,6 +595,7 @@ function SolicitationPanel({
                               : end,
                           });
                           handleOpenPopover(2);
+                          reset();
                         }}
                       >
                         Confirmar
