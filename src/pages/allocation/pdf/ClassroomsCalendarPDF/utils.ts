@@ -1,53 +1,38 @@
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
-import { EventExtendedProps } from 'models/http/responses/allocation.response.models';
-import { AllocationEnum } from 'utils/enums/allocation.enum';
-import { ReservationType } from 'utils/enums/reservations.enum';
-import { Event } from 'pages/allocation/interfaces/allocation.interfaces';
+import { RecurrenceRule } from 'pages/allocation/interfaces/allocation.interfaces';
 import moment from 'moment';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 
-function getExtendedPropsFromSchedule(
-  schedule: ScheduleResponse,
-): EventExtendedProps {
-  if (schedule.class_code) {
-    return {
-      class_data: {
-        schedule_id: schedule.id,
-        code: schedule.class_code,
-        subject_code: schedule.subject_code || '',
-        subject_name: schedule.subject || '',
-        building: schedule.building || AllocationEnum.UNALLOCATED,
-        classroom: schedule.classroom || AllocationEnum.UNALLOCATED,
-        allocated: schedule.allocated,
-        professors: [],
-        subscribers: 0,
-        week_day: schedule.week_day,
-        start_time: schedule.start_time,
-        end_time: schedule.end_time,
-        start_date: schedule.start_date,
-        end_date: schedule.end_date,
-        recurrence: schedule.recurrence,
-        month_week: schedule.month_week,
-      },
-    };
-  } else {
-    return {
-      reservation_data: {
-        schedule_id: schedule.id,
-        building: schedule.building || AllocationEnum.UNALLOCATED,
-        classroom: schedule.classroom || AllocationEnum.UNALLOCATED,
-        title: schedule.reservation || '',
-        start_time: schedule.start_time,
-        end_time: schedule.end_time,
-        start_date: schedule.start_date,
-        end_date: schedule.end_date,
-        recurrence: schedule.recurrence,
-        month_week: schedule.month_week,
-        created_by: '',
-        type: ReservationType.OTHER,
-      },
-    };
-  }
+interface MergedScheduleResponse extends ScheduleResponse {
+  titles: string[];
+  subjects_codes: string[];
+  classes_codes: string[];
+}
+
+interface MergedData {
+  titles: string[];
+  subjects_codes: string[];
+  classes_codes: string[];
+}
+
+export interface MergedEventExtendedProps {
+  merged_data?: MergedData;
+}
+
+export interface MergedEvent {
+  id: string;
+  title: string;
+  start: string; // Must be YYYY-MM-DDTHH:mm:ss
+  end: string; // Must be YYYY-MM-DDTHH:mm:ss
+
+  classroom_id?: number;
+  classroom?: string;
+  classroom_capacity?: number;
+  rrule?: RecurrenceRule; // Used when is unallocated
+  allDay: boolean;
+
+  resourceId: string;
+  extendedProps: MergedEventExtendedProps;
 }
 
 function getStartForEvent(week_day: WeekDay): string {
@@ -58,15 +43,63 @@ function getStartForEvent(week_day: WeekDay): string {
   return start;
 }
 
+function getSchedulessByWeekDay(
+  schedules: ScheduleResponse[],
+): Map<WeekDay, ScheduleResponse[]> {
+  const weekDayMap: Map<WeekDay, ScheduleResponse[]> = new Map();
+  schedules.forEach((schedule) => {
+    if (schedule.week_day !== undefined) {
+      const current = weekDayMap.get(schedule.week_day);
+      if (current) {
+        current.push(schedule);
+        weekDayMap.set(schedule.week_day, current);
+      } else {
+        weekDayMap.set(schedule.week_day, [schedule]);
+      }
+    }
+  });
+  return weekDayMap;
+}
+
+function mergeSchedules(
+  schedules: ScheduleResponse[],
+): MergedScheduleResponse[] {
+  const merged: MergedScheduleResponse[] = [];
+  const weekDayMap = getSchedulessByWeekDay(schedules);
+  weekDayMap.forEach((weekdaySchedules, week_day) => {
+    const mergedMap: Map<string, MergedScheduleResponse> = new Map();
+    weekdaySchedules.forEach((schedule) => {
+      const key: string = `${schedule.start_time}-${schedule.end_time}`;
+      const current = mergedMap.get(key);
+      if (current) {
+        if (schedule.reservation) current.titles.push(schedule.reservation);
+        if (schedule.subject_code)
+          current.subjects_codes.push(schedule.subject_code);
+        if (schedule.class_code)
+          current.classes_codes.push(schedule.class_code);
+        mergedMap.set(key, current);
+      } else {
+        mergedMap.set(key, {
+          ...schedule,
+          titles: schedule.reservation ? [schedule.reservation] : [],
+          subjects_codes: schedule.subject_code ? [schedule.subject_code] : [],
+          classes_codes: schedule.class_code ? [schedule.class_code] : [],
+        });
+      }
+    });
+    mergedMap.forEach((schedule) => {
+      merged.push(schedule);
+    });
+  });
+  return merged;
+}
+
 export function ClassroomCalendarEventsFromSchedules(
   schedules: ScheduleResponse[],
-): Event[] {
-  const events = schedules.reduce<Event[]>((acc, schedule) => {
-    const title = schedule.reservation
-      ? schedule.reservation
-      : schedule.subject_code
-      ? schedule.subject_code
-      : 'Sem título';
+): MergedEvent[] {
+  const mergedSchedules = mergeSchedules(schedules);
+  const events = mergedSchedules.reduce<MergedEvent[]>((acc, schedule) => {
+    const title = 'Evento mesclado';
     acc.push({
       id: String(schedule.id), // Must be unique por every occurence
       title: title,
@@ -85,7 +118,13 @@ export function ClassroomCalendarEventsFromSchedules(
       classroom: schedule.classroom,
       allDay: schedule.all_day,
       resourceId: `${schedule.building}-${schedule.classroom}`,
-      extendedProps: getExtendedPropsFromSchedule(schedule),
+      extendedProps: {
+        merged_data: {
+          titles: schedule.titles,
+          subjects_codes: schedule.subjects_codes,
+          classes_codes: schedule.classes_codes,
+        },
+      },
     });
     return acc;
   }, []);

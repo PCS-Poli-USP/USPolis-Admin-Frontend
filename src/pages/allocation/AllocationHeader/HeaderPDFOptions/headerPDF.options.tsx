@@ -13,13 +13,11 @@ import {
 } from '@chakra-ui/react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import ClassesPDF from '../../pdf/ClassesPDF/classesPDF';
-import ClassroomsPDF from '../../pdf/ClassroomsPDF/classroomsPDF';
 import Select from 'react-select';
 import { useState } from 'react';
 import useClasses from 'hooks/classes/useClasses';
 import { normalizeString } from 'utils/formatters';
 import useReservations from 'hooks/useReservations';
-import { Recurrence } from 'utils/enums/recurrence.enum';
 import ClassroomsCalendarPDF from 'pages/allocation/pdf/ClassroomsCalendarPDF/classrooms.calendar.pdf';
 import { ModalProps } from 'models/interfaces';
 
@@ -112,42 +110,6 @@ function HeaderPDFOptions({ buildings, isOpen, onClose }: PDFOptionsProps) {
               </PDFDownloadLink>
             </Box>
 
-            <Box w={'full'}>
-              <PDFDownloadLink
-                document={
-                  <ClassroomsPDF
-                    classes={classes.map((cls) => ({
-                      ...cls,
-                      schedules: cls.schedules.filter(
-                        (schedule) => schedule.allocated,
-                      ),
-                    }))}
-                    reservations={reservations.filter(
-                      (reservation) =>
-                        reservation.schedule.recurrence !== Recurrence.CUSTOM,
-                    )}
-                    subtitle={'Alocação Planejada'}
-                  />
-                }
-                fileName={
-                  selectedBuilding
-                    ? `salas-${normalizeString(selectedBuilding.label)}.pdf`
-                    : 'salas.pdf'
-                }
-              >
-                <Button
-                  w={'full'}
-                  isLoading={loadingC || loadingR}
-                  disabled={!selectedBuilding}
-                  fontWeight={'bold'}
-                  variant={'outline'}
-                  colorScheme={'blue'}
-                  color={'uspolis.blue'}
-                >
-                  Baixar alocação das salas
-                </Button>
-              </PDFDownloadLink>
-            </Box>
             <Box w={'full'}>
               <ClassroomsCalendarPDF
                 classes={classes}

@@ -7,13 +7,12 @@ import {
 } from '../utils';
 import { Button, Flex } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { Event } from 'pages/allocation/interfaces/allocation.interfaces';
-import { ClassroomCalendarEventsFromSchedules } from './utils';
+import { ClassroomCalendarEventsFromSchedules, MergedEvent } from './utils';
 import { Recurrence } from 'utils/enums/recurrence.enum';
 
 export interface SavedClassroomCalendarPage {
   classroom: string;
-  events: Event[];
+  events: MergedEvent[];
   index: number;
 }
 
@@ -28,16 +27,17 @@ interface ClassroomsCalendarPDFProps {
 function ClassroomsCalendarPDF(props: ClassroomsCalendarPDFProps) {
   const navigate = useNavigate();
 
-  const schedulesMap = getSchedulesByClassroom(
-    getSchedulesFromClasses(props.classes).concat(
-      getSchedulesFromReservations(
-        props.reservations.filter(
-          (val) => val.schedule.recurrence === Recurrence.WEEKLY,
-        ),
+  const schedules = getSchedulesFromClasses(props.classes).concat(
+    getSchedulesFromReservations(
+      props.reservations.filter(
+        (val) => val.schedule.recurrence === Recurrence.WEEKLY,
       ),
     ),
   );
-
+  const schedulesMap = getSchedulesByClassroom(schedules);
+  const sorted = new Map(
+    [...schedulesMap.entries()].sort((a, b) => a[0].localeCompare(b[0])),
+  );
   const sendCalendarsToPrint = () => {
     if (Array.from(schedulesMap.keys()).length === 0) {
       alert('Nenhum calendário encontrado!');
@@ -46,7 +46,7 @@ function ClassroomsCalendarPDF(props: ClassroomsCalendarPDFProps) {
 
     const savedCalendars: SavedClassroomCalendarPage[] = [];
     let index = 1;
-    schedulesMap.forEach((schedules, classroom) => {
+    sorted.forEach((schedules, classroom) => {
       const events = ClassroomCalendarEventsFromSchedules(schedules);
       savedCalendars.push({ classroom, events, index });
       index++;
