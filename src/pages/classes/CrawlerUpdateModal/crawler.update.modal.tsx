@@ -12,14 +12,18 @@ import {
   Checkbox,
   Stack,
   Progress,
+  Select,
 } from '@chakra-ui/react';
 import { ModalProps } from 'models/interfaces';
 import { useEffect, useState } from 'react';
+import { CrawlerType } from 'utils/enums/subjects.enum';
 
-interface JupiterUpdateModalProps extends ModalProps {
+interface CrawlerUpdateModalProps extends ModalProps {
   codes: string[];
   handleConfirm: (codes: string[]) => void;
   loading: boolean;
+  type: CrawlerType | undefined;
+  setCrawlerType: (type: CrawlerType | undefined) => void;
 }
 
 type SelectionMap = {
@@ -27,13 +31,15 @@ type SelectionMap = {
   selected: boolean;
 };
 
-function JupiterUpdateModal({
+function CrawlerUpdateModal({
   isOpen,
   onClose,
   codes,
   loading,
   handleConfirm,
-}: JupiterUpdateModalProps) {
+  setCrawlerType,
+  type,
+}: CrawlerUpdateModalProps) {
   const [selectionMap, setSelectionMap] = useState<SelectionMap[]>([]);
 
   useEffect(() => {
@@ -54,12 +60,26 @@ function JupiterUpdateModal({
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          Atualizar Disciplinas e Turmas pelo JupiterWeb
-        </ModalHeader>
+        <ModalHeader>Atualizar Disciplinas e Turmas</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Stack gap={'10px'}>
+            <Text fontWeight={'bold'}>Site:</Text>
+            <Select
+              placeholder='Selecionar Jupiter ou Janus'
+              value={type}
+              onChange={(event) => {
+                const value = event.target.value as CrawlerType;
+                if (value) setCrawlerType(value);
+                else setCrawlerType(undefined);
+              }}
+            >
+              <option value={'jupiter'}>Júpiter</option>
+              <option value={'janus'}>Janus</option>
+            </Select>
+            <Text as={'b'} fontSize={'sm'} noOfLines={2} mt={'2px'}>
+              *Não misture disciplinas da pós com da graduação
+            </Text>
             <Text>
               Selecione as disciplinas que deseja atualizar. As turmas
               relacionadas a essas disciplinas também serão atualizadas.
@@ -125,7 +145,9 @@ function JupiterUpdateModal({
           <Button
             colorScheme={'blue'}
             isLoading={loading}
-            disabled={selectionMap.filter((it) => it.selected).length < 1}
+            disabled={
+              selectionMap.filter((it) => it.selected).length < 1 || !type
+            }
             onClick={() =>
               handleConfirm(
                 selectionMap.filter((it) => it.selected).map((it) => it.code),
@@ -140,4 +162,4 @@ function JupiterUpdateModal({
   );
 }
 
-export default JupiterUpdateModal;
+export default CrawlerUpdateModal;

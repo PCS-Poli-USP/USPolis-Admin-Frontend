@@ -1,8 +1,9 @@
-import { SubjectType } from 'utils/enums/subjects.enum';
+import { CrawlerType, SubjectType } from 'utils/enums/subjects.enum';
 
 export interface CrawlSubject {
   subject_codes: string[];
   calendar_ids: number[];
+  type: CrawlerType;
 }
 
 export interface UpdateCrawlSubject {

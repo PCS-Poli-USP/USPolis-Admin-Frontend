@@ -28,16 +28,26 @@ import Select from 'react-select';
 import useBuildings from 'hooks/useBuildings';
 import useCalendars from 'hooks/useCalendars';
 import { useEffect, useRef, useState } from 'react';
+import { CrawlerType } from 'utils/enums/subjects.enum';
 
-interface JupiterCrawlerPopoverPrpos {
+interface CrawlerPopoverProps {
   subjects?: string[];
-  onSave: (subjectsList: string[], building_id: number, calendar_ids: number[]) => void;
+  crawlerType: CrawlerType | undefined;
+  setCrawlerType: (type: CrawlerType | undefined) => void;
+  onSave: (
+    subjectsList: string[],
+    building_id: number,
+    calendar_ids: number[],
+    type: CrawlerType,
+  ) => void;
 }
 
-export default function JupiterCrawlerPopover({
+export default function CrawlerPopover({
   subjects = [],
   onSave,
-}: JupiterCrawlerPopoverPrpos) {
+  crawlerType,
+  setCrawlerType,
+}: CrawlerPopoverProps) {
   const { buildings, loading: buildingsLoading } = useBuildings();
   const { calendars, loading: calendarsLoading } = useCalendars();
 
@@ -77,9 +87,13 @@ export default function JupiterCrawlerPopover({
   }
 
   function handleConfirmClick() {
-    if (buildingIdSelection !== undefined && subjectsList.length > 0) {
+    if (
+      buildingIdSelection !== undefined &&
+      subjectsList.length > 0 &&
+      crawlerType
+    ) {
       setSubjectsList([]);
-      onSave(subjectsList, buildingIdSelection, calendarIds);
+      onSave(subjectsList, buildingIdSelection, calendarIds, crawlerType);
       onClose();
     }
   }
@@ -92,12 +106,13 @@ export default function JupiterCrawlerPopover({
       initialFocusRef={initialFocusRef}
     >
       <PopoverTrigger>
-        <Button colorScheme='blue'>Adicionar pelo JupiterWeb</Button>
+        <Button colorScheme='blue'>Adicionar pelo Jupiter / Janus</Button>
       </PopoverTrigger>
       <PopoverContent>
         <PopoverCloseButton />
         <PopoverHeader>Disciplinas</PopoverHeader>
         <PopoverBody>
+          <Text mb={2}>Prédio:</Text>
           {buildings.length !== 1 && (
             <CSelect
               placeholder='Selecionar prédio'
@@ -115,6 +130,24 @@ export default function JupiterCrawlerPopover({
           )}
         </PopoverBody>
         <PopoverBody>
+          <Text mb={2}>Site:</Text>
+          <CSelect
+            placeholder='Selecionar Jupiter ou Janus'
+            value={crawlerType}
+            onChange={(event) => {
+              const value = event.target.value as CrawlerType;
+              if (value) setCrawlerType(value);
+              else setCrawlerType(undefined);
+            }}
+          >
+            <option value={'jupiter'}>Júpiter</option>
+            <option value={'janus'}>Janus</option>
+          </CSelect>
+          <Text as={'b'} fontSize={'sm'} noOfLines={2} mt={'2px'}>
+            *Não misture disciplinas da pós com da graduação
+          </Text>
+        </PopoverBody>
+        <PopoverBody>
           <Text mb={2}>Calendários das turmas:</Text>
           <Select
             placeholder='Selecione os calendários'
@@ -123,7 +156,7 @@ export default function JupiterCrawlerPopover({
               label: calendar.name,
               value: calendar.id,
             }))}
-            onChange={(selectedOptions: {value: number, label: string}[]) =>
+            onChange={(selectedOptions: { value: number; label: string }[]) =>
               setCalendarIds(selectedOptions.map((option) => option.value))
             }
             isLoading={calendarsLoading}
@@ -215,6 +248,7 @@ export default function JupiterCrawlerPopover({
                     colorScheme='blue'
                     size='sm'
                     onClick={handleConfirmClick}
+                    disabled={crawlerType === undefined}
                   >
                     Confirmar
                   </Button>

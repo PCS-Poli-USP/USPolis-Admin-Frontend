@@ -10,19 +10,19 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
-interface JupiterCrawlerAccordionProps {
+interface CrawlerAccordionProps {
   success: string[];
   failed: string[];
   erros: string[];
   update: boolean;
 }
 
-export default function JupiterCrawlerAccordion({
+export default function CrawlerAccordion({
   success,
   failed,
   erros,
   update,
-}: JupiterCrawlerAccordionProps) {
+}: CrawlerAccordionProps) {
   const [successSubjects, setSuccessSubjects] = useState<string[]>([]);
   const [failedSubjects, setFailedSubjects] = useState<string[]>([]);
 

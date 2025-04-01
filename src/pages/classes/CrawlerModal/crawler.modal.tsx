@@ -12,23 +12,28 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import JupiterCrawlerAccordion from './jupiterCrawler.accordion';
+import JupiterCrawlerAccordion from './crawler.accordion';
 import { SubjectCrawlResponse } from 'models/http/responses/subject.response.models';
+import { CrawlerType } from 'utils/enums/subjects.enum';
 
-interface JupiterCrawlerModalProps {
+interface CrawlerModalProps {
   isOpen: boolean;
   onClose: () => void;
   data?: SubjectCrawlResponse;
+  type: CrawlerType | undefined;
 }
 
-export default function JupiterCrawlerModal({
+export default function CrawlerModal({
   isOpen,
   onClose,
   data,
-}: JupiterCrawlerModalProps) {
+  type,
+}: CrawlerModalProps) {
   function handleClose() {
     onClose();
   }
+  const crawlerType = CrawlerType.translate(type);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -40,7 +45,7 @@ export default function JupiterCrawlerModal({
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Jupiter Crawler</ModalHeader>
+        <ModalHeader>{crawlerType} Crawler</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {data ? (
@@ -52,7 +57,7 @@ export default function JupiterCrawlerModal({
                   <OrderedList>
                     <ListItem fontWeight={'bold'}>
                       Código da disciplina digitado incorretamente ou não existe
-                      oferecimento no jupiter web
+                      oferecimento no {crawlerType}
                     </ListItem>
                     <ListItem fontWeight={'bold'}>
                       O jupiter web não segue a formatação esperada
@@ -79,7 +84,7 @@ export default function JupiterCrawlerModal({
             </>
           ) : (
             <Text>
-              Não foi possível carregar o resultado da busca no JupiterWeb{' '}
+              Não foi possível carregar o resultado da busca no {crawlerType}{' '}
             </Text>
           )}
         </ModalBody>
