@@ -134,8 +134,6 @@ function ClassModal(props: ClassModalProps) {
       type: firstData.type,
       professors: firstData.professors,
       vacancies: firstData.vacancies,
-      subscribers: firstData.subscribers,
-      pendings: firstData.pendings,
       air_conditionating: fourthData.air_conditionating,
       accessibility: fourthData.accessibility,
       projector: fourthData.projector,
@@ -255,8 +253,6 @@ function ClassModal(props: ClassModalProps) {
       code: data.code,
       type: data.type,
       vacancies: data.vacancies,
-      subscribers: data.subscribers,
-      pendings: data.pendings,
       professors: data.professors,
     });
   }

@@ -55,6 +55,23 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
           />
 
           <HStack spacing='8px' mt={4}>
+            <Select
+              label={'Tipo de turma'}
+              name={'type'}
+              placeholder={'Escolha o tipo da turma'}
+              options={[
+                { label: 'Prática', value: ClassType.PRACTIC },
+                { label: 'Teórica', value: ClassType.THEORIC },
+                {
+                  label: 'Prática Vinculada',
+                  value: ClassType.VINCULATED_PRACTIC,
+                },
+                {
+                  label: 'Teórica Vinculada',
+                  value: ClassType.VINCULATED_THEORIC,
+                },
+              ]}
+            />
             <NumberInput
               label={'Vagas'}
               name={'vacancies'}
@@ -62,40 +79,8 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               min={0}
               max={99999}
             />
-            <NumberInput
-              label={'Inscritos'}
-              name={'subscribers'}
-              placeholder={'Quantidade de inscritos'}
-              min={0}
-              max={99999}
-            />
-            <NumberInput
-              label={'Pendentes'}
-              name={'pendings'}
-              placeholder={'Quantidade de pendentes'}
-              min={0}
-              max={99999}
-            />
           </HStack>
 
-          <Select
-            label={'Tipo de turma'}
-            name={'type'}
-            mt={4}
-            placeholder={'Escolha o tipo da turma'}
-            options={[
-              { label: 'Prática', value: ClassType.PRACTIC },
-              { label: 'Teórica', value: ClassType.THEORIC },
-              {
-                label: 'Prática Vinculada',
-                value: ClassType.VINCULATED_PRACTIC,
-              },
-              {
-                label: 'Teórica Vinculada',
-                value: ClassType.VINCULATED_THEORIC,
-              },
-            ]}
-          />
           <MultiSelect
             label={'Professores'}
             name={'professors'}

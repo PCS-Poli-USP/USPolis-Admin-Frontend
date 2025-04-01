@@ -84,21 +84,6 @@ export const formFields = {
       ),
     defaultValue: 0,
   },
-  activation: {
-    validator: yup
-      .string()
-      .required('Campo obrigatório')
-      .test(
-        'is-valid-date',
-        'Data inválida',
-        (value) => !SubjectValidator.isInvalidDate(value),
-      ),
-    defaultValue: '',
-  },
-  desactivation: {
-    validator: yup.string(),
-    defaultValue: undefined,
-  },
 };
 
 export const schema = yup.object<SubjectForm>().shape({
@@ -109,8 +94,6 @@ export const schema = yup.object<SubjectForm>().shape({
   type: formFields.type.validator,
   class_credit: formFields.class_credit.validator,
   work_credit: formFields.work_credit.validator,
-  activation: formFields.activation.validator,
-  desactivation: formFields.desactivation.validator,
 });
 
 export const defaultValues: SubjectForm = {
@@ -121,6 +104,4 @@ export const defaultValues: SubjectForm = {
   type: formFields.type.defaultValue as SubjectType,
   class_credit: formFields.class_credit.defaultValue,
   work_credit: formFields.work_credit.defaultValue,
-  activation: formFields.activation.defaultValue,
-  desactivation: formFields.desactivation.defaultValue,
 };

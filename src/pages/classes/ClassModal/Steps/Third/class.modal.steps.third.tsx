@@ -59,7 +59,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
     setHighlightedDays(allDates);
   }, [props.schedules, setHighlightedDays]);
 
-  function resetScheduleInputs() {
+  function  resetScheduleInputs() {
     const { reset } = props.form;
     const { getValues } = props.secondForm;
     const values = getValues(['start_date', 'end_date']);

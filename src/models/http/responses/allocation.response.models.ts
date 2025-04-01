@@ -67,7 +67,7 @@ export interface ClassExtendedData extends BaseExtendedData {
   subject_name: string;
   allocated: boolean;
   professors: string[];
-  subscribers: number;
+  vacancies: number;
 }
 
 export interface ReservationExtendedData extends BaseExtendedData {

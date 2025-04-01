@@ -17,8 +17,6 @@ export interface CreateSubject {
   type: SubjectType;
   class_credit: number;
   work_credit: number;
-  activation: string;
-  desactivation?: string;
 }
 
 export interface UpdateSubject extends CreateSubject {}

@@ -11,8 +11,6 @@ export interface SubjectForm {
   type: SubjectType;
   class_credit: number;
   work_credit: number;
-  activation: string;
-  desactivation?: string;
 }
 
 export interface SubjectModalProps extends ModalProps {

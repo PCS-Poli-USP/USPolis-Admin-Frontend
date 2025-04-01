@@ -12,10 +12,10 @@ import {
 } from '@chakra-ui/react';
 import { ModalProps } from 'models/interfaces';
 import { EventApi } from '@fullcalendar/core';
-import { EventExtendedProps } from 'pages/allocation/interfaces/allocation.interfaces';
 import moment from 'moment';
 import { getEventScheduleText } from 'pages/allocation/utils/allocation.formatter';
 import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+import { EventExtendedProps } from 'models/http/responses/allocation.response.models';
 
 interface EventModalProps extends ModalProps {
   event?: EventApi;
@@ -103,7 +103,7 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
                   <Text
                     fontSize='lg'
                     textColor='#408080'
-                  >{`Inscritos: ${classData.subscribers}`}</Text>
+                  >{`Vagas: ${classData.vacancies}`}</Text>
                 </Box>
               </>
             ) : undefined}

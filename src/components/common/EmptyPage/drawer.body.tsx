@@ -242,15 +242,19 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           />
         </VStack>
       )}
-      <VStack w={'full'} alignItems={'flex-start'}>
-        <HStack>
-          <Text>Contato:</Text>
+      <VStack w={'full'} alignItems={'flex-start'} gap={'0px'}>
+        <Text fontSize={'15px'} color={'blackAlpha.600'}>
+          © 2025 USPolis
+        </Text>
+        <HStack align={'center'} justify={'center'} gap={'5px'}>
+          <Text fontSize={'15px'}>Contato:</Text>
           <Link
-            color={'blue'}
+            fontSize={'15px'}
+            color={'uspolis.blue'}
             href={
               'https://mail.google.com/mail/?view=cm&fs=1&to=uspolis@usp.br'
             }
-            rel="noopener noreferrer"
+            rel='noopener noreferrer'
             target='_blank'
           >
             uspolis@usp.br

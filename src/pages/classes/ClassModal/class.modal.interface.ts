@@ -24,8 +24,6 @@ export interface ClassForm {
   calendar_ids: number[];
 
   vacancies: number;
-  subscribers: number;
-  pendings: number;
 
   air_conditioning: boolean;
   projector: boolean;

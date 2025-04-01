@@ -3,10 +3,7 @@ import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import {
-  datetimeFormatter,
-  subjectTypeFormatter,
-} from 'utils/subjects/subjects.formatter';
+import { subjectTypeFormatter } from 'utils/subjects/subjects.formatter';
 import {
   FilterArray,
   FilterString,
@@ -94,10 +91,6 @@ export const getSubjectColumns = (
     {
       accessorKey: 'work_credit',
       header: 'Créditos Trabalho',
-    },
-    {
-      header: 'Ativação / Desativação',
-      cell: ({ row }) => datetimeFormatter(row),
     },
     {
       id: 'options',

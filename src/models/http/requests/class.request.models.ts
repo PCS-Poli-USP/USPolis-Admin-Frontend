@@ -8,8 +8,6 @@ export interface ClassBase {
   type: ClassType;
   professors: string[];
   vacancies: number;
-  subscribers: number;
-  pendings: number;
   air_conditionating: boolean;
   accessibility: boolean;
   projector: boolean;
