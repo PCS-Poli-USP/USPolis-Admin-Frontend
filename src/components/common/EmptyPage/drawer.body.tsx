@@ -24,6 +24,7 @@ import { GiBookCover, GiTeacher } from 'react-icons/gi';
 import { PiChair } from 'react-icons/pi';
 import { BsCalendar3, BsEnvelopeCheck } from 'react-icons/bs';
 import { IconType } from 'react-icons';
+import moment from 'moment';
 
 interface DrawerBodyProps {
   onClose: () => void;
@@ -244,7 +245,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
       )}
       <VStack w={'full'} alignItems={'flex-start'} gap={'0px'}>
         <Text fontSize={'15px'} color={'blackAlpha.600'}>
-          © 2025 USPolis
+          © {moment().year()} USPolis
         </Text>
         <HStack align={'center'} justify={'center'} gap={'5px'}>
           <Text fontSize={'15px'}>Contato:</Text>
