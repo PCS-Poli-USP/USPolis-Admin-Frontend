@@ -248,8 +248,8 @@ function Classes() {
           Turmas
         </Text>
         <Spacer />
-        <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
-          Adicionar Turma
+        <Button mr={"5px"} colorScheme={'blue'} onClick={handleRegisterClick}>
+          Adicionar manualmente
         </Button>
         <CrawlerPopover
           onSave={handleCrawlerSave}
@@ -262,7 +262,7 @@ function Classes() {
           colorScheme={'blue'}
           onClick={onOpenJupiterUpdateModal}
         >
-          Atualizar pelo Jupiter / Janus
+          Atualizar automaticamente
         </Button>
 
         <Button

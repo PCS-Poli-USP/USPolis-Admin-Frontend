@@ -64,7 +64,7 @@ function CrawlerUpdateModal({
         <ModalCloseButton />
         <ModalBody>
           <Stack gap={'10px'}>
-            <Text fontWeight={'bold'}>Site:</Text>
+            <Text fontWeight={'bold'}>Fonte:</Text>
             <Select
               placeholder='Selecionar Jupiter ou Janus'
               value={type}

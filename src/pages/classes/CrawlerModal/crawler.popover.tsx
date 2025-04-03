@@ -23,6 +23,7 @@ import {
   Text,
   VStack,
   HStack,
+  Box,
 } from '@chakra-ui/react';
 import Select from 'react-select';
 import useBuildings from 'hooks/useBuildings';
@@ -106,122 +107,104 @@ export default function CrawlerPopover({
       initialFocusRef={initialFocusRef}
     >
       <PopoverTrigger>
-        <Button colorScheme='blue'>Adicionar pelo Jupiter / Janus</Button>
+        <Button colorScheme='blue'>Adicionar automaticamente</Button>
       </PopoverTrigger>
       <PopoverContent>
         <PopoverCloseButton />
         <PopoverHeader>Disciplinas</PopoverHeader>
         <PopoverBody>
-          <Text mb={2}>Prédio:</Text>
-          {buildings.length !== 1 && (
-            <CSelect
-              placeholder='Selecionar prédio'
-              onChange={(event) =>
-                setBuildingIdSelection(Number(event.target.value))
-              }
-              icon={buildingsLoading ? <Spinner size='sm' /> : undefined}
-            >
-              {buildings.map((it) => (
-                <option key={it.id} value={it.id}>
-                  {it.name}
-                </option>
-              ))}
-            </CSelect>
-          )}
-        </PopoverBody>
-        <PopoverBody>
-          <Text mb={2}>Site:</Text>
-          <CSelect
-            placeholder='Selecionar Jupiter ou Janus'
-            value={crawlerType}
-            onChange={(event) => {
-              const value = event.target.value as CrawlerType;
-              if (value) setCrawlerType(value);
-              else setCrawlerType(undefined);
-            }}
-          >
-            <option value={'jupiter'}>Júpiter</option>
-            <option value={'janus'}>Janus</option>
-          </CSelect>
-          <Text as={'b'} fontSize={'sm'} noOfLines={2} mt={'2px'}>
-            *Não misture disciplinas da pós com da graduação
-          </Text>
-        </PopoverBody>
-        <PopoverBody>
-          <Text mb={2}>Calendários das turmas:</Text>
-          <Select
-            placeholder='Selecione os calendários'
-            isMulti
-            options={calendars.map((calendar) => ({
-              label: calendar.name,
-              value: calendar.id,
-            }))}
-            onChange={(selectedOptions: { value: number; label: string }[]) =>
-              setCalendarIds(selectedOptions.map((option) => option.value))
-            }
-            isLoading={calendarsLoading}
-          />
-        </PopoverBody>
-        <PopoverBody maxH='xl' overflowY='auto'>
-          <Text mb={2}>Adicionar manualmente:</Text>
-          <InputGroup>
-            <Input
-              value={subjectInput}
-              onChange={(event) =>
-                setSubjectInput(event.target.value.toUpperCase())
-              }
-              placeholder='Código da disciplina'
-              ref={initialFocusRef}
-              onKeyDownCapture={(e) => {
-                if (e.key === 'Enter') handleAddClick();
-              }}
-            />
-            <InputRightElement>
-              <IconButton
-                aria-label='adicionar-disciplina'
-                size='sm'
-                colorScheme='blue'
-                icon={<AddIcon />}
-                onClick={handleAddClick}
-              />
-            </InputRightElement>
-          </InputGroup>
+          <VStack gap={'10px'} alignItems={'flex-start'}>
+            <Box w={'100%'} hidden={buildings.length === 1}>
+              <Text mb={2}>Prédio:</Text>
+              <CSelect
+                placeholder='Selecionar prédio'
+                onChange={(event) =>
+                  setBuildingIdSelection(Number(event.target.value))
+                }
+                icon={buildingsLoading ? <Spinner size='sm' /> : undefined}
+              >
+                {buildings.map((it) => (
+                  <option key={it.id} value={it.id}>
+                    {it.name}
+                  </option>
+                ))}
+              </CSelect>
+            </Box>
 
-          <Text mt={4}>Adicionar uma lista:</Text>
-          <InputGroup>
-            <Input
-              value={multSubjectInput}
-              onChange={(event) =>
-                setMultSubjectInput(event.target.value.toUpperCase())
-              }
-              placeholder='Códigos das disciplinas'
-              onKeyDownCapture={(e) => {
-                if (e.key === 'Enter') handleAddClick();
-              }}
-            />
-            <InputRightElement>
-              <IconButton
-                aria-label='adicionar-disciplina'
-                size='sm'
-                colorScheme='blue'
-                icon={<AddIcon />}
-                onClick={handleAddClick}
-              />
-            </InputRightElement>
-          </InputGroup>
-          <Text as={'b'} fontSize={'sm'} noOfLines={1} mt={2}>
-            *Separe os códigos usando vírgula
-          </Text>
-          <Text as={'b'} fontSize={'sm'} noOfLines={1}>
-            *Não se preocupe com espaços
-          </Text>
+            <Box w={'100%'} mb={'5px'}>
+              <Text>Fonte:</Text>
+              <CSelect
+                placeholder='Selecionar Jupiter ou Janus'
+                value={crawlerType}
+                onChange={(event) => {
+                  const value = event.target.value as CrawlerType;
+                  if (value) setCrawlerType(value);
+                  else setCrawlerType(undefined);
+                }}
+              >
+                <option value={'jupiter'}>Júpiter</option>
+                <option value={'janus'}>Janus</option>
+              </CSelect>
+            </Box>
 
-          <Text mt={4}>Lista de disciplinas: ({subjectsList.length})</Text>
-          <UnorderedList p={2}>
-            {subjectsList.map((it) => (
-              <ListItem key={it}>{it}</ListItem>
-            ))}
-          </UnorderedList>
+            <Box w={'100%'}>
+              <Text>Calendários das turmas:</Text>
+              <Select
+                placeholder='Selecione os calendários'
+                isMulti
+                options={calendars.map((calendar) => ({
+                  label: calendar.name,
+                  value: calendar.id,
+                }))}
+                onChange={(
+                  selectedOptions: { value: number; label: string }[],
+                ) =>
+                  setCalendarIds(selectedOptions.map((option) => option.value))
+                }
+                isLoading={calendarsLoading}
+              />
+            </Box>
+
+            <Box w={'100%'}>
+              <Text>Adicionar:</Text>
+              <InputGroup>
+                <Input
+                  value={multSubjectInput}
+                  onChange={(event) =>
+                    setMultSubjectInput(event.target.value.toUpperCase())
+                  }
+                  placeholder='Códigos das disciplinas'
+                  onKeyDownCapture={(e) => {
+                    if (e.key === 'Enter') handleAddClick();
+                  }}
+                />
+                <InputRightElement>
+                  <IconButton
+                    aria-label='adicionar-disciplina'
+                    size='sm'
+                    colorScheme='blue'
+                    icon={<AddIcon />}
+                    onClick={handleAddClick}
+                  />
+                </InputRightElement>
+              </InputGroup>
+              <Text as={'b'} fontSize={'sm'} noOfLines={1} mt={2}>
+                *Separe os códigos usando vírgula
+              </Text>
+              <Text as={'b'} fontSize={'sm'} noOfLines={1}>
+                *Não se preocupe com espaços
+              </Text>
+            </Box>
+
+            <Box w={'100%'}>
+              <Text>Lista de disciplinas: ({subjectsList.length})</Text>
+              <UnorderedList p={2}>
+                {subjectsList.map((it) => (
+                  <ListItem key={it}>{it}</ListItem>
+                ))}
+              </UnorderedList>
+            </Box>
+          </VStack>
         </PopoverBody>
         {subjectsList.length > 0 &&
           buildingIdSelection !== undefined &&
