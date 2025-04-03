@@ -1,8 +1,8 @@
 import { Box, Heading, Tooltip, Stack, Text, VStack } from '@chakra-ui/react';
 import { EventContentArg } from '@fullcalendar/core';
+import { EventExtendedProps } from 'models/http/responses/allocation.response.models';
 import moment from 'moment';
 import { getEventScheduleText } from 'pages/allocation/utils/allocation.formatter';
-import { EventExtendedProps } from '../../interfaces/allocation.interfaces';
 import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
 
 export default function EventContent(eventInfo: EventContentArg) {
@@ -151,7 +151,7 @@ function ToolTipLabel(eventInfo: EventContentArg) {
             <Text
               fontSize='lg'
               textColor='#408080'
-            >{`Inscritos: ${classData.subscribers}`}</Text>
+            >{`Vagas: ${classData.vacancies}`}</Text>
           </Box>
         </>
       ) : undefined}

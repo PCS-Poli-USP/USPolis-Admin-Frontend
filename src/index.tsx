@@ -63,10 +63,6 @@ root.render(
           >
             <Router>
               <Routes>
-                <Route
-                  path='/print/classroom-calendar'
-                  element={<ClassroomCalendarPrintPage />}
-                />
                 <Route path='/auth' element={<AuthPage />} />
                 <Route path='auth-callback' element={<AuthCallbackPage />} />
                 <Route
@@ -80,6 +76,10 @@ root.render(
                 <Route path='/loading-page' element={<LoadingPage />} />
                 <Route element={<AxiosInterceptorRoute />}>
                   <Route element={<PersistLogin />}>
+                    <Route
+                      path='/print/classroom-calendar'
+                      element={<ClassroomCalendarPrintPage />}
+                    />
                     <Route path='/' element={<Navigate to='/index' />} />
                     <Route path='/index' element={<Home />} />
                     <Route path='/' element={<EmptyPage />}>

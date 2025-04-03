@@ -12,7 +12,5 @@ export interface ClassFirstForm {
   code: string;
   type: ClassType;
   vacancies: number;
-  subscribers: number;
-  pendings: number;
   professors: string[];
 }

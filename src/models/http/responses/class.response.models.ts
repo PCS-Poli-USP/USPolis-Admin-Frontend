@@ -12,8 +12,6 @@ export interface ClassUnfetchResponseBase {
   professors: string[];
   type: ClassType;
   vacancies: number;
-  subscribers: number;
-  pendings: number;
   air_conditionating: boolean;
   projector: boolean;
   accessibility: boolean;

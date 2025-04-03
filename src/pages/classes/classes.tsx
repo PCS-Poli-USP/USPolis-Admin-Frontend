@@ -1,6 +1,4 @@
 import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
-
-import JupiterCrawlerPopover from 'pages/classes/JupiterCrawlerModal/jupiterCrawler.popover';
 import DataTable from 'components/common/DataTable/dataTable.component';
 import Dialog from 'components/common/Dialog/dialog.component';
 import Loading from 'components/common/Loading/loading.component';
@@ -16,11 +14,14 @@ import { ScheduleResponse } from 'models/http/responses/schedule.response.models
 import { AllocateClassModal } from './AllocateClassModal';
 import ClassOccurrencesModal from './ClassOccurrencesModal';
 import PageContent from 'components/common/PageContent';
-import JupiterUpdateModal from './JupiterUpdateModal/jupiter.update.modal';
-import JupiterCrawlerModal from './JupiterCrawlerModal/jupiterCrawler.modal';
+import CrawlerUpdateModal from './CrawlerUpdateModal/crawler.update.modal';
 import useCrawler from 'hooks/useCrawler';
 import { appContext } from 'context/AppContext';
 import { UsersValidator } from 'utils/users/users.validator';
+import CrawlerModal from './CrawlerModal/crawler.modal';
+import CrawlerPopover from './CrawlerModal/crawler.popover';
+import { CrawlerType } from 'utils/enums/subjects.enum';
+
 function Classes() {
   const context = useContext(appContext);
 
@@ -63,6 +64,9 @@ function Classes() {
   const [selectedClass, setSelectedClass] = useState<ClassResponse>();
   const [, setSelectedSchedule] = useState<ScheduleResponse>();
   const [isUpdateClass, setIsUpdateClass] = useState(false);
+  const [crawlerType, setCrawlerType] = useState<CrawlerType | undefined>(
+    CrawlerType.JUPITER,
+  );
 
   const { subjects, getSubjects } = useSubjects();
   const { calendars } = useCalendars();
@@ -138,8 +142,13 @@ function Classes() {
     subjectsList: string[],
     building_id: number,
     calendar_ids: number[],
+    type: CrawlerType,
   ) {
-    await create(building_id, { subject_codes: subjectsList, calendar_ids });
+    await create(building_id, {
+      subject_codes: subjectsList,
+      calendar_ids,
+      type,
+    });
     onOpenJupiterModal();
     getClasses();
     getSubjects();
@@ -199,7 +208,7 @@ function Classes() {
         calendars={calendars}
         selectedClass={selectedClass}
       />
-      <JupiterUpdateModal
+      <CrawlerUpdateModal
         codes={classes
           .map((cls) => cls.subject_code)
           .filter((value, index, self) => self.indexOf(value) === index)}
@@ -207,11 +216,14 @@ function Classes() {
         onClose={onCloseJupiterUpdateModal}
         handleConfirm={handleUpdateJupiterConfirm}
         loading={isCrawling}
+        type={crawlerType}
+        setCrawlerType={setCrawlerType}
       />
-      <JupiterCrawlerModal
+      <CrawlerModal
         isOpen={isOpenJupiterModal}
         onClose={onCloseJupiterModal}
         data={result}
+        type={crawlerType}
       />
       {selectedClass && (
         <AllocateClassModal
@@ -236,17 +248,21 @@ function Classes() {
           Turmas
         </Text>
         <Spacer />
-        <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
-          Adicionar Turma
+        <Button mr={"5px"} colorScheme={'blue'} onClick={handleRegisterClick}>
+          Adicionar manualmente
         </Button>
-        <JupiterCrawlerPopover onSave={handleCrawlerSave} />
+        <CrawlerPopover
+          onSave={handleCrawlerSave}
+          crawlerType={crawlerType}
+          setCrawlerType={setCrawlerType}
+        />
 
         <Button
           ml={'5px'}
           colorScheme={'blue'}
           onClick={onOpenJupiterUpdateModal}
         >
-          Atualizar pelo JupiterWeb
+          Atualizar automaticamente
         </Button>
 
         <Button

@@ -57,28 +57,6 @@ export const classFirstFormFields = {
       .required('Campo obrigatório'),
     defaultValue: 0,
   },
-  subscribers: {
-    validator: yup
-      .number()
-      .min(0, 'Inscritos não pode ser negativo')
-      .required('Campo obrigatório'),
-    defaultValue: 0,
-  },
-  pendings: {
-    validator: yup
-      .number()
-      .min(0, 'Pendentes não pode ser negativo')
-      .required('Campo obrigatório')
-      .test(
-        'is-greater',
-        'Número de pendentes não pode ser maior que inscritos',
-        function (value) {
-          const { subscribers } = this.parent;
-          return subscribers >= value;
-        },
-      ),
-    defaultValue: 0,
-  },
 };
 
 export const classFirstSchema = yup.object<ClassFirstForm>().shape({
@@ -86,8 +64,6 @@ export const classFirstSchema = yup.object<ClassFirstForm>().shape({
   code: classFirstFormFields.code.validator,
   type: classFirstFormFields.type.validator,
   vacancies: classFirstFormFields.vacancies.validator,
-  subscribers: classFirstFormFields.subscribers.validator,
-  pendings: classFirstFormFields.pendings.validator,
   professors: classFirstFormFields.professors.validator,
 });
 
@@ -97,6 +73,4 @@ export const classFirstDefaultValues: ClassFirstForm = {
   type: classFirstFormFields.type.defaultValue as ClassType,
   professors: classFirstFormFields.professors.defaultValue,
   vacancies: classFirstFormFields.vacancies.defaultValue,
-  subscribers: classFirstFormFields.subscribers.defaultValue,
-  pendings: classFirstFormFields.pendings.defaultValue,
 };

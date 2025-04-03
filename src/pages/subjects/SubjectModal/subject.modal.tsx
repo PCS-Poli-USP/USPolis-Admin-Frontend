@@ -43,8 +43,6 @@ export default function SubjectModal(props: SubjectModalProps) {
   function formatSelectedSubject(data: SubjectResponse): SubjectResponse {
     const formated: SubjectResponse = {
       ...data,
-      activation: data.activation,
-      desactivation: data.desactivation ? data.desactivation : undefined,
     };
     return formated;
   }
@@ -59,7 +57,6 @@ export default function SubjectModal(props: SubjectModalProps) {
     const isValid = await trigger();
     if (!isValid) return;
     const values = getValues();
-    if (values['desactivation'] === '') values['desactivation'] = undefined;
     if (props.isUpdate && props.selectedSubject) {
       await updateSubject(props.selectedSubject.id, formatFormData(values));
     } else {
@@ -145,21 +142,6 @@ export default function SubjectModal(props: SubjectModalProps) {
                     name={'work_credit'}
                     type={'number'}
                     placeholder='Quantidade de créditos trabalho'
-                  />
-                </HStack>
-
-                <HStack spacing={4} w={'full'}>
-                  <Input
-                    label={'Ativação'}
-                    name={'activation'}
-                    placeholder={'Data de ativação'}
-                    type={'date'}
-                  />
-                  <Input
-                    label={'Desativação (Opcional)'}
-                    name={'desactivation'}
-                    placeholder={'Data de desativação'}
-                    type={'date'}
                   />
                 </HStack>
 

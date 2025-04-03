@@ -1,5 +1,5 @@
+import { RecurrenceRule } from 'models/http/responses/allocation.response.models';
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
-import { RecurrenceRule } from 'pages/allocation/interfaces/allocation.interfaces';
 import moment from 'moment';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 

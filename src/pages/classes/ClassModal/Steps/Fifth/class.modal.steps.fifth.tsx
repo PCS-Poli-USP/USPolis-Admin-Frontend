@@ -60,8 +60,6 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
       <HStack>
         <Text as={'b'}>Oferecimento: </Text>
         <Text>{`Vagas - ${firstForm.vacancies}`}</Text>
-        <Text>{`Inscritos - ${firstForm.subscribers}`}</Text>
-        <Text>{`Pendentes - ${firstForm.pendings}`}</Text>
       </HStack>
       <HStack>
         <Text as={'b'}>{`Tipo: `}</Text>

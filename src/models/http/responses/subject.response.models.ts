@@ -10,8 +10,6 @@ export interface SubjectResponseBase {
   type: SubjectType;
   class_credit: number;
   work_credit: number;
-  activation: string;
-  desactivation?: string;
 }
 
 export interface SubjectResponse extends SubjectResponseBase {
@@ -20,17 +18,7 @@ export interface SubjectResponse extends SubjectResponseBase {
   classes?: ClassUnfetchResponse[];
 }
 
-export interface SubjectUnfetchResponse {
-  id: number;
-  name: string;
-  code: string;
-  professors: string[];
-  type: SubjectType;
-  class_credit: number;
-  work_credit: number;
-  activation: string;
-  desactivation?: string;
-}
+export interface SubjectUnfetchResponse extends SubjectResponseBase {}
 
 export interface SubjectCrawlResponse {
   codes: string[];

@@ -5,7 +5,8 @@ import moment from 'moment';
 import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
 import { ClassResponse } from 'models/http/responses/class.response.models';
-import { Event, RecurrenceRule } from '../interfaces/allocation.interfaces';
+import { Event } from '../interfaces/allocation.interfaces';
+import { RecurrenceRule } from 'models/http/responses/allocation.response.models';
 import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import { AllocationEnum } from 'utils/enums/allocation.enum';
@@ -62,7 +63,7 @@ export function EventsFromClasses(classes: ClassResponse[]): Event[] {
             week_day: schedule.week_day,
             month_week: schedule.month_week,
             professors: cls.professors,
-            subscribers: cls.subscribers,
+            vacancies: cls.vacancies,
             start_time: schedule.start_time,
             end_time: schedule.end_time,
             start_date: schedule.start_date,

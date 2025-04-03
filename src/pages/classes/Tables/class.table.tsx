@@ -199,18 +199,6 @@ export const getClassesColumns = (
       filterFn: FilterNumber,
     },
     {
-      accessorKey: 'subscribers',
-      header: 'Inscritos',
-      maxSize: 100,
-      filterFn: FilterNumber,
-    },
-    {
-      accessorKey: 'pendings',
-      header: 'Pendentes',
-      maxSize: 100,
-      filterFn: FilterNumber,
-    },
-    {
       accessorKey: 'professors',
       header: 'Professores',
       maxSize: 250,
