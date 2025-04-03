@@ -65,6 +65,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
       if (props.vinculatedSolicitation.classroom_id) {
         handleSelectClassroom(props.vinculatedSolicitation.classroom_id);
       }
+      handleChangeRecurrence(Recurrence.CUSTOM);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -79,6 +80,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
       setIsMonthly(false);
       resetField('month_week', { defaultValue: '' });
       resetField('week_day', { defaultValue: '' });
+      resetField('start_date', { defaultValue: '' });
+      resetField('end_date', { defaultValue: '' });
     } else if (value === Recurrence.DAILY) {
       setIsDayli(true);
       setIsMonthly(false);
@@ -314,8 +317,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     setValue('end_date', newDates[newDates.length - 1]);
                   }
                 }}
-                readOnly={!!props.vinculatedSolicitation}
-                helpText={true}
+                readOnly={!!props.vinculatedSolicitation || !isCustom}
+                helpText={isCustom}
               />
             </VStack>
           </HStack>

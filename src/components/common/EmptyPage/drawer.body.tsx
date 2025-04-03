@@ -5,12 +5,18 @@ import {
   Text,
   Icon,
   useMediaQuery,
+  Link,
 } from '@chakra-ui/react';
 import { useContext } from 'react';
 import { FaList, FaRegCalendarTimes, FaRegUser } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { appContext } from 'context/AppContext';
-import { CalendarIcon, LockIcon, Search2Icon, UnlockIcon } from '@chakra-ui/icons';
+import {
+  CalendarIcon,
+  LockIcon,
+  Search2Icon,
+  UnlockIcon,
+} from '@chakra-ui/icons';
 import { LiaBuilding } from 'react-icons/lia';
 import { MdAddChart, MdEvent, MdOutlinePendingActions } from 'react-icons/md';
 import { LuCalendarClock } from 'react-icons/lu';
@@ -236,6 +242,21 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           />
         </VStack>
       )}
+      <VStack w={'full'} alignItems={'flex-start'}>
+        <HStack>
+          <Text>Contato:</Text>
+          <Link
+            color={'blue'}
+            href={
+              'https://mail.google.com/mail/?view=cm&fs=1&to=uspolis@usp.br'
+            }
+            rel="noopener noreferrer"
+            target='_blank'
+          >
+            uspolis@usp.br
+          </Link>
+        </HStack>
+      </VStack>
     </VStack>
   );
 }

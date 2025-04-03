@@ -2,11 +2,11 @@ import { Heading } from '@chakra-ui/react';
 import FullCalendar from '@fullcalendar/react';
 import rrulePlugin from '@fullcalendar/rrule';
 import timeGridPlugin from '@fullcalendar/timegrid';
-import ClassroomCalendarEventContent from '../allocation/pdf/ClassroomsCalendarPDF/classroom.calendar.event.content';
-import { Event } from 'pages/allocation/interfaces/allocation.interfaces';
+import ClassroomCalendarEventContent from './classroom.calendar.event.content';
+import { MergedEvent } from 'pages/allocation/pdf/ClassroomsCalendarPDF/utils';
 
 interface ClassroomCalendarPageProps {
-  events: Event[];
+  events: MergedEvent[];
   classroom: string;
   index: number;
 }
@@ -42,6 +42,8 @@ function ClassroomCalendarPage(props: ClassroomCalendarPageProps) {
             .toUpperCase()
         }
         locale={'pt-br'}
+        allDaySlot={false}
+        hiddenDays={[0]} // Hidden Sunday
         height={'auto'}
         nowIndicator={false}
         headerToolbar={{
@@ -54,7 +56,7 @@ function ClassroomCalendarPage(props: ClassroomCalendarPageProps) {
         views={{
           timeGridWeek: {
             slotMinTime: '07:00:00',
-            slotMaxTime: '24:00:00',
+            slotMaxTime: '23:00:00',
             slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
             eventMaxStack: 2,
             titleFormat: { weekday: 'long', day: 'numeric', month: 'long' },

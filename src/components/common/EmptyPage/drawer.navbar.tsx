@@ -130,13 +130,6 @@ export function DrawerNavBar({
                     loggedUser.buildings &&
                     loggedUser.buildings.length > 0 && (
                       <>
-                        <MenuItem
-                          color='black'
-                          fontWeight={'bold'}
-                          onClick={() => {}}
-                        >
-                          Prédios:{' '}
-                        </MenuItem>
                         {loggedUser.buildings.map((building, idx) => (
                           <MenuItem key={idx} color='black' onClick={() => {}}>
                             {building.name}
