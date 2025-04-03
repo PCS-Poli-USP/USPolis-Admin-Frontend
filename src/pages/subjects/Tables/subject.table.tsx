@@ -3,7 +3,7 @@ import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { SubjectResponse } from 'models/http/responses/subject.response.models';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { subjectTypeFormatter } from 'utils/subjects/subjects.formatter';
+import { SubjectType } from 'utils/enums/subjects.enum';
 import {
   FilterArray,
   FilterString,
@@ -82,7 +82,7 @@ export const getSubjectColumns = (
     {
       accessorKey: 'type',
       header: 'Tipo',
-      cell: ({ row }) => subjectTypeFormatter(row.original.type),
+      cell: ({ row }) => SubjectType.translate(row.original.type),
     },
     {
       accessorKey: 'class_credit',
