@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { sortCalendarResponse } from 'utils/calendars/calendar.sorter';
 import useCalendarsService from './API/services/useCalendarsService';
 
-const useCalendars = () => {
+const useCalendars = (initialFetch = true) => {
   const service = useCalendarsService();
   const [loading, setLoading] = useState(false);
   const [calendars, setCalendars] = useState<CalendarResponse[]>([]);
@@ -101,9 +101,11 @@ const useCalendars = () => {
   );
 
   useEffect(() => {
-    getCalendars();
+    if (initialFetch) {
+      getCalendars();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [initialFetch]);
 
   return {
     loading,

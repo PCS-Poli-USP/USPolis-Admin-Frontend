@@ -119,14 +119,10 @@ export default function SubjectModal(props: SubjectModalProps) {
                 <Select
                   label={'Tipo de turma'}
                   name={'type'}
-                  options={[
-                    { label: 'Semestral', value: SubjectType.BIANNUAL },
-                    {
-                      label: 'Quadrimestral',
-                      value: SubjectType.FOUR_MONTHLY,
-                    },
-                    { label: 'Outro', value: SubjectType.OTHER },
-                  ]}
+                  options={SubjectType.values().map((type) => ({
+                    value: type,
+                    label: SubjectType.translate(type),
+                  }))}
                 />
 
                 <HStack spacing={4} w={'full'}>

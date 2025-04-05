@@ -6,7 +6,10 @@ import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { ReservationType } from 'utils/enums/reservations.enum';
 import { getScheduleString } from 'utils/schedules/schedule.formatter';
-import { FilterRequester } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import {
+  FilterRequester,
+  FilterString,
+} from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface ReservationsColumnsProps {
   handleDuplicateClick: (data: ReservationResponse) => void;
@@ -22,7 +25,7 @@ export const getReservationsColumns = (
     header: 'Prédio',
     meta: {
       isSelectable: true,
-    }
+    },
   },
   {
     accessorKey: 'classroom_name',
@@ -101,6 +104,11 @@ export const getReservationsColumns = (
   {
     accessorKey: 'date',
     header: 'Período',
+    filterFn: FilterString,
+    accessorFn: (row) =>
+      `${moment(row.schedule.start_date).format('DD/MM/YYYY')} até ${moment(
+        row.schedule.end_date,
+      ).format('DD/MM/YYYY')}`,
     cell: ({ row }) => (
       <Box>
         <Text>{`${moment(row.original.schedule.start_date).format(

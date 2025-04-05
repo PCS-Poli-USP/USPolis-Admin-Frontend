@@ -9,5 +9,6 @@ export interface UserResponse {
   created_by: string;
   buildings?: BuildingResponse[];
   updated_at: string;
+  last_visited: string;
   solicitations: Array<ClassroomSolicitationResponse>;
 }
