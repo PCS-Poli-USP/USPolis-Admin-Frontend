@@ -138,6 +138,7 @@ function ReservationModal(props: ReservationModalProps) {
     const { trigger, getValues } = secondForm;
     const isValidSecond = await trigger();
     setStepsIsValid((prev) => [isValidFirst, isValidSecond]);
+    if (!isValidFirst) return;
     if (!isValidSecond) return;
 
     if (getValues('recurrence') !== Recurrence.CUSTOM && dates.length !== 0)
@@ -195,14 +196,15 @@ function ReservationModal(props: ReservationModalProps) {
 
       setStepsIsValid([true, true]);
       if (props.selectedReservation.schedule.occurrences) {
-        setDates(
-          props.selectedReservation.schedule.occurrences.map(
-            (occur) => occur.date,
-          ),
+        const dates = props.selectedReservation.schedule.occurrences.map(
+          (occur) => occur.date,
         );
+        setDates(dates);
+        calendarPicker.setSelectedDays(dates);
       }
     }
-  }, [props, firstForm, secondForm]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props]);
 
   const steps = [
     {

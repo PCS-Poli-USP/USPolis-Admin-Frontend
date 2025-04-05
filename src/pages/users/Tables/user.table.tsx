@@ -1,8 +1,12 @@
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { UserResponse } from 'models/http/responses/user.response.models';
+import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { FilterBoolean } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import {
+  FilterBoolean,
+  FilterString,
+} from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface UsersColumnsProps {
   handleEditClick: (data: UserResponse) => void;
@@ -33,9 +37,27 @@ export const getUsersColumns = (
   {
     accessorKey: 'updated_at',
     header: 'Atualizado em',
+    filterFn: FilterString,
+    accessorFn: (row) => moment(row.updated_at).format('DD/MM/YYYY [às] HH:mm'),
     cell: ({ row }) => (
       <Box>
-        <Text>{`${row.original.updated_at}`}</Text>
+        <Text>{`${moment(row.original.updated_at).format(
+          'DD/MM/YYYY [às] HH:mm',
+        )}`}</Text>
+      </Box>
+    ),
+  },
+  {
+    accessorKey: 'last_visited',
+    header: 'último acesso',
+    filterFn: FilterString,
+    accessorFn: (row) =>
+      moment(row.last_visited).format('DD/MM/YYYY [às] HH:mm'),
+    cell: ({ row }) => (
+      <Box>
+        <Text>{`${moment(row.original.last_visited).format(
+          'DD/MM/YYYY [às] HH:mm',
+        )}`}</Text>
       </Box>
     ),
   },

@@ -17,7 +17,7 @@ function Subjects() {
 
   const disableMap: boolean[] = subjects.map(
     (subject) =>
-      !UsersValidator.checkUserPermission(
+      !UsersValidator.checkUserBuildingPermission(
         context.loggedUser,
         subject.building_ids,
       ),

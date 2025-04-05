@@ -1,4 +1,4 @@
-import { Text, Tooltip } from '@chakra-ui/react';
+import { Box, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
 import moment from 'moment';
@@ -6,6 +6,7 @@ import { ReservationType } from 'utils/enums/reservations.enum';
 import {
   FilterArray,
   FilterNumber,
+  FilterString,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface MySolicitationsColumnsProp {}
@@ -121,8 +122,14 @@ export const getMySolicitationsColumns = (
   {
     accessorKey: 'updated_at',
     header: 'Atualizada em',
+    filterFn: FilterString,
+    accessorFn: (row) => moment(row.updated_at).format('DD/MM/YYYY [às] HH:mm'),
     cell: ({ row }) => (
-      <Text>{moment(row.original.updated_at).format('DD/MM/YYYY HH:mm')}</Text>
+      <Box>
+        <Text>{`${moment(row.original.updated_at).format(
+          'DD/MM/YYYY [às] HH:mm',
+        )}`}</Text>
+      </Box>
     ),
   },
 ];

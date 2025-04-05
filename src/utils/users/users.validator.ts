@@ -10,7 +10,7 @@ export class UsersValidator extends CommonValidator {
     return user ? user.is_admin : false;
   }
 
-  static checkUserPermission(
+  static checkUserBuildingPermission(
     user: UserResponse | null,
     buildings_ids: number[],
   ): boolean {
@@ -37,6 +37,16 @@ export class UsersValidator extends CommonValidator {
       if (schedule.building_id)
         class_allocated_buildings_ids.push(schedule.building_id);
     });
-    return this.checkUserPermission(user, class_allocated_buildings_ids);
+    return this.checkUserBuildingPermission(
+      user,
+      class_allocated_buildings_ids,
+    );
+  }
+
+  static checkUserRestrictedPermission(user: UserResponse | null) {
+    if (!user) return false;
+    if (user.is_admin) return true;
+    if (!user.buildings) return false;
+    return true;
   }
 }

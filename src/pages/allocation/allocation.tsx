@@ -36,7 +36,7 @@ const viewOptions: ViewOption[] = [
 function Allocation() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { loading, setLoading, loggedUser } = useContext(appContext);
-
+  
   const {
     isOpen: isOpenSolicitation,
     onOpen: onOpenSolicitation,
@@ -283,6 +283,8 @@ function Allocation() {
                         "main"`}
         gridTemplateRows={'1 1fr'}
         gridTemplateColumns={'1fr'}
+        w={'calc(100% - 0rem)'}
+        id='allocation-grid'
       >
         <GridItem p={2} area={'header'} display='flex' alignItems='center'>
           <AllocationHeader

@@ -1,7 +1,9 @@
-import { HStack, IconButton, Tooltip } from '@chakra-ui/react';
+import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { BuildingResponse } from 'models/http/responses/building.response.models';
+import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+import { FilterString } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface BuildingsColumnsProps {
   handleEditButton: (data: BuildingResponse) => void;
@@ -23,6 +25,15 @@ export const getBuildingsColumns = (
   {
     accessorKey: 'updated_at',
     header: 'Atualizado em',
+    filterFn: FilterString,
+    accessorFn: (row) => moment(row.updated_at).format('DD/MM/YYYY [às] HH:mm'),
+    cell: ({ row }) => (
+      <Box>
+        <Text>{`${moment(row.original.updated_at).format(
+          'DD/MM/YYYY [às] HH:mm',
+        )}`}</Text>
+      </Box>
+    ),
   },
   {
     id: 'options',

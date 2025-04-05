@@ -92,7 +92,7 @@ function ClassModal(props: ClassModalProps) {
     resolver: yupResolver(classFourthchema),
   });
 
-  const { createClass, updateClass } = useClasses();
+  const { createClass, updateClass } = useClasses(false);
 
   const [schedules, setSchedules] = useState<ScheduleData[]>([]);
   const [stepsIsValid, setStepsIsValid] = useState<

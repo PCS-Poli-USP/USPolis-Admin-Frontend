@@ -76,6 +76,31 @@ const useClassrooms = (initialFetch: boolean = true) => {
     [showToast, service],
   );
 
+  const getClassroomsWithConflict = useCallback(
+    async (schedule_id: number, building_id: number) => {
+      setLoading(true);
+      let current: ClassroomWithConflictCount[] = [];
+      await service
+        .getWithConflictCount(schedule_id, building_id)
+        .then((response) => {
+          // current = response.data.sort(sortClassroomResponse);
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao carregar salas do prédio ${building_id}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+      return current;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
   const getClassroomsWithConflictFromTime = useCallback(
     async (data: ClassroomConflictCheck, building_id: number) => {
       setLoading(true);
@@ -132,7 +157,11 @@ const useClassrooms = (initialFetch: boolean = true) => {
           getClassrooms();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao criar sala ${data.name}: ${error}`, 'error');
+          showToast(
+            'Erro',
+            `Erro ao criar sala ${data.name}: ${error}`,
+            'error',
+          );
           console.log(error);
         })
         .finally(() => {
@@ -187,7 +216,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
 
   useEffect(() => {
     if (initialFetch) getClassrooms();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFetch]);
 
   return {
@@ -196,6 +225,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
     getAllClassrooms,
     getClassrooms,
     getClassroomsByBuilding,
+    getClassroomsWithConflict,
     getClassroomsWithConflictFromTime,
     listOneFull,
     createClassroom,

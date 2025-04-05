@@ -27,14 +27,16 @@ import {
 } from '@chakra-ui/react';
 import Select from 'react-select';
 import useBuildings from 'hooks/useBuildings';
-import useCalendars from 'hooks/useCalendars';
 import { useEffect, useRef, useState } from 'react';
 import { CrawlerType } from 'utils/enums/subjects.enum';
+import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
 
 interface CrawlerPopoverProps {
   subjects?: string[];
   crawlerType: CrawlerType | undefined;
   setCrawlerType: (type: CrawlerType | undefined) => void;
+  calendars: CalendarResponse[];
+  loadingCalendars: boolean;
   onSave: (
     subjectsList: string[],
     building_id: number,
@@ -48,9 +50,10 @@ export default function CrawlerPopover({
   onSave,
   crawlerType,
   setCrawlerType,
+  calendars,
+  loadingCalendars,
 }: CrawlerPopoverProps) {
   const { buildings, loading: buildingsLoading } = useBuildings();
-  const { calendars, loading: calendarsLoading } = useCalendars();
 
   const [subjectsList, setSubjectsList] = useState(subjects);
   const [subjectInput, setSubjectInput] = useState('');
@@ -161,7 +164,7 @@ export default function CrawlerPopover({
                 ) =>
                   setCalendarIds(selectedOptions.map((option) => option.value))
                 }
-                isLoading={calendarsLoading}
+                isLoading={loadingCalendars}
               />
             </Box>
 

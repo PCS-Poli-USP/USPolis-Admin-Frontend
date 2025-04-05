@@ -1,13 +1,13 @@
 import {
   Box,
   Button,
+  Flex,
   HStack,
   Icon,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Text,
@@ -24,12 +24,16 @@ import moment from 'moment';
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+import { Recurrence } from 'utils/enums/recurrence.enum';
+import { WeekDay } from 'utils/enums/weekDays.enum';
+import { MonthWeek } from 'utils/enums/monthWeek.enum';
 
 function ClassroomTimeGrid({
   isOpen,
   onClose,
   classroom,
   preview,
+  scheduleDetails,
 }: ClassroomTimeGridProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const [showWeekends, setShowWeekends] = useState(false);
@@ -87,42 +91,63 @@ function ClassroomTimeGrid({
     </Icon>
   );
 
+  function formatScheduleDetails() {
+    const { recurrence, week_day, month_week } = scheduleDetails;
+    if (recurrence && week_day && !month_week) {
+      return `${Recurrence.translate(
+        recurrence as Recurrence,
+      )} às ${WeekDay.translate(week_day as WeekDay)}'s`;
+    }
+    if (recurrence && week_day && month_week) {
+      return `${Recurrence.translate(
+        recurrence as Recurrence,
+      )}, às ${WeekDay.translate(
+        week_day as WeekDay,
+      )}'s no ${MonthWeek.translate(month_week as MonthWeek)} dia do mês`;
+    }
+    return Recurrence.translate(recurrence as Recurrence) || 'Não definido';
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={handleCloseModal} size={'4xl'}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent maxH={'90vh'} overflowY={'auto'}>
         <ModalHeader>{`Sala ${classroom ? classroom.name : ''} - ${
           classroom ? classroom.capacity : ''
         } capacidade`}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Button
-            mb={'10px'}
-            onClick={() => setShowWeekends((prev) => !prev)}
-            leftIcon={showWeekends ? <ViewOffIcon /> : <ViewIcon />}
-          >
-            {showWeekends ? 'Ocultar' : 'Exibir'} finais de semana
-          </Button>
           <Box w={'full'} h={'full'}>
-            {isMobile && (
+            <Flex
+              direction={'row'}
+              w={'100%'}
+              gap={'20px'}
+              justify={'space-between'}
+            >
               <Box mb={'10px'}>
                 <HStack>
-                  <Text fontWeight={'bold'}>Legenda: </Text>
+                  <Text fontWeight={'bold'}>Legenda</Text>
                   <CircleIcon />
                   <Text>Já alocado</Text>
                   <CircleIcon color='#ff7300' />
                   <Text>Solicitado</Text>
                 </HStack>
-                <HStack>
-                  <Text fontWeight={'bold'}>Datas: </Text>
-                  <Text>
-                    {preview.dates
-                      .map((date) => moment(date).format('DD/MM/YYYY'))
-                      .join(', ')}
-                  </Text>
-                </HStack>
+                <Text>
+                  <b>Agenda:</b> {formatScheduleDetails()}
+                </Text>
+                <Text>
+                  <b>Horário:</b> {preview.start_time} - {preview.end_time}
+                </Text>
+                <Text>Datas solicitadas no rodapé do calendário</Text>
               </Box>
-            )}
+              <Button
+                mb={'10px'}
+                onClick={() => setShowWeekends((prev) => !prev)}
+                leftIcon={showWeekends ? <ViewOffIcon /> : <ViewIcon />}
+              >
+                {showWeekends ? 'Ocultar' : 'Exibir'} finais de semana
+              </Button>
+            </Flex>
             <FullCalendar
               plugins={[timeGridPlugin]}
               initialView='timeGridWeek'
@@ -146,38 +171,23 @@ function ClassroomTimeGrid({
               eventContent={ClassroomTimeGridEventContent}
               displayEventTime={false}
               displayEventEnd={false}
+              allDaySlot={false}
               validRange={{ start: `${year}-01-01`, end: `${year}-12-31` }} // Limita ao ano atual
               events={events}
-              // weekends={showWeekends}
               hiddenDays={showWeekends ? [1, 2, 3, 4, 5] : [0, 6]}
             />
-            {!isMobile && (
-              <>
-                <HStack>
-                  <Text fontWeight={'bold'}>Legenda: </Text>
-                  <CircleIcon />
-                  <Text>Já alocado</Text>
-                  <CircleIcon color='#ff7300' />
-                  <Text>Solicitado</Text>
-                </HStack>
-                <HStack>
-                  <Text fontWeight={'bold'}>Datas: </Text>
-                  <Text>
-                    {preview.dates
+            <HStack>
+              <Text fontWeight={'bold'}>Datas: </Text>
+              <Text>
+                {preview.dates.length > 0
+                  ? preview.dates
                       .map((date) => moment(date).format('DD/MM/YYYY'))
-                      .join(', ')}
-                  </Text>
-                </HStack>
-              </>
-            )}
+                      .join(', ')
+                  : 'Nenhuma data, verifique a agenda'}
+              </Text>
+            </HStack>
           </Box>
         </ModalBody>
-
-        <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={handleCloseModal}>
-            Fechar
-          </Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );

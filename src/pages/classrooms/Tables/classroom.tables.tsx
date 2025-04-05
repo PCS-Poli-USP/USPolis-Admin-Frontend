@@ -9,6 +9,7 @@ import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import {
   FilterBoolean,
   FilterNumber,
+  FilterString,
 } from 'utils/tanstackTableHelpers/tableFiltersFns';
 
 interface ClassroomColumnsProps {
@@ -77,14 +78,16 @@ export function getClassroomColumns(
       filterFn: FilterBoolean,
     },
     {
-      id: 'updated_at',
       accessorKey: 'updated_at',
       header: 'Atualizado em',
+      filterFn: FilterString,
+      accessorFn: (row) =>
+        moment(row.updated_at).format('DD/MM/YYYY [às] HH:mm'),
       cell: ({ row }) => (
         <Box>
-          <Text>
-            {moment(row.original.updated_at).format('DD/MM/YYYY HH:mm')}
-          </Text>
+          <Text>{`${moment(row.original.updated_at).format(
+            'DD/MM/YYYY [às] HH:mm',
+          )}`}</Text>
         </Box>
       ),
     },

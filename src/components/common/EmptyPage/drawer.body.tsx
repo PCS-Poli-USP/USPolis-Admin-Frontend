@@ -73,7 +73,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
   const { loggedUser } = useContext(appContext);
 
   return (
-    <VStack align={'start'} p={'10px'} spacing={4} maxH={'900px'}>
+    <VStack
+      align={'start'}
+      p={'10px'}
+      spacing={4}
+      maxH={'900px'}
+      
+    >
       {loggedUser ? (
         <>
           {loggedUser.is_admin ? (
@@ -243,7 +249,12 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           />
         </VStack>
       )}
-      <VStack w={'full'} alignItems={'flex-start'} gap={'0px'}>
+      <VStack
+        w={'full'}
+        alignItems={'flex-start'}
+        gap={'0px'}
+        id='menu-drawer-contact'
+      >
         <Text fontSize={'15px'} color={'blackAlpha.600'}>
           © {moment().year()} USPolis
         </Text>
