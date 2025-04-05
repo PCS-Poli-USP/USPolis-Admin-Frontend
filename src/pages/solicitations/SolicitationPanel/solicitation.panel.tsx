@@ -40,6 +40,7 @@ import {
 import { ReservationType } from 'utils/enums/reservations.enum';
 import useClassrooms from 'hooks/useClassrooms';
 import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classroom.time.grid';
+import { Recurrence } from 'utils/enums/recurrence.enum';
 
 type OptionType = { value: number; label: string };
 
@@ -148,7 +149,7 @@ function SolicitationPanel({
       if (classroom && classroomFull && classroom.id === classroomFull.id) {
         return;
       }
-      
+
       let id = -1;
       if (solicitation && !solicitation.closed) {
         if (classroom) {
@@ -242,6 +243,11 @@ function SolicitationPanel({
                 dates: solicitation.dates,
                 start_time: start,
                 end_time: end,
+              }}
+              scheduleDetails={{
+                recurrence: Recurrence.CUSTOM,
+                week_day: undefined,
+                month_week: undefined,
               }}
             />
             <Stack divider={<StackDivider />} spacing='4'>

@@ -33,6 +33,7 @@ import {
   ClassroomWithConflictCount,
 } from 'models/http/responses/classroom.response.models';
 import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classroom.time.grid';
+import { Recurrence } from 'utils/enums/recurrence.enum';
 
 function SolicitationModal({
   buildings,
@@ -166,6 +167,11 @@ function SolicitationModal({
               dates: selectedDays,
               start_time: start,
               end_time: end,
+            }}
+            scheduleDetails={{
+              recurrence: Recurrence.CUSTOM,
+              week_day: undefined,
+              month_week: undefined,
             }}
           />
           <FormProvider {...form}>
