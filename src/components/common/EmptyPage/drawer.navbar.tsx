@@ -23,6 +23,9 @@ import { FaUser } from 'react-icons/fa';
 import Logo from 'assets/uspolis.logo.png';
 import { appContext } from 'context/AppContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { PiHandPointingFill } from 'react-icons/pi';
+import { FeatureGuideContext } from 'context/FeatureGuideContext';
+import { UsersValidator } from 'utils/users/users.validator';
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
@@ -42,16 +45,20 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
 
 interface DrawerNavBarProps {
   handleDrawerOpen: () => void;
+  handleDrawerClose: () => void;
   open: boolean;
   isMobile: boolean;
 }
 
 export function DrawerNavBar({
   handleDrawerOpen,
+  handleDrawerClose,
   open,
   isMobile,
 }: DrawerNavBarProps) {
   const { isAuthenticated, loggedUser, logout } = useContext(appContext);
+  const { state, setState, setPathBeforeGuide } =
+    useContext(FeatureGuideContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -68,6 +75,7 @@ export function DrawerNavBar({
         <HStack spacing={3} alignItems={'center'}>
           {isAuthenticated && (
             <IconButton
+              id='navbar-menu-button'
               size={'md'}
               icon={<HamburgerIcon />}
               hidden={open}
@@ -89,61 +97,105 @@ export function DrawerNavBar({
             USPolis
           </NavLink>
         </HStack>
+        <Text hidden={!state.run}>Guia rodando</Text>
         <Flex alignItems={'center'}>
-          {isAuthenticated ? (
-            <Menu>
-              <MenuButton
-                as={Button}
-                rounded={'full'}
-                variant={'link'}
-                cursor={'pointer'}
-                minW={'150px'}
-                colorScheme='dark'
+          {UsersValidator.checkUserRestrictedPermission(loggedUser) ? (
+            <>
+              <Button
+                variant={'ghost'}
+                mr={'5px'}
+                onClick={() => {
+                  setPathBeforeGuide(location.pathname);
+                  if (location.pathname !== '/allocation') {
+                    navigate('/allocation', {
+                      replace: true,
+                      state: { from: location },
+                    });
+                  }
+                  if (open) {
+                    handleDrawerClose();
+                    setTimeout(() => {
+                      setState({
+                        ...state,
+                        run: true,
+                      });
+                    }, 300); // ajuste conforme sua animação
+                  } else {
+                    setState({
+                      ...state,
+                      run: true,
+                    });
+                  }
+                }}
+                textColor={'white'}
+                textAlign={'center'}
+                alignContent={'center'}
+                rightIcon={<PiHandPointingFill />}
               >
-                <Flex alignItems={'center'} gap='10px'>
-                  <Text
-                    overflowX={'auto'}
-                    textOverflow={'ellipsis'}
-                    w={'auto'}
-                    hidden={isMobile}
+                Tutorial
+              </Button>
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rounded={'full'}
+                  variant={'link'}
+                  cursor={'pointer'}
+                  minW={'150px'}
+                  colorScheme='dark'
+                >
+                  <Flex
+                    id='navbar-user-menu-button'
+                    alignItems={'center'}
+                    gap='10px'
                   >
-                    {loggedUser ? loggedUser.name : 'Logando...'}
-                  </Text>
-                  <Icon as={FaUser} boxSize={'20px'} />
-                </Flex>
-              </MenuButton>
-              <MenuList>
-                <VStack divider={<StackDivider borderColor={'black.500'} />}>
-                  <MenuItem
-                    color='black'
-                    fontWeight={'bold'}
-                    onClick={() => {}}
-                  >
-                    {loggedUser && loggedUser.is_admin
-                      ? 'Administrador'
-                      : loggedUser && loggedUser.buildings
-                      ? 'Responsável por Prédio'
-                      : 'Usuário Comum'}
-                  </MenuItem>
-                  {loggedUser &&
-                    !loggedUser.is_admin &&
-                    loggedUser.buildings &&
-                    loggedUser.buildings.length > 0 && (
-                      <>
-                        {loggedUser.buildings.map((building, idx) => (
-                          <MenuItem key={idx} color='black' onClick={() => {}}>
-                            {building.name}
-                          </MenuItem>
-                        ))}
-                      </>
-                    )}
+                    <Text
+                      overflowX={'auto'}
+                      textOverflow={'ellipsis'}
+                      w={'auto'}
+                      hidden={isMobile}
+                    >
+                      {loggedUser ? loggedUser.name : 'Logando...'}
+                    </Text>
+                    <Icon as={FaUser} boxSize={'20px'} />
+                  </Flex>
+                </MenuButton>
+                <MenuList>
+                  <VStack divider={<StackDivider borderColor={'black.500'} />}>
+                    <MenuItem
+                      color='black'
+                      fontWeight={'bold'}
+                      onClick={() => {}}
+                    >
+                      {loggedUser && loggedUser.is_admin
+                        ? 'Administrador'
+                        : loggedUser && loggedUser.buildings
+                        ? 'Responsável por Prédio'
+                        : 'Usuário Comum'}
+                    </MenuItem>
+                    {loggedUser &&
+                      !loggedUser.is_admin &&
+                      loggedUser.buildings &&
+                      loggedUser.buildings.length > 0 && (
+                        <>
+                          {loggedUser.buildings.map((building, idx) => (
+                            <MenuItem
+                              key={idx}
+                              color='black'
+                              onClick={() => {}}
+                            >
+                              {building.name}
+                            </MenuItem>
+                          ))}
+                        </>
+                      )}
 
-                  <MenuItem onClick={handleClickLogout} color='black'>
-                    Sair
-                  </MenuItem>
-                </VStack>
-              </MenuList>
-            </Menu>
+                    <MenuItem onClick={handleClickLogout} color='black'>
+                      Sair
+                    </MenuItem>
+                  </VStack>
+                </MenuList>
+              </Menu>
+            </>
           ) : (
             <HStack>
               <Button

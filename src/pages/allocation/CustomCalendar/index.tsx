@@ -1,5 +1,5 @@
 import { Box, Progress, useDisclosure } from '@chakra-ui/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import { EventApi, DatesSetArg, EventDropArg } from '@fullcalendar/core';
@@ -16,6 +16,7 @@ import EventContent from './EventContent/eventContent';
 import { Resource, Event } from '../interfaces/allocation.interfaces';
 import EventModal from './EventModal/event.modal';
 import moment from 'moment';
+import { useFeatureGuideContext } from 'context/FeatureGuideContext';
 
 type ViewOption = {
   value: string;
@@ -63,8 +64,10 @@ function CustomCalendar({
   setView,
   loading = false,
 }: CustomCalendarProps) {
+  const { registerControlFn } = useFeatureGuideContext();
   const calendarRef = useRef<FullCalendar>(null!);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
+  const [resourcesExpanded, setResourcesExpanded] = useState(hasBuildingFilter);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -122,9 +125,20 @@ function CustomCalendar({
     return res;
   });
 
+  useEffect(() => {
+    registerControlFn((value: any) => {
+      if (calendarRef.current) {
+        setResourcesExpanded(true);
+        setCalendarView(viewOptions[0].value);
+        setView(viewOptions[0]);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   console.log(events.length);
   return (
-    <Box paddingBottom={4} zIndex={-1}>
+    <Box paddingBottom={4} zIndex={-1} w={'100%'}>
       <DatePickerModal
         isOpen={isOpen}
         onClose={onClose}
@@ -300,7 +314,7 @@ function CustomCalendar({
         eventColor='#408080'
         displayEventTime
         resources={formatedResources}
-        resourcesInitiallyExpanded={hasBuildingFilter}
+        resourcesInitiallyExpanded={resourcesExpanded}
         resourceAreaWidth='150px'
         resourceAreaHeaderContent='Prédios / Salas'
         datesSet={handleDatesSet}

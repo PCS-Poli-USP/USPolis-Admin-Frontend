@@ -69,7 +69,7 @@ function Classes() {
   );
 
   const { subjects, getSubjects } = useSubjects();
-  const { calendars } = useCalendars();
+  const { calendars, loading: loadingCalendars } = useCalendars();
   const { loading, classes, getClasses, deleteClass, deleteManyClass } =
     useClasses();
   const { loading: isCrawling, result, create, update } = useCrawler();
@@ -248,22 +248,27 @@ function Classes() {
           Turmas
         </Text>
         <Spacer />
-        <Button mr={"5px"} colorScheme={'blue'} onClick={handleRegisterClick}>
+        <Button mr={'5px'} colorScheme={'blue'} onClick={handleRegisterClick}>
           Adicionar manualmente
         </Button>
-        <CrawlerPopover
-          onSave={handleCrawlerSave}
-          crawlerType={crawlerType}
-          setCrawlerType={setCrawlerType}
-        />
 
-        <Button
-          ml={'5px'}
-          colorScheme={'blue'}
-          onClick={onOpenJupiterUpdateModal}
-        >
-          Atualizar automaticamente
-        </Button>
+        <Flex align={'row'} gap={'5px'} id='crawler-buttons'>
+          <CrawlerPopover
+            onSave={handleCrawlerSave}
+            crawlerType={crawlerType}
+            setCrawlerType={setCrawlerType}
+            calendars={calendars}
+            loadingCalendars={loadingCalendars}
+          />
+
+          <Button
+            ml={'5px'}
+            colorScheme={'blue'}
+            onClick={onOpenJupiterUpdateModal}
+          >
+            Atualizar automaticamente
+          </Button>
+        </Flex>
 
         <Button
           ml={2}

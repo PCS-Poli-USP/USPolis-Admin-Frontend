@@ -43,6 +43,7 @@ import PersistLogin from 'components/routes/persistLogin.route';
 import AxiosInterceptorRoute from 'components/routes/axiosInterceptor.route';
 import LoadingPage from 'components/common/LoadingPage';
 import ClassroomCalendarPrintPage from 'pages/print';
+import FeatureGuideProvider from 'context/FeatureGuideContext';
 
 Amplify.configure(awsConfig);
 
@@ -61,74 +62,79 @@ root.render(
             dateAdapter={AdapterMoment}
             adapterLocale='pt-br'
           >
-            <Router>
-              <Routes>
-                <Route path='/auth' element={<AuthPage />} />
-                <Route path='auth-callback' element={<AuthCallbackPage />} />
-                <Route
-                  path='/test-auth-callback'
-                  element={<LoadingRedirect />}
-                />
-                <Route
-                  path='/test-auth-callback-error'
-                  element={<RedirectError error='Mock error bro' />}
-                />
-                <Route path='/loading-page' element={<LoadingPage />} />
-                <Route element={<AxiosInterceptorRoute />}>
-                  <Route element={<PersistLogin />}>
-                    <Route
-                      path='/print/classroom-calendar'
-                      element={<ClassroomCalendarPrintPage />}
-                    />
-                    <Route path='/' element={<Navigate to='/index' />} />
-                    <Route path='/index' element={<Home />} />
-                    <Route path='/' element={<EmptyPage />}>
-                      {/* Not found */}
-                      <Route path='*' element={<Page404 />} />
+            <FeatureGuideProvider>
+              <Router>
+                <Routes>
+                  <Route path='/auth' element={<AuthPage />} />
+                  <Route path='auth-callback' element={<AuthCallbackPage />} />
+                  <Route
+                    path='/test-auth-callback'
+                    element={<LoadingRedirect />}
+                  />
+                  <Route
+                    path='/test-auth-callback-error'
+                    element={<RedirectError error='Mock error bro' />}
+                  />
+                  <Route path='/loading-page' element={<LoadingPage />} />
+                  <Route element={<AxiosInterceptorRoute />}>
+                    <Route element={<PersistLogin />}>
+                      <Route
+                        path='/print/classroom-calendar'
+                        element={<ClassroomCalendarPrintPage />}
+                      />
+                      <Route path='/' element={<Navigate to='/index' />} />
+                      <Route path='/index' element={<Home />} />
+                      <Route path='/' element={<EmptyPage />}>
+                        {/* Not found */}
+                        <Route path='*' element={<Page404 />} />
 
-                      {/* Public routes */}
-                      <Route path='allocation' element={<Allocation />} />
-                      <Route path='find-classes' element={<FindClasses />} />
+                        {/* Public routes */}
+                        <Route path='allocation' element={<Allocation />} />
+                        <Route path='find-classes' element={<FindClasses />} />
 
-                      {/* Private routes */}
-                      <Route element={<PrivateRoute />}>
-                        <Route
-                          path='my-solicitations'
-                          element={<MySolicitations />}
-                        />
-
-                        {/* Restricted routes */}
-                        <Route element={<RestrictedRoute />}>
-                          <Route path='subjects' element={<Subjects />} />
-                          <Route path='calendars' element={<Calendars />} />
-                          <Route path='classrooms' element={<Classrooms />} />
-                          <Route path='classes' element={<Classes />} />
+                        {/* Private routes */}
+                        <Route element={<PrivateRoute />}>
                           <Route
-                            path='reservations'
-                            element={<Reservations />}
+                            path='my-solicitations'
+                            element={<MySolicitations />}
                           />
-                          <Route path='conflicts' element={<ConflictsPage />} />
-                          <Route
-                            path='solicitations'
-                            element={<Solicitations />}
-                          />
-                        </Route>
 
-                        {/* Admin routes */}
-                        <Route path='' element={<AdminRoute />}>
-                          <Route path='users' element={<Users />} />
-                          <Route path='buildings' element={<Buildings />} />
-                          <Route
-                            path='institutional-events'
-                            element={<InstitutionalEvents />}
-                          />
+                          {/* Restricted routes */}
+                          <Route element={<RestrictedRoute />}>
+                            <Route path='subjects' element={<Subjects />} />
+                            <Route path='calendars' element={<Calendars />} />
+                            <Route path='classrooms' element={<Classrooms />} />
+                            <Route path='classes' element={<Classes />} />
+                            <Route
+                              path='reservations'
+                              element={<Reservations />}
+                            />
+                            <Route
+                              path='conflicts'
+                              element={<ConflictsPage />}
+                            />
+                            <Route
+                              path='solicitations'
+                              element={<Solicitations />}
+                            />
+                          </Route>
+
+                          {/* Admin routes */}
+                          <Route path='' element={<AdminRoute />}>
+                            <Route path='users' element={<Users />} />
+                            <Route path='buildings' element={<Buildings />} />
+                            <Route
+                              path='institutional-events'
+                              element={<InstitutionalEvents />}
+                            />
+                          </Route>
                         </Route>
                       </Route>
                     </Route>
                   </Route>
-                </Route>
-              </Routes>
-            </Router>
+                </Routes>
+              </Router>
+            </FeatureGuideProvider>
           </LocalizationProvider>
         </AppContextProvider>
       </GoogleOAuthProvider>
