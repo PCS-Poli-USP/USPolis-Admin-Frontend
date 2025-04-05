@@ -23,7 +23,7 @@ export default class SubjectValidator extends CommonValidator {
   }
 
   static isInvalidType(value: string): boolean {
-    return !Object.values(SubjectType).includes(value as SubjectType);
+    return !SubjectType.values().includes(value as SubjectType);
   }
 
   static isInvalidCredit(value: number): boolean {
