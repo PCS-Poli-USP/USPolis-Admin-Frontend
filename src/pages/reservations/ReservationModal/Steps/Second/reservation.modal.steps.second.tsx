@@ -1,4 +1,11 @@
-import { HStack, Spacer, Text, VStack } from '@chakra-ui/react';
+import {
+  Button,
+  HStack,
+  Spacer,
+  Text,
+  useDisclosure,
+  VStack,
+} from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
 import { Input, Select } from 'components/common';
 import { ReservationModalSecondStepProps } from './reservation.modal.steps.second.interface';
@@ -10,23 +17,46 @@ import { Recurrence } from 'utils/enums/recurrence.enum';
 import { WeekDay } from 'utils/enums/weekDays.enum';
 import { MonthWeek } from 'utils/enums/monthWeek.enum';
 import { SelectInput } from 'components/common/form/SelectInput';
-import ClassroomCalendar from 'components/common/ClassroomCalendar';
-import { ClassroomFullResponse } from 'models/http/responses/classroom.response.models';
+import {
+  ClassroomFullResponse,
+  ClassroomWithConflictCount,
+} from 'models/http/responses/classroom.response.models';
 import useClassrooms from 'hooks/useClassrooms';
 import { sortDates } from 'utils/holidays/holidays.sorter';
+import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classroom.time.grid';
+import { generateRecurrenceDates } from 'utils/common/common.generator';
+import { formatClassroomForSelection } from 'utils/classrooms/classroom.formatter';
 
 function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
-  const { listOneFull } = useClassrooms(false);
+  const {
+    isOpen: isOpenCGrid,
+    onClose: onCloseCGrid,
+    onOpen: onOpenCGrid,
+  } = useDisclosure();
+
+  const { listOneFull, getClassroomsWithConflictFromTime } =
+    useClassrooms(false);
 
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
   const [selectedClassroom, setSelectedClassroom] =
     useState<ClassroomFullResponse>();
-  const [isDaily, setIsDayli] = useState(false);
-  const [isMonthly, setIsMonthly] = useState(false);
-  const [isCustom, setIsCustom] = useState(false);
+  const [conflictedClassrooms, setConflictedClassrooms] = useState<
+    ClassroomWithConflictCount[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [datesForTimeGrid, setDatesForTimeGrid] = useState<string[]>([]);
   const [isSelecting, setIsSelecting] = useState(false);
 
-  const { resetField, setValue } = props.form;
+  const { resetField, setValue, watch } = props.form;
+
+  const start = watch('start_time');
+  const end = watch('end_time');
+  const recurrence = watch('recurrence');
+  const start_date = watch('start_date');
+  const end_date = watch('end_date');
+  const month_week = watch('month_week');
+  const week_day = watch('week_day');
 
   useEffect(() => {
     const { getValues } = props.form;
@@ -41,20 +71,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     if (classroom_id > 0) {
       handleSelectClassroom(classroom_id);
     }
-
-    if (props.selectedReservation) {
-      if (
-        props.selectedReservation.schedule.occurrences &&
-        props.selectedDays.length === 0
-      ) {
-        props.setSelectedDays(
-          props.selectedReservation.schedule.occurrences.map(
-            (occur) => occur.date,
-          ),
-        );
-      }
-      handleChangeRecurrence(props.selectedReservation.schedule.recurrence);
-    }
+    setDatesForTimeGrid(props.selectedDays);
 
     if (props.vinculatedSolicitation) {
       const vinculatedBuilding = props.buildings.find(
@@ -65,40 +82,51 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
       if (props.vinculatedSolicitation.classroom_id) {
         handleSelectClassroom(props.vinculatedSolicitation.classroom_id);
       }
-      handleChangeRecurrence(Recurrence.CUSTOM);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  async function fetchClassroomWithConflict(dates: string[]) {
+    if (selectedBuilding) {
+      setIsLoading(true);
+      const conflict = await getClassroomsWithConflictFromTime(
+        { start_time: start, end_time: end, dates },
+        selectedBuilding.id,
+      );
+      setIsLoading(false);
+      setConflictedClassrooms(conflict);
+    }
+  }
+
+  useEffect(() => {
+    const dates = getDatesForTimeGrid();
+    setDatesForTimeGrid(dates);
+    if (dates.length > 0) {
+      fetchClassroomWithConflict(dates);
+    } else {
+      setConflictedClassrooms([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [start_date, end_date, recurrence, month_week, week_day]);
+
   function handleChangeRecurrence(value: string) {
     if (value === Recurrence.MONTHLY) {
-      setIsDayli(false);
-      setIsMonthly(true);
     } else if (value === Recurrence.CUSTOM) {
-      setIsCustom(true);
-      setIsDayli(false);
-      setIsMonthly(false);
       resetField('month_week', { defaultValue: '' });
       resetField('week_day', { defaultValue: '' });
       resetField('start_date', { defaultValue: '' });
       resetField('end_date', { defaultValue: '' });
     } else if (value === Recurrence.DAILY) {
-      setIsDayli(true);
-      setIsMonthly(false);
       setIsSelecting(false);
       resetField('month_week', { defaultValue: '' });
       resetField('week_day', { defaultValue: '' });
     } else {
-      setIsDayli(false);
-      setIsMonthly(false);
       resetField('month_week', { defaultValue: '' });
     }
-
     if (value !== Recurrence.CUSTOM) {
       props.setSelectedDays([]);
       props.setDates([]);
       setIsSelecting(false);
-      setIsCustom(false);
     }
   }
 
@@ -107,35 +135,97 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     setSelectedClassroom(classroom);
   }
 
+  function getDatesForTimeGrid() {
+    if (recurrence === Recurrence.CUSTOM) {
+      return props.selectedDays;
+    } else if (start_date && end_date) {
+      if (recurrence === Recurrence.DAILY) {
+        return generateRecurrenceDates(
+          start_date,
+          end_date,
+          recurrence,
+          undefined,
+          undefined,
+        );
+      }
+      if (recurrence !== Recurrence.MONTHLY && week_day) {
+        return generateRecurrenceDates(
+          start_date,
+          end_date,
+          recurrence,
+          week_day as WeekDay,
+          undefined,
+        );
+      }
+      if (recurrence === Recurrence.MONTHLY && month_week && week_day) {
+        return generateRecurrenceDates(
+          start_date,
+          end_date,
+          recurrence,
+          week_day as WeekDay,
+          month_week as MonthWeek,
+        );
+      }
+    }
+    return [];
+  }
+
   return (
     <VStack w={'full'} align={'strech'} h={'full'}>
+      <ClassroomTimeGrid
+        isOpen={isOpenCGrid}
+        onClose={onCloseCGrid}
+        classroom={selectedClassroom}
+        preview={{
+          title: props.selectedReservation
+            ? props.selectedReservation.title
+            : '',
+          dates: datesForTimeGrid,
+          start_time: start,
+          end_time: end,
+        }}
+        scheduleDetails={{
+          recurrence,
+          week_day,
+          month_week,
+        }}
+      />
       <FormProvider {...props.form}>
         <form>
           <Text fontSize={'lg'} fontWeight={'bold'}>
             Local e Disponibilidade
           </Text>
-          <HStack alignContent={'stretch'} maxH={200} w={'full'}>
-            <VStack w={'full'} alignSelf={'flex-start'}>
-              <Select
-                mt={4}
-                disabled={!!props.vinculatedSolicitation}
-                label={'Prédio'}
-                name={'building_id'}
-                options={props.buildings.map((building) => ({
-                  value: building.id,
-                  label: building.name,
-                }))}
-                onChange={(event) => {
+          <HStack
+            align={'center'}
+            justify={'flex-start'}
+            maxH={200}
+            w={'full'}
+            mt={'5px'}
+          >
+            <SelectInput
+              disabled={!!props.vinculatedSolicitation}
+              label={'Prédio'}
+              w={'390px'}
+              name={'building_id'}
+              options={props.buildings.map((building) => ({
+                value: building.id,
+                label: building.name,
+              }))}
+              onChange={(event) => {
+                if (event) {
                   setSelectedBuilding(
                     props.buildings.find(
-                      (building) => building.id === Number(event.target.value),
+                      (building) => building.id === Number(event.value),
                     ),
                   );
-                }}
-              />
+                } else setSelectedBuilding(undefined);
+              }}
+            />
+
+            <VStack>
               <SelectInput
-                mt={4}
                 label={'Sala de Aula'}
+                w={'390px'}
                 disabled={
                   !selectedBuilding ||
                   (props.vinculatedSolicitation &&
@@ -144,14 +234,20 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                 name={'classroom_id'}
                 options={
                   selectedBuilding
-                    ? props.classrooms
-                        .filter(
-                          (value) => value.building_id === selectedBuilding?.id,
-                        )
-                        .map((classroom) => ({
-                          value: classroom.id,
-                          label: classroom.name,
+                    ? conflictedClassrooms.length > 0
+                      ? conflictedClassrooms.map((cls) => ({
+                          value: cls.id,
+                          label: formatClassroomForSelection(cls),
                         }))
+                      : props.classrooms
+                          .filter(
+                            (value) =>
+                              value.building_id === selectedBuilding?.id,
+                          )
+                          .map((classroom) => ({
+                            value: classroom.id,
+                            label: `${classroom.name} [${classroom.capacity}]`,
+                          }))
                     : []
                 }
                 onChange={(event) => {
@@ -175,13 +271,17 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                 *A reserva vinculada quer necessariamente essa sala
               </Text>
             </VStack>
-            <Spacer></Spacer>
-            <VStack w={'auto'} h={'full'}>
-              <ClassroomCalendar
-                classroom={selectedClassroom}
-                h={130}
-                initialDate={props.initialDate}
-              />
+
+            <VStack>
+              <Button
+                mt={'30px'}
+                w={'strech'}
+                isDisabled={!selectedClassroom || isLoading}
+                isLoading={isLoading}
+                onClick={() => onOpenCGrid()}
+              >
+                Visualizar Disponibilidade
+              </Button>
             </VStack>
           </HStack>
 
@@ -229,7 +329,10 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   label={'Dia da semana'}
                   name={'week_day'}
                   placeholder='Escolha o dia da semana'
-                  disabled={isDaily || isCustom}
+                  disabled={
+                    recurrence === Recurrence.DAILY ||
+                    recurrence === Recurrence.CUSTOM
+                  }
                   options={WeekDay.getValues().map((value: WeekDay) => ({
                     label: WeekDay.translate(value),
                     value: value,
@@ -240,7 +343,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   label={'Semana do mês'}
                   name={'month_week'}
                   placeholder='Escolha a semana do mês'
-                  disabled={!isMonthly}
+                  disabled={recurrence !== Recurrence.MONTHLY}
                   options={MonthWeek.getValues().map((value: MonthWeek) => ({
                     label: MonthWeek.translate(value),
                     value: value,
@@ -254,14 +357,15 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   name={'start_date'}
                   placeholder='Data de inicio'
                   type='date'
-                  disabled={isCustom}
+                  disabled={recurrence === Recurrence.CUSTOM}
+                  onChange={(event) => console.log(event.target.value)}
                 />
                 <Input
                   label={'Fim da agenda'}
                   name={'end_date'}
                   placeholder='Data de fim'
                   type='date'
-                  disabled={isCustom}
+                  disabled={recurrence === Recurrence.CUSTOM}
                 />
               </HStack>
 
@@ -290,7 +394,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             </VStack>
 
             <VStack h={'full'} spacing={0} mt={4} alignItems={'center'}>
-              {isCustom && props.selectedDays.length === 0 ? (
+              {recurrence === Recurrence.CUSTOM &&
+              props.selectedDays.length === 0 ? (
                 <Text w={'full'} textAlign={'center'} textColor={'red.500'}>
                   Nenhum dia selecionado
                 </Text>
@@ -317,8 +422,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     setValue('end_date', newDates[newDates.length - 1]);
                   }
                 }}
-                readOnly={!!props.vinculatedSolicitation || !isCustom}
-                helpText={isCustom}
+                readOnly={
+                  !!props.vinculatedSolicitation ||
+                  recurrence !== Recurrence.CUSTOM
+                }
+                helpText={recurrence === Recurrence.CUSTOM}
               />
             </VStack>
           </HStack>
