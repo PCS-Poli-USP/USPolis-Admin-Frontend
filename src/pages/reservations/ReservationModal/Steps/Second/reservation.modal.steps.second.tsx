@@ -401,6 +401,12 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                 </Text>
               ) : undefined}
               <DateCalendarPicker
+                header={
+                  recurrence === Recurrence.CUSTOM &&
+                  props.selectedDays.length !== 0
+                    ? 'Selecione as datas'
+                    : ''
+                }
                 selectedDays={props.selectedDays}
                 highlightedDays={[]}
                 occupiedDays={props.occupiedDays}
