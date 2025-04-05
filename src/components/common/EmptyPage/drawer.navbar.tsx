@@ -97,7 +97,6 @@ export function DrawerNavBar({
             USPolis
           </NavLink>
         </HStack>
-        <Text hidden={!state.run}>Guia rodando</Text>
         <Flex alignItems={'center'}>
           {UsersValidator.checkUserRestrictedPermission(loggedUser) ? (
             <>
