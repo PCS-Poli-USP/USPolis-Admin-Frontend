@@ -87,7 +87,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   }, []);
 
   async function fetchClassroomWithConflict(dates: string[]) {
-    if (selectedBuilding) {
+    if (selectedBuilding && start && end) {
       setIsLoading(true);
       const conflict = await getClassroomsWithConflictFromTime(
         { start_time: start, end_time: end, dates },
@@ -101,18 +101,22 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   useEffect(() => {
     const dates = getDatesForTimeGrid();
     setDatesForTimeGrid(dates);
-    if (dates.length > 0) {
-      fetchClassroomWithConflict(dates);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [start_date, end_date, recurrence, month_week, week_day]);
+
+  useEffect(() => {
+    if (datesForTimeGrid.length > 0) {
+      fetchClassroomWithConflict(datesForTimeGrid);
     } else {
       setConflictedClassrooms([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [start_date, end_date, recurrence, month_week, week_day]);
+  }, [datesForTimeGrid, start, end]);
 
   function handleChangeRecurrence(value: string) {
     if (value === Recurrence.MONTHLY) {
     } else if (value === Recurrence.CUSTOM) {
-      resetField('month_week', { defaultValue: '' });
+      resetField('month_week', { defaultValue: undefined });
       resetField('week_day', { defaultValue: '' });
       resetField('start_date', { defaultValue: '' });
       resetField('end_date', { defaultValue: '' });
@@ -138,36 +142,14 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   function getDatesForTimeGrid() {
     if (recurrence === Recurrence.CUSTOM) {
       return props.selectedDays;
-    } else if (start_date && end_date) {
-      if (recurrence === Recurrence.DAILY) {
-        return generateRecurrenceDates(
-          start_date,
-          end_date,
-          recurrence,
-          undefined,
-          undefined,
-        );
-      }
-      if (recurrence !== Recurrence.MONTHLY && week_day) {
-        return generateRecurrenceDates(
-          start_date,
-          end_date,
-          recurrence,
-          week_day as WeekDay,
-          undefined,
-        );
-      }
-      if (recurrence === Recurrence.MONTHLY && month_week && week_day) {
-        return generateRecurrenceDates(
-          start_date,
-          end_date,
-          recurrence,
-          week_day as WeekDay,
-          month_week as MonthWeek,
-        );
-      }
     }
-    return [];
+    return generateRecurrenceDates(
+      start_date,
+      end_date,
+      recurrence,
+      week_day as WeekDay | undefined,
+      month_week as MonthWeek | undefined,
+    );
   }
 
   return (

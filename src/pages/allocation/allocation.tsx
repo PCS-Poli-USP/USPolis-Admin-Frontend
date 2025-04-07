@@ -36,7 +36,7 @@ const viewOptions: ViewOption[] = [
 function Allocation() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { loading, setLoading, loggedUser } = useContext(appContext);
-  
+
   const {
     isOpen: isOpenSolicitation,
     onOpen: onOpenSolicitation,
@@ -118,7 +118,7 @@ function Allocation() {
         const data =
           event.extendedProps.class_data ||
           event.extendedProps.reservation_data;
-        return data && data.building.toLowerCase().includes(buildingValue);
+        return data && data.building.toLowerCase() === buildingValue;
       });
     }
     if (classroom) {
@@ -126,16 +126,14 @@ function Allocation() {
         const data =
           event.extendedProps.class_data ||
           event.extendedProps.reservation_data;
-        return data && data.classroom.toLowerCase().includes(classroomValue);
+        return data && data.classroom.toLowerCase() === classroomValue;
       });
     }
     if (name) {
       newEvents = newEvents.filter((event) => {
         const nameFilterResult =
-          event.title.toLowerCase().includes(nameValue) ||
-          event.extendedProps.class_data?.code
-            .toLowerCase()
-            .includes(nameValue);
+          event.title.toLowerCase() === nameValue ||
+          event.extendedProps.class_data?.code.toLowerCase() === nameValue;
         return nameFilterResult;
       });
     }
@@ -143,9 +141,7 @@ function Allocation() {
       newEvents = newEvents.filter((event) => {
         const classFilterResult =
           event.extendedProps.class_data &&
-          event.extendedProps.class_data?.code
-            .toLowerCase()
-            .includes(classValue);
+          event.extendedProps.class_data?.code.toLowerCase() === classValue;
         return classFilterResult;
       });
     }

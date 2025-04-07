@@ -131,16 +131,22 @@ export function generateRecurrenceDates(
     case Recurrence.DAILY:
       return generateDailyDates(start, end);
     case Recurrence.WEEKLY:
-      return generateWeeklyDates(start, end, week_day as WeekDay);
+      return week_day !== undefined
+        ? generateWeeklyDates(start, end, week_day as WeekDay)
+        : [];
     case Recurrence.BIWEEKLY:
-      return generateBiweeklyDates(start, end, week_day as WeekDay);
+      return week_day !== undefined
+        ? generateBiweeklyDates(start, end, week_day as WeekDay)
+        : [];
     case Recurrence.MONTHLY:
-      return generateMonthlyDates(
-        start,
-        end,
-        week_day as WeekDay,
-        month_week as MonthWeek,
-      );
+      return week_day !== undefined && month_week
+        ? generateMonthlyDates(
+            start,
+            end,
+            week_day as WeekDay,
+            month_week as MonthWeek,
+          )
+        : [];
     default:
       return [];
   }
