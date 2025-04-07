@@ -136,7 +136,9 @@ function ClassroomTimeGrid({
                   <b>Agenda:</b> {formatScheduleDetails()}
                 </Text>
                 <Text>
-                  <b>Horário:</b> {preview.start_time} - {preview.end_time}
+                  <b>Horário:</b>{' '}
+                  {preview.start_time ? preview.start_time : 'Não informado'} até {' '}
+                  {preview.end_time ? preview.end_time : 'Não informado'}
                 </Text>
                 <Text>Datas solicitadas no rodapé do calendário</Text>
               </Box>

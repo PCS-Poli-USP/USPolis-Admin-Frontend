@@ -5,7 +5,7 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react';
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { FieldProps } from '../form.interface';
 
 interface InputProps extends FieldProps {
@@ -33,7 +33,8 @@ export function Input({
   onChange = undefined,
 }: InputProps) {
   const {
-    register,
+    control,
+    // register,
     formState: { errors },
   } = useFormContext();
 
@@ -47,7 +48,28 @@ export function Input({
       mr={mr}
     >
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
-      <ChakraInput
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <ChakraInput
+            {...field}
+            id={name}
+            type={type}
+            disabled={disabled}
+            placeholder={placeholder}
+            value={field.value || field.value === 0 ? field.value : ''}
+            hidden={hidden}
+            min={min}
+            max={max}
+            onChange={(event) => {
+              if (onChange) onChange(event);
+              field.onChange(event.target.value);
+            }}
+          />
+        )}
+      />
+      {/* <ChakraInput
         {...register(name)}
         type={type}
         disabled={disabled}
@@ -57,7 +79,7 @@ export function Input({
         min={min}
         max={max}
         onChange={onChange}
-      />
+      /> */}
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
     </FormControl>
   );
