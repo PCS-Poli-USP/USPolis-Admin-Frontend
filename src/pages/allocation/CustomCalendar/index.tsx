@@ -17,6 +17,8 @@ import { Resource, Event } from '../interfaces/allocation.interfaces';
 import EventModal from './EventModal/event.modal';
 import moment from 'moment';
 import { useFeatureGuideContext } from 'context/FeatureGuideContext';
+import { TourGuideEvents, TourGuideResources } from './utils';
+import { FG_STEP_INDEXES } from 'context/FeatureGuideContext/utils';
 
 type ViewOption = {
   value: string;
@@ -64,10 +66,12 @@ function CustomCalendar({
   setView,
   loading = false,
 }: CustomCalendarProps) {
-  const { registerControlFn } = useFeatureGuideContext();
+  const { registerControlFn, state } = useFeatureGuideContext();
+
   const calendarRef = useRef<FullCalendar>(null!);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
   const [resourcesExpanded, setResourcesExpanded] = useState(hasBuildingFilter);
+  const [isGuideMode, setIsGuideMode] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -128,6 +132,7 @@ function CustomCalendar({
   useEffect(() => {
     registerControlFn((value: any) => {
       if (calendarRef.current) {
+        setIsGuideMode(true);
         setResourcesExpanded(true);
         setCalendarView(viewOptions[0].value);
         setView(viewOptions[0]);
@@ -135,6 +140,15 @@ function CustomCalendar({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (
+      state.stepIndex !== FG_STEP_INDEXES.ALLOCATION_DRAG_AND_DROP &&
+      state.stepIndex !== FG_STEP_INDEXES.RESERVATION_BY_ALLOCATION
+    ) {
+      setIsGuideMode(false);
+    }
+  }, [state]);
 
   console.log(events.length);
   return (
@@ -305,7 +319,7 @@ function CustomCalendar({
                 },
           },
         }}
-        events={events}
+        events={isGuideMode ? TourGuideEvents : events}
         eventContent={EventContent}
         eventClick={(info) => {
           setSelectedEvent(info.event);
@@ -313,7 +327,7 @@ function CustomCalendar({
         }}
         eventColor='#408080'
         displayEventTime
-        resources={formatedResources}
+        resources={isGuideMode ? TourGuideResources : formatedResources}
         resourcesInitiallyExpanded={resourcesExpanded}
         resourceAreaWidth='150px'
         resourceAreaHeaderContent='Prédios / Salas'
