@@ -77,8 +77,6 @@ function SolicitationModal({
   const [selectedClassroom, setSelectedClassroom] =
     useState<ClassroomFullResponse>();
   const [showDatesError, setShowDatesError] = useState(false);
-  const [start, setStart] = useState<string>('');
-  const [end, setEnd] = useState<string>('');
 
   const { trigger, reset, getValues, clearErrors, watch, resetField } = form;
   const building_id = watch('building_id');
@@ -87,6 +85,8 @@ function SolicitationModal({
   const optionalClassroom = watch('optional_classroom');
   const optionalTime = watch('optional_time');
   const requiredClassroom = watch('required_classroom');
+  const start = watch('start_time');
+  const end = watch('end_time');
 
   async function handleSubmit() {
     const isValid = await trigger();
@@ -165,8 +165,8 @@ function SolicitationModal({
             preview={{
               title: title,
               dates: selectedDays,
-              start_time: start,
-              end_time: end,
+              start_time: start || '',
+              end_time: end || '',
             }}
             scheduleDetails={{
               recurrence: Recurrence.CUSTOM,
@@ -204,8 +204,8 @@ function SolicitationModal({
                         name={'start_time'}
                         placeholder='Horario de início da disciplina'
                         type='time'
+                        max={end}
                         disabled={optionalTime}
-                        onChange={(event) => setStart(event.target.value)}
                       />
                       <Input
                         label={'Horário de fim'}
@@ -213,7 +213,7 @@ function SolicitationModal({
                         placeholder='Horário de encerramento da disciplina'
                         type='time'
                         disabled={optionalTime}
-                        onChange={(event) => setEnd(event.target.value)}
+                        min={start}
                       />
                     </HStack>
                     <CheckBox
@@ -304,10 +304,8 @@ function SolicitationModal({
                     disabled={
                       !selectedBuilding ||
                       optionalClassroom ||
-                      (!optionalTime &&
-                        !start &&
-                        !end &&
-                        selectedDays.length === 0)
+                      (!optionalTime && !start && !end) ||
+                      selectedDays.length === 0
                     }
                     isLoading={loadingC || loadingClassrooms}
                     label='Sala'
@@ -385,7 +383,6 @@ function SolicitationModal({
                     text='Quero necessariamente essa sala'
                     name='required_classroom'
                   />
-                  <Text>{requiredClassroom ? 'Obrigatŕoia' : 'Opcional'}</Text>
                 </Flex>
               </VStack>
             </form>
