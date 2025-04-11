@@ -1,11 +1,12 @@
+import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 import createFeatureTourGuideStep from './steps';
+import TravelHand from 'components/common/Animation/TravelHand';
 
 function createUserMenuStep() {
   return createFeatureTourGuideStep({
     target: '#navbar-user-menu-button',
     title: 'Menu do Usuário',
-    description:
-      'Esse é o menu do usuário, onde você pode acessar suas informações e sair do sistema.',
+    description: 'Acesse suas informações ou saia do sistema.',
     placement: 'bottom',
   });
 }
@@ -14,7 +15,7 @@ function createOpenMenuStep() {
   return createFeatureTourGuideStep({
     target: '#navbar-menu-button',
     title: 'Abrir Menu',
-    description: 'Clique aqui para abrir o menu.',
+    description: 'Clique aqui.',
   });
 }
 
@@ -22,8 +23,7 @@ function createMenuStep() {
   return createFeatureTourGuideStep({
     target: '#menu-drawer',
     title: 'Menu',
-    description:
-      'Esse é o menu do sistema, onde você pode acessar todas as funcionalidades.',
+    description: 'Aqui você acessa todas as funcionalidades.',
     placement: 'right',
   });
 }
@@ -32,8 +32,7 @@ function createContactStep() {
   return createFeatureTourGuideStep({
     target: '#menu-drawer-contact',
     title: 'Contato',
-    description:
-      'Caso tenha alguma dúvida, sugestão ou deseja reportar um erro, nos contate por esse email.',
+    description: 'Nos mande um email.',
     placement: 'top',
   });
 }
@@ -42,8 +41,7 @@ function createAllocationGridStep() {
   return createFeatureTourGuideStep({
     target: '#allocation-grid',
     title: 'Mapa de Salas',
-    description:
-      'Esse é o mapa de salas, onde você pode visualizar a alocação de salas.',
+    description: 'Visualize a alocação de salas.',
   });
 }
 
@@ -51,8 +49,7 @@ function createAllocationHeaderStep() {
   return createFeatureTourGuideStep({
     target: '.fc-toolbar-chunk',
     title: 'Visualização de Alocação',
-    description:
-      'Aqui você pode escolher a visualização do mapa de salas, existem quatro opções, cada uma com uma visão diferente.',
+    description: 'Existem quatro opções, escolha uma!',
   });
 }
 
@@ -60,14 +57,47 @@ function createReservationByAllocationStep() {
   return createFeatureTourGuideStep({
     target: '.fc-scrollgrid-section-body',
     title: 'Reservas pelo Mapa de Salas',
+    description: (
+      <Text>
+        Crie reservas clicando no mapa de salas. <b>APENAS</b> em{' '}
+        <b>Sala/Dia</b> ou <b>Sala/Semana</b>.
+      </Text>
+    ),
+    placement: 'top',
+    isFixed: true,
+  });
+}
+
+function createAllocationDragAndDropStep() {
+  return createFeatureTourGuideStep({
+    target: '.chakra-heading.css-11f1tvj',
+    title: 'Editar alocações pelo Mapa de Salas',
     description:
-      'Você pode criar reservas clicando no mapa de salas diretamente, isso vale APENAS nas visualizações Sala/Dia ou Sala/Semana. Além disso, você pode editar alocações clicando segurado e arrastando para a nova sala/hora',
+      'Clique com o botão esquerdo segurado e arraste para a nova sala/hora.',
     placement: 'top',
     data: {
       next: '/classes',
     },
+    content: (
+      <Flex
+        align={'center'}
+        direction='column'
+        gap={'10px'}
+        p={'5px'}
+        zIndex={1000000}
+      >
+        <Heading fontWeight={'bold'} size={'mb'}>
+          Editar alocações pelo Mapa de Salas
+        </Heading>
+        <Text size={'md'}>
+          Clique com o botão esquerdo segurado e arraste para a nova sala/hora.
+        </Text>
+        <Box mt={'20px'}>
+          <TravelHand />
+        </Box>
+      </Flex>
+    ),
     isFixed: true,
-    width: '600px',
   });
 }
 
@@ -76,7 +106,7 @@ function createAutomaticClassCreationStep() {
     target: '#crawler-buttons',
     title: 'Cadastro de Turmas Automático',
     description:
-      'Você pode cadastrar turmas automaticamente, basta selecionar se vai ser pelo Júpiter ou pelo Janus, inserir os códigos das disciplinas e pronto!',
+      'Escolha Júpiter ou Janus, insira os códigos das disciplinas e pronto!',
     placement: 'bottom',
     data: {
       previous: '/allocation',
@@ -95,6 +125,7 @@ export function createSteps() {
     createAllocationGridStep(),
     createAllocationHeaderStep(),
     createReservationByAllocationStep(),
+    createAllocationDragAndDropStep(),
     createAutomaticClassCreationStep(),
   ];
 }
@@ -107,5 +138,6 @@ export const FG_STEP_INDEXES = {
   ALLOCATION_GRID: 4,
   ALLOCATION_HEADER: 5,
   RESERVATION_BY_ALLOCATION: 6,
-  AUTOMATIC_CLASS_CREATION: 7,
-}
+  ALLOCATION_DRAG_AND_DROP: 7,
+  AUTOMATIC_CLASS_CREATION: 8,
+};
