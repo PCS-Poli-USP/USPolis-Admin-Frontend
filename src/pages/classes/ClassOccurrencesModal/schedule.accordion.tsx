@@ -8,6 +8,7 @@ import {
   AlertIcon,
   Box,
   Button,
+  Center,
   Divider,
   HStack,
   Spinner,
@@ -19,7 +20,7 @@ import DateCalendarPicker, {
 } from 'components/common/DateCalendarPicker';
 import useSchedules from 'hooks/useSchedules';
 import { ClassFullResponse } from 'models/http/responses/class.response.models';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getScheduleFullString } from 'utils/schedules/schedule.formatter';
 
 interface ScheduleAccordionProps {
@@ -39,8 +40,24 @@ export default function ScheduleAccordion(props: ScheduleAccordionProps) {
   const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
   const { loading, updateOccurrences } = useSchedules();
 
+  useEffect(() => {
+    if (props.class && props.class.schedules.length > 0) {
+      const schedule = props.class.schedules[0];
+      const dates = schedule.occurrences.map((occur) => occur.date);
+      setSelectedDays(dates);
+      setOldDates(dates);
+      setSelectedId(schedule.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.class]);
+
   return (
-    <Accordion borderColor={'blackAlpha.900'} allowToggle>
+    <Accordion
+      allowToggle
+      borderColor={'blackAlpha.900'}
+      border={'1px'}
+      defaultIndex={[0]}
+    >
       {props.class ? (
         props.class.schedules.map((schedule, index) => (
           <AccordionItem key={index}>
@@ -127,7 +144,9 @@ export default function ScheduleAccordion(props: ScheduleAccordionProps) {
           </AccordionItem>
         ))
       ) : (
-        <Spinner />
+        <Center h={'50px'}>
+          <Spinner />
+        </Center>
       )}
     </Accordion>
   );

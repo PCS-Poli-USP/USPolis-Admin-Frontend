@@ -37,7 +37,12 @@ export function CalendarAccordion(props: HolidayCategoryAccordionProps) {
   }, [props.calendars]);
 
   return (
-    <Accordion allowMultiple borderColor={'blackAlpha.900'}>
+    <Accordion
+      allowMultiple
+      borderColor={'uspolis.blue'}
+      border={'1px'}
+      defaultIndex={[0]}
+    >
       {props.calendars.length === 0 ? (
         <Alert status={'warning'} fontSize={'sm'} mb={4}>
           <AlertIcon />
