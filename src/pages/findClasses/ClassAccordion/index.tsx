@@ -33,7 +33,7 @@ function ClassAccordion({ classes }: ClassAccordionProps) {
   }
 
   return (
-    <Accordion allowToggle>
+    <Accordion allowToggle border={'1px'} borderColor={'uspolis.blue'}>
       {classes.map((classData, index) => (
         <AccordionItem key={index}>
           <h2>

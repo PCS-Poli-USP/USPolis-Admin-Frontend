@@ -23,6 +23,7 @@ import { LuCalendarClock } from 'react-icons/lu';
 import { GiBookCover, GiTeacher } from 'react-icons/gi';
 import { PiChair } from 'react-icons/pi';
 import { BsCalendar3, BsEnvelopeCheck } from 'react-icons/bs';
+import { HiUserGroup } from "react-icons/hi";
 import { IconType } from 'react-icons';
 import moment from 'moment';
 
@@ -101,6 +102,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                 icon={<FaRegUser />}
                 to='/users'
                 text='Usuários'
+                replace_location={false}
+                onClose={onClose}
+              />
+              <DrawerButton 
+                icon={<HiUserGroup />}
+                to='/groups'
+                text='Grupos'
                 replace_location={false}
                 onClose={onClose}
               />

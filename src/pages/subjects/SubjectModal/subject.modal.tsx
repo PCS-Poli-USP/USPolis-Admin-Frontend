@@ -158,7 +158,7 @@ export default function SubjectModal(props: SubjectModalProps) {
 
         <ModalFooter>
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-            {props.isUpdate ? 'Salvar' : 'Cadastrar'}
+            {props.isUpdate ? 'Atualizar' : 'Cadastrar'}
           </Button>
           <Button onClick={handleCloseModal}>Cancelar</Button>
         </ModalFooter>

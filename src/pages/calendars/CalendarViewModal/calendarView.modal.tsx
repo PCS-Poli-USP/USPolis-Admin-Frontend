@@ -9,7 +9,10 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
-import { CalendarEvent, CalendarViewModalProps } from './calendarView.modal.interface';
+import {
+  CalendarEvent,
+  CalendarViewModalProps,
+} from './calendarView.modal.interface';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import CalendarViewEventContent from './calendarView.event.content';
@@ -71,7 +74,7 @@ function CalendarViewModal(props: CalendarViewModalProps) {
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={handleCloseModal}>
+          <Button mr={3} onClick={handleCloseModal}>
             Fechar
           </Button>
         </ModalFooter>

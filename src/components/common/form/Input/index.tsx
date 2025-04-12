@@ -26,6 +26,7 @@ export function Input({
   value = undefined,
   min = undefined,
   max = undefined,
+  w = undefined,
   mt = undefined,
   mb = undefined,
   mr = undefined,
@@ -46,6 +47,7 @@ export function Input({
       mb={mb}
       ml={ml}
       mr={mr}
+      w={w}
     >
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
       <Controller
@@ -63,6 +65,7 @@ export function Input({
             min={min}
             max={max}
             onChange={(event) => {
+              if (max && event.target.value.length > Number(max)) return;
               if (onChange) onChange(event);
               field.onChange(event.target.value);
             }}

@@ -41,6 +41,7 @@ function Calendars() {
     getHolidaysCategories,
     loading: loadingCategories,
   } = useHolidaysCategories();
+  
   const {
     calendars,
     getCalendars,
@@ -103,7 +104,7 @@ function Calendars() {
           onClick={handleCreateCalendarButton}
           leftIcon={<AddIcon />}
         >
-          Adicionar Calendário
+          Calendário
         </Button>
       </Flex>
       <CalendarAccordion

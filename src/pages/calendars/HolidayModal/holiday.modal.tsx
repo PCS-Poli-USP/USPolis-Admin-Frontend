@@ -49,7 +49,7 @@ function HolidayModal(props: HolidayModalProps) {
   });
 
   const { trigger, reset, getValues, clearErrors } = form;
-  const { createHoliday, createManyHolidays, updateHoliday } = useHolidays();
+  const { createHoliday, createManyHolidays, updateHoliday } = useHolidays(false);
 
   async function handleCreateSubmit() {
     if (isMultipleHolidays) {
@@ -214,10 +214,11 @@ function HolidayModal(props: HolidayModalProps) {
             disabled={isMultipleHolidays && selectedDays.length === 0}
             onClick={props.isUpdate ? handleUpdateSubmit : handleCreateSubmit}
             mr={4}
+            colorScheme='blue'
           >
             {props.isUpdate ? 'Atualizar' : 'Cadastrar'}
           </Button>
-          <Button colorScheme='blue' mr={3} onClick={handleCloseModal}>
+          <Button mr={3} onClick={handleCloseModal}>
             Fechar
           </Button>
         </ModalFooter>

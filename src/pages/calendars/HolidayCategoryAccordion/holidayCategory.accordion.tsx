@@ -48,7 +48,8 @@ export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
       ) : (
         <Accordion
           allowMultiple
-          borderColor={'blackAlpha.900'}
+          borderColor={'uspolis.blue'}
+          border={'1px'}
           index={lastOpenedIndex ? lastOpenedIndex : undefined}
           onChange={(val) => setLastOpenedIndex(val as number[])}
         >

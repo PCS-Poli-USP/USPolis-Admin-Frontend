@@ -44,6 +44,7 @@ import AxiosInterceptorRoute from 'components/routes/axiosInterceptor.route';
 import LoadingPage from 'components/common/LoadingPage';
 import ClassroomCalendarPrintPage from 'pages/print';
 import FeatureGuideProvider from 'context/FeatureGuideContext';
+import { Groups } from 'pages/groups/groups';
 
 Amplify.configure(awsConfig);
 
@@ -122,6 +123,7 @@ root.render(
                           {/* Admin routes */}
                           <Route path='' element={<AdminRoute />}>
                             <Route path='users' element={<Users />} />
+                            <Route path='groups' element={<Groups />} />
                             <Route path='buildings' element={<Buildings />} />
                             <Route
                               path='institutional-events'

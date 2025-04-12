@@ -126,7 +126,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
 
         <ModalFooter>
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-            Salvar
+            Cadastrar
           </Button>
           <Button onClick={() => handleCloseModal()}>Cancelar</Button>
         </ModalFooter>
