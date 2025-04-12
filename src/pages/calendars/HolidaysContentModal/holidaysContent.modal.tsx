@@ -58,7 +58,7 @@ function HolidaysContentModal(props: HolidaysContentModalProps) {
 
   const { deleteHolidayCategory } = useHolidaysCategories();
 
-  const { deleteHoliday, loading: loadingHolidays } = useHolidays();
+  const { deleteHoliday, loading: loadingHolidays } = useHolidays(false);
 
   function handleCreateHolidayCategoryButton() {
     onOpenHolidayCategoryModal();
@@ -117,7 +117,7 @@ function HolidaysContentModal(props: HolidaysContentModalProps) {
                 onClick={handleCreateHolidayCategoryButton}
                 leftIcon={<AddIcon />}
               >
-                Adicionar categoria
+                Categoria
               </Button>
             </HStack>
 
@@ -192,7 +192,7 @@ function HolidaysContentModal(props: HolidaysContentModalProps) {
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={props.onClose}>
+          <Button mr={3} onClick={props.onClose}>
             Fechar
           </Button>
         </ModalFooter>

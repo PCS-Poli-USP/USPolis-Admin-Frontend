@@ -32,7 +32,7 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
 
   const { trigger, getValues, reset, clearErrors } = form;
   const { createHolidayCategory, updateHolidayCategory } =
-    useHolidaysCategories();
+    useHolidaysCategories(false);
 
   async function handleCreateSubmit() {
     const isValid = await trigger();
@@ -110,12 +110,11 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
                   props.isUpdate ? handleUpdateSubmit : handleCreateSubmit
                 }
                 mr={4}
+                colorScheme='blue'
               >
                 {props.isUpdate ? 'Atualizar' : 'Cadastrar'}
               </Button>
-              <Button colorScheme='blue' onClick={handleCloseModal}>
-                Fechar
-              </Button>
+              <Button onClick={handleCloseModal}>Fechar</Button>
             </ModalFooter>
           </form>
         </FormProvider>

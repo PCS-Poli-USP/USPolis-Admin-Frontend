@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { sortHolidaysResponse } from 'utils/holidays/holidays.sorter';
 import useHolidaysService from './API/services/useHolidayService';
 
-const useHolidays = () => {
+const useHolidays = (initialFetch = true) => {
   const service = useHolidaysService();
   const [loading, setLoading] = useState(false);
   const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
@@ -124,9 +124,10 @@ const useHolidays = () => {
   );
 
   useEffect(() => {
+    if (initialFetch)
     getHolidays();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [initialFetch]);
 
   return {
     loading,
