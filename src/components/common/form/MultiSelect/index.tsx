@@ -23,7 +23,7 @@ export function MultiSelect({
   disabled = false,
   loading = false,
   values = undefined,
-  placeholder = undefined,
+  placeholder = "Selecione uma ou mais opções",
   mt = undefined,
   mb = undefined,
   mr = undefined,
@@ -72,6 +72,7 @@ export function MultiSelect({
             isDisabled={disabled}
             placeholder={placeholder}
             isMulti={true}
+            closeMenuOnSelect={false}
             onChange={(selectedOption: Option[]) => {
               const values = selectedOption.map(
                 (option: Option) => option.value,
