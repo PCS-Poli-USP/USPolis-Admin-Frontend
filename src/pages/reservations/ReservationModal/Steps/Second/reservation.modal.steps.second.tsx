@@ -52,9 +52,9 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
 
   const start = watch('start_time');
   const end = watch('end_time');
-  const recurrence = watch('recurrence');
   const start_date = watch('start_date');
   const end_date = watch('end_date');
+  const recurrence = watch('recurrence');
   const month_week = watch('month_week');
   const week_day = watch('week_day');
 
@@ -95,7 +95,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
       );
       setIsLoading(false);
       setConflictedClassrooms(conflict);
-    }
+    } else setConflictedClassrooms([]);
   }
 
   useEffect(() => {
@@ -340,7 +340,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   placeholder='Data de inicio'
                   type='date'
                   disabled={recurrence === Recurrence.CUSTOM}
-                  onChange={(event) => console.log(event.target.value)}
+                  max={end_date ? end_date : undefined}
                 />
                 <Input
                   label={'Fim da agenda'}
@@ -348,6 +348,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   placeholder='Data de fim'
                   type='date'
                   disabled={recurrence === Recurrence.CUSTOM}
+                  min={start_date ? start_date : undefined}
                 />
               </HStack>
 

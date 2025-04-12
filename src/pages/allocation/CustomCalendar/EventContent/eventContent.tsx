@@ -31,7 +31,8 @@ export default function EventContent(eventInfo: EventContentArg) {
               alignContent={'center'}
               textColor={classData.allocated ? 'white' : 'red.300'}
             >
-              {eventInfo.event.title} T{classNumberFromClassCode(classData.code)}
+              {eventInfo.event.title} T
+              {classNumberFromClassCode(classData.code)}
             </Heading>
             {isTimeGridView && (
               <>
@@ -69,6 +70,11 @@ export default function EventContent(eventInfo: EventContentArg) {
             )}
           </Stack>
         </Tooltip>
+      ) : undefined}
+      {!classData && !reservationData ? (
+        <Heading size='sm' alignContent={'center'} textColor={'white'}>
+          {eventInfo.event.title}
+        </Heading>
       ) : undefined}
     </>
   );

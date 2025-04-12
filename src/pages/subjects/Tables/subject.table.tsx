@@ -83,6 +83,8 @@ export const getSubjectColumns = (
       accessorKey: 'type',
       header: 'Tipo',
       cell: ({ row }) => SubjectType.translate(row.original.type),
+      meta: { isSelectable: true },
+      accessorFn: (row) => SubjectType.translate(row.type),
     },
     {
       accessorKey: 'class_credit',

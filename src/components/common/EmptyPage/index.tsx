@@ -91,7 +91,10 @@ export default function EmptyPage() {
       if (index === FG_STEP_INDEXES.MENU) {
         handleDrawerOpen();
       }
-      if (index === FG_STEP_INDEXES.RESERVATION_BY_ALLOCATION) {
+      if (
+        index === FG_STEP_INDEXES.RESERVATION_BY_ALLOCATION ||
+        index === FG_STEP_INDEXES.ALLOCATION_DRAG_AND_DROP
+      ) {
         setTimeout(() => {
           triggerControl('any'); // change calendar view and expand resources
         }, 100);
@@ -139,9 +142,8 @@ export default function EmptyPage() {
         setTimeout(() => {
           setState({ ...state, stepIndex: index + 1 });
         }, 300);
-      }
-      else setState({ ...state, stepIndex: index + 1 });
-      
+      } else setState({ ...state, stepIndex: index + 1 });
+
       if (stepData.next) {
         navigate(stepData.next);
       }

@@ -3,7 +3,7 @@ import { Placement } from 'react-joyride';
 
 interface StepContentProps {
   title: string;
-  description: string;
+  description: string | JSX.Element;
   titleSize?: string;
   descriptionSize?: string;
   mb?: number | string;
@@ -63,6 +63,7 @@ export interface FeatureTourGuideStep {
       backgroundColor: string;
     };
   };
+  spotlightClicks: boolean;
   offset: number;
   data: FeatureTourGuideStepData;
   isFixed: boolean;
@@ -95,6 +96,7 @@ function createFeatureTourGuideStep({
         backgroundColor: '#408080',
       },
     },
+    spotlightClicks: true,
     offset: offset,
     isFixed: isFixed,
     data: data,
