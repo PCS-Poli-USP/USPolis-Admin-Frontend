@@ -48,9 +48,7 @@ function GroupAccordion(props: GroupAccordionProps) {
             <>
               <AccordionButton>
                 <Box as='span' flex='1' textAlign='left'>
-                  <Text
-                    as={'b'}
-                  >{`${group.abbreviation} - ${group.name}`}</Text>
+                  <Text as={'b'}>{`${group.name}`}</Text>
                 </Box>
                 {isExpanded ? (
                   <MinusIcon fontSize='12px' />
@@ -122,6 +120,7 @@ function GroupAccordion(props: GroupAccordionProps) {
                               h={'50px'}
                               overflowX={'hidden'}
                               textOverflow={'ellipsis'}
+                              alignContent={'center'}
                             >
                               {`${user}`}
                             </Text>
@@ -164,6 +163,7 @@ function GroupAccordion(props: GroupAccordionProps) {
                               w={'160px'}
                               overflowX={'hidden'}
                               textOverflow={'ellipsis'}
+                              alignContent={'center'}
                               h={'50px'}
                             >{`${classroom}`}</Text>
                           </Flex>

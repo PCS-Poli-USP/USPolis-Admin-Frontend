@@ -90,7 +90,7 @@ function createAllocationDragAndDropStep() {
           Editar alocações pelo Mapa de Salas
         </Heading>
         <Text size={'md'}>
-          Clique com o botão esquerdo segurado e arraste para a nova sala/hora.
+          Clique segurado e arraste para a nova sala/hora.
         </Text>
         <Box mt={'20px'}>
           <TravelHand />

@@ -1,7 +1,6 @@
 export interface GroupResponse {
   id: number;
   name: string;
-  abbreviation: string;
 
   classroom_ids: number[];
   classroom_strs: string[];

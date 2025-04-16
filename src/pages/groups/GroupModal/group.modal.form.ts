@@ -14,17 +14,6 @@ export const formFields = {
       ),
     defaultValue: '',
   },
-  abbreviation: {
-    validator: yup
-      .string()
-      .required('Campo obrigatório')
-      .test(
-        'is-valid-option',
-        'Deve ter entre 3 e 10 caracteres',
-        (value) => !GroupValidator.isInvalidAbbreviation(value),
-      ),
-    defaultValue: '',
-  },
 
   classroom_ids: {
     validator: yup
@@ -54,14 +43,12 @@ export const formFields = {
 
 export const schema = yup.object<GroupForm>().shape({
   name: formFields.name.validator,
-  abbreviation: formFields.abbreviation.validator,
   classroom_ids: formFields.classroom_ids.validator,
   user_ids: formFields.user_ids.validator,
 });
 
 export const defaultValues: GroupForm = {
   name: formFields.name.defaultValue,
-  abbreviation: formFields.abbreviation.defaultValue,
   classroom_ids: formFields.classroom_ids.defaultValue,
   user_ids: formFields.user_ids.defaultValue,
 };

@@ -60,11 +60,7 @@ export function Groups() {
   }
 
   function filterGroups(value: string) {
-    const filtered = groups.filter(
-      (group) =>
-        filterString(group.name, value) ||
-        filterString(group.abbreviation, value),
-    );
+    const filtered = groups.filter((group) => filterString(group.name, value));
     setFilteredGroups(filtered);
   }
 

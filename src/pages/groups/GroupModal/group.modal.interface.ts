@@ -15,7 +15,6 @@ export interface GroupModalProps extends ModalProps {
 
 export interface GroupForm {
   name: string;
-  abbreviation: string;
   classroom_ids: number[];
   user_ids: number[];
 }
