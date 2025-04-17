@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react';
-import { AuthHttpService } from 'services/auth/auth.service';
+import { AuthHttpService } from '../../../services/auth/auth.service';
 import { axiosPrivate } from '../../../services/api/axios';
-import { appContext } from 'context/AppContext';
+import { appContext } from '../../../context/AppContext';
 
 const authHttpService = new AuthHttpService();
 

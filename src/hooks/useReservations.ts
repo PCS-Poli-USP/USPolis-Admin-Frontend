@@ -1,11 +1,11 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 import {
   CreateReservation,
   UpdateReservation,
-} from 'models/http/requests/reservation.request.models';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+} from '../models/http/requests/reservation.request.models';
+import { ReservationResponse } from '../models/http/responses/reservation.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortReservationsResponse } from 'utils/reservations/reservations.sorter';
+import { sortReservationsResponse } from '../utils/reservations/reservations.sorter';
 import useReservationsService from './API/services/useReservationsService';
 
 const useReservations = (initialFetch = true) => {
@@ -80,7 +80,7 @@ const useReservations = (initialFetch = true) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Reserva ${data.title} criado com sucesso!`,
@@ -104,7 +104,7 @@ const useReservations = (initialFetch = true) => {
       setLoading(true);
       await service
         .update(id, data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso', `Reserva atualizado com sucesso!`, 'success');
           getReservations();
         })
@@ -127,7 +127,7 @@ const useReservations = (initialFetch = true) => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso!', 'Sucesso ao remover reserva', 'success');
 
           getReservations();

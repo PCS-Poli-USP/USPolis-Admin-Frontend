@@ -45,15 +45,15 @@ import {
   DownloadIcon,
   SmallCloseIcon,
 } from '@chakra-ui/icons';
-import useReservations from 'hooks/useReservations';
+import useReservations from '../../../hooks/useReservations';
 import {
   CreateReservation,
   UpdateReservation,
-} from 'models/http/requests/reservation.request.models';
+} from '../../../models/http/requests/reservation.request.models';
 import { useEffect, useState } from 'react';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { useDateCalendarPicker } from 'components/common/DateCalendarPicker';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { useDateCalendarPicker } from '../../../components/common/DateCalendarPicker';
+import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 
 function ReservationModal(props: ReservationModalProps) {
   const firstForm = useForm<ReservationFirstForm>({

@@ -1,5 +1,5 @@
-import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
-import { ModalProps } from 'models/interfaces';
+import { HolidayCategoryResponse } from '../../../models/http/responses/holidayCategory.response.models';
+import { ModalProps } from '../../../models/interfaces';
 
 export interface HolidayCategoryModalProps extends ModalProps {
   isUpdate: boolean;

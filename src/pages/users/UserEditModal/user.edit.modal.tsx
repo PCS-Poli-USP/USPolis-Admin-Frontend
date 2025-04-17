@@ -16,8 +16,8 @@ import {
 import Select from 'react-select';
 
 import { useEffect, useState } from 'react';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import useBuildingsService from 'hooks/API/services/useBuildingsService';
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
+import useBuildingsService from '../../../hooks/API/services/useBuildingsService';
 
 interface EditModalProps {
   isOpen: boolean;
@@ -122,7 +122,7 @@ export default function EditUserModal(props: EditModalProps) {
                     value: it.id,
                     label: it.name,
                   }))}
-                  onChange={(selected: BuildingOption[]) => {
+                  onChange={(selected) => {
                     const selectedBuildings = selected as BuildingOption[];
                     setForm((prev) => ({
                       ...prev,

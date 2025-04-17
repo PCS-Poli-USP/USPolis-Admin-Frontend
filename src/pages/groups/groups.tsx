@@ -9,21 +9,21 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import PageContent from 'components/common/PageContent';
+import PageContent from '../../components/common/PageContent';
 import GroupAccordion from './GroupAccordion/group.accordion';
 import { MdGroupAdd } from 'react-icons/md';
 import GroupModal from './GroupModal/group.modal';
-import useClassrooms from 'hooks/useClassrooms';
-import useUsers from 'hooks/useUsers';
+import useClassrooms from '../../hooks/useClassrooms';
+import useUsers from '../../hooks/useUsers';
 import { useEffect, useState } from 'react';
-import useGroups from 'hooks/useGroups';
-import { GroupResponse } from 'models/http/responses/group.response.models';
-import Dialog from 'components/common/Dialog/dialog.component';
-import useBuildings from 'hooks/useBuildings';
-import { filterString } from 'utils/filters';
+import useGroups from '../../hooks/useGroups';
+import { GroupResponse } from '../../models/http/responses/group.response.models';
+import Dialog from '../../components/common/Dialog/dialog.component';
+import useBuildings from '../../hooks/useBuildings';
+import { filterString } from '../../utils/filters';
 import { BsSearch } from 'react-icons/bs';
 
-export function Groups() {
+export default function Groups() {
   const {
     isOpen: isOpenGroupModal,
     onOpen: onOpenGroupModal,

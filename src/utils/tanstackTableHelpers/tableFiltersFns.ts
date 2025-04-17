@@ -1,9 +1,9 @@
 import { Row } from '@tanstack/react-table';
-import { ClassResponse } from 'models/http/responses/class.response.models';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
-import { filterString, filterStringArray } from 'utils/filters';
-import { normalizeString } from 'utils/formatters';
+import { ClassResponse } from '../../models/http/responses/class.response.models';
+import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
+import { classNumberFromClassCode } from '../../utils/classes/classes.formatter';
+import { filterString, filterStringArray } from '../../utils/filters';
+import { normalizeString } from '../../utils/formatters';
 
 export function FilterBoolean(row: Row<any>, columnId: string, value: string) {
   const booleanFromStringValue = value === 'true';

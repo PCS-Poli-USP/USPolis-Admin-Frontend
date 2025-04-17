@@ -1,5 +1,5 @@
-import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
-import { sortHolidaysResponse } from 'utils/holidays/holidays.sorter';
+import { HolidayCategoryResponse } from '../../models/http/responses/holidayCategory.response.models';
+import { sortHolidaysResponse } from '../../utils/holidays/holidays.sorter';
 
 export function sortHolidaysCategoriesResponse(
   A: HolidayCategoryResponse,

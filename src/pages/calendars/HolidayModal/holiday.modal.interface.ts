@@ -1,6 +1,6 @@
-import { HolidayResponse } from 'models/http/responses/holiday.response.models';
-import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
-import { ModalProps } from 'models/interfaces';
+import { HolidayResponse } from '../../../models/http/responses/holiday.response.models';
+import { HolidayCategoryResponse } from '../../../models/http/responses/holidayCategory.response.models';
+import { ModalProps } from '../../../models/interfaces';
 
 export interface HolidayModalProps extends ModalProps {
   categories: HolidayCategoryResponse[];

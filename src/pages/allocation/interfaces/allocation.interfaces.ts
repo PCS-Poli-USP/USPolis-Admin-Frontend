@@ -1,7 +1,7 @@
 import {
   EventResponse,
   ResourceResponse,
-} from 'models/http/responses/allocation.response.models';
+} from '../../../models/http/responses/allocation.response.models';
 
 export interface Resource extends ResourceResponse {
   eventColor?: string;

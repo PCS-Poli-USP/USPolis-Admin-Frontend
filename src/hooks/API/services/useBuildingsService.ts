@@ -2,8 +2,8 @@ import { AxiosResponse } from 'axios';
 import {
   CreateBuilding,
   UpdateBuilding,
-} from 'models/http/requests/building.request.models';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
+} from '../../../models/http/requests/building.request.models';
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 const useBuildingsService = () => {

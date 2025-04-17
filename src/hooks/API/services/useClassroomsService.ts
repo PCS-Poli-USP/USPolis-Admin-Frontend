@@ -1,17 +1,17 @@
 import { AxiosResponse } from 'axios';
-import { ClassroomWithConflictCount as ClassroomWithConflictCountOLD } from 'models/common/classroom.model';
+import { ClassroomWithConflictCount as ClassroomWithConflictCountOLD } from '../../../models/common/classroom.model';
 import {
   ClassroomFullResponse,
   ClassroomResponse,
   ClassroomWithConflictCount,
-} from 'models/http/responses/classroom.response.models';
+} from '../../../models/http/responses/classroom.response.models';
 import {
   ClassroomConflictCheck,
   CreateClassroom,
   UpdateClassroom,
-} from 'models/http/requests/classroom.request.models';
+} from '../../../models/http/requests/classroom.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import * as service from 'services/api/axios';
+import * as service from '../../../services/api/axios';
 
 const useClassroomsService = () => {
   const axiosCommon = service.default;

@@ -16,12 +16,12 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
-import { UserResponse } from 'models/http/responses/user.response.models';
+import { CalendarResponse } from '../../../models/http/responses/calendar.responde.models';
+import { UserResponse } from '../../../models/http/responses/user.response.models';
 import { useEffect } from 'react';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { sortCalendarResponse } from 'utils/calendars/calendar.sorter';
-import { holidayCategoryToString } from 'utils/holidaysCategories/holidaysCategories.formatter';
+import { sortCalendarResponse } from '../../../utils/calendars/calendar.sorter';
+import { holidayCategoryToString } from '../../../utils/holidaysCategories/holidaysCategories.formatter';
 
 interface HolidayCategoryAccordionProps {
   loggedUser: UserResponse | null;

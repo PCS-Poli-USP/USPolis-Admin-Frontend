@@ -1,12 +1,12 @@
 import { UseFormReturn } from 'react-hook-form';
-import { WeekDay } from 'utils/enums/weekDays.enum';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
-import { DateCalendarPickerReturn } from 'components/common/DateCalendarPicker/hooks/useDateCalendarPicker';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { WeekDay } from '../../../../../utils/enums/weekDays.enum';
+import { MonthWeek } from '../../../../../utils/enums/monthWeek.enum';
+import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
+import { BuildingResponse } from '../../../../../models/http/responses/building.response.models';
+import { ClassroomResponse } from '../../../../../models/http/responses/classroom.response.models';
+import { ReservationResponse } from '../../../../../models/http/responses/reservation.response.models';
+import { DateCalendarPickerReturn } from '../../../../../components/common/DateCalendarPicker/hooks/useDateCalendarPicker';
+import { ClassroomSolicitationResponse } from '../../../../../models/http/responses/classroomSolicitation.response.models';
 
 export interface ReservationModalSecondStepProps
   extends DateCalendarPickerReturn {

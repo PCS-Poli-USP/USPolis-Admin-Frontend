@@ -4,7 +4,6 @@ import {
   FormControl,
   FormErrorMessage,
 } from '@chakra-ui/react';
-import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { FieldPropsBase } from '../form.interface';
 

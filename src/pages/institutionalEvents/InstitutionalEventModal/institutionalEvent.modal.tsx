@@ -14,18 +14,18 @@ import {
   Text,
   Checkbox,
 } from '@chakra-ui/react';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform//resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './institutionalEvent.modal.form';
-import { Input, Select, Textarea } from 'components/common';
+import { Input, Select, Textarea } from '../../../components/common';
 import { useEffect, useState } from 'react';
-import { EventTypes } from 'utils/enums/eventTypes.enum';
-import { CreateInstitutionalEvent } from 'models/http/requests/institutionalEvent.request.models';
+import { EventTypes } from '../../../utils/enums/eventTypes.enum';
+import { CreateInstitutionalEvent } from '../../../models/http/requests/institutionalEvent.request.models';
 import {
   InstitutionalEventForm,
   InstitutionalEventModalProps,
 } from './institutionalEvent.modal.interface';
-import useInstitutionalEvents from 'hooks/useInstitutionalEvents';
+import useInstitutionalEvents from '../../../hooks/useInstitutionalEvents';
 
 function InstitutionalEventModal({
   isOpen,
@@ -193,16 +193,17 @@ function InstitutionalEventModal({
             </ModalBody>
             <ModalFooter>
               <HStack gap={1}>
-                <Button onClick={onClose} variant='outline'>
-                  Fechar
-                </Button>
                 <Button
                   onClick={
                     !!selectedEvent ? handleUpdateSubmit : handleCreateSubmit
                   }
+                  colorScheme='blue'
                   isLoading={loading}
                 >
                   Confirmar
+                </Button>
+                <Button onClick={onClose} variant='outline'>
+                  Fechar
                 </Button>
               </HStack>
             </ModalFooter>

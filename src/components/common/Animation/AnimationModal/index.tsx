@@ -6,7 +6,7 @@ import {
   Center,
   Button,
 } from '@chakra-ui/react';
-import { ModalProps } from 'models/interfaces';
+import { ModalProps } from '../../../../models/interfaces';
 import TravelHand from '../TravelHand';
 
 interface AnimationModalProps extends ModalProps {

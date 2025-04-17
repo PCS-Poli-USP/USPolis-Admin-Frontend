@@ -11,17 +11,17 @@ import {
   ModalOverlay,
   Spinner,
 } from '@chakra-ui/react';
-import { ClassResponse } from 'models/http/responses/class.response.models';
+import { ClassResponse } from '../../../models/http/responses/class.response.models';
 import AllocateSingleScheduleSection, {
   AllocateSingleScheduleSectionRef,
 } from './allocateSingleScheduleSection';
 import { useContext, useEffect, useRef, useState } from 'react';
-import useOccurrences from 'hooks/useOccurrences';
-import useClassesService from 'hooks/API/services/useClassesService';
-import { AllocateManySchedulesData } from 'hooks/API/services/useOccurrencesService';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
-import useAllowedBuildings from 'hooks/useAllowedBuildings';
-import { appContext } from 'context/AppContext';
+import useOccurrences from '../../../hooks/useOccurrences';
+import useClassesService from '../../../hooks/API/services/useClassesService';
+import { AllocateManySchedulesData } from '../../../hooks/API/services/useOccurrencesService';
+import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
+import useAllowedBuildings from '../../../hooks/useAllowedBuildings';
+import { appContext } from '../../../context/AppContext';
 
 interface props {
   isOpen: boolean;

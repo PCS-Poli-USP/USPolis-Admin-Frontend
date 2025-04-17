@@ -17,19 +17,19 @@ import {
 import { HolidayForm, HolidayModalProps } from './holiday.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './holiday.modal.form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Input, Select } from 'components/common';
+import { yupResolver } from '@hookform//resolvers/yup';
+import { Input, Select } from '../../../components/common';
 import {
   CreateHoliday,
   UpdateHoliday,
-} from 'models/http/requests/holiday.request.models';
+} from '../../../models/http/requests/holiday.request.models';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
-import useHolidays from 'hooks/useHolidays';
+import useHolidays from '../../../hooks/useHolidays';
 import DateCalendarPicker, {
   useDateCalendarPicker,
-} from 'components/common/DateCalendarPicker';
-import { HolidayResponse } from 'models/http/responses/holiday.response.models';
+} from '../../../components/common/DateCalendarPicker';
+import { HolidayResponse } from '../../../models/http/responses/holiday.response.models';
 
 function HolidayModal(props: HolidayModalProps) {
   const [isMultipleHolidays, setIsMultipleHolidays] = useState(false);

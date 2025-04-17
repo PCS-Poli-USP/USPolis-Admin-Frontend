@@ -1,10 +1,10 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
-import { appContext } from 'context/AppContext';
-import { AuthHttpService } from 'services/auth/auth.service';
-import LoadingPage from 'components/common/LoadingPage';
+import { appContext } from '../context/AppContext';
+import { AuthHttpService } from '../services/auth/auth.service';
+import LoadingPage from '../components/common/LoadingPage';
 
-const OVERRIDE = process.env.REACT_APP_OVERRIDE_AUTH;
+const OVERRIDE = import.meta.env.VITE_OVERRIDE_PERSIST_LOGIN;
 
 const PersistLogin = () => {
   const [isLoading, setIsLoading] = useState(true);

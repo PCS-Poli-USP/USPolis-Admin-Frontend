@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { ClassroomForm } from './classroom.modal.interface';
-import { ClassroomValidator } from 'utils/classrooms/classrooms.validator';
+import { ClassroomValidator } from '../../../utils/classrooms/classrooms.validator';
 
 export const formFields = {
   name: {

@@ -13,11 +13,11 @@ import {
 import { CalendarIcon } from '@chakra-ui/icons';
 import { BsBookHalf, BsHouseFill, BsFillPenFill } from 'react-icons/bs';
 
-import Classroom from 'models/common/classroom.model';
-import Event from 'models/common/event.model';
+import Classroom from '../../models/common/classroom.model';
+import Event from '../../models/common/event.model';
 
 import { useEffect, useState } from 'react';
-import useClassesService from 'hooks/API/services/useClassesService';
+import useClassesService from '../../hooks/API/services/useClassesService';
 
 interface AutomaticAllocationAccordionProps {
   onEdit: (event: Event) => void;

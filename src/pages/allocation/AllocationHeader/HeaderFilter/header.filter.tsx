@@ -2,7 +2,7 @@ import { Box, Flex, Text, useMediaQuery } from '@chakra-ui/react';
 import Select, { SelectInstance, StylesConfig } from 'react-select';
 import { AllocationHeaderProps } from '..';
 import { useRef } from 'react';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+import { classNumberFromClassCode } from '../../../../utils/classes/classes.formatter';
 
 type OptionType = { value: string; label: string };
 
@@ -114,7 +114,7 @@ function HeaderFilter({
                     ? { value: buildingSearchValue, label: buildingSearchValue }
                     : undefined
                 }
-                onChange={(option: OptionType) => {
+                onChange={(option) => {
                   if (option) {
                     setBuildingSearchValue(option.value);
                   } else {
@@ -148,7 +148,7 @@ function HeaderFilter({
                       }
                     : undefined
                 }
-                onChange={(option: OptionType) => {
+                onChange={(option) => {
                   if (option) {
                     setClassroomSearchValue(option.value);
                   } else {
@@ -178,7 +178,7 @@ function HeaderFilter({
                     : undefined
                 }
                 options={subjectOptions}
-                onChange={(option: OptionType) => {
+                onChange={(option) => {
                   if (option) {
                     setNameSearchValue(option.value);
                   } else {
@@ -232,7 +232,7 @@ function HeaderFilter({
                   ? { value: buildingSearchValue, label: buildingSearchValue }
                   : undefined
               }
-              onChange={(option: OptionType) => {
+              onChange={(option) => {
                 if (option) {
                   setBuildingSearchValue(option.value);
                 } else {
@@ -263,7 +263,7 @@ function HeaderFilter({
                   ? { value: classroomSearchValue, label: classroomSearchValue }
                   : undefined
               }
-              onChange={(option: OptionType) => {
+              onChange={(option) => {
                 if (option) {
                   setClassroomSearchValue(option.value);
                 } else {
@@ -290,7 +290,7 @@ function HeaderFilter({
                   : undefined
               }
               options={subjectOptions}
-              onChange={(option: OptionType) => {
+              onChange={(option) => {
                 if (option) {
                   setNameSearchValue(option.value);
                 } else {

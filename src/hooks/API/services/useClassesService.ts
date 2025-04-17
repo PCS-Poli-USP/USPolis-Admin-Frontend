@@ -2,14 +2,14 @@ import { AxiosResponse } from 'axios';
 import {
   ClassResponse,
   ClassFullResponse,
-} from 'models/http/responses/class.response.models';
+} from '../../../models/http/responses/class.response.models';
 import {
   CreateClass,
   UpdateClass,
-} from 'models/http/requests/class.request.models';
+} from '../../../models/http/requests/class.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
-import axios from 'services/api/axios';
+import axios from '../../../services/api/axios';
 
 const useClassesService = () => {
   const PREFIX = '/classes';

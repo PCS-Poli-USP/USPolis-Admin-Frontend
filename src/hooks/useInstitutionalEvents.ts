@@ -1,9 +1,9 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 import {
   CreateInstitutionalEvent,
   UpdateInstitutionalEvent,
-} from 'models/http/requests/institutionalEvent.request.models';
-import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
+} from '../models/http/requests/institutionalEvent.request.models';
+import { InstitutionalEventResponse } from '../models/http/responses/instituionalEvent.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import useInstitutionalEventsService from './API/services/useInstitutionalEventsService';
 
@@ -21,7 +21,7 @@ const useInstitutionalEvents = () => {
       .then((response) => {
         setEvents(response.data);
       })
-      .catch((error) => {
+      .catch(() => {
         showToast('Erro', 'Erro ao carregar eventos institucionais', 'error');
       })
       .finally(() => {
@@ -34,7 +34,7 @@ const useInstitutionalEvents = () => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Evento institucional criado com sucesso!`,
@@ -61,7 +61,7 @@ const useInstitutionalEvents = () => {
       setLoading(true);
       await service
         .update(id, data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Evento institucional atualizado com sucesso!`,
@@ -88,7 +88,7 @@ const useInstitutionalEvents = () => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso!',
             'Sucesso ao remover evento institucional',

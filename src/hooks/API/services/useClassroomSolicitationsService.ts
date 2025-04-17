@@ -1,10 +1,10 @@
 import { AxiosResponse } from 'axios';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import {
   ClassroomSolicitationAprove,
   ClassroomSolicitationDeny,
   CreateClassroomSolicitation,
-} from 'models/http/requests/classroomSolicitation.request.models';
+} from '../../../models/http/requests/classroomSolicitation.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 const useClassroomSolicitationsService = () => {

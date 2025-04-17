@@ -1,7 +1,7 @@
 import * as yup from 'yup';
-import { ReservationValidator } from 'utils/reservations/resevations.validator';
-import { ScheduleValidator } from 'utils/schedules/schedules.validator';
-import { Recurrence } from 'utils/enums/recurrence.enum';
+import { ReservationValidator } from '../../../../../utils/reservations/resevations.validator';
+import { ScheduleValidator } from '../../../../../utils/schedules/schedules.validator';
+import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
 import { ReservationSecondForm } from './reservation.modal.steps.second.interface';
 
 export const secondFormFields = {

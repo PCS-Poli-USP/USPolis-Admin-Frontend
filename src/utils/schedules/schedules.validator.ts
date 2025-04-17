@@ -1,7 +1,7 @@
-import CommonValidator from 'utils/common/common.validator';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import CommonValidator from '../../utils/common/common.validator';
+import { MonthWeek } from '../../utils/enums/monthWeek.enum';
+import { Recurrence } from '../../utils/enums/recurrence.enum';
+import { WeekDay } from '../../utils/enums/weekDays.enum';
 
 export class ScheduleValidator extends CommonValidator {
   static isInvalidWeekDay(value: number) {

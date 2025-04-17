@@ -1,7 +1,7 @@
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
-import { EventExtendedProps } from 'models/http/responses/allocation.response.models';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
+import { WeekDay } from '../../../utils/enums/weekDays.enum';
+import { EventExtendedProps } from '../../../models/http/responses/allocation.response.models';
 
 export function getEventScheduleText(extendedProps: EventExtendedProps) {
   const data = extendedProps.class_data || extendedProps.reservation_data;

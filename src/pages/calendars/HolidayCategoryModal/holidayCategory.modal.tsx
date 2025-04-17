@@ -15,14 +15,14 @@ import {
 } from './holidayCategory.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './holidayCategory.modal.form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Input } from 'components/common';
+import { yupResolver } from '@hookform//resolvers/yup';
+import { Input } from '../../../components/common';
 import {
   CreateHolidayCategory,
   UpdateHolidayCategory,
-} from 'models/http/requests/holidayCategory.request.models';
+} from '../../../models/http/requests/holidayCategory.request.models';
 import { useEffect } from 'react';
-import useHolidaysCategories from 'hooks/useHolidaysCategories';
+import useHolidaysCategories from '../../../hooks/useHolidaysCategories';
 
 function HolidayCategoryModal(props: HolidayCategoryModalProps) {
   const form = useForm<HolidayCategoryForm>({

@@ -1,5 +1,5 @@
-import { appContext } from 'context/AppContext';
-import Page401 from 'pages/page401';
+import { appContext } from '../context/AppContext';
+import Page401 from '../pages/page401';
 import { useContext } from 'react';
 import { Outlet } from 'react-router-dom';
 

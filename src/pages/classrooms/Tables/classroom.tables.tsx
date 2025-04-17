@@ -1,8 +1,8 @@
 import { CopyIcon } from '@chakra-ui/icons';
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { appContext } from 'context/AppContext';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import { appContext } from '../../../context/AppContext';
+import { ClassroomResponse } from '../../../models/http/responses/classroom.response.models';
 import moment from 'moment';
 import { useContext } from 'react';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
@@ -10,7 +10,7 @@ import {
   FilterBoolean,
   FilterNumber,
   FilterString,
-} from 'utils/tanstackTableHelpers/tableFiltersFns';
+} from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 
 interface ClassroomColumnsProps {
   handleDuplicateClick: (data: ClassroomResponse) => void;

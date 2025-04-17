@@ -17,11 +17,11 @@ import {
 } from '@chakra-ui/react';
 import DateCalendarPicker, {
   useDateCalendarPicker,
-} from 'components/common/DateCalendarPicker';
-import useSchedules from 'hooks/useSchedules';
-import { ClassFullResponse } from 'models/http/responses/class.response.models';
+} from '../../../components/common/DateCalendarPicker';
+import useSchedules from '../../../hooks/useSchedules';
+import { ClassFullResponse } from '../../../models/http/responses/class.response.models';
 import { useEffect, useState } from 'react';
-import { getScheduleFullString } from 'utils/schedules/schedule.formatter';
+import { getScheduleFullString } from '../../../utils/schedules/schedule.formatter';
 
 interface ScheduleAccordionProps {
   class?: ClassFullResponse;

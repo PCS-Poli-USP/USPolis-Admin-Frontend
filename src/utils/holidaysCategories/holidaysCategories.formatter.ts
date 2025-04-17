@@ -1,4 +1,4 @@
-import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
+import { HolidayCategoryResponse } from '../../models/http/responses/holidayCategory.response.models';
 import moment from 'moment';
 
 export function holidayCategoryToString(

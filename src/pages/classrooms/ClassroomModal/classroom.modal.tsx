@@ -17,11 +17,11 @@ import {
 } from './classroom.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './classroom.modal.form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Input, Select } from 'components/common';
-import { NumberInput } from 'components/common/form/NumberInput';
-import { CheckBox } from 'components/common/form/CheckBox';
-import useClassrooms from 'hooks/useClassrooms';
+import { yupResolver } from '@hookform//resolvers/yup';
+import { Input, Select } from '../../../components/common';
+import { NumberInput } from '../../../components/common/form/NumberInput';
+import { CheckBox } from '../../../components/common/form/CheckBox';
+import useClassrooms from '../../../hooks/useClassrooms';
 
 export default function ClassroomModal(props: ClassroomModalProps) {
   const form = useForm<ClassroomForm>({

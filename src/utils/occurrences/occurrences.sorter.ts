@@ -1,4 +1,4 @@
-import { OccurrenceResponse } from 'models/http/responses/occurrence.response.models';
+import { OccurrenceResponse } from '../../models/http/responses/occurrence.response.models';
 import moment from 'moment';
 
 export function sortOccurrenceResponse(

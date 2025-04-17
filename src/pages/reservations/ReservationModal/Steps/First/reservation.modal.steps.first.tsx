@@ -18,10 +18,10 @@ import {
   Select,
   SelectInput,
   Textarea,
-} from 'components/common';
-import { ReservationType } from 'utils/enums/reservations.enum';
+} from '../../../../../components/common';
+import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 import { ReservationModalFirstStepProps } from './reservation.modal.steps.first.interface';
-import { sortDates } from 'utils/holidays/holidays.sorter';
+import { sortDates } from '../../../../../utils/holidays/holidays.sorter';
 import moment from 'moment';
 import { QuestionIcon } from '@chakra-ui/icons';
 

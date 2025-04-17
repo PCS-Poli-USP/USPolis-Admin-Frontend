@@ -1,4 +1,4 @@
-import { SubjectType } from "utils/enums/subjects.enum";
+import { SubjectType } from "../../utils/enums/subjects.enum";
 
 export interface Subject {
   id: number;

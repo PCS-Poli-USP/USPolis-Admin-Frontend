@@ -15,7 +15,7 @@ import {
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
-import { getScheduleFullString } from 'utils/schedules/schedule.formatter';
+import { getScheduleFullString } from '../../../../../utils/schedules/schedule.formatter';
 
 interface ScheduleListProps {
   schedules: ScheduleData[];

@@ -9,12 +9,12 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { ClassType } from 'utils/enums/classes.enum';
+import { ClassType } from '../../../../../utils/enums/classes.enum';
 import moment from 'moment';
 import { BsCalendar2WeekFill } from 'react-icons/bs';
 import { WarningIcon } from '@chakra-ui/icons';
 import { ClassModalFifthStepProps } from './class.modal.steps.fifth.interface';
-import { getScheduleFullString } from 'utils/schedules/schedule.formatter';
+import { getScheduleFullString } from '../../../../../utils/schedules/schedule.formatter';
 
 function ClassModalFifthStep(props: ClassModalFifthStepProps) {
   const firstForm = props.data.first;

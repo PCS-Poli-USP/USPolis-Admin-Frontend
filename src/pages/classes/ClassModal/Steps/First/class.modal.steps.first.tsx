@@ -1,12 +1,12 @@
 import { HStack, Text, VStack } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
-import { Input, Select } from 'components/common';
-import { ClassType } from 'utils/enums/classes.enum';
-import { NumberInput } from 'components/common/form/NumberInput';
+import { Input, Select } from '../../../../../components/common';
+import { ClassType } from '../../../../../utils/enums/classes.enum';
+import { NumberInput } from '../../../../../components/common/form/NumberInput';
 import { ClassModalFirstStepProps } from './class.modal.steps.first.interface';
 import { useEffect, useState } from 'react';
-import { SubjectResponse } from 'models/http/responses/subject.response.models';
-import { MultiSelect } from 'components/common/form/MultiSelect';
+import { SubjectResponse } from '../../../../../models/http/responses/subject.response.models';
+import { MultiSelect } from '../../../../../components/common/form/MultiSelect';
 
 function ClassModalFirstStep(props: ClassModalFirstStepProps) {
   const [selectedSubject, setSelectedSubject] = useState<

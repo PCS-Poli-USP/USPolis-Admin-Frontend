@@ -2,9 +2,9 @@ import useAxiosPrivate from '../axios/useAxiosPrivate';
 import {
   CreateUser,
   UpdateUser,
-} from 'models/http/requests/user.request.models';
+} from '../../../models/http/requests/user.request.models';
 import { AxiosResponse } from 'axios';
-import { UserResponse } from 'models/http/responses/user.response.models';
+import { UserResponse } from '../../../models/http/responses/user.response.models';
 
 const useUsersService = () => {
   const PREFIX = '/admin/users';

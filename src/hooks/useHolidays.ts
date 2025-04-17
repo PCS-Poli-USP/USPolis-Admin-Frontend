@@ -1,13 +1,13 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 import {
   CreateHoliday,
   CreateManyHolidays,
   UpdateHoliday,
-} from 'models/http/requests/holiday.request.models';
-import { HolidayResponse } from 'models/http/responses/holiday.response.models';
+} from '../models/http/requests/holiday.request.models';
+import { HolidayResponse } from '../models/http/responses/holiday.response.models';
 import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
-import { sortHolidaysResponse } from 'utils/holidays/holidays.sorter';
+import { sortHolidaysResponse } from '../utils/holidays/holidays.sorter';
 import useHolidaysService from './API/services/useHolidayService';
 
 const useHolidays = (initialFetch = true) => {
@@ -24,7 +24,7 @@ const useHolidays = (initialFetch = true) => {
       .then((response) => {
         setHolidays(response.data.sort(sortHolidaysResponse));
       })
-      .catch((error) => {
+      .catch(() => {
         showToast('Erro', 'Erro ao carregar feriados', 'error');
       })
       .finally(() => {
@@ -37,7 +37,7 @@ const useHolidays = (initialFetch = true) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Feriado do dia ${moment(data.date).format(
@@ -85,7 +85,7 @@ const useHolidays = (initialFetch = true) => {
       setLoading(true);
       await service
         .update(id, data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso', `Feriado atualizado com sucesso!`, 'success');
           getHolidays();
         })
@@ -108,7 +108,7 @@ const useHolidays = (initialFetch = true) => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso!', 'Sucesso ao remover feriado', 'success');
           getHolidays();
         })

@@ -1,7 +1,7 @@
-import { appContext } from 'context/AppContext';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
+import { appContext } from '../context/AppContext';
+import { BuildingResponse } from '../models/http/responses/building.response.models';
 import { useContext, useEffect, useState } from 'react';
-import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
+import { sortBuildingsResponse } from '../utils/buildings/building.sorter';
 import useBuildingsService from './API/services/useBuildingsService';
 
 const useAllowedBuildings = () => {

@@ -21,13 +21,13 @@ import {
   ClassExtendedData,
   EventExtendedProps,
   ReservationExtendedData,
-} from 'models/http/responses/allocation.response.models';
-import { ModalProps } from 'models/interfaces';
+} from '../../../models/http/responses/allocation.response.models';
+import { ModalProps } from '../../../models/interfaces';
 import { useEffect, useState } from 'react';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
 import useAllocation from '../hooks/useAllocation';
-import { EventUpdate } from 'models/http/requests/allocation.request.models';
-import { AllocationEnum } from 'utils/enums/allocation.enum';
+import { EventUpdate } from '../../../models/http/requests/allocation.request.models';
+import { AllocationEnum } from '../../../utils/enums/allocation.enum';
 import moment from 'moment';
 
 interface EventDragModalProps extends ModalProps {

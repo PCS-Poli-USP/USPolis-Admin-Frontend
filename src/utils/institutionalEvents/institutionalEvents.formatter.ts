@@ -1,4 +1,4 @@
-import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
+import { InstitutionalEventResponse } from '../../models/http/responses/instituionalEvent.response.models';
 import moment from 'moment';
 
 export const periodFormatter = (data: InstitutionalEventResponse) => {

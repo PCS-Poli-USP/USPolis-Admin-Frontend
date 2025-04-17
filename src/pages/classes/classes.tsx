@@ -1,26 +1,26 @@
 import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
-import DataTable from 'components/common/DataTable/dataTable.component';
-import Dialog from 'components/common/Dialog/dialog.component';
-import Loading from 'components/common/Loading/loading.component';
+import DataTable from '../../components/common/DataTable/dataTable.component';
+import Dialog from '../../components/common/Dialog/dialog.component';
+import Loading from '../../components/common/Loading/loading.component';
 import { useContext, useState } from 'react';
 import { getClassesColumns } from './Tables/class.table';
-import { ClassResponse } from 'models/http/responses/class.response.models';
-import useClasses from 'hooks/classes/useClasses';
+import { ClassResponse } from '../../models/http/responses/class.response.models';
+import useClasses from '../../hooks/classes/useClasses';
 import ClassModal from './ClassModal/class.modal';
-import useSubjects from 'hooks/useSubjetcts';
-import useCalendars from 'hooks/useCalendars';
+import useSubjects from '../../hooks/useSubjetcts';
+import useCalendars from '../../hooks/useCalendars';
 import { Row } from '@tanstack/react-table';
-import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
+import { ScheduleResponse } from '../../models/http/responses/schedule.response.models';
 import { AllocateClassModal } from './AllocateClassModal';
 import ClassOccurrencesModal from './ClassOccurrencesModal';
-import PageContent from 'components/common/PageContent';
+import PageContent from '../../components/common/PageContent';
 import CrawlerUpdateModal from './CrawlerUpdateModal/crawler.update.modal';
-import useCrawler from 'hooks/useCrawler';
-import { appContext } from 'context/AppContext';
-import { UsersValidator } from 'utils/users/users.validator';
+import useCrawler from '../../hooks/useCrawler';
+import { appContext } from '../../context/AppContext';
+import { UsersValidator } from '../../utils/users/users.validator';
 import CrawlerModal from './CrawlerModal/crawler.modal';
 import CrawlerPopover from './CrawlerModal/crawler.popover';
-import { CrawlerType } from 'utils/enums/subjects.enum';
+import { CrawlerType } from '../../utils/enums/subjects.enum';
 
 function Classes() {
   const context = useContext(appContext);
@@ -160,7 +160,7 @@ function Classes() {
 
   function handleDeleteSelectedClasses() {
     const classes_ids = classes
-      .filter((cls, index) => checkMap[index])
+      .filter((_, index) => checkMap[index])
       .map((cls) => cls.id);
     deleteManyClass(classes_ids);
     setCheckMap((prev) => prev.filter((val) => !val));

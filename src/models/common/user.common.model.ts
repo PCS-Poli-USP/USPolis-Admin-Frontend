@@ -1,5 +1,5 @@
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { BuildingResponse } from '../../models/http/responses/building.response.models';
+import { ClassroomSolicitationResponse } from '../../models/http/responses/classroomSolicitation.response.models';
 
 export interface User {
   id: string;

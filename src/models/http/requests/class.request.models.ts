@@ -1,4 +1,4 @@
-import { ClassType } from 'utils/enums/classes.enum';
+import { ClassType } from '../../../utils/enums/classes.enum';
 import { CreateSchedule, UpdateSchedule } from './schedule.request.models';
 
 export interface ClassBase {

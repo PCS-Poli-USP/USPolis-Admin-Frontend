@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
-import { ScheduleUpdateOccurences } from 'models/http/requests/schedule.request.models';
-import { ScheduleFullResponse } from 'models/http/responses/schedule.response.models';
+import { ScheduleUpdateOccurences } from '../../../models/http/requests/schedule.request.models';
+import { ScheduleFullResponse } from '../../../models/http/responses/schedule.response.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 const useScheduleService = () => {

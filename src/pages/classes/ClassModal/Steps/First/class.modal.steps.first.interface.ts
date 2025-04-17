@@ -1,7 +1,7 @@
-import { SubjectResponse } from 'models/http/responses/subject.response.models';
+import { SubjectResponse } from '../../../../../models/http/responses/subject.response.models';
 import { ClassModalStepsProps } from '../class.modal.steps.interface';
 import { UseFormReturn } from 'react-hook-form';
-import { ClassType } from 'utils/enums/classes.enum';
+import { ClassType } from '../../../../../utils/enums/classes.enum';
 
 export interface ClassModalFirstStepProps extends ClassModalStepsProps {
   form: UseFormReturn<ClassFirstForm, any, undefined>,

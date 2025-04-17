@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 import { ClassThirdForm } from './class.modal.steps.third.interface';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { ScheduleValidator } from 'utils/schedules/schedules.validator';
+import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
+import { ScheduleValidator } from '../../../../../utils/schedules/schedules.validator';
 
 export const classThirdFormFields = {
   schedule_start_date: {

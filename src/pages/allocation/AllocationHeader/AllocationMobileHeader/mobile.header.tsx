@@ -11,7 +11,7 @@ import { ChevronDownIcon, ChevronUpIcon, LockIcon } from '@chakra-ui/icons';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
-import { appContext } from 'context/AppContext';
+import { appContext } from '../../../../context/AppContext';
 import { AllocationHeaderProps } from '../index';
 import HeaderPDFOptions from '../HeaderPDFOptions/headerPDF.options';
 import HeaderFilter from '../HeaderFilter/header.filter';

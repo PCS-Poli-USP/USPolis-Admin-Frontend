@@ -10,12 +10,12 @@ import {
 import {
   ClassFullResponse,
   ClassResponse,
-} from 'models/http/responses/class.response.models';
-import { ModalProps } from 'models/interfaces';
+} from '../../../models/http/responses/class.response.models';
+import { ModalProps } from '../../../models/interfaces';
 import ScheduleAccordion from './schedule.accordion';
 import { useEffect, useState } from 'react';
-import useClasses from 'hooks/classes/useClasses';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+import useClasses from '../../../hooks/classes/useClasses';
+import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
 
 interface ClassOccurrencesModalProps extends ModalProps {
   selectedClass: ClassResponse;

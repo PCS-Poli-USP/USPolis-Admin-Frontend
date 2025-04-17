@@ -6,7 +6,6 @@ import {
   Button,
   Flex,
   HStack,
-  Icon,
   IconButton,
   Image,
   Link,
@@ -19,13 +18,12 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { ReactNode, useContext } from 'react';
-import { FaUser } from 'react-icons/fa';
-import Logo from 'assets/uspolis.logo.png';
-import { appContext } from 'context/AppContext';
+import Logo from '../../..//assets/uspolis.logo.png';
+import { appContext } from '../../../context/AppContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PiHandPointingFill } from 'react-icons/pi';
-import { FeatureGuideContext } from 'context/FeatureGuideContext';
-import { UsersValidator } from 'utils/users/users.validator';
+import { FeatureGuideContext } from '../../../context/FeatureGuideContext';
+import { UsersValidator } from '../../../utils/users/users.validator';
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
@@ -155,7 +153,12 @@ export function DrawerNavBar({
                     >
                       {loggedUser ? loggedUser.name : 'Logando...'}
                     </Text>
-                    <Icon as={FaUser} boxSize={'20px'} />
+                    <Image
+                      boxSize={'30px'}
+                      borderRadius={'full'}
+                      src={loggedUser?.user_info?.picture}
+                    />
+                    {/* <Icon as={FaUser} boxSize={'20px'} /> */}
                   </Flex>
                 </MenuButton>
                 <MenuList>

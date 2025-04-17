@@ -13,15 +13,15 @@ import {
 } from '@chakra-ui/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Input } from 'components/common';
+import { Input } from '../../../components/common';
 import { useEffect } from 'react';
 import { CalendarForm, CalendarModalProps } from './calendar.modal.interface';
 import { defaultValues, schema } from './calendar.modal.form';
 import {
   CreateCalendar,
   UpdateCalendar,
-} from 'models/http/requests/calendar.request.models';
-import { MultiSelect } from 'components/common/form/MultiSelect';
+} from '../../../models/http/requests/calendar.request.models';
+import { MultiSelect } from '../../../components/common/form/MultiSelect';
 
 function CalendarModal(props: CalendarModalProps) {
   const form = useForm<CalendarForm>({

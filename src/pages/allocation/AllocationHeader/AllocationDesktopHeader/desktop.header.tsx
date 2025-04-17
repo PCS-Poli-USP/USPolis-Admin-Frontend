@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
-import { appContext } from 'context/AppContext';
+import { appContext } from '../../../../context/AppContext';
 import { AllocationHeaderProps } from '..';
 import HeaderFilter from '../HeaderFilter/header.filter';
 import HeaderPDFOptions from '../HeaderPDFOptions/headerPDF.options';

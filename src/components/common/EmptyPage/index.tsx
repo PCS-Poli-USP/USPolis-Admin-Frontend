@@ -9,9 +9,9 @@ import DrawerBody from './drawer.body';
 import { DrawerNavBar } from './drawer.navbar';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Joyride, { CallBackProps, EVENTS, STATUS } from 'react-joyride';
-import { useFeatureGuideContext } from 'context/FeatureGuideContext';
-import { FeatureTourGuideStepData } from 'context/FeatureGuideContext/steps';
-import { FG_STEP_INDEXES } from 'context/FeatureGuideContext/utils';
+import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
+import { FeatureTourGuideStepData } from '../../../context/FeatureGuideContext/steps';
+import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
 
 const drawerWidth = 300;
 

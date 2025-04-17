@@ -1,8 +1,8 @@
-import useCustomToast from 'hooks/useCustomToast';
-import { OccurrenceResponse } from 'models/http/responses/occurrence.response.models';
+import useCustomToast from '../hooks/useCustomToast';
+import { OccurrenceResponse } from '../models/http/responses/occurrence.response.models';
 import { useCallback, useState } from 'react';
 
-import { sortOccurrenceResponse } from 'utils/occurrences/occurrences.sorter';
+import { sortOccurrenceResponse } from '../utils/occurrences/occurrences.sorter';
 import useOcurrencesService, {
   AllocateManySchedulesData,
 } from './API/services/useOccurrencesService';
@@ -38,7 +38,7 @@ const useOccurrences = () => {
       setLoading(true);
       await service
         .allocate_many_schedules(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso!',
             `${data.length} horário(s) alocado(s)`,

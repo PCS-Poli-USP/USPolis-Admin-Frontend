@@ -1,12 +1,12 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 import {
   ClassroomSolicitationAprove,
   ClassroomSolicitationDeny,
   CreateClassroomSolicitation,
-} from 'models/http/requests/classroomSolicitation.request.models';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+} from '../models/http/requests/classroomSolicitation.request.models';
+import { ClassroomSolicitationResponse } from '../models/http/responses/classroomSolicitation.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortClassroomSolicitationResponse } from 'utils/solicitations/solicitation.sorter';
+import { sortClassroomSolicitationResponse } from '../utils/solicitations/solicitation.sorter';
 import useClassroomSolicitationsService from './API/services/useClassroomSolicitationsService';
 
 const useClassroomsSolicitations = (initialFetch = true) => {
@@ -59,7 +59,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso', `Solicitação criada com sucesso!`, 'success');
           getSolicitations();
         })
@@ -79,7 +79,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       setLoading(true);
       await service
         .approve(id, data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso', `Solicitação aprovada com sucesso!`, 'success');
           getSolicitations();
         })
@@ -99,7 +99,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       setLoading(true);
       await service
         .deny(id, data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso!', 'Sucesso ao negar solicitação', 'success');
 
           getSolicitations();

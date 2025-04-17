@@ -18,7 +18,7 @@ import { FaLessThan, FaGreaterThan } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import moment, { Moment } from 'moment';
 import { CloseIcon } from '@chakra-ui/icons';
-import { OccurrenceResponse } from 'models/http/responses/occurrence.response.models';
+import { OccurrenceResponse } from '../../../models/http/responses/occurrence.response.models';
 import { BsCalendarFill } from 'react-icons/bs';
 
 function ClassroomCalendar({

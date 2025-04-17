@@ -25,24 +25,22 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import {
   ClassroomSolicitationAprove,
   ClassroomSolicitationDeny,
-} from 'models/http/requests/classroomSolicitation.request.models';
+} from '../../../models/http/requests/classroomSolicitation.request.models';
 import {
   ClassroomFullResponse,
   ClassroomWithConflictCount,
-} from 'models/http/responses/classroom.response.models';
-import { ReservationType } from 'utils/enums/reservations.enum';
-import useClassrooms from 'hooks/useClassrooms';
-import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classroom.time.grid';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-
-type OptionType = { value: number; label: string };
+} from '../../../models/http/responses/classroom.response.models';
+import { ReservationType } from '../../../utils/enums/reservations.enum';
+import useClassrooms from '../../../hooks/useClassrooms';
+import ClassroomTimeGrid from '../../../components/common/ClassroomTimeGrid/classroom.time.grid';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
 
 interface SolicitationPanelProps {
   solicitation?: ClassroomSolicitationResponse;
@@ -435,7 +433,7 @@ function SolicitationPanel({
                             : val.name,
                           value: val.id,
                         }))}
-                        onChange={(newValue: OptionType) => {
+                        onChange={(newValue) => {
                           setClassroom(
                             classrooms.find(
                               (val) => val.id === newValue?.value,

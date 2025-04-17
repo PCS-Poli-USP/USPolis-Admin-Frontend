@@ -1,6 +1,6 @@
 import {
   HolidayResponse,
-} from 'models/http/responses/holiday.response.models';
+} from '../../models/http/responses/holiday.response.models';
 
 export function sortHolidaysResponse(A: HolidayResponse, B: HolidayResponse) {
   if (A.category > B.category) return 1;

@@ -2,13 +2,13 @@ import { AxiosResponse } from 'axios';
 import {
   ReservationResponse,
   ReservationFullResponse,
-} from 'models/http/responses/reservation.response.models';
+} from '../../../models/http/responses/reservation.response.models';
 import {
   CreateReservation,
   UpdateReservation,
-} from 'models/http/requests/reservation.request.models';
+} from '../../../models/http/requests/reservation.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import axios from 'services/api/axios';
+import axios from '../../../services/api/axios';
 
 const useReservationsService = () => {
   const PREFIX = '/reservations';

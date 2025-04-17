@@ -1,16 +1,16 @@
 import { useContext, useEffect, useState } from 'react';
 import * as C from '@chakra-ui/react';
 
-import DataTable from 'components/common/DataTable/dataTable.component';
-import { appContext } from 'context/AppContext';
+import DataTable from '../../components/common/DataTable/dataTable.component';
+import { appContext } from '../../context/AppContext';
 import EditUserModal from './UserEditModal/user.edit.modal';
-import Dialog from 'components/common/Dialog/dialog.component';
-import PageContent from 'components/common/PageContent';
-import { UserResponse } from 'models/http/responses/user.response.models';
-import { UpdateUser } from 'models/http/requests/user.request.models';
-import useUsersService from 'hooks/API/services/useUsersService';
+import Dialog from '../../components/common/Dialog/dialog.component';
+import PageContent from '../../components/common/PageContent';
+import { UserResponse } from '../../models/http/responses/user.response.models';
+import { UpdateUser } from '../../models/http/requests/user.request.models';
+import useUsersService from '../../hooks/API/services/useUsersService';
 import { getUsersColumns } from './Tables/user.table';
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 
 const Users = () => {
   const { loading, setLoading } = useContext(appContext);

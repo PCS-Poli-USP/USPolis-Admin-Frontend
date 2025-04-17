@@ -1,6 +1,6 @@
 import { Flex, Heading, Image, Link, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import Logo from 'assets/uspolis.logo.png';
+import Logo from '../../assets/uspolis.logo.png';
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link

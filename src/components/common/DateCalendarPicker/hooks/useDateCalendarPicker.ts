@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { sortDates } from 'utils/holidays/holidays.sorter';
+import { sortDates } from '../../../../utils/holidays/holidays.sorter';
 
 export interface DateCalendarPickerReturn {
   dayClick: (day: string) => void;

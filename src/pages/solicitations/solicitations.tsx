@@ -1,10 +1,10 @@
 import { Grid, GridItem } from '@chakra-ui/react';
-import PageContent from 'components/common/PageContent';
+import PageContent from '../../components/common/PageContent';
 import SolicitationStack from './SolicitationStack/solicitation.stack';
 import SolicitationPanel from './SolicitationPanel/solicitation.panel';
-import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../hooks/useClassroomSolicitations';
 import { useEffect, useState } from 'react';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../models/http/responses/classroomSolicitation.response.models';
 
 function Solicitations() {
   const {

@@ -1,4 +1,4 @@
-import { CalendarValidator } from 'utils/calendars/calendar.validator';
+import { CalendarValidator } from '../../../utils/calendars/calendar.validator';
 import * as yup from 'yup';
 import { CalendarForm } from './calendar.modal.interface';
 

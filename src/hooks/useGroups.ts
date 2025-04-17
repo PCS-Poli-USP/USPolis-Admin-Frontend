@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import useGroupService from './API/services/useGroupService';
-import { GroupResponse } from 'models/http/responses/group.response.models';
+import { GroupResponse } from '../models/http/responses/group.response.models';
 import useCustomToast from './useCustomToast';
 import {
   GroupRequest,
   GroupUpdate,
-} from 'models/http/requests/group.request.models';
+} from '../models/http/requests/group.request.models';
 
 const useGroups = (initialFetch = true) => {
   const service = useGroupService();
@@ -21,7 +21,7 @@ const useGroups = (initialFetch = true) => {
       .then((response) => {
         setGroups(response.data);
       })
-      .catch((error) => {
+      .catch(() => {
         showToast('Erro', 'Erro ao carregar grupos', 'error');
       })
       .finally(() => {
@@ -34,7 +34,7 @@ const useGroups = (initialFetch = true) => {
     setLoading(true);
     await service
       .create(data)
-      .then((response) => {
+      .then(() => {
         showToast('Sucesso', `Grupo criado com sucesso!`, 'success');
         getAllGroups();
       })
@@ -51,7 +51,7 @@ const useGroups = (initialFetch = true) => {
     setLoading(true);
     await service
       .update(id, data)
-      .then((response) => {
+      .then(() => {
         showToast('Sucesso', `Grupo atualizado com sucesso!`, 'success');
         getAllGroups();
       })
@@ -68,7 +68,7 @@ const useGroups = (initialFetch = true) => {
     setLoading(true);
     await service
       .remove(id)
-      .then((response) => {
+      .then(() => {
         showToast('Sucesso', `Grupo removido com sucesso!`, 'success');
         getAllGroups();
       })

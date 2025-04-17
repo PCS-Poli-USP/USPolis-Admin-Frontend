@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 import createFeatureTourGuideStep from './steps';
-import TravelHand from 'components/common/Animation/TravelHand';
+import TravelHand from '../../components/common/Animation/TravelHand';
 
 function createUserMenuStep() {
   return createFeatureTourGuideStep({

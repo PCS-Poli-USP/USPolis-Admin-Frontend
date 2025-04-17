@@ -1,8 +1,8 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../../../hooks/useCustomToast';
 import { useCallback, useEffect, useState } from 'react';
 import { Resource, Event } from '../interfaces/allocation.interfaces';
-import useALlocationsService from 'hooks/API/services/useAllocationService';
-import { EventUpdate } from 'models/http/requests/allocation.request.models';
+import useALlocationsService from '../../../hooks/API/services/useAllocationService';
+import { EventUpdate } from '../../../models/http/requests/allocation.request.models';
 
 const useAllocation = (
   initialFetchEvents: boolean = true,

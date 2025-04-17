@@ -26,10 +26,10 @@ import {
   Box,
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import useBuildings from 'hooks/useBuildings';
+import useBuildings from '../../../hooks/useBuildings';
 import { useEffect, useRef, useState } from 'react';
-import { CrawlerType } from 'utils/enums/subjects.enum';
-import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
+import { CrawlerType } from '../../../utils/enums/subjects.enum';
+import { CalendarResponse } from '../../../models/http/responses/calendar.responde.models';
 
 interface CrawlerPopoverProps {
   subjects?: string[];

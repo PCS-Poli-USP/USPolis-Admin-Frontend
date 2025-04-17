@@ -1,4 +1,4 @@
-import { ClassResponseBase } from 'models/http/responses/class.response.models';
+import { ClassResponseBase } from '../../models/http/responses/class.response.models';
 
 export function sortClassResponse(A: ClassResponseBase, B: ClassResponseBase) {
   if (A.subject_code < B.subject_code) return -1;

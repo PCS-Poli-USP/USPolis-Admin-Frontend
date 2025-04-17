@@ -23,10 +23,10 @@ import ClassroomTimeGridEventContent from './classroom.time.grid.event.content';
 import moment from 'moment';
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
+import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { WeekDay } from '../../../utils/enums/weekDays.enum';
+import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
 
 function ClassroomTimeGrid({
   isOpen,

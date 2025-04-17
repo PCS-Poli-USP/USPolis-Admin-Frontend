@@ -1,4 +1,5 @@
 import { Flex, Heading, Text } from '@chakra-ui/react';
+import { JSX } from 'react';
 import { Placement } from 'react-joyride';
 
 interface StepContentProps {

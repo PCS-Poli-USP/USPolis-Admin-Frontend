@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { ClassSecondForm } from './class.modal.steps.second.interface';
-import { ScheduleValidator } from 'utils/schedules/schedules.validator';
+import { ScheduleValidator } from '../../../../../utils/schedules/schedules.validator';
 
 export const classSecondFormFields = {
   start_date: {

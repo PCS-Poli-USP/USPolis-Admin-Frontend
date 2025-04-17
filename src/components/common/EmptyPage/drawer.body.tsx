@@ -10,7 +10,7 @@ import {
 import { useContext } from 'react';
 import { FaList, FaRegCalendarTimes, FaRegUser } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { appContext } from 'context/AppContext';
+import { appContext } from '../../../context/AppContext';
 import {
   CalendarIcon,
   LockIcon,

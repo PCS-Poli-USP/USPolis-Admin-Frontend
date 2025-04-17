@@ -15,10 +15,10 @@ import {
 } from '@chakra-ui/react';
 
 import AutomaticAllocationAccordion from './automaticAllocation.accordion';
-import Event, { EventByClassrooms } from 'models/common/event.model';
-import EditEventModal from 'components/allocation/editEvent.modal';
+import Event, { EventByClassrooms } from '../../models/common/event.model';
+import EditEventModal from './editEvent.modal';
 import { useEffect, useState } from 'react';
-import useEventsService from 'hooks/API/services/useEventsService';
+import useEventsService from '../../hooks/API/services/useEventsService';
 
 interface AutomaticAllocationModalProps {
   isOpen: boolean;
@@ -133,8 +133,7 @@ export default function AutomaticAllocationModal({
     setAllocatedEvents(newAllocatedEvents);
     eventsService
       .editAllocations(newAllocatedEvents, newUnallocatedEvents)
-      .then((it) => {
-      })
+      .then((it) => {})
       .catch((error) => {
         toastError(`Erro ao salvar alocação: ${error}`);
       });

@@ -1,16 +1,16 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 import {
   ClassroomConflictCheck,
   CreateClassroom,
   UpdateClassroom,
-} from 'models/http/requests/classroom.request.models';
+} from '../models/http/requests/classroom.request.models';
 import {
   ClassroomResponse,
   ClassroomFullResponse,
   ClassroomWithConflictCount,
-} from 'models/http/responses/classroom.response.models';
+} from '../models/http/responses/classroom.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortClassroomResponse } from 'utils/classrooms/classrooms.sorter';
+import { sortClassroomResponse } from '../utils/classrooms/classrooms.sorter';
 import useClassroomsService from './API/services/useClassroomsService';
 
 const useClassrooms = (initialFetch: boolean = true) => {
@@ -43,7 +43,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
       .then((response) => {
         setClassrooms(response.data.sort(sortClassroomResponse));
       })
-      .catch((error) => {
+      .catch(() => {
         showToast('Erro', 'Erro ao carregar suas salas', 'error');
       })
       .finally(() => {
@@ -61,7 +61,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
           current = response.data;
           setClassrooms(current.sort(sortClassroomResponse));
         })
-        .catch((error) => {
+        .catch(() => {
           showToast(
             'Erro',
             `Erro ao carregar salas do prédio ${building_id}`,
@@ -76,30 +76,30 @@ const useClassrooms = (initialFetch: boolean = true) => {
     [showToast, service],
   );
 
-  const getClassroomsWithConflict = useCallback(
-    async (schedule_id: number, building_id: number) => {
-      setLoading(true);
-      let current: ClassroomWithConflictCount[] = [];
-      await service
-        .getWithConflictCount(schedule_id, building_id)
-        .then((response) => {
-          // current = response.data.sort(sortClassroomResponse);
-        })
-        .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao carregar salas do prédio ${building_id}`,
-            'error',
-          );
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-      return current;
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  // const getClassroomsWithConflict = useCallback(
+  //   async (schedule_id: number, building_id: number) => {
+  //     setLoading(true);
+  //     let current: ClassroomWithConflictCount[] = [];
+  //     await service
+  //       .getWithConflictCount(schedule_id, building_id)
+  //       .then((response) => {
+  //         // current = response.data.sort(sortClassroomResponse);
+  //       })
+  //       .catch(() => {
+  //         showToast(
+  //           'Erro',
+  //           `Erro ao carregar salas do prédio ${building_id}`,
+  //           'error',
+  //         );
+  //       })
+  //       .finally(() => {
+  //         setLoading(false);
+  //       });
+  //     return current;
+  //   },
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   [],
+  // );
 
   const getClassroomsWithConflictFromTime = useCallback(
     async (data: ClassroomConflictCheck, building_id: number) => {
@@ -110,7 +110,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
         .then((response) => {
           current = response.data.sort(sortClassroomResponse);
         })
-        .catch((error) => {
+        .catch(() => {
           showToast(
             'Erro',
             `Erro ao carregar salas do prédio ${building_id}`,
@@ -134,7 +134,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
         .then((response) => {
           current = response.data;
         })
-        .catch((error) => {
+        .catch(() => {
           current = undefined;
         });
       return current;
@@ -148,7 +148,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Sala ${data.name} criada com sucesso!`,
@@ -176,7 +176,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .update(id, data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso', `Sala atualizada com sucesso!`, 'success');
           getClassrooms();
         })
@@ -199,7 +199,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso!', 'Sucesso ao remover sala', 'success');
           getClassrooms();
         })
@@ -225,7 +225,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
     getAllClassrooms,
     getClassrooms,
     getClassroomsByBuilding,
-    getClassroomsWithConflict,
+    // getClassroomsWithConflict,
     getClassroomsWithConflictFromTime,
     listOneFull,
     createClassroom,

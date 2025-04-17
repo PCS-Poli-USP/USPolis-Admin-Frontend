@@ -1,6 +1,6 @@
 import { VStack, Text } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
-import { CheckBox } from 'components/common/form/CheckBox';
+import { CheckBox } from '../../../../../components/common/form/CheckBox';
 import { ClassModalFourthStepProps } from './class.modal.steps.fourth.interface';
 
 function ClassModalFourthStep(props: ClassModalFourthStepProps) {

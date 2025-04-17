@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { HolidayForm } from './holiday.modal.interface';
-import { HolidayValidator } from 'utils/holidays/holidays.validator';
+import { HolidayValidator } from '../../../utils/holidays/holidays.validator';
 
 export const formFields = {
   category_id: {

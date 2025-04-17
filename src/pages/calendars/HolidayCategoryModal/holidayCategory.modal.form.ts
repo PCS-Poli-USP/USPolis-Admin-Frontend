@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { HolidayCategoryForm } from './holidayCategory.modal.interface';
-import HolidayCategoryValidator from 'utils/holidaysCategories/holidaysCategories.validator';
+import HolidayCategoryValidator from '../../../utils/holidaysCategories/holidaysCategories.validator';
 
 export const formFields = {
   name: {

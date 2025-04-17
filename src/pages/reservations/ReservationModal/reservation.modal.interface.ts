@@ -1,11 +1,11 @@
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
-import { ModalProps } from 'models/interfaces';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
+import { ClassroomResponse } from '../../../models/http/responses/classroom.response.models';
+import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { ReservationResponse } from '../../../models/http/responses/reservation.response.models';
+import { ModalProps } from '../../../models/interfaces';
+import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { WeekDay } from '../../../utils/enums/weekDays.enum';
 
 export interface ReservationModalProps extends ModalProps {
   isUpdate: boolean;

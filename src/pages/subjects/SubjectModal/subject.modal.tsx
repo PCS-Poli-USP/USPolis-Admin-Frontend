@@ -12,19 +12,19 @@ import {
 } from '@chakra-ui/react';
 
 import { useEffect } from 'react';
-import { SubjectType } from 'utils/enums/subjects.enum';
+import { SubjectType } from '../../../utils/enums/subjects.enum';
 import { SubjectForm, SubjectModalProps } from './subject.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform//resolvers/yup';
 import { defaultValues, schema } from './subject.modal.form';
-import { Input, Select } from 'components/common';
-import { CreateSubject } from 'models/http/requests/subject.request.models';
-import useSubjects from 'hooks/useSubjetcts';
-import { MultiSelect } from 'components/common/form/MultiSelect';
-import ListInput from 'components/common/form/ListInput';
-import { ClassValidator } from 'utils/classes/classes.validator';
-import { sortProfessors } from 'utils/subjects/subjects.sorter';
-import { SubjectResponse } from 'models/http/responses/subject.response.models';
+import { Input, Select } from '../../../components/common';
+import { CreateSubject } from '../../../models/http/requests/subject.request.models';
+import useSubjects from '../../../hooks/useSubjetcts';
+import { MultiSelect } from '../../../components/common/form/MultiSelect';
+import ListInput from '../../../components/common/form/ListInput';
+import { ClassValidator } from '../../../utils/classes/classes.validator';
+import { sortProfessors } from '../../../utils/subjects/subjects.sorter';
+import { SubjectResponse } from '../../../models/http/responses/subject.response.models';
 
 export default function SubjectModal(props: SubjectModalProps) {
   const form = useForm<SubjectForm>({

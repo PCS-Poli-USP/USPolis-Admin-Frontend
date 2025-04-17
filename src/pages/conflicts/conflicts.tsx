@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import * as C from '@chakra-ui/react';
-import Conflict from 'models/http/responses/conflict.response.models';
+import Conflict from '../../models/http/responses/conflict.response.models';
 import moment from 'moment';
-import PageContent from 'components/common/PageContent';
-import { AllocateClassModal } from 'pages/classes/AllocateClassModal';
-import { Collapsable } from 'components/common/Collapsable';
-import useConflictsService from 'hooks/API/services/useConflictsService';
-import useCustomToast from 'hooks/useCustomToast';
+import PageContent from '../../components/common/PageContent';
+import { AllocateClassModal } from '../../pages/classes/AllocateClassModal';
+import { Collapsable } from '../../components/common/Collapsable';
+import useConflictsService from '../../hooks/API/services/useConflictsService';
+import useCustomToast from '../../hooks/useCustomToast';
 import Select from 'react-select';
 
 type Option = {

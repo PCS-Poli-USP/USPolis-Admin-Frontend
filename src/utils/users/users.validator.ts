@@ -1,6 +1,6 @@
-import { ClassResponse } from 'models/http/responses/class.response.models';
-import { UserResponse } from 'models/http/responses/user.response.models';
-import CommonValidator from 'utils/common/common.validator';
+import { ClassResponse } from '../../models/http/responses/class.response.models';
+import { UserResponse } from '../../models/http/responses/user.response.models';
+import CommonValidator from '../../utils/common/common.validator';
 
 export class UsersValidator extends CommonValidator {
   static isInvalidName(name: string) {

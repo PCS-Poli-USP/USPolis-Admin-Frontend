@@ -1,5 +1,5 @@
-import { ClassroomWithConflictCount } from 'models/common/classroom.model';
-import { ClassroomWithConflictCount as ClassroomWithConflictCountNew } from 'models/http/responses/classroom.response.models';
+import { ClassroomWithConflictCount } from '../../models/common/classroom.model';
+import { ClassroomWithConflictCount as ClassroomWithConflictCountNew } from '../../models/http/responses/classroom.response.models';
 
 export function formatClassroomForSelection(
   classroom: ClassroomWithConflictCount | ClassroomWithConflictCountNew,

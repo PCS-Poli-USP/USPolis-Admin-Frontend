@@ -13,14 +13,14 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
-import DataTable from 'components/common/DataTable/dataTable.component';
+import DataTable from '../../components/common/DataTable/dataTable.component';
 import { getMySolicitationsColumns } from './Tables/mySolicitations.table';
-import PageContent from 'components/common/PageContent';
+import PageContent from '../../components/common/PageContent';
 import { CloseIcon } from '@chakra-ui/icons';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../models/http/responses/classroomSolicitation.response.models';
 import SolicitationStack from './MySolicitationStack/mysolicitation.stack';
 import MySolicitationModal from './MySolicitationModal/mysolicitation.modal';
-import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../hooks/useClassroomSolicitations';
 
 const MySolicitations = () => {
   const { loading, solicitations } = useClassroomsSolicitations();
@@ -31,7 +31,7 @@ const MySolicitations = () => {
     useState<ClassroomSolicitationResponse>();
   const { isOpen, onClose, onToggle } = useDisclosure();
 
-  const columns = getMySolicitationsColumns({});
+  const columns = getMySolicitationsColumns();
 
   return (
     <PageContent>

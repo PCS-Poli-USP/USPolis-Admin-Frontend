@@ -1,7 +1,7 @@
-import { appContext } from 'context/AppContext';
+import { appContext } from '../../context/AppContext';
 import { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { AuthHttpService } from 'services/auth/auth.service';
+import { AuthHttpService } from '../../services/auth/auth.service';
 import LoadingRedirect from './loadingRedirect';
 import RedirectError from './redirectError';
 
@@ -32,6 +32,7 @@ const AuthCallbackPage = () => {
     console.log('Redirecting with code:', code);
     const response = await authService.getTokens(code);
     const { access_token, refresh_token } = response.data;
+    console.log('Response from auth service:', response.data);
     setAccessToken(access_token);
     setIsAuthenticated(true);
     localStorage.setItem('refresh_token', refresh_token);
@@ -46,4 +47,4 @@ const AuthCallbackPage = () => {
   );
 };
 
-export { AuthCallbackPage };
+export default AuthCallbackPage;

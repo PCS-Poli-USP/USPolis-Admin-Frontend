@@ -1,7 +1,7 @@
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { ReservationType } from 'utils/enums/reservations.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { ReservationType } from '../../../utils/enums/reservations.enum';
+import { WeekDay } from '../../../utils/enums/weekDays.enum';
 
 export interface Resource {
   id: string;

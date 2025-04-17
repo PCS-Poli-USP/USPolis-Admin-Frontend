@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import moment from 'moment';
-import { EventTypes } from 'utils/enums/eventTypes.enum';
+import { EventTypes } from '../../../utils/enums/eventTypes.enum';
 import { InstitutionalEventForm } from './institutionalEvent.modal.interface';
 
 export const formFields = {

@@ -6,17 +6,17 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import useClassroomsService from 'hooks/API/services/useClassroomsService';
+import useClassroomsService from '../../../hooks/API/services/useClassroomsService';
 import Classroom, {
   ClassroomWithConflictCount,
-} from 'models/common/classroom.model';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
+} from '../../../models/common/classroom.model';
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
+import { ScheduleResponse } from '../../../models/http/responses/schedule.response.models';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { formatClassroomForSelection } from 'utils/classrooms/classroom.formatter';
-import { sortClassroomResponse } from 'utils/classrooms/classrooms.sorter';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { formatClassroomForSelection } from '../../../utils/classrooms/classroom.formatter';
+import { sortClassroomResponse } from '../../../utils/classrooms/classrooms.sorter';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { WeekDay } from '../../../utils/enums/weekDays.enum';
 import AllocationLogHistory from './allocationLog.history';
 
 export interface AllocateSingleScheduleSectionRef {

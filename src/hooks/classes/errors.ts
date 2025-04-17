@@ -1,4 +1,4 @@
-import { ErrorParser } from 'hooks/errors';
+import { ErrorParser } from '../../hooks/errors';
 
 export class ClassErrorParser extends ErrorParser {
   static parseGetError(error: any) {

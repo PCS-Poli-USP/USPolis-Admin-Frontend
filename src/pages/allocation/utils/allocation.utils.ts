@@ -1,15 +1,15 @@
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { ReservationType } from 'utils/enums/reservations.enum';
+import { ReservationResponse } from '../../../models/http/responses/reservation.response.models';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { ReservationType } from '../../../utils/enums/reservations.enum';
 import moment from 'moment';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { ClassResponse } from 'models/http/responses/class.response.models';
+import { ClassroomResponse } from '../../../models/http/responses/classroom.response.models';
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
+import { ClassResponse } from '../../../models/http/responses/class.response.models';
 import { Event } from '../interfaces/allocation.interfaces';
-import { RecurrenceRule } from 'models/http/responses/allocation.response.models';
-import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
-import { WeekDay } from 'utils/enums/weekDays.enum';
-import { AllocationEnum } from 'utils/enums/allocation.enum';
+import { RecurrenceRule } from '../../../models/http/responses/allocation.response.models';
+import { ScheduleResponse } from '../../../models/http/responses/schedule.response.models';
+import { WeekDay } from '../../../utils/enums/weekDays.enum';
+import { AllocationEnum } from '../../../utils/enums/allocation.enum';
 
 export function scheduleToRRule(schedule: ScheduleResponse): RecurrenceRule {
   const byweekday: string[] = [];

@@ -48,7 +48,7 @@ import {
   FaStepBackward,
   FaStepForward,
 } from 'react-icons/fa';
-import { Textify } from 'utils/formatters';
+import { Textify } from '../../../utils/formatters';
 
 type ColumnPinning = {
   left: string[];
@@ -107,12 +107,6 @@ export default function DataTable<Data extends object>({
     }
     // eslint-disable-next-line
   }, [table.getState().columnFilters[0]?.id]);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function getFilteredData() {
-    const filteredData = table.getFilteredRowModel().rows;
-    return filteredData;
-  }
 
   return (
     <Flex

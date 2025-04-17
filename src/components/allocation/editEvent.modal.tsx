@@ -20,15 +20,14 @@ import {
 } from '@chakra-ui/react';
 import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
-import Dialog from 'components/common/Dialog/dialog.component';
-import { appContext } from 'context/AppContext';
-import { AvailableClassroom } from 'models/common/classroom.model';
-import { EventByClassrooms } from 'models/common/event.model';
+import Dialog from '../common/Dialog/dialog.component';
+import { appContext } from '../../context/AppContext';
+import { AvailableClassroom } from '../../models/common/classroom.model';
+import { EventByClassrooms } from '../../models/common/event.model';
 import { useContext, useEffect, useState } from 'react';
-import { Capitalize } from 'utils/formatters';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import useClassroomsService from 'hooks/API/services/useClassroomsService';
-import useBuildingsService from 'hooks/API/services/useBuildingsService';
+import { Capitalize } from '../../utils/formatters';
+import { BuildingResponse } from '../../models/http/responses/building.response.models';
+import useBuildingsService from '../../hooks/API/services/useBuildingsService';
 
 interface ClassroomOption {
   value: string;
@@ -74,7 +73,6 @@ export default function EditEventModal({
   const setCheckedEvents = checkBoxHook.setValue;
   const getCheckboxProps = checkBoxHook.getCheckboxProps;
 
-  const classroomsService = useClassroomsService();
   const buildingsService = useBuildingsService();
 
   const classData = classEvents[0];
@@ -125,18 +123,6 @@ export default function EditEventModal({
     // });
     // setAndSortAvailableClassrooms(response.data);
     // setClassroomsLoading(false);
-  }
-
-  function setAndSortAvailableClassrooms(value: AvailableClassroom[]) {
-    setAvailableClassrooms(
-      value.sort((a, b) => {
-        if (a.conflicted && !b.conflicted) return 1;
-        if (!a.conflicted && b.conflicted) return -1;
-        if (a.classroom_name < b.classroom_name) return -1;
-        if (a.classroom_name > b.classroom_name) return 1;
-        return 0;
-      }),
-    );
   }
 
   function getBuildingsList() {

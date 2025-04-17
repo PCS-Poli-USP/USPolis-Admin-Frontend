@@ -2,11 +2,11 @@ import { AxiosResponse } from 'axios';
 import {
   EventResponse,
   ResourceResponse,
-} from 'models/http/responses/allocation.response.models';
-import { JSONResponse } from 'models/http/responses/common.response.models';
-import axios from 'services/api/axios';
+} from '../../../models/http/responses/allocation.response.models';
+import { JSONResponse } from '../../../models/http/responses/common.response.models';
+import axios from '../../../services/api/axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import { EventUpdate } from 'models/http/requests/allocation.request.models';
+import { EventUpdate } from '../../../models/http/requests/allocation.request.models';
 
 const useAllocationsService = () => {
   const PREFIX = '/allocations';

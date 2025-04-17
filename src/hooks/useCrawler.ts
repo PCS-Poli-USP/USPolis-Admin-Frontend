@@ -1,10 +1,10 @@
-import { SubjectCrawlResponse } from 'models/http/responses/subject.response.models';
+import { SubjectCrawlResponse } from '../models/http/responses/subject.response.models';
 import { useCallback, useState } from 'react';
 import useSubjectsService from './API/services/useSubjectsService';
 import {
   CrawlSubject,
   UpdateCrawlSubject,
-} from 'models/http/requests/subject.request.models';
+} from '../models/http/requests/subject.request.models';
 
 const useCrawler = () => {
   const service = useSubjectsService();

@@ -1,5 +1,5 @@
 import { ClassModalStepsProps } from '../class.modal.steps.interface';
-import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
+import { CalendarResponse } from '../../../../../models/http/responses/calendar.responde.models';
 import { UseFormReturn } from 'react-hook-form';
 import { ClassThirdForm } from '../Third/class.modal.steps.third.interface';
 

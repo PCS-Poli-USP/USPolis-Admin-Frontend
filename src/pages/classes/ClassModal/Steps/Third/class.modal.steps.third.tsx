@@ -14,17 +14,17 @@ import {
 } from './class.modal.steps.third.interface';
 import { FormProvider } from 'react-hook-form';
 import { ScheduleData } from '../../class.modal.interface';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
+import { MonthWeek } from '../../../../../utils/enums/monthWeek.enum';
+import { WeekDay } from '../../../../../utils/enums/weekDays.enum';
 import { classThirdDefaultValues } from './class.modal.steps.third.form';
 import { sortScheduleData } from '../class.modal.steps.utils';
 import { useEffect, useState } from 'react';
 import DateCalendarPicker, {
   useDateCalendarPicker,
-} from 'components/common/DateCalendarPicker';
-import { generateRecurrenceDates } from 'utils/common/common.generator';
-import { Input, Select } from 'components/common';
+} from '../../../../../components/common/DateCalendarPicker';
+import { generateRecurrenceDates } from '../../../../../utils/common/common.generator';
+import { Input, Select } from '../../../../../components/common';
 import ScheduleList from '../ScheduleList/class.modal.steps.scheduleList';
 
 function ClassModalThirdStep(props: ClassModalThirdStepProps) {

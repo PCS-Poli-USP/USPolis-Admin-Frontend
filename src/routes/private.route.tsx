@@ -1,8 +1,8 @@
-import { appContext } from 'context/AppContext';
+import { appContext } from '../context/AppContext';
 import { useContext } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
-const OVERRIDE = process.env.REACT_APP_OVERRIDE_AUTH;
+const OVERRIDE = import.meta.env.VITE__OVERRIDE_AUTH;
 
 const PrivateRoute: React.FC = () => {
   const location = useLocation();

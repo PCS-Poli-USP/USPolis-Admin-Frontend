@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './index.css';
 import { Heading } from '@chakra-ui/react';
-import { SavedClassroomCalendarPage } from 'pages/allocation/pdf/ClassroomsCalendarPDF/classrooms.calendar.pdf';
-import ClassroomCalendarPage from 'pages/print/classroom.calendar.page';
+import { SavedClassroomCalendarPage } from '../../pages/allocation/pdf/ClassroomsCalendarPDF/classrooms.calendar.pdf';
+import ClassroomCalendarPage from '../../pages/print/classroom.calendar.page';
 
 const ClassroomCalendarPrintPage = () => {
   const navigate = useNavigate();

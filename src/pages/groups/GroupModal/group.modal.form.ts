@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { GroupForm } from './group.modal.interface';
-import GroupValidator from 'utils/groups/group.validator';
+import GroupValidator from '../../../utils/groups/group.validator';
 
 export const formFields = {
   name: {

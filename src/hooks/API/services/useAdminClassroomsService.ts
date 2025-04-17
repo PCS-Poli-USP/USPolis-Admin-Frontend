@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import Classroom from 'models/common/classroom.model';
+import Classroom from '../../../models/common/classroom.model';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 export interface AdminUpdateClassroom {

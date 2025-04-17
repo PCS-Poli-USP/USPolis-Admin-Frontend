@@ -1,19 +1,19 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 import {
   CreateClass,
   UpdateClass,
-} from 'models/http/requests/class.request.models';
+} from '../../models/http/requests/class.request.models';
 import {
   ClassFullResponse,
   ClassResponse,
-} from 'models/http/responses/class.response.models';
+} from '../../models/http/responses/class.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortClassResponse } from 'utils/classes/classes.sorter';
+import { sortClassResponse } from '../../utils/classes/classes.sorter';
 import useClassesService from '../API/services/useClassesService';
 import {
   AxiosErrorResponse,
   isAxiosErrorResponse,
-} from 'models/http/responses/common.response.models';
+} from '../../models/http/responses/common.response.models';
 import { ClassErrorParser } from './errors';
 
 const useClasses = (initialFetch: boolean = true) => {
@@ -122,7 +122,7 @@ const useClasses = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Turma ${data.code} criada com sucesso!`,
@@ -175,7 +175,7 @@ const useClasses = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response: any) => {
+        .then(() => {
           showToast('Sucesso!', 'Sucesso ao remover turma', 'success');
 
           getClasses();

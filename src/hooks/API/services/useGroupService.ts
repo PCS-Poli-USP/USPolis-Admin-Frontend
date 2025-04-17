@@ -1,11 +1,11 @@
 import { AxiosResponse } from 'axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import { GroupResponse } from 'models/http/responses/group.response.models';
-import { JSONResponse } from 'models/http/responses/common.response.models';
+import { GroupResponse } from '../../../models/http/responses/group.response.models';
+import { JSONResponse } from '../../../models/http/responses/common.response.models';
 import {
   GroupRequest,
   GroupUpdate,
-} from 'models/http/requests/group.request.models';
+} from '../../../models/http/requests/group.request.models';
 
 const useGroupService = () => {
   const PREFIX = '/admin/groups';

@@ -8,7 +8,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import moment from 'moment';
 
 interface SolicitationStackBodyProps {

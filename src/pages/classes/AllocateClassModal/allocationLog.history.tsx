@@ -1,10 +1,10 @@
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import { Flex, Skeleton, Text } from '@chakra-ui/react';
-import useAllocationLog from 'hooks/useAllocationLog';
-import { AllocationLogResponse } from 'models/http/responses/allocationLog.response.models';
+import useAllocationLog from '../../../hooks/useAllocationLog';
+import { AllocationLogResponse } from '../../../models/http/responses/allocationLog.response.models';
 import moment from 'moment';
 import { useState } from 'react';
-import { AllocationEnum } from 'utils/enums/allocation.enum';
+import { AllocationEnum } from '../../../utils/enums/allocation.enum';
 
 interface AllocationLogHistoryProps {
   last_log?: AllocationLogResponse;

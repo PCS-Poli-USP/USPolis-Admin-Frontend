@@ -1,16 +1,16 @@
 import { Document, Page, Text, View } from '@react-pdf/renderer';
 import { styles } from './styles';
-import { ClassResponse } from 'models/http/responses/class.response.models';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { ClassResponse } from '../../../../models/http/responses/class.response.models';
+import { ReservationResponse } from '../../../../models/http/responses/reservation.response.models';
 import {
   getClassroomOccupationMap,
   OCCUPATION_EMPTY,
   OccupationMap,
   WeekDayOccupationMap,
 } from '../utils';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
-import { WeekDay } from 'utils/enums/weekDays.enum';
-import { sortClassResponse } from 'utils/classes/classes.sorter';
+import { classNumberFromClassCode } from '../../../../utils/classes/classes.formatter';
+import { WeekDay } from '../../../../utils/enums/weekDays.enum';
+import { sortClassResponse } from '../../../../utils/classes/classes.sorter';
 
 interface ClassroomPDFProps {
   classes: ClassResponse[];
@@ -112,7 +112,7 @@ const ClassroomsPDF = ({
                       {time[0]} às {time[1]}
                     </Text>
                   </View>
-                  {days.map((day, idx) => {
+                  {days.map((day) => {
                     const value = Array.from(day[1])[index][1] as string;
                     return (
                       <View

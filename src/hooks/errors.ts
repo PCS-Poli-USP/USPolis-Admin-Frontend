@@ -1,4 +1,4 @@
-import { AxiosErrorResponse } from 'models/http/responses/common.response.models';
+import { AxiosErrorResponse } from '../models/http/responses/common.response.models';
 
 export class ErrorParser {
   private errors: AxiosErrorResponse[];

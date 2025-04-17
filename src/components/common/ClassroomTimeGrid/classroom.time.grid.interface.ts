@@ -1,8 +1,8 @@
-import { ClassroomFullResponse } from 'models/http/responses/classroom.response.models';
-import { ModalProps } from 'models/interfaces';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { ClassroomFullResponse } from '../../../models/http/responses/classroom.response.models';
+import { ModalProps } from '../../../models/interfaces';
+import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { WeekDay } from '../../../utils/enums/weekDays.enum';
 
 export interface ScheduleDetails {
   recurrence: Recurrence | undefined | string;

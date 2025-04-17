@@ -13,11 +13,11 @@ import {
 import { CalendarIcon } from '@chakra-ui/icons';
 import { BsBookHalf, BsHouseFill, BsFillPenFill } from 'react-icons/bs';
 
-import Classroom from 'models/common/classroom.model';
-import Event from 'models/common/event.model';
+import Classroom from '../../../models/common/classroom.model';
+import Event from '../../../models/common/event.model';
 
 import { useEffect, useState } from 'react';
-import useClassroomsService from 'hooks/API/services/useClassroomsService';
+import useClassroomsService from '../../../hooks/API/services/useClassroomsService';
 
 interface AutomaticAllocationAccordionProps {
   onEdit: (event: Event) => void;
@@ -73,9 +73,7 @@ export default function AutomaticAllocationAccordion({
               <BsBookHalf />
               <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
               <CalendarIcon />
-              <Text>{`${(value.week_day)}, ${
-                value.start_time
-              } às ${value.end_time}`}</Text>
+              <Text>{`${value.week_day}, ${value.start_time} às ${value.end_time}`}</Text>
               <BsHouseFill />
               <Text>{`${value.classroom}`}</Text>
               <Button
@@ -105,9 +103,7 @@ export default function AutomaticAllocationAccordion({
                 <BsBookHalf />
                 <Text>{`${value.subject_code} - ${value.class_code}, ${value.vacancies} vagas`}</Text>
                 <CalendarIcon />
-                <Text>{`${(value.week_day)}, ${
-                  value.start_time
-                } às ${value.end_time}`}</Text>
+                <Text>{`${value.week_day}, ${value.start_time} às ${value.end_time}`}</Text>
                 <Button
                   leftIcon={<BsFillPenFill />}
                   variant={'ghost'}

@@ -1,6 +1,6 @@
 import { Heading, Stack, Text } from '@chakra-ui/react';
 import { EventContentArg } from '@fullcalendar/core';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+import { classNumberFromClassCode } from '../../utils/classes/classes.formatter';
 import { MergedEventExtendedProps } from '../allocation/pdf/ClassroomsCalendarPDF/utils';
 
 export default function ClassroomCalendarEventContent(

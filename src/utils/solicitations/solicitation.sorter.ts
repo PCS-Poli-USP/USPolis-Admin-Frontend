@@ -1,4 +1,4 @@
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../models/http/responses/classroomSolicitation.response.models';
 import moment from 'moment';
 
 export function sortClassroomSolicitationResponse(

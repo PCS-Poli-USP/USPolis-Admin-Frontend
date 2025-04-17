@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import Event from 'models/common/event.model';
+import Event from '../../../models/common/event.model';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 interface EditManyAllocationsDTO {

@@ -1,6 +1,6 @@
-import { BuildingResponse } from "models/http/responses/building.response.models";
-import { ClassroomResponse } from "models/http/responses/classroom.response.models";
-import { ModalProps } from "models/interfaces";
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
+import { ClassroomResponse } from '../../../models/http/responses/classroom.response.models';
+import { ModalProps } from '../../../models/interfaces';
 
 export interface ClassroomModalProps extends ModalProps {
   isUpdate: boolean;

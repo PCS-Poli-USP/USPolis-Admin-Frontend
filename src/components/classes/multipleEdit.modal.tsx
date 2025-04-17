@@ -18,17 +18,15 @@ import {
   AlertIcon,
   Skeleton,
 } from '@chakra-ui/react';
-import MultipleEditAccordion from './multipleEdit.accordion';
 import { useEffect, useState } from 'react';
 import { CalendarIcon } from '@chakra-ui/icons';
 import { BsSearch } from 'react-icons/bs';
-import { ClassesBySubject } from 'utils/classes/classes.mapper';
-import { ConflictCalculator } from 'utils/conflict.calculator';
-import { ClassroomSchedule } from 'models/common/classroom.model';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
-import { ClassResponse } from 'models/http/responses/class.response.models';
-import useEventsService from 'hooks/API/services/useEventsService';
-import useClassroomsService from 'hooks/API/services/useClassroomsService';
+import { ConflictCalculator } from '../../utils/conflict.calculator';
+import { ClassroomSchedule } from '../../models/common/classroom.model';
+import { ClassroomResponse } from '../../models/http/responses/classroom.response.models';
+import { ClassResponse } from '../../models/http/responses/class.response.models';
+import useEventsService from '../../hooks/API/services/useEventsService';
+import useClassroomsService from '../../hooks/API/services/useClassroomsService';
 
 interface MultipleEditModalProps {
   isOpen: boolean;

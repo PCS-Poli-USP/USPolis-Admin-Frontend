@@ -1,4 +1,4 @@
-import CommonValidator from 'utils/common/common.validator';
+import CommonValidator from '../../utils/common/common.validator';
 
 export class ReservationValidator extends CommonValidator {
   static isInvalidTitle(value: string) {

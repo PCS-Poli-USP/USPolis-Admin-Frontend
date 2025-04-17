@@ -7,25 +7,25 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
-import { Input, Select } from 'components/common';
+import { Input, Select } from '../../../../../components/common';
 import { ReservationModalSecondStepProps } from './reservation.modal.steps.second.interface';
 
-import DateCalendarPicker from 'components/common/DateCalendarPicker';
+import DateCalendarPicker from '../../../../../components/common/DateCalendarPicker';
 import { useEffect, useState } from 'react';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { SelectInput } from 'components/common/form/SelectInput';
+import { BuildingResponse } from '../../../../../models/http/responses/building.response.models';
+import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
+import { WeekDay } from '../../../../../utils/enums/weekDays.enum';
+import { MonthWeek } from '../../../../../utils/enums/monthWeek.enum';
+import { SelectInput } from '../../../../../components/common/form/SelectInput';
 import {
   ClassroomFullResponse,
   ClassroomWithConflictCount,
-} from 'models/http/responses/classroom.response.models';
-import useClassrooms from 'hooks/useClassrooms';
-import { sortDates } from 'utils/holidays/holidays.sorter';
-import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classroom.time.grid';
-import { generateRecurrenceDates } from 'utils/common/common.generator';
-import { formatClassroomForSelection } from 'utils/classrooms/classroom.formatter';
+} from '../../../../../models/http/responses/classroom.response.models';
+import useClassrooms from '../../../../../hooks/useClassrooms';
+import { sortDates } from '../../../../../utils/holidays/holidays.sorter';
+import ClassroomTimeGrid from '../../../../../components/common/ClassroomTimeGrid/classroom.time.grid';
+import { generateRecurrenceDates } from '../../../../../utils/common/common.generator';
+import { formatClassroomForSelection } from '../../../../../utils/classrooms/classroom.formatter';
 
 function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   const {

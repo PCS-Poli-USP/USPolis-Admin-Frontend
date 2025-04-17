@@ -1,8 +1,8 @@
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { ReservationResponse } from '../../../../../models/http/responses/reservation.response.models';
 import { UseFormReturn } from 'react-hook-form';
-import { ReservationType } from 'utils/enums/reservations.enum';
+import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 import { ReservationSecondForm } from '../Second/reservation.modal.steps.second.interface';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../../../../models/http/responses/classroomSolicitation.response.models';
 
 
 export interface ReservationModalFirstStepProps {

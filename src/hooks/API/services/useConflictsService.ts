@@ -1,4 +1,4 @@
-import Conflict from 'models/http/responses/conflict.response.models';
+import Conflict from '../../../models/http/responses/conflict.response.models';
 import { AxiosResponse } from 'axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 

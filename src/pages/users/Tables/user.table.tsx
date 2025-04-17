@@ -1,12 +1,12 @@
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { UserResponse } from 'models/http/responses/user.response.models';
+import { UserResponse } from '../../../models/http/responses/user.response.models';
 import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import {
   FilterBoolean,
   FilterString,
-} from 'utils/tanstackTableHelpers/tableFiltersFns';
+} from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 
 interface UsersColumnsProps {
   handleEditClick: (data: UserResponse) => void;

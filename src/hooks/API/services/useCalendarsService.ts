@@ -1,9 +1,9 @@
 import { AxiosResponse } from 'axios';
-import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
+import { CalendarResponse } from '../../../models/http/responses/calendar.responde.models';
 import {
   CreateCalendar,
   UpdateCalendar,
-} from 'models/http/requests/calendar.request.models';
+} from '../../../models/http/requests/calendar.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 const useCalendarsService = () => {

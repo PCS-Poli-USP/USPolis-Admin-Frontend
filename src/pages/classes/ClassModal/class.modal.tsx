@@ -42,7 +42,7 @@ import {
   classFirstDefaultValues,
   classFirstSchema,
 } from './Steps/First/class.modal.steps.first.form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform//resolvers/yup';
 import {
   classSecondDefaultValues,
   classSecondSchema,
@@ -56,13 +56,13 @@ import {
   ClassBase,
   CreateClass,
   UpdateClass,
-} from 'models/http/requests/class.request.models';
+} from '../../../models/http/requests/class.request.models';
 import {
   CreateSchedule,
   UpdateSchedule,
-} from 'models/http/requests/schedule.request.models';
-import useClasses from 'hooks/classes/useClasses';
-import { ClassResponse } from 'models/http/responses/class.response.models';
+} from '../../../models/http/requests/schedule.request.models';
+import useClasses from '../../../hooks/classes/useClasses';
+import { ClassResponse } from '../../../models/http/responses/class.response.models';
 import { ClassFourthForm } from './Steps/Fourth/class.modal.steps.fourth.interface';
 import {
   classFourthDefaultValues,

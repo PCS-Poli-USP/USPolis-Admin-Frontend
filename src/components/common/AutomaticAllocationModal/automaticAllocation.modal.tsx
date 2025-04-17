@@ -16,10 +16,10 @@ import {
 
 import AutomaticAllocationAccordion from './automaticAllocation.accordion';
 import { useNavigate } from 'react-router-dom';
-import Event, { EventByClassrooms } from 'models/common/event.model';
-import EditEventModal from 'components/allocation/editEvent.modal';
+import Event, { EventByClassrooms } from '../../../models/common/event.model';
+import EditEventModal from '../../../components/allocation/editEvent.modal';
 import { useEffect, useState } from 'react';
-import useEventsService from 'hooks/API/services/useEventsService';
+import useEventsService from '../../../hooks/API/services/useEventsService';
 // import { EventToEventByClassroom } from 'utils/classes/classes.formatter';
 
 interface AutomaticAllocationModalProps {

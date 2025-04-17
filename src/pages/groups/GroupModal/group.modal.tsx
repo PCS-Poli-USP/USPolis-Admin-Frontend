@@ -15,13 +15,13 @@ import {
 } from '@chakra-ui/react';
 import { GroupModalProps } from './group.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform//resolvers/yup';
 import { schema, defaultValues } from './group.modal.form';
-import { Input, MultiSelect, Option } from 'components/common';
-import useGroups from 'hooks/useGroups';
+import { Input, MultiSelect, Option } from '../../../components/common';
+import useGroups from '../../../hooks/useGroups';
 import { useEffect, useState } from 'react';
 import { Select } from 'chakra-react-select';
-import { filterString } from 'utils/filters';
+import { filterString } from '../../../utils/filters';
 
 function GroupModal({
   isOpen,
@@ -132,7 +132,7 @@ function GroupModal({
                         closeMenuOnSelect={true}
                         isLoading={false}
                         isDisabled={false}
-                        onChange={(selected: Option) => {
+                        onChange={(selected) => {
                           if (selected) {
                             setSelectedBuilding(selected);
                           }

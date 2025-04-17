@@ -1,17 +1,17 @@
 import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
 
-import DataTable from 'components/common/DataTable/dataTable.component';
-import Loading from 'components/common/Loading/loading.component';
+import DataTable from '../../components/common/DataTable/dataTable.component';
+import Loading from '../../components/common/Loading/loading.component';
 import { getReservationsColumns } from './Tables/reservation.table';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
 import { useEffect, useState } from 'react';
-import useClassrooms from 'hooks/useClassrooms';
-import useBuildings from 'hooks/useBuildings';
-import useReservations from 'hooks/useReservations';
+import useClassrooms from '../../hooks/useClassrooms';
+import useBuildings from '../../hooks/useBuildings';
+import useReservations from '../../hooks/useReservations';
 import ReservationModal from './ReservationModal/reservation.modal';
-import Dialog from 'components/common/Dialog/dialog.component';
-import PageContent from 'components/common/PageContent';
-import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
+import Dialog from '../../components/common/Dialog/dialog.component';
+import PageContent from '../../components/common/PageContent';
+import useClassroomsSolicitations from '../../hooks/useClassroomSolicitations';
 
 function Reservations() {
   const {

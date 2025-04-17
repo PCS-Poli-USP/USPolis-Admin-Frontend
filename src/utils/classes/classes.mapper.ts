@@ -1,4 +1,4 @@
-import { ClassResponse } from 'models/http/responses/class.response.models';
+import { ClassResponse } from '../../models/http/responses/class.response.models';
 
 export function ClassesBySubject(classes: ClassResponse[]) {
   const mapData = classes.reduce((group: Map<string, ClassResponse[]>, cl) => {

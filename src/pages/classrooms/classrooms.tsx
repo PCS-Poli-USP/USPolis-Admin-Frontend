@@ -7,15 +7,15 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-import DataTable from 'components/common/DataTable/dataTable.component';
-import Dialog from 'components/common/Dialog/dialog.component';
+import DataTable from '../../components/common/DataTable/dataTable.component';
+import Dialog from '../../components/common/Dialog/dialog.component';
 import { useState } from 'react';
 import ClassroomModal from './ClassroomModal/classroom.modal';
-import useBuildings from 'hooks/useBuildings';
-import useClassrooms from 'hooks/useClassrooms';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import useBuildings from '../../hooks/useBuildings';
+import useClassrooms from '../../hooks/useClassrooms';
+import { ClassroomResponse } from '../../models/http/responses/classroom.response.models';
 import { getClassroomColumns } from './Tables/classroom.tables';
-import PageContent from 'components/common/PageContent';
+import PageContent from '../../components/common/PageContent';
 
 function Classrooms() {
   const {

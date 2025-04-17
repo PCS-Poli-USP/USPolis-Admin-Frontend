@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import Crawl from 'models/common/crawler.model';
+import Crawl from '../../../models/common/crawler.model';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 const useCrawlerService = () => {

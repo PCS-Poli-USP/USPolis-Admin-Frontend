@@ -16,7 +16,7 @@ import {
   Spacer,
   Text,
 } from '@chakra-ui/react';
-import { GroupResponse } from 'models/http/responses/group.response.models';
+import { GroupResponse } from '../../../models/http/responses/group.response.models';
 import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { FaUser } from 'react-icons/fa';

@@ -8,16 +8,16 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import DataTable from 'components/common/DataTable/dataTable.component';
-import Dialog from 'components/common/Dialog/dialog.component';
+import DataTable from '../../components/common/DataTable/dataTable.component';
+import Dialog from '../../components/common/Dialog/dialog.component';
 import { GoSync } from 'react-icons/go';
 import { useEffect, useState } from 'react';
 import { getInstitutionalEventsColumns } from './Tables/institutionalEvent.table';
-import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
-import useInstitutionalEvents from 'hooks/useInstitutionalEvents';
+import { InstitutionalEventResponse } from '../../models/http/responses/instituionalEvent.response.models';
+import useInstitutionalEvents from '../../hooks/useInstitutionalEvents';
 import InstitutionalEventModal from './InstitutionalEventModal/institutionalEvent.modal';
-import useBuildings from 'hooks/useBuildings';
-import PageContent from 'components/common/PageContent';
+import useBuildings from '../../hooks/useBuildings';
+import PageContent from '../../components/common/PageContent';
 
 function InstitutionalEvents() {
   const {

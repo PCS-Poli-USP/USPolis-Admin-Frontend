@@ -1,4 +1,4 @@
-import { SubjectType } from 'utils/enums/subjects.enum';
+import { SubjectType } from '../../../utils/enums/subjects.enum';
 import { BuildingResponse } from './building.response.models';
 import { ClassUnfetchResponse } from './class.response.models';
 

@@ -12,9 +12,9 @@ import {
   HStack,
   VStack,
 } from '@chakra-ui/react';
-import { ModalProps } from 'models/interfaces';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
-import { ReservationType } from 'utils/enums/reservations.enum';
+import { ModalProps } from '../../../models/interfaces';
+import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { ReservationType } from '../../../utils/enums/reservations.enum';
 import moment from 'moment';
 
 interface MySoliciationModalProps extends ModalProps {

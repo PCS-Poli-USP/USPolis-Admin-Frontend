@@ -4,9 +4,9 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
-import { Input } from 'components/common';
+import { Input } from '../../../../../components/common';
 import { ClassModalSecondStepProps } from './class.modal.steps.second.interface';
-import { MultiSelect } from 'components/common/form/MultiSelect';
+import { MultiSelect } from '../../../../../components/common/form/MultiSelect';
 
 function ClassModalSecondStep(props: ClassModalSecondStepProps) {
   function handleSelectClassDate(date: string, isStart: boolean) {

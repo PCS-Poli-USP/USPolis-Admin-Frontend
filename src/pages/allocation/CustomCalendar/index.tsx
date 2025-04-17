@@ -10,15 +10,15 @@ import interactionPlugin, {
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import rrulePlugin from '@fullcalendar/rrule';
-import DatePickerModal from 'components/allocation/datePicker.modal';
+import DatePickerModal from '../../../components/allocation/datePicker.modal';
 import ViewPickerModal from './ViewPickerModal/view.picker.modal';
 import EventContent from './EventContent/eventContent';
 import { Resource, Event } from '../interfaces/allocation.interfaces';
 import EventModal from './EventModal/event.modal';
 import moment from 'moment';
-import { useFeatureGuideContext } from 'context/FeatureGuideContext';
+import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { TourGuideEvents, TourGuideResources } from './utils';
-import { FG_STEP_INDEXES } from 'context/FeatureGuideContext/utils';
+import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
 
 type ViewOption = {
   value: string;
@@ -130,7 +130,7 @@ function CustomCalendar({
   });
 
   useEffect(() => {
-    registerControlFn((value: any) => {
+    registerControlFn(() => {
       if (calendarRef.current) {
         setIsGuideMode(true);
         setResourcesExpanded(true);

@@ -1,5 +1,5 @@
-import useSelfService from 'hooks/API/services/useSelfService';
-import { UserResponse } from 'models/http/responses/user.response.models';
+import useSelfService from '../hooks/API/services/useSelfService';
+import { UserResponse } from '../models/http/responses/user.response.models';
 import React, { createContext, useEffect, useState } from 'react';
 
 interface AppContext {

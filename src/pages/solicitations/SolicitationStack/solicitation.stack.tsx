@@ -8,11 +8,11 @@ import {
   StackDivider,
   VStack,
 } from '@chakra-ui/react';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import { useEffect, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import SolicitationStackBody from './solicitation.stack.body';
-import { filterString } from 'utils/filters';
+import { filterString } from '../../../utils/filters';
 
 interface SolicitationStackProps {
   solicitations: ClassroomSolicitationResponse[];

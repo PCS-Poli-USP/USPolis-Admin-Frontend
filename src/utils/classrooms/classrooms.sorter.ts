@@ -1,5 +1,5 @@
-import Classroom from 'models/common/classroom.model';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import Classroom from '../../models/common/classroom.model';
+import { ClassroomResponse } from '../../models/http/responses/classroom.response.models';
 
 export function sortClassroomResponse(
   A: ClassroomResponse | Classroom,

@@ -1,12 +1,12 @@
 import { HStack, Text, Box } from '@chakra-ui/react';
 import { Select as CSelect } from '@chakra-ui/react';
 import Select from 'react-select';
-import { Capitalize } from 'utils/formatters';
-import { ClassroomSchedule } from 'models/common/classroom.model';
+import { Capitalize } from '../../utils/formatters';
+import { ClassroomSchedule } from '../../models/common/classroom.model';
 import { useEffect, useState } from 'react';
-import { WeekDaysShortText } from 'utils/enums/weekDays.enum';
-import { ConflictCalculator } from 'utils/conflict.calculator';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
+import { WeekDaysShortText } from '../../utils/enums/weekDays.enum';
+import { ConflictCalculator } from '../../utils/conflict.calculator';
+import { BuildingResponse } from '../../models/http/responses/building.response.models';
 
 interface MultipleEditAllocationProps {
   eventID: string;

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
+const BASE_URL = import.meta.env.VITE_USPOLIS_API_ENDPOINT;
 
 export default axios.create({ baseURL: BASE_URL });
 

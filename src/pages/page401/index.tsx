@@ -1,5 +1,5 @@
 import { Flex, Heading, Text } from '@chakra-ui/react';
-import PageContent from 'components/common/PageContent';
+import PageContent from '../../components/common/PageContent';
 
 function Page401() {
   return (

@@ -3,8 +3,8 @@ import {
   CreateHoliday,
   CreateManyHolidays,
   UpdateHoliday,
-} from 'models/http/requests/holiday.request.models';
-import { HolidayResponse } from 'models/http/responses/holiday.response.models';
+} from '../../../models/http/requests/holiday.request.models';
+import { HolidayResponse } from '../../../models/http/responses/holiday.response.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 const useHolidaysService = () => {

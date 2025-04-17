@@ -8,22 +8,22 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { ClassResponse } from 'models/http/responses/class.response.models';
+import { ClassResponse } from '../../../models/http/responses/class.response.models';
 import {
   BsCalendarDateFill,
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
 import { BiSolidCalendarEdit } from 'react-icons/bi';
-import { getScheduleString } from 'utils/schedules/schedule.formatter';
+import { getScheduleString } from '../../../utils/schedules/schedule.formatter';
 import {
   FilterArray,
   FilterBuilding,
   FilterClassCode,
   FilterNumber,
   FilterString,
-} from 'utils/tanstackTableHelpers/tableFiltersFns';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+} from '../../../utils/tanstackTableHelpers/tableFiltersFns';
+import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
 
 interface ClassesColumnsProps {
   handleCheckAllClick: (data: Row<ClassResponse>[], value: boolean) => void;

@@ -1,7 +1,7 @@
 import moment, { Moment } from 'moment';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { MonthWeek } from '../../utils/enums/monthWeek.enum';
+import { Recurrence } from '../../utils/enums/recurrence.enum';
+import { WeekDay } from '../../utils/enums/weekDays.enum';
 
 const DATE_FORMATER = 'YYYY-MM-DD';
 

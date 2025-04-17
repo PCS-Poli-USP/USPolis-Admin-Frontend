@@ -1,7 +1,7 @@
-import { SolicitationValidator } from 'utils/solicitations/solicitation.validator';
+import { SolicitationValidator } from '../../../utils/solicitations/solicitation.validator';
 import * as yup from 'yup';
 import { SolicitationForm } from './solicitation.modal.interface';
-import { ReservationType } from 'utils/enums/reservations.enum';
+import { ReservationType } from '../../../utils/enums/reservations.enum';
 
 export const formFields = {
   building_id: {

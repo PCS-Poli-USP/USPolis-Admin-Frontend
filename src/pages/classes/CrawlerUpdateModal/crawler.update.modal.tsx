@@ -14,9 +14,9 @@ import {
   Progress,
   Select,
 } from '@chakra-ui/react';
-import { ModalProps } from 'models/interfaces';
+import { ModalProps } from '../../../models/interfaces';
 import { useEffect, useState } from 'react';
-import { CrawlerType } from 'utils/enums/subjects.enum';
+import { CrawlerType } from '../../../utils/enums/subjects.enum';
 
 interface CrawlerUpdateModalProps extends ModalProps {
   codes: string[];

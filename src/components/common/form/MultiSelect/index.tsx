@@ -73,16 +73,15 @@ export function MultiSelect({
             placeholder={placeholder}
             isMulti={true}
             closeMenuOnSelect={false}
-            onChange={(selectedOption: Option[]) => {
-              const values = selectedOption.map(
-                (option: Option) => option.value,
+            onChange={(selectedOption) => {
+              const values = (selectedOption || []).map(
+                (option) => option.value,
               );
               setValue(name, values);
               setSelectedOptions(selectedOption as Option[]);
               if (onChange) {
                 onChange();
               }
-              return;
             }}
             options={options}
           />
