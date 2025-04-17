@@ -27,7 +27,7 @@ const useGroupService = () => {
     id: number,
     input: GroupUpdate,
   ): Promise<AxiosResponse<JSONResponse>> => {
-    return axios.patch(`${PREFIX}/${id}`, input);
+    return axios.put(`${PREFIX}/${id}`, input);
   };
   const remove = (id: number): Promise<AxiosResponse<JSONResponse>> => {
     return axios.delete(`${PREFIX}/${id}`);
