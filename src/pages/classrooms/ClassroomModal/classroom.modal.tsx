@@ -9,6 +9,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  VStack,
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import {
@@ -18,10 +19,11 @@ import {
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './classroom.modal.form';
 import { yupResolver } from '@hookform//resolvers/yup';
-import { Input, Select } from '../../../components/common';
+import { Input, Select, SelectInput } from '../../../components/common';
 import { NumberInput } from '../../../components/common/form/NumberInput';
 import { CheckBox } from '../../../components/common/form/CheckBox';
 import useClassrooms from '../../../hooks/useClassrooms';
+import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
 
 export default function ClassroomModal(props: ClassroomModalProps) {
   const form = useForm<ClassroomForm>({
@@ -103,15 +105,23 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 placeholder={'Capacidade da sala'}
               />
 
-              <Text fontWeight={'bold'} mt={4}>
+              <Text fontWeight={'bold'} mt={4} mb={'10px'}>
                 Recursos
               </Text>
 
-              <HStack>
+              <VStack w={'full'} alignItems={'start'} gap={'10px'}>
                 <CheckBox text={'Ar condicionado'} name={'air_conditioning'} />
-                <CheckBox text={'Projetor'} name={'projector'} />
                 <CheckBox text={'Acessibilidade'} name={'accessibility'} />
-              </HStack>
+                <SelectInput
+                  name='audiovisual'
+                  label='Recurso audiovisual'
+                  w={'250px'}
+                  options={AudiovisualType.values().map((type) => ({
+                    label: AudiovisualType.translate(type),
+                    value: type,
+                  }))}
+                />
+              </VStack>
 
               <Text fontWeight={'bold'} mt={4}>
                 Alocação
@@ -126,7 +136,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
 
         <ModalFooter>
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-            Cadastrar
+            {props.isUpdate ? 'Atualizar' : 'Cadastrar'}
           </Button>
           <Button onClick={() => handleCloseModal()}>Cancelar</Button>
         </ModalFooter>

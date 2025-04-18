@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { AudiovisualType } from '../enums/audiovisualType.enum';
 
 export default class CommonValidator {
   static isEmptyString(value: string) {
@@ -51,5 +52,9 @@ export default class CommonValidator {
     const start = moment(start_time, 'HH:mm');
     const end = moment(end_time, 'HH:mm');
     return !start.isSameOrBefore(end);
+  }
+
+  static isInvalidAudiovisualType(value: string) {
+    return !AudiovisualType.values().includes(value as AudiovisualType);
   }
 }

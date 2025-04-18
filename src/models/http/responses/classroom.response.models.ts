@@ -1,3 +1,4 @@
+import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
 import { ScheduleFullResponse } from './schedule.response.models';
 
 export interface ClassroomResponse {
@@ -7,7 +8,7 @@ export interface ClassroomResponse {
   floor: number;
   ignore_to_allocate: boolean;
   accessibility: boolean;
-  projector: boolean;
+  audiovisual: AudiovisualType;
   air_conditioning: boolean;
   updated_at: string;
   created_by_id: number;

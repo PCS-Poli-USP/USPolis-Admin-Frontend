@@ -1,3 +1,4 @@
+import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
 import { ClassType } from '../../../utils/enums/classes.enum';
 import {
   ScheduleFullResponse,
@@ -13,7 +14,7 @@ export interface ClassUnfetchResponseBase {
   type: ClassType;
   vacancies: number;
   air_conditionating: boolean;
-  projector: boolean;
+  audiovisual: AudiovisualType;
   accessibility: boolean;
   ignore_to_allocate: boolean;
   full_allocated: boolean;

@@ -7,8 +7,8 @@ import { ScheduleData } from '../../class.modal.interface';
 import { ClassSecondForm } from '../Second/class.modal.steps.second.interface';
 
 export interface ClassModalThirdStepProps extends ClassModalStepsProps {
-  form: UseFormReturn<ClassThirdForm, any, undefined>;
-  secondForm: UseFormReturn<ClassSecondForm, any, undefined>;
+  form: UseFormReturn<ClassThirdForm, any, ClassThirdForm>;
+  secondForm: UseFormReturn<ClassSecondForm, any, ClassSecondForm>;
   schedules: ScheduleData[];
   setSchedules: (schedules: ScheduleData[]) => void;
   onNext: () => void;

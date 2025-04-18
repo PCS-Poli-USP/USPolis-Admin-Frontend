@@ -11,6 +11,7 @@ import {
   FilterNumber,
   FilterString,
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
+import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
 
 interface ClassroomColumnsProps {
   handleDuplicateClick: (data: ClassroomResponse) => void;
@@ -64,11 +65,12 @@ export function getClassroomColumns(
       filterFn: FilterBoolean,
     },
     {
-      id: 'projector',
-      accessorKey: 'projector',
-      header: 'Projetor',
-      meta: { isBoolean: true, isSelectable: true },
-      filterFn: FilterBoolean,
+      id: 'audiovisual',
+      accessorKey: 'audiovisual',
+      header: 'Audiovisual',
+      meta: { isSelectable: true },
+      cell: ({ row }) => AudiovisualType.translate(row.original.audiovisual),
+      accessorFn: (row) => AudiovisualType.translate(row.audiovisual),
     },
     {
       id: 'accessibility',

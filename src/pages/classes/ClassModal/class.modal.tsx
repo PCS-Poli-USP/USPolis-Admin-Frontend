@@ -136,7 +136,7 @@ function ClassModal(props: ClassModalProps) {
       vacancies: firstData.vacancies,
       air_conditionating: fourthData.air_conditionating,
       accessibility: fourthData.accessibility,
-      projector: fourthData.projector,
+      audiovisual: fourthData.audiovisual,
       ignore_to_allocate: fourthData.ignore_to_allocate,
       start_date: secondData.start_date,
       end_date: secondData.end_date,
@@ -233,7 +233,7 @@ function ClassModal(props: ClassModalProps) {
   function loadFourthFormFromClass(data: ClassResponse) {
     fourthForm.reset({
       ignore_to_allocate: data.ignore_to_allocate,
-      projector: data.projector,
+      audiovisual: data.audiovisual,
       accessibility: data.accessibility,
       air_conditionating: data.air_conditionating,
     });

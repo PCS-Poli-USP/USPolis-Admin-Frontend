@@ -1,3 +1,5 @@
+import { AudiovisualType } from "../../../utils/enums/audiovisualType.enum";
+
 export interface CreateClassroom {
   name: string;
   building_id: number;
@@ -5,7 +7,7 @@ export interface CreateClassroom {
   capacity: number;
   ignore_to_allocate: boolean;
   air_conditioning: boolean;
-  projector: boolean;
+  audiovisual: AudiovisualType;
   accessibility: boolean;
 }
 
