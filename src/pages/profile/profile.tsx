@@ -122,7 +122,6 @@ function Profile() {
 
                 <Accordion
                   allowMultiple
-                  allowToggle
                   defaultIndex={[0]}
                   borderColor={'uspolis.blue'}
                   border={'1px'}
