@@ -143,7 +143,7 @@ export function DrawerNavBar({
                   <Flex
                     id='navbar-user-menu-button'
                     alignItems={'center'}
-                    gap='10px'
+                    justifyItems={'center'}
                   >
                     <UserImage user={loggedUser} />
                   </Flex>

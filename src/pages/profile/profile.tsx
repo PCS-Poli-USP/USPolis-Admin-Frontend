@@ -27,9 +27,11 @@ import moment from 'moment';
 import { HiUserGroup } from 'react-icons/hi';
 import UserImage from '../../components/common/EmptyPage/UserImage/user.image';
 import { PiChair } from 'react-icons/pi';
+import LoadingPage from '../../components/common/LoadingPage';
+import Page401 from '../page401';
 
 function Profile() {
-  const { loggedUser } = useContext(appContext);
+  const { loggedUser, loading, isAuthenticated } = useContext(appContext);
   const userInfo = loggedUser?.user_info;
   return (
     <PageContent>
@@ -121,6 +123,7 @@ function Profile() {
                 <Accordion
                   allowMultiple
                   allowToggle
+                  defaultIndex={[0]}
                   borderColor={'uspolis.blue'}
                   border={'1px'}
                 >
@@ -198,9 +201,9 @@ function Profile() {
             </Grid>
           </Center>
         </>
-      ) : (
-        <Text fontSize={'4xl'}>Entre primeiro para acessar essa página!</Text>
-      )}
+      ) : undefined}
+      {isAuthenticated && loading && <LoadingPage />}
+      {!isAuthenticated && !loading ? <Page401 /> : undefined}
     </PageContent>
   );
 }

@@ -8,8 +8,9 @@ function LoadingPage() {
       width='100vw'
       height='100vh'
       align={'center'}
-      justify={'center'}
+      justify={'top'}
       overflow={'auto'}
+      p={'50px'}
     >
       <Heading mb={4}>Carregando...</Heading>
 

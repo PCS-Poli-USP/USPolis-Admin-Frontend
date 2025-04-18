@@ -7,15 +7,14 @@ import {
   Link,
   Menu,
   MenuButton,
-  Icon,
   MenuList,
   MenuItem,
 } from '@chakra-ui/react';
 import Logo from '../../../assets/uspolis.logo.png';
 import { appContext } from '../../../context/AppContext';
 import { useContext } from 'react';
-import { FaUser } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
+import UserImage from '../../../components/common/EmptyPage/UserImage/user.image';
 
 function Header() {
   const context = useContext(appContext);
@@ -120,18 +119,22 @@ function Header() {
               colorScheme='dark'
             >
               <Flex alignItems={'center'} gap='1'>
-                <Text
-                  textColor={'uspolis.blue'}
-                  maxW={'200px'}
-                  overflow={'hidden'}
-                  textOverflow={'ellipsis'}
-                >
-                  {context.loggedUser.name}
-                </Text>
-                <Icon as={FaUser} />
+                <UserImage user={context.loggedUser} />
               </Flex>
             </MenuButton>
             <MenuList>
+              <MenuItem
+                color='black'
+                fontWeight={'bold'}
+                onClick={() => {
+                  navigate('/profile', {
+                    replace: true,
+                    state: { from: location },
+                  });
+                }}
+              >
+                Acessar perfil
+              </MenuItem>
               <MenuItem onClick={() => context.logout()} color='black'>
                 Sair
               </MenuItem>
