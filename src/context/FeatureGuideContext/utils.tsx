@@ -6,8 +6,41 @@ function createUserMenuStep() {
   return createFeatureTourGuideStep({
     target: '#navbar-user-menu-button',
     title: 'Menu do Usuário',
-    description: 'Acesse suas informações ou saia do sistema.',
+    description: 'Acesse seu perfil ou saia do sistema.',
     placement: 'bottom',
+    data: {
+      next: '/profile',
+    },
+  });
+}
+
+function createUserProfileStep() {
+  return createFeatureTourGuideStep({
+    target: '#profile-info-grid',
+    title: 'Perfil do Usuário',
+    description: 'Aqui você pode ver suas informações.',
+    placement: 'right',
+    data: {
+      previous: '/allocation',
+    },
+  });
+}
+
+function createUserBuildingsStep() {
+  return createFeatureTourGuideStep({
+    target: '#profile-buildings-grid',
+    title: 'Prédios do Usuário',
+    description: 'Prédios que você tem acesso.',
+    placement: 'right',
+  });
+}
+
+function createUserGroupsStep() {
+  return createFeatureTourGuideStep({
+    target: '#profile-groups-grid',
+    title: 'Grupos e Salas do Usuário',
+    description: 'Grupos com as salas que você tem acesso.',
+    placement: 'right',
   });
 }
 
@@ -34,6 +67,9 @@ function createContactStep() {
     title: 'Contato',
     description: 'Nos mande um email.',
     placement: 'top',
+    data: {
+      next: '/allocation',
+    },
   });
 }
 
@@ -42,6 +78,9 @@ function createAllocationGridStep() {
     target: '#allocation-grid',
     title: 'Mapa de Salas',
     description: 'Visualize a alocação de salas.',
+    data: {
+      previous: '/profile',
+    },
   });
 }
 
@@ -119,6 +158,9 @@ function createAutomaticClassCreationStep() {
 export function createSteps() {
   return [
     createUserMenuStep(),
+    createUserProfileStep(),
+    createUserBuildingsStep(),
+    createUserGroupsStep(),
     createOpenMenuStep(),
     createMenuStep(),
     createContactStep(),
@@ -132,12 +174,15 @@ export function createSteps() {
 
 export const FG_STEP_INDEXES = {
   USER_MENU: 0,
-  OPEN_MENU: 1,
-  MENU: 2,
-  CONTACT: 3,
-  ALLOCATION_GRID: 4,
-  ALLOCATION_HEADER: 5,
-  RESERVATION_BY_ALLOCATION: 6,
-  ALLOCATION_DRAG_AND_DROP: 7,
-  AUTOMATIC_CLASS_CREATION: 8,
+  USER_PROFILE: 1,
+  USER_BUILDINGS: 2,
+  USER_GROUPS: 3,
+  OPEN_PAGE_MENU: 4,
+  PAGE_MENU: 5,
+  CONTACT: 6,
+  ALLOCATION_GRID: 7,
+  ALLOCATION_HEADER: 8,
+  RESERVATION_BY_ALLOCATION: 9,
+  ALLOCATION_DRAG_AND_DROP: 10,
+  AUTOMATIC_CLASS_CREATION: 11,
 };

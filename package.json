@@ -1,7 +1,7 @@
 {
   "proxy": "",
   "name": "uspolis-admin",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@chakra-ui/icons": "^2.2.4",
@@ -60,11 +60,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "vite build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev": "vite",
-    "build2": "vite build",
     "preview": "vite preview"
   },
   "eslintConfig": {

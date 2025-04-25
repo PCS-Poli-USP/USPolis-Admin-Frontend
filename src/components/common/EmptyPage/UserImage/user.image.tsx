@@ -30,7 +30,7 @@ export default function UserImage({ user, boxSize = '40px' }: UserImageProps) {
         </Center>
       ) : (
         <Box
-          boxSize='100%'
+          boxSize={boxSize}
           display='flex'
           alignItems='center'
           justifyContent='center'

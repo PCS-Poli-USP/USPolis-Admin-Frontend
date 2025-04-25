@@ -88,7 +88,7 @@ export default function EmptyPage() {
     stepData: FeatureTourGuideStepData,
   ) => {
     if (type === EVENTS.STEP_BEFORE) {
-      if (index === FG_STEP_INDEXES.MENU) {
+      if (index === FG_STEP_INDEXES.PAGE_MENU) {
         handleDrawerOpen();
       }
       if (
@@ -106,7 +106,7 @@ export default function EmptyPage() {
         navigate(stepData.previous);
       }
       if (
-        index === FG_STEP_INDEXES.MENU ||
+        index === FG_STEP_INDEXES.PAGE_MENU ||
         index === FG_STEP_INDEXES.AUTOMATIC_CLASS_CREATION
       ) {
         handleDrawerClose();
@@ -128,7 +128,7 @@ export default function EmptyPage() {
     stepData: FeatureTourGuideStepData,
   ) => {
     if (type === EVENTS.STEP_BEFORE) {
-      if (index === FG_STEP_INDEXES.MENU) {
+      if (index === FG_STEP_INDEXES.PAGE_MENU) {
         handleDrawerOpen();
       }
       if (index === FG_STEP_INDEXES.RESERVATION_BY_ALLOCATION) {

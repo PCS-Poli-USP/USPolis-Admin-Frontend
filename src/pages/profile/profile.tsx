@@ -39,6 +39,7 @@ function Profile() {
         <>
           <Center>
             <Grid
+              id='profile-grid'
               w={'1000px'}
               h={'auto'}
               templateColumns='repeat(1, 1fr)'
@@ -46,7 +47,7 @@ function Profile() {
               borderRadius={'10px'}
               padding={'20px'}
             >
-              <GridItem colSpan={1} h={'300px'} mb={'30px'}>
+              <GridItem colSpan={1} h={'300px'} mb={'30px'} id='profile-info-grid'>
                 <Flex
                   align={'center'}
                   justify={'center'}
@@ -89,7 +90,7 @@ function Profile() {
                 </Flex>
               </GridItem>
 
-              <GridItem colSpan={1} h={'50px'}>
+              <GridItem colSpan={1} h={'50px'} id='profile-buildings-grid'>
                 <Flex dir='row' justify={'start'} align={'center'} gap={'10px'}>
                   <LiaBuilding size={'25px'} />
                   <Text fontSize={'xl'} fontWeight={'bold'}>
@@ -106,7 +107,7 @@ function Profile() {
                 </Flex>
               </GridItem>
 
-              <GridItem colSpan={1} h={'auto'}>
+              <GridItem colSpan={1} h={'auto'} id='profile-groups-grid'>
                 <Flex
                   dir='row'
                   justify={'start'}
