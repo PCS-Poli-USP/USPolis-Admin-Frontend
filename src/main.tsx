@@ -15,7 +15,6 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import Page404 from './pages/page404';
 import AuthPage from './pages/auth';
 import RestrictedRoute from './routes/restricted.route';
-import React from 'react';
 // Providers, Contexts
 import FeatureGuideProvider from './context/FeatureGuideContext';
 
@@ -49,105 +48,94 @@ import Users from './pages/users/users';
 const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ThemeProvider theme={muiTheme}>
-      <ChakraProvider theme={chakraTheme}>
-        <GoogleOAuthProvider clientId={clientId!}>
-          <AppContextProvider>
-            <LocalizationProvider
-              dateAdapter={AdapterMoment}
-              adapterLocale='pt-br'
-            >
-              <FeatureGuideProvider>
-                <BrowserRouter>
-                  <Routes>
-                    <Route path='/auth' element={<AuthPage />} />
-                    <Route
-                      path='auth-callback'
-                      element={<AuthCallbackPage />}
-                    />
-                    <Route
-                      path='/test-auth-callback'
-                      element={<LoadingRedirect />}
-                    />
-                    <Route
-                      path='/test-auth-callback-error'
-                      element={<RedirectError error='Mock error bro' />}
-                    />
-                    <Route path='/loading-page' element={<LoadingPage />} />
-                    <Route element={<AxiosInterceptorRoute />}>
-                      <Route element={<PersistLogin />}>
-                        <Route
-                          path='/print/classroom-calendar'
-                          element={<ClassroomCalendarPrintPage />}
-                        />
-                        <Route path='/' element={<Navigate to='/index' />} />
-                        <Route path='/index' element={<Home />} />
-                        <Route path='/' element={<EmptyPage />}>
-                          {/* Not found */}
-                          <Route path='*' element={<Page404 />} />
+  <ThemeProvider theme={muiTheme}>
+    <ChakraProvider theme={chakraTheme}>
+      <GoogleOAuthProvider clientId={clientId!}>
+        <AppContextProvider>
+          <LocalizationProvider
+            dateAdapter={AdapterMoment}
+            adapterLocale='pt-br'
+          >
+            <FeatureGuideProvider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path='/auth' element={<AuthPage />} />
+                  <Route path='auth-callback' element={<AuthCallbackPage />} />
+                  <Route
+                    path='/test-auth-callback'
+                    element={<LoadingRedirect />}
+                  />
+                  <Route
+                    path='/test-auth-callback-error'
+                    element={<RedirectError error='Mock error bro' />}
+                  />
+                  <Route path='/loading-page' element={<LoadingPage />} />
+                  <Route element={<AxiosInterceptorRoute />}>
+                    <Route element={<PersistLogin />}>
+                      <Route
+                        path='/print/classroom-calendar'
+                        element={<ClassroomCalendarPrintPage />}
+                      />
+                      <Route path='/' element={<Navigate to='/index' />} />
+                      <Route path='/index' element={<Home />} />
+                      <Route path='/' element={<EmptyPage />}>
+                        {/* Not found */}
+                        <Route path='*' element={<Page404 />} />
 
-                          {/* Public routes */}
-                          <Route path='allocation' element={<Allocation />} />
+                        {/* Public routes */}
+                        <Route path='allocation' element={<Allocation />} />
+                        <Route path='find-classes' element={<FindClasses />} />
+
+                        {/* Private routes */}
+                        <Route element={<PrivateRoute />}>
+                          <Route path='profile' element={<Profile />} />
                           <Route
-                            path='find-classes'
-                            element={<FindClasses />}
+                            path='my-solicitations'
+                            element={<MySolicitations />}
                           />
 
-                          {/* Private routes */}
-                          <Route element={<PrivateRoute />}>
-                            <Route path='profile' element={<Profile />} />
+                          {/* Restricted routes */}
+                          <Route element={<RestrictedRoute />}>
+                            <Route path='subjects' element={<Subjects />} />
+                            <Route path='calendars' element={<Calendars />} />
+                            <Route path='classrooms' element={<Classrooms />} />
+                            <Route path='classes' element={<Classes />} />
                             <Route
-                              path='my-solicitations'
-                              element={<MySolicitations />}
+                              path='reservations'
+                              element={<Reservations />}
                             />
+                            <Route
+                              path='conflicts'
+                              element={<ConflictsPage />}
+                            />
+                            <Route
+                              path='solicitations'
+                              element={<Solicitations />}
+                            />
+                          </Route>
 
-                            {/* Restricted routes */}
-                            <Route element={<RestrictedRoute />}>
-                              <Route path='subjects' element={<Subjects />} />
-                              <Route path='calendars' element={<Calendars />} />
-                              <Route
-                                path='classrooms'
-                                element={<Classrooms />}
-                              />
-                              <Route path='classes' element={<Classes />} />
-                              <Route
-                                path='reservations'
-                                element={<Reservations />}
-                              />
-                              <Route
-                                path='conflicts'
-                                element={<ConflictsPage />}
-                              />
-                              <Route
-                                path='solicitations'
-                                element={<Solicitations />}
-                              />
-                            </Route>
-
-                            {/* Admin routes */}
-                            <Route path='' element={<AdminRoute />}>
-                              <Route path='users' element={<Users />} />
-                              <Route path='groups' element={<Groups />} />
-                              <Route path='buildings' element={<Buildings />} />
-                              <Route
-                                path='institutional-events'
-                                element={<InstitutionalEvents />}
-                              />
-                            </Route>
+                          {/* Admin routes */}
+                          <Route path='' element={<AdminRoute />}>
+                            <Route path='users' element={<Users />} />
+                            <Route path='groups' element={<Groups />} />
+                            <Route path='buildings' element={<Buildings />} />
+                            <Route
+                              path='institutional-events'
+                              element={<InstitutionalEvents />}
+                            />
                           </Route>
                         </Route>
                       </Route>
                     </Route>
-                  </Routes>
-                </BrowserRouter>
-              </FeatureGuideProvider>
-            </LocalizationProvider>
-          </AppContextProvider>
-        </GoogleOAuthProvider>
-      </ChakraProvider>
-    </ThemeProvider>
-  </React.StrictMode>,
+                  </Route>
+                </Routes>
+              </BrowserRouter>
+            </FeatureGuideProvider>
+          </LocalizationProvider>
+        </AppContextProvider>
+      </GoogleOAuthProvider>
+    </ChakraProvider>
+  </ThemeProvider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -137,7 +137,7 @@ export default function EditUserModal(props: EditModalProps) {
         </ModalBody>
         <ModalFooter>
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-            Salvar
+            Atualizar
           </Button>
           <Button onClick={props.onClose}>Cancelar</Button>
         </ModalFooter>
