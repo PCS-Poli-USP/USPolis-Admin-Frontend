@@ -30,14 +30,17 @@ export default function ClassroomModal(props: ClassroomModalProps) {
     resolver: yupResolver(schema),
   });
 
-  const { trigger, reset, getValues, clearErrors } = form;
+  const { trigger, reset, getValues, clearErrors, setValue } = form;
   const { createClassroom, updateClassroom } = useClassrooms();
 
   useEffect(() => {
     if (props.selectedClassroom) {
       reset({ ...props.selectedClassroom });
     }
-  }, [props, reset]);
+    if (props.buildings.length === 1) {
+      setValue('building_id', props.buildings[0].id);
+    }
+  }, [props, reset, setValue]);
 
   async function handleSaveClick() {
     const isValid = await trigger();
@@ -82,6 +85,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 label={'Prédio'}
                 name={'building_id'}
                 placeholder={'Escolha um prédio'}
+                disabled={props.buildings.length === 1}
                 options={props.buildings.map((building) => ({
                   value: building.id,
                   label: building.name,
