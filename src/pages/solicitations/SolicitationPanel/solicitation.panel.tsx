@@ -1,6 +1,4 @@
 import {
-  Alert,
-  AlertIcon,
   Box,
   Button,
   Card,
@@ -19,7 +17,6 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Spacer,
-  // Select,
   Stack,
   StackDivider,
   Text,
