@@ -1,10 +1,13 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
+  Flex,
   Heading,
   HStack,
   IconButton,
@@ -45,10 +48,9 @@ import { Recurrence } from '../../../utils/enums/recurrence.enum';
 interface SolicitationPanelProps {
   solicitation?: ClassroomSolicitationResponse;
   loading: boolean;
-  approve: (id: number, data: ClassroomSolicitationAprove) => void;
-  deny: (id: number, data: ClassroomSolicitationDeny) => void;
+  approve: (id: number, data: ClassroomSolicitationAprove) => Promise<void>;
+  deny: (id: number, data: ClassroomSolicitationDeny) => Promise<void>;
   handleClose: () => void;
-  reset: () => void;
 }
 
 function SolicitationPanel({
@@ -57,7 +59,6 @@ function SolicitationPanel({
   approve,
   deny,
   handleClose,
-  reset,
 }: SolicitationPanelProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
@@ -96,101 +97,104 @@ function SolicitationPanel({
     return moment(start, 'HH:mm').isBefore(moment(end, 'HH:mm'));
   }
 
-  // Set start and end time from solicitation
-  useEffect(() => {
-    if (solicitation?.start_time && solicitation.end_time) {
-      setStart(solicitation.start_time);
-      setEnd(solicitation.end_time);
-    } else {
-      setStart('');
-      setEnd('');
-    }
-  }, [solicitation?.start_time, solicitation?.end_time]);
-
-  // Fetch classrooms with conflicts count from time and dates
-  useEffect(() => {
-    const fetchClassrooms = async () => {
-      if (solicitation && !solicitation.closed) {
-        if (start && end && validateTime(start, end)) {
-          try {
-            setIsLoadingWithConflict(true);
-            const result = await getClassroomsWithConflictFromTime(
-              { start_time: start, end_time: end, dates: solicitation.dates },
-              solicitation?.building_id,
-            );
-            setClassrooms(result);
-          } finally {
-            setIsLoadingWithConflict(false);
-          }
-        }
-      }
-    };
-    if (!isLoadingWithConflict) fetchClassrooms();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [solicitation, end, start]);
-
-  // Fetch selected classroom from solicitation
-  useEffect(() => {
-    if (solicitation?.classroom_id && classrooms.length > 0) {
-      setClassroom(
-        classrooms.find((room) => room.id === solicitation.classroom_id),
-      );
-    } else {
-      setClassroom(undefined);
-    }
-  }, [solicitation, classrooms]);
-
-  // Fetch classroom occurrences from selected classroom
-  useEffect(() => {
-    const fetchClassroomOccurrences = async () => {
-      if (!solicitation) return;
-      if (classroom && classroomFull && classroom.id === classroomFull.id) {
-        return;
-      }
-
-      let id = -1;
-      if (solicitation && !solicitation.closed) {
-        if (classroom) {
-          id = classroom.id;
-        }
-        if (solicitation.classroom_id && !classroom) {
-          id = solicitation.classroom_id;
-        }
-      }
-
-      if (id > 0) {
+  const fetchClassrooms = async () => {
+    if (solicitation && !solicitation.closed && !isLoadingWithConflict) {
+      if (start && end && validateTime(start, end)) {
         try {
-          console.log('Buscando full');
-          setIsLoadingFull(true);
-          const result = await listOneFull(id);
-          setClassroomFull(result);
+          setIsLoadingWithConflict(true);
+          const result = await getClassroomsWithConflictFromTime(
+            { start_time: start, end_time: end, dates: solicitation.dates },
+            solicitation?.building_id,
+          );
+
+          setClassrooms(result);
+          if (solicitation.classroom_id && !classroom) {
+            setClassroom(
+              result.find((room) => room.id === solicitation.classroom_id),
+            );
+          } else {
+            setClassroom(undefined);
+          }
         } finally {
-          setIsLoadingFull(false);
+          setIsLoadingWithConflict(false);
         }
+      } else {
+        setClassrooms([]);
+        setClassroom(undefined);
       }
-    };
-
-    if (!isLoadingFull) {
-      fetchClassroomOccurrences();
     }
-  }, [listOneFull, classroom, classroomFull, solicitation, isLoadingFull]);
+  };
 
-  // Need when change between solicitations (the conclit count is not updated)
-  useEffect(() => {
-    if (classrooms && classroom) {
-      setClassroom(classrooms.find((val) => val.id === classroom.id));
+  const fetchClassroomOccurrences = async () => {
+    if (!solicitation) return;
+    if (isLoadingFull) return;
+    if (classroom && classroomFull && classroom.id === classroomFull.id) {
+      return;
     }
-  }, [classroom, classrooms]);
+
+    let id = -1;
+    if (solicitation && !solicitation.closed) {
+      if (classroom) {
+        id = classroom.id;
+      }
+      if (solicitation.classroom_id && !classroom) {
+        id = solicitation.classroom_id;
+      }
+    }
+
+    if (id > 0) {
+      try {
+        setIsLoadingFull(true);
+        const result = await listOneFull(id);
+        setClassroomFull(result);
+      } finally {
+        setIsLoadingFull(false);
+      }
+    } else setClassroomFull(undefined);
+  };
 
   useEffect(() => {
     setEditingClassroom(false);
-  }, []);
+    if (solicitation) {
+      // Fetch solicitation data
+      if (solicitation.start_time && solicitation.end_time) {
+        setStart(solicitation.start_time);
+        setEnd(solicitation.end_time);
+      } else {
+        setStart('');
+        setEnd('');
+      }
+    }
+  }, [solicitation]);
+
+  // Fetch classrooms with conflicts count from time and dates
+  useEffect(() => {
+    fetchClassrooms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [end, start]);
+
+  // Fetch classroom occurrences from selected classroom
+  useEffect(() => {
+    fetchClassroomOccurrences();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [classroom, solicitation]);
+
+  // Need when change between solicitations (the conclit count is not updated)
+  useEffect(() => {
+    if (solicitation && solicitation.classroom_id) {
+      if (classrooms) {
+        setClassroom(
+          classrooms.find((val) => val.id === solicitation.classroom_id),
+        );
+      }
+    }
+  }, [classrooms, solicitation]);
 
   return (
     <Card
       w={'100%'}
+      h={'100%'}
       border={'2px solid lightgray'}
-      hidden={!solicitation}
       p={'4px'}
       zIndex={2}
     >
@@ -516,6 +520,7 @@ function SolicitationPanel({
                       </Text>
                       <Text fontWeight={'bold'}>Justificativa: </Text>
                       <Textarea
+                        disabled={loading}
                         borderColor={justificationError ? 'red.300' : undefined}
                         value={justification}
                         onChange={(event) => {
@@ -530,14 +535,13 @@ function SolicitationPanel({
                         Campo obrigatório
                       </Text>
                       <Button
-                        onClick={() => {
+                        onClick={async () => {
                           if (justification.length === 0) {
                             setJustificationError(true);
                             return;
                           }
-                          deny(solicitation.id, { justification });
+                          await deny(solicitation.id, { justification });
                           handleOpenPopover(1);
-                          reset();
                         }}
                       >
                         Confirmar
@@ -577,10 +581,10 @@ function SolicitationPanel({
                         não poderá mudar seu estado.
                       </Text>
                       <Button
-                        onClick={() => {
+                        onClick={async () => {
                           if (!solicitation.classroom_id && !classroom) return;
 
-                          approve(solicitation.id, {
+                          await approve(solicitation.id, {
                             classroom_id: classroom
                               ? classroom.id
                               : solicitation.classroom_id
@@ -599,7 +603,6 @@ function SolicitationPanel({
                               : end,
                           });
                           handleOpenPopover(2);
-                          reset();
                         }}
                       >
                         Confirmar
@@ -611,7 +614,23 @@ function SolicitationPanel({
             </HStack>
           </CardFooter>
         </>
-      ) : undefined}
+      ) : (
+        <Flex
+          direction={'column'}
+          alignItems={'center'}
+          justify={'center'}
+          h={'100%'}
+          gap={4}
+        >
+          <Heading color={'uspolis.blue'}>
+            Nenhuma solicitação selecionada
+          </Heading>
+          <Text color={'uspolis.blue'}>
+            Selecione uma solicitação na lista ao lado para visualizar os
+            detalhes.
+          </Text>
+        </Flex>
+      )}
     </Card>
   );
 }

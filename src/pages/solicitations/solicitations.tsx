@@ -28,11 +28,14 @@ function Solicitations() {
 
   return (
     <PageContent>
-      <Grid gridTemplateColumns={'40% 60%'} h={'calc(100vh - 140px)'} gap={4}>
+      <Grid gridTemplateColumns={'40% 60%'} h={'calc(100vh - 120px)'} gap={4}>
         <GridItem
           borderRight={'2px'}
           h={'100%'}
+          border={'2px'}
+          borderRadius={'10px'}
           borderColor={'lightgray'}
+          p={'10px'}
           overflowY={'auto'}
         >
           <SolicitationStack
@@ -43,11 +46,13 @@ function Solicitations() {
             reset={() => setSolicitation(undefined)}
           />
         </GridItem>
-        <GridItem overflow={'auto'} w={'100%'} p={'0px 20px 0px 0px'}>
+        <GridItem
+          overflow={'auto'}
+          w={'100%'}
+          h={'100%'}
+          p={'0px 20px 0px 0px'}
+        >
           <SolicitationPanel
-            reset={() => {
-              getBuildingSolicitations();
-            }}
             handleClose={() => {
               setSelectedIndex(undefined);
               setSolicitation(undefined);

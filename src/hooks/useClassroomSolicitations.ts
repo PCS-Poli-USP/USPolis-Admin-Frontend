@@ -86,9 +86,6 @@ const useClassroomsSolicitations = (initialFetch = true) => {
         .catch((error) => {
           showToast('Erro', `Erro ao aprovar a solicitação: ${error}`, 'error');
           console.log(error);
-        })
-        .finally(() => {
-          setLoading(false);
         });
     },
     [getSolicitations, showToast, service],
@@ -99,20 +96,16 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       setLoading(true);
       await service
         .deny(id, data)
-        .then(() => {
+        .then(async () => {
           showToast('Sucesso!', 'Sucesso ao negar solicitação', 'success');
-
-          getSolicitations();
+          getBuildingSolicitations();
         })
         .catch((error) => {
           showToast('Erro!', `Erro ao negar solicitação: ${error}`, 'error');
           console.log(error);
-        })
-        .finally(() => {
-          setLoading(false);
         });
     },
-    [getSolicitations, showToast, service],
+    [getBuildingSolicitations, showToast, service],
   );
 
   useEffect(() => {
