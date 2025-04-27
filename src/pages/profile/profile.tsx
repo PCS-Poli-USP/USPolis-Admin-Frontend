@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import PageContent from '../../components/common/PageContent';
 import { appContext } from '../../context/AppContext';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import {
   getUserBuildings,
   getUserRole,
@@ -25,17 +25,24 @@ import { AddIcon, EmailIcon, MinusIcon } from '@chakra-ui/icons';
 import { LiaBuilding } from 'react-icons/lia';
 import moment from 'moment';
 import { HiUserGroup } from 'react-icons/hi';
-import UserImage from '../../components/common/EmptyPage/UserImage/user.image';
+import UserImage from '../../components/common/UserImage/user.image';
 import { PiChair } from 'react-icons/pi';
 import LoadingPage from '../../components/common/LoadingPage';
 import Page401 from '../page401';
 
 function Profile() {
-  const { loggedUser, loading, isAuthenticated } = useContext(appContext);
+  const { loggedUser, loading, isAuthenticated, getSelfFromBackend } =
+    useContext(appContext);
   const userInfo = loggedUser?.user_info;
+
+  useEffect(() => {
+    getSelfFromBackend();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <PageContent>
-      {loggedUser && userInfo ? (
+      {!loading && loggedUser && userInfo ? (
         <>
           <Center>
             <Grid
@@ -47,7 +54,12 @@ function Profile() {
               borderRadius={'10px'}
               padding={'20px'}
             >
-              <GridItem colSpan={1} h={'300px'} mb={'30px'} id='profile-info-grid'>
+              <GridItem
+                colSpan={1}
+                h={'300px'}
+                mb={'30px'}
+                id='profile-info-grid'
+              >
                 <Flex
                   align={'center'}
                   justify={'center'}
@@ -60,7 +72,7 @@ function Profile() {
                     direction={'column'}
                     justify={'center'}
                     align={'center'}
-                    w={'full'}
+                    w={'300px'}
                     gap={'10px'}
                   >
                     <UserImage user={loggedUser} boxSize='120px' />

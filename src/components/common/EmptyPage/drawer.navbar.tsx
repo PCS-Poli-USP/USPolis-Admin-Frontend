@@ -23,7 +23,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { PiHandPointingFill } from 'react-icons/pi';
 import { FeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { UsersValidator } from '../../../utils/users/users.validator';
-import UserImage from './UserImage/user.image';
+import UserImage from '../UserImage/user.image';
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
@@ -162,23 +162,6 @@ export function DrawerNavBar({
                     >
                       Acessar perfil
                     </MenuItem>
-                    {loggedUser &&
-                      !loggedUser.is_admin &&
-                      loggedUser.buildings &&
-                      loggedUser.buildings.length > 0 && (
-                        <>
-                          {loggedUser.buildings.map((building, idx) => (
-                            <MenuItem
-                              key={idx}
-                              color='black'
-                              onClick={() => {}}
-                            >
-                              {building.name}
-                            </MenuItem>
-                          ))}
-                        </>
-                      )}
-
                     <MenuItem onClick={handleClickLogout} color='black'>
                       Sair
                     </MenuItem>

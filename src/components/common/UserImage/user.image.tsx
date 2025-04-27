@@ -1,5 +1,5 @@
 import { Box, Center, Icon, Image } from '@chakra-ui/react';
-import { UserResponse } from '../../../../models/http/responses/user.response.models';
+import { UserResponse } from '../../../models/http/responses/user.response.models';
 import { useState } from 'react';
 import { FaUser } from 'react-icons/fa';
 
@@ -10,10 +10,12 @@ interface UserImageProps {
 
 export default function UserImage({ user, boxSize = '40px' }: UserImageProps) {
   const [hasError, setHasError] = useState(false);
+  const url = user.user_info?.picture;
+  console.log('UserImage', url);
+
   return (
     <Box
       boxSize={`calc(${boxSize} + 10px)`}
-      w={'full'}
       justifyContent={'center'}
       alignContent={'center'}
     >
@@ -22,15 +24,18 @@ export default function UserImage({ user, boxSize = '40px' }: UserImageProps) {
           <Image
             boxSize={boxSize}
             borderRadius={'full'}
-            src={user.user_info?.picture}
-            borderColor={'black'}
-            border={'2px'}
-            onError={() => setHasError(true)}
+            src={url}
+            border={'1px black solid'}
+            onError={(data) => {
+              console.log('Error loading image', data);
+              setHasError(true);
+            }}
+            onLoad={() => setHasError(false)}
           />
         </Center>
       ) : (
         <Box
-          boxSize={boxSize}
+          boxSize={`calc(${boxSize})`}
           display='flex'
           alignItems='center'
           justifyContent='center'
@@ -40,7 +45,7 @@ export default function UserImage({ user, boxSize = '40px' }: UserImageProps) {
           border={'2px'}
           borderRadius={'full'}
         >
-          <Icon as={FaUser} boxSize={boxSize} />
+          <Icon as={FaUser} boxSize={`calc(${boxSize} - 0px)`} />
         </Box>
       )}
     </Box>

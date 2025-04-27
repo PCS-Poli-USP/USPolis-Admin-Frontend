@@ -14,7 +14,7 @@ import Logo from '../../../assets/uspolis.logo.png';
 import { appContext } from '../../../context/AppContext';
 import { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import UserImage from '../../../components/common/EmptyPage/UserImage/user.image';
+import UserImage from '../../../components/common/UserImage/user.image';
 
 function Header() {
   const context = useContext(appContext);
