@@ -71,7 +71,12 @@ export function DrawerNavBar({
   }
   return (
     <Box bg='uspolis.blue' color='white' px={4}>
-      <Flex h={'60px'} alignItems={'center'} justifyContent={'space-between'}>
+      <Flex
+        h={'60px'}
+        alignItems={'center'}
+        justifyContent={'space-between'}
+        w={'100%'}
+      >
         <HStack spacing={3} alignItems={'center'}>
           {isAuthenticated && (
             <IconButton
@@ -104,6 +109,7 @@ export function DrawerNavBar({
                 <Button
                   variant={'ghost'}
                   mr={'5px'}
+                  hidden={isMobile}
                   onClick={() => {
                     setPathBeforeGuide(location.pathname);
                     if (location.pathname !== '/allocation') {
@@ -141,12 +147,13 @@ export function DrawerNavBar({
                   rounded={'full'}
                   variant={'link'}
                   cursor={'pointer'}
-                  minW={'150px'}
+                  minW={isMobile ? '50px' : '150px'}
                   colorScheme='dark'
                 >
                   <Flex
                     id='navbar-user-menu-button'
-                    alignItems={'center'}
+                    align={'center'}
+                    justify={'center'}
                     gap='10px'
                   >
                     <Text
