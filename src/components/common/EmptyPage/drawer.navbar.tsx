@@ -14,6 +14,7 @@ import {
   MenuItem,
   MenuList,
   StackDivider,
+  useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
 import { ReactNode, useContext } from 'react';
@@ -53,6 +54,7 @@ export function DrawerNavBar({
   handleDrawerClose,
   open,
 }: DrawerNavBarProps) {
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { isAuthenticated, loggedUser, logout } = useContext(appContext);
   const { state, setState, setPathBeforeGuide } =
     useContext(FeatureGuideContext);
@@ -68,7 +70,12 @@ export function DrawerNavBar({
   }
   return (
     <Box bg='uspolis.blue' color='white' px={4}>
-      <Flex h={'60px'} alignItems={'center'} justifyContent={'space-between'}>
+      <Flex
+        h={'60px'}
+        alignItems={'center'}
+        justifyContent={'space-between'}
+        w={'100%'}
+      >
         <HStack spacing={3} alignItems={'center'}>
           {isAuthenticated && (
             <IconButton
@@ -95,55 +102,58 @@ export function DrawerNavBar({
           </NavLink>
         </HStack>
         <Flex alignItems={'center'}>
-          {loggedUser &&
-          UsersValidator.checkUserRestrictedPermission(loggedUser) ? (
+          {loggedUser ? (
             <>
-              <Button
-                variant={'ghost'}
-                mr={'5px'}
-                onClick={() => {
-                  setPathBeforeGuide(location.pathname);
-                  if (location.pathname !== '/allocation') {
-                    navigate('/allocation', {
-                      replace: true,
-                      state: { from: location },
-                    });
-                  }
-                  if (open) {
-                    handleDrawerClose();
-                    setTimeout(() => {
+              {UsersValidator.checkUserRestrictedPermission(loggedUser) && (
+                <Button
+                  variant={'ghost'}
+                  mr={'5px'}
+                  hidden={isMobile}
+                  onClick={() => {
+                    setPathBeforeGuide(location.pathname);
+                    if (location.pathname !== '/allocation') {
+                      navigate('/allocation', {
+                        replace: true,
+                        state: { from: location },
+                      });
+                    }
+                    if (open) {
+                      handleDrawerClose();
+                      setTimeout(() => {
+                        setState({
+                          ...state,
+                          run: true,
+                        });
+                      }, 300); // ajuste conforme sua animação
+                    } else {
                       setState({
                         ...state,
                         run: true,
                       });
-                    }, 300); // ajuste conforme sua animação
-                  } else {
-                    setState({
-                      ...state,
-                      run: true,
-                    });
-                  }
-                }}
-                textColor={'white'}
-                textAlign={'center'}
-                alignContent={'center'}
-                rightIcon={<PiHandPointingFill />}
-              >
-                Tutorial
-              </Button>
+                    }
+                  }}
+                  textColor={'white'}
+                  textAlign={'center'}
+                  alignContent={'center'}
+                  rightIcon={<PiHandPointingFill />}
+                >
+                  Tutorial
+                </Button>
+              )}
               <Menu>
                 <MenuButton
                   as={Button}
                   rounded={'full'}
                   variant={'link'}
                   cursor={'pointer'}
-                  minW={'50px'}
+                  minW={isMobile ? '50px' : '150px'}
                   colorScheme='dark'
                 >
                   <Flex
                     id='navbar-user-menu-button'
-                    alignItems={'center'}
-                    justifyItems={'center'}
+                    align={'center'}
+                    justify={'center'}
+                    gap='10px'
                   >
                     <UserImage user={loggedUser} />
                   </Flex>
@@ -160,8 +170,28 @@ export function DrawerNavBar({
                         });
                       }}
                     >
-                      Acessar perfil
+                      {loggedUser.is_admin
+                        ? 'Administrador'
+                        : loggedUser.buildings
+                        ? 'Responsável por Prédio'
+                        : 'Usuário Comum'}
                     </MenuItem>
+                    {!loggedUser.is_admin &&
+                      loggedUser.buildings &&
+                      loggedUser.buildings.length > 0 && (
+                        <>
+                          {loggedUser.buildings.map((building, idx) => (
+                            <MenuItem
+                              key={idx}
+                              color='black'
+                              onClick={() => {}}
+                            >
+                              {building.name}
+                            </MenuItem>
+                          ))}
+                        </>
+                      )}
+
                     <MenuItem onClick={handleClickLogout} color='black'>
                       Sair
                     </MenuItem>

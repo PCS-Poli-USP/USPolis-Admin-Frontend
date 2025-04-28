@@ -50,6 +50,11 @@ interface SolicitationPanelProps {
   handleClose: () => void;
 }
 
+interface OptionType {
+  label: string;
+  value: number;
+}
+
 function SolicitationPanel({
   solicitation,
   loading,
@@ -434,12 +439,14 @@ function SolicitationPanel({
                             : val.name,
                           value: val.id,
                         }))}
-                        onChange={(newValue) => {
-                          setClassroom(
-                            classrooms.find(
-                              (val) => val.id === newValue?.value,
-                            ),
-                          );
+                        onChange={(newValue: OptionType) => {
+                          if (newValue) {
+                            setClassroom(
+                              classrooms.find(
+                                (val) => val.id === newValue.value,
+                              ),
+                            );
+                          } else setClassroom(undefined);
                         }}
                       />
                     </Box>
