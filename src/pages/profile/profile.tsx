@@ -42,7 +42,7 @@ function Profile() {
 
   return (
     <PageContent>
-      {!loading && loggedUser && userInfo ? (
+      {!loading && loggedUser ? (
         <>
           <Center>
             <Grid
@@ -78,7 +78,7 @@ function Profile() {
                     <UserImage user={loggedUser} boxSize='120px' />
 
                     <Text fontSize={'2xl'} fontWeight={'bold'}>
-                      {userInfo.name}
+                      {userInfo ? userInfo.name : 'Usuário não encontrado'}
                     </Text>
                     <Text fontSize={'xl'} fontWeight={'bold'}>
                       {getUserRole(loggedUser)}
@@ -91,7 +91,7 @@ function Profile() {
                     align={'center'}
                   >
                     <Box>
-                      <EmailIcon /> {userInfo.email}
+                      <EmailIcon /> {userInfo ? userInfo.email : 'Email não encontrado'}
                     </Box>
                     <Box>
                       {`Último acesso em ${moment(
@@ -133,82 +133,91 @@ function Profile() {
                   </Text>
                 </Flex>
 
-                <Accordion
-                  allowMultiple
-                  defaultIndex={[0]}
-                  borderColor={'uspolis.blue'}
-                  border={'1px'}
-                >
-                  {loggedUser.groups.length === 0 ? (
-                    <Alert status={'warning'} fontSize={'sm'} mb={4}>
-                      <AlertIcon />
-                      Não pertence a nenhum grupo nem possui salas
-                    </Alert>
-                  ) : undefined}
-
-                  {loggedUser.groups.map((group, index) => (
-                    <AccordionItem key={index}>
-                      {({ isExpanded }) => (
-                        <>
-                          <AccordionButton>
-                            <Box as='span' flex='1' textAlign='left'>
-                              <Text
-                                as={'b'}
-                              >{`${group.name} (${group.classroom_strs.length} salas)`}</Text>
-                            </Box>
-                            {isExpanded ? (
-                              <MinusIcon fontSize='12px' />
-                            ) : (
-                              <AddIcon fontSize='12px' />
-                            )}
-                          </AccordionButton>
-                          <AccordionPanel>
-                            <Flex key={index} direction={'column'} gap={'10px'}>
-                              <SimpleGrid
-                                w={'full'}
-                                minChildWidth={'160px'}
-                                spacing={'15px'}
-                                alignItems={'flex-end'}
+                {loggedUser.groups.length === 0 ? (
+                  <Alert
+                    status={'warning'}
+                    fontSize={'sm'}
+                    mb={4}
+                    borderRadius={'10px'}
+                  >
+                    <AlertIcon />
+                    Não pertence a nenhum grupo nem possui salas
+                  </Alert>
+                ) : (
+                  <Accordion
+                    allowMultiple
+                    defaultIndex={[0]}
+                    borderColor={'uspolis.blue'}
+                    border={'1px'}
+                  >
+                    {loggedUser.groups.map((group, index) => (
+                      <AccordionItem key={index}>
+                        {({ isExpanded }) => (
+                          <>
+                            <AccordionButton>
+                              <Box as='span' flex='1' textAlign='left'>
+                                <Text
+                                  as={'b'}
+                                >{`${group.name} (${group.classroom_strs.length} salas)`}</Text>
+                              </Box>
+                              {isExpanded ? (
+                                <MinusIcon fontSize='12px' />
+                              ) : (
+                                <AddIcon fontSize='12px' />
+                              )}
+                            </AccordionButton>
+                            <AccordionPanel>
+                              <Flex
+                                key={index}
+                                direction={'column'}
+                                gap={'10px'}
                               >
-                                {group.classroom_strs.length === 0 ? (
-                                  <Alert
-                                    status={'warning'}
-                                    fontSize={'sm'}
-                                    borderRadius={'10px'}
-                                    mb={4}
-                                  >
-                                    <AlertIcon />
-                                    Esse grupo não possui salas
-                                  </Alert>
-                                ) : undefined}
-                                {group.classroom_strs.map(
-                                  (classroom, index) => (
-                                    <Flex
-                                      key={index}
-                                      justify={'flex-start'}
-                                      align={'center'}
-                                      gap={'5px'}
-                                      w={'160px'}
+                                <SimpleGrid
+                                  w={'full'}
+                                  minChildWidth={'160px'}
+                                  spacing={'15px'}
+                                  alignItems={'flex-end'}
+                                >
+                                  {group.classroom_strs.length === 0 ? (
+                                    <Alert
+                                      status={'warning'}
+                                      fontSize={'sm'}
+                                      borderRadius={'10px'}
+                                      mb={4}
                                     >
-                                      <Icon boxSize={'20px'} as={PiChair} />
-                                      <Text
+                                      <AlertIcon />
+                                      Esse grupo não possui salas
+                                    </Alert>
+                                  ) : undefined}
+                                  {group.classroom_strs.map(
+                                    (classroom, index) => (
+                                      <Flex
+                                        key={index}
+                                        justify={'flex-start'}
+                                        align={'center'}
+                                        gap={'5px'}
                                         w={'160px'}
-                                        overflowX={'hidden'}
-                                        textOverflow={'ellipsis'}
-                                        alignContent={'center'}
-                                        h={'50px'}
-                                      >{`${classroom}`}</Text>
-                                    </Flex>
-                                  ),
-                                )}
-                              </SimpleGrid>
-                            </Flex>
-                          </AccordionPanel>
-                        </>
-                      )}
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+                                      >
+                                        <Icon boxSize={'20px'} as={PiChair} />
+                                        <Text
+                                          w={'160px'}
+                                          overflowX={'hidden'}
+                                          textOverflow={'ellipsis'}
+                                          alignContent={'center'}
+                                          h={'50px'}
+                                        >{`${classroom}`}</Text>
+                                      </Flex>
+                                    ),
+                                  )}
+                                </SimpleGrid>
+                              </Flex>
+                            </AccordionPanel>
+                          </>
+                        )}
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                )}
               </GridItem>
             </Grid>
           </Center>

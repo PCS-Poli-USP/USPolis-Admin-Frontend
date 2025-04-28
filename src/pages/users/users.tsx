@@ -40,9 +40,6 @@ const Users = () => {
       setLoading(false);
     } catch (err) {
       console.error(err);
-      setTimeout(() => {
-        fetchUsers();
-      }, 1000);
     }
   }
 
