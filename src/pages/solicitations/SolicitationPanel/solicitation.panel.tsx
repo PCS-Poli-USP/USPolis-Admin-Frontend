@@ -436,11 +436,13 @@ function SolicitationPanel({
                           value: val.id,
                         }))}
                         onChange={(newValue: OptionType) => {
-                          setClassroom(
-                            classrooms.find(
-                              (val) => val.id === newValue?.value,
-                            ),
-                          );
+                          if (newValue) {
+                            setClassroom(
+                              classrooms.find(
+                                (val) => val.id === newValue.value,
+                              ),
+                            );
+                          } else setClassroom(undefined);
                         }}
                       />
                     </Box>

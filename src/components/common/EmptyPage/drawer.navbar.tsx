@@ -98,41 +98,43 @@ export function DrawerNavBar({
           </NavLink>
         </HStack>
         <Flex alignItems={'center'}>
-          {UsersValidator.checkUserRestrictedPermission(loggedUser) ? (
+          {loggedUser ? (
             <>
-              <Button
-                variant={'ghost'}
-                mr={'5px'}
-                onClick={() => {
-                  setPathBeforeGuide(location.pathname);
-                  if (location.pathname !== '/allocation') {
-                    navigate('/allocation', {
-                      replace: true,
-                      state: { from: location },
-                    });
-                  }
-                  if (open) {
-                    handleDrawerClose();
-                    setTimeout(() => {
+              {UsersValidator.checkUserRestrictedPermission(loggedUser) && (
+                <Button
+                  variant={'ghost'}
+                  mr={'5px'}
+                  onClick={() => {
+                    setPathBeforeGuide(location.pathname);
+                    if (location.pathname !== '/allocation') {
+                      navigate('/allocation', {
+                        replace: true,
+                        state: { from: location },
+                      });
+                    }
+                    if (open) {
+                      handleDrawerClose();
+                      setTimeout(() => {
+                        setState({
+                          ...state,
+                          run: true,
+                        });
+                      }, 300); // ajuste conforme sua animação
+                    } else {
                       setState({
                         ...state,
                         run: true,
                       });
-                    }, 300); // ajuste conforme sua animação
-                  } else {
-                    setState({
-                      ...state,
-                      run: true,
-                    });
-                  }
-                }}
-                textColor={'white'}
-                textAlign={'center'}
-                alignContent={'center'}
-                rightIcon={<PiHandPointingFill />}
-              >
-                Tutorial
-              </Button>
+                    }
+                  }}
+                  textColor={'white'}
+                  textAlign={'center'}
+                  alignContent={'center'}
+                  rightIcon={<PiHandPointingFill />}
+                >
+                  Tutorial
+                </Button>
+              )}
               <Menu>
                 <MenuButton
                   as={Button}
@@ -165,14 +167,13 @@ export function DrawerNavBar({
                       fontWeight={'bold'}
                       onClick={() => {}}
                     >
-                      {loggedUser && loggedUser.is_admin
+                      {loggedUser.is_admin
                         ? 'Administrador'
-                        : loggedUser && loggedUser.buildings
+                        : loggedUser.buildings
                         ? 'Responsável por Prédio'
                         : 'Usuário Comum'}
                     </MenuItem>
-                    {loggedUser &&
-                      !loggedUser.is_admin &&
+                    {!loggedUser.is_admin &&
                       loggedUser.buildings &&
                       loggedUser.buildings.length > 0 && (
                         <>
