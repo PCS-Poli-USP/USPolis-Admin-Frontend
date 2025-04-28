@@ -11,15 +11,15 @@ interface UserImageProps {
 export default function UserImage({ user, boxSize = '40px' }: UserImageProps) {
   const [hasError, setHasError] = useState(false);
   const url = user.user_info?.picture;
-  console.log('UserImage', url);
 
   return (
     <Box
       boxSize={`calc(${boxSize} + 10px)`}
       justifyContent={'center'}
       alignContent={'center'}
+      display={'flex'}
     >
-      {!hasError ? (
+      {!hasError && url ? (
         <Center>
           <Image
             boxSize={boxSize}
@@ -30,7 +30,6 @@ export default function UserImage({ user, boxSize = '40px' }: UserImageProps) {
               console.log('Error loading image', data);
               setHasError(true);
             }}
-            onLoad={() => setHasError(false)}
           />
         </Center>
       ) : (
@@ -45,7 +44,7 @@ export default function UserImage({ user, boxSize = '40px' }: UserImageProps) {
           border={'2px'}
           borderRadius={'full'}
         >
-          <Icon as={FaUser} boxSize={`calc(${boxSize} - 0px)`} />
+          <Icon as={FaUser} boxSize={`calc(${boxSize} - 10px)`} />
         </Box>
       )}
     </Box>
