@@ -146,7 +146,6 @@ export function DrawerNavBar({
                   rounded={'full'}
                   variant={'link'}
                   cursor={'pointer'}
-                  minW={isMobile ? '50px' : '150px'}
                   colorScheme='dark'
                 >
                   <Flex
@@ -170,28 +169,8 @@ export function DrawerNavBar({
                         });
                       }}
                     >
-                      {loggedUser.is_admin
-                        ? 'Administrador'
-                        : loggedUser.buildings
-                        ? 'Responsável por Prédio'
-                        : 'Usuário Comum'}
+                      Acessar perfil
                     </MenuItem>
-                    {!loggedUser.is_admin &&
-                      loggedUser.buildings &&
-                      loggedUser.buildings.length > 0 && (
-                        <>
-                          {loggedUser.buildings.map((building, idx) => (
-                            <MenuItem
-                              key={idx}
-                              color='black'
-                              onClick={() => {}}
-                            >
-                              {building.name}
-                            </MenuItem>
-                          ))}
-                        </>
-                      )}
-
                     <MenuItem onClick={handleClickLogout} color='black'>
                       Sair
                     </MenuItem>
