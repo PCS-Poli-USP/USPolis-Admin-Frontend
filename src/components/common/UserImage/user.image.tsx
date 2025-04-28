@@ -14,10 +14,11 @@ export default function UserImage({ user, boxSize = '40px' }: UserImageProps) {
 
   return (
     <Box
-      boxSize={`calc(${boxSize} + 10px)`}
       justifyContent={'center'}
       alignContent={'center'}
+      flexDir={'column'}
       display={'flex'}
+      w={'fit-content'}
     >
       {!hasError && url ? (
         <Center>
