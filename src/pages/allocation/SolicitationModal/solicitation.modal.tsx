@@ -17,7 +17,7 @@ import {
 import { SolicitationModalProps } from './solicitation.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './solicitation.modal.form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform//resolvers/yup';
 import { CheckBox, Input, SelectInput, Textarea } from '../../../components/common';
 import { useEffect, useState } from 'react';
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
