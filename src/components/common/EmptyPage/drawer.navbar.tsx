@@ -71,7 +71,12 @@ export function DrawerNavBar({
   }
   return (
     <Box bg='uspolis.blue' color='white' px={4}>
-      <Flex h={'60px'} alignItems={'center'} justifyContent={'space-between'}>
+      <Flex
+        h={'60px'}
+        alignItems={'center'}
+        justifyContent={'space-between'}
+        w={'100%'}
+      >
         <HStack spacing={3} alignItems={'center'}>
           {isAuthenticated && (
             <IconButton
@@ -98,53 +103,57 @@ export function DrawerNavBar({
           </NavLink>
         </HStack>
         <Flex alignItems={'center'}>
-          {UsersValidator.checkUserRestrictedPermission(loggedUser) ? (
+          {loggedUser ? (
             <>
-              <Button
-                variant={'ghost'}
-                mr={'5px'}
-                onClick={() => {
-                  setPathBeforeGuide(location.pathname);
-                  if (location.pathname !== '/allocation') {
-                    navigate('/allocation', {
-                      replace: true,
-                      state: { from: location },
-                    });
-                  }
-                  if (open) {
-                    handleDrawerClose();
-                    setTimeout(() => {
+              {UsersValidator.checkUserRestrictedPermission(loggedUser) && (
+                <Button
+                  variant={'ghost'}
+                  mr={'5px'}
+                  hidden={isMobile}
+                  onClick={() => {
+                    setPathBeforeGuide(location.pathname);
+                    if (location.pathname !== '/allocation') {
+                      navigate('/allocation', {
+                        replace: true,
+                        state: { from: location },
+                      });
+                    }
+                    if (open) {
+                      handleDrawerClose();
+                      setTimeout(() => {
+                        setState({
+                          ...state,
+                          run: true,
+                        });
+                      }, 300); // ajuste conforme sua animação
+                    } else {
                       setState({
                         ...state,
                         run: true,
                       });
-                    }, 300); // ajuste conforme sua animação
-                  } else {
-                    setState({
-                      ...state,
-                      run: true,
-                    });
-                  }
-                }}
-                textColor={'white'}
-                textAlign={'center'}
-                alignContent={'center'}
-                rightIcon={<PiHandPointingFill />}
-              >
-                Tutorial
-              </Button>
+                    }
+                  }}
+                  textColor={'white'}
+                  textAlign={'center'}
+                  alignContent={'center'}
+                  rightIcon={<PiHandPointingFill />}
+                >
+                  Tutorial
+                </Button>
+              )}
               <Menu>
                 <MenuButton
                   as={Button}
                   rounded={'full'}
                   variant={'link'}
                   cursor={'pointer'}
-                  minW={'150px'}
+                  minW={isMobile ? '50px' : '150px'}
                   colorScheme='dark'
                 >
                   <Flex
                     id='navbar-user-menu-button'
-                    alignItems={'center'}
+                    align={'center'}
+                    justify={'center'}
                     gap='10px'
                   >
                     <Text
@@ -165,14 +174,13 @@ export function DrawerNavBar({
                       fontWeight={'bold'}
                       onClick={() => {}}
                     >
-                      {loggedUser && loggedUser.is_admin
+                      {loggedUser.is_admin
                         ? 'Administrador'
-                        : loggedUser && loggedUser.buildings
+                        : loggedUser.buildings
                         ? 'Responsável por Prédio'
                         : 'Usuário Comum'}
                     </MenuItem>
-                    {loggedUser &&
-                      !loggedUser.is_admin &&
+                    {!loggedUser.is_admin &&
                       loggedUser.buildings &&
                       loggedUser.buildings.length > 0 && (
                         <>

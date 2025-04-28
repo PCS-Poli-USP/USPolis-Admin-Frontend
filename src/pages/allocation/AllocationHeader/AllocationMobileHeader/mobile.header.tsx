@@ -40,7 +40,7 @@ function AllocationMobileHeader({
     defaultIsOpen: true,
   });
   const { isOpen: isOpenPDF, onClose: onClosePDF } = useDisclosure({
-    defaultIsOpen: true,
+    defaultIsOpen: false,
   });
   return (
     <Flex direction={'column'} alignItems={'flex-start'} gap={5} w={'100%'}>
