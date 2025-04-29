@@ -75,8 +75,9 @@ function Classes() {
   const { loading: isCrawling, result, create, update } = useCrawler();
 
   const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
+  const validator = new UsersValidator(context.loggedUser);
   const disableMap = classes.map((cls) => {
-    return !UsersValidator.checkUserPermissionOnClass(context.loggedUser, cls);
+    return !validator.checkUserClassPermission(cls);
   });
 
   const columns = getClassesColumns({

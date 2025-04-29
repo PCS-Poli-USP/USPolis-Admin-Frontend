@@ -14,13 +14,10 @@ import { appContext } from '../../context/AppContext';
 function Subjects() {
   const context = useContext(appContext);
   const { loading, subjects, getSubjects, deleteSubject } = useSubjects();
+  const validator = new UsersValidator(context.loggedUser);
 
   const disableMap: boolean[] = subjects.map(
-    (subject) =>
-      !UsersValidator.checkUserBuildingPermission(
-        context.loggedUser,
-        subject.building_ids,
-      ),
+    (subject) => !validator.checkUserBuildingPermission(subject.building_ids),
   );
 
   const columns = getSubjectColumns({

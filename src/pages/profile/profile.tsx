@@ -91,7 +91,8 @@ function Profile() {
                     align={'center'}
                   >
                     <Box>
-                      <EmailIcon /> {userInfo ? userInfo.email : 'Email não encontrado'}
+                      <EmailIcon />{' '}
+                      {userInfo ? userInfo.email : 'Email não encontrado'}
                     </Box>
                     <Box>
                       {`Último acesso em ${moment(
@@ -141,7 +142,7 @@ function Profile() {
                     borderRadius={'10px'}
                   >
                     <AlertIcon />
-                    Não pertence a nenhum grupo nem possui salas
+                    Não pertence a nenhum grupo nem possui salas, se você for um responsável por prédio entre em contato por uspolis@usp.br.
                   </Alert>
                 ) : (
                   <Accordion

@@ -60,6 +60,7 @@ export function DrawerNavBar({
     useContext(FeatureGuideContext);
   const location = useLocation();
   const navigate = useNavigate();
+  const validator = new UsersValidator(loggedUser);
 
   async function handleClickLogout() {
     await logout();
@@ -104,7 +105,7 @@ export function DrawerNavBar({
         <Flex alignItems={'center'}>
           {loggedUser ? (
             <>
-              {UsersValidator.checkUserRestrictedPermission(loggedUser) && (
+              {validator.checkUserRestrictedPermission() && (
                 <Button
                   variant={'ghost'}
                   mr={'5px'}
