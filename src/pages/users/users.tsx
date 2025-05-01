@@ -1,8 +1,7 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as C from '@chakra-ui/react';
 
 import DataTable from '../../components/common/DataTable/dataTable.component';
-import { appContext } from '../../context/AppContext';
 import EditUserModal from './UserEditModal/user.edit.modal';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import PageContent from '../../components/common/PageContent';
@@ -13,7 +12,7 @@ import { getUsersColumns } from './Tables/user.table';
 import useCustomToast from '../../hooks/useCustomToast';
 
 const Users = () => {
-  const { loading, setLoading } = useContext(appContext);
+  const [loadingUsers, setLoadingUsers] = useState<boolean>(false);
   const usersService = useUsersService();
   const showToast = useCustomToast();
 
@@ -33,11 +32,11 @@ const Users = () => {
   }, []);
 
   async function fetchUsers() {
-    setLoading(true);
+    setLoadingUsers(true);
     try {
       const response = await usersService.list();
       setUsers(response.data);
-      setLoading(false);
+      setLoadingUsers(false);
     } catch (err) {
       console.error(err);
     }
@@ -54,7 +53,7 @@ const Users = () => {
   }
 
   async function editUser(user_id: number, data: UpdateUser) {
-    setLoading(true);
+    setLoadingUsers(true);
     try {
       await usersService.update(user_id, data);
       showToast('Sucesso', `Usuário editado!`, 'success');
@@ -65,13 +64,13 @@ const Users = () => {
         `Erro ao editar usuário:\n${err.response.data.message}`,
         'error',
       );
-      setLoading(false);
+      setLoadingUsers(false);
     }
     fetchUsers();
   }
 
   async function deleteUser(user_id: number) {
-    setLoading(true);
+    setLoadingUsers(true);
     try {
       await usersService.deleteById(user_id);
       showToast('Sucesso', `Usuário deletado!`, 'success');
@@ -82,7 +81,7 @@ const Users = () => {
         `Erro ao deletar usuário:\n${err.response.data.message}`,
         'error',
       );
-      setLoading(false);
+      setLoadingUsers(false);
     }
     fetchUsers();
   }
@@ -94,7 +93,7 @@ const Users = () => {
           Usuários
         </C.Text>
       </C.Flex>
-      <DataTable loading={loading} columns={columns} data={users} />
+      <DataTable loading={loadingUsers} columns={columns} data={users} />
       <EditUserModal
         isOpen={editModalOpen}
         onClose={() => {

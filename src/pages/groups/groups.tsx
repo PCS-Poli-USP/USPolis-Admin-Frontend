@@ -98,6 +98,7 @@ export default function Groups() {
             deleteGroup(selectedGroup.id);
             setSelectedGroup(undefined);
           }
+          onClose();
         }}
       />
       <Flex align={'center'}>

@@ -21,12 +21,32 @@ export const getUsersColumns = (
     header: 'ID',
   },
   {
+    filterFn: FilterString,
     accessorKey: 'name',
     header: 'Nome',
   },
   {
+    filterFn: FilterString,
     accessorKey: 'email',
     header: 'Email',
+  },
+  {
+    filterFn: FilterString,
+    accessorFn: (row) =>
+      row.buildings
+        ? row.buildings.length > 0
+          ? row.buildings.map((b) => b.name).join(', ')
+          : 'Nenhum'
+        : 'Nenhum',
+    header: 'Prédios',
+  },
+  {
+    filterFn: FilterString,
+    accessorFn: (row) =>
+      row.groups.length > 0
+        ? row.groups.map((g) => g.name).join(', ')
+        : 'Nenhum',
+    header: 'Grupos',
   },
   {
     accessorKey: 'is_admin',
@@ -64,10 +84,6 @@ export const getUsersColumns = (
   {
     accessorKey: 'created_by',
     header: 'Criado por',
-  },
-  {
-    accessorFn: (row) => row.buildings?.map((b) => b.name).join(', '),
-    header: 'Prédios',
   },
   {
     id: 'options',
