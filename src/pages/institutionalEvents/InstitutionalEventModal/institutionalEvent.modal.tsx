@@ -17,7 +17,7 @@ import {
 import { yupResolver } from '@hookform//resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './institutionalEvent.modal.form';
-import { Input, Select, Textarea } from '../../../components/common';
+import { Input, SelectInput, Textarea } from '../../../components/common';
 import { useEffect, useState } from 'react';
 import { EventTypes } from '../../../utils/enums/eventTypes.enum';
 import { CreateInstitutionalEvent } from '../../../models/http/requests/institutionalEvent.request.models';
@@ -163,7 +163,7 @@ function InstitutionalEventModal({
                 />
                 <Text color='gray.500'>ou</Text>
                 <Flex w='100%' gap={3}>
-                  <Select
+                  <SelectInput
                     label='Prédio'
                     name='building'
                     disabled={!!locationWatcher}
@@ -179,7 +179,7 @@ function InstitutionalEventModal({
                   />
                 </Flex>
                 <Flex w='100%' gap={3}>
-                  <Select
+                  <SelectInput
                     label='Categoria'
                     name='category'
                     options={Object.keys(EventTypes).map((opt) => ({

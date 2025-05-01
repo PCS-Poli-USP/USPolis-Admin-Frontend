@@ -1,5 +1,7 @@
 import {
   Button,
+  Checkbox,
+  Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -18,7 +20,7 @@ import {
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './classroom.modal.form';
 import { yupResolver } from '@hookform//resolvers/yup';
-import { Input, Select, SelectInput } from '../../../components/common';
+import { Input, MultiSelect, SelectInput } from '../../../components/common';
 import { NumberInput } from '../../../components/common/form/NumberInput';
 import { CheckBox } from '../../../components/common/form/CheckBox';
 import useClassrooms from '../../../hooks/useClassrooms';
@@ -39,6 +41,9 @@ export default function ClassroomModal(props: ClassroomModalProps) {
     }
     if (props.buildings.length === 1) {
       setValue('building_id', props.buildings[0].id);
+    }
+    if (props.groups.length === 1) {
+      setValue('group_ids', [props.groups[0].id]);
     }
   }, [props, reset, setValue]);
 
@@ -78,10 +83,8 @@ export default function ClassroomModal(props: ClassroomModalProps) {
         <ModalBody pb={6}>
           <FormProvider {...form}>
             <form>
-              <Input label={'Nome'} name={'name'} placeholder='Nome da sala' />
-
-              <Select
-                mt={4}
+              <SelectInput
+                mb={4}
                 label={'Prédio'}
                 name={'building_id'}
                 placeholder={'Escolha um prédio'}
@@ -92,27 +95,36 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 }))}
               />
 
-              <NumberInput
-                mt={4}
-                min={0}
-                label={'Andar'}
-                name={'floor'}
-                placeholder={'Andar da sala'}
-              />
+              <Input label={'Nome'} name={'name'} placeholder='Nome da sala' />
 
-              <NumberInput
-                min={0}
-                mt={4}
-                label={'Capacidade'}
-                name={'capacity'}
-                placeholder={'Capacidade da sala'}
-              />
+              <Flex
+                direction={'row'}
+                justify={'center'}
+                align={'center'}
+                w={'full'}
+                gap={'5px'}
+              >
+                <NumberInput
+                  mt={4}
+                  min={0}
+                  label={'Andar'}
+                  name={'floor'}
+                  placeholder={'Andar da sala'}
+                />
 
+                <NumberInput
+                  min={0}
+                  mt={4}
+                  label={'Capacidade'}
+                  name={'capacity'}
+                  placeholder={'Capacidade da sala'}
+                />
+              </Flex>
               <Text fontWeight={'bold'} mt={4} mb={'10px'}>
                 Recursos
               </Text>
 
-              <VStack w={'full'} alignItems={'start'} gap={'10px'}>
+              <VStack w={'full'} alignItems={'start'} gap={'10px'} mb={'10px'}>
                 <CheckBox text={'Ar condicionado'} name={'air_conditioning'} />
                 <CheckBox text={'Acessibilidade'} name={'accessibility'} />
                 <SelectInput
@@ -126,13 +138,30 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 />
               </VStack>
 
-              <Text fontWeight={'bold'} mt={4}>
-                Alocação
-              </Text>
-              <CheckBox
-                text={'Ignorar para alocação automática'}
-                name={'ignore_to_allocate'}
+              <MultiSelect
+                label='Grupos'
+                name='group_ids'
+                disabled={props.groups.length === 1}
+                placeholder='Selecione para quais grupos a sala vai ser adicionada'
+                options={props.groups.map((group) => ({
+                  label: group.name,
+                  value: group.id,
+                }))}
               />
+              <Checkbox
+                mt={'5px'}
+                disabled={props.groups.length === 1}
+                onChange={(event) => {
+                  if (event.target.checked) {
+                    setValue(
+                      'group_ids',
+                      props.groups.map((group) => group.id),
+                    );
+                  } else setValue('group_ids', []);
+                }}
+              >
+                Selecionar todos
+              </Checkbox>
             </form>
           </FormProvider>
         </ModalBody>

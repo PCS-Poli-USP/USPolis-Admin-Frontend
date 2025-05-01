@@ -13,7 +13,7 @@ interface MultiSelectProps extends FieldProps {
   options: Option[];
   values?: Option[];
   loading?: boolean;
-  onChange?: () => void;
+  onChange?: (options: Option[]) => void;
 }
 
 export function MultiSelect({
@@ -23,7 +23,7 @@ export function MultiSelect({
   disabled = false,
   loading = false,
   values = undefined,
-  placeholder = "Selecione uma ou mais opções",
+  placeholder = 'Selecione uma ou mais opções',
   mt = undefined,
   mb = undefined,
   mr = undefined,
@@ -50,6 +50,7 @@ export function MultiSelect({
       setSelectedOptions(values);
     } else {
       const current: (string | number)[] = getValues(name);
+      console.log('current', current);
       if (current) {
         setSelectedOptions(
           options.filter((option) => current.includes(option.value)),
@@ -73,14 +74,14 @@ export function MultiSelect({
             placeholder={placeholder}
             isMulti={true}
             closeMenuOnSelect={false}
-            onChange={(selectedOption) => {
+            onChange={(selectedOption: Option[]) => {
               const values = (selectedOption || []).map(
                 (option) => option.value,
               );
               setValue(name, values);
               setSelectedOptions(selectedOption as Option[]);
               if (onChange) {
-                onChange();
+                onChange(selectedOption);
               }
             }}
             options={options}

@@ -8,20 +8,22 @@ import {
   ModalCloseButton,
   Button,
   Flex,
-  FormLabel,
-  FormControl,
   Checkbox,
-  Box,
 } from '@chakra-ui/react';
 import { GroupModalProps } from './group.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform//resolvers/yup';
 import { schema, defaultValues } from './group.modal.form';
-import { Input, MultiSelect, Option } from '../../../components/common';
-import useGroups from '../../../hooks/useGroups';
+import {
+  CheckBox,
+  Input,
+  MultiSelect,
+  SelectInput,
+} from '../../../components/common';
+import useGroups from '../../../hooks/groups/useGroups';
 import { useEffect, useState } from 'react';
-import { Select } from 'chakra-react-select';
 import { filterString } from '../../../utils/filters';
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
 
 function GroupModal({
   isOpen,
@@ -39,7 +41,7 @@ function GroupModal({
   });
   const { createGroup, updateGroup } = useGroups(false);
   const [allUsers, setAllUsers] = useState(false);
-  const [selectedBuilding, setSelectedBuilding] = useState<Option | null>(null);
+  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
 
   function handleClose() {
     form.reset(defaultValues);
@@ -49,6 +51,7 @@ function GroupModal({
   const { watch } = form;
   const classroom_ids = watch('classroom_ids');
   const user_ids = watch('user_ids');
+  const main = watch('main');
 
   async function handleSubmit() {
     const isValid = await form.trigger();
@@ -68,8 +71,13 @@ function GroupModal({
       form.reset({
         name: group.name,
         user_ids: group.user_ids,
-        classroom_ids: group.classroom_ids,
+        classroom_ids: group.main ? [] : group.classroom_ids,
+        building_id: group.building_id,
+        main: group.main,
       });
+      setSelectedBuilding(
+        buildings.find((building) => building.id === group.building_id),
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [group]);
@@ -119,56 +127,46 @@ function GroupModal({
                 >
                   Ver todos usuários
                 </Checkbox>
-                <FormControl>
-                  <FormLabel>Filtro e inserção rápida</FormLabel>
-                  <Flex w={'100%'}>
-                    <Box w={'100%'}>
-                      <Select
-                        options={buildings.map((building) => ({
-                          label: `${building.name}`,
-                          value: building.id,
-                        }))}
-                        placeholder='Selecione um prédio e adicione suas salas'
-                        closeMenuOnSelect={true}
-                        isLoading={false}
-                        isDisabled={false}
-                        onChange={(selected) => {
-                          if (selected) {
-                            setSelectedBuilding(selected);
-                          }
-                        }}
-                      />
-                    </Box>
-                    <Button
-                      // rightIcon={<AddIcon />}
-                      onClick={() => {
-                        if (selectedBuilding === null) return;
-                        const current = form.getValues('classroom_ids');
-                        classrooms.forEach((classroom) => {
-                          if (
-                            classroom.building_id === selectedBuilding.value
-                          ) {
-                            current.push(classroom.id);
-                          }
-                        });
-                        const unique = new Set(current);
-                        const selectedClassroomIds = Array.from(unique);
-                        form.setValue('classroom_ids', selectedClassroomIds);
-                      }}
-                    >
-                      {' '}
-                      Inserir salas
-                    </Button>
-                  </Flex>
-                </FormControl>
+
+                <Flex
+                  w={'100%'}
+                  align={'center'}
+                  justify={'center'}
+                  gap={'5px'}
+                >
+                  <SelectInput
+                    name='building_id'
+                    label='Prédio'
+                    disabled={group && group.main}
+                    placeholder='Selecione um prédio'
+                    options={buildings.map((building) => ({
+                      label: building.name,
+                      value: building.id,
+                    }))}
+                    onChange={(option) => {
+                      if (option) {
+                        setSelectedBuilding(
+                          buildings.filter(
+                            (building) => building.id === option.value,
+                          )[0],
+                        );
+                      } else {
+                        setSelectedBuilding(undefined);
+                        form.setValue('classroom_ids', []);
+                      }
+                    }}
+                  />
+                </Flex>
+
                 <MultiSelect
                   name='classroom_ids'
                   label={`Salas (${classroom_ids.length})`}
+                  disabled={main}
                   options={
                     selectedBuilding
                       ? classrooms
                           .filter((val) =>
-                            filterString(val.building, selectedBuilding.label),
+                            filterString(val.building, selectedBuilding.name),
                           )
                           .map((classroom) => ({
                             label: `${classroom.name} (${classroom.building})`,
@@ -179,6 +177,17 @@ function GroupModal({
                           value: classroom.id,
                         }))
                   }
+                />
+                <CheckBox
+                  name='main'
+                  text='Grupo principal'
+                  disabled={group && group.main}
+                  onChange={(value) => {
+                    if (value) {
+                      form.setValue('classroom_ids', []);
+                      form.clearErrors('classroom_ids');
+                    }
+                  }}
                 />
               </Flex>
             </ModalBody>

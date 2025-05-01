@@ -2,6 +2,9 @@ export interface GroupResponse {
   id: number;
   name: string;
 
+  building_id: number;
+  building: string;
+  main: boolean;
   classroom_ids: number[];
   classroom_strs: string[];
   user_ids: number[];

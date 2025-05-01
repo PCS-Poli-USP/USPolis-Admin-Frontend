@@ -11,6 +11,7 @@ import {
 interface UsersColumnsProps {
   handleEditClick: (data: UserResponse) => void;
   handleDeleteClick: (data: UserResponse) => void;
+  isLoading: boolean;
 }
 
 export const getUsersColumns = (
@@ -96,6 +97,8 @@ export const getUsersColumns = (
             size='xs'
             variant='ghost'
             aria-label='editar-usuaio'
+            isLoading={props.isLoading}
+            disabled={props.isLoading}
             icon={<BsFillPenFill />}
             onClick={() => props.handleEditClick(row.original)}
           />
@@ -108,6 +111,8 @@ export const getUsersColumns = (
             variant='ghost'
             aria-label='deletar-usuario'
             icon={<BsFillTrashFill />}
+            isLoading={props.isLoading}
+            disabled={props.isLoading}
             onClick={() => props.handleDeleteClick(row.original)}
           />
         </Tooltip>

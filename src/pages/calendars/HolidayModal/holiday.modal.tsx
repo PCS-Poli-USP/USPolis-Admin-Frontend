@@ -18,7 +18,7 @@ import { HolidayForm, HolidayModalProps } from './holiday.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './holiday.modal.form';
 import { yupResolver } from '@hookform//resolvers/yup';
-import { Input, Select } from '../../../components/common';
+import { Input, SelectInput } from '../../../components/common';
 import {
   CreateHoliday,
   UpdateHoliday,
@@ -147,7 +147,7 @@ function HolidayModal(props: HolidayModalProps) {
           <form>
             <ModalBody maxH={'2xl'} overflowY={'auto'}>
               <VStack spacing={4} alignItems={'flex-start'}>
-                <Select
+                <SelectInput
                   disabled={true}
                   label={'Categoria do feriado'}
                   name={'category_id'}

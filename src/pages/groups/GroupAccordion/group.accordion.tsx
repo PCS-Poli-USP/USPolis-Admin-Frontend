@@ -1,4 +1,4 @@
-import { AddIcon, MinusIcon } from '@chakra-ui/icons';
+import { AddIcon, MinusIcon, StarIcon } from '@chakra-ui/icons';
 import {
   Accordion,
   AccordionButton,
@@ -34,7 +34,7 @@ function GroupAccordion(props: GroupAccordionProps) {
       {props.groups.length === 0 ? (
         <Alert status={'warning'} fontSize={'sm'} mb={4} borderRadius={'10px'}>
           <AlertIcon />
-          Nenhum Grupo adicionado
+          Nenhum Grupo encontrado
         </Alert>
       ) : (
         <Accordion
@@ -48,8 +48,19 @@ function GroupAccordion(props: GroupAccordionProps) {
               {({ isExpanded }) => (
                 <>
                   <AccordionButton>
-                    <Box as='span' flex='1' textAlign='left'>
-                      <Text as={'b'}>{`${group.name}`}</Text>
+                    <Box
+                      as='span'
+                      flex='1'
+                      textAlign='left'
+                      alignContent={'center'}
+                      justifyContent={'center'}
+                    >
+                      <Text
+                        as={'b'}
+                      >{`${group.building} - Grupo ${group.name}`}</Text>
+                      {group.main && (
+                        <StarIcon ml={'5px'} color={'yellow.500'} mb={'5px'} />
+                      )}
                     </Box>
                     {isExpanded ? (
                       <MinusIcon fontSize='12px' />
@@ -63,7 +74,9 @@ function GroupAccordion(props: GroupAccordionProps) {
                     <HStack mb={4}>
                       <Text>{`Atualizado em ${moment(group.updated_at).format(
                         'DD/MM/YYYY  [às] HH:mm',
-                      )}`}</Text>
+                      )}${
+                        group.main ? ', esse é o grupo principal do prédio.' : ''
+                      }`}</Text>
                       <Spacer />
                       <Button
                         leftIcon={<BsFillPenFill />}

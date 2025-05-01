@@ -1,8 +1,8 @@
-import { BuildingResponse } from "../../../models/http/responses/building.response.models";
-import { ClassroomResponse } from "../../../models/http/responses/classroom.response.models";
-import { GroupResponse } from "../../../models/http/responses/group.response.models";
-import { UserResponse } from "../../../models/http/responses/user.response.models";
-import { ModalProps } from "../../../models/interfaces";
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
+import { ClassroomResponse } from '../../../models/http/responses/classroom.response.models';
+import { GroupResponse } from '../../../models/http/responses/group.response.models';
+import { UserResponse } from '../../../models/http/responses/user.response.models';
+import { ModalProps } from '../../../models/interfaces';
 
 export interface GroupModalProps extends ModalProps {
   group?: GroupResponse;
@@ -14,7 +14,9 @@ export interface GroupModalProps extends ModalProps {
 }
 
 export interface GroupForm {
+  building_id: number;
   name: string;
   classroom_ids: number[];
   user_ids: number[];
+  main: boolean;
 }

@@ -17,6 +17,7 @@ interface ClassroomColumnsProps {
   handleDuplicateClick: (data: ClassroomResponse) => void;
   handleEditClick: (data: ClassroomResponse) => void;
   handleDeleteClick: (data: ClassroomResponse) => void;
+  isLoading: boolean;
 }
 
 export function getClassroomColumns(
@@ -106,6 +107,7 @@ export function getClassroomColumns(
               aria-label='duplicar-sala'
               icon={<CopyIcon />}
               onClick={() => props.handleDuplicateClick(row.original)}
+              disabled={props.isLoading}
             />
           </Tooltip>
           <Tooltip label='Editar'>
@@ -116,6 +118,7 @@ export function getClassroomColumns(
               aria-label='editar-sala'
               icon={<BsFillPenFill />}
               onClick={() => props.handleEditClick(row.original)}
+              disabled={props.isLoading}
             />
           </Tooltip>
 

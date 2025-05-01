@@ -24,7 +24,7 @@ import DateCalendarPicker, {
   useDateCalendarPicker,
 } from '../../../../../components/common/DateCalendarPicker';
 import { generateRecurrenceDates } from '../../../../../utils/common/common.generator';
-import { Input, Select } from '../../../../../components/common';
+import { Input, SelectInput } from '../../../../../components/common';
 import ScheduleList from '../ScheduleList/class.modal.steps.scheduleList';
 
 function ClassModalThirdStep(props: ClassModalThirdStepProps) {
@@ -59,7 +59,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
     setHighlightedDays(allDates);
   }, [props.schedules, setHighlightedDays]);
 
-  function  resetScheduleInputs() {
+  function resetScheduleInputs() {
     const { reset } = props.form;
     const { getValues } = props.secondForm;
     const values = getValues(['start_date', 'end_date']);
@@ -281,7 +281,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
       <FormProvider {...props.form}>
         <form>
           <HStack align={'center'} mt={4}>
-            <Select
+            <SelectInput
               label={'Recorrência'}
               name={'recurrence'}
               placeholder={'Escolha uma recorrência'}
@@ -289,13 +289,15 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
                 label: Recurrence.translate(value),
                 value: value,
               }))}
-              onChange={(event) => {
-                const { clearErrors } = props.form;
-                clearErrors(['month_week', 'week_day']);
-                handleChangeRecurrence(event.target.value);
+              onChange={(option) => {
+                if (option) {
+                  const { clearErrors } = props.form;
+                  clearErrors(['month_week', 'week_day']);
+                  handleChangeRecurrence(option.value as string);
+                }
               }}
             />
-            <Select
+            <SelectInput
               label={'Dia da semana'}
               name={'week_day'}
               placeholder='Escolha o dia da semana'
@@ -306,7 +308,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
               }))}
             />
 
-            <Select
+            <SelectInput
               label={'Semana do mês'}
               name={'month_week'}
               placeholder='Escolha a semana do mês'

@@ -17,7 +17,7 @@ import { SubjectForm, SubjectModalProps } from './subject.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform//resolvers/yup';
 import { defaultValues, schema } from './subject.modal.form';
-import { Input, Select } from '../../../components/common';
+import { Input, SelectInput } from '../../../components/common';
 import { CreateSubject } from '../../../models/http/requests/subject.request.models';
 import useSubjects from '../../../hooks/useSubjetcts';
 import { MultiSelect } from '../../../components/common/form/MultiSelect';
@@ -116,7 +116,7 @@ export default function SubjectModal(props: SubjectModalProps) {
                   placeholder='Código da disciplina'
                 />
 
-                <Select
+                <SelectInput
                   label={'Tipo de turma'}
                   name={'type'}
                   options={SubjectType.values().map((type) => ({

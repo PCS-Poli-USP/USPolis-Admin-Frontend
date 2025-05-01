@@ -15,6 +15,10 @@ const useGroupService = () => {
     return axios.get(PREFIX);
   };
 
+  const listMyGroups = (): Promise<AxiosResponse<Array<GroupResponse>>> => {
+    return axios.get('/users/my-groups');
+  };
+
   const listById = (id: number): Promise<AxiosResponse<GroupResponse>> => {
     return axios.get(`${PREFIX}/${id}`);
   };
@@ -34,6 +38,7 @@ const useGroupService = () => {
   };
   return {
     list,
+    listMyGroups,
     listById,
     create,
     update,

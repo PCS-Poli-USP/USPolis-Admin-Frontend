@@ -26,6 +26,18 @@ export const formFields = {
       ),
     defaultValue: 0,
   },
+  group_ids: {
+    validator: yup
+      .array()
+      .of(yup.number().required('Campo obrigatório'))
+      .min(0)
+      .test('is-valid-option', 'Selecione um grupo ou mais', function (value) {
+        if (!value) return false;
+        if (value.length === 0) return false;
+        return !ClassroomValidator.isInvalidIdArray(value);
+      }),
+    defaultValue: [],
+  },
   floor: {
     validator: yup
       .number()
@@ -48,10 +60,7 @@ export const formFields = {
       ),
     defaultValue: 0,
   },
-  ignore_to_allocate: {
-    validator: yup.boolean().required('Campo obrigatório'),
-    defaultValue: false,
-  },
+
   audiovisual: {
     validator: yup
       .string()
@@ -74,9 +83,9 @@ export const formFields = {
 export const schema = yup.object<ClassroomForm>().shape({
   name: formFields.name.validator,
   building_id: formFields.building_id.validator,
+  group_ids: formFields.group_ids.validator,
   floor: formFields.floor.validator,
   capacity: formFields.capacity.validator,
-  ignore_to_allocate: formFields.ignore_to_allocate.validator,
   air_conditioning: formFields.air_conditioning.validator,
   audiovisual: formFields.audiovisual.validator,
   accessibility: formFields.accessibility.validator,
@@ -85,9 +94,9 @@ export const schema = yup.object<ClassroomForm>().shape({
 export const defaultValues: ClassroomForm = {
   name: formFields.name.defaultValue,
   building_id: formFields.building_id.defaultValue,
+  group_ids: formFields.group_ids.defaultValue,
   floor: formFields.floor.defaultValue,
   capacity: formFields.capacity.defaultValue,
-  ignore_to_allocate: formFields.ignore_to_allocate.defaultValue,
   air_conditioning: formFields.air_conditioning.defaultValue,
   audiovisual: formFields.audiovisual.defaultValue,
   accessibility: formFields.accessibility.defaultValue,

@@ -16,7 +16,7 @@ import GroupModal from './GroupModal/group.modal';
 import useClassrooms from '../../hooks/useClassrooms';
 import useUsers from '../../hooks/useUsers';
 import { useEffect, useState } from 'react';
-import useGroups from '../../hooks/useGroups';
+import useGroups from '../../hooks/groups/useGroups';
 import { GroupResponse } from '../../models/http/responses/group.response.models';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import useBuildings from '../../hooks/useBuildings';
@@ -50,6 +50,8 @@ export default function Groups() {
     getAllBuildings,
   } = useBuildings(false);
 
+  const [filterBuilding, setFilterBuilding] = useState<string>('');
+  const [filterName, setFilterName] = useState<string>('');
   const [selectedGroup, setSelectedGroup] = useState<GroupResponse>();
   const [filteredGroups, setFilteredGroups] = useState<GroupResponse[]>([]);
 
@@ -59,8 +61,13 @@ export default function Groups() {
     getUsers();
   }
 
-  function filterGroups(value: string) {
-    const filtered = groups.filter((group) => filterString(group.name, value));
+  function filterGroups(building: string, name: string) {
+    console.log('filtering', building, name);
+    const filtered = groups.filter((group) => {
+      const matchBuilding = filterString(group.building, building);
+      const matchName = filterString(group.name, name);
+      return matchBuilding && matchName;
+    });
     setFilteredGroups(filtered);
   }
 
@@ -109,9 +116,23 @@ export default function Groups() {
           </InputLeftElement>
           <Input
             type='text'
+            placeholder='Filtrar por prédio'
+            onChange={(event) => {
+              setFilterBuilding(event.target.value);
+              filterGroups(event.target.value, filterName);
+            }}
+          />
+        </InputGroup>
+        <InputGroup ml={'40px'} w={'fit-content'}>
+          <InputLeftElement pointerEvents='none'>
+            <BsSearch color='gray.300' />
+          </InputLeftElement>
+          <Input
+            type='text'
             placeholder='Filtrar por grupo'
             onChange={(event) => {
-              filterGroups(event.target.value);
+              setFilterName(event.target.value);
+              filterGroups(filterBuilding, event.target.value);
             }}
           />
         </InputGroup>
@@ -135,7 +156,7 @@ export default function Groups() {
         minH={'100px'}
       >
         <GroupAccordion
-          groups={filteredGroups.length > 0 ? filteredGroups : groups}
+          groups={filterBuilding || filterName ? filteredGroups : groups}
           onGroupUpdate={(group) => {
             setSelectedGroup(group);
             onOpenGroupModal();

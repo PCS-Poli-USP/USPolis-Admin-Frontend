@@ -14,7 +14,7 @@ import {
   AxiosErrorResponse,
   isAxiosErrorResponse,
 } from '../../models/http/responses/common.response.models';
-import { ClassErrorParser } from './errors';
+import { ClassErrorParser } from './classErrorParser';
 
 const useClasses = (initialFetch: boolean = true) => {
   const service = useClassesService();
@@ -22,6 +22,7 @@ const useClasses = (initialFetch: boolean = true) => {
   const [classes, setClasses] = useState<ClassResponse[]>([]);
 
   const showToast = useCustomToast();
+  const errorParser = new ClassErrorParser();
 
   const getAllClasses = useCallback(async () => {
     setLoading(true);
@@ -132,12 +133,13 @@ const useClasses = (initialFetch: boolean = true) => {
         })
         .catch((error: any) => {
           console.log(error);
-          showToast('Erro', ClassErrorParser.parseCreateError(error), 'error');
+          showToast('Erro', errorParser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getClasses, showToast, service],
   );
 
@@ -153,11 +155,7 @@ const useClasses = (initialFetch: boolean = true) => {
         .catch((error: any) => {
           if (isAxiosErrorResponse(error)) {
             console.log(error);
-            showToast(
-              'Erro',
-              `Erro ao atualizar turma: ${error.response?.data.detail}`,
-              'error',
-            );
+            showToast('Erro', errorParser.parseUpdateError(error), 'error');
           } else {
             console.log(error);
             showToast('Erro', `Erro inesperado ao atualizar turma`, 'error');
@@ -167,6 +165,7 @@ const useClasses = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getClasses, showToast, service],
   );
 
@@ -183,11 +182,7 @@ const useClasses = (initialFetch: boolean = true) => {
         .catch((error: any) => {
           if (isAxiosErrorResponse(error)) {
             console.log(error);
-            showToast(
-              'Erro',
-              `Erro ao remover turma: ${error.response?.data.detail}`,
-              'error',
-            );
+            showToast('Erro', errorParser.parseDeleteError(error), 'error');
           } else {
             console.log(error);
             showToast('Erro', `Erro inesperado ao remover turma`, 'error');
@@ -197,6 +192,7 @@ const useClasses = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getClasses, showToast, service],
   );
 
@@ -224,13 +220,14 @@ const useClasses = (initialFetch: boolean = true) => {
             );
           } else {
             console.log(error);
-            showToast('Erro', `Erro inesperado ao remover turmas`, 'error');
+            showToast('Erro', errorParser.parseDeleteError(error), 'error');
           }
         })
         .finally(() => {
           setLoading(false);
         });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getClasses, showToast, service],
   );
 

@@ -1,6 +1,6 @@
 import { HStack, Text, VStack } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
-import { Input, Select } from '../../../../../components/common';
+import { Input, SelectInput } from '../../../../../components/common';
 import { ClassType } from '../../../../../utils/enums/classes.enum';
 import { NumberInput } from '../../../../../components/common/form/NumberInput';
 import { ClassModalFirstStepProps } from './class.modal.steps.first.interface';
@@ -30,7 +30,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
             Informações gerais
           </Text>
 
-          <Select
+          <SelectInput
             mt={4}
             label={'Disciplina'}
             name={'subject_id'}
@@ -39,11 +39,13 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               value: subject.id,
               label: `${subject.code} - ${subject.name}`,
             }))}
-            onChange={(event) => {
-              const selected = props.subjects.find(
-                (subject) => subject.id === Number(event.target.value),
-              );
-              setSelectedSubject(selected);
+            onChange={(option) => {
+              if (option) {
+                const selected = props.subjects.find(
+                  (subject) => subject.id === option.value,
+                );
+                setSelectedSubject(selected);
+              } else setSelectedSubject(undefined);
             }}
           />
 
@@ -55,22 +57,14 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
           />
 
           <HStack spacing='8px' mt={4}>
-            <Select
+            <SelectInput
               label={'Tipo de turma'}
               name={'type'}
               placeholder={'Escolha o tipo da turma'}
-              options={[
-                { label: 'Prática', value: ClassType.PRACTIC },
-                { label: 'Teórica', value: ClassType.THEORIC },
-                {
-                  label: 'Prática Vinculada',
-                  value: ClassType.VINCULATED_PRACTIC,
-                },
-                {
-                  label: 'Teórica Vinculada',
-                  value: ClassType.VINCULATED_THEORIC,
-                },
-              ]}
+              options={ClassType.getValues().map((type) => ({
+                value: type,
+                label: ClassType.translate(type),
+              }))}
             />
             <NumberInput
               label={'Vagas'}

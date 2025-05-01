@@ -15,7 +15,6 @@ import { FormProvider } from 'react-hook-form';
 import {
   CheckBox,
   Input,
-  Select,
   SelectInput,
   Textarea,
 } from '../../../../../components/common';
@@ -88,7 +87,7 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
               </PopoverContent>
             </Popover>
           </Flex>
-          <Select
+          <SelectInput
             name='solicitation_id'
             label='Solicitação'
             isLoading={props.loadingSolicitations}
@@ -97,8 +96,10 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                 ? 'Carregando...'
                 : 'Selecione uma solicitação'
             }
-            onChange={(event) => {
-              const solicitation_id = event.target.value;
+            onChange={(option) => {
+              const solicitation_id = option
+                ? (option.value as number)
+                : undefined;
               if (solicitation_id) {
                 const solicitation = props.solicitations.find(
                   (value) => value.id === Number(solicitation_id),
