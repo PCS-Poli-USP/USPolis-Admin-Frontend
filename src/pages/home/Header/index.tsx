@@ -119,7 +119,7 @@ function Header() {
               colorScheme='dark'
             >
               <Flex alignItems={'center'} gap='1'>
-                <UserImage user={context.loggedUser} />
+                <UserImage  />
               </Flex>
             </MenuButton>
             <MenuList>

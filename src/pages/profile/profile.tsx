@@ -75,7 +75,7 @@ function Profile() {
                     w={'300px'}
                     gap={'10px'}
                   >
-                    <UserImage user={loggedUser} boxSize='120px' />
+                    <UserImage boxSize='120px' />
 
                     <Text fontSize={'2xl'} fontWeight={'bold'}>
                       {userInfo ? userInfo.name : 'Usuário não encontrado'}
@@ -142,7 +142,8 @@ function Profile() {
                     borderRadius={'10px'}
                   >
                     <AlertIcon />
-                    Não pertence a nenhum grupo nem possui salas, se você for um responsável por prédio entre em contato por uspolis@usp.br.
+                    Não pertence a nenhum grupo nem possui salas, se você for um
+                    responsável por prédio entre em contato por uspolis@usp.br.
                   </Alert>
                 ) : (
                   <Accordion
