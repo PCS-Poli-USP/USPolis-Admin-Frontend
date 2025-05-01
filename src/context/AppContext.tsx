@@ -36,7 +36,6 @@ export default function AppContextProvider({
   children,
 }: React.PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(false);
-  const [loadingUser, setLoadingUser] = useState(false);
   const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
   const [accessToken, setAccessToken] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -46,7 +45,7 @@ export default function AppContextProvider({
 
   async function getSelfFromBackend() {
     try {
-      setLoadingUser(true);
+      setLoading(true);
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
       setIsAuthenticated(true);
@@ -59,7 +58,7 @@ export default function AppContextProvider({
         logout();
       }
     } finally {
-      setLoadingUser(false);
+      setLoading(false);
     }
   }
 
@@ -74,11 +73,11 @@ export default function AppContextProvider({
   }
 
   useEffect(() => {
-    if (accessToken && !loggedUser && !loadingUser) {
+    if (accessToken && !loggedUser && !loading) {
       getSelfFromBackend();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken, loggedUser, loadingUser]);
+  }, [accessToken, loggedUser, loading]);
 
   return (
     <appContext.Provider

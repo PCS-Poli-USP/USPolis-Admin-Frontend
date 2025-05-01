@@ -10,7 +10,7 @@ function LoadingPage() {
       align={'center'}
       justify={'top'}
       overflow={'auto'}
-      p={'50px'}
+      p={'100px'}
     >
       <Heading mb={4}>Carregando...</Heading>
 

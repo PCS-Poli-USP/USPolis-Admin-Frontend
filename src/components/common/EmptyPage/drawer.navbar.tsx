@@ -103,7 +103,7 @@ export function DrawerNavBar({
           </NavLink>
         </HStack>
         <Flex alignItems={'center'}>
-          {loggedUser ? (
+          {isAuthenticated ? (
             <>
               {validator.checkUserRestrictedPermission() && (
                 <Button
@@ -155,7 +155,7 @@ export function DrawerNavBar({
                     justify={'center'}
                     gap='10px'
                   >
-                    <UserImage user={loggedUser} />
+                    <UserImage />
                   </Flex>
                 </MenuButton>
                 <MenuList>
