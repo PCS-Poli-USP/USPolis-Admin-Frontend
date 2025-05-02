@@ -18,8 +18,10 @@ import { defaultValues, schema } from './user.edit.modal.form';
 import { yupResolver } from '@hookform/resolvers/yup/dist/yup.js';
 import { FormProvider, useForm } from 'react-hook-form';
 import { CheckBox, MultiSelect } from '../../../components/common';
+import useUsers from '../../../hooks/useUsers';
 
 export default function EditUserModal(props: UserEditModalProps) {
+  const { updateUser } = useUsers(false);
   const form = useForm({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
@@ -38,10 +40,17 @@ export default function EditUserModal(props: UserEditModalProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.user]);
 
-  function handleSaveClick() {
-    // props.onSave(form);
-    // setForm(initialForm);
-    // props.onClose();
+  async function handleSaveClick() {
+    if (!props.user) return;
+    const isValid = await form.trigger();
+    if (!isValid) {
+      return;
+    }
+    const values = form.getValues();
+    await updateUser(props.user.id, values);
+    form.reset();
+    props.refetch();
+    props.onClose();
   }
 
   function handleCloseModal() {

@@ -8,8 +8,8 @@ export const formFields = {
       .boolean()
       .required('Campo obrigatório')
       .test('is-valid-option', 'Campo obrigatório', (value) => {
-        if (value === undefined) return true;
-        return false;
+        if (value === undefined) return false;
+        return true;
       }),
     defaultValue: false,
   },

@@ -40,6 +40,17 @@ export const getUsersColumns = (
           : 'Nenhum'
         : 'Nenhum',
     header: 'Prédios',
+    cell: ({ row }) => (
+      <Box>
+        {row.original.buildings ? (
+          row.original.buildings.map((b, index) => (
+            <Text key={index}>{`${b.name}`}</Text>
+          ))
+        ) : (
+          <Text>Nenhum</Text>
+        )}
+      </Box>
+    ),
   },
   {
     filterFn: FilterString,
@@ -48,12 +59,28 @@ export const getUsersColumns = (
         ? row.groups.map((g) => g.name).join(', ')
         : 'Nenhum',
     header: 'Grupos',
+    cell: ({ row }) => (
+      <Box>
+        {row.original.groups.length ? (
+          row.original.groups.map((b, index) => (
+            <Text key={index}>{`${b.name}`}</Text>
+          ))
+        ) : (
+          <Text>Nenhum</Text>
+        )}
+      </Box>
+    ),
   },
   {
     accessorKey: 'is_admin',
     header: 'Admin',
-    meta: { isBoolean: true },
+    meta: { isBoolean: true, isSelectable: true },
+    maxSize: 120,
     filterFn: FilterBoolean,
+  },
+  {
+    accessorKey: 'created_by',
+    header: 'Criado por',
   },
   {
     accessorKey: 'updated_at',
@@ -81,10 +108,6 @@ export const getUsersColumns = (
         )}`}</Text>
       </Box>
     ),
-  },
-  {
-    accessorKey: 'created_by',
-    header: 'Criado por',
   },
   {
     id: 'options',

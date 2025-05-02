@@ -50,7 +50,6 @@ const Users = () => {
         user={selectedUser}
         isOpen={editModalOpen}
         refetch={() => {
-          setEditModalOpen(false);
           getUsers();
         }}
         onClose={() => {

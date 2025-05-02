@@ -9,7 +9,7 @@ interface UserImageProps {
 
 export default function UserImage({ boxSize = '40px' }: UserImageProps) {
   const { loading, loggedUser } = useContext(appContext);
-
+  const numBoxSize = Number(boxSize.replace('px', ''));
   return (
     <Box
       justifyContent={'center'}
@@ -40,7 +40,10 @@ export default function UserImage({ boxSize = '40px' }: UserImageProps) {
                 border={'2px'}
                 borderRadius={'full'}
               >
-                <Icon as={FaUser} boxSize={`calc(${boxSize} - 10px)`} />
+                <Icon
+                  as={FaUser}
+                  boxSize={`calc(${boxSize} - ${numBoxSize * 0.25}px)`}
+                />
               </Box>
             }
           />
