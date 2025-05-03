@@ -5,7 +5,7 @@ import Loading from '../../components/common/Loading/loading.component';
 import { getReservationsColumns } from './Tables/reservation.table';
 import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
 import { useEffect, useState } from 'react';
-import useClassrooms from '../../hooks/useClassrooms';
+import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import useBuildings from '../../hooks/useBuildings';
 import useReservations from '../../hooks/useReservations';
 import ReservationModal from './ReservationModal/reservation.modal';

@@ -38,7 +38,7 @@ import {
   ClassroomWithConflictCount,
 } from '../../../models/http/responses/classroom.response.models';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
-import useClassrooms from '../../../hooks/useClassrooms';
+import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import ClassroomTimeGrid from '../../../components/common/ClassroomTimeGrid/classroom.time.grid';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 

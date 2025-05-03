@@ -12,7 +12,7 @@ import moment from 'moment';
 import { Resource } from '../../models/http/responses/allocation.response.models';
 import { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction';
 import useBuildings from '../../hooks/useBuildings';
-import useClassrooms from '../../hooks/useClassrooms';
+import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import ReservationModal from '../../pages/reservations/ReservationModal/reservation.modal';
 import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
 import { loadReservationForDataClick } from './utils/allocation.utils';

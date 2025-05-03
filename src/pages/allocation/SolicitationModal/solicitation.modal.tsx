@@ -21,7 +21,7 @@ import { yupResolver } from '@hookform//resolvers/yup';
 import { CheckBox, Input, SelectInput, Textarea } from '../../../components/common';
 import { useEffect, useState } from 'react';
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
-import useClassrooms from '../../../hooks/useClassrooms';
+import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import { NumberInput } from '../../../components/common/form/NumberInput';
 import useClassroomsSolicitations from '../../../hooks/useClassroomSolicitations';

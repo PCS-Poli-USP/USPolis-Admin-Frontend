@@ -12,7 +12,7 @@ import Dialog from '../../components/common/Dialog/dialog.component';
 import { useState } from 'react';
 import ClassroomModal from './ClassroomModal/classroom.modal';
 import useBuildings from '../../hooks/useBuildings';
-import useClassrooms from '../../hooks/useClassrooms';
+import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import { ClassroomResponse } from '../../models/http/responses/classroom.response.models';
 import { getClassroomColumns } from './Tables/classroom.tables';
 import PageContent from '../../components/common/PageContent';

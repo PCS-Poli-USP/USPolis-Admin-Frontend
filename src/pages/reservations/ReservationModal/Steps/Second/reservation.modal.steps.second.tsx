@@ -21,7 +21,7 @@ import {
   ClassroomFullResponse,
   ClassroomWithConflictCount,
 } from '../../../../../models/http/responses/classroom.response.models';
-import useClassrooms from '../../../../../hooks/useClassrooms';
+import useClassrooms from '../../../../../hooks/classrooms/useClassrooms';
 import { sortDates } from '../../../../../utils/holidays/holidays.sorter';
 import ClassroomTimeGrid from '../../../../../components/common/ClassroomTimeGrid/classroom.time.grid';
 import { generateRecurrenceDates } from '../../../../../utils/common/common.generator';
