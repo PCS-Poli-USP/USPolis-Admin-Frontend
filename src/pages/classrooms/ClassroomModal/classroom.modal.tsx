@@ -23,7 +23,7 @@ import { yupResolver } from '@hookform//resolvers/yup';
 import { Input, MultiSelect, SelectInput } from '../../../components/common';
 import { NumberInput } from '../../../components/common/form/NumberInput';
 import { CheckBox } from '../../../components/common/form/CheckBox';
-import useClassrooms from '../../../hooks/useClassrooms';
+import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
 
 export default function ClassroomModal(props: ClassroomModalProps) {
@@ -32,8 +32,10 @@ export default function ClassroomModal(props: ClassroomModalProps) {
     resolver: yupResolver(schema),
   });
 
-  const { trigger, reset, getValues, clearErrors, setValue } = form;
+  const { trigger, reset, getValues, clearErrors, setValue, watch } = form;
   const { createClassroom, updateClassroom } = useClassrooms();
+
+  const building_id = watch('building_id');
 
   useEffect(() => {
     if (props.selectedClassroom) {
@@ -141,16 +143,22 @@ export default function ClassroomModal(props: ClassroomModalProps) {
               <MultiSelect
                 label='Grupos'
                 name='group_ids'
-                disabled={props.groups.length === 1}
-                placeholder='Selecione para quais grupos a sala vai ser adicionada'
-                options={props.groups.map((group) => ({
-                  label: group.name,
-                  value: group.id,
-                }))}
+                disabled={props.groups.length === 1 || !building_id}
+                placeholder={
+                  !building_id
+                    ? 'Selecione um prédio primeiro'
+                    : 'Selecione para quais grupos a sala vai ser adicionada'
+                }
+                options={props.groups
+                  .filter((group) => group.building_id === building_id)
+                  .map((group) => ({
+                    label: group.name,
+                    value: group.id,
+                  }))}
               />
               <Checkbox
                 mt={'5px'}
-                disabled={props.groups.length === 1}
+                disabled={props.groups.length === 1 || !building_id}
                 onChange={(event) => {
                   if (event.target.checked) {
                     setValue(

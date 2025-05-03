@@ -1,22 +1,26 @@
-import useCustomToast from '../hooks/useCustomToast';
+/* eslint-disable react-hooks/exhaustive-deps */
+import useCustomToast from '../../hooks/useCustomToast';
 import {
   ClassroomConflictCheck,
   CreateClassroom,
   UpdateClassroom,
-} from '../models/http/requests/classroom.request.models';
+} from '../../models/http/requests/classroom.request.models';
 import {
   ClassroomResponse,
   ClassroomFullResponse,
   ClassroomWithConflictCount,
-} from '../models/http/responses/classroom.response.models';
+} from '../../models/http/responses/classroom.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortClassroomResponse } from '../utils/classrooms/classrooms.sorter';
-import useClassroomsService from './API/services/useClassroomsService';
+import { sortClassroomResponse } from '../../utils/classrooms/classrooms.sorter';
+import useClassroomsService from '../API/services/useClassroomsService';
+import { ClassroomErrorParser } from './classroomErrorParser';
 
 const useClassrooms = (initialFetch: boolean = true) => {
   const service = useClassroomsService();
   const [loading, setLoading] = useState(false);
   const [classrooms, setClassrooms] = useState<ClassroomResponse[]>([]);
+
+  const parser = new ClassroomErrorParser();
 
   const showToast = useCustomToast();
 
@@ -28,7 +32,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
         setClassrooms(response.data.sort(sortClassroomResponse));
       })
       .catch((error) => {
-        showToast('Erro', 'Erro ao carregar todas as salas', 'error');
+        showToast('Erro', parser.parseGetError(error), 'error');
         console.log(error);
       })
       .finally(() => {
@@ -43,8 +47,8 @@ const useClassrooms = (initialFetch: boolean = true) => {
       .then((response) => {
         setClassrooms(response.data.sort(sortClassroomResponse));
       })
-      .catch(() => {
-        showToast('Erro', 'Erro ao carregar suas salas', 'error');
+      .catch((error) => {
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
@@ -61,12 +65,8 @@ const useClassrooms = (initialFetch: boolean = true) => {
           current = response.data;
           setClassrooms(current.sort(sortClassroomResponse));
         })
-        .catch(() => {
-          showToast(
-            'Erro',
-            `Erro ao carregar salas do prédio ${building_id}`,
-            'error',
-          );
+        .catch((error) => {
+          showToast('Erro', parser.parseGetError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
@@ -110,12 +110,8 @@ const useClassrooms = (initialFetch: boolean = true) => {
         .then((response) => {
           current = response.data.sort(sortClassroomResponse);
         })
-        .catch(() => {
-          showToast(
-            'Erro',
-            `Erro ao carregar salas do prédio ${building_id}`,
-            'error',
-          );
+        .catch((error) => {
+          showToast('Erro', parser.parseGetError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
@@ -134,7 +130,8 @@ const useClassrooms = (initialFetch: boolean = true) => {
         .then((response) => {
           current = response.data;
         })
-        .catch(() => {
+        .catch((error) => {
+          showToast('Erro', parser.parseGetError(error), 'error');
           current = undefined;
         });
       return current;
@@ -157,11 +154,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
           getClassrooms();
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao criar sala ${data.name}: ${error}`,
-            'error',
-          );
+          showToast('Erro', parser.parseCreateError(error), 'error');
           console.log(error);
         })
         .finally(() => {
@@ -181,11 +174,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
           getClassrooms();
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao atualizar a sala ${data.name}: ${error}`,
-            'error',
-          );
+          showToast('Erro', parser.parseUpdateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
@@ -204,7 +193,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
           getClassrooms();
         })
         .catch((error) => {
-          showToast('Erro!', 'Erro ao remover sala', 'error');
+          showToast('Erro!', parser.parseDeleteError(error), 'error');
           console.log(error);
         })
         .finally(() => {

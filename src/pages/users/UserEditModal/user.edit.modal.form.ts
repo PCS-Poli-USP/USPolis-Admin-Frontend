@@ -20,6 +20,7 @@ export const formFields = {
       .min(0)
       .test('is-valid-option', 'Usuários invalidas', (value) => {
         if (!value) return true;
+        if (value.length === 0) return true;
         return !UsersValidator.isInvalidIdArray(value);
       }),
     defaultValue: [],
@@ -31,6 +32,7 @@ export const formFields = {
       .min(0)
       .test('is-valid-option', 'Grupos inválidos', (value) => {
         if (!value) return true;
+        if (value.length === 0) return true;
         return !UsersValidator.isInvalidIdArray(value);
       }),
     defaultValue: [],

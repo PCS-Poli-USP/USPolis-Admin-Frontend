@@ -64,7 +64,7 @@ const useUsers = (initialFetch: boolean = true) => {
           getUsers();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao criar reserva: ${error}`, 'error');
+          showToast('Erro', `Erro ao criar usuário: ${error}`, 'error');
         })
         .finally(() => {
           setLoading(false);
@@ -79,7 +79,7 @@ const useUsers = (initialFetch: boolean = true) => {
       await service
         .update(id, data)
         .then(() => {
-          showToast('Sucesso', `Reserva atualizado com sucesso!`, 'success');
+          showToast('Sucesso', `Usuário atualizado com sucesso!`, 'success');
           getUsers();
         })
         .catch((error) => {

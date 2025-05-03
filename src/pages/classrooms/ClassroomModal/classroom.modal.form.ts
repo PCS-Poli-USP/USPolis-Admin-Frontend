@@ -30,7 +30,7 @@ export const formFields = {
     validator: yup
       .array()
       .of(yup.number().required('Campo obrigatório'))
-      .min(0)
+      .min(1, 'Selecione um grupo ou mais')
       .test('is-valid-option', 'Selecione um grupo ou mais', function (value) {
         if (!value) return false;
         if (value.length === 0) return false;
