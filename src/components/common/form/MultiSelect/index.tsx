@@ -11,8 +11,7 @@ export type Option = {
 
 interface MultiSelectProps extends FieldProps {
   options: Option[];
-  values?: Option[];
-  loading?: boolean;
+  isLoading?: boolean;
   onChange?: (options: Option[]) => void;
 }
 
@@ -21,8 +20,7 @@ export function MultiSelect({
   name,
   options,
   disabled = false,
-  loading = false,
-  values = undefined,
+  isLoading = false,
   placeholder = 'Selecione uma ou mais opções',
   mt = undefined,
   mb = undefined,
@@ -42,55 +40,47 @@ export function MultiSelect({
   );
 
   useEffect(() => {
-    if (values) {
-      setValue(
-        name,
-        values.map((val) => val.value),
+    const current: (string | number)[] = getValues(name);
+    if (current) {
+      setSelectedOptions(
+        options.filter((option) => current.includes(option.value)),
       );
-      setSelectedOptions(values);
-    } else {
-      const current: (string | number)[] = getValues(name);
-      console.log('current', current);
-      if (current) {
-        setSelectedOptions(
-          options.filter((option) => current.includes(option.value)),
-        );
-      }
-    }
+    } else setSelectedOptions([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values, name, options]);
+  }, [name, options]);
 
   return (
-    <Controller
-      control={control}
-      name={name}
-      render={() => (
-        <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
-          <FormLabel alignSelf='flex-start'>{label}</FormLabel>
+    <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
+      <FormLabel alignSelf='flex-start'>{label}</FormLabel>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
           <Select
+            {...field}
+            id={name}
             value={selectedOptions}
-            isLoading={loading}
-            isDisabled={disabled}
+            isLoading={isLoading}
+            isDisabled={disabled || isLoading}
             placeholder={placeholder}
             isMulti={true}
+            isClearable={true}
             closeMenuOnSelect={false}
             onChange={(selectedOption: Option[]) => {
+              if (onChange) {
+                onChange(selectedOption);
+              }
               const values = (selectedOption || []).map(
                 (option) => option.value,
               );
               setValue(name, values);
               setSelectedOptions(selectedOption as Option[]);
-              if (onChange) {
-                onChange(selectedOption);
-              }
             }}
             options={options}
           />
-          <FormErrorMessage>
-            {errors[name]?.message?.toString()}
-          </FormErrorMessage>
-        </FormControl>
-      )}
-    />
+        )}
+      />
+      <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
+    </FormControl>
   );
 }

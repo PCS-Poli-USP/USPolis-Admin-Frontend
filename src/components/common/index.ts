@@ -1,5 +1,4 @@
 export * from './form/Input';
-export * from './form/Select';
 export * from './form/Textarea';
 export * from './form/SelectInput'
 export * from './form/MultiSelect'

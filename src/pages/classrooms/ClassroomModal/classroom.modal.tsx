@@ -161,10 +161,10 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 disabled={props.groups.length === 1 || !building_id}
                 onChange={(event) => {
                   if (event.target.checked) {
-                    setValue(
-                      'group_ids',
-                      props.groups.map((group) => group.id),
-                    );
+                    const groups = props.groups
+                      .filter((group) => group.building_id === building_id)
+                      .map((group) => group.id);
+                    setValue('group_ids', groups);
                   } else setValue('group_ids', []);
                 }}
               >

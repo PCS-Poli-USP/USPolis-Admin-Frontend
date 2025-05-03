@@ -36,7 +36,7 @@ export const formFields = {
         if (value.length === 0) return false;
         return !ClassroomValidator.isInvalidIdArray(value);
       }),
-    defaultValue: [],
+    defaultValue: [] as number[],
   },
   floor: {
     validator: yup

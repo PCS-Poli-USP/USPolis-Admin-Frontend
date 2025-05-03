@@ -11,7 +11,6 @@ type Option = {
 
 interface SelectProps extends FieldProps {
   options: Option[];
-  value?: string | number;
   onChange?: (value: Option | undefined) => void;
 }
 
@@ -65,11 +64,12 @@ export function SelectInput({
             {...field}
             id={name}
             value={selectedOption}
+            isLoading={isLoading}
             isDisabled={disabled || isLoading}
             placeholder={placeholder ? placeholder : 'Selecione uma opção'}
+            isMulti={false}
             isClearable={true}
-            // icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
-            isLoading={isLoading}
+            closeMenuOnSelect={true}
             onChange={(option: Option | null) => {
               if (onChange) onChange(option ? option : undefined);
               setValue(name, option ? option.value : '');

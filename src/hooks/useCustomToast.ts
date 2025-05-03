@@ -12,7 +12,7 @@ const useCustomToast = () => {
         status,
         isClosable: true,
         position: 'top-left',
-        duration: 4000,
+        duration: 5000,
       });
     },
     [toast],
