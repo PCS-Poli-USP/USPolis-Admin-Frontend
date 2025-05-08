@@ -83,7 +83,12 @@ export function AllocateClassModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} size={'xl'}>
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      size={'xl'}
+      closeOnOverlayClick={false}
+    >
       <ModalOverlay />
       <ModalContent>
         {inputClass ? (
@@ -133,7 +138,7 @@ export function AllocateClassModal({
                     Restaurar
                   </Button>
                   <Button onClick={handleSave} flexGrow={1} colorScheme='blue'>
-                    Salvar
+                    Salvar Tudo
                   </Button>
                 </Flex>
               </Flex>

@@ -1,11 +1,5 @@
-import {
-  Checkbox,
-  Flex,
-  Select,
-  Spinner,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Checkbox, Flex, Text, VStack } from '@chakra-ui/react';
+import Select, { SingleValue } from 'react-select';
 import useClassroomsService from '../../../hooks/API/services/useClassroomsService';
 import Classroom, {
   ClassroomWithConflictCount,
@@ -29,6 +23,16 @@ interface props {
   allowedBuildings: BuildingResponse[];
   loadingBuildings: boolean;
   initialBuildingId?: number;
+}
+
+interface BuildingOption {
+  label: string;
+  value: number;
+}
+
+interface ClassroomOption {
+  label: string;
+  value: number;
 }
 
 const AllocateSingleScheduleSection = forwardRef<
@@ -74,16 +78,22 @@ const AllocateSingleScheduleSection = forwardRef<
     // selectedData
     const [selectedBuilding, setSelectedBuilding] =
       useState<BuildingResponse>();
+    const [selecteBuildingOption, setSelecteBuildingOption] =
+      useState<BuildingOption>();
     const [selectedClassroom, setSelectedClassroom] = useState<Classroom>();
-    const [removeAllocation, setRemoveAllocation] = useState<boolean>(false);
+    const [selecteClassroomOption, setSelecteClassroomOption] =
+      useState<BuildingOption>();
 
     // loadings
     const [classroomsLoading, setClassroomsLoading] = useState(false);
 
     // logic
+    const [removeAllocation, setRemoveAllocation] = useState<boolean>(false);
     const [resetClassroomsOnceLoaded, setResetClassroomsOnceLoaded] =
       useState(false);
     const [hasSetInitialBuilding, setHasSetInitialBuilding] = useState(false);
+    const [hasConflict, setHasConflict] = useState(false);
+    const [intentionalConflict, setIntentionalConflict] = useState(false);
 
     useEffect(() => {
       reset();
@@ -97,10 +107,17 @@ const AllocateSingleScheduleSection = forwardRef<
         initialBuildingId &&
         allowedBuildings.length > 0
       ) {
-        setSelectedBuilding(
-          allowedBuildings.find(
-            (building) => building.id === initialBuildingId,
-          ),
+        const building = allowedBuildings.find(
+          (building) => building.id === initialBuildingId,
+        );
+        setSelectedBuilding(building);
+        setSelecteBuildingOption(
+          building
+            ? {
+                label: building.name,
+                value: building.id,
+              }
+            : undefined,
         );
         setHasSetInitialBuilding(true);
       }
@@ -109,10 +126,17 @@ const AllocateSingleScheduleSection = forwardRef<
     useEffect(() => {
       if (!schedule) return;
       if (resetClassroomsOnceLoaded && classrooms.length > 0) {
-        setSelectedClassroom(
-          classrooms.find(
-            (classroom) => classroom.id === schedule.classroom_id,
-          ),
+        const classroom = classrooms.find(
+          (classroom) => classroom.id === schedule.classroom_id,
+        );
+        setSelectedClassroom(classroom);
+        setSelecteClassroomOption(
+          classroom
+            ? {
+                label: formatClassroomForSelection(classroom),
+                value: Number(classroom.id),
+              }
+            : undefined,
         );
         setResetClassroomsOnceLoaded(false);
       }
@@ -121,6 +145,8 @@ const AllocateSingleScheduleSection = forwardRef<
     useEffect(() => {
       if (!selectedBuilding || !schedule) return;
       setClassroomsLoading(true);
+      setSelecteClassroomOption(undefined);
+      setSelectedClassroom(undefined);
       classroomsService
         .getWithConflictCount(schedule.id, selectedBuilding.id)
         .then((response) => {
@@ -138,22 +164,28 @@ const AllocateSingleScheduleSection = forwardRef<
         if (schedule.classroom_id) {
           if (selectedBuilding?.id !== schedule.building_id)
             setResetClassroomsOnceLoaded(true);
-          else
+          else {
+            setSelecteClassroomOption(undefined);
             setSelectedClassroom(
               classrooms.find(
                 (classroom) => classroom.id === schedule.classroom_id,
               ),
             );
+          }
         } else {
           setSelectedClassroom(undefined);
+          setSelecteClassroomOption(undefined);
         }
         if (schedule.building_id) {
-          setSelectedBuilding(
-            allowedBuildings.find(
-              (building) => building.id === schedule.building_id,
-            ),
+          const building = allowedBuildings.find(
+            (building) => building.id === schedule.building_id,
           );
+          setSelecteBuildingOption(
+            building ? { label: building.name, value: building.id } : undefined,
+          );
+          setSelectedBuilding(building);
         } else {
+          setSelecteBuildingOption(undefined);
           setSelectedBuilding(undefined);
         }
       }
@@ -162,7 +194,7 @@ const AllocateSingleScheduleSection = forwardRef<
     return (
       <>
         {schedule && (
-          <Flex flexDir={'column'} gap={4}>
+          <Flex flexDir={'column'} gap={'5px'}>
             <Flex flexDir={'column'}>
               <Text>
                 Recorrencia:{' '}
@@ -190,56 +222,89 @@ const AllocateSingleScheduleSection = forwardRef<
               </Text>
             </Flex>
             <VStack alignItems={'flex-start'}>
-              <Checkbox
-                colorScheme='red'
-                isChecked={removeAllocation}
-                onChange={(e) => {
-                  setRemoveAllocation(e.target.checked);
-                }}
-              >
-                Remover alocação
-              </Checkbox>
+              <Flex direction={'row'} gap={'25px'} w={'100%'}>
+                <Checkbox
+                  colorScheme='red'
+                  isChecked={removeAllocation}
+                  onChange={(e) => {
+                    setRemoveAllocation(e.target.checked);
+                  }}
+                >
+                  Remover alocação
+                </Checkbox>
+                <Checkbox
+                  hidden={!hasConflict || removeAllocation || true}
+                  colorScheme='red'
+                  isChecked={intentionalConflict}
+                  onChange={(e) => {
+                    setIntentionalConflict(e.target.checked);
+                  }}
+                >
+                  Conflito intencional
+                </Checkbox>
+              </Flex>
+
               {!removeAllocation && (
-                <>
+                <Flex direction={'column'} gap={'5px'} w={'100%'}>
                   <Select
-                    placeholder='Selecione o prédio'
-                    icon={loadingBuildings ? <Spinner /> : undefined}
-                    onChange={(e) => {
-                      setSelectedBuilding(
-                        allowedBuildings.find(
-                          (building) => building.id === Number(e.target.value),
-                        ),
-                      );
+                    placeholder={
+                      loadingBuildings
+                        ? 'Carregando prédios...'
+                        : 'Selecione o prédio'
+                    }
+                    isLoading={loadingBuildings}
+                    isMulti={false}
+                    value={selecteBuildingOption}
+                    options={allowedBuildings.map((building) => ({
+                      label: building.name,
+                      value: building.id,
+                    }))}
+                    onChange={(option: SingleValue<BuildingOption>) => {
+                      if (option) {
+                        setSelecteBuildingOption(option as BuildingOption);
+                        setSelectedBuilding(
+                          allowedBuildings.find(
+                            (building) => building.id === option?.value,
+                          ),
+                        );
+                      } else {
+                        setSelecteBuildingOption(undefined);
+                        setSelectedBuilding(undefined);
+                        setHasConflict(false);
+                      }
                     }}
-                    value={selectedBuilding ? selectedBuilding.id : 0}
-                  >
-                    {allowedBuildings.map((building) => (
-                      <option key={building.id} value={building.id}>
-                        {building.name}
-                      </option>
-                    ))}
-                  </Select>
+                  />
                   <Select
-                    placeholder='Selecione a sala'
-                    icon={classroomsLoading ? <Spinner /> : undefined}
-                    onChange={(e) => {
-                      setSelectedClassroom(
-                        classrooms.find(
-                          (classroom) =>
-                            Number(classroom.id) === Number(e.target.value),
-                        ),
-                      );
+                    placeholder={
+                      classroomsLoading
+                        ? 'Carregando salas...'
+                        : 'Selecione a sala'
+                    }
+                    isLoading={classroomsLoading}
+                    options={classrooms.map((classroom) => ({
+                      label: formatClassroomForSelection(classroom),
+                      value: Number(classroom.id),
+                    }))}
+                    onChange={(option: SingleValue<ClassroomOption>) => {
+                      if (option) {
+                        const classroom = classrooms.find(
+                          (classroom) => Number(classroom.id) === option.value,
+                        );
+                        setSelecteClassroomOption(option as ClassroomOption);
+                        setSelectedClassroom(classroom);
+                        setHasConflict(
+                          classroom ? classroom.conflicts > 0 : false,
+                        );
+                      } else {
+                        setSelecteClassroomOption(undefined);
+                        setSelectedClassroom(undefined);
+                        setHasConflict(false);
+                      }
                     }}
-                    value={selectedClassroom ? Number(selectedClassroom.id) : 0}
-                    disabled={!selectedBuilding || classroomsLoading}
-                  >
-                    {classrooms.map((classroom) => (
-                      <option key={classroom.id} value={Number(classroom.id)}>
-                        {formatClassroomForSelection(classroom)}
-                      </option>
-                    ))}
-                  </Select>
-                </>
+                    value={selecteClassroomOption}
+                    isDisabled={!selectedBuilding || classroomsLoading}
+                  />
+                </Flex>
               )}
               <AllocationLogHistory
                 last_log={schedule.last_log}
