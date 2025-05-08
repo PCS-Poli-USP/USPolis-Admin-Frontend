@@ -68,8 +68,8 @@ function ClassroomTimeGrid({
             type: schedule.reservation
               ? 'Reserva'
               : schedule.subject && schedule.class_code
-              ? `Turma ${classNumberFromClassCode(schedule.class_code)}`
-              : 'Não indentificado',
+                ? `Turma ${classNumberFromClassCode(schedule.class_code)}`
+                : 'Não indentificado',
             start: occurrence.start_time,
             end: occurrence.end_time,
           },
@@ -137,8 +137,8 @@ function ClassroomTimeGrid({
                 </Text>
                 <Text>
                   <b>Horário:</b>{' '}
-                  {preview.start_time ? preview.start_time : 'Não informado'} até {' '}
-                  {preview.end_time ? preview.end_time : 'Não informado'}
+                  {preview.start_time ? preview.start_time : 'Não informado'}{' '}
+                  até {preview.end_time ? preview.end_time : 'Não informado'}
                 </Text>
                 <Text>Datas solicitadas no rodapé do calendário</Text>
               </Box>

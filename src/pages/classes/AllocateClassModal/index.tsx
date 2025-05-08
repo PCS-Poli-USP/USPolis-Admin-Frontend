@@ -100,7 +100,9 @@ export function AllocateClassModal({
                     <Box key={index}>
                       <AllocateSingleScheduleSection
                         key={schedule.id}
-                        ref={(ref) => (sectionsRefs.current[index] = ref)}
+                        ref={(ref) => {
+                          sectionsRefs.current[index] = ref;
+                        }}
                         schedule={schedule}
                         allowedBuildings={allowedBuildings}
                         loadingBuildings={loading}

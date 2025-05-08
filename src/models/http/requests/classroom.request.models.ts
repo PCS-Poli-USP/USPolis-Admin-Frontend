@@ -1,4 +1,4 @@
-import { AudiovisualType } from "../../../utils/enums/audiovisualType.enum";
+import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
 
 export interface CreateClassroom {
   name: string;

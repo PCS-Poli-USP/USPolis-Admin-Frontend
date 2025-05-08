@@ -7,9 +7,20 @@ interface LoadingProps {
 
 export default function Loading({ isOpen, onClose }: LoadingProps) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false} closeOnEsc={false}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      closeOnOverlayClick={false}
+      closeOnEsc={false}
+    >
       <ModalOverlay display='flex' alignItems='center' justifyContent='center'>
-        <Spinner thickness='4px' speed='0.65s' emptyColor='uspolis.grey' color='uspolis.blue' size='xl' />
+        <Spinner
+          thickness='4px'
+          speed='0.65s'
+          emptyColor='uspolis.grey'
+          color='uspolis.blue'
+          size='xl'
+        />
       </ModalOverlay>
       <ModalContent></ModalContent> {/* block scrolling when loading */}
     </Modal>

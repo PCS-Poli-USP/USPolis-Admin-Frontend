@@ -159,8 +159,8 @@ export default function DataTable<Data extends object>({
                         boxShadow: isLastLeftPinnedColumn
                           ? '-4px 0 4px -4px gray inset'
                           : isFirstRightPinnedColumn
-                          ? '4px 0 4px -4px gray inset'
-                          : undefined,
+                            ? '4px 0 4px -4px gray inset'
+                            : undefined,
                         left:
                           isPinned === 'left'
                             ? `${header.column.getStart('left')}px`
@@ -184,15 +184,15 @@ export default function DataTable<Data extends object>({
                           meta?.isCenter
                             ? 'center'
                             : meta?.isNumeric
-                            ? 'flex-end'
-                            : 'flex-start'
+                              ? 'flex-end'
+                              : 'flex-start'
                         }
                         alignContent={
                           meta?.isCenter
                             ? 'center'
                             : meta?.isNumeric
-                            ? 'flex-end'
-                            : 'flex-start'
+                              ? 'flex-end'
+                              : 'flex-start'
                         }
                       >
                         <Tooltip
@@ -287,8 +287,8 @@ export default function DataTable<Data extends object>({
                         boxShadow: isLastLeftPinnedColumn
                           ? '-4px 0 4px -4px gray inset'
                           : isFirstRightPinnedColumn
-                          ? '4px 0 4px -4px gray inset'
-                          : undefined,
+                            ? '4px 0 4px -4px gray inset'
+                            : undefined,
                         left:
                           isPinned === 'left'
                             ? `${cell.column.getStart('left')}px`

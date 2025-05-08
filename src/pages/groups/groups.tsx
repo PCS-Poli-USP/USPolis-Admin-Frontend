@@ -62,7 +62,6 @@ export default function Groups() {
   }
 
   function filterGroups(building: string, name: string) {
-    console.log('filtering', building, name);
     const filtered = groups.filter((group) => {
       const matchBuilding = filterString(group.building, building);
       const matchName = filterString(group.name, name);

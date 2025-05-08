@@ -9,13 +9,13 @@ import { ScheduleData } from '../../class.modal.interface';
 import { ClassFourthForm } from '../Fourth/class.modal.steps.fourth.interface';
 
 interface ClassFormData {
-  first: ClassFirstForm,
-  second: ClassSecondForm,
-  third: ClassThirdForm,
-  fourth: ClassFourthForm,
+  first: ClassFirstForm;
+  second: ClassSecondForm;
+  third: ClassThirdForm;
+  fourth: ClassFourthForm;
 }
 export interface ClassModalFifthStepProps extends ClassModalStepsProps {
-  data: ClassFormData,
+  data: ClassFormData;
   moveTo: (index: number) => void;
   subjects: SubjectResponse[];
   calendars: CalendarResponse[];

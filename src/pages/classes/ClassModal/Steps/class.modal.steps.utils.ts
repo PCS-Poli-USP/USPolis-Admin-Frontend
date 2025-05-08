@@ -1,4 +1,4 @@
-import { ScheduleData } from "../class.modal.interface";
+import { ScheduleData } from '../class.modal.interface';
 
 export function sortScheduleData(A: ScheduleData, B: ScheduleData) {
   if (A.recurrence < B.recurrence) return -1;

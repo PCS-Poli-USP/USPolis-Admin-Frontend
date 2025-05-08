@@ -176,9 +176,7 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
         <Text>{fourthForm.accessibility ? 'Sim' : 'Não'}</Text>
       </HStack>
       <HStack>
-        <Text
-          as={'b'}
-        >{`Recurso audiovisual: `}</Text>
+        <Text as={'b'}>{`Recurso audiovisual: `}</Text>
         <Text color={fourthForm.audiovisual ? undefined : 'red'}>
           {fourthForm.audiovisual
             ? AudiovisualType.translate(fourthForm.audiovisual)

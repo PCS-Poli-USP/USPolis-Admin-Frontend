@@ -137,7 +137,7 @@ function ReservationModal(props: ReservationModalProps) {
     const isValidFirst = await firstForm.trigger();
     const { trigger, getValues } = secondForm;
     const isValidSecond = await trigger();
-    setStepsIsValid((prev) => [isValidFirst, isValidSecond]);
+    setStepsIsValid(() => [isValidFirst, isValidSecond]);
     if (!isValidFirst) return;
     if (!isValidSecond) return;
 

@@ -108,7 +108,9 @@ function insertScheduleInOccupationMap(
   });
 }
 
-export function getSchedulesFromClasses(classes: ClassResponse[]): ScheduleResponse[] {
+export function getSchedulesFromClasses(
+  classes: ClassResponse[],
+): ScheduleResponse[] {
   return classes.reduce<ScheduleResponse[]>((acc, cls) => {
     return acc.concat(cls.schedules);
   }, []);

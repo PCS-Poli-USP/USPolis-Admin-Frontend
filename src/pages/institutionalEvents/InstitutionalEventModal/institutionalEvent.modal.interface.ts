@@ -1,6 +1,6 @@
-import { BuildingResponse } from "../../../models/http/responses/building.response.models";
-import { InstitutionalEventResponse } from "../../../models/http/responses/instituionalEvent.response.models";
-import { ModalProps } from "../../../models/interfaces";
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
+import { InstitutionalEventResponse } from '../../../models/http/responses/instituionalEvent.response.models';
+import { ModalProps } from '../../../models/interfaces';
 
 export interface InstitutionalEventForm {
   building?: string;

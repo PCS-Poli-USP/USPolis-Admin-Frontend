@@ -19,6 +19,7 @@ import { yupResolver } from '@hookform/resolvers/yup/dist/yup.js';
 import { FormProvider, useForm } from 'react-hook-form';
 import { CheckBox, MultiSelect } from '../../../components/common';
 import useUsers from '../../../hooks/useUsers';
+import GroupFormatter from '../../../utils/groups/group.formatter';
 
 export default function EditUserModal(props: UserEditModalProps) {
   const { updateUser } = useUsers(false);
@@ -86,7 +87,7 @@ export default function EditUserModal(props: UserEditModalProps) {
                   label='Grupos'
                   name='group_ids'
                   options={props.groups.map((group) => ({
-                    label: group.name,
+                    label: GroupFormatter.getGroupName(group),
                     value: group.id,
                   }))}
                   placeholder='Selecione os grupos'

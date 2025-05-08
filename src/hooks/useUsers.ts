@@ -84,6 +84,7 @@ const useUsers = (initialFetch: boolean = true) => {
         })
         .catch((error) => {
           showToast('Erro', `Erro ao atualizar o usuário: ${error}`, 'error');
+          console.log(error);
         })
         .finally(() => {
           setLoading(false);
@@ -115,7 +116,7 @@ const useUsers = (initialFetch: boolean = true) => {
 
   useEffect(() => {
     if (initialFetch) getUsers();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFetch]);
 
   return {

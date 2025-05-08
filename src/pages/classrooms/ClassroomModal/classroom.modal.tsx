@@ -25,6 +25,7 @@ import { NumberInput } from '../../../components/common/form/NumberInput';
 import { CheckBox } from '../../../components/common/form/CheckBox';
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
+import GroupFormatter from '../../../utils/groups/group.formatter';
 
 export default function ClassroomModal(props: ClassroomModalProps) {
   const form = useForm<ClassroomForm>({
@@ -152,7 +153,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 options={props.groups
                   .filter((group) => group.building_id === building_id)
                   .map((group) => ({
-                    label: group.name,
+                    label: GroupFormatter.getGroupName(group),
                     value: group.id,
                   }))}
               />

@@ -225,15 +225,15 @@ function SolicitationPanel({
                 solicitation.approved
                   ? 'green'
                   : solicitation.denied
-                  ? 'red.500'
-                  : 'yellow.500'
+                    ? 'red.500'
+                    : 'yellow.500'
               }
             >{`${
               solicitation.approved
                 ? 'Aprovado'
                 : solicitation.denied
-                ? 'Negado'
-                : 'Pendente'
+                  ? 'Negado'
+                  : 'Pendente'
             }`}</Heading>
           </CardHeader>
 
@@ -592,13 +592,13 @@ function SolicitationPanel({
                             classroom_id: classroom
                               ? classroom.id
                               : solicitation.classroom_id
-                              ? solicitation.classroom_id
-                              : 0,
+                                ? solicitation.classroom_id
+                                : 0,
                             classroom_name: classroom
                               ? classroom.name
                               : solicitation.classroom
-                              ? solicitation.classroom
-                              : 'Sem nome',
+                                ? solicitation.classroom
+                                : 'Sem nome',
                             start_time: solicitation.start_time
                               ? solicitation.start_time
                               : start,

@@ -41,7 +41,9 @@ export default function Dialog({
         <AlertDialogHeader>{title}?</AlertDialogHeader>
         <AlertDialogBody color='red'>
           {multipleWarningText.length > 0 ? (
-            multipleWarningText.map((value, index) => <Text key={index}>{value}</Text>)
+            multipleWarningText.map((value, index) => (
+              <Text key={index}>{value}</Text>
+            ))
           ) : (
             <Text>{warningText}</Text>
           )}

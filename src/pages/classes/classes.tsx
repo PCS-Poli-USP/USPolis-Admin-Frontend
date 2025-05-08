@@ -61,8 +61,12 @@ function Classes() {
     onClose: onCloseJupiterModal,
   } = useDisclosure();
 
-  const [selectedClass, setSelectedClass] = useState<ClassResponse>();
-  const [, setSelectedSchedule] = useState<ScheduleResponse>();
+  const [selectedClass, setSelectedClass] = useState<ClassResponse | undefined>(
+    undefined,
+  );
+  const [, setSelectedSchedule] = useState<ScheduleResponse | undefined>(
+    undefined,
+  );
   const [isUpdateClass, setIsUpdateClass] = useState(false);
   const [crawlerType, setCrawlerType] = useState<CrawlerType | undefined>(
     CrawlerType.JUPITER,

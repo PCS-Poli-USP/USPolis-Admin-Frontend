@@ -27,7 +27,7 @@ const useAllowedBuildings = () => {
       setLoading(false);
     };
     getAllowedBuildings();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedUser]);
 
   return { allowedBuildings, loading };

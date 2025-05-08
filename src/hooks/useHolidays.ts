@@ -124,9 +124,8 @@ const useHolidays = (initialFetch = true) => {
   );
 
   useEffect(() => {
-    if (initialFetch)
-    getHolidays();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (initialFetch) getHolidays();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFetch]);
 
   return {

@@ -119,7 +119,7 @@ function Header() {
               colorScheme='dark'
             >
               <Flex alignItems={'center'} gap='1'>
-                <UserImage  />
+                <UserImage />
               </Flex>
             </MenuButton>
             <MenuList>

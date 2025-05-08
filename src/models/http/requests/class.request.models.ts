@@ -11,7 +11,7 @@ export interface ClassBase {
   vacancies: number;
   air_conditionating: boolean;
   accessibility: boolean;
- audiovisual: AudiovisualType;
+  audiovisual: AudiovisualType;
   ignore_to_allocate: boolean;
   calendar_ids: number[];
 }

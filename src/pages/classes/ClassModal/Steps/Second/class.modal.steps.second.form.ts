@@ -28,7 +28,7 @@ export const classSecondFormFields = {
         function (value) {
           const { start_date } = this.parent;
           if (!value) return true;
-          if (!!start_date) return true;
+          if (start_date) return true;
 
           return !ScheduleValidator.isInvalidDateOferring(start_date, value);
         },
@@ -40,15 +40,11 @@ export const classSecondFormFields = {
       .array()
       .of(yup.number().required('Campo obrigatório'))
       .min(0)
-      .test(
-        'is-valid-array',
-        'Calendários inválidos',
-        function (value) {
-          if (!value) return true;
-          if (value.length === 0) return true;
-          return !ScheduleValidator.isInvalidIdArray(value);
-        },
-      ),
+      .test('is-valid-array', 'Calendários inválidos', function (value) {
+        if (!value) return true;
+        if (value.length === 0) return true;
+        return !ScheduleValidator.isInvalidIdArray(value);
+      }),
     defaultValue: [],
   },
 };

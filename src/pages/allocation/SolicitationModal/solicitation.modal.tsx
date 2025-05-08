@@ -18,7 +18,12 @@ import { SolicitationModalProps } from './solicitation.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './solicitation.modal.form';
 import { yupResolver } from '@hookform//resolvers/yup';
-import { CheckBox, Input, SelectInput, Textarea } from '../../../components/common';
+import {
+  CheckBox,
+  Input,
+  SelectInput,
+  Textarea,
+} from '../../../components/common';
 import { useEffect, useState } from 'react';
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
@@ -314,33 +319,34 @@ function SolicitationModal({
                       !selectedBuilding
                         ? 'Selecione um prédio antes'
                         : !optionalTime && !start && !end
-                        ? 'Selecione um horário antes'
-                        : selectedDays.length === 0
-                        ? 'Selecione as datas primeiro'
-                        : 'Selecione uma sala'
+                          ? 'Selecione um horário antes'
+                          : selectedDays.length === 0
+                            ? 'Selecione as datas primeiro'
+                            : 'Selecione uma sala'
                     }
                     options={
                       !selectedBuilding
                         ? []
                         : optionalTime
-                        ? classrooms
-                            .filter(
-                              (val) => val.building_id === selectedBuilding.id,
-                            )
-                            .map((val) => ({
-                              value: val.id,
-                              label: val.name,
-                            }))
-                        : selectedDays.length === 0
-                        ? []
-                        : start && end && classroomsWithConflict
-                        ? classroomsWithConflict.map((val) => ({
-                            label: val.conflicts
-                              ? `⚠️ ${val.name} (${val.conflicts} conflitos)`
-                              : val.name,
-                            value: val.id,
-                          }))
-                        : []
+                          ? classrooms
+                              .filter(
+                                (val) =>
+                                  val.building_id === selectedBuilding.id,
+                              )
+                              .map((val) => ({
+                                value: val.id,
+                                label: val.name,
+                              }))
+                          : selectedDays.length === 0
+                            ? []
+                            : start && end && classroomsWithConflict
+                              ? classroomsWithConflict.map((val) => ({
+                                  label: val.conflicts
+                                    ? `⚠️ ${val.name} (${val.conflicts} conflitos)`
+                                    : val.name,
+                                  value: val.id,
+                                }))
+                              : []
                     }
                   />
                   <Tooltip
@@ -348,8 +354,8 @@ function SolicitationModal({
                       !classroom_id
                         ? 'Selecione uma sala'
                         : selectedDays.length === 0
-                        ? 'Selecione os dias'
-                        : ''
+                          ? 'Selecione os dias'
+                          : ''
                     }
                   >
                     <Button

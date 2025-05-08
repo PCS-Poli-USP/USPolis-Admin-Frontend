@@ -49,8 +49,12 @@ export default function MultipleEditModal({
 }: MultipleEditModalProps) {
   const [subjectSearchValue, setSubjectSearchValue] = useState('');
   const [map, setMap] = useState<[string, ClassResponse[]][]>([]);
-  const [filteredMap, setFilteredMap] = useState<[string, ClassResponse[]][]>([]);
-  const [filteredClasses, setFilteredClasses] = useState<ClassroomResponse[]>([]);
+  const [filteredMap, setFilteredMap] = useState<[string, ClassResponse[]][]>(
+    [],
+  );
+  const [filteredClasses, setFilteredClasses] = useState<ClassroomResponse[]>(
+    [],
+  );
   const [allocationMap, setAllocationMap] = useState<Allocation[]>([]);
   const [classroomSchedulesMap, setClassroomSchedulesMap] = useState<
     [string, string, ClassroomSchedule][]
@@ -223,7 +227,7 @@ export default function MultipleEditModal({
       ];
 
       setClassroomSchedulesMap(
-        newClassroomSchedulesMap //.sort(sortClassroomScheduleMap),
+        newClassroomSchedulesMap, //.sort(sortClassroomScheduleMap),
       );
     }
     setIsUpdatingSchedules(false);
@@ -259,7 +263,7 @@ export default function MultipleEditModal({
         );
         newClassroomSchedulesMap[oldScheduleIndex] = oldSchedule;
         setClassroomSchedulesMap(
-          newClassroomSchedulesMap //.sort(sortClassroomScheduleMap),
+          newClassroomSchedulesMap, //.sort(sortClassroomScheduleMap),
         );
       }
       setIsUpdatingSchedules(false);

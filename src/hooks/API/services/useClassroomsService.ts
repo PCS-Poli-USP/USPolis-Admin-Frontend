@@ -21,9 +21,7 @@ const useClassroomsService = () => {
     return axiosCommon.get('/classrooms');
   };
 
-  const getMine = (): Promise<
-    AxiosResponse<Array<ClassroomResponse>>
-  > => {
+  const getMine = (): Promise<AxiosResponse<Array<ClassroomResponse>>> => {
     return axios.get('/users/my-classrooms');
   };
 

@@ -1,8 +1,4 @@
-import {
-  HStack,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { HStack, Text, VStack } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
 import { Input } from '../../../../../components/common';
 import { ClassModalSecondStepProps } from './class.modal.steps.second.interface';

@@ -38,7 +38,12 @@ export function FilterEventPopover(props: FilterEventPopoverProps) {
   }
 
   return (
-    <Popover isOpen={props.isOpen} onClose={props.onClose} placement='right-end' closeOnBlur={false}>
+    <Popover
+      isOpen={props.isOpen}
+      onClose={props.onClose}
+      placement='right-end'
+      closeOnBlur={false}
+    >
       <PopoverContent p={5} w='500px' ml='700px' mt='40px'>
         <PopoverHeader fontWeight='bold'>Filtrar Alocações</PopoverHeader>
         <PopoverArrow />
@@ -51,7 +56,9 @@ export function FilterEventPopover(props: FilterEventPopoverProps) {
               <Input
                 type='text'
                 value={props.subjectSearchValue}
-                onChange={(event) => props.handleSubjectChange(event.target.value)}
+                onChange={(event) =>
+                  props.handleSubjectChange(event.target.value)
+                }
               />
             </VStack>
 
@@ -60,17 +67,30 @@ export function FilterEventPopover(props: FilterEventPopoverProps) {
               <Input
                 type='text'
                 value={props.classroomSearchValue}
-                onChange={(event) => props.handleClassroomChange(event.target.value)}
+                onChange={(event) =>
+                  props.handleClassroomChange(event.target.value)
+                }
               />
             </VStack>
           </HStack>
         </PopoverBody>
 
-        <PopoverFooter border='0' display='flex' alignItems='center' justifyContent='space-between' pb={4}>
+        <PopoverFooter
+          border='0'
+          display='flex'
+          alignItems='center'
+          justifyContent='space-between'
+          pb={4}
+        >
           <Button colorScheme='red' mr={5} onClick={handleClosePopover}>
             Cancelar
           </Button>
-          <Button leftIcon={<BsSearch />} colorScheme='teal' variant='solid' onClick={handleFilterClick}>
+          <Button
+            leftIcon={<BsSearch />}
+            colorScheme='teal'
+            variant='solid'
+            onClick={handleFilterClick}
+          >
             Filtrar
           </Button>
         </PopoverFooter>

@@ -104,7 +104,7 @@ const useCalendars = (initialFetch = true) => {
     if (initialFetch) {
       getCalendars();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFetch]);
 
   return {

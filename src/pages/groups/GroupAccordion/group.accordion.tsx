@@ -75,7 +75,9 @@ function GroupAccordion(props: GroupAccordionProps) {
                       <Text>{`Atualizado em ${moment(group.updated_at).format(
                         'DD/MM/YYYY  [às] HH:mm',
                       )}${
-                        group.main ? ', esse é o grupo principal do prédio.' : ''
+                        group.main
+                          ? ', esse é o grupo principal do prédio.'
+                          : ''
                       }`}</Text>
                       <Spacer />
                       <Button

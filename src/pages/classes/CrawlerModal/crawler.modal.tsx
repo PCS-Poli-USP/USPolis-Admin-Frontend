@@ -84,7 +84,8 @@ export default function CrawlerModal({
             </>
           ) : (
             <Text>
-              Não foi possível carregar o resultado da busca no {crawlerType}{' '}
+              Não foi possível carregar o resultado da busca no{' '}
+              {crawlerType}{' '}
             </Text>
           )}
         </ModalBody>

@@ -1,4 +1,7 @@
-import { EventExtendedProps, RecurrenceRule } from "../../../../models/http/responses/allocation.response.models";
+import {
+  EventExtendedProps,
+  RecurrenceRule,
+} from '../../../../models/http/responses/allocation.response.models';
 
 export interface ClassroomsCalendarEvent {
   id: string;

@@ -58,9 +58,8 @@ const useAxiosPrivate = () => {
             const newAccessToken = response.data.access_token;
             context.setAccessToken(newAccessToken);
 
-            originalRequest.headers[
-              'Authorization'
-            ] = `Bearer ${newAccessToken}`;
+            originalRequest.headers['Authorization'] =
+              `Bearer ${newAccessToken}`;
 
             const retryResponse = await axiosPrivate(originalRequest);
             return retryResponse;

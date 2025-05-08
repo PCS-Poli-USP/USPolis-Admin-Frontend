@@ -25,11 +25,16 @@ import {
   HStack,
   Box,
 } from '@chakra-ui/react';
-import Select from 'react-select';
+import Select, { MultiValue } from 'react-select';
 import useBuildings from '../../../hooks/useBuildings';
 import { useEffect, useRef, useState } from 'react';
 import { CrawlerType } from '../../../utils/enums/subjects.enum';
 import { CalendarResponse } from '../../../models/http/responses/calendar.responde.models';
+
+type Option = {
+  label: string;
+  value: number;
+};
 
 interface CrawlerPopoverProps {
   subjects?: string[];
@@ -159,9 +164,7 @@ export default function CrawlerPopover({
                   label: calendar.name,
                   value: calendar.id,
                 }))}
-                onChange={(
-                  selectedOptions: { value: number; label: string }[],
-                ) =>
+                onChange={(selectedOptions: MultiValue<Option>) =>
                   setCalendarIds(selectedOptions.map((option) => option.value))
                 }
                 isLoading={loadingCalendars}

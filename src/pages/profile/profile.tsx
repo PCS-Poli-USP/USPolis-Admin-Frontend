@@ -29,6 +29,7 @@ import UserImage from '../../components/common/UserImage/user.image';
 import { PiChair } from 'react-icons/pi';
 import LoadingPage from '../../components/common/LoadingPage';
 import Page401 from '../page401';
+import GroupFormatter from '../../utils/groups/group.formatter';
 
 function Profile() {
   const { loggedUser, loading, isAuthenticated, getSelfFromBackend } =
@@ -158,9 +159,11 @@ function Profile() {
                           <>
                             <AccordionButton>
                               <Box as='span' flex='1' textAlign='left'>
-                                <Text
-                                  as={'b'}
-                                >{`${group.name} (${group.classroom_strs.length} salas)`}</Text>
+                                <Text as={'b'}>{`${GroupFormatter.getGroupName(
+                                  group,
+                                )} (${
+                                  group.classroom_strs.length
+                                } salas)`}</Text>
                               </Box>
                               {isExpanded ? (
                                 <MinusIcon fontSize='12px' />

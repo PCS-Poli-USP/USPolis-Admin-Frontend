@@ -57,7 +57,9 @@ export function FilterEventModal(props: FilterEventModalProps) {
               <Input
                 type='text'
                 value={props.subjectSearchValue}
-                onChange={(event) => props.handleSubjectChange(event.target.value)}
+                onChange={(event) =>
+                  props.handleSubjectChange(event.target.value)
+                }
               />
             </VStack>
 
@@ -66,7 +68,9 @@ export function FilterEventModal(props: FilterEventModalProps) {
               <Input
                 type='text'
                 value={props.classroomSearchValue}
-                onChange={(event) => props.handleClassroomChange(event.target.value)}
+                onChange={(event) =>
+                  props.handleClassroomChange(event.target.value)
+                }
               />
             </VStack>
           </HStack>
@@ -76,7 +80,12 @@ export function FilterEventModal(props: FilterEventModalProps) {
           <Button colorScheme='red' mr={5} onClick={handleCloseModal}>
             Cancelar
           </Button>
-          <Button leftIcon={<BsSearch />} colorScheme='teal' variant='solid' onClick={handleFilterClick}>
+          <Button
+            leftIcon={<BsSearch />}
+            colorScheme='teal'
+            variant='solid'
+            onClick={handleFilterClick}
+          >
             Filtrar
           </Button>
         </ModalFooter>

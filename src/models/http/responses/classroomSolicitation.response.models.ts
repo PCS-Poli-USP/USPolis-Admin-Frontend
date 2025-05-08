@@ -1,4 +1,4 @@
-import { ReservationType } from "../../../utils/enums/reservations.enum";
+import { ReservationType } from '../../../utils/enums/reservations.enum';
 
 export interface ClassroomSolicitationResponse {
   id: number;

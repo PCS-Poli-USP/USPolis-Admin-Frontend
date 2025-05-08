@@ -49,7 +49,8 @@ function HolidayModal(props: HolidayModalProps) {
   });
 
   const { trigger, reset, getValues, clearErrors } = form;
-  const { createHoliday, createManyHolidays, updateHoliday } = useHolidays(false);
+  const { createHoliday, createManyHolidays, updateHoliday } =
+    useHolidays(false);
 
   async function handleCreateSubmit() {
     if (isMultipleHolidays) {

@@ -72,8 +72,8 @@ function SolicitationStackBody({
                     solicitation.approved
                       ? `Situação: Aprovado por ${solicitation.closed_by}`
                       : solicitation.denied
-                      ? `Situação: Negado por ${solicitation.closed_by}`
-                      : ''
+                        ? `Situação: Negado por ${solicitation.closed_by}`
+                        : ''
                   } às ${moment(solicitation.updated_at).format(
                     'DD/MM/YYYY, HH:mm',
                   )}`}

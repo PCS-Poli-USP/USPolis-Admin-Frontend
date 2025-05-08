@@ -1,4 +1,4 @@
-import { ClassType } from "../../utils/enums/classes.enum";
+import { ClassType } from '../../utils/enums/classes.enum';
 
 export default interface Class {
   id: number;

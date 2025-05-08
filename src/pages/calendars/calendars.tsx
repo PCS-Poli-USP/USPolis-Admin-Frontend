@@ -41,7 +41,7 @@ function Calendars() {
     getHolidaysCategories,
     loading: loadingCategories,
   } = useHolidaysCategories();
-  
+
   const {
     calendars,
     getCalendars,

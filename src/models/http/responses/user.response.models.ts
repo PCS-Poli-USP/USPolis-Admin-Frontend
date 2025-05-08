@@ -1,6 +1,5 @@
 import { BuildingResponse } from './building.response.models';
 import { ClassroomSolicitationResponse } from './classroomSolicitation.response.models';
-import { GroupResponse } from './group.response.models';
 
 export interface UserInfoResponse {
   name: string;
@@ -21,6 +20,16 @@ export interface UserResponse {
   updated_at: string;
   last_visited: string;
   solicitations: Array<ClassroomSolicitationResponse>;
-  groups: Array<GroupResponse>;
+  groups: Array<UserGroupResponse>;
   user_info?: UserInfoResponse;
+}
+
+export interface UserGroupResponse {
+  id: number;
+  name: string;
+  building_id: number;
+  building: string;
+  main: boolean;
+  classroom_strs: string[];
+  classroom_ids: number[];
 }

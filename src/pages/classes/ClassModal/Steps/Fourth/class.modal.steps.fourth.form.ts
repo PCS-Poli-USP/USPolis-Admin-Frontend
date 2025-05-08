@@ -36,7 +36,8 @@ export const classFourthchema = yup.object<ClassFourthForm>().shape({
 
 export const classFourthDefaultValues: ClassFourthForm = {
   ignore_to_allocate: classFourthFormFields.ignore_to_allocate.defaultValue,
-  audiovisual: classFourthFormFields.audiovisual.defaultValue as AudiovisualType,
+  audiovisual: classFourthFormFields.audiovisual
+    .defaultValue as AudiovisualType,
   air_conditionating: classFourthFormFields.air_conditionating.defaultValue,
   accessibility: classFourthFormFields.accessibility.defaultValue,
 };

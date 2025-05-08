@@ -125,8 +125,8 @@ export function EventsFromSchedules(schedules: ScheduleResponse[]): Event[] {
     const title = schedule.reservation
       ? schedule.reservation
       : schedule.class_code
-      ? schedule.class_code
-      : 'Sem título';
+        ? schedule.class_code
+        : 'Sem título';
     acc.push({
       id: String(schedule.id), // Must be unique por every occurence
       title: title,

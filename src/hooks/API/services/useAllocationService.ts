@@ -25,9 +25,7 @@ const useAllocationsService = () => {
     return axios.get(`${PREFIX}/resources`);
   };
 
-  const update = (
-    event: EventUpdate,
-  ): Promise<AxiosResponse<JSONResponse>> => {
+  const update = (event: EventUpdate): Promise<AxiosResponse<JSONResponse>> => {
     return privateAxios.patch(`${PREFIX}/events`, event);
   };
 

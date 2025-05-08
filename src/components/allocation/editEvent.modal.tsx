@@ -186,8 +186,8 @@ export default function EditEventModal({
               !selectedClassroom?.classroom_name
                 ? 'info'
                 : classData?.subscribers > selectedClassroom.capacity
-                ? 'error'
-                : 'success'
+                  ? 'error'
+                  : 'success'
             }
             fontSize='md'
             mt={2}

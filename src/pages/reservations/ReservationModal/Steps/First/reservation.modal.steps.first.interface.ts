@@ -4,7 +4,6 @@ import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 import { ReservationSecondForm } from '../Second/reservation.modal.steps.second.interface';
 import { ClassroomSolicitationResponse } from '../../../../../models/http/responses/classroomSolicitation.response.models';
 
-
 export interface ReservationModalFirstStepProps {
   isUpdate: boolean;
   form: UseFormReturn<ReservationFirstForm, any, undefined>;

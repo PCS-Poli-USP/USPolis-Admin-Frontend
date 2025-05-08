@@ -12,7 +12,7 @@ export namespace ClassType {
     [ClassType.VINCULATED_PRACTIC]: 'Prática Vinculada',
     [ClassType.VINCULATED_THEORIC]: 'Teórica Vinculada',
   };
-  
+
   export function translate(type: ClassType): string {
     return translations[type];
   }
