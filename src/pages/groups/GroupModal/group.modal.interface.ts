@@ -18,5 +18,4 @@ export interface GroupForm {
   name: string;
   classroom_ids: number[];
   user_ids: number[];
-  main: boolean;
 }

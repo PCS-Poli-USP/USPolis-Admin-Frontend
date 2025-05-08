@@ -8,18 +8,12 @@ import {
   ModalCloseButton,
   Button,
   Flex,
-  Checkbox,
 } from '@chakra-ui/react';
 import { GroupModalProps } from './group.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform//resolvers/yup';
 import { schema, defaultValues } from './group.modal.form';
-import {
-  CheckBox,
-  Input,
-  MultiSelect,
-  SelectInput,
-} from '../../../components/common';
+import { Input, MultiSelect, SelectInput } from '../../../components/common';
 import useGroups from '../../../hooks/groups/useGroups';
 import { useEffect, useState } from 'react';
 import { filterString } from '../../../utils/filters';
@@ -40,7 +34,6 @@ function GroupModal({
     resolver: yupResolver(schema),
   });
   const { createGroup, updateGroup } = useGroups(false);
-  const [allUsers, setAllUsers] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
 
   function handleClose() {
@@ -50,8 +43,6 @@ function GroupModal({
 
   const { watch } = form;
   const classroom_ids = watch('classroom_ids');
-  const user_ids = watch('user_ids');
-  const main = watch('main');
 
   async function handleSubmit() {
     const isValid = await form.trigger();
@@ -73,7 +64,6 @@ function GroupModal({
         user_ids: group.user_ids,
         classroom_ids: group.main ? [] : group.classroom_ids,
         building_id: group.building_id,
-        main: group.main,
       });
       setSelectedBuilding(
         buildings.find((building) => building.id === group.building_id),
@@ -107,26 +97,12 @@ function GroupModal({
                 </Flex>
                 <MultiSelect
                   name='user_ids'
-                  label={`Usuários ${allUsers ? '' : 'autorizados'} (${
-                    user_ids.length
-                  })`}
-                  options={users
-                    .filter(
-                      (user) => allUsers || user.is_admin || user.buildings,
-                    )
-                    .map((user) => ({
-                      label: `${user.name} (${user.email})`,
-                      value: user.id,
-                    }))}
+                  label={`Usuários`}
+                  options={users.map((user) => ({
+                    label: `${user.name} (${user.email})`,
+                    value: user.id,
+                  }))}
                 />
-                <Checkbox
-                  value={allUsers ? 'true' : 'false'}
-                  onChange={(event) => {
-                    setAllUsers(event.target.checked);
-                  }}
-                >
-                  Ver todos usuários
-                </Checkbox>
 
                 <Flex
                   w={'100%'}
@@ -160,8 +136,17 @@ function GroupModal({
 
                 <MultiSelect
                   name='classroom_ids'
-                  label={`Salas (${classroom_ids.length})`}
-                  disabled={main}
+                  disabled={group && group.main}
+                  label={
+                    group && group.main
+                      ? 'Salas'
+                      : `Salas (${classroom_ids.length})`
+                  }
+                  placeholder={
+                    group && group.main
+                      ? 'Grupo principal não tem salas'
+                      : 'Selecione as salas do grupo'
+                  }
                   options={
                     selectedBuilding
                       ? classrooms
@@ -177,17 +162,6 @@ function GroupModal({
                           value: classroom.id,
                         }))
                   }
-                />
-                <CheckBox
-                  name='main'
-                  text='Grupo principal'
-                  disabled={group && group.main}
-                  onChange={(value) => {
-                    if (value) {
-                      form.setValue('classroom_ids', []);
-                      form.clearErrors('classroom_ids');
-                    }
-                  }}
                 />
               </Flex>
             </ModalBody>

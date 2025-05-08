@@ -92,6 +92,8 @@ function GroupAccordion(props: GroupAccordionProps) {
                         Atualizar Grupo
                       </Button>
                       <Button
+                        disabled={group.main}
+                        hidden={group.main}
                         leftIcon={<BsFillTrashFill />}
                         colorScheme={'red'}
                         size={'sm'}
@@ -153,7 +155,7 @@ function GroupAccordion(props: GroupAccordionProps) {
                       <Flex
                         direction={'column'}
                         w={'50%'}
-                        gap={'10px'}
+                        gap={'20px'}
                         borderRadius={'10px'}
                         padding={'15px'}
                         border={'1px'}

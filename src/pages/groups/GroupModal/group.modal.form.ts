@@ -43,17 +43,6 @@ export const formFields = {
       }),
     defaultValue: [],
   },
-  main: {
-    validator: yup
-      .boolean()
-      .required('Campo obrigatório')
-      .transform((value) => {
-        if (value === '') return false;
-        return value;
-      }),
-    defaultValue: false,
-  },
-
   user_ids: {
     validator: yup
       .array()
@@ -73,7 +62,6 @@ export const schema = yup.object<GroupForm>().shape({
   name: formFields.name.validator,
   classroom_ids: formFields.classroom_ids.validator,
   user_ids: formFields.user_ids.validator,
-  main: formFields.main.validator,
 });
 
 export const defaultValues: GroupForm = {
@@ -81,5 +69,4 @@ export const defaultValues: GroupForm = {
   name: formFields.name.defaultValue,
   classroom_ids: formFields.classroom_ids.defaultValue,
   user_ids: formFields.user_ids.defaultValue,
-  main: formFields.main.defaultValue,
 };
