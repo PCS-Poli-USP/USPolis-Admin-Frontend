@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "target": "ESNext",
+    "module": "Node18",
+    "moduleResolution": "node16",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "lib": ["dom", "dom.iterable", "esnext"],
-    "module": "ESNext",
     "skipLibCheck": true,
     "sourceMap": false,
     "forceConsistentCasingInFileNames": true,
@@ -14,7 +15,6 @@
     "useDefineForClassFields": true,
 
     /* Bundler mode */
-    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -28,5 +28,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "build"]
 }
