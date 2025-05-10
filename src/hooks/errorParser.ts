@@ -1,8 +1,8 @@
 import { AxiosErrorResponse } from '../models/http/responses/common.response.models';
 
 export class ErrorParser {
-  private errors: AxiosErrorResponse[];
-  private model_name: string;
+  protected errors: AxiosErrorResponse[];
+  protected model_name: string;
 
   constructor(model_name: string) {
     this.errors = [];

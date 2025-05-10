@@ -32,7 +32,8 @@ const PersistLogin = () => {
           context.setAccessToken(response.data.access_token);
           context.setIsAuthenticated(true);
         });
-      } catch (error) {
+      } catch (error: any) {
+        console.error('Error verifying refresh token:', error);
         context.logout();
         if (location.pathname !== '/index') navigate('/auth');
         else setIsLoading(false);

@@ -24,7 +24,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import moment from 'moment';
@@ -200,7 +200,7 @@ function SolicitationPanel({
       p={'4px'}
       zIndex={2}
     >
-      {!!solicitation ? (
+      {solicitation ? (
         <>
           <CardHeader mb={-5}>
             <HStack>
@@ -439,7 +439,7 @@ function SolicitationPanel({
                             : val.name,
                           value: val.id,
                         }))}
-                        onChange={(newValue: OptionType) => {
+                        onChange={(newValue: SingleValue<OptionType>) => {
                           if (newValue) {
                             setClassroom(
                               classrooms.find(

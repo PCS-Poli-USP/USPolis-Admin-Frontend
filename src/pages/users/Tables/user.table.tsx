@@ -5,6 +5,7 @@ import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import {
   FilterBoolean,
+  FilterNumber,
   FilterString,
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 
@@ -20,6 +21,7 @@ export const getUsersColumns = (
   {
     accessorKey: 'id',
     header: 'ID',
+    filterFn: FilterNumber,
   },
   {
     filterFn: FilterString,
@@ -37,8 +39,8 @@ export const getUsersColumns = (
       row.buildings
         ? row.buildings.length > 0
           ? row.buildings.map((b) => b.name).join(', ')
-          : 'Nenhum'
-        : 'Nenhum',
+          : ''
+        : '',
     header: 'Prédios',
     cell: ({ row }) => (
       <Box>
@@ -47,7 +49,7 @@ export const getUsersColumns = (
             <Text key={index}>{`${b.name}`}</Text>
           ))
         ) : (
-          <Text>Nenhum</Text>
+          <Text></Text>
         )}
       </Box>
     ),
@@ -57,7 +59,7 @@ export const getUsersColumns = (
     accessorFn: (row) =>
       row.groups.length > 0
         ? row.groups.map((g) => g.name).join(', ')
-        : 'Nenhum',
+        : '',
     header: 'Grupos',
     cell: ({ row }) => (
       <Box>
@@ -66,7 +68,7 @@ export const getUsersColumns = (
             <Text key={index}>{`${b.name}`}</Text>
           ))
         ) : (
-          <Text>Nenhum</Text>
+          <Text></Text>
         )}
       </Box>
     ),

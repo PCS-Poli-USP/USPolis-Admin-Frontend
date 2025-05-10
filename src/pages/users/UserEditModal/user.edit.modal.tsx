@@ -87,7 +87,9 @@ export default function EditUserModal(props: UserEditModalProps) {
                   label='Grupos'
                   name='group_ids'
                   options={props.groups.map((group) => ({
-                    label: GroupFormatter.getGroupName(group),
+                    label: group.main
+                      ? GroupFormatter.getGroupName(group)
+                      : `${group.building} - ${GroupFormatter.getGroupName(group)}`,
                     value: group.id,
                   }))}
                   placeholder='Selecione os grupos'

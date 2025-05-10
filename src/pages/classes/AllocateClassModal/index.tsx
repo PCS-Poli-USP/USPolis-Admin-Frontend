@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Divider,
@@ -22,6 +24,7 @@ import { AllocateManySchedulesData } from '../../../hooks/API/services/useOccurr
 import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
 import useAllowedBuildings from '../../../hooks/useAllowedBuildings';
 import { appContext } from '../../../context/AppContext';
+import { UsersValidator } from '../../../utils/users/users.validator';
 
 interface props {
   isOpen: boolean;
@@ -39,6 +42,8 @@ export function AllocateClassModal({
   class_id,
 }: props) {
   const { loggedUser } = useContext(appContext);
+  const validator = new UsersValidator(loggedUser);
+
   const classesService = useClassesService();
   const [inputClass, setInputClass] = useState<ClassResponse>();
 
@@ -91,63 +96,88 @@ export function AllocateClassModal({
     >
       <ModalOverlay />
       <ModalContent>
-        {inputClass ? (
+        {loggedUser ? (
           <>
-            <ModalHeader>
-              Alocar Turma: {inputClass.subject_code} -{' '}
-              {classNumberFromClassCode(inputClass.code)}
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Flex flexDir={'column'} gap={4}>
-                <Flex flexDir={'column'} gap={4}>
-                  {inputClass.schedules.map((schedule, index) => (
-                    <Box key={index}>
-                      <AllocateSingleScheduleSection
-                        key={schedule.id}
-                        ref={(ref) => {
-                          sectionsRefs.current[index] = ref;
+            {inputClass ? (
+              <>
+                <ModalHeader>
+                  Alocar Turma: {inputClass.subject_code} -{' '}
+                  {classNumberFromClassCode(inputClass.code)}
+                </ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <Flex flexDir={'column'} gap={4}>
+                    <Flex flexDir={'column'} gap={4}>
+                      {inputClass.schedules
+                        .filter((schedule) => {
+                          if (!schedule.classroom_id) return true;
+                          return validator.checkUserClassroomPermission([
+                            schedule.classroom_id,
+                          ]);
+                        })
+                        .map((schedule, index) => (
+                          <Box key={index}>
+                            <AllocateSingleScheduleSection
+                              key={schedule.id}
+                              user={loggedUser}
+                              ref={(ref) => {
+                                sectionsRefs.current[index] = ref;
+                              }}
+                              schedule={schedule}
+                              allowedBuildings={allowedBuildings}
+                              loadingBuildings={loading}
+                              initialBuildingId={
+                                loggedUser
+                                  ? loggedUser.buildings &&
+                                    loggedUser.buildings.length === 1
+                                    ? loggedUser.buildings[0].id
+                                    : undefined
+                                  : undefined
+                              }
+                            />
+                            <Divider />
+                          </Box>
+                        ))}
+                    </Flex>
+                    <Flex flexGrow={1} justifyContent={'space-between'} gap={2}>
+                      <Button
+                        onClick={handleClose}
+                        flexGrow={1}
+                        colorScheme='red'
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        flexGrow={1}
+                        alignSelf={'stretch'}
+                        onClick={() => {
+                          reset();
                         }}
-                        schedule={schedule}
-                        allowedBuildings={allowedBuildings}
-                        loadingBuildings={loading}
-                        initialBuildingId={
-                          loggedUser
-                            ? loggedUser.buildings &&
-                              loggedUser.buildings.length === 1
-                              ? loggedUser.buildings[0].id
-                              : undefined
-                            : undefined
-                        }
-                      />
-                      <Divider />
-                    </Box>
-                  ))}
-                </Flex>
-                <Flex flexGrow={1} justifyContent={'space-between'} gap={2}>
-                  <Button onClick={handleClose} flexGrow={1} colorScheme='red'>
-                    Cancelar
-                  </Button>
-                  <Button
-                    flexGrow={1}
-                    alignSelf={'stretch'}
-                    onClick={() => {
-                      reset();
-                    }}
-                  >
-                    Restaurar
-                  </Button>
-                  <Button onClick={handleSave} flexGrow={1} colorScheme='blue'>
-                    Salvar Tudo
-                  </Button>
-                </Flex>
-              </Flex>
-            </ModalBody>
+                      >
+                        Restaurar
+                      </Button>
+                      <Button
+                        onClick={handleSave}
+                        flexGrow={1}
+                        colorScheme='blue'
+                      >
+                        Salvar Tudo
+                      </Button>
+                    </Flex>
+                  </Flex>
+                </ModalBody>
+              </>
+            ) : (
+              <ModalBody>
+                <Spinner />
+              </ModalBody>
+            )}
           </>
         ) : (
-          <ModalBody>
-            <Spinner />
-          </ModalBody>
+          <Alert status='error'>
+            <AlertIcon />
+            Você não está logado. Por favor, faça login para continuar.
+          </Alert>
         )}
       </ModalContent>
     </Modal>

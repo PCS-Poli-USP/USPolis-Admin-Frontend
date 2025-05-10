@@ -12,6 +12,8 @@ import { sortClassroomResponse } from '../../../utils/classrooms/classrooms.sort
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
 import AllocationLogHistory from './allocationLog.history';
+import { UserResponse } from '../../../models/http/responses/user.response.models';
+import { UsersValidator } from '../../../utils/users/users.validator';
 
 export interface AllocateSingleScheduleSectionRef {
   reset(): void;
@@ -20,6 +22,7 @@ export interface AllocateSingleScheduleSectionRef {
 
 interface props {
   schedule: ScheduleResponse;
+  user: UserResponse;
   allowedBuildings: BuildingResponse[];
   loadingBuildings: boolean;
   initialBuildingId?: number;
@@ -42,6 +45,7 @@ const AllocateSingleScheduleSection = forwardRef<
   (
     {
       schedule,
+      user,
       allowedBuildings,
       loadingBuildings,
       initialBuildingId = undefined,
@@ -66,7 +70,6 @@ const AllocateSingleScheduleSection = forwardRef<
         };
       },
     }));
-
     // hooks
     const classroomsService = useClassroomsService();
 
@@ -150,7 +153,14 @@ const AllocateSingleScheduleSection = forwardRef<
       classroomsService
         .getWithConflictCount(schedule.id, selectedBuilding.id)
         .then((response) => {
-          setClassrooms(response.data.sort(sortClassroomResponse));
+          const validator = new UsersValidator(user);
+          setClassrooms(
+            response.data
+              .filter((value) =>
+                validator.checkUserClassroomPermission([Number(value.id)]),
+              )
+              .sort(sortClassroomResponse),
+          );
         })
         .finally(() => {
           setClassroomsLoading(false);
@@ -233,7 +243,7 @@ const AllocateSingleScheduleSection = forwardRef<
                   Remover alocação
                 </Checkbox>
                 <Checkbox
-                  hidden={!hasConflict || removeAllocation || true}
+                  hidden={!hasConflict || removeAllocation}
                   colorScheme='red'
                   isChecked={intentionalConflict}
                   onChange={(e) => {

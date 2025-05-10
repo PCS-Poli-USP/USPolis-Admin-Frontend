@@ -1,5 +1,4 @@
 import {
-  Checkbox,
   Heading,
   HStack,
   Input,
@@ -29,7 +28,6 @@ function SolicitationStack({
   selectedIndex,
   setSelectedIndex,
 }: SolicitationStackProps) {
-  const [hidden, setHidden] = useState(true);
   const [current, setCurrent] = useState<ClassroomSolicitationResponse[]>([]);
   const [filtered, setFiltered] = useState<ClassroomSolicitationResponse[]>([]);
   const [buildingSearch, setBuildingSearch] = useState('');
@@ -56,23 +54,14 @@ function SolicitationStack({
       newCurrent = newCurrent.filter((val) =>
         filterString(val.user, requester),
       );
-    if (hidden) newCurrent = newCurrent.filter((val) => !val.closed);
     setFiltered(newCurrent);
   }
 
   useEffect(() => {
-    if (hidden) {
-      const initial = [
-        ...solicitations.filter((solicitation) => !solicitation.closed),
-      ];
-      setCurrent(initial);
-      setFiltered((prev) => prev.filter((val) => !val.closed));
-    } else {
-      setCurrent([...solicitations]);
-      filterSolicitation(buildingSearch, classroomSearch, requesterSearch);
-    }
+    setCurrent([...solicitations]);
+    filterSolicitation(buildingSearch, classroomSearch, requesterSearch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hidden, solicitations]);
+  }, [solicitations]);
 
   return (
     <VStack
@@ -141,16 +130,6 @@ function SolicitationStack({
             }}
           />
         </InputGroup>
-      </HStack>
-      <HStack>
-        <Checkbox
-          isChecked={hidden}
-          onChange={() => {
-            setHidden((prev) => !prev);
-          }}
-        >
-          Ocultar aprovados/negados
-        </Checkbox>
       </HStack>
       <SolicitationStackBody
         reset={reset}

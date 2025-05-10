@@ -39,7 +39,6 @@ interface ClassesColumnsProps {
 export const getClassesColumns = (
   props: ClassesColumnsProps,
 ): ColumnDef<ClassResponse>[] => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const columns: ColumnDef<ClassResponse>[] = [
     {
       id: 'mark',

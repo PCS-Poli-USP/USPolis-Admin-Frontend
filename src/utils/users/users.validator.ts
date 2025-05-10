@@ -24,7 +24,7 @@ export class UsersValidator extends CommonValidator {
     const userSet = new Set(this.user.buildings.map((b) => b.id));
     const buildingsSet = new Set<number>(buildings_ids);
     // Check if buildingsSet is a subset of userSet
-    for (let buildingId of buildingsSet) {
+    for (const buildingId of buildingsSet) {
       if (!userSet.has(buildingId)) {
         return false;
       }
@@ -67,8 +67,11 @@ export class UsersValidator extends CommonValidator {
       if (schedule.classroom_id)
         class_clasrooms_ids.push(schedule.classroom_id);
     });
-    if (class_clasrooms_ids.length > 0)
-      return this.checkUserClassroomPermission(class_clasrooms_ids);
+    if (class_clasrooms_ids.length > 0) {
+      const classSet = new Set(class_clasrooms_ids);
+      const userSet = new Set(this.getUserClassroomsIds());
+      return classSet.intersection(userSet).size > 0;
+    }
     const user_buildings_ids = this.getUserBuildingsIds();
     const userSet = new Set(user_buildings_ids);
     const buildingsSet = new Set<number>(cls.subject_building_ids);

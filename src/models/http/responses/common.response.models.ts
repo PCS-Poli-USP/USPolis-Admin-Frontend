@@ -13,3 +13,5 @@ export function isAxiosErrorResponse(error: any): error is AxiosErrorResponse {
 export interface JSONResponse {
   message: string;
 }
+
+export type NoContentResponse = object
