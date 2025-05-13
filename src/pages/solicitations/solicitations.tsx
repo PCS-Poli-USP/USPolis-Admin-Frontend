@@ -10,7 +10,8 @@ function Solicitations() {
   const {
     loading,
     solicitations,
-    getBuildingSolicitations,
+    getPendingBuildingSolicitations,
+    getAllBuildingSolicitations,
     approveSolicitation,
     denySolicitation,
   } = useClassroomsSolicitations(false);
@@ -21,8 +22,10 @@ function Solicitations() {
     undefined,
   );
 
+  const [loadedAll, setLoadedAll] = useState(false);
+
   useEffect(() => {
-    getBuildingSolicitations();
+    getPendingBuildingSolicitations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -44,6 +47,13 @@ function Solicitations() {
             solicitations={solicitations}
             handleOnClick={setSolicitation}
             reset={() => setSolicitation(undefined)}
+            loading={loading}
+            handleShowAll={(showAll) => {
+              if (!loadedAll && showAll) {
+                getAllBuildingSolicitations();
+                setLoadedAll(true);
+              }
+            }}
           />
         </GridItem>
         <GridItem

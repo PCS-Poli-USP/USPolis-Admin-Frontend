@@ -11,10 +11,24 @@ const useClassroomSolicitationsService = () => {
   const PREFIX = '/solicitations/classroom';
   const axios = useAxiosPrivate();
 
-  const get = (): Promise<
+  const getAll = (
+    start?: string,
+    end?: string,
+  ): Promise<AxiosResponse<Array<ClassroomSolicitationResponse>>> => {
+    const params = new URLSearchParams();
+    if (start && end) {
+      params.append('start', start);
+      params.append('end', end);
+    }
+    return axios.get(`${PREFIX}`, {
+      params,
+    });
+  };
+
+  const getPending = (): Promise<
     AxiosResponse<Array<ClassroomSolicitationResponse>>
   > => {
-    return axios.get(PREFIX);
+    return axios.get(`${PREFIX}/pending`);
   };
 
   const getMySolicitations = (): Promise<
@@ -47,7 +61,15 @@ const useClassroomSolicitationsService = () => {
     return axios.delete(`${PREFIX}/${id}`);
   };
 
-  return { get, getMySolicitations, create, approve, deny, deleteById };
+  return {
+    getAll,
+    getPending,
+    getMySolicitations,
+    create,
+    approve,
+    deny,
+    deleteById,
+  };
 };
 
 export default useClassroomSolicitationsService;

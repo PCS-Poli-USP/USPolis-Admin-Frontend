@@ -34,10 +34,10 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       });
   }, [showToast, service]);
 
-  const getBuildingSolicitations = useCallback(async () => {
+  const getPendingBuildingSolicitations = useCallback(async () => {
     setLoading(true);
     await service
-      .get()
+      .getPending()
       .then((response) => {
         setSolicitations(response.data.sort(sortClassroomSolicitationResponse));
       })
@@ -45,7 +45,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
         console.log(error);
         showToast(
           'Erro',
-          'Erro ao carregar as solicitações do seu prédio',
+          'Erro ao carregar as solicitações pendentes do seu prédio',
           'error',
         );
       })
@@ -53,6 +53,31 @@ const useClassroomsSolicitations = (initialFetch = true) => {
         setLoading(false);
       });
   }, [showToast, service]);
+
+  const getAllBuildingSolicitations = useCallback(
+    async (start?: string, end?: string) => {
+      setLoading(true);
+      await service
+        .getAll(start, end)
+        .then((response) => {
+          setSolicitations(
+            response.data.sort(sortClassroomSolicitationResponse),
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+          showToast(
+            'Erro',
+            'Erro ao carregar as solicitações do seu prédio',
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
 
   const createSolicitation = useCallback(
     async (data: CreateClassroomSolicitation) => {
@@ -98,14 +123,14 @@ const useClassroomsSolicitations = (initialFetch = true) => {
         .deny(id, data)
         .then(async () => {
           showToast('Sucesso!', 'Sucesso ao negar solicitação', 'success');
-          getBuildingSolicitations();
+          getPendingBuildingSolicitations();
         })
         .catch((error) => {
           showToast('Erro!', `Erro ao negar solicitação: ${error}`, 'error');
           console.log(error);
         });
     },
-    [getBuildingSolicitations, showToast, service],
+    [getPendingBuildingSolicitations, showToast, service],
   );
 
   useEffect(() => {
@@ -117,7 +142,8 @@ const useClassroomsSolicitations = (initialFetch = true) => {
     loading,
     solicitations,
     getSolicitations,
-    getBuildingSolicitations,
+    getPendingBuildingSolicitations,
+    getAllBuildingSolicitations,
     createSolicitation,
     approveSolicitation,
     denySolicitation,

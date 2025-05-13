@@ -499,62 +499,6 @@ function SolicitationPanel({
 
           <CardFooter>
             <HStack>
-              <Popover placement={'top'} isOpen={openPopover === 1}>
-                <PopoverTrigger>
-                  <Button
-                    isLoading={loading || loadingClassrooms}
-                    rightIcon={<CloseIcon />}
-                    colorScheme='red'
-                    isDisabled={solicitation.closed}
-                    onClick={() => handleOpenPopover(1)}
-                  >
-                    Negar
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <PopoverHeader fontWeight={'bold'}>
-                    Essa ação é irreversível
-                  </PopoverHeader>
-                  <PopoverCloseButton onClick={() => handleOpenPopover(1)} />
-                  <PopoverBody>
-                    <VStack alignItems={'start'} alignContent={'flex-start'}>
-                      <Text>
-                        Uma vez negado não será possível mudar o estado da
-                        solicitação
-                      </Text>
-                      <Text fontWeight={'bold'}>Justificativa: </Text>
-                      <Textarea
-                        disabled={loading}
-                        borderColor={justificationError ? 'red.300' : undefined}
-                        value={justification}
-                        onChange={(event) => {
-                          setJustification(event.target.value);
-                          setJustificationError(false);
-                        }}
-                      />
-                      <Text>{`Caracteres restantes: ${
-                        256 - justification.length
-                      }`}</Text>
-                      <Text textColor={'red.500'} hidden={!justificationError}>
-                        Campo obrigatório
-                      </Text>
-                      <Button
-                        onClick={async () => {
-                          if (justification.length === 0) {
-                            setJustificationError(true);
-                            return;
-                          }
-                          await deny(solicitation.id, { justification });
-                          handleOpenPopover(1);
-                        }}
-                      >
-                        Confirmar
-                      </Button>
-                    </VStack>
-                  </PopoverBody>
-                </PopoverContent>
-              </Popover>
-
               <Popover placement={'top'} isOpen={openPopover === 2}>
                 <PopoverTrigger>
                   <Button
@@ -615,22 +559,79 @@ function SolicitationPanel({
                   </PopoverBody>
                 </PopoverContent>
               </Popover>
+
+              <Popover placement={'top'} isOpen={openPopover === 1}>
+                <PopoverTrigger>
+                  <Button
+                    isLoading={loading || loadingClassrooms}
+                    rightIcon={<CloseIcon />}
+                    colorScheme='red'
+                    isDisabled={solicitation.closed}
+                    onClick={() => handleOpenPopover(1)}
+                  >
+                    Negar
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverHeader fontWeight={'bold'}>
+                    Essa ação é irreversível
+                  </PopoverHeader>
+                  <PopoverCloseButton onClick={() => handleOpenPopover(1)} />
+                  <PopoverBody>
+                    <VStack alignItems={'start'} alignContent={'flex-start'}>
+                      <Text>
+                        Uma vez negado não será possível mudar o estado da
+                        solicitação
+                      </Text>
+                      <Text fontWeight={'bold'}>Justificativa: </Text>
+                      <Textarea
+                        disabled={loading}
+                        borderColor={justificationError ? 'red.300' : undefined}
+                        value={justification}
+                        onChange={(event) => {
+                          setJustification(event.target.value);
+                          setJustificationError(false);
+                        }}
+                      />
+                      <Text>{`Caracteres restantes: ${
+                        256 - justification.length
+                      }`}</Text>
+                      <Text textColor={'red.500'} hidden={!justificationError}>
+                        Campo obrigatório
+                      </Text>
+                      <Button
+                        onClick={async () => {
+                          if (justification.length === 0) {
+                            setJustificationError(true);
+                            return;
+                          }
+                          await deny(solicitation.id, { justification });
+                          handleOpenPopover(1);
+                        }}
+                      >
+                        Confirmar
+                      </Button>
+                    </VStack>
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
             </HStack>
           </CardFooter>
         </>
       ) : (
         <Flex
           direction={'column'}
-          alignItems={'center'}
-          justify={'center'}
+          justify={'flex-start'}
+          align={'center'}
           h={'100%'}
-          gap={4}
+          mt={'50px'}
+          gap={'10px'}
         >
           <Heading color={'uspolis.blue'}>
             Nenhuma solicitação selecionada
           </Heading>
-          <Text color={'uspolis.blue'}>
-            Selecione uma solicitação na lista ao lado para visualizar os
+          <Text color={'uspolis.blue'} fontSize={'xl'}>
+            Selecione uma solicitação na pilha ao lado para visualizar os
             detalhes.
           </Text>
         </Flex>

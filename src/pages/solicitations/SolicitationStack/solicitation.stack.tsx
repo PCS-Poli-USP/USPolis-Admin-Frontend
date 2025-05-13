@@ -1,9 +1,11 @@
 import {
+  Checkbox,
   Heading,
   HStack,
   Input,
   InputGroup,
   InputLeftElement,
+  Skeleton,
   StackDivider,
   VStack,
 } from '@chakra-ui/react';
@@ -19,6 +21,8 @@ interface SolicitationStackProps {
   reset: () => void;
   selectedIndex?: number;
   setSelectedIndex: (index: number) => void;
+  loading: boolean;
+  handleShowAll: (showAll: boolean) => void;
 }
 
 function SolicitationStack({
@@ -27,12 +31,15 @@ function SolicitationStack({
   reset,
   selectedIndex,
   setSelectedIndex,
+  loading,
+  handleShowAll,
 }: SolicitationStackProps) {
   const [current, setCurrent] = useState<ClassroomSolicitationResponse[]>([]);
   const [filtered, setFiltered] = useState<ClassroomSolicitationResponse[]>([]);
   const [buildingSearch, setBuildingSearch] = useState('');
   const [classroomSearch, setClassroomSearch] = useState('');
   const [requesterSearch, setRequesterSearch] = useState('');
+  const [showAll, setShowAll] = useState(false);
 
   function filterSolicitation(
     building: string,
@@ -131,17 +138,28 @@ function SolicitationStack({
           />
         </InputGroup>
       </HStack>
-      <SolicitationStackBody
-        reset={reset}
-        setSelectedIndex={setSelectedIndex}
-        selectedIndex={selectedIndex}
-        solicitations={
-          buildingSearch || classroomSearch || requesterSearch
-            ? filtered
-            : current
-        }
-        handleOnClick={handleOnClick}
-      />
+      <Checkbox
+        isChecked={showAll}
+        onChange={(e) => {
+          setShowAll(e.target.checked);
+          handleShowAll(e.target.checked);
+        }}
+      >
+        Exibir aprovados/negados do semestre
+      </Checkbox>
+      <Skeleton isLoaded={!loading} w={'full'}>
+        <SolicitationStackBody
+          reset={reset}
+          setSelectedIndex={setSelectedIndex}
+          selectedIndex={selectedIndex}
+          solicitations={
+            buildingSearch || classroomSearch || requesterSearch
+              ? filtered.filter((val) => showAll || !val.closed)
+              : current.filter((val) => showAll || !val.closed)
+          }
+          handleOnClick={handleOnClick}
+        />
+      </Skeleton>
     </VStack>
   );
 }
