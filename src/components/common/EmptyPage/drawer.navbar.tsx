@@ -125,8 +125,9 @@ export function DrawerNavBar({
                           ...state,
                           run: true,
                         });
-                      }, 300); // ajuste conforme sua animação
-                    } else {
+                      }, 300);
+                    }
+                    if (!open) {
                       setState({
                         ...state,
                         run: true,

@@ -97,7 +97,7 @@ export default function EmptyPage() {
       ) {
         setTimeout(() => {
           triggerControl('any'); // change calendar view and expand resources
-        }, 100);
+        }, 200);
       }
     }
 
@@ -105,20 +105,27 @@ export default function EmptyPage() {
       if (stepData.previous) {
         navigate(stepData.previous);
       }
-      if (
-        index === FG_STEP_INDEXES.PAGE_MENU ||
-        index === FG_STEP_INDEXES.AUTOMATIC_CLASS_CREATION
-      ) {
+      if (index == FG_STEP_INDEXES.AUTOMATIC_CLASS_CREATION) {
+        setTimeout(() => {
+          setState({ ...state, stepIndex: index - 1 });
+        }, 250);
+        return;
+      }
+      if (index === FG_STEP_INDEXES.PAGE_MENU) {
         handleDrawerClose();
         setTimeout(() => {
           setState({ ...state, stepIndex: index - 1 });
         }, 100);
-      } else if (index === FG_STEP_INDEXES.ALLOCATION_GRID) {
+        return;
+      }
+      if (index === FG_STEP_INDEXES.ALLOCATION_GRID) {
         handleDrawerOpen();
         setTimeout(() => {
           setState({ ...state, stepIndex: index - 1 });
         }, 300);
-      } else setState({ ...state, stepIndex: index - 1 });
+        return;
+      }
+      setState({ ...state, stepIndex: index - 1 });
     }
   };
 
@@ -131,18 +138,37 @@ export default function EmptyPage() {
       if (index === FG_STEP_INDEXES.PAGE_MENU) {
         handleDrawerOpen();
       }
-      if (index === FG_STEP_INDEXES.RESERVATION_BY_ALLOCATION) {
-        triggerControl('any'); // change calendar view and expand resources
+      if (
+        index === FG_STEP_INDEXES.RESERVATION_BY_ALLOCATION ||
+        index === FG_STEP_INDEXES.ALLOCATION_DRAG_AND_DROP
+      ) {
+        setTimeout(() => {
+          triggerControl('any'); // change calendar view and expand resources
+        }, 100);
       }
     }
 
     if (type === EVENTS.STEP_AFTER) {
-      if (index === FG_STEP_INDEXES.CONTACT) {
+      if (index == FG_STEP_INDEXES.CONTACT) {
         handleDrawerClose();
+      }
+      if (index === FG_STEP_INDEXES.USER_MENU) {
+        setTimeout(() => {
+          setState({ ...state, stepIndex: index + 1 });
+        }, 600);
+      }
+      if (index === FG_STEP_INDEXES.CONTACT) {
         setTimeout(() => {
           setState({ ...state, stepIndex: index + 1 });
         }, 300);
-      } else setState({ ...state, stepIndex: index + 1 });
+      }
+
+      if (
+        index !== FG_STEP_INDEXES.CONTACT &&
+        index !== FG_STEP_INDEXES.USER_MENU
+      ) {
+        setState({ ...state, stepIndex: index + 1 });
+      }
 
       if (stepData.next) {
         navigate(stepData.next);
@@ -232,7 +258,10 @@ export default function EmptyPage() {
             handleGuidePreviousClick(type, index, stepData);
             return;
           }
-          handleGuideNextClick(type, index, stepData);
+          if (action === 'next') {
+            handleGuideNextClick(type, index, stepData);
+            return;
+          }
           return;
         }}
       />
