@@ -36,6 +36,7 @@ function SolicitationStackBody({
               key={index}
               w={'full'}
               borderRadius='md'
+              p={'10px'}
               border={selected ? '1px' : undefined}
               cursor={false ? 'not-allowed' : 'pointer'}
               transition='background 0.3s, opacity 0.3s'
