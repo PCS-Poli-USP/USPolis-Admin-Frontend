@@ -2,7 +2,7 @@ import { FormLabel, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FieldProps } from '../form.interface';
 import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import Select from 'react-select';
+import Select, { MultiValue } from 'react-select';
 
 export type Option = {
   label: string;
@@ -21,6 +21,7 @@ export function MultiSelect({
   options,
   disabled = false,
   isLoading = false,
+  hidden = false,
   placeholder = 'Selecione uma ou mais opções',
   mt = undefined,
   mb = undefined,
@@ -50,7 +51,14 @@ export function MultiSelect({
   }, [name, options]);
 
   return (
-    <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
+    <FormControl
+      isInvalid={!!errors[name]}
+      mt={mt}
+      mb={mb}
+      ml={ml}
+      mr={mr}
+      hidden={hidden}
+    >
       <FormLabel alignSelf='flex-start'>{label}</FormLabel>
       <Controller
         name={name}
@@ -66,9 +74,9 @@ export function MultiSelect({
             isMulti={true}
             isClearable={true}
             closeMenuOnSelect={false}
-            onChange={(selectedOption: Option[]) => {
+            onChange={(selectedOption: MultiValue<Option>) => {
               if (onChange) {
-                onChange(selectedOption);
+                onChange(selectedOption as Option[]);
               }
               const values = (selectedOption || []).map(
                 (option) => option.value,

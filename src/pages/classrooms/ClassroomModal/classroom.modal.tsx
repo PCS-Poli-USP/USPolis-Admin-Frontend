@@ -92,6 +92,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 name={'building_id'}
                 placeholder={'Escolha um prédio'}
                 disabled={props.buildings.length === 1}
+                hidden={props.buildings.length === 1}
                 options={props.buildings.map((building) => ({
                   value: building.id,
                   label: building.name,
@@ -144,6 +145,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
               <MultiSelect
                 label='Grupos'
                 name='group_ids'
+                hidden={props.groups.length === 1}
                 disabled={props.groups.length === 1 || !building_id}
                 placeholder={
                   !building_id

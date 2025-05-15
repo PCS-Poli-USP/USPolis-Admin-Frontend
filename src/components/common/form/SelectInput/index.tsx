@@ -20,6 +20,7 @@ export function SelectInput({
   options,
   disabled = false,
   placeholder = undefined,
+  hidden = false,
   isLoading = false,
   mt = undefined,
   mb = undefined,
@@ -49,6 +50,7 @@ export function SelectInput({
   return (
     <FormControl
       isInvalid={!!errors[name]}
+      hidden={hidden}
       mt={mt}
       mb={mb}
       ml={ml}
