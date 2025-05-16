@@ -12,6 +12,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
+  Text,
 } from '@chakra-ui/react';
 import { ClassResponse } from '../../../models/http/responses/class.response.models';
 import AllocateSingleScheduleSection, {
@@ -77,6 +78,7 @@ export function AllocateClassModal({
       const sectionData = ref?.getData();
       if (sectionData) data.push(sectionData);
     }
+    console.log('data', data);
     await allocateManySchedules(data);
     if (refresh) refresh();
     handleClose();
@@ -109,43 +111,55 @@ export function AllocateClassModal({
                   <Flex flexDir={'column'} gap={4}>
                     <Flex flexDir={'column'} gap={4}>
                       {inputClass.schedules
-                        .filter((schedule) => {
-                          if (!schedule.classroom_id) return true;
-                          return validator.checkUserClassroomPermission([
-                            schedule.classroom_id,
-                          ]);
+                        .sort((a, b) => {
+                          if (a.week_day && b.week_day) {
+                            return a.week_day - b.week_day;
+                          }
+                          return 0;
                         })
-                        .map((schedule, index) => (
-                          <Box key={index}>
-                            <AllocateSingleScheduleSection
-                              key={schedule.id}
-                              user={loggedUser}
-                              ref={(ref) => {
-                                sectionsRefs.current[index] = ref;
-                              }}
-                              schedule={schedule}
-                              allowedBuildings={allowedBuildings}
-                              loadingBuildings={loading}
-                              initialBuildingId={
-                                loggedUser
-                                  ? loggedUser.buildings &&
-                                    loggedUser.buildings.length === 1
-                                    ? loggedUser.buildings[0].id
+                        .map((schedule, index) => {
+                          const readonly = schedule.classroom_id
+                            ? !validator.checkUserClassroomPermission([
+                                schedule.classroom_id,
+                              ])
+                            : false;
+                          return (
+                            <Box key={index}>
+                              <AllocateSingleScheduleSection
+                                key={schedule.id}
+                                user={loggedUser}
+                                ref={(ref) => {
+                                  if (readonly) {
+                                    sectionsRefs.current[index] = null;
+                                    return;
+                                  }
+                                  sectionsRefs.current[index] = ref;
+                                }}
+                                schedule={schedule}
+                                allowedBuildings={allowedBuildings}
+                                loadingBuildings={loading}
+                                initialBuildingId={
+                                  loggedUser
+                                    ? loggedUser.buildings &&
+                                      loggedUser.buildings.length === 1
+                                      ? loggedUser.buildings[0].id
+                                      : undefined
                                     : undefined
-                                  : undefined
-                              }
-                            />
-                            <Divider />
-                          </Box>
-                        ))}
+                                }
+                                readonly={readonly}
+                              />
+                              <Divider />
+                            </Box>
+                          );
+                        })}
                     </Flex>
                     <Flex flexGrow={1} justifyContent={'space-between'} gap={2}>
                       <Button
-                        onClick={handleClose}
+                        onClick={handleSave}
                         flexGrow={1}
-                        colorScheme='red'
+                        colorScheme='blue'
                       >
-                        Cancelar
+                        Salvar
                       </Button>
                       <Button
                         flexGrow={1}
@@ -157,11 +171,11 @@ export function AllocateClassModal({
                         Restaurar
                       </Button>
                       <Button
-                        onClick={handleSave}
+                        onClick={handleClose}
                         flexGrow={1}
-                        colorScheme='blue'
+                        colorScheme='red'
                       >
-                        Salvar Tudo
+                        Cancelar
                       </Button>
                     </Flex>
                   </Flex>
@@ -169,7 +183,17 @@ export function AllocateClassModal({
               </>
             ) : (
               <ModalBody>
-                <Spinner />
+                <Flex
+                  direction={'row'}
+                  gap={'10px'}
+                  align={'center'}
+                  justify={'center'}
+                >
+                  <Text fontWeight={'bold'} fontSize={'lg'}>
+                    Carregando
+                  </Text>
+                  <Spinner />
+                </Flex>
               </ModalBody>
             )}
           </>

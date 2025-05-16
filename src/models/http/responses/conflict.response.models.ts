@@ -21,3 +21,32 @@ interface ByClassroomConflict {
   name: string;
   conflicts: { [key: string]: OccurrenceConflict[][] };
 }
+
+export interface ClassroomIntentionalConflictMap {
+  classroom_id: number;
+  classroom: string;
+  conflicts: IntentionalConflictResponse[];
+}
+
+export interface BuildingIntentionalConflictMap {
+  building_id: number;
+  building: string;
+  classroom_maps: ClassroomIntentionalConflictMap[];
+}
+
+export interface IntentionalConflictOccurrenceResponse {
+  id: number;
+  label: string;
+  start_time: string;
+  end_time: string;
+}
+
+export interface IntentionalConflictResponse {
+  id: number;
+  classroom_id: number;
+  classroom: string;
+  date: string;
+
+  first: IntentionalConflictOccurrenceResponse;
+  second: IntentionalConflictOccurrenceResponse;
+}

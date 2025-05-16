@@ -94,7 +94,7 @@ function Allocation() {
   const {
     loading: loadingSolicitations,
     solicitations,
-    getBuildingSolicitations,
+    getPendingBuildingSolicitations,
   } = useClassroomsSolicitations(false);
 
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
@@ -261,7 +261,7 @@ function Allocation() {
       getAllBuildings();
       getAllClassrooms();
       if (loggedUser.is_admin || loggedUser.buildings) {
-        getBuildingSolicitations();
+        getPendingBuildingSolicitations();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -323,7 +323,7 @@ function Allocation() {
               loadingClassrooms={loadingClassrooms}
               refetch={async () => {
                 if (loggedUser.is_admin || loggedUser.buildings) {
-                  await getBuildingSolicitations();
+                  await getPendingBuildingSolicitations();
                 }
               }}
             />

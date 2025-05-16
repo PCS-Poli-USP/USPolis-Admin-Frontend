@@ -1,9 +1,7 @@
 import { Checkbox, Flex, Text, VStack } from '@chakra-ui/react';
 import Select, { SingleValue } from 'react-select';
 import useClassroomsService from '../../../hooks/API/services/useClassroomsService';
-import Classroom, {
-  ClassroomWithConflictCount,
-} from '../../../models/common/classroom.model';
+import { ClassroomWithConflictCount } from '../../../models/http/responses/classroom.response.models';
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
 import { ScheduleResponse } from '../../../models/http/responses/schedule.response.models';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
@@ -14,10 +12,16 @@ import { WeekDay } from '../../../utils/enums/weekDays.enum';
 import AllocationLogHistory from './allocationLog.history';
 import { UserResponse } from '../../../models/http/responses/user.response.models';
 import { UsersValidator } from '../../../utils/users/users.validator';
+import IntentionalConflictPopover from './IntentionalConflictPopover';
 
 export interface AllocateSingleScheduleSectionRef {
   reset(): void;
-  getData(): { schedule_id: number; classroom_id: number } | null;
+  getData(): {
+    schedule_id: number;
+    classroom_id: number;
+    intentional_conflict: boolean;
+    intentional_occurrence_ids: number[];
+  } | null;
 }
 
 interface props {
@@ -25,6 +29,7 @@ interface props {
   user: UserResponse;
   allowedBuildings: BuildingResponse[];
   loadingBuildings: boolean;
+  readonly: boolean;
   initialBuildingId?: number;
 }
 
@@ -48,6 +53,7 @@ const AllocateSingleScheduleSection = forwardRef<
       user,
       allowedBuildings,
       loadingBuildings,
+      readonly,
       initialBuildingId = undefined,
     }: props,
     ref,
@@ -56,17 +62,26 @@ const AllocateSingleScheduleSection = forwardRef<
       reset() {
         reset();
       },
-      getData(): { schedule_id: number; classroom_id: number } | null {
+      getData(): {
+        schedule_id: number;
+        classroom_id: number;
+        intentional_conflict: boolean;
+        intentional_occurrence_ids: number[];
+      } | null {
         if (!schedule) return null;
         if (removeAllocation)
           return {
             schedule_id: schedule.id,
             classroom_id: -1,
+            intentional_conflict: false,
+            intentional_occurrence_ids: [],
           };
         if (!selectedClassroom) return null;
         return {
           schedule_id: schedule.id,
           classroom_id: Number(selectedClassroom.id),
+          intentional_conflict: intentionalConflict,
+          intentional_occurrence_ids: intentionalOccurrenceIds,
         };
       },
     }));
@@ -83,7 +98,8 @@ const AllocateSingleScheduleSection = forwardRef<
       useState<BuildingResponse>();
     const [selecteBuildingOption, setSelecteBuildingOption] =
       useState<BuildingOption>();
-    const [selectedClassroom, setSelectedClassroom] = useState<Classroom>();
+    const [selectedClassroom, setSelectedClassroom] =
+      useState<ClassroomWithConflictCount>();
     const [selecteClassroomOption, setSelecteClassroomOption] =
       useState<BuildingOption>();
 
@@ -97,11 +113,14 @@ const AllocateSingleScheduleSection = forwardRef<
     const [hasSetInitialBuilding, setHasSetInitialBuilding] = useState(false);
     const [hasConflict, setHasConflict] = useState(false);
     const [intentionalConflict, setIntentionalConflict] = useState(false);
+    const [intentionalOccurrenceIds, setIntentionalOccurrenceIds] = useState<
+      number[]
+    >([]);
 
     useEffect(() => {
       reset();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [allowedBuildings, schedule]);
+    }, [allowedBuildings, schedule, readonly]);
 
     useEffect(() => {
       if (
@@ -124,7 +143,13 @@ const AllocateSingleScheduleSection = forwardRef<
         );
         setHasSetInitialBuilding(true);
       }
-    }, [schedule, hasSetInitialBuilding, initialBuildingId, allowedBuildings]);
+    }, [
+      schedule,
+      hasSetInitialBuilding,
+      initialBuildingId,
+      allowedBuildings,
+      readonly,
+    ]);
 
     useEffect(() => {
       if (!schedule) return;
@@ -141,9 +166,12 @@ const AllocateSingleScheduleSection = forwardRef<
               }
             : undefined,
         );
+        setHasConflict(
+          classroom ? classroom.conflicts_infos.length > 0 : false,
+        );
         setResetClassroomsOnceLoaded(false);
       }
-    }, [schedule, resetClassroomsOnceLoaded, classrooms]);
+    }, [schedule, resetClassroomsOnceLoaded, classrooms, readonly]);
 
     useEffect(() => {
       if (!selectedBuilding || !schedule) return;
@@ -156,8 +184,10 @@ const AllocateSingleScheduleSection = forwardRef<
           const validator = new UsersValidator(user);
           setClassrooms(
             response.data
-              .filter((value) =>
-                validator.checkUserClassroomPermission([Number(value.id)]),
+              .filter(
+                (value) =>
+                  readonly ||
+                  validator.checkUserClassroomPermission([Number(value.id)]),
               )
               .sort(sortClassroomResponse),
           );
@@ -166,7 +196,7 @@ const AllocateSingleScheduleSection = forwardRef<
           setClassroomsLoading(false);
         });
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedBuilding, schedule]);
+    }, [selectedBuilding, schedule, readonly]);
 
     function reset() {
       setRemoveAllocation(false);
@@ -175,11 +205,20 @@ const AllocateSingleScheduleSection = forwardRef<
           if (selectedBuilding?.id !== schedule.building_id)
             setResetClassroomsOnceLoaded(true);
           else {
-            setSelecteClassroomOption(undefined);
-            setSelectedClassroom(
-              classrooms.find(
-                (classroom) => classroom.id === schedule.classroom_id,
-              ),
+            const classroom = classrooms.find(
+              (classroom) => classroom.id === schedule.classroom_id,
+            );
+            setSelecteClassroomOption(
+              classroom
+                ? {
+                    label: formatClassroomForSelection(classroom),
+                    value: Number(classroom.id),
+                  }
+                : undefined,
+            );
+            setSelectedClassroom(classroom);
+            setHasConflict(
+              classroom ? classroom.conflicts_infos.length > 0 : false,
             );
           }
         } else {
@@ -206,6 +245,11 @@ const AllocateSingleScheduleSection = forwardRef<
         {schedule && (
           <Flex flexDir={'column'} gap={'5px'}>
             <Flex flexDir={'column'}>
+              {readonly && (
+                <Text color={'red'}>
+                  Apenas leitura, voce não possui acesso a essa sala
+                </Text>
+              )}
               <Text>
                 Recorrencia:{' '}
                 <strong>{Recurrence.translate(schedule.recurrence)}</strong>
@@ -232,7 +276,7 @@ const AllocateSingleScheduleSection = forwardRef<
               </Text>
             </Flex>
             <VStack alignItems={'flex-start'}>
-              <Flex direction={'row'} gap={'25px'} w={'100%'}>
+              <Flex direction={'row'} gap={'25px'} w={'100%'} hidden={readonly}>
                 <Checkbox
                   colorScheme='red'
                   isChecked={removeAllocation}
@@ -242,16 +286,28 @@ const AllocateSingleScheduleSection = forwardRef<
                 >
                   Remover alocação
                 </Checkbox>
-                <Checkbox
+                <IntentionalConflictPopover
                   hidden={!hasConflict || removeAllocation}
-                  colorScheme='red'
-                  isChecked={intentionalConflict}
-                  onChange={(e) => {
-                    setIntentionalConflict(e.target.checked);
+                  classroom={selectedClassroom}
+                  handleConfirm={(map, infos) => {
+                    if (!infos) return;
+                    const occurrences_ids: number[] = [];
+                    infos.forEach((info, index) => {
+                      if (map[index]) {
+                        console.log(info);
+                        let ids = info.unintentional_ids;
+                        if (ids.length === 0) ids = info.intentional_ids;
+                        occurrences_ids.push(...ids);
+                      }
+                    });
+                    setIntentionalOccurrenceIds(occurrences_ids);
+                    setIntentionalConflict(true);
                   }}
-                >
-                  Conflito intencional
-                </Checkbox>
+                  handleCancel={() => {
+                    setIntentionalConflict(false);
+                    setIntentionalOccurrenceIds([]);
+                  }}
+                />
               </Flex>
 
               {!removeAllocation && (
@@ -264,6 +320,7 @@ const AllocateSingleScheduleSection = forwardRef<
                     }
                     isLoading={loadingBuildings}
                     isMulti={false}
+                    isDisabled={readonly}
                     value={selecteBuildingOption}
                     options={allowedBuildings.map((building) => ({
                       label: building.name,
@@ -303,7 +360,9 @@ const AllocateSingleScheduleSection = forwardRef<
                         setSelecteClassroomOption(option as ClassroomOption);
                         setSelectedClassroom(classroom);
                         setHasConflict(
-                          classroom ? classroom.conflicts > 0 : false,
+                          classroom
+                            ? classroom.conflicts_infos.length > 0
+                            : false,
                         );
                       } else {
                         setSelecteClassroomOption(undefined);
@@ -312,7 +371,9 @@ const AllocateSingleScheduleSection = forwardRef<
                       }
                     }}
                     value={selecteClassroomOption}
-                    isDisabled={!selectedBuilding || classroomsLoading}
+                    isDisabled={
+                      !selectedBuilding || classroomsLoading || readonly
+                    }
                   />
                 </Flex>
               )}

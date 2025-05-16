@@ -1,4 +1,5 @@
 import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
+import { ConflictType } from '../../../utils/enums/conflictType.enum';
 
 export interface CreateClassroom {
   name: string;
@@ -11,10 +12,12 @@ export interface CreateClassroom {
   accessibility: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface UpdateClassroom extends CreateClassroom {}
 
 export interface ClassroomConflictCheck {
   start_time: string;
   end_time: string;
   dates: string[];
+  type: ConflictType;
 }

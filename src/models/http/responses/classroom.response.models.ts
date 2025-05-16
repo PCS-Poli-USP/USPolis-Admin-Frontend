@@ -21,6 +21,24 @@ export interface ClassroomFullResponse extends ClassroomResponse {
   schedules: ScheduleFullResponse[];
 }
 
+export interface ConflictsInfo {
+  subject_id?: number;
+  subject?: string;
+  class_id?: number;
+  class_code?: string;
+  reservation?: string;
+  reservation_id?: number;
+  schedule_id: number;
+  start: string;
+  end: string;
+  total_count: number;
+  intentional_ids: number[];
+  intentional_count: number;
+  unintentional_ids: number[];
+  unintentional_count: number;
+}
+
 export interface ClassroomWithConflictCount extends ClassroomResponse {
   conflicts: number;
+  conflicts_infos: ConflictsInfo[];
 }
