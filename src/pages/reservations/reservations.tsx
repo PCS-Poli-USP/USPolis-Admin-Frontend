@@ -32,7 +32,7 @@ function Reservations() {
   const {
     loading: loadingSolicitations,
     solicitations,
-    getBuildingSolicitations,
+    getPendingBuildingSolicitations,
   } = useClassroomsSolicitations(false);
 
   const [selectedReservation, setSelectedReservation] =
@@ -75,7 +75,7 @@ function Reservations() {
   }
 
   useEffect(() => {
-    getBuildingSolicitations();
+    getPendingBuildingSolicitations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

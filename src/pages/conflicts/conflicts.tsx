@@ -167,7 +167,10 @@ const ConflictsPage = () => {
                 <UnintentionalConflictsTab
                   conflicts={conflicts}
                   selectedBuildingName={selectedBuildingName}
-                  setSelectedClassId={setSelectedClassId}
+                  setSelectedClassId={(id) => {
+                    console.log('setSelectedClassId', id);
+                    setSelectedClassId(id);
+                  }}
                   setIsOpenAllocate={(value) => {
                     setIsOpenAllocate(value);
                   }}
@@ -179,7 +182,10 @@ const ConflictsPage = () => {
                 <IntentionalConflictsTab
                   conflicts={intentionalConflicts}
                   selectedBuildingName={selectedBuildingName}
-                  setSelectedClassId={setSelectedClassId}
+                  setSelectedClassId={(id) => {
+                    console.log('setSelectedClassId', id);
+                    setSelectedClassId(id);
+                  }}
                   setIsOpenAllocate={(value) => {
                     setIsOpenAllocate(value);
                   }}

@@ -17,6 +17,7 @@ import { Collapsable } from '../../../components/common/Collapsable';
 import moment from 'moment';
 import Conflict from '../../../models/http/responses/conflict.response.models';
 import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface UnintentionalConflictsTabProps {
   selectedBuildingName: string;
@@ -31,6 +32,8 @@ function UnintentionalConflictsTab({
   setSelectedClassId,
   setIsOpenAllocate,
 }: UnintentionalConflictsTabProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
   return (
     <Flex direction={'column'}>
       <Accordion allowToggle>
@@ -124,6 +127,7 @@ function UnintentionalConflictsTab({
                                     ) : undefined}
                                   </Flex>
                                   <Button
+                                    hidden={!event.class_id}
                                     onClick={() => {
                                       setSelectedClassId(event.class_id);
                                       setIsOpenAllocate(true);
@@ -131,6 +135,17 @@ function UnintentionalConflictsTab({
                                   >
                                     Editar Alocação
                                   </Button>
+                                  {!event.class_id && (
+                                    <Button
+                                      onClick={() => {
+                                        navigate('/reservations', {
+                                          state: { from: location.pathname },
+                                        });
+                                      }}
+                                    >
+                                      Ir para Reservas
+                                    </Button>
+                                  )}
                                 </Flex>
                               ))}
                             </Flex>

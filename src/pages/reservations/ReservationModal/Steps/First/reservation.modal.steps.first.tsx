@@ -28,6 +28,24 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
   const has_solicitation = props.form.watch('has_solicitation');
   const { resetField } = props.form;
 
+  const soliciationsOptions = props.solicitations
+    .filter((value) => {
+      if (
+        props.selectedReservation &&
+        props.selectedReservation.has_solicitation
+      ) {
+        return (
+          !value.closed ||
+          value.id === props.selectedReservation.solicitation_id
+        );
+      }
+      return !value.closed;
+    })
+    .map((solicitation) => ({
+      value: solicitation.id,
+      label: `${solicitation.reservation_title} - ${solicitation.user} (${solicitation.email})`,
+    }));
+
   return (
     <VStack w={'full'} align={'stretch'}>
       <FormProvider {...props.form}>
@@ -49,9 +67,10 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                 }
               }}
               disabled={
-                props.isUpdate &&
-                props.selectedReservation &&
-                props.selectedReservation.has_solicitation
+                (props.isUpdate &&
+                  props.selectedReservation &&
+                  props.selectedReservation.has_solicitation) ||
+                soliciationsOptions.length === 0
               }
             />
             <Popover placement='bottom'>
@@ -94,7 +113,9 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
             placeholder={
               props.loadingSolicitations
                 ? 'Carregando...'
-                : 'Selecione uma solicitação'
+                : soliciationsOptions.length > 0
+                  ? 'Selecione uma solicitação'
+                  : 'Nenhuma solicitação pendente encontrada'
             }
             onChange={(option) => {
               const solicitation_id = option
@@ -142,23 +163,7 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                 }
               }
             }}
-            options={props.solicitations
-              .filter((value) => {
-                if (
-                  props.selectedReservation &&
-                  props.selectedReservation.has_solicitation
-                ) {
-                  return (
-                    !value.closed ||
-                    value.id === props.selectedReservation.solicitation_id
-                  );
-                }
-                return !value.closed;
-              })
-              .map((solicitation) => ({
-                value: solicitation.id,
-                label: `${solicitation.reservation_title} - ${solicitation.user} (${solicitation.email})`,
-              }))}
+            options={soliciationsOptions}
             disabled={
               (props.isUpdate &&
                 props.selectedReservation &&

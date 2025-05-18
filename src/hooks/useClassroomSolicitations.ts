@@ -23,7 +23,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
     await service
       .getMySolicitations()
       .then((response) => {
-        setSolicitations(response.data.sort(sortClassroomSolicitationResponse));
+        setSolicitations(response.data);
       })
       .catch((error) => {
         console.log(error);

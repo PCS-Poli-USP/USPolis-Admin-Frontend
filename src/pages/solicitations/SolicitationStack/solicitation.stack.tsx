@@ -145,7 +145,7 @@ function SolicitationStack({
           handleShowAll(e.target.checked);
         }}
       >
-        Exibir aprovados/negados do semestre
+        Exibir aprovados/negados/antigos
       </Checkbox>
       <Skeleton isLoaded={!loading} w={'full'}>
         <SolicitationStackBody

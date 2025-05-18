@@ -41,6 +41,7 @@ import { ReservationType } from '../../../utils/enums/reservations.enum';
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import ClassroomTimeGrid from '../../../components/common/ClassroomTimeGrid/classroom.time.grid';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { ConflictType } from '../../../utils/enums/conflictType.enum';
 
 interface SolicitationPanelProps {
   solicitation?: ClassroomSolicitationResponse;
@@ -105,7 +106,12 @@ function SolicitationPanel({
         try {
           setIsLoadingWithConflict(true);
           const result = await getClassroomsWithConflictFromTime(
-            { start_time: start, end_time: end, dates: solicitation.dates },
+            {
+              start_time: start,
+              end_time: end,
+              dates: solicitation.dates,
+              type: ConflictType.UNINTENTIONAL,
+            },
             solicitation?.building_id,
           );
 
@@ -314,7 +320,9 @@ function SolicitationPanel({
                     <Button
                       mt={2}
                       size={'sm'}
-                      isDisabled={solicitation.required_classroom}
+                      isDisabled={
+                        solicitation.required_classroom || solicitation.closed
+                      }
                       fontWeight={'bold'}
                       textColor={editingClassroom ? 'red.500' : 'yellow.500'}
                       onClick={() => {

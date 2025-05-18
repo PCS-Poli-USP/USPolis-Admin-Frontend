@@ -57,20 +57,24 @@ export function AllocateClassModal({
     for (const ref of sectionsRefs.current) ref?.reset();
   }
 
-  useEffect(() => {
-    async function use() {
-      if (class_) {
-        setInputClass(class_);
-        return;
-      }
-      if (class_id) {
-        const response = await classesService.getById(class_id);
-        setInputClass(response.data);
-      }
+  async function use() {
+    if (class_) {
+      setInputClass(class_);
+      return;
     }
+    if (class_id) {
+      const response = await classesService.getById(class_id);
+      setInputClass(response.data);
+      return;
+    }
+  }
+
+  useEffect(() => {
     use();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [class_, class_id]);
+
+  console.log(class_, class_id);
 
   async function handleSave() {
     const data: AllocateManySchedulesData[] = [];
@@ -78,7 +82,6 @@ export function AllocateClassModal({
       const sectionData = ref?.getData();
       if (sectionData) data.push(sectionData);
     }
-    console.log('data', data);
     await allocateManySchedules(data);
     if (refresh) refresh();
     handleClose();

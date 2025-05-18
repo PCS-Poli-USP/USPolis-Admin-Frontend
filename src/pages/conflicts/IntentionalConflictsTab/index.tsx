@@ -17,6 +17,7 @@ import Conflict from '../../../models/http/responses/conflict.response.models';
 import moment from 'moment';
 import { Collapsable } from '../../../components/common/Collapsable';
 import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface IntentionalConflictsTabProps {
   selectedBuildingName: string;
@@ -30,7 +31,9 @@ function IntentionalConflictsTab({
   conflicts,
   setSelectedClassId,
   setIsOpenAllocate,
-}: IntentionalConflictsTabProps) {
+}: IntentionalConflictsTabProps) {  
+  const location = useLocation();
+  const navigate = useNavigate();
   return (
     <Flex direction={'column'}>
       <Accordion allowToggle>
@@ -124,6 +127,7 @@ function IntentionalConflictsTab({
                                     ) : undefined}
                                   </Flex>
                                   <Button
+                                    hidden={!event.class_id}
                                     onClick={() => {
                                       setSelectedClassId(event.class_id);
                                       setIsOpenAllocate(true);
@@ -131,6 +135,17 @@ function IntentionalConflictsTab({
                                   >
                                     Editar Alocação
                                   </Button>
+                                  {!event.class_id && (
+                                    <Button
+                                      onClick={() => {
+                                        navigate('/reservations', {
+                                          state: { from: location.pathname },
+                                        });
+                                      }}
+                                    >
+                                      Ir para Reservas
+                                    </Button>
+                                  )}
                                 </Flex>
                               ))}
                             </Flex>

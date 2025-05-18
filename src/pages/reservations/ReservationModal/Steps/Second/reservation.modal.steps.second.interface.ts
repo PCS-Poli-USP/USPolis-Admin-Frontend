@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UseFormReturn } from 'react-hook-form';
 import { WeekDay } from '../../../../../utils/enums/weekDays.enum';
 import { MonthWeek } from '../../../../../utils/enums/monthWeek.enum';
@@ -14,7 +15,7 @@ export interface ReservationModalSecondStepProps
   buildings: BuildingResponse[];
   classrooms: ClassroomResponse[];
   setDates: (value: string[]) => void;
-  form: UseFormReturn<ReservationSecondForm, any, undefined>;
+  form: UseFormReturn<ReservationSecondForm, any, ReservationSecondForm>;
   selectedReservation?: ReservationResponse;
   initialDate?: string;
   vinculatedSolicitation?: ClassroomSolicitationResponse;
