@@ -57,11 +57,6 @@ const ConflictsPage = () => {
   const [selectedClassId, setSelectedClassId] = useState<number>(0);
 
   useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     setBuildingNames(conflicts?.map((it) => it.name) || []);
   }, [conflicts]);
 
