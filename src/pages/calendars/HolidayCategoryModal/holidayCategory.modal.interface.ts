@@ -9,6 +9,6 @@ export interface HolidayCategoryModalProps extends ModalProps {
 
 export interface HolidayCategoryForm {
   name: string;
-  id?: number;
+  year: number;
   created_by?: string;
 }

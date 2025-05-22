@@ -14,12 +14,22 @@ export const formFields = {
       ),
     defaultValue: '',
   },
+  year: {
+    validator: yup
+      .number()
+      .required('Campo obrigatório')
+      .min(2025, 'Ano inválido')
+      .max(2100, 'Ano inválido'),
+    defaultValue: new Date().getFullYear(),
+  },
 };
 
 export const schema = yup.object<HolidayCategoryForm>().shape({
   name: formFields.name.validator,
+  year: formFields.year.validator,
 });
 
 export const defaultValues: HolidayCategoryForm = {
   name: formFields.name.defaultValue,
+  year: formFields.year.defaultValue,
 };

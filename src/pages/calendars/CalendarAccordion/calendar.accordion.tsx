@@ -13,6 +13,7 @@ import {
   List,
   ListIcon,
   ListItem,
+  Skeleton,
   Spacer,
   Text,
 } from '@chakra-ui/react';
@@ -29,6 +30,7 @@ interface HolidayCategoryAccordionProps {
   onCalendarView: (data: CalendarResponse) => void;
   onCalendarUpdate: (data: CalendarResponse) => void;
   onCalendarDelete: (data: CalendarResponse) => void;
+  loading: boolean;
 }
 
 export function CalendarAccordion(props: HolidayCategoryAccordionProps) {
@@ -37,100 +39,111 @@ export function CalendarAccordion(props: HolidayCategoryAccordionProps) {
   }, [props.calendars]);
 
   return (
-    <Accordion
-      allowMultiple
-      borderColor={'uspolis.blue'}
-      border={'1px'}
-      defaultIndex={[0]}
-    >
-      {props.calendars.length === 0 ? (
+    <Skeleton isLoaded={!props.loading} mb={4}>
+      {props.calendars.length == 0 ? (
         <Alert status={'warning'} fontSize={'sm'} mb={4}>
           <AlertIcon />
           Nenhum Calendário adicionado
         </Alert>
-      ) : undefined}
-      {props.calendars.map((calendar, index) => (
-        <AccordionItem key={index}>
-          {({ isExpanded }) => (
-            <>
-              <AccordionButton>
-                <Box as='span' flex='1' textAlign='left'>
-                  <Text as={'b'}>{`Calendario: ${calendar.name}`}</Text>
-                </Box>
-                {isExpanded ? (
-                  <MinusIcon fontSize='12px' />
-                ) : (
-                  <AddIcon fontSize='12px' />
-                )}
-              </AccordionButton>
+      ) : (
+        <Accordion
+          allowMultiple
+          borderColor={'uspolis.blue'}
+          border={'1px'}
+          defaultIndex={[0]}
+        >
+          {props.calendars.length === 0 ? (
+            <Alert status={'warning'} fontSize={'sm'} mb={4}>
+              <AlertIcon />
+              Nenhum Calendário adicionado
+            </Alert>
+          ) : undefined}
+          {props.calendars.map((calendar, index) => (
+            <AccordionItem key={index}>
+              {({ isExpanded }) => (
+                <>
+                  <AccordionButton>
+                    <Box as='span' flex='1' textAlign='left'>
+                      <Text
+                        as={'b'}
+                      >{`Calendario: ${calendar.name} (${calendar.year})`}</Text>
+                    </Box>
+                    {isExpanded ? (
+                      <MinusIcon fontSize='12px' />
+                    ) : (
+                      <AddIcon fontSize='12px' />
+                    )}
+                  </AccordionButton>
 
-              <AccordionPanel>
-                <Divider mb={2} borderColor={'blackAlpha.500'} />
-                <HStack mb={4}>
-                  <Text>{`Criado por ${calendar.created_by}`}</Text>
-                  <Spacer />
-                  <Button
-                    leftIcon={<CalendarIcon />}
-                    size={'sm'}
-                    variant={'ghost'}
-                    onClick={() => props.onCalendarView(calendar)}
-                  >
-                    Visualizar Calendário
-                  </Button>
-                  <Button
-                    hidden={
-                      props.loggedUser
-                        ? !props.loggedUser.is_admin &&
-                          props.loggedUser.id !== calendar.owner_id
-                        : true
-                    }
-                    leftIcon={<BsFillPenFill />}
-                    colorScheme={'yellow'}
-                    size={'sm'}
-                    variant={'ghost'}
-                    onClick={() => props.onCalendarUpdate(calendar)}
-                  >
-                    Atualizar Calendário
-                  </Button>
-                  <Button
-                    hidden={
-                      props.loggedUser
-                        ? !props.loggedUser.is_admin &&
-                          props.loggedUser.id !== calendar.owner_id
-                        : true
-                    }
-                    leftIcon={<BsFillTrashFill />}
-                    colorScheme={'red'}
-                    size={'sm'}
-                    variant={'ghost'}
-                    onClick={() => props.onCalendarDelete(calendar)}
-                  >
-                    Deletar Calendário
-                  </Button>
-                </HStack>
-                <Divider mb={2} borderColor={'blackAlpha.500'} />
-                <Text fontWeight={'bold'}>Categorias e Datas</Text>
-                {calendar.categories.length > 0 ? (
-                  <List>
-                    {calendar.categories.map((category, index) => (
-                      <ListItem key={index}>
-                        <ListIcon as={CalendarIcon} />
-                        {holidayCategoryToString(category)}
-                      </ListItem>
-                    ))}
-                  </List>
-                ) : (
-                  <Alert status={'warning'} fontSize={'sm'} mb={4}>
-                    <AlertIcon />
-                    Nenhuma categoria de feriado adicionada
-                  </Alert>
-                )}
-              </AccordionPanel>
-            </>
-          )}
-        </AccordionItem>
-      ))}
-    </Accordion>
+                  <AccordionPanel>
+                    <Divider mb={2} borderColor={'blackAlpha.500'} />
+                    <HStack mb={4}>
+                      <Text>{`Criado por ${calendar.created_by}`}</Text>
+                      <Spacer />
+                      <Button
+                        leftIcon={<CalendarIcon />}
+                        size={'sm'}
+                        variant={'ghost'}
+                        onClick={() => props.onCalendarView(calendar)}
+                      >
+                        Visualizar Calendário
+                      </Button>
+                      <Button
+                        hidden={
+                          props.loggedUser
+                            ? !props.loggedUser.is_admin &&
+                              props.loggedUser.id !== calendar.owner_id
+                            : true
+                        }
+                        leftIcon={<BsFillPenFill />}
+                        colorScheme={'yellow'}
+                        size={'sm'}
+                        variant={'ghost'}
+                        onClick={() => props.onCalendarUpdate(calendar)}
+                      >
+                        Atualizar Calendário
+                      </Button>
+                      <Button
+                        hidden={
+                          props.loggedUser
+                            ? !props.loggedUser.is_admin &&
+                              props.loggedUser.id !== calendar.owner_id
+                            : true
+                        }
+                        leftIcon={<BsFillTrashFill />}
+                        colorScheme={'red'}
+                        size={'sm'}
+                        variant={'ghost'}
+                        onClick={() => props.onCalendarDelete(calendar)}
+                      >
+                        Deletar Calendário
+                      </Button>
+                    </HStack>
+                    <Divider mb={2} borderColor={'blackAlpha.500'} />
+                    <Text fontWeight={'bold'}>Categorias e Datas</Text>
+                    {calendar.categories.length > 0 ? (
+                      <List>
+                        {calendar.categories.map((category, index) => (
+                          <ListItem key={index}>
+                            <ListIcon as={CalendarIcon} />
+                            {holidayCategoryToString(category)}
+                          </ListItem>
+                        ))}
+                      </List>
+                    ) : (
+                      <Alert status={'warning'} fontSize={'sm'} mb={4}>
+                        <AlertIcon />
+                        Nenhuma categoria de feriado adicionada
+                      </Alert>
+                    )}
+                  </AccordionPanel>
+                </>
+              )}
+            </AccordionItem>
+          ))}
+        </Accordion>
+      )}
+    </Skeleton>
   );
 }
 

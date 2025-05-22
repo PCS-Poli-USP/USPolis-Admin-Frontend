@@ -43,6 +43,7 @@ function Calendars() {
   } = useHolidaysCategories();
 
   const {
+    loading: loadingCalendars,
     calendars,
     getCalendars,
     createCalendar,
@@ -108,6 +109,7 @@ function Calendars() {
         </Button>
       </Flex>
       <CalendarAccordion
+        loading={loadingCalendars}
         calendars={calendars}
         onCalendarView={handleViewCalendarButton}
         onCalendarUpdate={handleEditCalendarButton}

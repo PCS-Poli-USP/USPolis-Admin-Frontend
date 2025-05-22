@@ -16,5 +16,6 @@ export interface CalendarModalProps extends ModalProps {
 
 export interface CalendarForm {
   name: string;
+  year: number;
   categories_ids: number[];
 }

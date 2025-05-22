@@ -22,6 +22,7 @@ import {
   UpdateCalendar,
 } from '../../../models/http/requests/calendar.request.models';
 import { MultiSelect } from '../../../components/common/form/MultiSelect';
+import { NumberInput } from '../../../components/common/form/NumberInput';
 
 function CalendarModal(props: CalendarModalProps) {
   const form = useForm<CalendarForm>({
@@ -43,6 +44,7 @@ function CalendarModal(props: CalendarModalProps) {
   function formatUpdateData(data: CalendarForm): UpdateCalendar {
     const formated_data: UpdateCalendar = {
       name: data.name,
+      year: data.year,
       categories_ids: data.categories_ids,
     };
     return formated_data;
@@ -69,7 +71,11 @@ function CalendarModal(props: CalendarModalProps) {
       const selected = props.selectedCalendar.categories
         ? props.selectedCalendar.categories.map((category) => category.id)
         : undefined;
-      reset({ name: props.selectedCalendar.name, categories_ids: selected });
+      reset({
+        name: props.selectedCalendar.name,
+        year: props.selectedCalendar.year,
+        categories_ids: selected,
+      });
     }
   }, [reset, props]);
 
@@ -101,6 +107,13 @@ function CalendarModal(props: CalendarModalProps) {
                   name={'name'}
                   type={'text'}
                   placeholder={'Nome do calendário'}
+                />
+                <NumberInput
+                  name='year'
+                  label='Ano'
+                  placeholder='Ano do calendário'
+                  min={2025}
+                  max={2100}
                 />
                 <MultiSelect
                   label={'Categorias de Feriados (Opcional)'}
