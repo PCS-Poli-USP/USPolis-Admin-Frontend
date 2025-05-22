@@ -23,6 +23,8 @@ import {
   FilterString,
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
+import moment from 'moment';
+import { SortPeriodFn } from '../../../utils/tanstackTableHelpers/tableSortingFns';
 
 interface ClassesColumnsProps {
   handleCheckAllClick: (data: Row<ClassResponse>[], value: boolean) => void;
@@ -228,6 +230,23 @@ export const getClassesColumns = (
         </Box>
       ),
       filterFn: FilterArray,
+    },
+    {
+      accessorKey: 'date',
+      header: 'Período',
+      filterFn: FilterString,
+      sortingFn: SortPeriodFn,
+      accessorFn: (row) =>
+        `${moment(row.start_date).format('DD/MM/YYYY')} até ${moment(
+          row.end_date,
+        ).format('DD/MM/YYYY')}`,
+      cell: ({ row }) => (
+        <Box>
+          <Text>{`${moment(row.original.start_date).format(
+            'DD/MM/YYYY',
+          )} até ${moment(row.original.end_date).format('DD/MM/YYYY')}`}</Text>
+        </Box>
+      ),
     },
     {
       id: 'options',

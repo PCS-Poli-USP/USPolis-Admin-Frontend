@@ -10,6 +10,7 @@ import {
   FilterRequester,
   FilterString,
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
+import { SortPeriodFn } from '../../../utils/tanstackTableHelpers/tableSortingFns';
 
 interface ReservationsColumnsProps {
   handleDuplicateClick: (data: ReservationResponse) => void;
@@ -105,6 +106,7 @@ export const getReservationsColumns = (
     accessorKey: 'date',
     header: 'Período',
     filterFn: FilterString,
+    sortingFn: SortPeriodFn,
     accessorFn: (row) =>
       `${moment(row.schedule.start_date).format('DD/MM/YYYY')} até ${moment(
         row.schedule.end_date,
