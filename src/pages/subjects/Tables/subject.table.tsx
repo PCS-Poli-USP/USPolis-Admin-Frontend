@@ -19,7 +19,6 @@ interface SubjectColumnsProps {
 export const getSubjectColumns = (
   props: SubjectColumnsProps,
 ): ColumnDef<SubjectResponse>[] => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const columns: ColumnDef<SubjectResponse>[] = [
     {
       accessorKey: 'code',

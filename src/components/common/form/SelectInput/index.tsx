@@ -12,6 +12,7 @@ type Option = {
 interface SelectProps extends FieldProps {
   options: Option[];
   onChange?: (value: Option | undefined) => void;
+  validator?: (value: string | number) => boolean;
 }
 
 export function SelectInput({
@@ -27,6 +28,7 @@ export function SelectInput({
   mr = undefined,
   ml = undefined,
   w = undefined,
+  validator = undefined,
   onChange = undefined,
 }: SelectProps) {
   const {
@@ -38,9 +40,14 @@ export function SelectInput({
 
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
 
+  const isValidValue = (val: number | string) => {
+    if (validator) return validator(val);
+    return !!val;
+  };
+
   useEffect(() => {
     const current: string | number = getValues(name);
-    if (current) {
+    if (isValidValue(current)) {
       const option = options.find((option) => option.value === current);
       setSelectedOption(option ? option : null);
     } else setSelectedOption(null);

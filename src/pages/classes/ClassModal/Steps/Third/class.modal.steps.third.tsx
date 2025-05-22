@@ -301,6 +301,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
               label={'Dia da semana'}
               name={'week_day'}
               placeholder='Escolha o dia da semana'
+              validator={(val) => val !== ''}
               disabled={isDaily || isCustom}
               options={WeekDay.getValues().map((value: WeekDay) => ({
                 label: WeekDay.translate(value),

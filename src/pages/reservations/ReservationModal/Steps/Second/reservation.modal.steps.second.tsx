@@ -26,6 +26,7 @@ import { sortDates } from '../../../../../utils/holidays/holidays.sorter';
 import ClassroomTimeGrid from '../../../../../components/common/ClassroomTimeGrid/classroom.time.grid';
 import { generateRecurrenceDates } from '../../../../../utils/common/common.generator';
 import { formatClassroomForSelection } from '../../../../../utils/classrooms/classroom.formatter';
+import { ConflictType } from '../../../../../utils/enums/conflictType.enum';
 
 function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   const {
@@ -90,7 +91,12 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     if (selectedBuilding && start && end) {
       setIsLoading(true);
       const conflict = await getClassroomsWithConflictFromTime(
-        { start_time: start, end_time: end, dates },
+        {
+          start_time: start,
+          end_time: end,
+          dates,
+          type: ConflictType.UNINTENTIONAL,
+        },
         selectedBuilding.id,
       );
       setIsLoading(false);
@@ -316,6 +322,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     recurrence === Recurrence.DAILY ||
                     recurrence === Recurrence.CUSTOM
                   }
+                  validator={(val) => val !== ''}
                   options={WeekDay.getValues().map((value: WeekDay) => ({
                     label: WeekDay.translate(value),
                     value: value,
