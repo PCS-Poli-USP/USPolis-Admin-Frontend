@@ -14,7 +14,16 @@ const useReservationsService = () => {
   const PREFIX = '/reservations';
   const axiosPrivate = useAxiosPrivate();
 
-  const getMine = (): Promise<AxiosResponse<Array<ReservationResponse>>> => {
+  const getMine = (
+    start?: string,
+    end?: string,
+  ): Promise<AxiosResponse<Array<ReservationResponse>>> => {
+    if (start && end) {
+      const params = new URLSearchParams();
+      params.append('start', start);
+      params.append('end', end);
+      return axiosPrivate.get(`/users/my-reservations`, { params });
+    }
     return axiosPrivate.get(`/users/my-reservations`);
   };
 

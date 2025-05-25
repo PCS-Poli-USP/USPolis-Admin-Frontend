@@ -34,24 +34,27 @@ const useReservations = (initialFetch = true) => {
       });
   }, [showToast, service]);
 
-  const getReservations = useCallback(async () => {
-    setLoading(true);
-    await service
-      .getMine()
-      .then((response) => {
-        setReservations(response.data.sort(sortReservationsResponse));
-      })
-      .catch((error) => {
-        showToast(
-          'Erro',
-          `Erro ao carregar suas reservas: ${error.response.detail}`,
-          'error',
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [showToast, service]);
+  const getReservations = useCallback(
+    async (start?: string, end?: string) => {
+      setLoading(true);
+      await service
+        .getMine(start, end)
+        .then((response) => {
+          setReservations(response.data.sort(sortReservationsResponse));
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao carregar suas reservas: ${error.response.detail}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
 
   const getReservationsByBuildingName = useCallback(
     async (building_name: string) => {

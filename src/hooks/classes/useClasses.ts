@@ -40,21 +40,24 @@ const useClasses = (initialFetch: boolean = true) => {
       });
   }, [showToast, service]);
 
-  const getClasses = useCallback(async () => {
-    setLoading(true);
-    await service
-      .getMine()
-      .then((response) => {
-        setClasses(response.data.sort(sortClassResponse));
-      })
-      .catch((error) => {
-        showToast('Erro', 'Erro ao carregar suas turmas', 'error');
-        console.log(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [showToast, service]);
+  const getClasses = useCallback(
+    async (start?: string, end?: string) => {
+      setLoading(true);
+      await service
+        .getMine(start, end)
+        .then((response) => {
+          setClasses(response.data.sort(sortClassResponse));
+        })
+        .catch((error) => {
+          showToast('Erro', 'Erro ao carregar suas turmas', 'error');
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
 
   const getClassesBySubject = useCallback(
     async (subject_id: number) => {

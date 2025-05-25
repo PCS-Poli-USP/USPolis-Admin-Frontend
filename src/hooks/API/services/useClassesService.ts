@@ -45,7 +45,16 @@ const useClassesService = () => {
     return axiosPrivate.get(`${PREFIX}/${id}`);
   };
 
-  const getMine = (): Promise<AxiosResponse<Array<ClassResponse>>> => {
+  const getMine = (
+    start?: string,
+    end?: string,
+  ): Promise<AxiosResponse<Array<ClassResponse>>> => {
+    if (start && end) {
+      const params = new URLSearchParams();
+      params.append('start', start);
+      params.append('end', end);
+      return axiosPrivate.get(`/users/my-classes`, { params });
+    }
     return axiosPrivate.get(`/users/my-classes`);
   };
 

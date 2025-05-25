@@ -1,4 +1,4 @@
-import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
+import { Button, Flex, Spacer, useDisclosure } from '@chakra-ui/react';
 import DataTable from '../../components/common/DataTable/dataTable.component';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import Loading from '../../components/common/Loading/loading.component';
@@ -21,6 +21,7 @@ import { UsersValidator } from '../../utils/users/users.validator';
 import CrawlerModal from './CrawlerModal/crawler.modal';
 import CrawlerPopover from './CrawlerModal/crawler.popover';
 import { CrawlerType } from '../../utils/enums/subjects.enum';
+import PageTitle from '../../components/common/PageTitle';
 
 function Classes() {
   const context = useContext(appContext);
@@ -249,9 +250,12 @@ function Classes() {
         />
       )}
       <Flex align='center'>
-        <Text fontSize='4xl' mb={4}>
-          Turmas
-        </Text>
+        <PageTitle
+          title='Turmas'
+          onConfirm={(start, end) => {
+            getClasses(start, end);
+          }}
+        />
         <Spacer />
         <Button mr={'5px'} colorScheme={'blue'} onClick={handleRegisterClick}>
           Adicionar manualmente
