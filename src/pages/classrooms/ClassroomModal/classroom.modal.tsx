@@ -162,6 +162,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
               <Checkbox
                 mt={'5px'}
                 disabled={props.groups.length === 1 || !building_id}
+                hidden={props.groups.length === 1}
                 onChange={(event) => {
                   if (event.target.checked) {
                     const groups = props.groups

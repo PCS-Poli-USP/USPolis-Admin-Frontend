@@ -34,6 +34,7 @@ export const appContext = createContext<AppContext>(DEFAULT_VALUE);
 
 export default function AppContextProvider({
   children,
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 }: React.PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(false);
   const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
@@ -49,7 +50,16 @@ export default function AppContextProvider({
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
       setIsAuthenticated(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
+      console.error('Error getting self from backend:', e);
+      console.log(e);
+
+      if (e.message == 'Network Error') {
+        console.log('Server error, logging out... (from getSelf)');
+        logout();
+      }
+
       if (e.response.status === 403) {
         throw new Error('User with this email not registered');
       }
