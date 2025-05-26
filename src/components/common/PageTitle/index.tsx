@@ -31,48 +31,62 @@ function PageTitle({ title, onConfirm }: PageTitleProps) {
       mb={'10px'}
     >
       <Text fontSize='4xl'>{title}</Text>
-      <DateRangeInput
-        title={title}
-        start={start}
-        end={end}
-        setStart={setStart}
-        setEnd={setEnd}
-        onConfirm={(start, end) => {
-          onConfirm(start, end);
-          setRangeApplied(true);
-        }}
-        onReset={() => {
-          setRangeApplied(false);
-          onConfirm('', '');
-        }}
-      />
-      {rangeApplied && (
-        <Flex
-          borderRadius={'40px'}
-          border={'1px solid #408080'}
-          p={'5px'}
-          gap={'5px'}
-          justify={'center'}
-          align={'center'}
-        >
-          <Text fontWeight={'bold'}>
-            Período: {formatDate(start)} até {formatDate(end)}
-          </Text>
-          <IconButton
-            aria-label='Remover período'
-            icon={<CloseIcon />}
-            isRound
-            size={'sm'}
-            variant={'ghost'}
-            onClick={() => {
-              setRangeApplied(false);
-              setStart('');
-              setEnd('');
-              onConfirm('', '');
-            }}
-          />
-        </Flex>
-      )}
+      <Flex gap={'5px'} align={'center'}>
+        <DateRangeInput
+          title={title}
+          start={start}
+          end={end}
+          setStart={setStart}
+          setEnd={setEnd}
+          onConfirm={(start, end) => {
+            onConfirm(start, end);
+            setRangeApplied(true);
+          }}
+          onReset={() => {
+            setRangeApplied(false);
+            onConfirm('', '');
+          }}
+        />
+        {!rangeApplied && (
+          <Flex
+            borderRadius={'40px'}
+            border={'1px solid #408080'}
+            p={'5px'}
+            gap={'5px'}
+            justify={'center'}
+            align={'center'}
+          >
+            <Text fontWeight={'bold'}>Período: Até o momento</Text>
+          </Flex>
+        )}
+        {rangeApplied && (
+          <Flex
+            borderRadius={'40px'}
+            border={'1px solid #408080'}
+            p={'5px'}
+            gap={'5px'}
+            justify={'center'}
+            align={'center'}
+          >
+            <Text fontWeight={'bold'}>
+              Período: {formatDate(start)} até {formatDate(end)}
+            </Text>
+            <IconButton
+              aria-label='Remover período'
+              icon={<CloseIcon />}
+              isRound
+              size={'sm'}
+              variant={'ghost'}
+              onClick={() => {
+                setRangeApplied(false);
+                setStart('');
+                setEnd('');
+                onConfirm('', '');
+              }}
+            />
+          </Flex>
+        )}
+      </Flex>
     </Flex>
   );
 }

@@ -93,7 +93,7 @@ function DateRangeInput({
   return (
     <Popover isOpen={isOpen} onClose={onClose}>
       <PopoverTrigger>
-        <Tooltip label={`Ver ${title} anteriores`} placement='right'>
+        <Tooltip label={`Ver ${title} anteriores`} placement='top'>
           <IconButton
             onClick={onToggle}
             variant={'ghost'}
