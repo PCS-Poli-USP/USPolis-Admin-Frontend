@@ -1,12 +1,14 @@
-import { ClassResponse } from 'models/http/responses/class.response.models';
+import { ClassResponse } from '../../models/http/responses/class.response.models';
 
 export function ClassesBySubject(classes: ClassResponse[]) {
   const mapData = classes.reduce((group: Map<string, ClassResponse[]>, cl) => {
     const { subject_code } = cl;
     const subjectClasses = group.get(subject_code);
-    subjectClasses
-      ? group.set(subject_code, subjectClasses.concat(cl))
-      : group.set(subject_code, [cl]);
+    if (subjectClasses) {
+      group.set(subject_code, subjectClasses.concat(cl));
+    } else {
+      group.set(subject_code, [cl]);
+    }
 
     return group;
   }, new Map<string, ClassResponse[]>());
@@ -17,7 +19,7 @@ export function ClassesBySubject(classes: ClassResponse[]) {
   );
 
   // Sort by subject
-  return Array.from(mapData).sort(([subjectA, _dataA], [subjectB, _dataB]) =>
+  return Array.from(mapData).sort(([subjectA], [subjectB]) =>
     subjectA.localeCompare(subjectB),
   );
 }

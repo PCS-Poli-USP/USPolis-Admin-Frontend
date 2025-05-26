@@ -3,14 +3,14 @@ import { useState } from 'react';
 import {
   CreateBuilding,
   UpdateBuilding,
-} from 'models/http/requests/building.request.models';
-import RegisterModal from 'pages/buildings/RegisterModal/register.modal';
-import Dialog from 'components/common/Dialog/dialog.component';
-import DataTable from 'components/common/DataTable/dataTable.component';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
+} from '../../models/http/requests/building.request.models';
+import RegisterModal from '../../pages/buildings/RegisterModal/register.modal';
+import Dialog from '../../components/common/Dialog/dialog.component';
+import DataTable from '../../components/common/DataTable/dataTable.component';
+import { BuildingResponse } from '../../models/http/responses/building.response.models';
 import { getBuildingsColumns } from './Tables/building.tables';
-import useBuildings from 'hooks/useBuildings';
-import PageContent from 'components/common/PageContent';
+import useBuildings from '../../hooks/useBuildings';
+import PageContent from '../../components/common/PageContent';
 
 const Buildings = () => {
   const [contextBuilding, setContextBuilding] = useState<

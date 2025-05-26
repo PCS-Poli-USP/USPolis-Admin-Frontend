@@ -6,6 +6,7 @@ import {
 } from '@chakra-ui/icons';
 import {
   Box,
+  Center,
   chakra,
   Flex,
   IconButton,
@@ -48,7 +49,7 @@ import {
   FaStepBackward,
   FaStepForward,
 } from 'react-icons/fa';
-import { Textify } from 'utils/formatters';
+import { Textify } from '../../../utils/formatters';
 
 type ColumnPinning = {
   left: string[];
@@ -108,12 +109,6 @@ export default function DataTable<Data extends object>({
     // eslint-disable-next-line
   }, [table.getState().columnFilters[0]?.id]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function getFilteredData() {
-    const filteredData = table.getFilteredRowModel().rows;
-    return filteredData;
-  }
-
   return (
     <Flex
       direction={'column'}
@@ -164,8 +159,8 @@ export default function DataTable<Data extends object>({
                         boxShadow: isLastLeftPinnedColumn
                           ? '-4px 0 4px -4px gray inset'
                           : isFirstRightPinnedColumn
-                          ? '4px 0 4px -4px gray inset'
-                          : undefined,
+                            ? '4px 0 4px -4px gray inset'
+                            : undefined,
                         left:
                           isPinned === 'left'
                             ? `${header.column.getStart('left')}px`
@@ -184,11 +179,32 @@ export default function DataTable<Data extends object>({
                       <Box
                         onClick={header.column.getToggleSortingHandler()}
                         cursor={header.column.getCanSort() ? 'pointer' : ''}
+                        display={'flex'}
+                        justifyContent={
+                          meta?.isCenter
+                            ? 'center'
+                            : meta?.isNumeric
+                              ? 'flex-end'
+                              : 'flex-start'
+                        }
+                        alignContent={
+                          meta?.isCenter
+                            ? 'center'
+                            : meta?.isNumeric
+                              ? 'flex-end'
+                              : 'flex-start'
+                        }
                       >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        <Tooltip
+                          label={header.column.columnDef.header as string}
+                        >
+                          <Text textOverflow={'ellipsis'}>
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                          </Text>
+                        </Tooltip>
 
                         <chakra.span pl='2'>
                           {header.column.getIsSorted() ? (
@@ -271,8 +287,8 @@ export default function DataTable<Data extends object>({
                         boxShadow: isLastLeftPinnedColumn
                           ? '-4px 0 4px -4px gray inset'
                           : isFirstRightPinnedColumn
-                          ? '4px 0 4px -4px gray inset'
-                          : undefined,
+                            ? '4px 0 4px -4px gray inset'
+                            : undefined,
                         left:
                           isPinned === 'left'
                             ? `${cell.column.getStart('left')}px`
@@ -290,17 +306,44 @@ export default function DataTable<Data extends object>({
                       overflowX={'hidden'}
                       textOverflow={'ellipsis'}
                     >
-                      {meta?.isBoolean ? (
-                        cell.getValue() ? (
-                          <CheckIcon />
-                        ) : (
-                          <CloseIcon />
-                        )
+                      {meta?.isCenter ? (
+                        <Center>
+                          {meta?.isBoolean ? (
+                            cell.getValue() ? (
+                              <Center>
+                                <CheckIcon />
+                              </Center>
+                            ) : (
+                              <Center>
+                                <CloseIcon />
+                              </Center>
+                            )
+                          ) : (
+                            flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )
+                          )}
+                        </Center>
                       ) : (
-                        flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )
+                        <>
+                          {meta?.isBoolean ? (
+                            cell.getValue() ? (
+                              <Center>
+                                <CheckIcon />
+                              </Center>
+                            ) : (
+                              <Center>
+                                <CloseIcon />
+                              </Center>
+                            )
+                          ) : (
+                            flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )
+                          )}
+                        </>
                       )}
                     </Td>
                   );
@@ -445,6 +488,11 @@ function Filter({ column }: { column: Column<any, any> }) {
       mt='2'
       value={(columnFilterValue ?? '') as string}
       onChange={(e) => column.setFilterValue(e.target.value)}
+      w={'fit-content'}
+      maxW={
+        column.columnDef.maxSize ? `${column.columnDef.maxSize}px` : undefined
+      }
+      alignSelf={'flex-end'}
     >
       {sortedUniqueValues.map((value: any) => (
         <option value={value} key={value}>

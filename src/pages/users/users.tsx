@@ -1,93 +1,39 @@
-import { useContext, useEffect, useState } from 'react';
+import { useState } from 'react';
 import * as C from '@chakra-ui/react';
 
-import DataTable from 'components/common/DataTable/dataTable.component';
-import { appContext } from 'context/AppContext';
+import DataTable from '../../components/common/DataTable/dataTable.component';
 import EditUserModal from './UserEditModal/user.edit.modal';
-import Dialog from 'components/common/Dialog/dialog.component';
-import PageContent from 'components/common/PageContent';
-import { UserResponse } from 'models/http/responses/user.response.models';
-import { UpdateUser } from 'models/http/requests/user.request.models';
-import useUsersService from 'hooks/API/services/useUsersService';
+import Dialog from '../../components/common/Dialog/dialog.component';
+import PageContent from '../../components/common/PageContent';
+import { UserResponse } from '../../models/http/responses/user.response.models';
 import { getUsersColumns } from './Tables/user.table';
-import useCustomToast from 'hooks/useCustomToast';
+import useUsers from '../../hooks/useUsers';
+import useBuildings from '../../hooks/useBuildings';
+import useGroups from '../../hooks/groups/useGroups';
 
 const Users = () => {
-  const { loading, setLoading } = useContext(appContext);
-  const usersService = useUsersService();
-  const showToast = useCustomToast();
+  const { buildings, loading: loadingBuildings } = useBuildings();
+  const { users, loading, deleteUser, getUsers } = useUsers();
+  const { groups, loading: loadingGroups } = useGroups();
 
-  const [users, setUsers] = useState<UserResponse[]>([]);
-  const [contextUser, setContextUser] = useState<UserResponse | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserResponse>();
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
   const columns = getUsersColumns({
     handleEditClick: handleEditButton,
     handleDeleteClick: handleDeleteButton,
+    isLoading: loading || loadingBuildings || loadingGroups,
   });
 
-  useEffect(() => {
-    fetchUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  async function fetchUsers() {
-    setLoading(true);
-    try {
-      const response = await usersService.list();
-      setUsers(response.data);
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
-      setTimeout(() => {
-        fetchUsers();
-      }, 1000);
-    }
-  }
-
   function handleEditButton(user: UserResponse) {
-    setContextUser(user);
+    setSelectedUser(user);
     setEditModalOpen(true);
   }
 
   function handleDeleteButton(user: UserResponse) {
+    setSelectedUser(user);
     setDeleteDialogOpen(true);
-    setContextUser(user);
-  }
-
-  async function editUser(user_id: number, data: UpdateUser) {
-    setLoading(true);
-    try {
-      await usersService.update(user_id, data);
-      showToast('Sucesso', `Usuário editado!`, 'success');
-    } catch (err: any) {
-      console.error(err);
-      showToast(
-        'Erro',
-        `Erro ao editar usuário:\n${err.response.data.message}`,
-        'error',
-      );
-      setLoading(false);
-    }
-    fetchUsers();
-  }
-
-  async function deleteUser(user_id: number) {
-    setLoading(true);
-    try {
-      await usersService.deleteById(user_id);
-      showToast('Sucesso', `Usuário deletado!`, 'success');
-    } catch (err: any) {
-      console.error(err);
-      showToast(
-        'Erro',
-        `Erro ao deletar usuário:\n${err.response.data.message}`,
-        'error',
-      );
-      setLoading(false);
-    }
-    fetchUsers();
   }
 
   return (
@@ -99,26 +45,16 @@ const Users = () => {
       </C.Flex>
       <DataTable loading={loading} columns={columns} data={users} />
       <EditUserModal
+        groups={groups}
+        buildings={buildings}
+        user={selectedUser}
         isOpen={editModalOpen}
+        refetch={() => {
+          getUsers();
+        }}
         onClose={() => {
           setEditModalOpen(false);
-          setContextUser(null);
-        }}
-        formData={{
-          buildings: contextUser?.buildings?.map((b) => ({
-            label: b.name,
-            value: b.id,
-          })),
-          is_admin: contextUser?.is_admin,
-        }}
-        otherData={{
-          email: contextUser?.email,
-        }}
-        onSave={(form) => {
-          editUser(contextUser!.id, {
-            building_ids: form.buildings?.map((b) => b.value),
-            is_admin: form.is_admin ? form.is_admin : false,
-          });
+          setSelectedUser(undefined);
         }}
       />
       <Dialog
@@ -127,10 +63,11 @@ const Users = () => {
           setDeleteDialogOpen(false);
         }}
         onConfirm={() => {
-          deleteUser(contextUser!.id);
+          if (!selectedUser) return;
+          deleteUser(selectedUser.id);
           setDeleteDialogOpen(false);
         }}
-        title={`Deseja deletar o usuário "${contextUser?.name}"`}
+        title={`Deseja deletar o usuário "${selectedUser?.name}"`}
       />
     </PageContent>
   );

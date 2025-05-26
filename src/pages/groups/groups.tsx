@@ -9,21 +9,21 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import PageContent from 'components/common/PageContent';
+import PageContent from '../../components/common/PageContent';
 import GroupAccordion from './GroupAccordion/group.accordion';
 import { MdGroupAdd } from 'react-icons/md';
 import GroupModal from './GroupModal/group.modal';
-import useClassrooms from 'hooks/useClassrooms';
-import useUsers from 'hooks/useUsers';
+import useClassrooms from '../../hooks/classrooms/useClassrooms';
+import useUsers from '../../hooks/useUsers';
 import { useEffect, useState } from 'react';
-import useGroups from 'hooks/useGroups';
-import { GroupResponse } from 'models/http/responses/group.response.models';
-import Dialog from 'components/common/Dialog/dialog.component';
-import useBuildings from 'hooks/useBuildings';
-import { filterString } from 'utils/filters';
+import useGroups from '../../hooks/groups/useGroups';
+import { GroupResponse } from '../../models/http/responses/group.response.models';
+import Dialog from '../../components/common/Dialog/dialog.component';
+import useBuildings from '../../hooks/useBuildings';
+import { filterString } from '../../utils/filters';
 import { BsSearch } from 'react-icons/bs';
 
-export function Groups() {
+export default function Groups() {
   const {
     isOpen: isOpenGroupModal,
     onOpen: onOpenGroupModal,
@@ -50,6 +50,8 @@ export function Groups() {
     getAllBuildings,
   } = useBuildings(false);
 
+  const [filterBuilding, setFilterBuilding] = useState<string>('');
+  const [filterName, setFilterName] = useState<string>('');
   const [selectedGroup, setSelectedGroup] = useState<GroupResponse>();
   const [filteredGroups, setFilteredGroups] = useState<GroupResponse[]>([]);
 
@@ -59,12 +61,12 @@ export function Groups() {
     getUsers();
   }
 
-  function filterGroups(value: string) {
-    const filtered = groups.filter(
-      (group) =>
-        filterString(group.name, value) ||
-        filterString(group.abbreviation, value),
-    );
+  function filterGroups(building: string, name: string) {
+    const filtered = groups.filter((group) => {
+      const matchBuilding = filterString(group.building, building);
+      const matchName = filterString(group.name, name);
+      return matchBuilding && matchName;
+    });
     setFilteredGroups(filtered);
   }
 
@@ -102,6 +104,7 @@ export function Groups() {
             deleteGroup(selectedGroup.id);
             setSelectedGroup(undefined);
           }
+          onClose();
         }}
       />
       <Flex align={'center'}>
@@ -112,9 +115,23 @@ export function Groups() {
           </InputLeftElement>
           <Input
             type='text'
+            placeholder='Filtrar por prédio'
+            onChange={(event) => {
+              setFilterBuilding(event.target.value);
+              filterGroups(event.target.value, filterName);
+            }}
+          />
+        </InputGroup>
+        <InputGroup ml={'40px'} w={'fit-content'}>
+          <InputLeftElement pointerEvents='none'>
+            <BsSearch color='gray.300' />
+          </InputLeftElement>
+          <Input
+            type='text'
             placeholder='Filtrar por grupo'
             onChange={(event) => {
-              filterGroups(event.target.value);
+              setFilterName(event.target.value);
+              filterGroups(filterBuilding, event.target.value);
             }}
           />
         </InputGroup>
@@ -138,7 +155,7 @@ export function Groups() {
         minH={'100px'}
       >
         <GroupAccordion
-          groups={filteredGroups.length > 0 ? filteredGroups : groups}
+          groups={filterBuilding || filterName ? filteredGroups : groups}
           onGroupUpdate={(group) => {
             setSelectedGroup(group);
             onOpenGroupModal();

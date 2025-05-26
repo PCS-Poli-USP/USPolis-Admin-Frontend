@@ -1,13 +1,13 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 // import { CreateUser } from 'models/common/user.common.model';
 import {
   CreateUser,
   UpdateUser,
-} from 'models/http/requests/user.request.models';
+} from '../models/http/requests/user.request.models';
 
-import { UserResponse } from 'models/http/responses/user.response.models';
+import { UserResponse } from '../models/http/responses/user.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortUsersResponse } from 'utils/users/users.sorter';
+import { sortUsersResponse } from '../utils/users/users.sorter';
 import useUsersService from './API/services/useUsersService';
 import useSelfService from './API/services/useSelfService';
 
@@ -42,7 +42,7 @@ const useUsers = (initialFetch: boolean = true) => {
       .then((response) => {
         setUsers(response.data.sort(sortUsersResponse));
       })
-      .catch((error) => {
+      .catch(() => {
         showToast('Erro', 'Erro ao carregar usuários', 'error');
       })
       .finally(() => {
@@ -55,7 +55,7 @@ const useUsers = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Usuário ${data.name} criado com sucesso!`,
@@ -64,7 +64,7 @@ const useUsers = (initialFetch: boolean = true) => {
           getUsers();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao criar reserva: ${error}`, 'error');
+          showToast('Erro', `Erro ao criar usuário: ${error}`, 'error');
         })
         .finally(() => {
           setLoading(false);
@@ -78,12 +78,13 @@ const useUsers = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .update(id, data)
-        .then((response) => {
-          showToast('Sucesso', `Reserva atualizado com sucesso!`, 'success');
+        .then(() => {
+          showToast('Sucesso', `Usuário atualizado com sucesso!`, 'success');
           getUsers();
         })
         .catch((error) => {
           showToast('Erro', `Erro ao atualizar o usuário: ${error}`, 'error');
+          console.log(error);
         })
         .finally(() => {
           setLoading(false);
@@ -97,7 +98,7 @@ const useUsers = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso!', 'Sucesso ao remover usuário', 'success');
 
           getUsers();
@@ -115,7 +116,7 @@ const useUsers = (initialFetch: boolean = true) => {
 
   useEffect(() => {
     if (initialFetch) getUsers();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFetch]);
 
   return {

@@ -1,16 +1,17 @@
 import { Grid, GridItem } from '@chakra-ui/react';
-import PageContent from 'components/common/PageContent';
+import PageContent from '../../components/common/PageContent';
 import SolicitationStack from './SolicitationStack/solicitation.stack';
 import SolicitationPanel from './SolicitationPanel/solicitation.panel';
-import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../hooks/useClassroomSolicitations';
 import { useEffect, useState } from 'react';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../models/http/responses/classroomSolicitation.response.models';
 
 function Solicitations() {
   const {
     loading,
     solicitations,
-    getBuildingSolicitations,
+    getPendingBuildingSolicitations,
+    getAllBuildingSolicitations,
     approveSolicitation,
     denySolicitation,
   } = useClassroomsSolicitations(false);
@@ -21,18 +22,23 @@ function Solicitations() {
     undefined,
   );
 
+  const [loadedAll, setLoadedAll] = useState(false);
+
   useEffect(() => {
-    getBuildingSolicitations();
+    getPendingBuildingSolicitations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <PageContent>
-      <Grid gridTemplateColumns={'40% 60%'} h={'calc(100vh - 140px)'} gap={4}>
+      <Grid gridTemplateColumns={'40% 60%'} h={'calc(100vh - 120px)'} gap={4}>
         <GridItem
           borderRight={'2px'}
           h={'100%'}
+          border={'2px'}
+          borderRadius={'10px'}
           borderColor={'lightgray'}
+          p={'10px'}
           overflowY={'auto'}
         >
           <SolicitationStack
@@ -41,13 +47,22 @@ function Solicitations() {
             solicitations={solicitations}
             handleOnClick={setSolicitation}
             reset={() => setSolicitation(undefined)}
+            loading={loading}
+            handleShowAll={(showAll) => {
+              if (!loadedAll && showAll) {
+                getAllBuildingSolicitations();
+                setLoadedAll(true);
+              }
+            }}
           />
         </GridItem>
-        <GridItem overflow={'auto'} w={'100%'} p={'0px 20px 0px 0px'}>
+        <GridItem
+          overflow={'auto'}
+          w={'100%'}
+          h={'100%'}
+          p={'0px 20px 0px 0px'}
+        >
           <SolicitationPanel
-            reset={() => {
-              getBuildingSolicitations();
-            }}
             handleClose={() => {
               setSelectedIndex(undefined);
               setSolicitation(undefined);

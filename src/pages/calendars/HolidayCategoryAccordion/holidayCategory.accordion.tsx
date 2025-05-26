@@ -16,13 +16,13 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
+import { HolidayCategoryResponse } from '../../../models/http/responses/holidayCategory.response.models';
 import HolidayCategoryAccordionItem from './holidayCategory.accordion.item';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { useEffect, useState } from 'react';
-import { sortAllHolidaysFromHolidaysCategories } from 'utils/holidaysCategories/holidaysCategories.sorter';
-import { HolidayResponse } from 'models/http/responses/holiday.response.models';
-import { UserResponse } from 'models/http/responses/user.response.models';
+import { sortAllHolidaysFromHolidaysCategories } from '../../../utils/holidaysCategories/holidaysCategories.sorter';
+import { HolidayResponse } from '../../../models/http/responses/holiday.response.models';
+import { UserResponse } from '../../../models/http/responses/user.response.models';
 
 interface HolidayCategoryAccordionProps {
   loading: boolean;

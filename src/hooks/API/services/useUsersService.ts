@@ -2,9 +2,10 @@ import useAxiosPrivate from '../axios/useAxiosPrivate';
 import {
   CreateUser,
   UpdateUser,
-} from 'models/http/requests/user.request.models';
+} from '../../../models/http/requests/user.request.models';
 import { AxiosResponse } from 'axios';
-import { UserResponse } from 'models/http/responses/user.response.models';
+import { UserResponse } from '../../../models/http/responses/user.response.models';
+import { JSONResponse } from '../../../models/http/responses/common.response.models';
 
 const useUsersService = () => {
   const PREFIX = '/admin/users';
@@ -19,13 +20,15 @@ const useUsersService = () => {
   };
 
   const update = (
-    user_id: Number,
+    user_id: number,
     data: UpdateUser,
-  ): Promise<AxiosResponse<Number>> => {
+  ): Promise<AxiosResponse<number>> => {
     return axios.put(`${PREFIX}/${user_id}`, data);
   };
 
-  const deleteById = (user_id: number): Promise<AxiosResponse<any>> => {
+  const deleteById = (
+    user_id: number,
+  ): Promise<AxiosResponse<JSONResponse>> => {
     return axios.delete(`${PREFIX}/${user_id}`);
   };
 

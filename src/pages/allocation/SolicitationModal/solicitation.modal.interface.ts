@@ -1,7 +1,7 @@
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
-import { ModalProps } from 'models/interfaces';
-import { ReservationType } from 'utils/enums/reservations.enum';
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
+import { ClassroomResponse } from '../../../models/http/responses/classroom.response.models';
+import { ModalProps } from '../../../models/interfaces';
+import { ReservationType } from '../../../utils/enums/reservations.enum';
 
 export interface SolicitationModalProps extends ModalProps {
   isMobile: boolean;

@@ -1,5 +1,5 @@
-import useSelfService from 'hooks/API/services/useSelfService';
-import { UserResponse } from 'models/http/responses/user.response.models';
+import useSelfService from '../hooks/API/services/useSelfService';
+import { UserResponse } from '../models/http/responses/user.response.models';
 import React, { createContext, useEffect, useState } from 'react';
 
 interface AppContext {
@@ -34,9 +34,9 @@ export const appContext = createContext<AppContext>(DEFAULT_VALUE);
 
 export default function AppContextProvider({
   children,
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 }: React.PropsWithChildren<{}>) {
   const [loading, setLoading] = useState(false);
-  const [loadingUser, setLoadingUser] = useState(false);
   const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
   const [accessToken, setAccessToken] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -46,11 +46,20 @@ export default function AppContextProvider({
 
   async function getSelfFromBackend() {
     try {
-      setLoadingUser(true);
+      setLoading(true);
       const self = await selfService.getSelf();
       setLoggedUser(self.data);
       setIsAuthenticated(true);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
+      console.error('Error getting self from backend:', e);
+      console.log(e);
+
+      if (e.message == 'Network Error') {
+        console.log('Server error, logging out... (from getSelf)');
+        logout();
+      }
+
       if (e.response.status === 403) {
         throw new Error('User with this email not registered');
       }
@@ -59,7 +68,7 @@ export default function AppContextProvider({
         logout();
       }
     } finally {
-      setLoadingUser(false);
+      setLoading(false);
     }
   }
 
@@ -74,11 +83,11 @@ export default function AppContextProvider({
   }
 
   useEffect(() => {
-    if (accessToken && !loggedUser && !loadingUser) {
+    if (accessToken && !loggedUser && !loading) {
       getSelfFromBackend();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken, loggedUser, loadingUser]);
+  }, [accessToken, loggedUser, loading]);
 
   return (
     <appContext.Provider

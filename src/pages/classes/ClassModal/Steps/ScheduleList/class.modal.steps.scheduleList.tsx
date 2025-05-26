@@ -15,7 +15,7 @@ import {
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
-import { getScheduleFullString } from 'utils/schedules/schedule.formatter';
+import { getScheduleFullString } from '../../../../../utils/schedules/schedule.formatter';
 
 interface ScheduleListProps {
   schedules: ScheduleData[];
@@ -36,7 +36,7 @@ function ScheduleList(props: ScheduleListProps) {
               <HStack>
                 <BsCalendar2WeekFill />
                 <Text>{getScheduleFullString(val)}</Text>
-                
+
                 <Text fontWeight={'bold'} textColor={'red.500'}>
                   {val.allocated ? 'Alocado' : ''}
                 </Text>
@@ -52,7 +52,9 @@ function ScheduleList(props: ScheduleListProps) {
                   />
                 </Tooltip>
 
-                <Tooltip label={val.allocated ? 'Remover horário ALOCADO' : 'Remover'}>
+                <Tooltip
+                  label={val.allocated ? 'Remover horário ALOCADO' : 'Remover'}
+                >
                   <IconButton
                     colorScheme='red'
                     size='sm'

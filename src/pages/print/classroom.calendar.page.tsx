@@ -3,7 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import rrulePlugin from '@fullcalendar/rrule';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import ClassroomCalendarEventContent from './classroom.calendar.event.content';
-import { MergedEvent } from 'pages/allocation/pdf/ClassroomsCalendarPDF/utils';
+import { MergedEvent } from '../../pages/allocation/pdf/ClassroomsCalendarPDF/utils';
 
 interface ClassroomCalendarPageProps {
   events: MergedEvent[];

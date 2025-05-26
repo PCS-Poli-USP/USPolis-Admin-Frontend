@@ -1,6 +1,6 @@
 import { Box, Checkbox, HStack, StackDivider, VStack } from '@chakra-ui/react';
 import Select, { SelectInstance } from 'react-select';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import { useEffect, useRef, useState } from 'react';
 import SolicitationStackBody from './mysolicitation.stack.body';
 

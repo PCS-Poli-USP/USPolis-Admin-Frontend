@@ -38,6 +38,7 @@ function CalendarViewModal(props: CalendarViewModalProps) {
     });
   }
   const year = new Date().getFullYear(); // Obtém o ano atual
+
   return (
     <Modal isOpen={props.isOpen} onClose={handleCloseModal} size={'4xl'}>
       <ModalOverlay />
@@ -67,7 +68,10 @@ function CalendarViewModal(props: CalendarViewModalProps) {
               eventContent={CalendarViewEventContent}
               displayEventTime={false}
               displayEventEnd={false}
-              validRange={{ start: `${year}-01-01`, end: `${year}-12-31` }} // Limita ao ano atual
+              validRange={{
+                start: `${props.calendar ? props.calendar.year : year}-01-01`,
+                end: `${props.calendar ? props.calendar.year : year}-12-31`,
+              }}
               events={events}
             />
           </Box>

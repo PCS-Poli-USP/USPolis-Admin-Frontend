@@ -1,17 +1,18 @@
-import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
+import { Button, Flex, Spacer, useDisclosure } from '@chakra-ui/react';
 
-import DataTable from 'components/common/DataTable/dataTable.component';
-import Loading from 'components/common/Loading/loading.component';
+import DataTable from '../../components/common/DataTable/dataTable.component';
+import Loading from '../../components/common/Loading/loading.component';
 import { getReservationsColumns } from './Tables/reservation.table';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
 import { useEffect, useState } from 'react';
-import useClassrooms from 'hooks/useClassrooms';
-import useBuildings from 'hooks/useBuildings';
-import useReservations from 'hooks/useReservations';
+import useClassrooms from '../../hooks/classrooms/useClassrooms';
+import useBuildings from '../../hooks/useBuildings';
+import useReservations from '../../hooks/useReservations';
 import ReservationModal from './ReservationModal/reservation.modal';
-import Dialog from 'components/common/Dialog/dialog.component';
-import PageContent from 'components/common/PageContent';
-import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
+import Dialog from '../../components/common/Dialog/dialog.component';
+import PageContent from '../../components/common/PageContent';
+import useClassroomsSolicitations from '../../hooks/useClassroomSolicitations';
+import PageTitle from '../../components/common/PageTitle';
 
 function Reservations() {
   const {
@@ -32,7 +33,7 @@ function Reservations() {
   const {
     loading: loadingSolicitations,
     solicitations,
-    getBuildingSolicitations,
+    getPendingBuildingSolicitations,
   } = useClassroomsSolicitations(false);
 
   const [selectedReservation, setSelectedReservation] =
@@ -75,8 +76,8 @@ function Reservations() {
   }
 
   useEffect(() => {
-    getBuildingSolicitations();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    getPendingBuildingSolicitations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -88,9 +89,12 @@ function Reservations() {
         }}
       />
       <Flex align='center' direction={'row'}>
-        <Text fontSize='4xl' mb={4}>
-          Reservas
-        </Text>
+        <PageTitle
+          title='Reservas'
+          onConfirm={(start, end) => {
+            getReservations(start, end);
+          }}
+        />
         <Spacer />
         <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
           Adicionar Reserva

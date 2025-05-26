@@ -5,14 +5,15 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
+  Skeleton,
   StackDivider,
   VStack,
 } from '@chakra-ui/react';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import { useEffect, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import SolicitationStackBody from './solicitation.stack.body';
-import { filterString } from 'utils/filters';
+import { filterString } from '../../../utils/filters';
 
 interface SolicitationStackProps {
   solicitations: ClassroomSolicitationResponse[];
@@ -20,6 +21,8 @@ interface SolicitationStackProps {
   reset: () => void;
   selectedIndex?: number;
   setSelectedIndex: (index: number) => void;
+  loading: boolean;
+  handleShowAll: (showAll: boolean) => void;
 }
 
 function SolicitationStack({
@@ -28,13 +31,15 @@ function SolicitationStack({
   reset,
   selectedIndex,
   setSelectedIndex,
+  loading,
+  handleShowAll,
 }: SolicitationStackProps) {
-  const [hidden, setHidden] = useState(true);
   const [current, setCurrent] = useState<ClassroomSolicitationResponse[]>([]);
   const [filtered, setFiltered] = useState<ClassroomSolicitationResponse[]>([]);
   const [buildingSearch, setBuildingSearch] = useState('');
   const [classroomSearch, setClassroomSearch] = useState('');
   const [requesterSearch, setRequesterSearch] = useState('');
+  const [showAll, setShowAll] = useState(false);
 
   function filterSolicitation(
     building: string,
@@ -56,23 +61,14 @@ function SolicitationStack({
       newCurrent = newCurrent.filter((val) =>
         filterString(val.user, requester),
       );
-    if (hidden) newCurrent = newCurrent.filter((val) => !val.closed);
     setFiltered(newCurrent);
   }
 
   useEffect(() => {
-    if (hidden) {
-      const initial = [
-        ...solicitations.filter((solicitation) => !solicitation.closed),
-      ];
-      setCurrent(initial);
-      setFiltered((prev) => prev.filter((val) => !val.closed));
-    } else {
-      setCurrent([...solicitations]);
-      filterSolicitation(buildingSearch, classroomSearch, requesterSearch);
-    }
+    setCurrent([...solicitations]);
+    filterSolicitation(buildingSearch, classroomSearch, requesterSearch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hidden, solicitations]);
+  }, [solicitations]);
 
   return (
     <VStack
@@ -142,27 +138,28 @@ function SolicitationStack({
           />
         </InputGroup>
       </HStack>
-      <HStack>
-        <Checkbox
-          isChecked={hidden}
-          onChange={() => {
-            setHidden((prev) => !prev);
-          }}
-        >
-          Ocultar aprovados/negados
-        </Checkbox>
-      </HStack>
-      <SolicitationStackBody
-        reset={reset}
-        setSelectedIndex={setSelectedIndex}
-        selectedIndex={selectedIndex}
-        solicitations={
-          buildingSearch || classroomSearch || requesterSearch
-            ? filtered
-            : current
-        }
-        handleOnClick={handleOnClick}
-      />
+      <Checkbox
+        isChecked={showAll}
+        onChange={(e) => {
+          setShowAll(e.target.checked);
+          handleShowAll(e.target.checked);
+        }}
+      >
+        Exibir aprovados/negados/antigos
+      </Checkbox>
+      <Skeleton isLoaded={!loading} w={'full'}>
+        <SolicitationStackBody
+          reset={reset}
+          setSelectedIndex={setSelectedIndex}
+          selectedIndex={selectedIndex}
+          solicitations={
+            buildingSearch || classroomSearch || requesterSearch
+              ? filtered.filter((val) => showAll || !val.closed)
+              : current.filter((val) => showAll || !val.closed)
+          }
+          handleOnClick={handleOnClick}
+        />
+      </Skeleton>
     </VStack>
   );
 }

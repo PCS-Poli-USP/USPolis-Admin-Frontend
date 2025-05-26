@@ -17,19 +17,19 @@ import {
 import { HolidayForm, HolidayModalProps } from './holiday.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './holiday.modal.form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Input, Select } from 'components/common';
+import { yupResolver } from '@hookform//resolvers/yup';
+import { Input, SelectInput } from '../../../components/common';
 import {
   CreateHoliday,
   UpdateHoliday,
-} from 'models/http/requests/holiday.request.models';
+} from '../../../models/http/requests/holiday.request.models';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
-import useHolidays from 'hooks/useHolidays';
+import useHolidays from '../../../hooks/useHolidays';
 import DateCalendarPicker, {
   useDateCalendarPicker,
-} from 'components/common/DateCalendarPicker';
-import { HolidayResponse } from 'models/http/responses/holiday.response.models';
+} from '../../../components/common/DateCalendarPicker';
+import { HolidayResponse } from '../../../models/http/responses/holiday.response.models';
 
 function HolidayModal(props: HolidayModalProps) {
   const [isMultipleHolidays, setIsMultipleHolidays] = useState(false);
@@ -49,7 +49,8 @@ function HolidayModal(props: HolidayModalProps) {
   });
 
   const { trigger, reset, getValues, clearErrors } = form;
-  const { createHoliday, createManyHolidays, updateHoliday } = useHolidays(false);
+  const { createHoliday, createManyHolidays, updateHoliday } =
+    useHolidays(false);
 
   async function handleCreateSubmit() {
     if (isMultipleHolidays) {
@@ -147,7 +148,7 @@ function HolidayModal(props: HolidayModalProps) {
           <form>
             <ModalBody maxH={'2xl'} overflowY={'auto'}>
               <VStack spacing={4} alignItems={'flex-start'}>
-                <Select
+                <SelectInput
                   disabled={true}
                   label={'Categoria do feriado'}
                   name={'category_id'}

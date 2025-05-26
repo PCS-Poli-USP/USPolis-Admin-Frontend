@@ -1,11 +1,14 @@
-import useCustomToast from 'hooks/useCustomToast';
-import { OccurrenceResponse } from 'models/http/responses/occurrence.response.models';
+/* eslint-disable react-hooks/exhaustive-deps */
+
+import useCustomToast from '../hooks/useCustomToast';
+import { OccurrenceResponse } from '../models/http/responses/occurrence.response.models';
 import { useCallback, useState } from 'react';
 
-import { sortOccurrenceResponse } from 'utils/occurrences/occurrences.sorter';
+import { sortOccurrenceResponse } from '../utils/occurrences/occurrences.sorter';
 import useOcurrencesService, {
   AllocateManySchedulesData,
 } from './API/services/useOccurrencesService';
+import { ScheduleErrorParser } from './schedules/scheduleErrorParser';
 
 const useOccurrences = () => {
   const service = useOcurrencesService();
@@ -13,6 +16,7 @@ const useOccurrences = () => {
   const [occurrences, setOccurrences] = useState<OccurrenceResponse[]>([]);
 
   const showToast = useCustomToast();
+  const scheduleParser = new ScheduleErrorParser();
 
   const getOccurrences = useCallback(async () => {
     setLoading(true);
@@ -38,7 +42,7 @@ const useOccurrences = () => {
       setLoading(true);
       await service
         .allocate_many_schedules(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso!',
             `${data.length} horário(s) alocado(s)`,
@@ -46,7 +50,7 @@ const useOccurrences = () => {
           );
         })
         .catch((error) => {
-          showToast('Erro', 'Erro ao alocar horários', 'error');
+          showToast('Erro', scheduleParser.parseAllocateError(error), 'error');
           console.log(error);
         })
         .finally(() => {

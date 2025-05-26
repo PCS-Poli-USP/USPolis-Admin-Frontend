@@ -1,7 +1,7 @@
 import * as yup from 'yup';
-import { ReservationValidator } from 'utils/reservations/resevations.validator';
-import { ScheduleValidator } from 'utils/schedules/schedules.validator';
-import { Recurrence } from 'utils/enums/recurrence.enum';
+import { ReservationValidator } from '../../../../../utils/reservations/resevations.validator';
+import { ScheduleValidator } from '../../../../../utils/schedules/schedules.validator';
+import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
 import { ReservationSecondForm } from './reservation.modal.steps.second.interface';
 
 export const secondFormFields = {
@@ -80,7 +80,7 @@ export const secondFormFields = {
         function (value) {
           const { start_date } = this.parent;
           if (!value) return true;
-          if (!!start_date) return true;
+          if (start_date) return true;
 
           return !ScheduleValidator.isInvalidDateOferring(start_date, value);
         },

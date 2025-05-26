@@ -9,9 +9,9 @@ import DrawerBody from './drawer.body';
 import { DrawerNavBar } from './drawer.navbar';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Joyride, { CallBackProps, EVENTS, STATUS } from 'react-joyride';
-import { useFeatureGuideContext } from 'context/FeatureGuideContext';
-import { FeatureTourGuideStepData } from 'context/FeatureGuideContext/steps';
-import { FG_STEP_INDEXES } from 'context/FeatureGuideContext/utils';
+import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
+import { FeatureTourGuideStepData } from '../../../context/FeatureGuideContext/steps';
+import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
 
 const drawerWidth = 300;
 
@@ -88,7 +88,54 @@ export default function EmptyPage() {
     stepData: FeatureTourGuideStepData,
   ) => {
     if (type === EVENTS.STEP_BEFORE) {
-      if (index === FG_STEP_INDEXES.MENU) {
+      if (index === FG_STEP_INDEXES.PAGE_MENU) {
+        handleDrawerOpen();
+      }
+      if (
+        index === FG_STEP_INDEXES.RESERVATION_BY_ALLOCATION ||
+        index === FG_STEP_INDEXES.ALLOCATION_DRAG_AND_DROP
+      ) {
+        setTimeout(() => {
+          triggerControl('any'); // change calendar view and expand resources
+        }, 200);
+      }
+    }
+
+    if (type === EVENTS.STEP_AFTER) {
+      if (stepData.previous) {
+        navigate(stepData.previous);
+      }
+      if (index == FG_STEP_INDEXES.AUTOMATIC_CLASS_CREATION) {
+        setTimeout(() => {
+          setState({ ...state, stepIndex: index - 1 });
+        }, 250);
+        return;
+      }
+      if (index === FG_STEP_INDEXES.PAGE_MENU) {
+        handleDrawerClose();
+        setTimeout(() => {
+          setState({ ...state, stepIndex: index - 1 });
+        }, 100);
+        return;
+      }
+      if (index === FG_STEP_INDEXES.ALLOCATION_GRID) {
+        handleDrawerOpen();
+        setTimeout(() => {
+          setState({ ...state, stepIndex: index - 1 });
+        }, 300);
+        return;
+      }
+      setState({ ...state, stepIndex: index - 1 });
+    }
+  };
+
+  const handleGuideNextClick = (
+    type: string,
+    index: number,
+    stepData: FeatureTourGuideStepData,
+  ) => {
+    if (type === EVENTS.STEP_BEFORE) {
+      if (index === FG_STEP_INDEXES.PAGE_MENU) {
         handleDrawerOpen();
       }
       if (
@@ -102,47 +149,26 @@ export default function EmptyPage() {
     }
 
     if (type === EVENTS.STEP_AFTER) {
-      if (stepData.previous) {
-        navigate(stepData.previous);
-      }
-      if (
-        index === FG_STEP_INDEXES.MENU ||
-        index === FG_STEP_INDEXES.AUTOMATIC_CLASS_CREATION
-      ) {
+      if (index == FG_STEP_INDEXES.CONTACT) {
         handleDrawerClose();
-        setTimeout(() => {
-          setState({ ...state, stepIndex: index - 1 });
-        }, 100);
-      } else if (index === FG_STEP_INDEXES.ALLOCATION_GRID) {
-        handleDrawerOpen();
-        setTimeout(() => {
-          setState({ ...state, stepIndex: index - 1 });
-        }, 300);
-      } else setState({ ...state, stepIndex: index - 1 });
-    }
-  };
-
-  const handleGuideNextClick = (
-    type: string,
-    index: number,
-    stepData: FeatureTourGuideStepData,
-  ) => {
-    if (type === EVENTS.STEP_BEFORE) {
-      if (index === FG_STEP_INDEXES.MENU) {
-        handleDrawerOpen();
       }
-      if (index === FG_STEP_INDEXES.RESERVATION_BY_ALLOCATION) {
-        triggerControl('any'); // change calendar view and expand resources
+      if (index === FG_STEP_INDEXES.USER_MENU) {
+        setTimeout(() => {
+          setState({ ...state, stepIndex: index + 1 });
+        }, 600);
       }
-    }
-
-    if (type === EVENTS.STEP_AFTER) {
       if (index === FG_STEP_INDEXES.CONTACT) {
-        handleDrawerClose();
         setTimeout(() => {
           setState({ ...state, stepIndex: index + 1 });
         }, 300);
-      } else setState({ ...state, stepIndex: index + 1 });
+      }
+
+      if (
+        index !== FG_STEP_INDEXES.CONTACT &&
+        index !== FG_STEP_INDEXES.USER_MENU
+      ) {
+        setState({ ...state, stepIndex: index + 1 });
+      }
 
       if (stepData.next) {
         navigate(stepData.next);
@@ -232,7 +258,10 @@ export default function EmptyPage() {
             handleGuidePreviousClick(type, index, stepData);
             return;
           }
-          handleGuideNextClick(type, index, stepData);
+          if (action === 'next') {
+            handleGuideNextClick(type, index, stepData);
+            return;
+          }
           return;
         }}
       />

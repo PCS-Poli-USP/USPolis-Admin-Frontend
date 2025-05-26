@@ -1,11 +1,11 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 import {
   CreateBuilding,
   UpdateBuilding,
-} from 'models/http/requests/building.request.models';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
+} from '../models/http/requests/building.request.models';
+import { BuildingResponse } from '../models/http/responses/building.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortBuildingsResponse } from 'utils/buildings/building.sorter';
+import { sortBuildingsResponse } from '../utils/buildings/building.sorter';
 import useBuildingsService from './API/services/useBuildingsService';
 
 const useBuildings = (initialFetch = true) => {
@@ -22,7 +22,7 @@ const useBuildings = (initialFetch = true) => {
       .then((response) => {
         setBuildings(response.data.sort(sortBuildingsResponse));
       })
-      .catch((error) => {
+      .catch(() => {
         showToast('Erro', 'Erro ao carregar prédios', 'error');
       })
       .finally(() => {
@@ -37,7 +37,7 @@ const useBuildings = (initialFetch = true) => {
       .then((response) => {
         setBuildings(response.data.sort(sortBuildingsResponse));
       })
-      .catch((error) => {
+      .catch(() => {
         showToast('Erro', 'Erro ao carregar seus prédios', 'error');
       })
       .finally(() => {
@@ -50,7 +50,7 @@ const useBuildings = (initialFetch = true) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Prédio ${data.name} criado com sucesso!`,
@@ -73,7 +73,7 @@ const useBuildings = (initialFetch = true) => {
       setLoading(true);
       await service
         .update(id, data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso', `Prédio atualizado com sucesso!`, 'success');
           getBuildings();
         })
@@ -96,7 +96,7 @@ const useBuildings = (initialFetch = true) => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso!', 'Sucesso ao remover prédio', 'success');
 
           getBuildings();

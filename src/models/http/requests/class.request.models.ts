@@ -1,4 +1,5 @@
-import { ClassType } from 'utils/enums/classes.enum';
+import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
+import { ClassType } from '../../../utils/enums/classes.enum';
 import { CreateSchedule, UpdateSchedule } from './schedule.request.models';
 
 export interface ClassBase {
@@ -10,7 +11,7 @@ export interface ClassBase {
   vacancies: number;
   air_conditionating: boolean;
   accessibility: boolean;
-  projector: boolean;
+  audiovisual: AudiovisualType;
   ignore_to_allocate: boolean;
   calendar_ids: number[];
 }

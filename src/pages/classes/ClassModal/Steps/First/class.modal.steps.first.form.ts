@@ -1,7 +1,7 @@
-import { ClassValidator } from 'utils/classes/classes.validator';
+import { ClassValidator } from '../../../../../utils/classes/classes.validator';
 import * as yup from 'yup';
 import { ClassFirstForm } from './class.modal.steps.first.interface';
-import { ClassType } from 'utils/enums/classes.enum';
+import { ClassType } from '../../../../../utils/enums/classes.enum';
 
 export const classFirstFormFields = {
   subject_id: {

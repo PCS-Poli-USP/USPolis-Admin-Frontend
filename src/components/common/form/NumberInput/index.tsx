@@ -66,7 +66,7 @@ export function NumberInput({
             hidden={hidden}
             min={min}
             max={max}
-            onChange={(valueAsString, valueAsNumber) => {
+            onChange={(valueAsNumber) => {
               field.onChange(valueAsNumber);
               setInputValue(valueAsNumber);
             }}

@@ -12,9 +12,9 @@ import {
   HStack,
   VStack,
 } from '@chakra-ui/react';
-import { ModalProps } from 'models/interfaces';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
-import { ReservationType } from 'utils/enums/reservations.enum';
+import { ModalProps } from '../../../models/interfaces';
+import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { ReservationType } from '../../../utils/enums/reservations.enum';
 import moment from 'moment';
 
 interface MySoliciationModalProps extends ModalProps {
@@ -145,15 +145,15 @@ function MySolicitationModal({
                       solicitation.approved
                         ? 'green.500'
                         : solicitation.denied
-                        ? 'red.500'
-                        : 'yellow.500'
+                          ? 'red.500'
+                          : 'yellow.500'
                     }
                   >
                     {solicitation.approved
                       ? 'Aprovado'
                       : solicitation.denied
-                      ? 'Negado'
-                      : 'Pendente'}
+                        ? 'Negado'
+                        : 'Pendente'}
                   </Text>
                 </Box>
               </VStack>

@@ -1,14 +1,14 @@
-import { ClassResponse } from 'models/http/responses/class.response.models';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { ClassResponse } from '../../../models/http/responses/class.response.models';
+import { ReservationResponse } from '../../../models/http/responses/reservation.response.models';
 import {
   ScheduleResponse,
   ScheduleResponseBase,
-} from 'models/http/responses/schedule.response.models';
+} from '../../../models/http/responses/schedule.response.models';
 import moment from 'moment';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
-import { AllocationEnum } from 'utils/enums/allocation.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
-import { sortScheduleResponse } from 'utils/schedules/schedules.sorter';
+import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
+import { AllocationEnum } from '../../../utils/enums/allocation.enum';
+import { WeekDay } from '../../../utils/enums/weekDays.enum';
+import { sortScheduleResponse } from '../../../utils/schedules/schedules.sorter';
 
 type ScheduleMap = [string, string, string, ScheduleResponseBase];
 
@@ -90,7 +90,7 @@ function insertScheduleInOccupationMap(
   const start = moment(schedule.start_time, 'HH:mm');
   const end = moment(schedule.end_time, 'HH:mm');
   const timeRanges = Array.from(map.keys());
-  timeRanges.forEach((timeRange, index) => {
+  timeRanges.forEach((timeRange) => {
     const rangeStart = moment(timeRange[0], 'HH:mm');
     const rangeEnd = moment(timeRange[1], 'HH:mm');
     if (rangeStart.isSameOrBefore(start) && rangeEnd.isSameOrAfter(start)) {
@@ -108,7 +108,9 @@ function insertScheduleInOccupationMap(
   });
 }
 
-export function getSchedulesFromClasses(classes: ClassResponse[]): ScheduleResponse[] {
+export function getSchedulesFromClasses(
+  classes: ClassResponse[],
+): ScheduleResponse[] {
   return classes.reduce<ScheduleResponse[]>((acc, cls) => {
     return acc.concat(cls.schedules);
   }, []);

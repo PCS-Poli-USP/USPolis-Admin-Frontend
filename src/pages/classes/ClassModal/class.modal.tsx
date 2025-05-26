@@ -42,7 +42,7 @@ import {
   classFirstDefaultValues,
   classFirstSchema,
 } from './Steps/First/class.modal.steps.first.form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform//resolvers/yup';
 import {
   classSecondDefaultValues,
   classSecondSchema,
@@ -56,13 +56,13 @@ import {
   ClassBase,
   CreateClass,
   UpdateClass,
-} from 'models/http/requests/class.request.models';
+} from '../../../models/http/requests/class.request.models';
 import {
   CreateSchedule,
   UpdateSchedule,
-} from 'models/http/requests/schedule.request.models';
-import useClasses from 'hooks/classes/useClasses';
-import { ClassResponse } from 'models/http/responses/class.response.models';
+} from '../../../models/http/requests/schedule.request.models';
+import useClasses from '../../../hooks/classes/useClasses';
+import { ClassResponse } from '../../../models/http/responses/class.response.models';
 import { ClassFourthForm } from './Steps/Fourth/class.modal.steps.fourth.interface';
 import {
   classFourthDefaultValues,
@@ -136,7 +136,7 @@ function ClassModal(props: ClassModalProps) {
       vacancies: firstData.vacancies,
       air_conditionating: fourthData.air_conditionating,
       accessibility: fourthData.accessibility,
-      projector: fourthData.projector,
+      audiovisual: fourthData.audiovisual,
       ignore_to_allocate: fourthData.ignore_to_allocate,
       start_date: secondData.start_date,
       end_date: secondData.end_date,
@@ -233,7 +233,7 @@ function ClassModal(props: ClassModalProps) {
   function loadFourthFormFromClass(data: ClassResponse) {
     fourthForm.reset({
       ignore_to_allocate: data.ignore_to_allocate,
-      projector: data.projector,
+      audiovisual: data.audiovisual,
       accessibility: data.accessibility,
       air_conditionating: data.air_conditionating,
     });

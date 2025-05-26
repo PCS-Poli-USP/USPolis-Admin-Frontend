@@ -1,14 +1,14 @@
 import { ClassModalStepsProps } from '../class.modal.steps.interface';
 import { UseFormReturn } from 'react-hook-form';
-import { WeekDay } from 'utils/enums/weekDays.enum';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { Recurrence } from 'utils/enums/recurrence.enum';
+import { WeekDay } from '../../../../../utils/enums/weekDays.enum';
+import { MonthWeek } from '../../../../../utils/enums/monthWeek.enum';
+import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
 import { ScheduleData } from '../../class.modal.interface';
 import { ClassSecondForm } from '../Second/class.modal.steps.second.interface';
 
 export interface ClassModalThirdStepProps extends ClassModalStepsProps {
-  form: UseFormReturn<ClassThirdForm, any, undefined>;
-  secondForm: UseFormReturn<ClassSecondForm, any, undefined>;
+  form: UseFormReturn<ClassThirdForm, any, ClassThirdForm>;
+  secondForm: UseFormReturn<ClassSecondForm, any, ClassSecondForm>;
   schedules: ScheduleData[];
   setSchedules: (schedules: ScheduleData[]) => void;
   onNext: () => void;

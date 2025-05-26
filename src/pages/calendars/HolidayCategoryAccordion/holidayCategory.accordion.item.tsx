@@ -1,7 +1,7 @@
 import { HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
-import { HolidayResponse } from 'models/http/responses/holiday.response.models';
+import { HolidayResponse } from '../../../models/http/responses/holiday.response.models';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { datetimeToDate } from 'utils/formatters';
+import { datetimeToDate } from '../../../utils/formatters';
 
 interface HolidayCategoryAccordionItemProps {
   isOwner: boolean;

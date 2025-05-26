@@ -1,7 +1,7 @@
-import SubjectValidator from 'utils/subjects/subjects.validator';
+import SubjectValidator from '../../../utils/subjects/subjects.validator';
 import * as yup from 'yup';
 import { SubjectForm } from './subject.modal.interface';
-import { SubjectType } from 'utils/enums/subjects.enum';
+import { SubjectType } from '../../../utils/enums/subjects.enum';
 
 export const formFields = {
   building_ids: {

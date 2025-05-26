@@ -1,13 +1,26 @@
 import { useEffect, useState } from 'react';
-import * as C from '@chakra-ui/react';
-import Conflict from 'models/http/responses/conflict.response.models';
-import moment from 'moment';
-import PageContent from 'components/common/PageContent';
-import { AllocateClassModal } from 'pages/classes/AllocateClassModal';
-import { Collapsable } from 'components/common/Collapsable';
-import useConflictsService from 'hooks/API/services/useConflictsService';
-import useCustomToast from 'hooks/useCustomToast';
+import {
+  Flex,
+  Text,
+  Tabs,
+  TabList,
+  TabPanels,
+  TabPanel,
+  Tab,
+  TabIndicator,
+  Input,
+  Skeleton,
+} from '@chakra-ui/react';
+import Conflict from '../../models/http/responses/conflict.response.models';
+import PageContent from '../../components/common/PageContent';
+import { AllocateClassModal } from '../../pages/classes/AllocateClassModal';
+import useConflictsService from '../../hooks/API/services/useConflictsService';
+import useCustomToast from '../../hooks/useCustomToast';
 import Select from 'react-select';
+import UnintentionalConflictsTab from './UnintentionalConflictsTab';
+import IntentionalConflictsTab from './IntentionalConflictsTab';
+import { ConflictType } from '../../utils/enums/conflictType.enum';
+import moment from 'moment';
 
 type Option = {
   value: string;
@@ -20,46 +33,71 @@ const ConflictsPage = () => {
   const conflictsService = useConflictsService();
 
   const [conflicts, setConflicts] = useState<Conflict[] | null>(null);
+  const [intentionalConflicts, setIntentionalConflicts] = useState<
+    Conflict[] | null
+  >(null);
+
+  const today = moment();
+
   const [loading, setLoading] = useState<boolean>(false);
   const [buildingNames, setBuildingNames] = useState<string[] | null>(null);
   const [selectedBuildingName, setSelectedBuildingName] = useState<string>('');
+  const [start, setStart] = useState<string>(
+    today.month() < 6
+      ? moment({ year: today.year(), month: 0, day: 1 }).format('YYYY-MM-DD') // 1º janeiro
+      : moment({ year: today.year(), month: 6, day: 1 }).format('YYYY-MM-DD'),
+  );
+  const [end, setEnd] = useState<string>(
+    today.month() < 6
+      ? moment({ year: today.year(), month: 5, day: 30 }).format('YYYY-MM-DD') // 1º janeiro
+      : moment({ year: today.year(), month: 11, day: 31 }).format('YYYY-MM-DD'),
+  );
+
   const [isOpenAllocate, setIsOpenAllocate] = useState<boolean>(false);
   const [selectedClassId, setSelectedClassId] = useState<number>(0);
-
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     setBuildingNames(conflicts?.map((it) => it.name) || []);
   }, [conflicts]);
 
-  function fetchData() {
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [start, end]);
+
+  async function fetchData() {
     setLoading(true);
-    conflictsService
-      .list()
+    await conflictsService
+      .list(start, end, ConflictType.UNINTENTIONAL)
       .then((res) => {
         setConflicts(res.data);
       })
       .catch((err) => {
         console.error(err);
         showToast('Erro', 'Erro ao carregar conflitos', 'error');
-      })
-      .finally(() => {
-        setLoading(false);
       });
+
+    await conflictsService
+      .list(start, end, ConflictType.INTENTIONAL)
+      .then((res) => {
+        setIntentionalConflicts(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+        showToast('Erro', 'Erro ao carregar conflitos intencionais', 'error');
+      });
+    setLoading(false);
   }
 
   return (
     <PageContent>
-      <C.Flex paddingX={4} direction={'column'}>
-        <C.Text fontSize='4xl' mb={4}>
+      <Flex paddingX={4} direction={'column'}>
+        <Text fontSize='4xl' mb={4}>
           Conflitos
-        </C.Text>
-        <C.Flex direction={'row'} gap={4} mb={4}>
-          <C.Flex direction={'column'} flex={1}>
-            <C.Text fontSize={'md'}>Prédio:</C.Text>
+        </Text>
+        <Flex direction={'row'} gap={4} mb={4}>
+          <Flex direction={'column'} flex={1}>
+            <Text fontSize={'md'}>Prédio:</Text>
             <Select
               placeholder={'Selecione o prédio'}
               options={
@@ -67,152 +105,103 @@ const ConflictsPage = () => {
                   ? buildingNames.map((it) => ({ value: it, label: it }))
                   : []
               }
-              onChange={(e: Option | null) => {
-                if (e) setSelectedBuildingName(e.value);
-                else setSelectedBuildingName('');
+              onChange={(option: Option | null) => {
+                if (option) {
+                  setSelectedBuildingName(option.value);
+                } else setSelectedBuildingName('');
               }}
               isLoading={loading}
             />
-          </C.Flex>
-        </C.Flex>
-        <C.Flex direction={'column'}>
-          <C.Accordion allowToggle>
-            {selectedBuildingName ? (
-              conflicts
-                ?.find((it) => it.name === selectedBuildingName)
-                ?.conflicts.map((classroom) => (
-                  <C.AccordionItem>
-                    <h2>
-                      <C.AccordionButton>
-                        <C.Box flex='1' textAlign='left' fontWeight={'bold'}>
-                          Sala: {classroom.name}
-                        </C.Box>
-                        <C.AccordionIcon />
-                      </C.AccordionButton>
-                    </h2>
-                    <C.AccordionPanel
-                      display='flex'
-                      flexDirection='column'
-                      gap={4}
-                    >
-                      {Object.entries(classroom.conflicts).map(
-                        ([identifier, event_groups], index) => (
-                          <C.Flex
-                            key={index}
-                            direction={'column'}
-                            justifyContent={'space-between'}
-                            gap={4}
-                            border={'1px solid'}
-                            boxShadow={'md'}
-                            borderColor={'gray.200'}
-                            borderRadius={4}
-                            padding={4}
-                          >
-                            <Collapsable title={identifier}>
-                              {event_groups.map((event_group, index) => (
-                                <C.Flex
-                                  key={index}
-                                  direction={'column'}
-                                  justifyContent={'space-between'}
-                                  border={'1px solid'}
-                                  borderColor={'gray.200'}
-                                  borderRadius={4}
-                                  padding={4}
-                                  margin={4}
-                                >
-                                  <C.Heading size='md'>
-                                    {moment(event_group[0].date).format(
-                                      'DD/MM/YYYY',
-                                    )}
-                                  </C.Heading>
-                                  {event_group.map((event) => (
-                                    <C.Flex
-                                      key={event.id}
-                                      direction={'row'}
-                                      justifyContent={'space-between'}
-                                      border={'1px solid'}
-                                      borderColor={'gray.200'}
-                                      borderRadius={4}
-                                      padding={4}
-                                    >
-                                      <C.Flex direction={'column'} flex={1}>
-                                        <C.Text fontSize={'md'}>
-                                          <strong>
-                                            Início:{' '}
-                                            {event.start_time.toLocaleString()}
-                                          </strong>
-                                        </C.Text>
-                                        <C.Text fontSize={'md'}>
-                                          <strong>
-                                            Fim:{' '}
-                                            {event.end_time.toLocaleString()}
-                                          </strong>
-                                        </C.Text>
-                                      </C.Flex>
-                                      <C.Flex direction={'column'} flex={1}>
-                                        {event.subject_code ? (
-                                          <C.Text fontSize={'md'}>
-                                            {event.subject_code}
-                                          </C.Text>
-                                        ) : undefined}
-                                        {event.reservation_title ? (
-                                          <C.Text fontSize={'md'}>
-                                            Reserva: {event.reservation_title}
-                                          </C.Text>
-                                        ) : undefined}
-                                      </C.Flex>
-                                      <C.Flex direction={'column'} flex={1}>
-                                        {event.class_code ? (
-                                          <C.Text fontSize={'md'}>
-                                            Turma: {event.class_code}
-                                          </C.Text>
-                                        ) : undefined}
-                                      </C.Flex>
-                                      <C.Button
-                                        onClick={() => {
-                                          setSelectedClassId(event.class_id);
-                                          setIsOpenAllocate(true);
-                                        }}
-                                      >
-                                        Editar Alocação
-                                      </C.Button>
-                                    </C.Flex>
-                                  ))}
-                                </C.Flex>
-                              ))}
-                            </Collapsable>
-                          </C.Flex>
-                        ),
-                      )}
-                    </C.AccordionPanel>
-                  </C.AccordionItem>
-                ))
-            ) : (
-              <></>
-            )}
-          </C.Accordion>
-          {selectedBuildingName ? (
-            conflicts?.find((val) => val.name === selectedBuildingName)
-              ?.conflicts.length === 0 ? (
-              <C.Alert status='success'>
-                <C.AlertIcon />
-                <C.AlertTitle>Nenhum conflito encontrado</C.AlertTitle>
-              </C.Alert>
-            ) : undefined
-          ) : (
-            <C.Alert status='warning'>
-              <C.AlertIcon />
-              <C.AlertTitle>Selecione um prédio</C.AlertTitle>
-            </C.Alert>
-          )}
-        </C.Flex>
-      </C.Flex>
+          </Flex>
+          <Flex direction={'column'} flex={1}>
+            <Text fontSize={'md'}>Início:</Text>
+            <Input
+              type='date'
+              value={start}
+              onChange={(e) => {
+                const date = moment(e.target.value);
+                if (date.isValid()) {
+                  const newStart = date.format('YYYY-MM-DD');
+                  if (newStart != start) setStart(newStart);
+                }
+              }}
+              max={end}
+            />
+          </Flex>
+          <Flex direction={'column'} flex={1}>
+            <Text fontSize={'md'}>Fim:</Text>
+            <Input
+              type='date'
+              value={end}
+              min={start}
+              onChange={(e) => {
+                const date = moment(e.target.value);
+                if (date.isValid()) {
+                  const newEnd = date.format('YYYY-MM-DD');
+                  if (newEnd != end) setEnd(newEnd);
+                }
+              }}
+            />
+          </Flex>
+        </Flex>
+        <Tabs position='relative' variant='unstyled'>
+          <TabList>
+            <Tab>
+              <Text fontSize='3xl' color={'red.600'}>
+                Não intencionais
+              </Text>
+            </Tab>
+            <Tab>
+              <Text fontSize='3xl'>Intencionais</Text>
+            </Tab>
+          </TabList>
+          <TabIndicator
+            mt='-1.5px'
+            height='2px'
+            bg='uspolis.blue'
+            borderRadius='1px'
+          />
+          <TabPanels>
+            <TabPanel>
+              <Skeleton isLoaded={!loading}>
+                <UnintentionalConflictsTab
+                  conflicts={conflicts}
+                  selectedBuildingName={selectedBuildingName}
+                  setSelectedClassId={(id) => {
+                    console.log('setSelectedClassId', id);
+                    setSelectedClassId(id);
+                  }}
+                  setIsOpenAllocate={(value) => {
+                    setIsOpenAllocate(value);
+                  }}
+                />
+              </Skeleton>
+            </TabPanel>
+            <TabPanel>
+              <Skeleton isLoaded={!loading}>
+                <IntentionalConflictsTab
+                  conflicts={intentionalConflicts}
+                  selectedBuildingName={selectedBuildingName}
+                  setSelectedClassId={(id) => {
+                    console.log('setSelectedClassId', id);
+                    setSelectedClassId(id);
+                  }}
+                  setIsOpenAllocate={(value) => {
+                    setIsOpenAllocate(value);
+                  }}
+                />
+              </Skeleton>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
+      </Flex>
       <AllocateClassModal
         isOpen={isOpenAllocate}
         onClose={() => {
           setIsOpenAllocate(false);
-          fetchData();
+          setSelectedClassId(0);
         }}
+        refresh={fetchData}
         class_id={selectedClassId}
       />
     </PageContent>

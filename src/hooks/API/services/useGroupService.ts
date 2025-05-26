@@ -1,11 +1,11 @@
 import { AxiosResponse } from 'axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import { GroupResponse } from 'models/http/responses/group.response.models';
-import { JSONResponse } from 'models/http/responses/common.response.models';
+import { GroupResponse } from '../../../models/http/responses/group.response.models';
+import { JSONResponse } from '../../../models/http/responses/common.response.models';
 import {
   GroupRequest,
   GroupUpdate,
-} from 'models/http/requests/group.request.models';
+} from '../../../models/http/requests/group.request.models';
 
 const useGroupService = () => {
   const PREFIX = '/admin/groups';
@@ -13,6 +13,10 @@ const useGroupService = () => {
 
   const list = (): Promise<AxiosResponse<Array<GroupResponse>>> => {
     return axios.get(PREFIX);
+  };
+
+  const listMyGroups = (): Promise<AxiosResponse<Array<GroupResponse>>> => {
+    return axios.get('/users/my-groups');
   };
 
   const listById = (id: number): Promise<AxiosResponse<GroupResponse>> => {
@@ -27,13 +31,14 @@ const useGroupService = () => {
     id: number,
     input: GroupUpdate,
   ): Promise<AxiosResponse<JSONResponse>> => {
-    return axios.patch(`${PREFIX}/${id}`, input);
+    return axios.put(`${PREFIX}/${id}`, input);
   };
   const remove = (id: number): Promise<AxiosResponse<JSONResponse>> => {
     return axios.delete(`${PREFIX}/${id}`);
   };
   return {
     list,
+    listMyGroups,
     listById,
     create,
     update,

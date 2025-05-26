@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import { UserResponse } from 'models/http/responses/user.response.models';
+import { UserResponse } from '../../../models/http/responses/user.response.models';
 
 const useSelfService = () => {
   const PREFIX = '/users';

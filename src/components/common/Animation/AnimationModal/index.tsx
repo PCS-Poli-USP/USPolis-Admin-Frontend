@@ -6,7 +6,7 @@ import {
   Center,
   Button,
 } from '@chakra-ui/react';
-import { ModalProps } from 'models/interfaces';
+import { ModalProps } from '../../../../models/interfaces';
 import TravelHand from '../TravelHand';
 
 interface AnimationModalProps extends ModalProps {
@@ -20,17 +20,17 @@ export default function AnimationModal({
 }: AnimationModalProps) {
   return (
     <>
-    <Button onClick={() => onOpen()}>Animar</Button>
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalBody alignContent={'center'} justifyContent={'center'}>
-          <Center>
-            <TravelHand />
-          </Center>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+      <Button onClick={() => onOpen()}>Animar</Button>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody alignContent={'center'} justifyContent={'center'}>
+            <Center>
+              <TravelHand />
+            </Center>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

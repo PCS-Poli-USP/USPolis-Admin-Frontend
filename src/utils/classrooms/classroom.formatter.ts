@@ -1,8 +1,7 @@
-import { ClassroomWithConflictCount } from 'models/common/classroom.model';
-import { ClassroomWithConflictCount as ClassroomWithConflictCountNew } from 'models/http/responses/classroom.response.models';
+import { ClassroomWithConflictCount } from '../../models/http/responses/classroom.response.models';
 
 export function formatClassroomForSelection(
-  classroom: ClassroomWithConflictCount | ClassroomWithConflictCountNew,
+  classroom: ClassroomWithConflictCount,
 ): string {
   return classroom.conflicts > 0
     ? `⚠️ ${classroom.name} [${classroom.capacity}] (${classroom.conflicts} conflitos)`

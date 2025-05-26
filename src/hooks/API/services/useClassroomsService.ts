@@ -1,17 +1,16 @@
 import { AxiosResponse } from 'axios';
-import { ClassroomWithConflictCount as ClassroomWithConflictCountOLD } from 'models/common/classroom.model';
 import {
   ClassroomFullResponse,
   ClassroomResponse,
   ClassroomWithConflictCount,
-} from 'models/http/responses/classroom.response.models';
+} from '../../../models/http/responses/classroom.response.models';
 import {
   ClassroomConflictCheck,
   CreateClassroom,
   UpdateClassroom,
-} from 'models/http/requests/classroom.request.models';
+} from '../../../models/http/requests/classroom.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import * as service from 'services/api/axios';
+import * as service from '../../../services/api/axios';
 
 const useClassroomsService = () => {
   const axiosCommon = service.default;
@@ -21,9 +20,7 @@ const useClassroomsService = () => {
     return axiosCommon.get('/classrooms');
   };
 
-  const getMine = (): Promise<
-    AxiosResponse<Array<ClassroomResponse>>
-  > => {
+  const getMine = (): Promise<AxiosResponse<Array<ClassroomResponse>>> => {
     return axios.get('/users/my-classrooms');
   };
 
@@ -53,9 +50,13 @@ const useClassroomsService = () => {
   const getWithConflictCount = (
     schedule_id: number,
     building_id: number,
-  ): Promise<AxiosResponse<ClassroomWithConflictCountOLD[]>> => {
+  ): Promise<AxiosResponse<ClassroomWithConflictCount[]>> => {
+    const params = new URLSearchParams();
     return axios.get(
       `/classrooms/with-conflict-count/${building_id}/${schedule_id}`,
+      {
+        params,
+      },
     );
   };
 
@@ -67,6 +68,7 @@ const useClassroomsService = () => {
     params.append('start_time', data.start_time);
     params.append('end_time', data.end_time);
     data.dates.forEach((date) => params.append('dates', date));
+    params.append('type', data.type);
     return axios.get(`/classrooms/with-conflict-count/${building_id}`, {
       params,
     });

@@ -26,12 +26,6 @@ const chakraTheme = extendTheme({
         color: 'uspolis.blue',
         fontFamily: 'Ubuntu, sans-serif',
       },
-      // '*::-webkit-scrollbar': {
-      //   display: 'none', // Oculta a barra de rolagem em navegadores WebKit
-      // },
-      // '*': {
-      //   scrollbarWidth: 'none', // Oculta a barra de rolagem em Firefox
-      // },
     },
   },
 });

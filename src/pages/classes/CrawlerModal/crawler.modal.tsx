@@ -13,8 +13,8 @@ import {
 } from '@chakra-ui/react';
 
 import JupiterCrawlerAccordion from './crawler.accordion';
-import { SubjectCrawlResponse } from 'models/http/responses/subject.response.models';
-import { CrawlerType } from 'utils/enums/subjects.enum';
+import { SubjectCrawlResponse } from '../../../models/http/responses/subject.response.models';
+import { CrawlerType } from '../../../utils/enums/subjects.enum';
 
 interface CrawlerModalProps {
   isOpen: boolean;
@@ -84,7 +84,8 @@ export default function CrawlerModal({
             </>
           ) : (
             <Text>
-              Não foi possível carregar o resultado da busca no {crawlerType}{' '}
+              Não foi possível carregar o resultado da busca no{' '}
+              {crawlerType}{' '}
             </Text>
           )}
         </ModalBody>

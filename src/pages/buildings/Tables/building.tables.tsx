@@ -1,9 +1,9 @@
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
 import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { FilterString } from 'utils/tanstackTableHelpers/tableFiltersFns';
+import { FilterString } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 
 interface BuildingsColumnsProps {
   handleEditButton: (data: BuildingResponse) => void;

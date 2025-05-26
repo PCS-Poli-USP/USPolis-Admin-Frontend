@@ -1,7 +1,10 @@
-import { CreateCalendar, UpdateCalendar } from "models/http/requests/calendar.request.models";
-import { CalendarResponse } from "models/http/responses/calendar.responde.models";
-import { HolidayCategoryResponse } from "models/http/responses/holidayCategory.response.models";
-import { ModalProps } from "models/interfaces";
+import {
+  CreateCalendar,
+  UpdateCalendar,
+} from '../../../models/http/requests/calendar.request.models';
+import { CalendarResponse } from '../../../models/http/responses/calendar.responde.models';
+import { HolidayCategoryResponse } from '../../../models/http/responses/holidayCategory.response.models';
+import { ModalProps } from '../../../models/interfaces';
 
 export interface CalendarModalProps extends ModalProps {
   isUpdate: boolean;
@@ -13,5 +16,6 @@ export interface CalendarModalProps extends ModalProps {
 
 export interface CalendarForm {
   name: string;
+  year: number;
   categories_ids: number[];
 }

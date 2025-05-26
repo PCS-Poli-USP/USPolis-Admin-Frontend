@@ -15,14 +15,15 @@ import {
 } from './holidayCategory.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './holidayCategory.modal.form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Input } from 'components/common';
+import { yupResolver } from '@hookform//resolvers/yup';
+import { Input } from '../../../components/common';
 import {
   CreateHolidayCategory,
   UpdateHolidayCategory,
-} from 'models/http/requests/holidayCategory.request.models';
+} from '../../../models/http/requests/holidayCategory.request.models';
 import { useEffect } from 'react';
-import useHolidaysCategories from 'hooks/useHolidaysCategories';
+import useHolidaysCategories from '../../../hooks/useHolidaysCategories';
+import { NumberInput } from '../../../components/common/form/NumberInput';
 
 function HolidayCategoryModal(props: HolidayCategoryModalProps) {
   const form = useForm<HolidayCategoryForm>({
@@ -48,6 +49,7 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
   function formatUpdateData(data: HolidayCategoryForm): UpdateHolidayCategory {
     const formated_data: UpdateHolidayCategory = {
       name: data.name,
+      year: data.year,
     };
     return formated_data;
   }
@@ -100,6 +102,13 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
                   name={'name'}
                   type={'text'}
                   placeholder={'Nome da categoria'}
+                />
+                <NumberInput
+                  name='year'
+                  label='Ano'
+                  placeholder='Ano do calendário'
+                  min={2025}
+                  max={2100}
                 />
               </VStack>
             </ModalBody>

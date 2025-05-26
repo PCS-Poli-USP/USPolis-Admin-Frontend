@@ -1,4 +1,4 @@
-import { ReservationResponseBase } from 'models/http/responses/reservation.response.models';
+import { ReservationResponseBase } from '../../models/http/responses/reservation.response.models';
 
 export function sortReservationsResponse(
   A: ReservationResponseBase,

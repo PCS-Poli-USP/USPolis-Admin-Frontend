@@ -1,6 +1,5 @@
-import { SubjectType } from 'utils/enums/subjects.enum';
+import { SubjectType } from '../../../utils/enums/subjects.enum';
 import { BuildingResponse } from './building.response.models';
-import { ClassUnfetchResponse } from './class.response.models';
 
 export interface SubjectResponseBase {
   id: number;
@@ -15,9 +14,9 @@ export interface SubjectResponseBase {
 export interface SubjectResponse extends SubjectResponseBase {
   building_ids: number[];
   buildings: BuildingResponse[];
-  classes?: ClassUnfetchResponse[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface SubjectUnfetchResponse extends SubjectResponseBase {}
 
 export interface SubjectCrawlResponse {

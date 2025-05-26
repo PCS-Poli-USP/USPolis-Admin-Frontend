@@ -1,15 +1,16 @@
 import { CopyIcon } from '@chakra-ui/icons';
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { ReservationResponse } from '../../../models/http/responses/reservation.response.models';
 import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { ReservationType } from 'utils/enums/reservations.enum';
-import { getScheduleString } from 'utils/schedules/schedule.formatter';
+import { ReservationType } from '../../../utils/enums/reservations.enum';
+import { getScheduleString } from '../../../utils/schedules/schedule.formatter';
 import {
   FilterRequester,
   FilterString,
-} from 'utils/tanstackTableHelpers/tableFiltersFns';
+} from '../../../utils/tanstackTableHelpers/tableFiltersFns';
+import { SortPeriodFn } from '../../../utils/tanstackTableHelpers/tableSortingFns';
 
 interface ReservationsColumnsProps {
   handleDuplicateClick: (data: ReservationResponse) => void;
@@ -105,6 +106,7 @@ export const getReservationsColumns = (
     accessorKey: 'date',
     header: 'Período',
     filterFn: FilterString,
+    sortingFn: SortPeriodFn,
     accessorFn: (row) =>
       `${moment(row.schedule.start_date).format('DD/MM/YYYY')} até ${moment(
         row.schedule.end_date,

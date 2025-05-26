@@ -1,6 +1,7 @@
 import {
   Button,
-  HStack,
+  Checkbox,
+  Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -9,6 +10,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  VStack,
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import {
@@ -17,11 +19,13 @@ import {
 } from './classroom.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './classroom.modal.form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Input, Select } from 'components/common';
-import { NumberInput } from 'components/common/form/NumberInput';
-import { CheckBox } from 'components/common/form/CheckBox';
-import useClassrooms from 'hooks/useClassrooms';
+import { yupResolver } from '@hookform//resolvers/yup';
+import { Input, MultiSelect, SelectInput } from '../../../components/common';
+import { NumberInput } from '../../../components/common/form/NumberInput';
+import { CheckBox } from '../../../components/common/form/CheckBox';
+import useClassrooms from '../../../hooks/classrooms/useClassrooms';
+import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
+import GroupFormatter from '../../../utils/groups/group.formatter';
 
 export default function ClassroomModal(props: ClassroomModalProps) {
   const form = useForm<ClassroomForm>({
@@ -29,14 +33,22 @@ export default function ClassroomModal(props: ClassroomModalProps) {
     resolver: yupResolver(schema),
   });
 
-  const { trigger, reset, getValues, clearErrors } = form;
+  const { trigger, reset, getValues, clearErrors, setValue, watch } = form;
   const { createClassroom, updateClassroom } = useClassrooms();
+
+  const building_id = watch('building_id');
 
   useEffect(() => {
     if (props.selectedClassroom) {
       reset({ ...props.selectedClassroom });
     }
-  }, [props, reset]);
+    if (props.buildings.length === 1) {
+      setValue('building_id', props.buildings[0].id);
+    }
+    if (props.groups.length === 1) {
+      setValue('group_ids', [props.groups[0].id]);
+    }
+  }, [props, reset, setValue]);
 
   async function handleSaveClick() {
     const isValid = await trigger();
@@ -74,59 +86,101 @@ export default function ClassroomModal(props: ClassroomModalProps) {
         <ModalBody pb={6}>
           <FormProvider {...form}>
             <form>
-              <Input label={'Nome'} name={'name'} placeholder='Nome da sala' />
-
-              <Select
-                mt={4}
+              <SelectInput
+                mb={4}
                 label={'Prédio'}
                 name={'building_id'}
                 placeholder={'Escolha um prédio'}
+                disabled={props.buildings.length === 1}
+                hidden={props.buildings.length === 1}
                 options={props.buildings.map((building) => ({
                   value: building.id,
                   label: building.name,
                 }))}
               />
 
-              <NumberInput
-                mt={4}
-                min={0}
-                label={'Andar'}
-                name={'floor'}
-                placeholder={'Andar da sala'}
-              />
+              <Input label={'Nome'} name={'name'} placeholder='Nome da sala' />
 
-              <NumberInput
-                min={0}
-                mt={4}
-                label={'Capacidade'}
-                name={'capacity'}
-                placeholder={'Capacidade da sala'}
-              />
+              <Flex
+                direction={'row'}
+                justify={'center'}
+                align={'center'}
+                w={'full'}
+                gap={'5px'}
+              >
+                <NumberInput
+                  mt={4}
+                  min={0}
+                  label={'Andar'}
+                  name={'floor'}
+                  placeholder={'Andar da sala'}
+                />
 
-              <Text fontWeight={'bold'} mt={4}>
+                <NumberInput
+                  min={0}
+                  mt={4}
+                  label={'Capacidade'}
+                  name={'capacity'}
+                  placeholder={'Capacidade da sala'}
+                />
+              </Flex>
+              <Text fontWeight={'bold'} mt={4} mb={'10px'}>
                 Recursos
               </Text>
 
-              <HStack>
+              <VStack w={'full'} alignItems={'start'} gap={'10px'} mb={'10px'}>
                 <CheckBox text={'Ar condicionado'} name={'air_conditioning'} />
-                <CheckBox text={'Projetor'} name={'projector'} />
                 <CheckBox text={'Acessibilidade'} name={'accessibility'} />
-              </HStack>
+                <SelectInput
+                  name='audiovisual'
+                  label='Recurso audiovisual'
+                  w={'250px'}
+                  options={AudiovisualType.values().map((type) => ({
+                    label: AudiovisualType.translate(type),
+                    value: type,
+                  }))}
+                />
+              </VStack>
 
-              <Text fontWeight={'bold'} mt={4}>
-                Alocação
-              </Text>
-              <CheckBox
-                text={'Ignorar para alocação automática'}
-                name={'ignore_to_allocate'}
+              <MultiSelect
+                label='Grupos'
+                name='group_ids'
+                hidden={props.groups.length === 1}
+                disabled={props.groups.length === 1 || !building_id}
+                placeholder={
+                  !building_id
+                    ? 'Selecione um prédio primeiro'
+                    : 'Selecione para quais grupos a sala vai ser adicionada'
+                }
+                options={props.groups
+                  .filter((group) => group.building_id === building_id)
+                  .map((group) => ({
+                    label: GroupFormatter.getGroupName(group),
+                    value: group.id,
+                  }))}
               />
+              <Checkbox
+                mt={'5px'}
+                disabled={props.groups.length === 1 || !building_id}
+                hidden={props.groups.length === 1}
+                onChange={(event) => {
+                  if (event.target.checked) {
+                    const groups = props.groups
+                      .filter((group) => group.building_id === building_id)
+                      .map((group) => group.id);
+                    setValue('group_ids', groups);
+                  } else setValue('group_ids', []);
+                }}
+              >
+                Selecionar todos
+              </Checkbox>
             </form>
           </FormProvider>
         </ModalBody>
 
         <ModalFooter>
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-            Cadastrar
+            {props.isUpdate ? 'Atualizar' : 'Cadastrar'}
           </Button>
           <Button onClick={() => handleCloseModal()}>Cancelar</Button>
         </ModalFooter>

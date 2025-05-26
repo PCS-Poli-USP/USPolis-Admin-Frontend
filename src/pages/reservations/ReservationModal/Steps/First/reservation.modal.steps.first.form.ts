@@ -1,8 +1,8 @@
 import * as yup from 'yup';
-import { ReservationValidator } from 'utils/reservations/resevations.validator';
+import { ReservationValidator } from '../../../../../utils/reservations/resevations.validator';
 import { ReservationFirstForm } from './reservation.modal.steps.first.interface';
-import { ReservationType } from 'utils/enums/reservations.enum';
-import CommonValidator from 'utils/common/common.validator';
+import { ReservationType } from '../../../../../utils/enums/reservations.enum';
+import CommonValidator from '../../../../../utils/common/common.validator';
 
 export const formFields = {
   title: {

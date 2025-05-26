@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 import { ClassroomForm } from './classroom.modal.interface';
-import { ClassroomValidator } from 'utils/classrooms/classrooms.validator';
+import { ClassroomValidator } from '../../../utils/classrooms/classrooms.validator';
+import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
 
 export const formFields = {
   name: {
@@ -25,6 +26,18 @@ export const formFields = {
       ),
     defaultValue: 0,
   },
+  group_ids: {
+    validator: yup
+      .array()
+      .of(yup.number().required('Campo obrigatório'))
+      .min(1, 'Selecione um grupo ou mais')
+      .test('is-valid-option', 'Selecione um grupo ou mais', function (value) {
+        if (!value) return false;
+        if (value.length === 0) return false;
+        return !ClassroomValidator.isInvalidIdArray(value);
+      }),
+    defaultValue: [] as number[],
+  },
   floor: {
     validator: yup
       .number()
@@ -47,13 +60,15 @@ export const formFields = {
       ),
     defaultValue: 0,
   },
-  ignore_to_allocate: {
-    validator: yup.boolean().required('Campo obrigatório'),
-    defaultValue: false,
-  },
-  projector: {
-    validator: yup.boolean().required('Campo obrigatório'),
-    defaultValue: false,
+
+  audiovisual: {
+    validator: yup
+      .string()
+      .required('Campo obrigatório')
+      .test('valid-audiovisual', 'Recuso audiovisual inválido', (value) => {
+        return !ClassroomValidator.isInvalidAudiovisualType(value);
+      }),
+    defaultValue: AudiovisualType.NONE,
   },
   air_conditioning: {
     validator: yup.boolean().required('Campo obrigatório'),
@@ -68,21 +83,21 @@ export const formFields = {
 export const schema = yup.object<ClassroomForm>().shape({
   name: formFields.name.validator,
   building_id: formFields.building_id.validator,
+  group_ids: formFields.group_ids.validator,
   floor: formFields.floor.validator,
   capacity: formFields.capacity.validator,
-  ignore_to_allocate: formFields.ignore_to_allocate.validator,
   air_conditioning: formFields.air_conditioning.validator,
-  projector: formFields.projector.validator,
+  audiovisual: formFields.audiovisual.validator,
   accessibility: formFields.accessibility.validator,
 });
 
 export const defaultValues: ClassroomForm = {
   name: formFields.name.defaultValue,
   building_id: formFields.building_id.defaultValue,
+  group_ids: formFields.group_ids.defaultValue,
   floor: formFields.floor.defaultValue,
   capacity: formFields.capacity.defaultValue,
-  ignore_to_allocate: formFields.ignore_to_allocate.defaultValue,
   air_conditioning: formFields.air_conditioning.defaultValue,
-  projector: formFields.projector.defaultValue,
+  audiovisual: formFields.audiovisual.defaultValue,
   accessibility: formFields.accessibility.defaultValue,
 };

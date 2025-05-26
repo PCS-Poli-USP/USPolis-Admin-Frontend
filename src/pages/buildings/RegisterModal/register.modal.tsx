@@ -12,7 +12,7 @@ import {
   ModalOverlay,
 } from '@chakra-ui/react';
 
-import { CreateBuilding } from 'models/http/requests/building.request.models';
+import { CreateBuilding } from '../../../models/http/requests/building.request.models';
 
 import { useEffect, useState } from 'react';
 

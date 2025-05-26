@@ -1,5 +1,5 @@
-import CommonValidator from 'utils/common/common.validator';
-import { ClassType } from 'utils/enums/classes.enum';
+import CommonValidator from '../../utils/common/common.validator';
+import { ClassType } from '../../utils/enums/classes.enum';
 
 export class ClassValidator extends CommonValidator {
   static isInvalidClassCode(value: string) {

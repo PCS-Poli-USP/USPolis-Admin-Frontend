@@ -11,8 +11,8 @@ type Option = {
 
 interface SelectProps extends FieldProps {
   options: Option[];
-  value?: string | number;
   onChange?: (value: Option | undefined) => void;
+  validator?: (value: string | number) => boolean;
 }
 
 export function SelectInput({
@@ -21,12 +21,14 @@ export function SelectInput({
   options,
   disabled = false,
   placeholder = undefined,
+  hidden = false,
   isLoading = false,
   mt = undefined,
   mb = undefined,
   mr = undefined,
   ml = undefined,
   w = undefined,
+  validator = undefined,
   onChange = undefined,
 }: SelectProps) {
   const {
@@ -38,9 +40,14 @@ export function SelectInput({
 
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
 
+  const isValidValue = (val: number | string) => {
+    if (validator) return validator(val);
+    return !!val;
+  };
+
   useEffect(() => {
     const current: string | number = getValues(name);
-    if (current) {
+    if (isValidValue(current)) {
       const option = options.find((option) => option.value === current);
       setSelectedOption(option ? option : null);
     } else setSelectedOption(null);
@@ -50,6 +57,7 @@ export function SelectInput({
   return (
     <FormControl
       isInvalid={!!errors[name]}
+      hidden={hidden}
       mt={mt}
       mb={mb}
       ml={ml}
@@ -65,11 +73,12 @@ export function SelectInput({
             {...field}
             id={name}
             value={selectedOption}
+            isLoading={isLoading}
             isDisabled={disabled || isLoading}
             placeholder={placeholder ? placeholder : 'Selecione uma opção'}
+            isMulti={false}
             isClearable={true}
-            // icon={isLoading ? <Spinner /> : <ChevronDownIcon />}
-            isLoading={isLoading}
+            closeMenuOnSelect={true}
             onChange={(option: Option | null) => {
               if (onChange) onChange(option ? option : undefined);
               setValue(name, option ? option.value : '');

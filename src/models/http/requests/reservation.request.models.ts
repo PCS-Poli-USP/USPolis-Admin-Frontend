@@ -1,4 +1,4 @@
-import { ReservationType } from 'utils/enums/reservations.enum';
+import { ReservationType } from '../../../utils/enums/reservations.enum';
 import { CreateSchedule, UpdateSchedule } from './schedule.request.models';
 
 export interface ReservationBase {

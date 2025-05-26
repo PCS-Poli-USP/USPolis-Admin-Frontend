@@ -1,6 +1,6 @@
-import useCustomToast from 'hooks/useCustomToast';
-import { ScheduleUpdateOccurences } from 'models/http/requests/schedule.request.models';
-import { ScheduleFullResponse } from 'models/http/responses/schedule.response.models';
+import useCustomToast from '../hooks/useCustomToast';
+import { ScheduleUpdateOccurences } from '../models/http/requests/schedule.request.models';
+import { ScheduleFullResponse } from '../models/http/responses/schedule.response.models';
 import { useCallback, useState } from 'react';
 import useScheduleService from './API/services/useSchedulesService';
 

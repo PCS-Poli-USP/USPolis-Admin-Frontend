@@ -1,11 +1,19 @@
-import {Box, Modal, ModalBody, ModalContent, ModalOverlay, SkeletonCircle, SkeletonText} from '@chakra-ui/react';
+import {
+  Box,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalOverlay,
+  SkeletonCircle,
+  SkeletonText,
+} from '@chakra-ui/react';
 
 interface LoadingModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function LoadingModal({ isOpen, onClose }: LoadingModalProps ) {
+export function LoadingModal({ isOpen, onClose }: LoadingModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />

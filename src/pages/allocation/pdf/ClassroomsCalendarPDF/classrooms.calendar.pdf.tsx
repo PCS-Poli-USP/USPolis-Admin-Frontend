@@ -1,5 +1,5 @@
-import { ClassResponse } from 'models/http/responses/class.response.models';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import { ClassResponse } from '../../../../models/http/responses/class.response.models';
+import { ReservationResponse } from '../../../../models/http/responses/reservation.response.models';
 import {
   getSchedulesByClassroom,
   getSchedulesFromClasses,
@@ -8,7 +8,7 @@ import {
 import { Button, Flex } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { ClassroomCalendarEventsFromSchedules, MergedEvent } from './utils';
-import { Recurrence } from 'utils/enums/recurrence.enum';
+import { Recurrence } from '../../../../utils/enums/recurrence.enum';
 
 export interface SavedClassroomCalendarPage {
   classroom: string;

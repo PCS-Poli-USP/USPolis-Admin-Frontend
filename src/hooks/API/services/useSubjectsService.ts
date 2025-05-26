@@ -4,11 +4,11 @@ import {
   CreateSubject,
   UpdateCrawlSubject,
   UpdateSubject,
-} from 'models/http/requests/subject.request.models';
+} from '../../../models/http/requests/subject.request.models';
 import {
   SubjectCrawlResponse,
   SubjectResponse,
-} from 'models/http/responses/subject.response.models';
+} from '../../../models/http/responses/subject.response.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 const useSubjectsService = () => {

@@ -1,20 +1,20 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 import {
   CreateClass,
   UpdateClass,
-} from 'models/http/requests/class.request.models';
+} from '../../models/http/requests/class.request.models';
 import {
   ClassFullResponse,
   ClassResponse,
-} from 'models/http/responses/class.response.models';
+} from '../../models/http/responses/class.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortClassResponse } from 'utils/classes/classes.sorter';
+import { sortClassResponse } from '../../utils/classes/classes.sorter';
 import useClassesService from '../API/services/useClassesService';
 import {
   AxiosErrorResponse,
   isAxiosErrorResponse,
-} from 'models/http/responses/common.response.models';
-import { ClassErrorParser } from './errors';
+} from '../../models/http/responses/common.response.models';
+import { ClassErrorParser } from './classErrorParser';
 
 const useClasses = (initialFetch: boolean = true) => {
   const service = useClassesService();
@@ -22,6 +22,7 @@ const useClasses = (initialFetch: boolean = true) => {
   const [classes, setClasses] = useState<ClassResponse[]>([]);
 
   const showToast = useCustomToast();
+  const errorParser = new ClassErrorParser();
 
   const getAllClasses = useCallback(async () => {
     setLoading(true);
@@ -39,21 +40,24 @@ const useClasses = (initialFetch: boolean = true) => {
       });
   }, [showToast, service]);
 
-  const getClasses = useCallback(async () => {
-    setLoading(true);
-    await service
-      .getMine()
-      .then((response) => {
-        setClasses(response.data.sort(sortClassResponse));
-      })
-      .catch((error) => {
-        showToast('Erro', 'Erro ao carregar suas turmas', 'error');
-        console.log(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [showToast, service]);
+  const getClasses = useCallback(
+    async (start?: string, end?: string) => {
+      setLoading(true);
+      await service
+        .getMine(start, end)
+        .then((response) => {
+          setClasses(response.data.sort(sortClassResponse));
+        })
+        .catch((error) => {
+          showToast('Erro', 'Erro ao carregar suas turmas', 'error');
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
 
   const getClassesBySubject = useCallback(
     async (subject_id: number) => {
@@ -122,7 +126,7 @@ const useClasses = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Turma ${data.code} criada com sucesso!`,
@@ -132,12 +136,13 @@ const useClasses = (initialFetch: boolean = true) => {
         })
         .catch((error: any) => {
           console.log(error);
-          showToast('Erro', ClassErrorParser.parseCreateError(error), 'error');
+          showToast('Erro', errorParser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getClasses, showToast, service],
   );
 
@@ -153,11 +158,7 @@ const useClasses = (initialFetch: boolean = true) => {
         .catch((error: any) => {
           if (isAxiosErrorResponse(error)) {
             console.log(error);
-            showToast(
-              'Erro',
-              `Erro ao atualizar turma: ${error.response?.data.detail}`,
-              'error',
-            );
+            showToast('Erro', errorParser.parseUpdateError(error), 'error');
           } else {
             console.log(error);
             showToast('Erro', `Erro inesperado ao atualizar turma`, 'error');
@@ -167,6 +168,7 @@ const useClasses = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getClasses, showToast, service],
   );
 
@@ -175,7 +177,7 @@ const useClasses = (initialFetch: boolean = true) => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response: any) => {
+        .then(() => {
           showToast('Sucesso!', 'Sucesso ao remover turma', 'success');
 
           getClasses();
@@ -183,11 +185,7 @@ const useClasses = (initialFetch: boolean = true) => {
         .catch((error: any) => {
           if (isAxiosErrorResponse(error)) {
             console.log(error);
-            showToast(
-              'Erro',
-              `Erro ao remover turma: ${error.response?.data.detail}`,
-              'error',
-            );
+            showToast('Erro', errorParser.parseDeleteError(error), 'error');
           } else {
             console.log(error);
             showToast('Erro', `Erro inesperado ao remover turma`, 'error');
@@ -197,6 +195,7 @@ const useClasses = (initialFetch: boolean = true) => {
           setLoading(false);
         });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getClasses, showToast, service],
   );
 
@@ -224,13 +223,14 @@ const useClasses = (initialFetch: boolean = true) => {
             );
           } else {
             console.log(error);
-            showToast('Erro', `Erro inesperado ao remover turmas`, 'error');
+            showToast('Erro', errorParser.parseDeleteError(error), 'error');
           }
         })
         .finally(() => {
           setLoading(false);
         });
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getClasses, showToast, service],
   );
 

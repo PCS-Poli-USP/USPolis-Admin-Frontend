@@ -1,10 +1,12 @@
 import { AxiosResponse } from 'axios';
-import { OccurrenceResponse } from 'models/http/responses/occurrence.response.models';
+import { OccurrenceResponse } from '../../../models/http/responses/occurrence.response.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 export interface AllocateManySchedulesData {
   schedule_id: number;
   classroom_id: number;
+  intentional_conflict: boolean;
+  intentional_occurrence_ids: number[];
 }
 
 const useOcurrencesService = () => {

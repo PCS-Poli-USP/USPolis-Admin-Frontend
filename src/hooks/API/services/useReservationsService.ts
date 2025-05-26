@@ -2,19 +2,28 @@ import { AxiosResponse } from 'axios';
 import {
   ReservationResponse,
   ReservationFullResponse,
-} from 'models/http/responses/reservation.response.models';
+} from '../../../models/http/responses/reservation.response.models';
 import {
   CreateReservation,
   UpdateReservation,
-} from 'models/http/requests/reservation.request.models';
+} from '../../../models/http/requests/reservation.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import axios from 'services/api/axios';
+import axios from '../../../services/api/axios';
 
 const useReservationsService = () => {
   const PREFIX = '/reservations';
   const axiosPrivate = useAxiosPrivate();
 
-  const getMine = (): Promise<AxiosResponse<Array<ReservationResponse>>> => {
+  const getMine = (
+    start?: string,
+    end?: string,
+  ): Promise<AxiosResponse<Array<ReservationResponse>>> => {
+    if (start && end) {
+      const params = new URLSearchParams();
+      params.append('start', start);
+      params.append('end', end);
+      return axiosPrivate.get(`/users/my-reservations`, { params });
+    }
     return axiosPrivate.get(`/users/my-reservations`);
   };
 
@@ -32,6 +41,10 @@ const useReservationsService = () => {
     building_name: string,
   ): Promise<AxiosResponse<Array<ReservationResponse>>> => {
     return axios.get(`${PREFIX}/building/${building_name}`);
+  };
+
+  const getById = (id: number): Promise<AxiosResponse<ReservationResponse>> => {
+    return axiosPrivate.get(`${PREFIX}/${id}`);
   };
 
   const create = (
@@ -56,6 +69,7 @@ const useReservationsService = () => {
     get,
     getFull,
     getByBuildingName,
+    getById,
     create,
     deleteById,
     update,

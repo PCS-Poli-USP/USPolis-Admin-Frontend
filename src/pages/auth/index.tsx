@@ -2,15 +2,15 @@ import { Heading, HStack, Text, Image, Button } from '@chakra-ui/react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { Card, CardBody, Flex } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import Logo from 'assets/uspolis.logo.png';
+import Logo from '../../assets/uspolis.logo.png';
+
+const REDIRECT_URL = import.meta.env.VITE_REDIRECT_URI;
 
 const AuthPage = () => {
   const navigate = useNavigate();
 
   const login = useGoogleLogin({
-    redirect_uri:
-      process.env.REACT_APP_REDIRECT_URI ??
-      'http://localhost:3000/auth-callback',
+    redirect_uri: REDIRECT_URL ?? 'http://localhost:3000/auth-callback',
     ux_mode: 'redirect',
     flow: 'auth-code',
   });
@@ -68,4 +68,4 @@ const AuthPage = () => {
   );
 };
 
-export { AuthPage };
+export default AuthPage;

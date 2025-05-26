@@ -1,5 +1,5 @@
-import CommonValidator from 'utils/common/common.validator';
-import { SubjectType } from 'utils/enums/subjects.enum';
+import CommonValidator from '../../utils/common/common.validator';
+import { SubjectType } from '../../utils/enums/subjects.enum';
 
 export default class SubjectValidator extends CommonValidator {
   static isInvalidCode(value: string): boolean {

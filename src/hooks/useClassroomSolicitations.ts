@@ -1,12 +1,12 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 import {
   ClassroomSolicitationAprove,
   ClassroomSolicitationDeny,
   CreateClassroomSolicitation,
-} from 'models/http/requests/classroomSolicitation.request.models';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+} from '../models/http/requests/classroomSolicitation.request.models';
+import { ClassroomSolicitationResponse } from '../models/http/responses/classroomSolicitation.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortClassroomSolicitationResponse } from 'utils/solicitations/solicitation.sorter';
+import { sortClassroomSolicitationResponse } from '../utils/solicitations/solicitation.sorter';
 import useClassroomSolicitationsService from './API/services/useClassroomSolicitationsService';
 
 const useClassroomsSolicitations = (initialFetch = true) => {
@@ -23,7 +23,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
     await service
       .getMySolicitations()
       .then((response) => {
-        setSolicitations(response.data.sort(sortClassroomSolicitationResponse));
+        setSolicitations(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -34,10 +34,10 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       });
   }, [showToast, service]);
 
-  const getBuildingSolicitations = useCallback(async () => {
+  const getPendingBuildingSolicitations = useCallback(async () => {
     setLoading(true);
     await service
-      .get()
+      .getPending()
       .then((response) => {
         setSolicitations(response.data.sort(sortClassroomSolicitationResponse));
       })
@@ -45,7 +45,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
         console.log(error);
         showToast(
           'Erro',
-          'Erro ao carregar as solicitações do seu prédio',
+          'Erro ao carregar as solicitações pendentes do seu prédio',
           'error',
         );
       })
@@ -54,12 +54,37 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       });
   }, [showToast, service]);
 
+  const getAllBuildingSolicitations = useCallback(
+    async (start?: string, end?: string) => {
+      setLoading(true);
+      await service
+        .getAll(start, end)
+        .then((response) => {
+          setSolicitations(
+            response.data.sort(sortClassroomSolicitationResponse),
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+          showToast(
+            'Erro',
+            'Erro ao carregar as solicitações do seu prédio',
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
+
   const createSolicitation = useCallback(
     async (data: CreateClassroomSolicitation) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso', `Solicitação criada com sucesso!`, 'success');
           getSolicitations();
         })
@@ -79,16 +104,13 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       setLoading(true);
       await service
         .approve(id, data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso', `Solicitação aprovada com sucesso!`, 'success');
           getSolicitations();
         })
         .catch((error) => {
           showToast('Erro', `Erro ao aprovar a solicitação: ${error}`, 'error');
           console.log(error);
-        })
-        .finally(() => {
-          setLoading(false);
         });
     },
     [getSolicitations, showToast, service],
@@ -99,20 +121,16 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       setLoading(true);
       await service
         .deny(id, data)
-        .then((response) => {
+        .then(async () => {
           showToast('Sucesso!', 'Sucesso ao negar solicitação', 'success');
-
-          getSolicitations();
+          getPendingBuildingSolicitations();
         })
         .catch((error) => {
           showToast('Erro!', `Erro ao negar solicitação: ${error}`, 'error');
           console.log(error);
-        })
-        .finally(() => {
-          setLoading(false);
         });
     },
-    [getSolicitations, showToast, service],
+    [getPendingBuildingSolicitations, showToast, service],
   );
 
   useEffect(() => {
@@ -124,7 +142,8 @@ const useClassroomsSolicitations = (initialFetch = true) => {
     loading,
     solicitations,
     getSolicitations,
-    getBuildingSolicitations,
+    getPendingBuildingSolicitations,
+    getAllBuildingSolicitations,
     createSolicitation,
     approveSolicitation,
     denySolicitation,

@@ -1,6 +1,6 @@
-import { ScheduleValidator } from 'utils/schedules/schedules.validator';
+import { ScheduleValidator } from '../../../utils/schedules/schedules.validator';
 import * as yup from 'yup';
-import { Recurrence } from 'utils/enums/recurrence.enum';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { ClassScheduleForm } from './class.modal.interface';
 
 export const scheduleFormFields = {

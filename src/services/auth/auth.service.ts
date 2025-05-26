@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-const USPOLIS_SERVER_URL = process.env.REACT_APP_USPOLIS_API_ENDPOINT;
+const USPOLIS_SERVER_URL = import.meta.env.VITE_USPOLIS_API_ENDPOINT;
 
 interface GetTokensReponse {
   access_token: string;

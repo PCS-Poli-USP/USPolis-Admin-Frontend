@@ -1,22 +1,22 @@
 import { Grid, GridItem, useDisclosure, useMediaQuery } from '@chakra-ui/react';
-import Loading from 'components/common/Loading/loading.component';
-import { appContext } from 'context/AppContext';
+import Loading from '../../components/common/Loading/loading.component';
+import { appContext } from '../../context/AppContext';
 import { useContext, useEffect, useState } from 'react';
 import { Event } from './interfaces/allocation.interfaces';
-import useAllocation from 'pages/allocation/hooks/useAllocation';
-import PageContent from 'components/common/PageContent';
+import useAllocation from '../../pages/allocation/hooks/useAllocation';
+import PageContent from '../../components/common/PageContent';
 import SolicitationModal from './SolicitationModal/solicitation.modal';
 import CustomCalendar from './CustomCalendar';
 import AllocationHeader from './AllocationHeader';
 import moment from 'moment';
-import { Resource } from 'models/http/responses/allocation.response.models';
+import { Resource } from '../../models/http/responses/allocation.response.models';
 import { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction';
-import useBuildings from 'hooks/useBuildings';
-import useClassrooms from 'hooks/useClassrooms';
-import ReservationModal from 'pages/reservations/ReservationModal/reservation.modal';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+import useBuildings from '../../hooks/useBuildings';
+import useClassrooms from '../../hooks/classrooms/useClassrooms';
+import ReservationModal from '../../pages/reservations/ReservationModal/reservation.modal';
+import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
 import { loadReservationForDataClick } from './utils/allocation.utils';
-import useClassroomsSolicitations from 'hooks/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../hooks/useClassroomSolicitations';
 import { EventDropArg } from '@fullcalendar/core';
 import EventDragModal from './EventDragModal';
 import { EventDef } from '@fullcalendar/core/internal';
@@ -94,7 +94,7 @@ function Allocation() {
   const {
     loading: loadingSolicitations,
     solicitations,
-    getBuildingSolicitations,
+    getPendingBuildingSolicitations,
   } = useClassroomsSolicitations(false);
 
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
@@ -261,7 +261,7 @@ function Allocation() {
       getAllBuildings();
       getAllClassrooms();
       if (loggedUser.is_admin || loggedUser.buildings) {
-        getBuildingSolicitations();
+        getPendingBuildingSolicitations();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -323,7 +323,7 @@ function Allocation() {
               loadingClassrooms={loadingClassrooms}
               refetch={async () => {
                 if (loggedUser.is_admin || loggedUser.buildings) {
-                  await getBuildingSolicitations();
+                  await getPendingBuildingSolicitations();
                 }
               }}
             />

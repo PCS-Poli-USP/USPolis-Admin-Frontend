@@ -9,12 +9,13 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { ClassType } from 'utils/enums/classes.enum';
+import { ClassType } from '../../../../../utils/enums/classes.enum';
 import moment from 'moment';
 import { BsCalendar2WeekFill } from 'react-icons/bs';
 import { WarningIcon } from '@chakra-ui/icons';
 import { ClassModalFifthStepProps } from './class.modal.steps.fifth.interface';
-import { getScheduleFullString } from 'utils/schedules/schedule.formatter';
+import { getScheduleFullString } from '../../../../../utils/schedules/schedule.formatter';
+import { AudiovisualType } from '../../../../../utils/enums/audiovisualType.enum';
 
 function ClassModalFifthStep(props: ClassModalFifthStepProps) {
   const firstForm = props.data.first;
@@ -167,16 +168,20 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
         <Text>{fourthForm.ignore_to_allocate ? 'Sim' : 'Não'}</Text>
       </HStack>
       <HStack>
-        <Text as={'b'}>{`Projetor: `}</Text>
-        <Text>{fourthForm.projector ? 'Sim' : 'Não'}</Text>
-      </HStack>
-      <HStack>
         <Text as={'b'}>{`Ar Condicionado: `}</Text>
         <Text>{fourthForm.air_conditionating ? 'Sim' : 'Não'}</Text>
       </HStack>
       <HStack>
         <Text as={'b'}>{`Acessibilidade: `}</Text>
         <Text>{fourthForm.accessibility ? 'Sim' : 'Não'}</Text>
+      </HStack>
+      <HStack>
+        <Text as={'b'}>{`Recurso audiovisual: `}</Text>
+        <Text color={fourthForm.audiovisual ? undefined : 'red'}>
+          {fourthForm.audiovisual
+            ? AudiovisualType.translate(fourthForm.audiovisual)
+            : 'Não informado'}
+        </Text>
       </HStack>
       <Divider />
     </VStack>

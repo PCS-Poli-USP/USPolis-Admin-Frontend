@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Divider,
@@ -10,18 +12,20 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
+  Text,
 } from '@chakra-ui/react';
-import { ClassResponse } from 'models/http/responses/class.response.models';
+import { ClassResponse } from '../../../models/http/responses/class.response.models';
 import AllocateSingleScheduleSection, {
   AllocateSingleScheduleSectionRef,
 } from './allocateSingleScheduleSection';
 import { useContext, useEffect, useRef, useState } from 'react';
-import useOccurrences from 'hooks/useOccurrences';
-import useClassesService from 'hooks/API/services/useClassesService';
-import { AllocateManySchedulesData } from 'hooks/API/services/useOccurrencesService';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
-import useAllowedBuildings from 'hooks/useAllowedBuildings';
-import { appContext } from 'context/AppContext';
+import useOccurrences from '../../../hooks/useOccurrences';
+import useClassesService from '../../../hooks/API/services/useClassesService';
+import { AllocateManySchedulesData } from '../../../hooks/API/services/useOccurrencesService';
+import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
+import useAllowedBuildings from '../../../hooks/useAllowedBuildings';
+import { appContext } from '../../../context/AppContext';
+import { UsersValidator } from '../../../utils/users/users.validator';
 
 interface props {
   isOpen: boolean;
@@ -39,6 +43,8 @@ export function AllocateClassModal({
   class_id,
 }: props) {
   const { loggedUser } = useContext(appContext);
+  const validator = new UsersValidator(loggedUser);
+
   const classesService = useClassesService();
   const [inputClass, setInputClass] = useState<ClassResponse>();
 
@@ -51,20 +57,24 @@ export function AllocateClassModal({
     for (const ref of sectionsRefs.current) ref?.reset();
   }
 
-  useEffect(() => {
-    async function use() {
-      if (class_) {
-        setInputClass(class_);
-        return;
-      }
-      if (class_id) {
-        const response = await classesService.getById(class_id);
-        setInputClass(response.data);
-      }
+  async function use() {
+    if (class_) {
+      setInputClass(class_);
+      return;
     }
+    if (class_id) {
+      const response = await classesService.getById(class_id);
+      setInputClass(response.data);
+      return;
+    }
+  }
+
+  useEffect(() => {
     use();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [class_, class_id]);
+
+  console.log(class_, class_id);
 
   async function handleSave() {
     const data: AllocateManySchedulesData[] = [];
@@ -83,64 +93,118 @@ export function AllocateClassModal({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} size={'xl'}>
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      size={'xl'}
+      closeOnOverlayClick={false}
+    >
       <ModalOverlay />
       <ModalContent>
-        {inputClass ? (
+        {loggedUser ? (
           <>
-            <ModalHeader>
-              Alocar Turma: {inputClass.subject_code} -{' '}
-              {classNumberFromClassCode(inputClass.code)}
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Flex flexDir={'column'} gap={4}>
-                <Flex flexDir={'column'} gap={4}>
-                  {inputClass.schedules.map((schedule, index) => (
-                    <Box key={index}>
-                      <AllocateSingleScheduleSection
-                        key={schedule.id}
-                        ref={(ref) => (sectionsRefs.current[index] = ref)}
-                        schedule={schedule}
-                        allowedBuildings={allowedBuildings}
-                        loadingBuildings={loading}
-                        initialBuildingId={
-                          loggedUser
-                            ? loggedUser.buildings &&
-                              loggedUser.buildings.length === 1
-                              ? loggedUser.buildings[0].id
-                              : undefined
-                            : undefined
-                        }
-                      />
-                      <Divider />
-                    </Box>
-                  ))}
+            {inputClass ? (
+              <>
+                <ModalHeader>
+                  Alocar Turma: {inputClass.subject_code} -{' '}
+                  {classNumberFromClassCode(inputClass.code)}
+                </ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <Flex flexDir={'column'} gap={4}>
+                    <Flex flexDir={'column'} gap={4}>
+                      {inputClass.schedules
+                        .sort((a, b) => {
+                          if (a.week_day && b.week_day) {
+                            return a.week_day - b.week_day;
+                          }
+                          return 0;
+                        })
+                        .map((schedule, index) => {
+                          const readonly = schedule.classroom_id
+                            ? !validator.checkUserClassroomPermission([
+                                schedule.classroom_id,
+                              ])
+                            : false;
+                          return (
+                            <Box key={index}>
+                              <AllocateSingleScheduleSection
+                                key={schedule.id}
+                                user={loggedUser}
+                                ref={(ref) => {
+                                  if (readonly) {
+                                    sectionsRefs.current[index] = null;
+                                    return;
+                                  }
+                                  sectionsRefs.current[index] = ref;
+                                }}
+                                schedule={schedule}
+                                allowedBuildings={allowedBuildings}
+                                loadingBuildings={loading}
+                                initialBuildingId={
+                                  loggedUser
+                                    ? loggedUser.buildings &&
+                                      loggedUser.buildings.length === 1
+                                      ? loggedUser.buildings[0].id
+                                      : undefined
+                                    : undefined
+                                }
+                                readonly={readonly}
+                              />
+                              <Divider />
+                            </Box>
+                          );
+                        })}
+                    </Flex>
+                    <Flex flexGrow={1} justifyContent={'space-between'} gap={2}>
+                      <Button
+                        onClick={handleSave}
+                        flexGrow={1}
+                        colorScheme='blue'
+                      >
+                        Salvar
+                      </Button>
+                      <Button
+                        flexGrow={1}
+                        alignSelf={'stretch'}
+                        onClick={() => {
+                          reset();
+                        }}
+                      >
+                        Restaurar
+                      </Button>
+                      <Button
+                        onClick={handleClose}
+                        flexGrow={1}
+                        colorScheme='red'
+                      >
+                        Cancelar
+                      </Button>
+                    </Flex>
+                  </Flex>
+                </ModalBody>
+              </>
+            ) : (
+              <ModalBody>
+                <Flex
+                  direction={'row'}
+                  gap={'10px'}
+                  align={'center'}
+                  justify={'center'}
+                >
+                  <Text fontWeight={'bold'} fontSize={'lg'}>
+                    Carregando
+                  </Text>
+                  <Spinner />
                 </Flex>
-                <Flex flexGrow={1} justifyContent={'space-between'} gap={2}>
-                  <Button onClick={handleClose} flexGrow={1} colorScheme='red'>
-                    Cancelar
-                  </Button>
-                  <Button
-                    flexGrow={1}
-                    alignSelf={'stretch'}
-                    onClick={() => {
-                      reset();
-                    }}
-                  >
-                    Restaurar
-                  </Button>
-                  <Button onClick={handleSave} flexGrow={1} colorScheme='blue'>
-                    Salvar
-                  </Button>
-                </Flex>
-              </Flex>
-            </ModalBody>
+              </ModalBody>
+            )}
           </>
         ) : (
-          <ModalBody>
-            <Spinner />
-          </ModalBody>
+          <Alert status='error'>
+            <AlertIcon />
+            Você não está logado. Por favor, faça login para continuar.
+          </Alert>
         )}
       </ModalContent>
     </Modal>

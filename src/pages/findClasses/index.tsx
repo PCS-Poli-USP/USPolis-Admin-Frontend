@@ -1,4 +1,4 @@
-import PageContent from 'components/common/PageContent';
+import PageContent from '../../components/common/PageContent';
 import {
   Alert,
   AlertIcon,
@@ -9,11 +9,11 @@ import {
 } from '@chakra-ui/react';
 import Select from 'react-select';
 import { useRef, useState } from 'react';
-import useSubjects from 'hooks/useSubjetcts';
+import useSubjects from '../../hooks/useSubjetcts';
 import { SelectInstance } from 'react-select';
 import ClassAccordion from './ClassAccordion';
-import useClasses from 'hooks/classes/useClasses';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+import useClasses from '../../hooks/classes/useClasses';
+import { classNumberFromClassCode } from '../../utils/classes/classes.formatter';
 
 type OptionType = {
   value: number;

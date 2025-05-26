@@ -1,7 +1,9 @@
 import { VStack, Text } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
-import { CheckBox } from 'components/common/form/CheckBox';
+import { CheckBox } from '../../../../../components/common/form/CheckBox';
 import { ClassModalFourthStepProps } from './class.modal.steps.fourth.interface';
+import { SelectInput } from '../../../../../components/common';
+import { AudiovisualType } from '../../../../../utils/enums/audiovisualType.enum';
 
 function ClassModalFourthStep(props: ClassModalFourthStepProps) {
   return (
@@ -22,6 +24,15 @@ function ClassModalFourthStep(props: ClassModalFourthStepProps) {
             <CheckBox name={'projector'} text={'Projetor'} />
             <CheckBox name={'air_conditionating'} text={'Ar condicionado'} />
             <CheckBox name={'accessibility'} text={'Acessibilidade'} />
+            <SelectInput
+              name='audiovisual'
+              label='Recurso audiovisual'
+              w={'250px'}
+              options={AudiovisualType.values().map((type) => ({
+                label: AudiovisualType.translate(type),
+                value: type,
+              }))}
+            />
           </VStack>
         </form>
       </FormProvider>

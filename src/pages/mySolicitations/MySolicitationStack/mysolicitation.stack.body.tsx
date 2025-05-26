@@ -7,7 +7,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { ClassroomSolicitationResponse } from 'models/http/responses/classroomSolicitation.response.models';
+import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import moment from 'moment';
 
 interface SolicitationStackBodyProps {
@@ -72,8 +72,8 @@ function SolicitationStackBody({
                     solicitation.approved
                       ? `Situação: Aprovado por ${solicitation.closed_by}`
                       : solicitation.denied
-                      ? `Situação: Negado por ${solicitation.closed_by}`
-                      : ''
+                        ? `Situação: Negado por ${solicitation.closed_by}`
+                        : ''
                   } às ${moment(solicitation.updated_at).format(
                     'DD/MM/YYYY, HH:mm',
                   )}`}

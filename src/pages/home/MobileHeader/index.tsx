@@ -12,8 +12,8 @@ import {
   MenuList,
   MenuItem,
 } from '@chakra-ui/react';
-import Logo from 'assets/uspolis.logo.png';
-import { appContext } from 'context/AppContext';
+import Logo from '../../../assets/uspolis.logo.png';
+import { appContext } from '../../../context/AppContext';
 import { useContext } from 'react';
 import { FaUser } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';

@@ -1,11 +1,11 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 import {
   CreateReservation,
   UpdateReservation,
-} from 'models/http/requests/reservation.request.models';
-import { ReservationResponse } from 'models/http/responses/reservation.response.models';
+} from '../models/http/requests/reservation.request.models';
+import { ReservationResponse } from '../models/http/responses/reservation.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortReservationsResponse } from 'utils/reservations/reservations.sorter';
+import { sortReservationsResponse } from '../utils/reservations/reservations.sorter';
 import useReservationsService from './API/services/useReservationsService';
 
 const useReservations = (initialFetch = true) => {
@@ -34,24 +34,27 @@ const useReservations = (initialFetch = true) => {
       });
   }, [showToast, service]);
 
-  const getReservations = useCallback(async () => {
-    setLoading(true);
-    await service
-      .getMine()
-      .then((response) => {
-        setReservations(response.data.sort(sortReservationsResponse));
-      })
-      .catch((error) => {
-        showToast(
-          'Erro',
-          `Erro ao carregar suas reservas: ${error.response.detail}`,
-          'error',
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [showToast, service]);
+  const getReservations = useCallback(
+    async (start?: string, end?: string) => {
+      setLoading(true);
+      await service
+        .getMine(start, end)
+        .then((response) => {
+          setReservations(response.data.sort(sortReservationsResponse));
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao carregar suas reservas: ${error.response.detail}`,
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
 
   const getReservationsByBuildingName = useCallback(
     async (building_name: string) => {
@@ -75,12 +78,37 @@ const useReservations = (initialFetch = true) => {
     [showToast, service],
   );
 
+  const getReservationsById = useCallback(
+    async (id: number) => {
+      setLoading(true);
+      let reservation: ReservationResponse | undefined;
+      await service
+        .getById(id)
+        .then((response) => {
+          reservation = response.data;
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            `Erro ao carregar reserva: ${error.response.detail}`,
+            'error',
+          );
+          reservation = undefined;
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+      return reservation;
+    },
+    [showToast, service],
+  );
+
   const createReservation = useCallback(
     async (data: CreateReservation) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Reserva ${data.title} criado com sucesso!`,
@@ -104,7 +132,7 @@ const useReservations = (initialFetch = true) => {
       setLoading(true);
       await service
         .update(id, data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso', `Reserva atualizado com sucesso!`, 'success');
           getReservations();
         })
@@ -127,7 +155,7 @@ const useReservations = (initialFetch = true) => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso!', 'Sucesso ao remover reserva', 'success');
 
           getReservations();
@@ -154,6 +182,7 @@ const useReservations = (initialFetch = true) => {
     getAllReservations,
     getReservations,
     getReservationsByBuildingName,
+    getReservationsById,
     createReservation,
     updateReservation,
     deleteReservation,

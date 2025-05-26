@@ -1,8 +1,6 @@
 import {
   Button,
-  Checkbox,
   Flex,
-  FormControl,
   FormLabel,
   Input,
   Modal,
@@ -13,71 +11,46 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
-import Select from 'react-select';
 
-import { useEffect, useState } from 'react';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import useBuildingsService from 'hooks/API/services/useBuildingsService';
+import { useEffect } from 'react';
+import { UserEditModalProps } from './user.edit.modal.interface';
+import { defaultValues, schema } from './user.edit.modal.form';
+import { yupResolver } from '@hookform/resolvers/yup/dist/yup.js';
+import { FormProvider, useForm } from 'react-hook-form';
+import { CheckBox, MultiSelect } from '../../../components/common';
+import useUsers from '../../../hooks/useUsers';
+import GroupFormatter from '../../../utils/groups/group.formatter';
 
-interface EditModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  formData?: EditUserFormValues;
-  otherData?: EditUserOtherData;
-  onSave: (data: EditUserFormValues) => void;
-}
-
-interface EditUserFormValues {
-  buildings?: BuildingOption[];
-  is_admin?: boolean;
-}
-
-interface EditUserOtherData {
-  email?: string;
-}
-
-interface BuildingOption {
-  value: number;
-  label: string;
-}
-
-export default function EditUserModal(props: EditModalProps) {
-  const buildingsService = useBuildingsService();
-
-  const initialForm: EditUserFormValues = {
-    buildings: [],
-    is_admin: false,
-  };
-
-  const [isLoadingBuildings, setIsLoadingBuildings] = useState(false);
-  const [buildings, setBuildings] = useState<BuildingResponse[]>([]);
-  const [form, setForm] = useState<EditUserFormValues>(initialForm);
+export default function EditUserModal(props: UserEditModalProps) {
+  const { updateUser } = useUsers(false);
+  const form = useForm({
+    defaultValues: defaultValues,
+    resolver: yupResolver(schema),
+  });
 
   useEffect(() => {
-    if (props.formData) setForm(props.formData);
-  }, [props.formData]);
-
-  useEffect(() => {
-    fetchBuildings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  async function fetchBuildings() {
-    try {
-      const response = await buildingsService.getAll();
-      setBuildings(response.data);
-      setIsLoadingBuildings(false);
-    } catch (err) {
-      console.error(err);
-      setTimeout(() => {
-        fetchBuildings();
-      }, 1000);
+    if (props.user) {
+      form.reset({
+        ...defaultValues,
+        is_admin: props.user.is_admin,
+        group_ids: props.user.groups
+          ? props.user.groups.map((group) => group.id)
+          : [],
+      });
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.user]);
 
-  function handleSaveClick() {
-    props.onSave(form);
-    setForm(initialForm);
+  async function handleSaveClick() {
+    if (!props.user) return;
+    const isValid = await form.trigger();
+    if (!isValid) {
+      return;
+    }
+    const values = form.getValues();
+    await updateUser(props.user.id, values);
+    form.reset();
+    props.refetch();
     props.onClose();
   }
 
@@ -86,58 +59,60 @@ export default function EditUserModal(props: EditModalProps) {
   }
 
   return (
-    <Modal isOpen={props.isOpen} onClose={handleCloseModal}>
+    <Modal isOpen={props.isOpen} onClose={handleCloseModal} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{'Editar informações do usuário'}</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <Flex direction={'column'} gap={4}>
-            <Flex direction={'column'}>
-              <FormLabel>Email</FormLabel>
-              <Input value={props.otherData?.email} disabled />
-            </Flex>
-            <FormControl>
-              <Checkbox
-                isChecked={form.is_admin}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, is_admin: e.target.checked }))
-                }
-              >
-                Administrador
-              </Checkbox>
-            </FormControl>
-            {!form.is_admin && (
-              <FormControl>
-                <FormLabel>Prédios</FormLabel>
-                <Select
-                  placeholder={
-                    isLoadingBuildings
-                      ? 'Carregando...'
-                      : 'Selecione um ou mais'
-                  }
-                  isLoading={isLoadingBuildings}
-                  isMulti
-                  options={buildings.map((it) => ({
-                    value: it.id,
-                    label: it.name,
+          <FormProvider {...form}>
+            <form>
+              <Flex direction={'column'} gap={4}>
+                <Flex direction={'column'}>
+                  <FormLabel>Email</FormLabel>
+                  <Input value={props.user?.email} disabled />
+                </Flex>
+                <CheckBox name='is_admin' text='Administrador' />
+                <MultiSelect
+                  label='Prédios'
+                  name='building_ids'
+                  disabled={true}
+                  options={props.buildings.map((building) => ({
+                    label: building.name,
+                    value: building.id,
                   }))}
-                  onChange={(selected: BuildingOption[]) => {
-                    const selectedBuildings = selected as BuildingOption[];
-                    setForm((prev) => ({
-                      ...prev,
-                      buildings: selectedBuildings,
-                    }));
-                  }}
-                  value={form.buildings}
+                  placeholder='Os prédios dependem dos grupos'
                 />
-              </FormControl>
-            )}
-          </Flex>
+                <MultiSelect
+                  label='Grupos'
+                  name='group_ids'
+                  options={props.groups.map((group) => ({
+                    label: group.main
+                      ? GroupFormatter.getGroupName(group)
+                      : `${group.building} - ${GroupFormatter.getGroupName(group)}`,
+                    value: group.id,
+                  }))}
+                  placeholder='Selecione os grupos'
+                  onChange={(options) => {
+                    const groups_ids = options.map((option) => {
+                      return option.value;
+                    });
+                    const groups = props.groups.filter((group) =>
+                      groups_ids.includes(group.id),
+                    );
+                    const buildings_ids = groups.map((group) => {
+                      return group.building_id;
+                    });
+                    form.setValue('building_ids', buildings_ids);
+                  }}
+                />
+              </Flex>
+            </form>
+          </FormProvider>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
-            Salvar
+            Atualizar
           </Button>
           <Button onClick={props.onClose}>Cancelar</Button>
         </ModalFooter>

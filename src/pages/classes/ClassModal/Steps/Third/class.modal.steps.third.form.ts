@@ -1,7 +1,7 @@
 import * as yup from 'yup';
 import { ClassThirdForm } from './class.modal.steps.third.interface';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { ScheduleValidator } from 'utils/schedules/schedules.validator';
+import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
+import { ScheduleValidator } from '../../../../../utils/schedules/schedules.validator';
 
 export const classThirdFormFields = {
   schedule_start_date: {
@@ -56,13 +56,18 @@ export const classThirdFormFields = {
       .test('is-valid-month-week', 'Semana do mês inválido', function (value) {
         if (!value) return true;
         return !ScheduleValidator.isInvalidMonthWeek(value);
-      }).test('must-have-mont-week-when-recurrence', 'É preciso escolher uma semana do mês', function (value) {
-        const { recurrence } = this.parent;
-        if (!recurrence) return true;
-        if (recurrence !== Recurrence.MONTHLY) return true;
-        if (!value) return false;
-        return !ScheduleValidator.isInvalidMonthWeek(value);
-      }),
+      })
+      .test(
+        'must-have-mont-week-when-recurrence',
+        'É preciso escolher uma semana do mês',
+        function (value) {
+          const { recurrence } = this.parent;
+          if (!recurrence) return true;
+          if (recurrence !== Recurrence.MONTHLY) return true;
+          if (!value) return false;
+          return !ScheduleValidator.isInvalidMonthWeek(value);
+        },
+      ),
     defaultValue: '',
   },
   week_day: {
@@ -74,13 +79,21 @@ export const classThirdFormFields = {
         if (!value) return true;
         return !ScheduleValidator.isInvalidWeekDay(value);
       })
-      .test('must-have-week-day-when-recurrence', 'É preciso escolher um dia da semana', function (value) {
-        const { recurrence } = this.parent;
-        if (!recurrence) return true;
-        if (recurrence === Recurrence.CUSTOM || recurrence === Recurrence.DAILY) return true;
-        if (value === undefined || value === null) return false;
-        return !ScheduleValidator.isInvalidWeekDay(value);
-      }),
+      .test(
+        'must-have-week-day-when-recurrence',
+        'É preciso escolher um dia da semana',
+        function (value) {
+          const { recurrence } = this.parent;
+          if (!recurrence) return true;
+          if (
+            recurrence === Recurrence.CUSTOM ||
+            recurrence === Recurrence.DAILY
+          )
+            return true;
+          if (value === undefined || value === null) return false;
+          return !ScheduleValidator.isInvalidWeekDay(value);
+        },
+      ),
     defaultValue: '',
   },
   start_time: {
@@ -113,7 +126,6 @@ export const classThirdFormFields = {
       ),
     defaultValue: '',
   },
-  
 };
 
 export const classThirdSchema = yup.object<ClassThirdForm>().shape({
@@ -124,7 +136,6 @@ export const classThirdSchema = yup.object<ClassThirdForm>().shape({
   week_day: classThirdFormFields.week_day.validator,
   start_time: classThirdFormFields.start_time.validator,
   end_time: classThirdFormFields.end_time.validator,
-  
 });
 
 export const classThirdDefaultValues: ClassThirdForm = {
@@ -135,5 +146,4 @@ export const classThirdDefaultValues: ClassThirdForm = {
   week_day: classThirdFormFields.week_day.defaultValue,
   start_time: classThirdFormFields.start_time.defaultValue,
   end_time: classThirdFormFields.end_time.defaultValue,
-  
 };

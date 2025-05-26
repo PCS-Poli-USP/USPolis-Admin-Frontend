@@ -126,7 +126,7 @@ export function ListInput({
     <Controller
       control={control}
       name={name}
-      render={({ field, fieldState }) => (
+      render={({ field }) => (
         <VStack align={'strech'} mt={mt} mb={mb} ml={ml} mr={mr} w={'full'}>
           <FormControl isInvalid={hasValueError}>
             <FormLabel alignSelf='flex-start'>{label}</FormLabel>

@@ -12,18 +12,18 @@ import {
   VStack,
   useDisclosure,
 } from '@chakra-ui/react';
-import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
+import { HolidayCategoryResponse } from '../../../models/http/responses/holidayCategory.response.models';
 import { useState } from 'react';
-import Dialog from 'components/common/Dialog/dialog.component';
-import { datetimeToDate } from 'utils/formatters';
-import useHolidaysCategories from 'hooks/useHolidaysCategories';
-import useHolidays from 'hooks/useHolidays';
-import HolidayCategoryAccordion from 'pages/calendars/HolidayCategoryAccordion';
-import HolidayCategoryModal from 'pages/calendars/HolidayCategoryModal';
-import HolidayModal from 'pages/calendars/HolidayModal';
+import Dialog from '../../../components/common/Dialog/dialog.component';
+import { datetimeToDate } from '../../../utils/formatters';
+import useHolidaysCategories from '../../../hooks/useHolidaysCategories';
+import useHolidays from '../../../hooks/useHolidays';
+import HolidayCategoryAccordion from '../../../pages/calendars/HolidayCategoryAccordion';
+import HolidayCategoryModal from '../../../pages/calendars/HolidayCategoryModal';
+import HolidayModal from '../../../pages/calendars/HolidayModal';
 import { HolidaysContentModalProps } from './holidaysContent.modal.interface';
 import { AddIcon } from '@chakra-ui/icons';
-import { HolidayResponse } from 'models/http/responses/holiday.response.models';
+import { HolidayResponse } from '../../../models/http/responses/holiday.response.models';
 
 function HolidaysContentModal(props: HolidaysContentModalProps) {
   const {

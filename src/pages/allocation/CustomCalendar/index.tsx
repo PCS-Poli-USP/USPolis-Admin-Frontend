@@ -10,15 +10,16 @@ import interactionPlugin, {
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import rrulePlugin from '@fullcalendar/rrule';
-import DatePickerModal from 'components/allocation/datePicker.modal';
+import DatePickerModal from '../../../components/allocation/datePicker.modal';
 import ViewPickerModal from './ViewPickerModal/view.picker.modal';
 import EventContent from './EventContent/eventContent';
 import { Resource, Event } from '../interfaces/allocation.interfaces';
 import EventModal from './EventModal/event.modal';
 import moment from 'moment';
-import { useFeatureGuideContext } from 'context/FeatureGuideContext';
+import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { TourGuideEvents, TourGuideResources } from './utils';
-import { FG_STEP_INDEXES } from 'context/FeatureGuideContext/utils';
+import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
+import './styles.css';
 
 type ViewOption = {
   value: string;
@@ -130,7 +131,7 @@ function CustomCalendar({
   });
 
   useEffect(() => {
-    registerControlFn((value: any) => {
+    registerControlFn(() => {
       if (calendarRef.current) {
         setIsGuideMode(true);
         setResourcesExpanded(true);
@@ -144,13 +145,20 @@ function CustomCalendar({
   useEffect(() => {
     if (
       state.stepIndex !== FG_STEP_INDEXES.ALLOCATION_DRAG_AND_DROP &&
-      state.stepIndex !== FG_STEP_INDEXES.RESERVATION_BY_ALLOCATION
+      state.stepIndex !== FG_STEP_INDEXES.RESERVATION_BY_ALLOCATION &&
+      state.stepIndex !== FG_STEP_INDEXES.AUTOMATIC_CLASS_CREATION
     ) {
       setIsGuideMode(false);
     }
+
+    if (state.stepIndex === FG_STEP_INDEXES.AUTOMATIC_CLASS_CREATION) {
+      setIsGuideMode(true);
+      setResourcesExpanded(true);
+      setCalendarView(viewOptions[0].value);
+      setView(viewOptions[0]);
+    }
   }, [state]);
 
-  console.log(events.length);
   return (
     <Box paddingBottom={4} zIndex={-1} w={'100%'}>
       <DatePickerModal
@@ -214,41 +222,41 @@ function CustomCalendar({
         customButtons={{
           goToView: {
             text: isMobile ? view.label : 'Escolher visualização',
-            click: (_ev, _el) => {
+            click: () => {
               onOpenViewPicker();
             },
           },
           resourceTLDayView: {
             text: 'Sala / Dia',
-            click: (_ev, _el) => {
+            click: () => {
               setCalendarView(viewOptions[0].value);
               setView(viewOptions[0]);
             },
           },
           resourceTLWeekView: {
             text: 'Sala / Semana',
-            click: (_ev, _el) => {
+            click: () => {
               setCalendarView(viewOptions[1].value);
               setView(viewOptions[1]);
             },
           },
           timeGridDayView: {
             text: 'Dia',
-            click: (_ev, _el) => {
+            click: () => {
               setCalendarView(viewOptions[2].value);
               setView(viewOptions[2]);
             },
           },
           timeGridWeekView: {
             text: 'Geral',
-            click: (_ev, _el) => {
+            click: () => {
               setCalendarView(viewOptions[3].value);
               setView(viewOptions[3]);
             },
           },
           goToDate: {
             text: isMobile ? 'Data' : 'Escolher data',
-            click: (_ev, _el) => onOpen(),
+            click: () => onOpen(),
           },
           customPrev: {
             text: '<',
@@ -318,6 +326,9 @@ function CustomCalendar({
                   year: 'numeric',
                 },
           },
+        }}
+        buttonText={{
+          today: 'Hoje',
         }}
         events={isGuideMode ? TourGuideEvents : events}
         eventContent={EventContent}

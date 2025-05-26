@@ -1,9 +1,9 @@
-import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
+import { ScheduleResponse } from '../../models/http/responses/schedule.response.models';
 import moment from 'moment';
-import { ScheduleData } from 'pages/classes/ClassModal/class.modal.interface';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { ScheduleData } from '../../pages/classes/ClassModal/class.modal.interface';
+import { MonthWeek } from '../../utils/enums/monthWeek.enum';
+import { Recurrence } from '../../utils/enums/recurrence.enum';
+import { WeekDay } from '../../utils/enums/weekDays.enum';
 
 export function getScheduleFullString(
   schedule: ScheduleData | ScheduleResponse,

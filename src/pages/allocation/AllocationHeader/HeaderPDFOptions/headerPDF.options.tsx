@@ -15,11 +15,11 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import ClassesPDF from '../../pdf/ClassesPDF/classesPDF';
 import Select from 'react-select';
 import { useState } from 'react';
-import useClasses from 'hooks/classes/useClasses';
-import { normalizeString } from 'utils/formatters';
-import useReservations from 'hooks/useReservations';
-import ClassroomsCalendarPDF from 'pages/allocation/pdf/ClassroomsCalendarPDF/classrooms.calendar.pdf';
-import { ModalProps } from 'models/interfaces';
+import useClasses from '../../../../hooks/classes/useClasses';
+import { normalizeString } from '../../../../utils/formatters';
+import useReservations from '../../../../hooks/useReservations';
+import ClassroomsCalendarPDF from '../../../../pages/allocation/pdf/ClassroomsCalendarPDF/classrooms.calendar.pdf';
+import { ModalProps } from '../../../../models/interfaces';
 
 type Option = {
   value: string;

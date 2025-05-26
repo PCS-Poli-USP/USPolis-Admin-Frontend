@@ -1,7 +1,7 @@
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { SubjectResponse } from 'models/http/responses/subject.response.models';
-import { ModalProps } from 'models/interfaces';
-import { SubjectType } from 'utils/enums/subjects.enum';
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
+import { SubjectResponse } from '../../../models/http/responses/subject.response.models';
+import { ModalProps } from '../../../models/interfaces';
+import { SubjectType } from '../../../utils/enums/subjects.enum';
 
 export interface SubjectForm {
   building_ids: number[];

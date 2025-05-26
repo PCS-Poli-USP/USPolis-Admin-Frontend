@@ -1,4 +1,4 @@
-import { CalendarValidator } from 'utils/calendars/calendar.validator';
+import { CalendarValidator } from '../../../utils/calendars/calendar.validator';
 import * as yup from 'yup';
 import { CalendarForm } from './calendar.modal.interface';
 
@@ -13,6 +13,14 @@ export const formFields = {
         (value) => !CalendarValidator.isInvalidName(value),
       ),
     defaultValue: '',
+  },
+  year: {
+    validator: yup
+      .number()
+      .required('Campo obrigatório')
+      .min(2025, 'Ano inválido')
+      .max(2100, 'Ano inválido'),
+    defaultValue: new Date().getFullYear(),
   },
   categories_ids: {
     validator: yup
@@ -29,10 +37,12 @@ export const formFields = {
 
 export const schema = yup.object<CalendarForm>().shape({
   name: formFields.name.validator,
+  year: formFields.year.validator,
   categories_ids: formFields.categories_ids.validator,
 });
 
 export const defaultValues: CalendarForm = {
   name: formFields.name.defaultValue,
+  year: formFields.year.defaultValue,
   categories_ids: formFields.categories_ids.defaultValue,
 };

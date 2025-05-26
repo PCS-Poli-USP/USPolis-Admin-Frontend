@@ -44,8 +44,12 @@ function ViewPickerModal({
           <Select
             value={view}
             options={options}
-            onChange={(newOption: ViewOption) => {
-              if (newOption) onSelectView(newOption as ViewOption);
+            onChange={(newOption) => {
+              if (newOption)
+                onSelectView({
+                  label: newOption.label,
+                  value: newOption.value,
+                });
               onClose();
             }}
           />

@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import { AllocationLogResponse } from 'models/http/responses/allocationLog.response.models';
+import { AllocationLogResponse } from '../../../models/http/responses/allocationLog.response.models';
 
 const useAllocationLogService = () => {
   const PREFIX = '/allocations_logs';

@@ -1,11 +1,11 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 import {
   CreateCalendar,
   UpdateCalendar,
-} from 'models/http/requests/calendar.request.models';
-import { CalendarResponse } from 'models/http/responses/calendar.responde.models';
+} from '../models/http/requests/calendar.request.models';
+import { CalendarResponse } from '../models/http/responses/calendar.responde.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortCalendarResponse } from 'utils/calendars/calendar.sorter';
+import { sortCalendarResponse } from '../utils/calendars/calendar.sorter';
 import useCalendarsService from './API/services/useCalendarsService';
 
 const useCalendars = (initialFetch = true) => {
@@ -36,7 +36,7 @@ const useCalendars = (initialFetch = true) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Calendário ${data.name} criado com sucesso!`,
@@ -60,7 +60,7 @@ const useCalendars = (initialFetch = true) => {
       setLoading(true);
       await service
         .update(id, data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso', `Calendário atualizado com sucesso!`, 'success');
           getCalendars();
         })
@@ -84,7 +84,7 @@ const useCalendars = (initialFetch = true) => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso!', 'Sucesso ao remover calendário', 'success');
 
           getCalendars();
@@ -104,7 +104,7 @@ const useCalendars = (initialFetch = true) => {
     if (initialFetch) {
       getCalendars();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFetch]);
 
   return {

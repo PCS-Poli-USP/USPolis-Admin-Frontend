@@ -1,9 +1,9 @@
 import { Box, Heading, Tooltip, Stack, Text, VStack } from '@chakra-ui/react';
 import { EventContentArg } from '@fullcalendar/core';
-import { EventExtendedProps } from 'models/http/responses/allocation.response.models';
+import { EventExtendedProps } from '../../../../models/http/responses/allocation.response.models';
 import moment from 'moment';
-import { getEventScheduleText } from 'pages/allocation/utils/allocation.formatter';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+import { getEventScheduleText } from '../../../../pages/allocation/utils/allocation.formatter';
+import { classNumberFromClassCode } from '../../../../utils/classes/classes.formatter';
 
 export default function EventContent(eventInfo: EventContentArg) {
   const eventData = eventInfo.event._def;

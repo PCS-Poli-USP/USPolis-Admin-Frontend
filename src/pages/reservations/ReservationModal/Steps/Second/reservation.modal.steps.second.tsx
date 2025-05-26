@@ -7,25 +7,26 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
-import { Input, Select } from 'components/common';
+import { Input, SelectInput } from '../../../../../components/common';
 import { ReservationModalSecondStepProps } from './reservation.modal.steps.second.interface';
 
-import DateCalendarPicker from 'components/common/DateCalendarPicker';
+import DateCalendarPicker from '../../../../../components/common/DateCalendarPicker';
 import { useEffect, useState } from 'react';
-import { BuildingResponse } from 'models/http/responses/building.response.models';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { SelectInput } from 'components/common/form/SelectInput';
+import { BuildingResponse } from '../../../../../models/http/responses/building.response.models';
+import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
+import { WeekDay } from '../../../../../utils/enums/weekDays.enum';
+import { MonthWeek } from '../../../../../utils/enums/monthWeek.enum';
+
 import {
   ClassroomFullResponse,
   ClassroomWithConflictCount,
-} from 'models/http/responses/classroom.response.models';
-import useClassrooms from 'hooks/useClassrooms';
-import { sortDates } from 'utils/holidays/holidays.sorter';
-import ClassroomTimeGrid from 'components/common/ClassroomTimeGrid/classroom.time.grid';
-import { generateRecurrenceDates } from 'utils/common/common.generator';
-import { formatClassroomForSelection } from 'utils/classrooms/classroom.formatter';
+} from '../../../../../models/http/responses/classroom.response.models';
+import useClassrooms from '../../../../../hooks/classrooms/useClassrooms';
+import { sortDates } from '../../../../../utils/holidays/holidays.sorter';
+import ClassroomTimeGrid from '../../../../../components/common/ClassroomTimeGrid/classroom.time.grid';
+import { generateRecurrenceDates } from '../../../../../utils/common/common.generator';
+import { formatClassroomForSelection } from '../../../../../utils/classrooms/classroom.formatter';
+import { ConflictType } from '../../../../../utils/enums/conflictType.enum';
 
 function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   const {
@@ -90,7 +91,12 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     if (selectedBuilding && start && end) {
       setIsLoading(true);
       const conflict = await getClassroomsWithConflictFromTime(
-        { start_time: start, end_time: end, dates },
+        {
+          start_time: start,
+          end_time: end,
+          dates,
+          type: ConflictType.UNINTENTIONAL,
+        },
         selectedBuilding.id,
       );
       setIsLoading(false);
@@ -293,7 +299,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
           <HStack w={'full'} h={'full'} mt={-5}>
             <VStack h={'full'} w={'full'}>
               <HStack align={'center'} w={'full'} mt={4}>
-                <Select
+                <SelectInput
                   label={'Recorrência'}
                   name={'recurrence'}
                   placeholder={'Escolha uma recorrência'}
@@ -301,13 +307,14 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     label: Recurrence.translate(value),
                     value: value,
                   }))}
-                  onChange={(event) => {
-                    // clearErrors(['month_week', 'week_day']);
-                    handleChangeRecurrence(event.target.value);
+                  onChange={(option) => {
+                    if (option) {
+                      handleChangeRecurrence(option.value as string);
+                    }
                   }}
                   disabled={!!props.vinculatedSolicitation}
                 />
-                <Select
+                <SelectInput
                   label={'Dia da semana'}
                   name={'week_day'}
                   placeholder='Escolha o dia da semana'
@@ -315,13 +322,14 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     recurrence === Recurrence.DAILY ||
                     recurrence === Recurrence.CUSTOM
                   }
+                  validator={(val) => val !== ''}
                   options={WeekDay.getValues().map((value: WeekDay) => ({
                     label: WeekDay.translate(value),
                     value: value,
                   }))}
                 />
 
-                <Select
+                <SelectInput
                   label={'Semana do mês'}
                   name={'month_week'}
                   placeholder='Escolha a semana do mês'

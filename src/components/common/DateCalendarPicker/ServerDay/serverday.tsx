@@ -35,7 +35,7 @@ function ServerDay(
       parsedDate.date() === props.day.date() &&
       parsedDate.month() === props.day.month()
     );
-  })
+  });
   const isOcupped = !!occupiedDays.find((val) => {
     const parsedDate = moment(val);
     return (
@@ -43,9 +43,9 @@ function ServerDay(
       parsedDate.month() === props.day.month()
     );
   });
-  
-  const sIcon = selectIcon ? selectIcon : '✔️'
-  const hIcon = highlightIcon ? highlightIcon : '📅'
+
+  const sIcon = selectIcon ? selectIcon : '✔️';
+  const hIcon = highlightIcon ? highlightIcon : '📅';
 
   return (
     <Badge

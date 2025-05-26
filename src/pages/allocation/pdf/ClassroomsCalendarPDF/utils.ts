@@ -1,7 +1,7 @@
-import { RecurrenceRule } from 'models/http/responses/allocation.response.models';
-import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
+import { RecurrenceRule } from '../../../../models/http/responses/allocation.response.models';
+import { ScheduleResponse } from '../../../../models/http/responses/schedule.response.models';
 import moment from 'moment';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { WeekDay } from '../../../../utils/enums/weekDays.enum';
 
 interface MergedScheduleResponse extends ScheduleResponse {
   titles: string[];
@@ -66,7 +66,7 @@ function mergeSchedules(
 ): MergedScheduleResponse[] {
   const merged: MergedScheduleResponse[] = [];
   const weekDayMap = getSchedulessByWeekDay(schedules);
-  weekDayMap.forEach((weekdaySchedules, week_day) => {
+  weekDayMap.forEach((weekdaySchedules) => {
     const mergedMap: Map<string, MergedScheduleResponse> = new Map();
     weekdaySchedules.forEach((schedule) => {
       const key: string = `${schedule.start_time}-${schedule.end_time}`;

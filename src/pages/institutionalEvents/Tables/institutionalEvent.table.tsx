@@ -1,9 +1,9 @@
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
+import { InstitutionalEventResponse } from '../../../models/http/responses/instituionalEvent.response.models';
 import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { periodFormatter } from 'utils/institutionalEvents/institutionalEvents.formatter';
+import { periodFormatter } from '../../../utils/institutionalEvents/institutionalEvents.formatter';
 
 interface InstitutionalEventsColumnsProps {
   handleEditInstitutionalEvent: (data: InstitutionalEventResponse) => void;

@@ -2,8 +2,8 @@ import { AxiosResponse } from 'axios';
 import {
   CreateInstitutionalEvent,
   UpdateInstitutionalEvent,
-} from 'models/http/requests/institutionalEvent.request.models';
-import { InstitutionalEventResponse } from 'models/http/responses/instituionalEvent.response.models';
+} from '../../../models/http/requests/institutionalEvent.request.models';
+import { InstitutionalEventResponse } from '../../../models/http/responses/instituionalEvent.response.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 const useInstitutionalEventsService = () => {

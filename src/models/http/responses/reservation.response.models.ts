@@ -1,4 +1,4 @@
-import { ReservationType } from 'utils/enums/reservations.enum';
+import { ReservationType } from '../../../utils/enums/reservations.enum';
 import {
   ScheduleResponse,
   ScheduleFullResponse,
@@ -22,7 +22,7 @@ export interface ReservationResponseBase {
   created_by_id: number;
   created_by: string;
 
-  requester?: string,
+  requester?: string;
   has_solicitation: boolean;
   solicitation_id?: number;
 }
@@ -31,7 +31,6 @@ export interface ReservationResponse extends ReservationResponseBase {
   schedule: ScheduleResponse;
 }
 
-export interface ReservationFullResponse
-  extends ReservationResponseBase {
+export interface ReservationFullResponse extends ReservationResponseBase {
   schedule: ScheduleFullResponse;
 }

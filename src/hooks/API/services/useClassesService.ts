@@ -2,14 +2,14 @@ import { AxiosResponse } from 'axios';
 import {
   ClassResponse,
   ClassFullResponse,
-} from 'models/http/responses/class.response.models';
+} from '../../../models/http/responses/class.response.models';
 import {
   CreateClass,
   UpdateClass,
-} from 'models/http/requests/class.request.models';
+} from '../../../models/http/requests/class.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
-import axios from 'services/api/axios';
+import axios from '../../../services/api/axios';
 
 const useClassesService = () => {
   const PREFIX = '/classes';
@@ -45,7 +45,16 @@ const useClassesService = () => {
     return axiosPrivate.get(`${PREFIX}/${id}`);
   };
 
-  const getMine = (): Promise<AxiosResponse<Array<ClassResponse>>> => {
+  const getMine = (
+    start?: string,
+    end?: string,
+  ): Promise<AxiosResponse<Array<ClassResponse>>> => {
+    if (start && end) {
+      const params = new URLSearchParams();
+      params.append('start', start);
+      params.append('end', end);
+      return axiosPrivate.get(`/users/my-classes`, { params });
+    }
     return axiosPrivate.get(`/users/my-classes`);
   };
 

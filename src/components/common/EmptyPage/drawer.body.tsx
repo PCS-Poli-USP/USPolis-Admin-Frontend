@@ -10,7 +10,7 @@ import {
 import { useContext } from 'react';
 import { FaList, FaRegCalendarTimes, FaRegUser } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { appContext } from 'context/AppContext';
+import { appContext } from '../../../context/AppContext';
 import {
   CalendarIcon,
   LockIcon,
@@ -23,7 +23,7 @@ import { LuCalendarClock } from 'react-icons/lu';
 import { GiBookCover, GiTeacher } from 'react-icons/gi';
 import { PiChair } from 'react-icons/pi';
 import { BsCalendar3, BsEnvelopeCheck } from 'react-icons/bs';
-import { HiUserGroup } from "react-icons/hi";
+import { HiUserGroup } from 'react-icons/hi';
 import { IconType } from 'react-icons';
 import moment from 'moment';
 
@@ -74,13 +74,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
   const { loggedUser } = useContext(appContext);
 
   return (
-    <VStack
-      align={'start'}
-      p={'10px'}
-      spacing={4}
-      maxH={'900px'}
-      
-    >
+    <VStack align={'start'} p={'10px'} spacing={4} maxH={'900px'}>
       {loggedUser ? (
         <>
           {loggedUser.is_admin ? (
@@ -105,7 +99,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                 replace_location={false}
                 onClose={onClose}
               />
-              <DrawerButton 
+              <DrawerButton
                 icon={<HiUserGroup />}
                 to='/groups'
                 text='Grupos'

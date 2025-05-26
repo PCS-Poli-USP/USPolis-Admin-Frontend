@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import useAllocationLogService from './API/services/useAllocationLogService';
-import { AllocationLogResponse } from 'models/http/responses/allocationLog.response.models';
+import { AllocationLogResponse } from '../models/http/responses/allocationLog.response.models';
 import useCustomToast from './useCustomToast';
 
 const useAllocationLog = () => {
@@ -17,7 +17,7 @@ const useAllocationLog = () => {
         .then((response) => {
           setLogs(response.data);
         })
-        .catch((error) => {
+        .catch(() => {
           showToast('Erro', 'Erro ao carregar histórico', 'error');
         })
         .finally(() => {

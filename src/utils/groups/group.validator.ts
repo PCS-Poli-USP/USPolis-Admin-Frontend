@@ -1,4 +1,4 @@
-import CommonValidator from 'utils/common/common.validator';
+import CommonValidator from '../../utils/common/common.validator';
 
 export default class GroupValidator extends CommonValidator {
   static isInvalidName(value: string) {

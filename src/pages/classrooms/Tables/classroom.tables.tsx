@@ -1,8 +1,8 @@
 import { CopyIcon } from '@chakra-ui/icons';
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { appContext } from 'context/AppContext';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import { appContext } from '../../../context/AppContext';
+import { ClassroomResponse } from '../../../models/http/responses/classroom.response.models';
 import moment from 'moment';
 import { useContext } from 'react';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
@@ -10,12 +10,14 @@ import {
   FilterBoolean,
   FilterNumber,
   FilterString,
-} from 'utils/tanstackTableHelpers/tableFiltersFns';
+} from '../../../utils/tanstackTableHelpers/tableFiltersFns';
+import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
 
 interface ClassroomColumnsProps {
   handleDuplicateClick: (data: ClassroomResponse) => void;
   handleEditClick: (data: ClassroomResponse) => void;
   handleDeleteClick: (data: ClassroomResponse) => void;
+  isLoading: boolean;
 }
 
 export function getClassroomColumns(
@@ -33,54 +35,57 @@ export function getClassroomColumns(
       id: 'building',
       accessorKey: 'building',
       header: 'Prédio',
-      meta: { isSelectable: true },
+      maxSize: 100,
+      meta: { isSelectable: true, isCenter: true },
     },
     {
       id: 'floor',
       accessorKey: 'floor',
       header: 'Andar',
-      meta: { isSelectable: true },
+      maxSize: 100,
+      meta: { isCenter: true },
       filterFn: FilterNumber,
     },
     {
       id: 'capacity',
       accessorKey: 'capacity',
       header: 'Capacidade',
-      meta: { isSelectable: true },
+      maxSize: 100,
+      meta: { isCenter: true },
       filterFn: FilterNumber,
     },
-    {
-      id: 'ignore_to_allocate',
-      accessorKey: 'ignore_to_allocate',
-      header: 'Ignorar',
-      meta: { isBoolean: true, isSelectable: true },
-      filterFn: FilterBoolean,
-    },
+
     {
       id: 'air_conditioning',
       accessorKey: 'air_conditioning',
       header: 'Ar condicionado',
+      maxSize: 120,
       meta: { isBoolean: true, isSelectable: true },
       filterFn: FilterBoolean,
     },
     {
-      id: 'projector',
-      accessorKey: 'projector',
-      header: 'Projetor',
-      meta: { isBoolean: true, isSelectable: true },
-      filterFn: FilterBoolean,
+      id: 'audiovisual',
+      accessorKey: 'audiovisual',
+      header: 'Audiovisual',
+      meta: { isSelectable: true, isCenter: true },
+      maxSize: 100,
+      cell: ({ row }) => AudiovisualType.translate(row.original.audiovisual),
+      accessorFn: (row) => AudiovisualType.translate(row.audiovisual),
     },
     {
       id: 'accessibility',
       accessorKey: 'accessibility',
       header: 'Acessibilidade',
-      meta: { isBoolean: true, isSelectable: true },
+      maxSize: 100,
+      meta: { isBoolean: true, isSelectable: true, isCenter: true },
       filterFn: FilterBoolean,
     },
     {
       accessorKey: 'updated_at',
       header: 'Atualizado em',
       filterFn: FilterString,
+      meta: { isCenter: true },
+      maxSize: 150,
       accessorFn: (row) =>
         moment(row.updated_at).format('DD/MM/YYYY [às] HH:mm'),
       cell: ({ row }) => (
@@ -104,6 +109,7 @@ export function getClassroomColumns(
               aria-label='duplicar-sala'
               icon={<CopyIcon />}
               onClick={() => props.handleDuplicateClick(row.original)}
+              disabled={props.isLoading}
             />
           </Tooltip>
           <Tooltip label='Editar'>
@@ -114,6 +120,7 @@ export function getClassroomColumns(
               aria-label='editar-sala'
               icon={<BsFillPenFill />}
               onClick={() => props.handleEditClick(row.original)}
+              disabled={props.isLoading}
             />
           </Tooltip>
 

@@ -8,12 +8,12 @@ import {
   Text,
   Flex,
 } from '@chakra-ui/react';
-import { ClassResponse } from 'models/http/responses/class.response.models';
-import { ScheduleResponse } from 'models/http/responses/schedule.response.models';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
-import { AllocationEnum } from 'utils/enums/allocation.enum';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { ClassResponse } from '../../../models/http/responses/class.response.models';
+import { ScheduleResponse } from '../../../models/http/responses/schedule.response.models';
+import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
+import { AllocationEnum } from '../../../utils/enums/allocation.enum';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { WeekDay } from '../../../utils/enums/weekDays.enum';
 
 interface ClassAccordionProps {
   classes: ClassResponse[];

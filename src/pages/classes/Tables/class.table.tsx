@@ -8,22 +8,23 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { ColumnDef, Row } from '@tanstack/react-table';
-import { ClassResponse } from 'models/http/responses/class.response.models';
+import { ClassResponse } from '../../../models/http/responses/class.response.models';
 import {
   BsCalendarDateFill,
   BsFillPenFill,
   BsFillTrashFill,
 } from 'react-icons/bs';
 import { BiSolidCalendarEdit } from 'react-icons/bi';
-import { getScheduleString } from 'utils/schedules/schedule.formatter';
+import { getScheduleString } from '../../../utils/schedules/schedule.formatter';
 import {
   FilterArray,
-  FilterBuilding,
   FilterClassCode,
   FilterNumber,
   FilterString,
-} from 'utils/tanstackTableHelpers/tableFiltersFns';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
+} from '../../../utils/tanstackTableHelpers/tableFiltersFns';
+import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
+import moment from 'moment';
+import { SortPeriodFn } from '../../../utils/tanstackTableHelpers/tableSortingFns';
 
 interface ClassesColumnsProps {
   handleCheckAllClick: (data: Row<ClassResponse>[], value: boolean) => void;
@@ -40,7 +41,6 @@ interface ClassesColumnsProps {
 export const getClassesColumns = (
   props: ClassesColumnsProps,
 ): ColumnDef<ClassResponse>[] => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const columns: ColumnDef<ClassResponse>[] = [
     {
       id: 'mark',
@@ -109,6 +109,7 @@ export const getClassesColumns = (
       maxSize: 120,
       meta: {
         isSelectable: true,
+        isCenter: true,
       },
       cell: ({ row }) => (
         <Box>
@@ -131,6 +132,9 @@ export const getClassesColumns = (
           : ['Não alocada'],
       filterFn: FilterArray,
       header: 'Sala',
+      meta: {
+        isCenter: true,
+      },
       maxSize: 120,
       cell: ({ row }) => (
         <Box>
@@ -171,18 +175,27 @@ export const getClassesColumns = (
     {
       accessorFn: (row) =>
         row.calendar_names.length > 0
-          ? row.calendar_names
+          ? row.calendar_names.map((calendar) =>
+              calendar.replace('Calendário', ''),
+            )
           : ['Sem calendários'],
-      filterFn: FilterBuilding,
+      filterFn: FilterArray,
       header: 'Calendários',
-      maxSize: 140,
+      maxSize: 150,
+      meta: {
+        isSelectable: true,
+        isCenter: true,
+      },
       cell: ({ row }) => (
         <Box>
           {row.original.calendar_names.length > 0 ? (
             row.original.calendar_names.map((calendar, index) => (
-              <Tooltip label={<Text>{calendar}</Text>} key={index}>
+              <Tooltip
+                label={<Text>{calendar.replace('Calendário', '')}</Text>}
+                key={index}
+              >
                 <Text maxW={140} overflowX={'hidden'} textOverflow={'ellipsis'}>
-                  {calendar}
+                  {calendar.replace('Calendário', '')}
                 </Text>
               </Tooltip>
             ))
@@ -197,6 +210,9 @@ export const getClassesColumns = (
       header: 'Vagas',
       maxSize: 100,
       filterFn: FilterNumber,
+      meta: {
+        isNumeric: true,
+      },
     },
     {
       accessorKey: 'professors',
@@ -214,6 +230,23 @@ export const getClassesColumns = (
         </Box>
       ),
       filterFn: FilterArray,
+    },
+    {
+      accessorKey: 'date',
+      header: 'Período',
+      filterFn: FilterString,
+      sortingFn: SortPeriodFn,
+      accessorFn: (row) =>
+        `${moment(row.start_date).format('DD/MM/YYYY')} até ${moment(
+          row.end_date,
+        ).format('DD/MM/YYYY')}`,
+      cell: ({ row }) => (
+        <Box>
+          <Text>{`${moment(row.original.start_date).format(
+            'DD/MM/YYYY',
+          )} até ${moment(row.original.end_date).format('DD/MM/YYYY')}`}</Text>
+        </Box>
+      ),
     },
     {
       id: 'options',

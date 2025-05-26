@@ -2,8 +2,8 @@ import { AxiosResponse } from 'axios';
 import {
   CreateHolidayCategory,
   UpdateHolidayCategory,
-} from 'models/http/requests/holidayCategory.request.models';
-import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
+} from '../../../models/http/requests/holidayCategory.request.models';
+import { HolidayCategoryResponse } from '../../../models/http/responses/holidayCategory.response.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
 const useHolidayCategoryService = () => {

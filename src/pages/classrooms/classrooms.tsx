@@ -7,15 +7,16 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-import DataTable from 'components/common/DataTable/dataTable.component';
-import Dialog from 'components/common/Dialog/dialog.component';
+import DataTable from '../../components/common/DataTable/dataTable.component';
+import Dialog from '../../components/common/Dialog/dialog.component';
 import { useState } from 'react';
 import ClassroomModal from './ClassroomModal/classroom.modal';
-import useBuildings from 'hooks/useBuildings';
-import useClassrooms from 'hooks/useClassrooms';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import useBuildings from '../../hooks/useBuildings';
+import useClassrooms from '../../hooks/classrooms/useClassrooms';
+import { ClassroomResponse } from '../../models/http/responses/classroom.response.models';
 import { getClassroomColumns } from './Tables/classroom.tables';
-import PageContent from 'components/common/PageContent';
+import PageContent from '../../components/common/PageContent';
+import useGroups from '../../hooks/groups/useGroups';
 
 function Classrooms() {
   const {
@@ -32,7 +33,8 @@ function Classrooms() {
   const [selectedClassroom, setSelectedClassroom] =
     useState<ClassroomResponse>();
   const [isUpdate, setIsUpdate] = useState(false);
-  const { buildings } = useBuildings();
+  const { loading: loadingBuildings, buildings } = useBuildings();
+  const { loading: loadingGroups, groups } = useGroups();
   const { loading, classrooms, getClassrooms, deleteClassroom } =
     useClassrooms();
 
@@ -40,6 +42,7 @@ function Classrooms() {
     handleDuplicateClick: handleDuplicateClick,
     handleEditClick: handleEditClick,
     handleDeleteClick: handleDeleteClick,
+    isLoading: loading || loadingBuildings || loadingGroups,
   });
 
   function handleDuplicateClick(data: ClassroomResponse) {
@@ -82,6 +85,7 @@ function Classrooms() {
         }}
         isUpdate={isUpdate}
         buildings={buildings}
+        groups={groups}
         refetch={getClassrooms}
         selectedClassroom={selectedClassroom}
       />
@@ -105,7 +109,7 @@ function Classrooms() {
           </Button>
         </Flex>
         <DataTable
-          loading={loading}
+          loading={loading || loadingBuildings || loadingGroups}
           data={classrooms}
           columns={columns}
           columnPinning={{ left: ['name'], right: ['options'] }}

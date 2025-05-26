@@ -1,13 +1,13 @@
 import { CopyIcon } from '@chakra-ui/icons';
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { SubjectResponse } from 'models/http/responses/subject.response.models';
+import { SubjectResponse } from '../../../models/http/responses/subject.response.models';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
-import { SubjectType } from 'utils/enums/subjects.enum';
+import { SubjectType } from '../../../utils/enums/subjects.enum';
 import {
   FilterArray,
   FilterString,
-} from 'utils/tanstackTableHelpers/tableFiltersFns';
+} from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 
 interface SubjectColumnsProps {
   handleEditButton: (data: SubjectResponse) => void;
@@ -19,7 +19,6 @@ interface SubjectColumnsProps {
 export const getSubjectColumns = (
   props: SubjectColumnsProps,
 ): ColumnDef<SubjectResponse>[] => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const columns: ColumnDef<SubjectResponse>[] = [
     {
       accessorKey: 'code',

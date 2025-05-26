@@ -2,7 +2,7 @@ import { FormLabel, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FieldProps } from '../form.interface';
 import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import Select from 'react-select';
+import Select, { MultiValue } from 'react-select';
 
 export type Option = {
   label: string;
@@ -11,9 +11,8 @@ export type Option = {
 
 interface MultiSelectProps extends FieldProps {
   options: Option[];
-  values?: Option[];
-  loading?: boolean;
-  onChange?: () => void;
+  isLoading?: boolean;
+  onChange?: (options: Option[]) => void;
 }
 
 export function MultiSelect({
@@ -21,9 +20,9 @@ export function MultiSelect({
   name,
   options,
   disabled = false,
-  loading = false,
-  values = undefined,
-  placeholder = "Selecione uma ou mais opções",
+  isLoading = false,
+  hidden = false,
+  placeholder = 'Selecione uma ou mais opções',
   mt = undefined,
   mb = undefined,
   mr = undefined,
@@ -42,55 +41,54 @@ export function MultiSelect({
   );
 
   useEffect(() => {
-    if (values) {
-      setValue(
-        name,
-        values.map((val) => val.value),
+    const current: (string | number)[] = getValues(name);
+    if (current) {
+      setSelectedOptions(
+        options.filter((option) => current.includes(option.value)),
       );
-      setSelectedOptions(values);
-    } else {
-      const current: (string | number)[] = getValues(name);
-      if (current) {
-        setSelectedOptions(
-          options.filter((option) => current.includes(option.value)),
-        );
-      }
-    }
+    } else setSelectedOptions([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values, name, options]);
+  }, [name, options]);
 
   return (
-    <Controller
-      control={control}
-      name={name}
-      render={() => (
-        <FormControl isInvalid={!!errors[name]} mt={mt} mb={mb} ml={ml} mr={mr}>
-          <FormLabel alignSelf='flex-start'>{label}</FormLabel>
+    <FormControl
+      isInvalid={!!errors[name]}
+      mt={mt}
+      mb={mb}
+      ml={ml}
+      mr={mr}
+      hidden={hidden}
+    >
+      <FormLabel alignSelf='flex-start'>{label}</FormLabel>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
           <Select
+            {...field}
+            id={name}
             value={selectedOptions}
-            isLoading={loading}
-            isDisabled={disabled}
+            isLoading={isLoading}
+            isDisabled={disabled || isLoading}
             placeholder={placeholder}
             isMulti={true}
+            isClearable={true}
             closeMenuOnSelect={false}
-            onChange={(selectedOption: Option[]) => {
-              const values = selectedOption.map(
-                (option: Option) => option.value,
+            onChange={(selectedOption: MultiValue<Option>) => {
+              if (onChange) {
+                onChange(selectedOption as Option[]);
+              }
+              const values = (selectedOption || []).map(
+                (option) => option.value,
               );
               setValue(name, values);
               setSelectedOptions(selectedOption as Option[]);
-              if (onChange) {
-                onChange();
-              }
-              return;
             }}
             options={options}
           />
-          <FormErrorMessage>
-            {errors[name]?.message?.toString()}
-          </FormErrorMessage>
-        </FormControl>
-      )}
-    />
+        )}
+      />
+      <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
+    </FormControl>
   );
 }

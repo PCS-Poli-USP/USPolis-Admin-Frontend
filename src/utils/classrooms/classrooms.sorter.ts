@@ -1,9 +1,8 @@
-import Classroom from 'models/common/classroom.model';
-import { ClassroomResponse } from 'models/http/responses/classroom.response.models';
+import { ClassroomResponse } from '../../models/http/responses/classroom.response.models';
 
 export function sortClassroomResponse(
-  A: ClassroomResponse | Classroom,
-  B: ClassroomResponse | Classroom,
+  A: ClassroomResponse,
+  B: ClassroomResponse,
 ) {
   if (A.building < B.building) return -1;
   if (A.building > B.building) return 1;

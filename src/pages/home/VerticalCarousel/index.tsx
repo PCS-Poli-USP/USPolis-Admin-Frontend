@@ -78,7 +78,8 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
         return;
       }
       const index = Math.floor(
-        (scrollY - componentTop - boxH + 60 + textGap / 2) / (textH + textGap / 2),
+        (scrollY - componentTop - boxH + 60 + textGap / 2) /
+          (textH + textGap / 2),
       );
       if (index >= 0 && index < items.length && index !== currentImageIndex) {
         setCurrentImageIndex(index);

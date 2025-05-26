@@ -8,17 +8,16 @@ import {
   ModalCloseButton,
   Button,
   Flex,
-  FormLabel,
-  FormControl,
 } from '@chakra-ui/react';
 import { GroupModalProps } from './group.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform//resolvers/yup';
 import { schema, defaultValues } from './group.modal.form';
-import { Input, MultiSelect, Option } from 'components/common';
-import useGroups from 'hooks/useGroups';
-import { useEffect } from 'react';
-import { Select } from 'chakra-react-select';
+import { Input, MultiSelect, SelectInput } from '../../../components/common';
+import useGroups from '../../../hooks/groups/useGroups';
+import { useEffect, useState } from 'react';
+import { filterString } from '../../../utils/filters';
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
 
 function GroupModal({
   isOpen,
@@ -35,6 +34,7 @@ function GroupModal({
     resolver: yupResolver(schema),
   });
   const { createGroup, updateGroup } = useGroups(false);
+  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
 
   function handleClose() {
     form.reset(defaultValues);
@@ -43,7 +43,6 @@ function GroupModal({
 
   const { watch } = form;
   const classroom_ids = watch('classroom_ids');
-  const user_ids = watch('user_ids');
 
   async function handleSubmit() {
     const isValid = await form.trigger();
@@ -62,10 +61,13 @@ function GroupModal({
     if (group) {
       form.reset({
         name: group.name,
-        abbreviation: group.abbreviation,
         user_ids: group.user_ids,
-        classroom_ids: group.classroom_ids,
+        classroom_ids: group.main ? [] : group.classroom_ids,
+        building_id: group.building_id,
       });
+      setSelectedBuilding(
+        buildings.find((building) => building.id === group.building_id),
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [group]);
@@ -87,63 +89,79 @@ function GroupModal({
               <Flex direction={'column'} w={'full'} gap={'10px'}>
                 <Flex w={'full'} gap={'10px'}>
                   <Input
-                    w={'75%'}
+                    w={'100%'}
                     name='name'
                     label='Nome'
                     placeholder='Insira o nome do grupo'
                   />
-                  <Input
-                    w={'25%'}
-                    name='abbreviation'
-                    label='Sigla'
-                    max={10}
-                    min={3}
-                    placeholder='Entre 3 a 10 caracteres'
-                  />
                 </Flex>
                 <MultiSelect
                   name='user_ids'
-                  label={`Usuários Administrativos (${user_ids.length})`}
-                  options={users
-                    .filter((user) => user.is_admin || user.buildings)
-                    .map((user) => ({
-                      label: `${user.name} (${user.email})`,
-                      value: user.id,
-                    }))}
+                  label={`Usuários`}
+                  options={users.map((user) => ({
+                    label: `${user.name} (${user.email})`,
+                    value: user.id,
+                  }))}
                 />
-                <FormControl>
-                  <FormLabel>Inserção rápida</FormLabel>
-                  <Select
+
+                <Flex
+                  w={'100%'}
+                  align={'center'}
+                  justify={'center'}
+                  gap={'5px'}
+                >
+                  <SelectInput
+                    name='building_id'
+                    label='Prédio'
+                    disabled={group && group.main}
+                    placeholder='Selecione um prédio'
                     options={buildings.map((building) => ({
-                      label: `${building.name}`,
+                      label: building.name,
                       value: building.id,
                     }))}
-                    placeholder='Selecione um prédio e adicione suas salas'
-                    closeMenuOnSelect={true}
-                    isLoading={false}
-                    isDisabled={false}
-                    onChange={(selected: Option) => {
-                      if (selected) {
-                        const current = form.getValues('classroom_ids');
-                        classrooms.forEach((classroom) => {
-                          if (classroom.building_id === selected.value) {
-                            current.push(classroom.id);
-                          }
-                        });
-                        const unique = new Set(current);
-                        const selectedClassroomIds = Array.from(unique);
-                        form.setValue('classroom_ids', selectedClassroomIds);
+                    onChange={(option) => {
+                      if (option) {
+                        setSelectedBuilding(
+                          buildings.filter(
+                            (building) => building.id === option.value,
+                          )[0],
+                        );
+                      } else {
+                        setSelectedBuilding(undefined);
+                        form.setValue('classroom_ids', []);
                       }
                     }}
                   />
-                </FormControl>
+                </Flex>
+
                 <MultiSelect
                   name='classroom_ids'
-                  label={`Salas (${classroom_ids.length})`}
-                  options={classrooms.map((classroom) => ({
-                    label: `${classroom.name} (${classroom.building})`,
-                    value: classroom.id,
-                  }))}
+                  disabled={group && group.main}
+                  label={
+                    group && group.main
+                      ? 'Salas'
+                      : `Salas (${classroom_ids.length})`
+                  }
+                  placeholder={
+                    group && group.main
+                      ? 'Grupo principal não tem salas'
+                      : 'Selecione as salas do grupo'
+                  }
+                  options={
+                    selectedBuilding
+                      ? classrooms
+                          .filter((val) =>
+                            filterString(val.building, selectedBuilding.name),
+                          )
+                          .map((classroom) => ({
+                            label: `${classroom.name} (${classroom.building})`,
+                            value: classroom.id,
+                          }))
+                      : classrooms.map((classroom) => ({
+                          label: `${classroom.name} (${classroom.building})`,
+                          value: classroom.id,
+                        }))
+                  }
                 />
               </Flex>
             </ModalBody>

@@ -1,6 +1,6 @@
-import { ScheduleResponseBase } from 'models/http/responses/schedule.response.models';
 import moment from 'moment';
-import { Recurrence } from 'utils/enums/recurrence.enum';
+import { ScheduleResponseBase } from '../../models/http/responses/schedule.response.models';
+import { Recurrence } from '../../utils/enums/recurrence.enum';
 
 export function sortScheduleResponse(
   A: ScheduleResponseBase,

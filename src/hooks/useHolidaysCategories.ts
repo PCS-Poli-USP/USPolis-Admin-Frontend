@@ -1,11 +1,11 @@
-import useCustomToast from 'hooks/useCustomToast';
+import useCustomToast from '../hooks/useCustomToast';
 import {
   CreateHolidayCategory,
   UpdateHolidayCategory,
-} from 'models/http/requests/holidayCategory.request.models';
-import { HolidayCategoryResponse } from 'models/http/responses/holidayCategory.response.models';
+} from '../models/http/requests/holidayCategory.request.models';
+import { HolidayCategoryResponse } from '../models/http/responses/holidayCategory.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortHolidaysCategoriesResponse } from 'utils/holidaysCategories/holidaysCategories.sorter';
+import { sortHolidaysCategoriesResponse } from '../utils/holidaysCategories/holidaysCategories.sorter';
 import useHolidayCategoryService from './API/services/useHolidayCategoryService';
 
 const useHolidaysCategories = (initialFetch = true) => {
@@ -40,7 +40,7 @@ const useHolidaysCategories = (initialFetch = true) => {
       setLoading(true);
       await service
         .create(data)
-        .then((response) => {
+        .then(() => {
           showToast(
             'Sucesso',
             `Categoria ${data.name} criada com sucesso!`,
@@ -64,7 +64,7 @@ const useHolidaysCategories = (initialFetch = true) => {
       setLoading(true);
       await service
         .update(id, data)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso', `Categoria atualizada com sucesso!`, 'success');
           getHolidaysCategories();
         })
@@ -88,7 +88,7 @@ const useHolidaysCategories = (initialFetch = true) => {
       setLoading(true);
       await service
         .deleteById(id)
-        .then((response) => {
+        .then(() => {
           showToast('Sucesso!', 'Sucesso ao remover categoria', 'success');
 
           getHolidaysCategories();
@@ -106,7 +106,7 @@ const useHolidaysCategories = (initialFetch = true) => {
 
   useEffect(() => {
     if (initialFetch) getHolidaysCategories();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFetch]);
 
   return {

@@ -1,6 +1,6 @@
-import { MonthWeek } from 'utils/enums/monthWeek.enum';
-import { Recurrence } from 'utils/enums/recurrence.enum';
-import { WeekDay } from 'utils/enums/weekDays.enum';
+import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
+import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { WeekDay } from '../../../utils/enums/weekDays.enum';
 
 export interface ScheduleBase {
   start_date: string;

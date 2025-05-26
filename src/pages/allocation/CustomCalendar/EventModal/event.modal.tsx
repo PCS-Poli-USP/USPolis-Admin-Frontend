@@ -10,12 +10,12 @@ import {
   VStack,
   Box,
 } from '@chakra-ui/react';
-import { ModalProps } from 'models/interfaces';
+import { ModalProps } from '../../../../models/interfaces';
 import { EventApi } from '@fullcalendar/core';
 import moment from 'moment';
-import { getEventScheduleText } from 'pages/allocation/utils/allocation.formatter';
-import { classNumberFromClassCode } from 'utils/classes/classes.formatter';
-import { EventExtendedProps } from 'models/http/responses/allocation.response.models';
+import { getEventScheduleText } from '../../../../pages/allocation/utils/allocation.formatter';
+import { classNumberFromClassCode } from '../../../../utils/classes/classes.formatter';
+import { EventExtendedProps } from '../../../../models/http/responses/allocation.response.models';
 
 interface EventModalProps extends ModalProps {
   event?: EventApi;
