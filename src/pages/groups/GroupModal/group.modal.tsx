@@ -14,7 +14,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform//resolvers/yup';
 import { schema, defaultValues } from './group.modal.form';
 import { Input, MultiSelect, SelectInput } from '../../../components/common';
-import useGroups from '../../../hooks/groups/useGroups';
 import { useEffect, useState } from 'react';
 import { filterString } from '../../../utils/filters';
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
@@ -27,17 +26,18 @@ function GroupModal({
   users,
   classrooms,
   isUpdate,
-  refetch,
+  createGroup,
+  updateGroup,
 }: GroupModalProps) {
   const form = useForm({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
   });
-  const { createGroup, updateGroup } = useGroups(false);
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
 
   function handleClose() {
     form.reset(defaultValues);
+    setSelectedBuilding(undefined);
     onClose();
   }
 
@@ -49,12 +49,11 @@ function GroupModal({
     if (!isValid) return;
     const values = form.getValues();
     if (isUpdate && group) {
-      await updateGroup(group.id, values);
+      updateGroup(group.id, values);
     } else {
-      await createGroup(values);
+      createGroup(values);
     }
     handleClose();
-    refetch();
   }
 
   useEffect(() => {
@@ -64,6 +63,7 @@ function GroupModal({
         user_ids: group.user_ids,
         classroom_ids: group.main ? [] : group.classroom_ids,
         building_id: group.building_id,
+        main: group.main,
       });
       setSelectedBuilding(
         buildings.find((building) => building.id === group.building_id),
@@ -120,6 +120,7 @@ function GroupModal({
                       value: building.id,
                     }))}
                     onChange={(option) => {
+                      form.setValue('classroom_ids', []);
                       if (option) {
                         setSelectedBuilding(
                           buildings.filter(
@@ -128,7 +129,6 @@ function GroupModal({
                         );
                       } else {
                         setSelectedBuilding(undefined);
-                        form.setValue('classroom_ids', []);
                       }
                     }}
                   />

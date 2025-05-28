@@ -41,7 +41,8 @@ export default function Groups() {
   const {
     groups,
     loading: loadingGroups,
-    getAllGroups,
+    createGroup,
+    updateGroup,
     deleteGroup,
   } = useGroups();
   const {
@@ -88,9 +89,8 @@ export default function Groups() {
         buildings={buildings}
         classrooms={classrooms}
         users={users}
-        refetch={() => {
-          getAllGroups();
-        }}
+        createGroup={createGroup}
+        updateGroup={updateGroup}
       />
       <Dialog
         title={'Remover grupo'}

@@ -1,3 +1,7 @@
+import {
+  GroupRequest,
+  GroupUpdate,
+} from '../../../models/http/requests/group.request.models';
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
 import { ClassroomResponse } from '../../../models/http/responses/classroom.response.models';
 import { GroupResponse } from '../../../models/http/responses/group.response.models';
@@ -10,7 +14,8 @@ export interface GroupModalProps extends ModalProps {
   users: UserResponse[];
   buildings: BuildingResponse[];
   isUpdate: boolean;
-  refetch: () => void;
+  createGroup: (data: GroupRequest) => Promise<void>;
+  updateGroup: (id: number, data: GroupUpdate) => Promise<void>;
 }
 
 export interface GroupForm {
@@ -18,4 +23,5 @@ export interface GroupForm {
   name: string;
   classroom_ids: number[];
   user_ids: number[];
+  main: boolean;
 }

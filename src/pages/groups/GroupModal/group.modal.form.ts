@@ -43,6 +43,10 @@ export const formFields = {
       }),
     defaultValue: [],
   },
+  main: {
+    defaultValues: false,
+    validator: yup.boolean(),
+  },
   user_ids: {
     validator: yup
       .array()
@@ -69,4 +73,5 @@ export const defaultValues: GroupForm = {
   name: formFields.name.defaultValue,
   classroom_ids: formFields.classroom_ids.defaultValue,
   user_ids: formFields.user_ids.defaultValue,
+  main: formFields.main.defaultValues,
 };
