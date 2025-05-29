@@ -21,7 +21,7 @@ import { UsersValidator } from '../../utils/users/users.validator';
 import CrawlerModal from './CrawlerModal/crawler.modal';
 import CrawlerPopover from './CrawlerModal/crawler.popover';
 import { CrawlerType } from '../../utils/enums/subjects.enum';
-import PageTitle from '../../components/common/PageTitle';
+import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 
 function Classes() {
   const context = useContext(appContext);
@@ -250,7 +250,7 @@ function Classes() {
         />
       )}
       <Flex align='center'>
-        <PageTitle
+        <PageHeaderWithFilter
           title='Turmas'
           onConfirm={(start, end) => {
             getClasses(start, end);

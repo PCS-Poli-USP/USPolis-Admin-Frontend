@@ -12,7 +12,7 @@ import ReservationModal from './ReservationModal/reservation.modal';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import PageContent from '../../components/common/PageContent';
 import useClassroomsSolicitations from '../../hooks/useClassroomSolicitations';
-import PageTitle from '../../components/common/PageTitle';
+import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 
 function Reservations() {
   const {
@@ -89,7 +89,7 @@ function Reservations() {
         }}
       />
       <Flex align='center' direction={'row'}>
-        <PageTitle
+        <PageHeaderWithFilter
           title='Reservas'
           onConfirm={(start, end) => {
             getReservations(start, end);
