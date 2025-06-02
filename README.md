@@ -1,60 +1,104 @@
-# USPolis - Admin Frontend
+# USPolis Frontend
+[![Static Badge](https://img.shields.io/badge/Node-1eeb25)](https://nodejs.org/pt)
+[![Static Badge](https://img.shields.io/badge/Typescript-035afc)](https://www.typescriptlang.org/)
+[![Static Badge](https://img.shields.io/badge/React-408080)](https://react.dev/)
+https://img.shields.io/badge/Prettier-4f2f03
 
-Frontend administrativo do sistema USPolis - gerenciamento da alocação de turmas da EPUSP.
+[![Static Badge](https://img.shields.io/badge/Chackra-v2-408080)](https://v2.chakra-ui.com/)
+[![Static Badge](https://img.shields.io/badge/Vite-961eeb)](https://vite.dev/)
+[![Static Badge](https://img.shields.io/badge/Yarn-291eeb)](https://yarnpkg.com/)
+[![Static Badge](https://img.shields.io/badge/Testing%20Library-a10303)](https://testing-library.com/docs/)
+[![Static Badge](https://img.shields.io/badge/ESLint-24034f)](https://eslint.org/)
+[![Static Badge](https://img.shields.io/badge/Prettier-4f2f03)](https://prettier.io/docs/)
 
-## Dependências
 
-### `nodejs`
+![USPolis-removebg-preview](https://github.com/user-attachments/assets/c19e3ce9-646c-4404-926c-4115c4a5a0b8)
 
-nodejs v18.14.0
-npm v9.3.1
 
-## Configuração
+## Table of Contents
+1. [Stack](#stack)
+2. [Docs](#docs)
+3. [Setup](#setup)
+4. [Run and Build](#run-and-build)
+5. [Develop](#develop)
+6. [Test](#test)
 
-### `.env`
+## Stack
+Here we have the main tecnologies used on frontend:
+- [Typescript](https://www.typescriptlang.org/) - TypeScript is a strongly typed programming language that builds on JavaScript.
+- [React](https://fastapi.tiangolo.com/) - Javascript front-end library.
+- [Chakra-UI](https://v2.chakra-ui.com/) - A React component library (**version 2**).
+- [Yarn](https://yarnpkg.com/) - A package manager for javascript projects
+- [Vite](https://vite.dev/) - A fast frontend build tool
 
-Configurar .env com base no arquivo env-example na raiz do projeto
+We also uses other tools for development, check the [develop](#develop) section.
 
-### `npm install`
+## Docs
 
-Instalar as dependências do projeto
+You can see a complete documentation at [USPolis-Admin Wiki](https://github.com/PCS-Poli-USP/USPolis-Admin/wiki), there you will find the architecture, models, design patterns, bussiness rules, descriptions and more.
 
-## Execução
+## Setup
 
-### `npm start`
+This codebase was written for Node.js 20 and above.
 
-Executa o projeto em modo de desenvolvimento (http://localhost:3000)
+First make sure that you have [Yarn](https://yarnpkg.com/getting-started/install) installed.
 
-### `npm run build`
+After installing yarn now we will install the dependencies
+```bash
+yarn install
+```
 
-Cria uma build otimizada para produção na pasta build
+There are enviroment variables that must be setted, you can see a example of `.env` file at `env.example` on the root folder. 
 
-Documentação para [deploys](https://create-react-app.dev/docs/deployment/)
+Assuming you've created and setted the '.env' file, everything should run as if there is a [API or backend](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/tree/main) running (see the [docs](https://github.com/PCS-Poli-USP/USPolis-Admin/wiki) for a complete step by step to how set the enviroment).
 
-## Documentation
+## Run and Build
 
-### Architecture
+This project uses [Vite](https://vite.dev/) as building tool, for running the website do:
 
-This repo follows an architecture very similar to the traditional react.
+```bash
+yarn vite
+```
 
-Some things that are not obvious and are worth noting:
+Your website will be available at http://localhost:3000
 
-- The landing page is on ```App.tsx```
+If you want to build the static files to serve it, run:
+```bash
+yarn build
+```
 
-#### Pages
+The static files will be avaliable at folder `build` on the root of the project. To serve the static files run this command:
 
-This is where the main code of your page is on. Ideally, it will only be an architectural description of the page, connecting different components previously developed, aside from *handle functions*.
+```bash
+npx serve -s build
+```
 
-#### Components
+The flag -s is important since our project is a [SPA](https://developer.mozilla.org/en-US/docs/Glossary/SPA).
 
-Inside this directory we can find the ```common``` components, which are generic and used by different pages, and the specific components from each page.
+## Develop
 
-#### Services
+Since Vite is just a speed building tool, it not check syntax errors, so if you made a mistake your website will be a blank white page and you will be in trouble to find were is the problem.
 
-This is where **all the backend integration code** are centered. Basically, a service consists of classes that handles the backend communication.
+So, for making Vite viable we uses [Eslint](https://eslint.org/) for analyzing our code, actually we uses the [Typescript-Eslint](https://typescript-eslint.io/) library to enable eslint and prettier to support Typescript.
 
-The services uses the models for interfacing.
+You can change the typescript-eslint rules (make more strict or less strict) at `eslint.config.mjs` file, you can read all rules [here](https://typescript-eslint.io/rules/).
 
-#### Models
+To run eslint do:
+```bash
+yarn lint
+```
+***The project actually have vite-eslint plugin that automatically shows on terminal were is the erros or warnings, so you not need to run this command**
 
-Here we have the definitions of the interfaces that need to be sended or received from the backend, aside from eventually some usefull entity that need to be present on lots of pages of the frontend application.
+For code formatting we uses [Prettier](https://prettier.io/docs/), the config file is `.prettierrc.js`.
+
+To run prettier do:
+```bash
+yarn format
+```
+
+> [!TIP]
+> If you use VSCode we strongly recommends install [Prittier-VSCode](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extension and [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extension. This will save your time, showing errors on editor and running prettier on after save the file.
+
+## Test
+
+We are working on a test enviroment for frontend, but the project already has [Testing Library](https://testing-library.com/docs/) as a dependency.
