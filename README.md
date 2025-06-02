@@ -2,8 +2,6 @@
 [![Static Badge](https://img.shields.io/badge/Node-1eeb25)](https://nodejs.org/pt)
 [![Static Badge](https://img.shields.io/badge/Typescript-035afc)](https://www.typescriptlang.org/)
 [![Static Badge](https://img.shields.io/badge/React-408080)](https://react.dev/)
-https://img.shields.io/badge/Prettier-4f2f03
-
 [![Static Badge](https://img.shields.io/badge/Chackra-v2-408080)](https://v2.chakra-ui.com/)
 [![Static Badge](https://img.shields.io/badge/Vite-961eeb)](https://vite.dev/)
 [![Static Badge](https://img.shields.io/badge/Yarn-291eeb)](https://yarnpkg.com/)
