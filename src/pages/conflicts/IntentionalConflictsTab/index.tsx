@@ -31,7 +31,7 @@ function IntentionalConflictsTab({
   conflicts,
   setSelectedClassId,
   setIsOpenAllocate,
-}: IntentionalConflictsTabProps) {  
+}: IntentionalConflictsTabProps) {
   const location = useLocation();
   const navigate = useNavigate();
   return (

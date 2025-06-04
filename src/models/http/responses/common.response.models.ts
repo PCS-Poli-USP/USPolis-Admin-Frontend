@@ -14,4 +14,4 @@ export interface JSONResponse {
   message: string;
 }
 
-export type NoContentResponse = object
+export type NoContentResponse = object;

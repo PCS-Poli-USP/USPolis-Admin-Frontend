@@ -59,7 +59,11 @@ export default function EditUserModal(props: UserEditModalProps) {
   }
 
   return (
-    <Modal isOpen={props.isOpen} onClose={handleCloseModal} closeOnOverlayClick={false}>
+    <Modal
+      isOpen={props.isOpen}
+      onClose={handleCloseModal}
+      closeOnOverlayClick={false}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{'Editar informações do usuário'}</ModalHeader>
