@@ -10,7 +10,12 @@ const useCalendarsService = () => {
   const PREFIX = '/calendars';
   const axios = useAxiosPrivate();
 
-  const list = (): Promise<AxiosResponse<Array<CalendarResponse>>> => {
+  const list = (
+    year?: string,
+  ): Promise<AxiosResponse<Array<CalendarResponse>>> => {
+    if (year) {
+      return axios.get(`${PREFIX}?year=${year}`);
+    }
     return axios.get(PREFIX);
   };
 

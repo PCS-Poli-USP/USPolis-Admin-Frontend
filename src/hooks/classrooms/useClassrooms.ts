@@ -55,52 +55,6 @@ const useClassrooms = (initialFetch: boolean = true) => {
       });
   }, [showToast, service]);
 
-  const getClassroomsByBuilding = useCallback(
-    async (building_id: number) => {
-      setLoading(true);
-      let current: ClassroomResponse[] = [];
-      await service
-        .getClassroomsByBuildingId(building_id)
-        .then((response) => {
-          current = response.data;
-          setClassrooms(current.sort(sortClassroomResponse));
-        })
-        .catch((error) => {
-          showToast('Erro', parser.parseGetError(error), 'error');
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-      return current;
-    },
-    [showToast, service],
-  );
-
-  // const getClassroomsWithConflict = useCallback(
-  //   async (schedule_id: number, building_id: number) => {
-  //     setLoading(true);
-  //     let current: ClassroomWithConflictCount[] = [];
-  //     await service
-  //       .getWithConflictCount(schedule_id, building_id)
-  //       .then((response) => {
-  //         // current = response.data.sort(sortClassroomResponse);
-  //       })
-  //       .catch(() => {
-  //         showToast(
-  //           'Erro',
-  //           `Erro ao carregar salas do prédio ${building_id}`,
-  //           'error',
-  //         );
-  //       })
-  //       .finally(() => {
-  //         setLoading(false);
-  //       });
-  //     return current;
-  //   },
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [],
-  // );
-
   const getClassroomsWithConflictFromTime = useCallback(
     async (data: ClassroomConflictCheck, building_id: number) => {
       setLoading(true);
@@ -118,7 +72,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
         });
       return current;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [],
   );
 
@@ -136,7 +90,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
         });
       return current;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [],
   );
 
@@ -205,7 +159,6 @@ const useClassrooms = (initialFetch: boolean = true) => {
 
   useEffect(() => {
     if (initialFetch) getClassrooms();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFetch]);
 
   return {
@@ -213,8 +166,6 @@ const useClassrooms = (initialFetch: boolean = true) => {
     classrooms,
     getAllClassrooms,
     getClassrooms,
-    getClassroomsByBuilding,
-    // getClassroomsWithConflict,
     getClassroomsWithConflictFromTime,
     listOneFull,
     createClassroom,

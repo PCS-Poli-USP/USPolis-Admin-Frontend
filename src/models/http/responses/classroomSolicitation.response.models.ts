@@ -17,6 +17,8 @@ export interface ClassroomSolicitationResponse {
   start_time?: string;
   end_time?: string;
   capacity: number;
+  deleted: boolean;
+  deleted_by?: string;
   approved: boolean;
   denied: boolean;
   closed: boolean;

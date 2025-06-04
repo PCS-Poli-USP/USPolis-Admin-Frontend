@@ -1,3 +1,4 @@
+import { CloseIcon } from '@chakra-ui/icons';
 import {
   IconButton,
   Popover,
@@ -15,6 +16,9 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
+  Text,
+  Icon,
+  PopoverArrow,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { LuCalendarSearch } from 'react-icons/lu';
@@ -26,7 +30,6 @@ interface DateRangeInputProps {
   setStart: (start: string) => void;
   setEnd: (end: string) => void;
   onConfirm: (start: string, end: string) => void;
-  onReset: () => void;
 }
 
 function DateRangeInput({
@@ -36,9 +39,9 @@ function DateRangeInput({
   setStart,
   setEnd,
   onConfirm,
-  onReset,
 }: DateRangeInputProps) {
   const { isOpen, onClose, onToggle } = useDisclosure();
+  const [rangeApplied, setRangeApplied] = useState(false);
 
   const [hasStartError, setHasStartError] = useState(false);
   const [startErroMsg, setStartErrorMsg] = useState('');
@@ -52,12 +55,18 @@ function DateRangeInput({
       setHasStartError(true);
       setStartErrorMsg('Data inválida');
       isValid = false;
+    } else {
+      setHasStartError(false);
+      setStartErrorMsg('');
     }
 
     if (!end) {
       setHasEndError(true);
       setEndErrorMsg('Data inválida');
       isValid = false;
+    } else {
+      setHasEndError(false);
+      setEndErrorMsg('');
     }
 
     const startDate = new Date(start);
@@ -74,6 +83,7 @@ function DateRangeInput({
   function resetValues() {
     setStart('');
     setEnd('');
+    setRangeApplied(false);
   }
 
   function resetErrors() {
@@ -87,26 +97,74 @@ function DateRangeInput({
     if (!validate()) return;
     resetErrors();
     onConfirm(start, end);
+    setRangeApplied(true);
     onClose();
   }
 
+  function formatDate(date: string) {
+    if (!date) return '';
+    const values = date.split('-');
+    if (values.length !== 3) return '';
+    return `${values[2]}/${values[1]}/${values[0]}`;
+  }
+
   return (
-    <Popover isOpen={isOpen} onClose={onClose}>
+    <Popover isOpen={isOpen} onClose={onClose} placement='right'>
       <PopoverTrigger>
         <Tooltip label={`Ver ${title} anteriores`} placement='top'>
-          <IconButton
-            onClick={onToggle}
-            variant={'ghost'}
-            color={'uspolis.blue'}
-            fontSize={'30px'}
-            icon={<LuCalendarSearch />}
-            aria-label='data-range-input'
-          />
+          <Flex
+            gap={'10px'}
+            align={'center'}
+            cursor={'pointer'}
+            _hover={{ opacity: 0.6 }}
+          >
+            <Icon as={LuCalendarSearch} boxSize={'30px'} onClick={onToggle} />
+            {!rangeApplied && (
+              <Flex
+                borderRadius={'40px'}
+                border={'1px solid #408080'}
+                p={'5px'}
+                gap={'5px'}
+                justify={'center'}
+                align={'center'}
+                onClick={onToggle}
+              >
+                <Text fontWeight={'bold'}>Período: Atual</Text>
+              </Flex>
+            )}
+            {rangeApplied && (
+              <Flex
+                borderRadius={'40px'}
+                border={'1px solid #408080'}
+                p={'5px'}
+                gap={'5px'}
+                justify={'center'}
+                align={'center'}
+              >
+                <Text fontWeight={'bold'} onClick={onToggle}>
+                  Período: {formatDate(start)} até {formatDate(end)}
+                </Text>
+                <IconButton
+                  aria-label='Remover período'
+                  icon={<CloseIcon />}
+                  _hover={{ bg: 'red.500', color: 'white', opacity: 1.0 }}
+                  isRound
+                  size={'sm'}
+                  variant={'ghost'}
+                  onClick={() => {
+                    resetValues();
+                    if (rangeApplied) onConfirm('', '');
+                  }}
+                />
+              </Flex>
+            )}
+          </Flex>
         </Tooltip>
       </PopoverTrigger>
       <PopoverContent w={'400px'}>
         <PopoverCloseButton />
         <PopoverHeader fontWeight={'bold'}>Selecione o período</PopoverHeader>
+        <PopoverArrow />
         <PopoverBody>
           <Flex direction={'row'} gap={'10px'}>
             <Flex direction={'column'} gap={'10px'} w={'50%'}>
@@ -145,7 +203,6 @@ function DateRangeInput({
               colorScheme='blue'
               w={'50%'}
               onClick={() => {
-                console.log('cancelar');
                 handleConfirm();
               }}
             >
@@ -155,10 +212,10 @@ function DateRangeInput({
               w={'50%'}
               colorScheme='red'
               onClick={() => {
-                console.log('cancelar');
                 resetValues();
                 resetErrors();
-                onReset();
+                if (rangeApplied) onConfirm('', '');
+                onClose();
               }}
             >
               Desfazer

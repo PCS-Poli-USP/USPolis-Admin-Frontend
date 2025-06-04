@@ -21,7 +21,7 @@ export const classFirstFormFields = {
       .required('Campo obrigatório')
       .test(
         'is-valid-field',
-        'Código deve conter 7 caracteres',
+        'Código não pode ser vazio',
         (value) => !ClassValidator.isInvalidClassCode(value),
       ),
     defaultValue: '',

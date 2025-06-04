@@ -68,10 +68,17 @@ function SolicitationStackBody({
                   'DD/MM/YYYY, HH:mm',
                 )}`}
               </Text>
-              {solicitation.approved || solicitation.denied ? (
+              {solicitation.approved ||
+              solicitation.denied ||
+              solicitation.deleted ? (
                 <Text>
                   <Highlight
-                    query={['aprovado', 'negado', solicitation.user]}
+                    query={[
+                      'aprovado',
+                      'negado',
+                      'removido',
+                      solicitation.user,
+                    ]}
                     styles={{ textColor: 'uspolis.blue', fontWeight: 'bold' }}
                   >
                     {`${
@@ -79,7 +86,9 @@ function SolicitationStackBody({
                         ? `Situação: Aprovado por ${solicitation.closed_by}`
                         : solicitation.denied
                           ? `Situação: Negado por ${solicitation.closed_by}`
-                          : ''
+                          : solicitation.deleted
+                            ? `Situação: Removido por ${solicitation.deleted_by}`
+                            : ''
                     } às ${moment(solicitation.updated_at).format(
                       'DD/MM/YYYY, HH:mm',
                     )}`}

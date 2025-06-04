@@ -3,7 +3,7 @@ import { ClassType } from '../../utils/enums/classes.enum';
 
 export class ClassValidator extends CommonValidator {
   static isInvalidClassCode(value: string) {
-    return value.length !== 7;
+    return this.isEmptyString(value);
   }
 
   static isInvalidSubjectCode(value: string) {

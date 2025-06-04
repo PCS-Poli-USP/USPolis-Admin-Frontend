@@ -57,9 +57,7 @@ export const getUsersColumns = (
   {
     filterFn: FilterString,
     accessorFn: (row) =>
-      row.groups.length > 0
-        ? row.groups.map((g) => g.name).join(', ')
-        : '',
+      row.groups.length > 0 ? row.groups.map((g) => g.name).join(', ') : '',
     header: 'Grupos',
     cell: ({ row }) => (
       <Box>

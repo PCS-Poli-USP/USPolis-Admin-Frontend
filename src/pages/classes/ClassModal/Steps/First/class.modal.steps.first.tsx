@@ -13,6 +13,8 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
     SubjectResponse | undefined
   >(undefined);
 
+  const [professors, setProfessors] = useState<string[]>([]);
+
   useEffect(() => {
     const subject_id = Number(props.form.getValues('subject_id'));
     if (subject_id > 0) {
@@ -21,6 +23,20 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
       );
     }
   }, [setSelectedSubject, props.subjects, props.form]);
+
+  useEffect(() => {
+    if (selectedSubject && props.isUpdate) {
+      const subjectProfessors = selectedSubject.professors.map(
+        (professor) => professor,
+      );
+      for (const professor of props.form.getValues('professors')) {
+        if (!subjectProfessors.includes(professor)) {
+          subjectProfessors.push(professor);
+        }
+      }
+      setProfessors(subjectProfessors);
+    }
+  }, [selectedSubject, props.isUpdate, props.form]);
 
   return (
     <VStack mt={5} width={'100%'} align={'stretch'}>
@@ -81,14 +97,10 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
             placeholder={'Escolha os professores'}
             mt={4}
             disabled={false}
-            options={
-              selectedSubject
-                ? selectedSubject.professors.map((professor) => ({
-                    value: professor,
-                    label: professor,
-                  }))
-                : []
-            }
+            options={professors.map((professor) => ({
+              value: professor,
+              label: professor,
+            }))}
           />
         </form>
       </FormProvider>

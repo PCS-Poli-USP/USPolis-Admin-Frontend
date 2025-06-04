@@ -15,21 +15,24 @@ const useCalendars = (initialFetch = true) => {
 
   const showToast = useCustomToast();
 
-  const getCalendars = useCallback(async () => {
-    setLoading(true);
-    await service
-      .list()
-      .then((response) => {
-        setCalendars(response.data.sort(sortCalendarResponse));
-      })
-      .catch((error) => {
-        console.log(error);
-        showToast('Erro', 'Erro ao carregar calendários', 'error');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [showToast, service]);
+  const getCalendars = useCallback(
+    async (year?: string) => {
+      setLoading(true);
+      await service
+        .list(year)
+        .then((response) => {
+          setCalendars(response.data.sort(sortCalendarResponse));
+        })
+        .catch((error) => {
+          console.log(error);
+          showToast('Erro', 'Erro ao carregar calendários', 'error');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
 
   const createCalendar = useCallback(
     async (data: CreateCalendar) => {

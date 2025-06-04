@@ -1,5 +1,5 @@
 import { AddIcon } from '@chakra-ui/icons';
-import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
+import { Button, Flex, Spacer, useDisclosure } from '@chakra-ui/react';
 import CalendarModal from './CalendarModal/calendar.modal';
 import { useContext, useState } from 'react';
 import { CalendarResponse } from '../../models/http/responses/calendar.responde.models';
@@ -11,6 +11,7 @@ import CalendarAccordion from './CalendarAccordion/calendar.accordion';
 import HolidaysContentModal from './HolidaysContentModal/holidaysContent.modal';
 import PageContent from '../../components/common/PageContent';
 import { appContext } from '../../context/AppContext';
+import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 
 function Calendars() {
   const { loggedUser } = useContext(appContext);
@@ -87,9 +88,14 @@ function Calendars() {
   return (
     <PageContent>
       <Flex align={'center'}>
-        <Text fontSize={'4xl'} mb={4}>
-          Calendários
-        </Text>
+        <PageHeaderWithFilter
+          title='Calendários'
+          onConfirm={() => {}}
+          type='year'
+          onConfirmYear={(year: string) => {
+            getCalendars(year);
+          }}
+        />
         <Spacer />
         <Button
           mr={2}
