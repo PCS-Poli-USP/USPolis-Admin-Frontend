@@ -74,12 +74,6 @@ const useClassroomsService = () => {
     });
   };
 
-  const getClassroomsByBuildingId = (
-    building_id: number,
-  ): Promise<AxiosResponse<ClassroomResponse[]>> => {
-    return axios.get(`/classrooms/building/${building_id}`);
-  };
-
   return {
     get,
     getMine,
@@ -89,7 +83,6 @@ const useClassroomsService = () => {
     update,
     getWithConflictCount,
     getWithConflictCountFromTime,
-    getClassroomsByBuildingId,
   };
 };
 
