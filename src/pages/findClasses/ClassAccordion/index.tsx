@@ -14,6 +14,7 @@ import { classNumberFromClassCode } from '../../../utils/classes/classes.formatt
 import { AllocationEnum } from '../../../utils/enums/allocation.enum';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
+import moment from 'moment';
 
 interface ClassAccordionProps {
   classes: ClassResponse[];
@@ -62,6 +63,11 @@ function ClassAccordion({ classes }: ClassAccordionProps) {
               {classData.professors.map((professor, index) => (
                 <Text key={`C-${index}}`}>{professor}</Text>
               ))}
+              <Text fontWeight={'bold'} mt={'20px'}>Período: </Text>
+              <Text>
+                {moment(classData.start_date).format('DD/MM/YYYY')} até{' '}
+                {moment(classData.end_date).format('DD/MM/YYYY')}
+              </Text>
             </Flex>
           </AccordionPanel>
         </AccordionItem>

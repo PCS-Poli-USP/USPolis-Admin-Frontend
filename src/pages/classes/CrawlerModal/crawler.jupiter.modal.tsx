@@ -8,36 +8,36 @@ import {
   InputGroup,
   InputRightElement,
   ListItem,
-  Popover,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
   PopoverFooter,
-  PopoverHeader,
-  PopoverTrigger,
   Spacer,
   Select as CSelect,
   UnorderedList,
-  useDisclosure,
   Spinner,
   Text,
   VStack,
   HStack,
   Box,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalOverlay,
+  ModalFooter,
 } from '@chakra-ui/react';
 import Select, { MultiValue } from 'react-select';
 import useBuildings from '../../../hooks/useBuildings';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CrawlerType } from '../../../utils/enums/subjects.enum';
 import { CalendarResponse } from '../../../models/http/responses/calendar.responde.models';
-import { LuTimer } from 'react-icons/lu';
+import { ModalProps } from '../../../models/interfaces';
 
 type Option = {
   label: string;
   value: number;
 };
 
-interface CrawlerPopoverProps {
+interface CrawlerJupiterModalProps extends ModalProps {
   subjects?: string[];
   crawlerType: CrawlerType | undefined;
   setCrawlerType: (type: CrawlerType | undefined) => void;
@@ -51,14 +51,16 @@ interface CrawlerPopoverProps {
   ) => void;
 }
 
-export default function CrawlerPopover({
+export default function CrawlerJupiterModal({
   subjects = [],
   onSave,
   crawlerType,
   setCrawlerType,
   calendars,
   loadingCalendars,
-}: CrawlerPopoverProps) {
+  isOpen,
+  onClose,
+}: CrawlerJupiterModalProps) {
   const { buildings, loading: buildingsLoading } = useBuildings();
 
   const [subjectsList, setSubjectsList] = useState(subjects);
@@ -68,8 +70,6 @@ export default function CrawlerPopover({
     number | undefined
   >(undefined);
   const [calendarIds, setCalendarIds] = useState<number[]>([]);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const initialFocusRef = useRef(null);
 
   useEffect(() => {
     if (buildings.length === 1) {
@@ -109,29 +109,19 @@ export default function CrawlerPopover({
   }
 
   return (
-    <Popover
+    <Modal
       isOpen={isOpen}
-      onOpen={onOpen}
       onClose={onClose}
-      initialFocusRef={initialFocusRef}
+      size={'xl'}
+      closeOnOverlayClick={false}
+      motionPreset='slideInBottom'
+      scrollBehavior='outside'
     >
-      <PopoverTrigger>
-        <Button
-          colorScheme='blue'
-          variant={'ghost'}
-          color={'uspolis.blue'}
-          justifyContent={'flex-start'}
-          w={'100%'}
-          leftIcon={<LuTimer />}
-        >
-          {' '}
-          Automático
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent>
-        <PopoverCloseButton />
-        <PopoverHeader>Disciplinas</PopoverHeader>
-        <PopoverBody>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Disciplinas</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
           <VStack gap={'10px'} alignItems={'flex-start'}>
             <Box w={'100%'} hidden={buildings.length === 1}>
               <Text mb={2}>Prédio:</Text>
@@ -222,11 +212,11 @@ export default function CrawlerPopover({
               </UnorderedList>
             </Box>
           </VStack>
-        </PopoverBody>
+        </ModalBody>
         {subjectsList.length > 0 &&
           buildingIdSelection !== undefined &&
           buildingIdSelection !== 0 && (
-            <PopoverFooter>
+            <ModalFooter>
               <VStack>
                 {subjectsList.length > 10 ? (
                   <Alert status={'warning'} fontSize={'sm'}>
@@ -254,9 +244,9 @@ export default function CrawlerPopover({
                   </Button>
                 </HStack>
               </VStack>
-            </PopoverFooter>
+            </ModalFooter>
           )}
-      </PopoverContent>
-    </Popover>
+      </ModalContent>
+    </Modal>
   );
 }
