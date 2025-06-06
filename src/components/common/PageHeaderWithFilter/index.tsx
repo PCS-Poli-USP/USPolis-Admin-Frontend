@@ -1,10 +1,15 @@
 import { Flex, Text } from '@chakra-ui/react';
 import DateRangeInput from './DataRangeInput';
-import { useState } from 'react';
 import YearInput from './YearInput';
 
 interface PageHeaderWithFilterProps {
   title: string;
+  start: string;
+  end: string;
+  setStart: (start: string) => void;
+  setEnd: (end: string) => void;
+  year?: string;
+  setYear?: (year: string) => void;
   onConfirm: (start: string, end: string) => void;
   type?: 'year' | 'dateRange';
   onConfirmYear?: (year: string) => void;
@@ -12,14 +17,16 @@ interface PageHeaderWithFilterProps {
 
 function PageHeaderWithFilter({
   title,
+  start,
+  end,
+  year = new Date().getFullYear().toString(),
+  setStart,
+  setEnd,
+  setYear = () => {},
   onConfirm,
   type = 'dateRange',
   onConfirmYear = undefined,
 }: PageHeaderWithFilterProps) {
-  const [start, setStart] = useState('');
-  const [end, setEnd] = useState('');
-  const [year, setYear] = useState(new Date().getFullYear().toString());
-
   return (
     <Flex
       direction={'row'}

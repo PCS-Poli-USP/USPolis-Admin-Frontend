@@ -26,6 +26,7 @@ import { classNumberFromClassCode } from '../../../utils/classes/classes.formatt
 import moment from 'moment';
 import { SortPeriodFn } from '../../../utils/tanstackTableHelpers/tableSortingFns';
 
+const DEBUG = import.meta.env.VITE_DEBUG === 'true';
 interface ClassesColumnsProps {
   handleCheckAllClick: (data: Row<ClassResponse>[], value: boolean) => void;
   handleCheckboxClick: (id: number, value: boolean) => void;
@@ -311,5 +312,30 @@ export const getClassesColumns = (
       ),
     },
   ];
+
+  if (DEBUG) {
+    columns.push({
+      id: 'CLASS-ID',
+      header: 'ID Turma',
+      accessorKey: 'id',
+      cell: ({ row }) => (
+        <Box>
+          <Text>{row.original.id}</Text>
+        </Box>
+      ),
+    });
+    columns.push({
+      id: 'SCHEDULES-IDS',
+      header: 'IDS Agendas',
+      cell: ({ row }) => (
+        <Box>
+          {row.original.schedules.map((schedule, index) => (
+            <Text key={index}>{schedule.id}</Text>
+          ))}
+        </Box>
+      ),
+    });
+  }
+
   return columns;
 };

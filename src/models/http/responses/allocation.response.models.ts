@@ -2,6 +2,7 @@ import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
+import { ScheduleResponseBase } from './schedule.response.models';
 
 export interface Resource {
   id: string;
@@ -80,4 +81,29 @@ export interface ReservationExtendedData extends BaseExtendedData {
 export interface EventExtendedProps {
   class_data?: ClassExtendedData;
   reservation_data?: ReservationExtendedData;
+}
+
+interface AllocationScheduleOptions {
+  schedule_target_id: number;
+  options: ScheduleResponseBase[];
+}
+
+interface AllocationClassOptions {
+  class_id: number;
+  class_code: string;
+  schedule_options: AllocationScheduleOptions[];
+}
+
+interface AllocationReuseTargetOptions {
+  subject_id: number;
+  subject_code: string;
+  subject_name: string;
+  class_options: AllocationClassOptions[];
+}
+
+export interface AllocationReuseResponse {
+  building_id: number;
+  allocation_year: number;
+  target_options: AllocationReuseTargetOptions[];
+  strict: boolean;
 }
