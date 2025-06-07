@@ -8,6 +8,7 @@ interface props {
   openIcon?: React.ReactNode;
   closeIcon?: React.ReactNode;
   iconSize?: number | string;
+  titleSize?: string;
 }
 
 const Collapsable = ({
@@ -16,6 +17,7 @@ const Collapsable = ({
   openIcon,
   closeIcon,
   iconSize,
+  titleSize = 'md',
 }: props) => {
   const [open, setOpen] = useState(false);
 
@@ -40,7 +42,7 @@ const Collapsable = ({
           )}
         </div>
         <Heading
-          size='md'
+          size={titleSize}
           maxW={'800px'}
           textOverflow={'ellipsis'}
           overflow={'hidden'}
@@ -48,7 +50,7 @@ const Collapsable = ({
           {title}
         </Heading>
       </Flex>
-      {open ? <div>{children}</div> : <></>}
+      <div style={{ display: open ? 'block' : 'none' }}>{children}</div>
     </Flex>
   );
 };

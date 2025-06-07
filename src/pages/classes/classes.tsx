@@ -37,6 +37,7 @@ import { LuDownload, LuHand, LuTimer } from 'react-icons/lu';
 import CrawlerJupiterModal from './CrawlerModal/crawler.jupiter.modal';
 import { AddIcon } from '@chakra-ui/icons';
 import { IoTrashBinOutline } from 'react-icons/io5';
+import AllocationReuseModal from './AllocationReuseModal/allocation.reuse.modal';
 
 function Classes() {
   const context = useContext(appContext);
@@ -80,6 +81,11 @@ function Classes() {
     isOpen: isOpenCrawlerJupiterModal,
     onOpen: onOpenCrawlerJupiterModal,
     onClose: onCloseCrawlerJupiterModal,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAllocationReuseModal,
+    onOpen: onOpenAllocationReuseModal,
+    onClose: onCloseAllocationReuseModal,
   } = useDisclosure();
 
   const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
@@ -280,6 +286,14 @@ function Classes() {
         calendars={calendars}
         loadingCalendars={loadingCalendars}
       />
+      <AllocationReuseModal
+        isOpen={isOpenAllocationReuseModal}
+        onClose={onCloseAllocationReuseModal}
+        data={undefined}
+        subjects={subjects}
+        classes={classes}
+        buildings={context.loggedUser ? context.loggedUser.buildings || [] : []}
+      />
       <Flex align='center'>
         <PageHeaderWithFilter
           title='Turmas'
@@ -347,7 +361,7 @@ function Classes() {
               <MenuItem
                 as={Button}
                 justifyContent={'flex-start'}
-                colorScheme={'red'}
+                colorScheme={'blue'}
                 onClick={handleDeleteSelectedClassesClick}
                 leftIcon={<IoTrashBinOutline />}
                 mb={'5px'}
@@ -362,7 +376,9 @@ function Classes() {
                 as={Button}
                 justifyContent={'flex-start'}
                 colorScheme={'blue'}
-                onClick={handleDeleteSelectedClassesClick}
+                onClick={() => {
+                  onOpenAllocationReuseModal();
+                }}
                 leftIcon={<LuDownload />}
                 mb={'5px'}
               >

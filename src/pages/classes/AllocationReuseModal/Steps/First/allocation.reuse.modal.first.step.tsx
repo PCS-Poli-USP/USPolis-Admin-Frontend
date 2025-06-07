@@ -1,0 +1,209 @@
+import { Box, Button, Checkbox, Flex, Heading, Text } from '@chakra-ui/react';
+import { SubjectResponse } from '../../../../../models/http/responses/subject.response.models';
+import Select from 'react-select';
+import { ClassResponse } from '../../../../../models/http/responses/class.response.models';
+import { useEffect, useState } from 'react';
+import { classNumberFromClassCode } from '../../../../../utils/classes/classes.formatter';
+import { Collapsable } from '../../../../../components/common/Collapsable';
+import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
+import { SubjectWithClasses } from '../../allocation.reuse.modal';
+
+interface AllocationReuseModalFirstStepProps {
+  subjects: SubjectResponse[];
+  classesBySubject: Map<number, ClassResponse[]>;
+  map: Map<number, SubjectWithClasses>;
+  setMap: (map: Map<number, SubjectWithClasses>) => void;
+}
+
+interface Option {
+  label: string;
+  value: number;
+}
+
+function AllocationReuseModalFirstStep({
+  subjects,
+  classesBySubject,
+  map,
+  setMap,
+}: AllocationReuseModalFirstStepProps) {
+  const [selectedSubjects, setSelesctedSubjects] = useState<Option[]>([]);
+  const [selectedClasses, setSelectedClasses] = useState<Set<number>>(
+    new Set(),
+  );
+
+  useEffect(() => {
+    const subjectIds = Array.from(map.keys());
+    const newSelectedSubjects = subjects
+      .filter((subject) => subjectIds.includes(subject.id))
+      .map((subject) => ({
+        label: `${subject.code} - ${subject.name}`,
+        value: subject.id,
+      }));
+    setSelesctedSubjects(newSelectedSubjects);
+
+    const classesIds: number[] = [];
+    for (const entry of map.values()) {
+      classesIds.push(...entry.class_ids);
+    }
+    const newSelectedClasses = new Set<number>(classesIds);
+    setSelectedClasses(newSelectedClasses);
+  }, [map, subjects]);
+
+  return (
+    <Flex
+      direction={'column'}
+      width={'100%'}
+      alignItems={'flex-start'}
+      justify={'flex-start'}
+      gap={'10px'}
+    >
+      <Heading size={'md'}>Disciplinas e Turmas:</Heading>
+      <Text>
+        Escolha para quais disciplinas você deseja reutilizar alocações.
+      </Text>
+      <Box w={'100%'}>
+        <Select
+          placeholder={'Selecione as disciplinas'}
+          isMulti={true}
+          value={selectedSubjects}
+          options={subjects.map((subject) => ({
+            label: `${subject.code} - ${subject.name}`,
+            value: subject.id,
+          }))}
+          onChange={(value) => {
+            const removedSubjects = selectedSubjects.filter(
+              (s) => !value.some((v) => v.value === s.value),
+            );
+            setSelesctedSubjects(value as Option[]);
+
+            removedSubjects.forEach((subject) => {
+              const removedClasses = classesBySubject.get(subject.value);
+              if (removedClasses) {
+                setSelectedClasses((prev) => {
+                  removedClasses.forEach((cls) => prev.delete(cls.id));
+                  return prev;
+                });
+              }
+              const newMap = new Map(map);
+              newMap.delete(subject.value);
+              setMap(newMap);
+            });
+          }}
+        />
+      </Box>
+      <Box>
+        {selectedSubjects.length > 0 && (
+          <Text mt={'10px'}>Escolha as turmas das disciplinas:</Text>
+        )}
+        {subjects
+          .filter((subject) =>
+            selectedSubjects.some((s) => s.value === subject.id),
+          )
+          .map((subject) => (
+            <Box key={subject.id} mt={4}>
+              <Text fontWeight={'bold'} fontSize={'lg'}>
+                {subject.code} - {subject.name}
+              </Text>
+              <Collapsable
+                title={`Escolher turmas (${classesBySubject.get(subject.id)?.length})`}
+                iconSize={'25px'}
+                titleSize='sm'
+              >
+                <Flex direction={'column'} gap={'5px'} mb={4}>
+                  <Flex direction={'row'} gap={'5px'} mb={'5px'} mt={'5px'}>
+                    <Button
+                      size={'sm'}
+                      leftIcon={<CheckIcon />}
+                      onClick={() => {
+                        const subjectClasses = classesBySubject.get(subject.id);
+                        if (!subjectClasses) return;
+
+                        const class_ids = subjectClasses.map((cls) => cls.id);
+                        const newMap = new Map(map);
+                        newMap.set(subject.id, {
+                          subject_id: subject.id,
+                          class_ids: class_ids,
+                        });
+                        setMap(newMap);
+
+                        const newSet = new Set(selectedClasses);
+                        subjectClasses.forEach((cls) => newSet.add(cls.id));
+                        setSelectedClasses(newSet);
+                      }}
+                    >
+                      Selecionar tudo
+                    </Button>
+                    <Button
+                      size={'sm'}
+                      leftIcon={<CloseIcon />}
+                      onClick={() => {
+                        const subjectClasses = classesBySubject.get(subject.id);
+                        if (!subjectClasses) return;
+
+                        const newMap = new Map(map);
+                        newMap.delete(subject.id);
+                        setMap(newMap);
+
+                        const newSet = new Set(selectedClasses);
+                        subjectClasses.forEach((cls) => newSet.delete(cls.id));
+                        setSelectedClasses(newSet);
+                      }}
+                    >
+                      Desmarcar tudo
+                    </Button>
+                  </Flex>
+                  {classesBySubject.get(subject.id)?.map((cls) => (
+                    <Checkbox
+                      key={`C${cls.id}`}
+                      size={'lg'}
+                      isChecked={selectedClasses.has(cls.id)}
+                      onChange={(e) => {
+                        const subjectMap = map.get(cls.subject_id);
+                        if (!subjectMap) {
+                          const newMap = new Map(map);
+                          newMap.set(cls.subject_id, {
+                            subject_id: cls.subject_id,
+                            class_ids: e.target.checked ? [cls.id] : [],
+                          });
+                          setMap(newMap);
+                        }
+
+                        if (subjectMap) {
+                          const newMap = new Map(map);
+                          const updatedClasses = e.target.checked
+                            ? [...subjectMap.class_ids, cls.id]
+                            : subjectMap.class_ids.filter(
+                                (id) => id !== cls.id,
+                              );
+                          newMap.set(cls.subject_id, {
+                            subject_id: cls.subject_id,
+                            class_ids: updatedClasses,
+                          });
+                          setMap(newMap);
+                        }
+                        if (e.target.checked) {
+                          setSelectedClasses((prev) =>
+                            new Set(prev).add(cls.id),
+                          );
+                        } else {
+                          setSelectedClasses((prev) => {
+                            const newSet = new Set(prev);
+                            newSet.delete(cls.id);
+                            return newSet;
+                          });
+                        }
+                      }}
+                    >
+                      Turma {classNumberFromClassCode(cls.code)}
+                    </Checkbox>
+                  ))}
+                </Flex>
+              </Collapsable>
+            </Box>
+          ))}
+      </Box>
+    </Flex>
+  );
+}
+
+export default AllocationReuseModalFirstStep;
