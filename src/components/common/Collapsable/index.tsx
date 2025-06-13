@@ -9,6 +9,10 @@ interface props {
   closeIcon?: React.ReactNode;
   iconSize?: number | string;
   titleSize?: string;
+  initiallyOpen?: boolean;
+  border?: string;
+  p?: string;
+  fontWeight?: string;
 }
 
 const Collapsable = ({
@@ -18,11 +22,15 @@ const Collapsable = ({
   closeIcon,
   iconSize,
   titleSize = 'md',
+  initiallyOpen = false,
+  border = 'none',
+  p = undefined,
+  fontWeight = 'bold',
 }: props) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initiallyOpen);
 
   return (
-    <Flex direction='column'>
+    <Flex direction='column' border={border} p={p}>
       <Flex alignItems='center'>
         <div
           onClick={() => {
@@ -46,6 +54,7 @@ const Collapsable = ({
           maxW={'800px'}
           textOverflow={'ellipsis'}
           overflow={'hidden'}
+          fontWeight={fontWeight}
         >
           {title}
         </Heading>

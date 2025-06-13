@@ -60,6 +60,9 @@ function AllocationReuseModal({
   buildings,
 }: AllocationReuseModalProps) {
   const [map, setMap] = useState<Map<number, SubjectWithClasses>>(new Map());
+  const [allocationMap, setAllocationMap] = useState<Map<number, number[]>>(
+    new Map(),
+  );
   const classesBySubject = new Map<number, ClassResponse[]>();
   subjects.forEach((subject) => {
     classesBySubject.set(
@@ -85,7 +88,12 @@ function AllocationReuseModal({
       title: 'Segundo',
       description: 'Alocações',
       content: (
-        <AllocationReuseModalSecondStep buildings={buildings} map={map} />
+        <AllocationReuseModalSecondStep
+          buildings={buildings}
+          map={map}
+          allocationMap={allocationMap}
+          setAllocationMap={setAllocationMap}
+        />
       ),
     },
   ];
