@@ -7,6 +7,7 @@ import { classNumberFromClassCode } from '../../../../../utils/classes/classes.f
 import { Collapsable } from '../../../../../components/common/Collapsable';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import { SubjectWithClasses } from '../../allocation.reuse.modal';
+import HelpPopover from '../../../../../components/common/HelpPopover';
 
 interface AllocationReuseModalFirstStepProps {
   subjects: SubjectResponse[];
@@ -58,9 +59,27 @@ function AllocationReuseModalFirstStep({
       gap={'10px'}
     >
       <Heading size={'md'}>Disciplinas e Turmas:</Heading>
-      <Text>
-        Escolha para quais disciplinas você deseja reutilizar alocações.
-      </Text>
+      <Flex direction={'row'} gap={'5px'} alignItems={'center'}>
+        <Text>
+          Escolha para quais disciplinas você deseja reutilizar alocações.
+        </Text>
+        <HelpPopover title='Como funciona a reutilização?'>
+          <Flex direction={'column'} gap={'5px'} textAlign={'justify'}>
+            <Text>
+              A reutilização de alocações vai buscar as alocações das turmas das
+              disciplinas que você selecionar.
+            </Text>
+            <Text>
+              O sistema irá tentar buscar exatamente a mesma turma, mas no ano
+              que você pedir.
+            </Text>
+            <Text>
+              Ou seja, os resultados são alocações com o mesmo período, dia,
+              horário e turma, mas no ano que você escolher.
+            </Text>
+          </Flex>
+        </HelpPopover>
+      </Flex>
       <Box w={'100%'}>
         <Select
           placeholder={'Selecione as disciplinas'}
@@ -75,7 +94,17 @@ function AllocationReuseModalFirstStep({
               (s) => !value.some((v) => v.value === s.value),
             );
             setSelesctedSubjects(value as Option[]);
-
+            const newMap = new Map(map);
+            value.forEach((subject) => {
+              if (!newMap.has(subject.value)) {
+                const classes = classesBySubject.get(subject.value);
+                const classIds = classes ? classes.map((cls) => cls.id) : [];
+                newMap.set(subject.value, {
+                  subject_id: subject.value,
+                  class_ids: classIds,
+                });
+              }
+            });
             removedSubjects.forEach((subject) => {
               const removedClasses = classesBySubject.get(subject.value);
               if (removedClasses) {
@@ -84,10 +113,9 @@ function AllocationReuseModalFirstStep({
                   return prev;
                 });
               }
-              const newMap = new Map(map);
               newMap.delete(subject.value);
-              setMap(newMap);
             });
+            setMap(newMap);
           }}
         />
       </Box>
@@ -99,108 +127,128 @@ function AllocationReuseModalFirstStep({
           .filter((subject) =>
             selectedSubjects.some((s) => s.value === subject.id),
           )
-          .map((subject) => (
-            <Box key={subject.id} mt={4}>
-              <Text fontWeight={'bold'} fontSize={'lg'}>
-                {subject.code} - {subject.name}
-              </Text>
-              <Collapsable
-                title={`Escolher turmas (${classesBySubject.get(subject.id)?.length})`}
-                iconSize={'25px'}
-                titleSize='sm'
-              >
-                <Flex direction={'column'} gap={'5px'} mb={4}>
-                  <Flex direction={'row'} gap={'5px'} mb={'5px'} mt={'5px'}>
-                    <Button
-                      size={'sm'}
-                      leftIcon={<CheckIcon />}
-                      onClick={() => {
-                        const subjectClasses = classesBySubject.get(subject.id);
-                        if (!subjectClasses) return;
-
-                        const class_ids = subjectClasses.map((cls) => cls.id);
-                        const newMap = new Map(map);
-                        newMap.set(subject.id, {
-                          subject_id: subject.id,
-                          class_ids: class_ids,
-                        });
-                        setMap(newMap);
-
-                        const newSet = new Set(selectedClasses);
-                        subjectClasses.forEach((cls) => newSet.add(cls.id));
-                        setSelectedClasses(newSet);
-                      }}
-                    >
-                      Selecionar tudo
-                    </Button>
-                    <Button
-                      size={'sm'}
-                      leftIcon={<CloseIcon />}
-                      onClick={() => {
-                        const subjectClasses = classesBySubject.get(subject.id);
-                        if (!subjectClasses) return;
-
-                        const newMap = new Map(map);
-                        newMap.delete(subject.id);
-                        setMap(newMap);
-
-                        const newSet = new Set(selectedClasses);
-                        subjectClasses.forEach((cls) => newSet.delete(cls.id));
-                        setSelectedClasses(newSet);
-                      }}
-                    >
-                      Desmarcar tudo
-                    </Button>
-                  </Flex>
-                  {classesBySubject.get(subject.id)?.map((cls) => (
-                    <Checkbox
-                      key={`C${cls.id}`}
-                      size={'lg'}
-                      isChecked={selectedClasses.has(cls.id)}
-                      onChange={(e) => {
-                        const subjectMap = map.get(cls.subject_id);
-                        if (!subjectMap) {
-                          const newMap = new Map(map);
-                          newMap.set(cls.subject_id, {
-                            subject_id: cls.subject_id,
-                            class_ids: e.target.checked ? [cls.id] : [],
-                          });
-                          setMap(newMap);
-                        }
-
-                        if (subjectMap) {
-                          const newMap = new Map(map);
-                          const updatedClasses = e.target.checked
-                            ? [...subjectMap.class_ids, cls.id]
-                            : subjectMap.class_ids.filter(
-                                (id) => id !== cls.id,
-                              );
-                          newMap.set(cls.subject_id, {
-                            subject_id: cls.subject_id,
-                            class_ids: updatedClasses,
-                          });
-                          setMap(newMap);
-                        }
-                        if (e.target.checked) {
-                          setSelectedClasses((prev) =>
-                            new Set(prev).add(cls.id),
+          .map((subject) => {
+            const classes = classesBySubject.get(subject.id);
+            let i = 0;
+            if (classes) {
+              classes.forEach((cls) => {
+                if (selectedClasses.has(cls.id)) {
+                  i++;
+                }
+              });
+            }
+            return (
+              <Box key={subject.id} mt={4}>
+                <Text fontWeight={'bold'} fontSize={'lg'}>
+                  {subject.code} - {subject.name}
+                </Text>
+                <Collapsable
+                  title={`Escolher turmas [ ${i} / ${classes ? classes.length : 0} ]`}
+                  iconSize={'25px'}
+                  titleSize='sm'
+                >
+                  <Flex direction={'column'} gap={'5px'} mb={'10px'} ml={'20px'}>
+                    <Flex direction={'row'} gap={'5px'} mb={'5px'} mt={'5px'}>
+                      <Button
+                        size={'sm'}
+                        leftIcon={<CheckIcon />}
+                        onClick={() => {
+                          const subjectClasses = classesBySubject.get(
+                            subject.id,
                           );
-                        } else {
-                          setSelectedClasses((prev) => {
-                            const newSet = new Set(prev);
-                            newSet.delete(cls.id);
-                            return newSet;
+                          if (!subjectClasses) return;
+
+                          const class_ids = subjectClasses.map((cls) => cls.id);
+                          const newMap = new Map(map);
+                          newMap.set(subject.id, {
+                            subject_id: subject.id,
+                            class_ids: class_ids,
                           });
-                        }
-                      }}
-                    >
-                      Turma {classNumberFromClassCode(cls.code)}
-                    </Checkbox>
-                  ))}
-                </Flex>
-              </Collapsable>
-            </Box>
-          ))}
+                          setMap(newMap);
+
+                          const newSet = new Set(selectedClasses);
+                          subjectClasses.forEach((cls) => newSet.add(cls.id));
+                          setSelectedClasses(newSet);
+                        }}
+                      >
+                        Selecionar tudo
+                      </Button>
+                      <Button
+                        size={'sm'}
+                        leftIcon={<CloseIcon />}
+                        onClick={() => {
+                          const subjectClasses = classesBySubject.get(
+                            subject.id,
+                          );
+                          if (!subjectClasses) return;
+
+                          const newMap = new Map(map);
+                          newMap.set(subject.id, {
+                            subject_id: subject.id,
+                            class_ids: [],
+                          });
+                          setMap(newMap);
+
+                          const newSet = new Set(selectedClasses);
+                          subjectClasses.forEach((cls) =>
+                            newSet.delete(cls.id),
+                          );
+                          setSelectedClasses(newSet);
+                        }}
+                      >
+                        Desmarcar tudo
+                      </Button>
+                    </Flex>
+                    {classesBySubject.get(subject.id)?.map((cls) => (
+                      <Checkbox
+                        key={`C${cls.id}`}
+                        size={'lg'}
+                        isChecked={selectedClasses.has(cls.id)}
+                        onChange={(e) => {
+                          const subjectMap = map.get(cls.subject_id);
+                          if (!subjectMap) {
+                            const newMap = new Map(map);
+                            newMap.set(cls.subject_id, {
+                              subject_id: cls.subject_id,
+                              class_ids: e.target.checked ? [cls.id] : [],
+                            });
+                            setMap(newMap);
+                          }
+
+                          if (subjectMap) {
+                            const newMap = new Map(map);
+                            const updatedClasses = e.target.checked
+                              ? [...subjectMap.class_ids, cls.id]
+                              : subjectMap.class_ids.filter(
+                                  (id) => id !== cls.id,
+                                );
+                            newMap.set(cls.subject_id, {
+                              subject_id: cls.subject_id,
+                              class_ids: updatedClasses,
+                            });
+                            setMap(newMap);
+                          }
+                          if (e.target.checked) {
+                            setSelectedClasses((prev) =>
+                              new Set(prev).add(cls.id),
+                            );
+                          } else {
+                            setSelectedClasses((prev) => {
+                              const newSet = new Set(prev);
+                              newSet.delete(cls.id);
+                              return newSet;
+                            });
+                          }
+                        }}
+                      >
+                        Turma {classNumberFromClassCode(cls.code)}
+                      </Checkbox>
+                    ))}
+                  </Flex>
+                </Collapsable>
+              </Box>
+            );
+          })}
       </Box>
     </Flex>
   );

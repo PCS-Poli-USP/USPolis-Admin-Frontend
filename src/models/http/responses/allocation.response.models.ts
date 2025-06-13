@@ -83,18 +83,19 @@ export interface EventExtendedProps {
   reservation_data?: ReservationExtendedData;
 }
 
-interface AllocationScheduleOptions {
+export interface AllocationScheduleOptions {
   schedule_target_id: number;
+  schedule_target: ScheduleResponseBase;
   options: ScheduleResponseBase[];
 }
 
-interface AllocationClassOptions {
+export interface AllocationClassOptions {
   class_id: number;
   class_code: string;
   schedule_options: AllocationScheduleOptions[];
 }
 
-interface AllocationReuseTargetOptions {
+export interface AllocationReuseTargetOptions {
   subject_id: number;
   subject_code: string;
   subject_name: string;
