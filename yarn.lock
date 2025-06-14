@@ -2077,15 +2077,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yup@npm:^0.32.0":
-  version: 0.32.0
-  resolution: "@types/yup@npm:0.32.0"
-  dependencies:
-    yup: "npm:*"
-  checksum: 10c0/34e64210e3c4e25f8faa8244c95d2e55ba3a54e701807a94939334d333c20f39e7bbfb38781c529e09ae3d629dff0b8954ede30b971867f87132cd6582cdbf8c
-  languageName: node
-  linkType: hard
-
 "@typescript-eslint/eslint-plugin@npm:8.32.1":
   version: 8.32.1
   resolution: "@typescript-eslint/eslint-plugin@npm:8.32.1"
@@ -7122,7 +7113,6 @@ __metadata:
     "@types/node": "npm:^22.14.1"
     "@types/react": "npm:^19.1.2"
     "@types/react-dom": "npm:^19.1.2"
-    "@types/yup": "npm:^0.32.0"
     "@vitejs/plugin-react": "npm:^4.4.0"
     axios: "npm:^1.8.4"
     chakra-react-select: "npm:^5.0.2"
@@ -7432,7 +7422,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yup@npm:*, yup@npm:^1.6.1":
+"yup@npm:^1.6.1":
   version: 1.6.1
   resolution: "yup@npm:1.6.1"
   dependencies:
