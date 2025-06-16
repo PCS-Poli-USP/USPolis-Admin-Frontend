@@ -51,7 +51,12 @@ function Solicitations() {
             handleShowAll={(showAll) => {
               if (!loadedAll && showAll) {
                 getAllBuildingSolicitations();
-                setLoadedAll(true);
+                setLoadedAll(showAll);
+              }
+
+              if (!showAll) {
+                getPendingBuildingSolicitations();
+                setLoadedAll(showAll);
               }
             }}
           />
