@@ -37,6 +37,7 @@ function AllocationReuseClassOptions({
             {data.schedule_options.map((option) => {
               return (
                 <AllocationReuseScheduleOptions
+                  key={option.schedule_target_id}
                   data={option}
                   allocationMap={allocationMap}
                   setAllocationMap={setAllocationMap}

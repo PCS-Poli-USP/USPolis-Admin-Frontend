@@ -17,6 +17,7 @@ function AllocationReuseSubjectOptions({
   const classOptions = data.class_options.sort((a, b) =>
     a.class_code.localeCompare(b.class_code),
   );
+
   return (
     <Collapsable
       title={`${data.subject_code} - ${data.subject_name}`}
@@ -26,15 +27,16 @@ function AllocationReuseSubjectOptions({
     >
       <Stack
         direction={'column'}
-        gap={'5px'}
+        gap={'2px'}
         ml={'20px'}
         mb={'20px'}
         divider={<StackDivider />}
       >
         <div></div>
         {classOptions.length > 0 &&
-          classOptions.map((option) => (
+          classOptions.map((option, idx) => (
             <AllocationReuseClassOptions
+              key={`${data.subject_code}-C${idx}`}
               data={option}
               allocationMap={allocationMap}
               setAllocationMap={setAllocationMap}

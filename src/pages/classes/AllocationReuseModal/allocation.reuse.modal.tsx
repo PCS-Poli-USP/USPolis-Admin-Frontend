@@ -25,7 +25,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { ModalProps } from '../../../models/interfaces';
-import { AllocationReuseResponse } from '../../../models/http/responses/allocation.response.models';
+
 import {
   ArrowBackIcon,
   ArrowForwardIcon,
@@ -40,7 +40,6 @@ import AllocationReuseModalSecondStep from './Steps/Second/allocation.reuse.seco
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
 
 interface AllocationReuseModalProps extends ModalProps {
-  data?: AllocationReuseResponse;
   subjects: SubjectResponse[];
   classes: ClassResponse[];
   buildings: BuildingResponse[];
@@ -52,7 +51,6 @@ export interface SubjectWithClasses {
 }
 
 function AllocationReuseModal({
-  data,
   isOpen,
   onClose,
   subjects,
@@ -70,6 +68,9 @@ function AllocationReuseModal({
       classes.filter((cls) => cls.subject_id === subject.id),
     );
   });
+  const [selectedClasses, setSelectedClasses] = useState<Set<number>>(
+    new Set(),
+  );
 
   const steps = [
     {
@@ -81,6 +82,8 @@ function AllocationReuseModal({
           classesBySubject={classesBySubject}
           map={map}
           setMap={setMap}
+          selectedClasses={selectedClasses}
+          setSelectedClasses={setSelectedClasses}
         />
       ),
     },
@@ -107,6 +110,10 @@ function AllocationReuseModal({
     true,
     true,
   ]);
+  const [stepsInvalidText, setStepsInvalidText] = useState<[string, string]>([
+    'Inválido',
+    'Inválido',
+  ]);
 
   function handlePreviousClick() {
     if (activeStep > 0) {
@@ -114,7 +121,59 @@ function AllocationReuseModal({
     }
   }
 
+  function validateFirstStep() {
+    const isValid = map.size > 0 && selectedClasses.size > 0;
+    setStepsIsValid([isValid, stepsIsValid[1]]);
+
+    if (!map.size) {
+      setStepsInvalidText([
+        'Selecione ao menos uma disciplina',
+        stepsInvalidText[1],
+      ]);
+    } else if (!selectedClasses.size) {
+      setStepsInvalidText([
+        'Selecione ao menos uma turma',
+        stepsInvalidText[1],
+      ]);
+    } else {
+      setStepsInvalidText(['Inválido', stepsInvalidText[1]]);
+    }
+    return isValid;
+  }
+
+  function validateSecondStep() {
+    const scheduleIds = new Array<number>();
+    allocationMap.values().forEach((ids) => scheduleIds.push(...ids));
+    const isValid = scheduleIds.length > 0;
+    setStepsIsValid([stepsIsValid[0], isValid]);
+
+    if (!scheduleIds.length) {
+      setStepsInvalidText([
+        stepsInvalidText[0],
+        'Selecione ao menos uma alocação',
+      ]);
+    }
+    if (scheduleIds.length) {
+      setStepsInvalidText([stepsInvalidText[0], 'Inválido']);
+    }
+    return isValid;
+  }
+
+  function validateSteps() {
+    const firstStepValid = validateFirstStep();
+    const secondStepValid = validateSecondStep();
+    return firstStepValid && secondStepValid;
+  }
+
   function handleNextClick() {
+    if (activeStep === 0) {
+      const isValid = validateFirstStep();
+      if (!isValid) return;
+    }
+    if (activeStep === 1) {
+      const isValid = validateSecondStep();
+      if (!isValid) return;
+    }
     if (activeStep < steps.length - 1) {
       setActiveStep(activeStep + 1);
     }
@@ -156,7 +215,7 @@ function AllocationReuseModal({
                       color={stepsIsValid[index] ? undefined : 'red'}
                       hidden={stepsIsValid[index]}
                     >
-                      Inválido
+                      {stepsInvalidText[index]}
                     </Text>
                   </Box>
 
@@ -198,9 +257,11 @@ function AllocationReuseModal({
               {activeStep === steps.length - 1 ? (
                 <Button
                   colorScheme={'blue'}
-                  onClick={() => {}}
+                  onClick={() => {
+                    const isValid = validateSteps();
+                    if (!isValid) return;
+                  }}
                   rightIcon={<DownloadIcon />}
-                  isDisabled={stepsIsValid.filter((value) => !value).length > 0}
                 >
                   Finalizar
                 </Button>

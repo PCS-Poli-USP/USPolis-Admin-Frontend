@@ -8,7 +8,7 @@ import {
 } from '@chakra-ui/react';
 import Select from 'react-select';
 import { BuildingResponse } from '../../../../../models/http/responses/building.response.models';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AllocationReuseResponse } from '../../../../../models/http/responses/allocation.response.models';
 import useAllocationsService from '../../../../../hooks/API/services/useAllocationService';
 import { SubjectWithClasses } from '../../allocation.reuse.modal';
@@ -36,9 +36,31 @@ function AllocationReuseModalSecondStep({
   const { getAllocationOptions } = useAllocationsService();
 
   const [allocationYear, setAllocationYear] = useState<number>(currentYear - 1);
-  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
+  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse | undefined>(
+    buildings.length === 1 ? buildings[0] : undefined,
+  );
   const [data, setData] = useState<AllocationReuseResponse>();
   const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (data) {
+      const newMap = new Map(allocationMap);
+      const subjectOptions = data.target_options;
+      subjectOptions.forEach((subject) => {
+        const classOptions = subject.class_options;
+        classOptions.forEach((option) => {
+          option.schedule_options.forEach((scheduleOption) => {
+            newMap.set(
+              scheduleOption.schedule_target_id,
+              scheduleOption.options.map((opt) => opt.id),
+            );
+          });
+        });
+      });
+      setAllocationMap(newMap);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
     <Flex direction={'column'} gap={'10px'} w={'100%'}>

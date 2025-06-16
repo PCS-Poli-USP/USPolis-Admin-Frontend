@@ -14,6 +14,8 @@ interface AllocationReuseModalFirstStepProps {
   classesBySubject: Map<number, ClassResponse[]>;
   map: Map<number, SubjectWithClasses>;
   setMap: (map: Map<number, SubjectWithClasses>) => void;
+  selectedClasses: Set<number>;
+  setSelectedClasses: (classes: Set<number>) => void;
 }
 
 interface Option {
@@ -26,11 +28,10 @@ function AllocationReuseModalFirstStep({
   classesBySubject,
   map,
   setMap,
+  selectedClasses,
+  setSelectedClasses,
 }: AllocationReuseModalFirstStepProps) {
   const [selectedSubjects, setSelesctedSubjects] = useState<Option[]>([]);
-  const [selectedClasses, setSelectedClasses] = useState<Set<number>>(
-    new Set(),
-  );
 
   useEffect(() => {
     const subjectIds = Array.from(map.keys());
@@ -48,6 +49,7 @@ function AllocationReuseModalFirstStep({
     }
     const newSelectedClasses = new Set<number>(classesIds);
     setSelectedClasses(newSelectedClasses);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, subjects]);
 
   return (
@@ -108,10 +110,11 @@ function AllocationReuseModalFirstStep({
             removedSubjects.forEach((subject) => {
               const removedClasses = classesBySubject.get(subject.value);
               if (removedClasses) {
-                setSelectedClasses((prev) => {
-                  removedClasses.forEach((cls) => prev.delete(cls.id));
-                  return prev;
-                });
+                const newSelectedClasses = new Set(selectedClasses);
+                removedClasses.forEach((cls) =>
+                  newSelectedClasses.delete(cls.id),
+                );
+                setSelectedClasses(newSelectedClasses);
               }
               newMap.delete(subject.value);
             });
@@ -121,7 +124,10 @@ function AllocationReuseModalFirstStep({
       </Box>
       <Box>
         {selectedSubjects.length > 0 && (
-          <Text mt={'10px'}>Escolha as turmas das disciplinas:</Text>
+          <Text mt={'10px'}>
+            Escolha as turmas das disciplinas ({selectedClasses.size} turmas
+            selecionadas):
+          </Text>
         )}
         {subjects
           .filter((subject) =>
@@ -147,7 +153,12 @@ function AllocationReuseModalFirstStep({
                   iconSize={'25px'}
                   titleSize='sm'
                 >
-                  <Flex direction={'column'} gap={'5px'} mb={'10px'} ml={'20px'}>
+                  <Flex
+                    direction={'column'}
+                    gap={'5px'}
+                    mb={'10px'}
+                    ml={'20px'}
+                  >
                     <Flex direction={'row'} gap={'5px'} mb={'5px'} mt={'5px'}>
                       <Button
                         size={'sm'}
@@ -228,17 +239,14 @@ function AllocationReuseModalFirstStep({
                             });
                             setMap(newMap);
                           }
+                          const newSelectedClasses = new Set(selectedClasses);
                           if (e.target.checked) {
-                            setSelectedClasses((prev) =>
-                              new Set(prev).add(cls.id),
-                            );
-                          } else {
-                            setSelectedClasses((prev) => {
-                              const newSet = new Set(prev);
-                              newSet.delete(cls.id);
-                              return newSet;
-                            });
+                            newSelectedClasses.add(cls.id);
                           }
+                          if (!e.target.checked) {
+                            newSelectedClasses.delete(cls.id);
+                          }
+                          setSelectedClasses(newSelectedClasses);
                         }}
                       >
                         Turma {classNumberFromClassCode(cls.code)}
