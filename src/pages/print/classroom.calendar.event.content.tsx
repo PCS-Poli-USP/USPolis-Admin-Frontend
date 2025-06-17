@@ -1,7 +1,7 @@
 import { Heading, Stack, Text } from '@chakra-ui/react';
 import { EventContentArg } from '@fullcalendar/core';
 import { classNumberFromClassCode } from '../../utils/classes/classes.formatter';
-import { MergedEventExtendedProps } from '../allocation/pdf/ClassroomsCalendarPDF/utils';
+import { MergedEventExtendedProps } from '../allocation/pdf/ClassroomsCalendarPDF/classroom.calendar.utils';
 
 export default function ClassroomCalendarEventContent(
   eventInfo: EventContentArg,
@@ -58,7 +58,23 @@ export default function ClassroomCalendarEventContent(
               </Heading>
             ))}
         </Stack>
-      ) : undefined}
+      ) : (
+        <Stack spacing={'5px'}>
+          <Text noOfLines={1} textColor={'black'}>
+            {eventInfo.timeText}
+          </Text>
+          <Heading
+            size='sm'
+            alignContent={'center'}
+            textColor={'black'}
+            textOverflow={'ellipsis'}
+            overflow={'hidden'}
+            noOfLines={1}
+          >
+            {eventData.title}
+          </Heading>
+        </Stack>
+      )}
     </>
   );
 }

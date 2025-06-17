@@ -3,12 +3,15 @@ import FullCalendar from '@fullcalendar/react';
 import rrulePlugin from '@fullcalendar/rrule';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import ClassroomCalendarEventContent from './classroom.calendar.event.content';
-import { MergedEvent } from '../../pages/allocation/pdf/ClassroomsCalendarPDF/utils';
+import { MergedEvent } from '../allocation/pdf/ClassroomsCalendarPDF/classroom.calendar.utils';
+import { datetimeToDate } from '../../utils/formatters';
 
 interface ClassroomCalendarPageProps {
   events: MergedEvent[];
   classroom: string;
   index: number;
+  startDate: string;
+  endDate: string;
 }
 
 function ClassroomCalendarPage(props: ClassroomCalendarPageProps) {
@@ -29,6 +32,9 @@ function ClassroomCalendarPage(props: ClassroomCalendarPageProps) {
     >
       <Heading size={'lg'} w={'full'} textAlign={'center'}>
         Sala {props.classroom}
+      </Heading>
+      <Heading size={'md'} w={'full'} textAlign={'center'}>
+        {datetimeToDate(props.startDate)} até {datetimeToDate(props.endDate)}
       </Heading>
       <FullCalendar
         initialDate={events.length > 0 ? events[0].start : undefined}
