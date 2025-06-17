@@ -27,7 +27,15 @@ const useClassesService = () => {
 
   const getByBuildingName = (
     building_name: string,
+    start?: string,
+    end?: string,
   ): Promise<AxiosResponse<Array<ClassResponse>>> => {
+    if (start && end) {
+      const params = new URLSearchParams();
+      params.append('start', start);
+      params.append('end', end);
+      return axios.get(`${PREFIX}/building/${building_name}`, { params });
+    }
     return axios.get(`${PREFIX}/building/${building_name}`);
   };
 

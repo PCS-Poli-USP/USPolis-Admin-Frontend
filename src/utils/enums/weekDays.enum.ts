@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 export enum WeekDay {
   MONDAY = 0,
   TUESDAY = 1,
@@ -38,6 +39,16 @@ export namespace WeekDay {
     [WeekDay.FRIDAY]: 'Friday',
     [WeekDay.SATURDAY]: 'Saturday',
     [WeekDay.SUNDAY]: 'Sunday',
+  };
+
+  const intMapping: { [key: number]: WeekDay } = {
+    0: WeekDay.MONDAY,
+    1: WeekDay.TUESDAY,
+    2: WeekDay.WEDNESDAY,
+    3: WeekDay.THURSDAY,
+    4: WeekDay.FRIDAY,
+    5: WeekDay.SATURDAY,
+    6: WeekDay.SUNDAY,
   };
 
   const translations: { [key in WeekDay]: string } = {
@@ -118,16 +129,16 @@ export namespace WeekDay {
     return day;
   }
 
-  export function fromInt(dayInt: number): string {
-    const dayStr = stringMapping[dayInt as WeekDay];
-    if (dayStr === undefined) {
+  export function fromInt(dayInt: number): WeekDay {
+    const day = intMapping[dayInt];
+    if (day == undefined) {
       throw new NoSuchWeekDay(
         `No such week day: ${dayInt}. Valid week days: ${Object.keys(
           stringMapping,
         ).join(', ')}`,
       );
     }
-    return dayStr;
+    return day;
   }
 }
 

@@ -57,10 +57,10 @@ const useReservations = (initialFetch = true) => {
   );
 
   const getReservationsByBuildingName = useCallback(
-    async (building_name: string) => {
+    async (building_name: string, start?: string, end?: string) => {
       setLoading(true);
       await service
-        .getByBuildingName(building_name)
+        .getByBuildingName(building_name, start, end)
         .then((response) => {
           setReservations(response.data.sort(sortReservationsResponse));
         })

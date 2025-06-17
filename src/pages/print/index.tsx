@@ -36,6 +36,8 @@ const ClassroomCalendarPrintPage = () => {
             classroom={data.classroom}
             events={data.events}
             index={data.index}
+            startDate={data.startDate}
+            endDate={data.endDate}
           />
         ))
       ) : (

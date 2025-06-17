@@ -10,8 +10,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   ClassroomCalendarEventsFromSchedules,
   MergedEvent,
-} from './classroom.calendar.utils';
+} from '../ClassroomsCalendarPDF/classroom.calendar.utils';
 import { Recurrence } from '../../../../utils/enums/recurrence.enum';
+import { getEmptyEventsFromEvents } from './classroom.empty.calendar.utils';
 import { DownloadIcon } from '@chakra-ui/icons';
 
 export interface SavedClassroomCalendarPage {
@@ -22,7 +23,7 @@ export interface SavedClassroomCalendarPage {
   endDate: string;
 }
 
-interface ClassroomsCalendarPDFProps {
+interface ClassroomsEmptyCalendarReportPDFProps {
   classes: ClassResponse[];
   reservations: ReservationResponse[];
   building: string;
@@ -32,7 +33,9 @@ interface ClassroomsCalendarPDFProps {
   endDate: string;
 }
 
-function ClassroomsCalendarPDF(props: ClassroomsCalendarPDFProps) {
+function ClassroomsEmptyCalendarReportPDF(
+  props: ClassroomsEmptyCalendarReportPDFProps,
+) {
   const navigate = useNavigate();
 
   const schedules = getSchedulesFromClasses(props.classes).concat(
@@ -46,6 +49,13 @@ function ClassroomsCalendarPDF(props: ClassroomsCalendarPDFProps) {
   const sorted = new Map(
     [...schedulesMap.entries()].sort((a, b) => a[0].localeCompare(b[0])),
   );
+
+  sorted.forEach((schedules, classroom) => {
+    const events = ClassroomCalendarEventsFromSchedules(schedules);
+    const emptyEvents = getEmptyEventsFromEvents(events);
+    console.log(emptyEvents);
+  });
+
   const sendCalendarsToPrint = () => {
     if (Array.from(schedulesMap.keys()).length === 0) {
       alert('Nenhum calendário encontrado!');
@@ -56,9 +66,11 @@ function ClassroomsCalendarPDF(props: ClassroomsCalendarPDFProps) {
     let index = 1;
     sorted.forEach((schedules, classroom) => {
       const events = ClassroomCalendarEventsFromSchedules(schedules);
+      const emptyEvents = getEmptyEventsFromEvents(events);
+      console.log(emptyEvents);
       savedCalendars.push({
         classroom,
-        events,
+        events: emptyEvents,
         index,
         startDate: props.startDate,
         endDate: props.endDate,
@@ -82,10 +94,10 @@ function ClassroomsCalendarPDF(props: ClassroomsCalendarPDFProps) {
         color={'uspolis.blue'}
         leftIcon={<DownloadIcon />}
       >
-        Mapa de salas
+        Disponibilidade das salas
       </Button>
     </Flex>
   );
 }
 
-export default ClassroomsCalendarPDF;
+export default ClassroomsEmptyCalendarReportPDF;
