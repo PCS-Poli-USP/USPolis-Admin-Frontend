@@ -50,12 +50,6 @@ function ClassroomsEmptyCalendarReportPDF(
     [...schedulesMap.entries()].sort((a, b) => a[0].localeCompare(b[0])),
   );
 
-  sorted.forEach((schedules, classroom) => {
-    const events = ClassroomCalendarEventsFromSchedules(schedules);
-    const emptyEvents = getEmptyEventsFromEvents(events);
-    console.log(emptyEvents);
-  });
-
   const sendCalendarsToPrint = () => {
     if (Array.from(schedulesMap.keys()).length === 0) {
       alert('Nenhum calendário encontrado!');
@@ -67,7 +61,6 @@ function ClassroomsEmptyCalendarReportPDF(
     sorted.forEach((schedules, classroom) => {
       const events = ClassroomCalendarEventsFromSchedules(schedules);
       const emptyEvents = getEmptyEventsFromEvents(events);
-      console.log(emptyEvents);
       savedCalendars.push({
         classroom,
         events: emptyEvents,
