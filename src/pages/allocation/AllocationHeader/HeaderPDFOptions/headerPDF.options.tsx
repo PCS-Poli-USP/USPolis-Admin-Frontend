@@ -1,7 +1,9 @@
 import {
   Box,
   Button,
+  Flex,
   Heading,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,12 +16,14 @@ import {
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import ClassesPDF from '../../pdf/ClassesPDF/classesPDF';
 import Select from 'react-select';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useClasses from '../../../../hooks/classes/useClasses';
 import { normalizeString } from '../../../../utils/formatters';
 import useReservations from '../../../../hooks/useReservations';
 import ClassroomsCalendarPDF from '../../../../pages/allocation/pdf/ClassroomsCalendarPDF/classrooms.calendar.pdf';
 import { ModalProps } from '../../../../models/interfaces';
+import ClassroomsEmptyCalendarReportPDF from '../../pdf/ClassroomsEmptyCalendarPDF/classrooms.empty.calendar.pdf';
+import { DownloadIcon } from '@chakra-ui/icons';
 
 type Option = {
   value: string;
@@ -31,6 +35,10 @@ interface PDFOptionsProps extends ModalProps {
 
 function HeaderPDFOptions({ buildings, isOpen, onClose }: PDFOptionsProps) {
   const [selectedBuilding, setSelectedBuilding] = useState<Option | null>(null);
+  const today = new Date();
+  const [start, setStart] = useState<string>(getStartOfSemester());
+  const [end, setEnd] = useState<string>(getEndOfSemester());
+
   const {
     loading: loadingC,
     classes,
@@ -41,6 +49,30 @@ function HeaderPDFOptions({ buildings, isOpen, onClose }: PDFOptionsProps) {
     reservations,
     getReservationsByBuildingName,
   } = useReservations(false);
+
+  function getStartOfSemester() {
+    const semesterStart = new Date(today.getFullYear(), 0, 1);
+    if (today.getMonth() >= 7) {
+      semesterStart.setMonth(6, 21);
+    }
+    return semesterStart.toISOString().split('T')[0];
+  }
+
+  function getEndOfSemester() {
+    const semesterEnd = new Date(today.getFullYear(), 11, 31);
+    if (today.getMonth() < 7) {
+      semesterEnd.setMonth(6, 20);
+    }
+    return semesterEnd.toISOString().split('T')[0];
+  }
+
+  useEffect(() => {
+    if (selectedBuilding && start && end) {
+      getClassesByBuildingName(selectedBuilding.label, start, end);
+      getReservationsByBuildingName(selectedBuilding.label, start, end);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedBuilding, start, end]);
 
   return (
     <Modal
@@ -61,25 +93,67 @@ function HeaderPDFOptions({ buildings, isOpen, onClose }: PDFOptionsProps) {
             divider={<StackDivider />}
             mb={'10px'}
           >
-            <Box w={'full'}>
-              <Select
-                placeholder={'Selecione um prédio'}
-                options={buildings}
-                isClearable={true}
-                onChange={(option: Option | null) => {
-                  setSelectedBuilding(option);
-                  if (option) {
-                    getClassesByBuildingName(option.label);
-                    getReservationsByBuildingName(option.label);
-                  }
-                }}
-              />
-              {!selectedBuilding && (
-                <Text color={'red.500'} ml={'5px'} mt={'5px'}>
-                  Selecione um prédio antes!
-                </Text>
-              )}
-            </Box>
+            <Flex
+              w={'full'}
+              direction={'column'}
+              alignItems={'center'}
+              gap={'10px'}
+            >
+              <Flex
+                w={'full'}
+                direction={'row'}
+                alignItems={'center'}
+                gap={'10px'}
+              >
+                <Flex direction={'column'} w={'50%'}>
+                  <Text fontWeight={'bold'}>Início: </Text>
+                  <Input
+                    type='date'
+                    value={start}
+                    onChange={(e) => {
+                      setStart(e.target.value);
+                    }}
+                  />
+                  {!start && (
+                    <Text color={'red.500'} ml={'5px'} mt={'5px'}>
+                      Selecione a data de início!
+                    </Text>
+                  )}
+                </Flex>
+                <Flex direction={'column'} w={'50%'}>
+                  <Text fontWeight={'bold'}>Fim: </Text>
+                  <Input
+                    type='date'
+                    value={end}
+                    onChange={(e) => {
+                      setEnd(e.target.value);
+                    }}
+                  />
+                  {!end && (
+                    <Text color={'red.500'} ml={'5px'} mt={'5px'}>
+                      Selecione a data de fim!
+                    </Text>
+                  )}
+                </Flex>
+              </Flex>
+
+              <Flex direction={'column'} w={'100%'}>
+                <Text fontWeight={'bold'}>Prédio: </Text>
+                <Select
+                  placeholder={'Selecione um prédio'}
+                  options={buildings}
+                  isClearable={true}
+                  onChange={(option: Option | null) => {
+                    setSelectedBuilding(option);
+                  }}
+                />
+                {!selectedBuilding && (
+                  <Text color={'red.500'} ml={'5px'} mt={'5px'}>
+                    Selecione um prédio antes!
+                  </Text>
+                )}
+              </Flex>
+            </Flex>
 
             <Heading size={'md'} ml={'5px'}>
               Alocações gerais
@@ -99,13 +173,16 @@ function HeaderPDFOptions({ buildings, isOpen, onClose }: PDFOptionsProps) {
                 <Button
                   w={'full'}
                   isLoading={loadingC || loadingR}
-                  disabled={!selectedBuilding}
+                  disabled={
+                    !selectedBuilding || loadingC || loadingR || !start || !end
+                  }
                   fontWeight={'bold'}
                   variant={'outline'}
                   colorScheme={'blue'}
                   color={'uspolis.blue'}
+                  leftIcon={<DownloadIcon />}
                 >
-                  Baixar alocação das disciplinas
+                  Alocação das disciplinas
                 </Button>
               </PDFDownloadLink>
             </Box>
@@ -115,8 +192,29 @@ function HeaderPDFOptions({ buildings, isOpen, onClose }: PDFOptionsProps) {
                 classes={classes}
                 reservations={reservations}
                 building={selectedBuilding ? selectedBuilding.label : ''}
-                disabled={!selectedBuilding || loadingC || loadingR}
+                disabled={
+                  !selectedBuilding || loadingC || loadingR || !start || !end
+                }
                 loading={loadingC || loadingR}
+                startDate={start}
+                endDate={end}
+              />
+            </Box>
+
+            <Heading size={'md'} ml={'5px'}>
+              Relatórios
+            </Heading>
+            <Box w={'full'}>
+              <ClassroomsEmptyCalendarReportPDF
+                classes={classes}
+                reservations={reservations}
+                building={selectedBuilding ? selectedBuilding.label : ''}
+                disabled={
+                  !selectedBuilding || loadingC || loadingR || !start || !end
+                }
+                loading={loadingC || loadingR}
+                startDate={start}
+                endDate={end}
               />
             </Box>
           </Stack>

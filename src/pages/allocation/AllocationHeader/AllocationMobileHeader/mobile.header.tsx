@@ -39,7 +39,11 @@ function AllocationMobileHeader({
   const { isOpen: isOpenOptions, onToggle } = useDisclosure({
     defaultIsOpen: true,
   });
-  const { isOpen: isOpenPDF, onClose: onClosePDF } = useDisclosure({
+  const {
+    isOpen: isOpenPDF,
+    onClose: onClosePDF,
+    onOpen: onOpenPDF,
+  } = useDisclosure({
     defaultIsOpen: false,
   });
   return (
@@ -66,7 +70,7 @@ function AllocationMobileHeader({
         <Box rounded='md' w={'calc(100vw - 48px)'}>
           <Flex mb={4} gap={2} direction={'column'} w={'100%'}>
             <Flex direction={'row'} gap={5} w={'full'}>
-              <Button onClick={() => onOpen()} colorScheme='blue'>
+              <Button onClick={() => onOpenPDF()} colorScheme='blue'>
                 Baixar
               </Button>
               <Tooltip
