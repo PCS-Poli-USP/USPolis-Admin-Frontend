@@ -15,6 +15,8 @@ export interface ClassroomResponse {
   created_by: string;
   building_id: number;
   building: string;
+  group_ids: number[];
+  groups: string[];
 }
 
 export interface ClassroomFullResponse extends ClassroomResponse {

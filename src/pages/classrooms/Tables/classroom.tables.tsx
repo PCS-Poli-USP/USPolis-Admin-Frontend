@@ -39,6 +39,23 @@ export function getClassroomColumns(
       meta: { isSelectable: true, isCenter: true },
     },
     {
+      filterFn: FilterString,
+      accessorFn: (row) =>
+        row.groups.length > 0 ? row.groups.join(', ') : '',
+      header: 'Grupos',
+      cell: ({ row }) => (
+        <Box>
+          {row.original.groups.length ? (
+            row.original.groups.map((group, index) => (
+              <Text key={index}>{`${group}`}</Text>
+            ))
+          ) : (
+            <Text></Text>
+          )}
+        </Box>
+      ),
+    },
+    {
       id: 'floor',
       accessorKey: 'floor',
       header: 'Andar',
@@ -58,7 +75,7 @@ export function getClassroomColumns(
     {
       id: 'air_conditioning',
       accessorKey: 'air_conditioning',
-      header: 'Ar condicionado',
+      header: 'Ar cond.',
       maxSize: 120,
       meta: { isBoolean: true, isSelectable: true },
       filterFn: FilterBoolean,

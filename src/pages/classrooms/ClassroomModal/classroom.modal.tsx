@@ -34,7 +34,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
   });
 
   const { trigger, reset, getValues, clearErrors, setValue, watch } = form;
-  const { createClassroom, updateClassroom } = useClassrooms();
+  const { createClassroom, updateClassroom } = useClassrooms(false);
 
   const building_id = watch('building_id');
 
