@@ -11,14 +11,25 @@ import { BuildingResponse } from '../../../../../models/http/responses/building.
 import { useEffect, useState } from 'react';
 import { AllocationReuseResponse } from '../../../../../models/http/responses/allocation.response.models';
 import useAllocationsService from '../../../../../hooks/API/services/useAllocationService';
-import { SubjectWithClasses } from '../../allocation.reuse.modal';
+import {
+  ScheduleAllocationData,
+  SubjectWithClasses,
+} from '../../allocation.reuse.modal';
 import AllocationReuseSubjectOptions from './allocation.reuse.subject.options';
 
 interface AllocationReuseModalSecondStepProps {
   buildings: BuildingResponse[];
   map: Map<number, SubjectWithClasses>;
-  allocationMap: Map<number, number[]>;
-  setAllocationMap: (map: Map<number, number[]>) => void;
+  allocationMap: Map<number, ScheduleAllocationData>;
+  setAllocationMap: (map: Map<number, ScheduleAllocationData>) => void;
+  selectedBuilding: BuildingResponse | undefined;
+  setSelectedBuilding: (building: BuildingResponse | undefined) => void;
+  allocationReuseResponse: AllocationReuseResponse | undefined;
+  setAllocationReuseResponse: (
+    response: AllocationReuseResponse | undefined,
+  ) => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
 }
 
 function AllocationReuseModalSecondStep({
@@ -26,6 +37,12 @@ function AllocationReuseModalSecondStep({
   map,
   allocationMap,
   setAllocationMap,
+  selectedBuilding,
+  setSelectedBuilding,
+  allocationReuseResponse,
+  setAllocationReuseResponse,
+  loading,
+  setLoading,
 }: AllocationReuseModalSecondStepProps) {
   const currentYear = new Date().getFullYear();
   const years: number[] = [];
@@ -36,31 +53,29 @@ function AllocationReuseModalSecondStep({
   const { getAllocationOptions } = useAllocationsService();
 
   const [allocationYear, setAllocationYear] = useState<number>(currentYear - 1);
-  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse | undefined>(
-    buildings.length === 1 ? buildings[0] : undefined,
-  );
-  const [data, setData] = useState<AllocationReuseResponse>();
-  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (data) {
+    if (allocationReuseResponse) {
       const newMap = new Map(allocationMap);
-      const subjectOptions = data.target_options;
+      const subjectOptions = allocationReuseResponse.target_options;
       subjectOptions.forEach((subject) => {
         const classOptions = subject.class_options;
         classOptions.forEach((option) => {
           option.schedule_options.forEach((scheduleOption) => {
-            newMap.set(
-              scheduleOption.schedule_target_id,
-              scheduleOption.options.map((opt) => opt.id),
+            const options = scheduleOption.options.filter(
+              (opt) => opt.classroom && opt.classroom_id,
             );
+            newMap.set(scheduleOption.schedule_target_id, {
+              classroom_ids: options.map((opt) => opt.classroom_id as number),
+              classrooms: options.map((opt) => opt.classroom) as string[],
+            });
           });
         });
       });
       setAllocationMap(newMap);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [allocationReuseResponse]);
 
   return (
     <Flex direction={'column'} gap={'10px'} w={'100%'}>
@@ -96,7 +111,7 @@ function AllocationReuseModalSecondStep({
                   strict: true,
                 })
                   .then((res) => {
-                    setData(res.data);
+                    setAllocationReuseResponse(res.data);
                   })
                   .finally(() => {
                     setLoading(false);
@@ -105,7 +120,7 @@ function AllocationReuseModalSecondStep({
             }
             if (!option) {
               setSelectedBuilding(undefined);
-              setData(undefined);
+              setAllocationReuseResponse(undefined);
             }
           }}
         />
@@ -131,15 +146,24 @@ function AllocationReuseModalSecondStep({
           Selecione um prédio para buscar alocações.
         </Alert>
       )}
-      <Skeleton isLoaded={!loading} w={'100%'} h={'100%'} minH={'200px'}>
-        {data &&
-          data.target_options &&
-          data.target_options.map((target) => (
-            <AllocationReuseSubjectOptions
-              data={target}
-              allocationMap={allocationMap}
-              setAllocationMap={setAllocationMap}
-            />
+      <Skeleton
+        isLoaded={!loading}
+        w={'100%'}
+        h={'100%'}
+        minH={'200px'}
+        maxH={'400px'}
+        overflowY={'auto'}
+      >
+        {allocationReuseResponse &&
+          allocationReuseResponse.target_options &&
+          allocationReuseResponse.target_options.map((target) => (
+            <div key={target.subject_id}>
+              <AllocationReuseSubjectOptions
+                data={target}
+                allocationMap={allocationMap}
+                setAllocationMap={setAllocationMap}
+              />
+            </div>
           ))}
       </Skeleton>
     </Flex>

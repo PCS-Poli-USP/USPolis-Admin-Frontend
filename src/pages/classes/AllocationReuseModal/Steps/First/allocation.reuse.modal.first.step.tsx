@@ -16,6 +16,7 @@ interface AllocationReuseModalFirstStepProps {
   setMap: (map: Map<number, SubjectWithClasses>) => void;
   selectedClasses: Set<number>;
   setSelectedClasses: (classes: Set<number>) => void;
+  setSelectedSubjects: (subjects: Set<number>) => void;
 }
 
 interface Option {
@@ -30,8 +31,11 @@ function AllocationReuseModalFirstStep({
   setMap,
   selectedClasses,
   setSelectedClasses,
+  setSelectedSubjects,
 }: AllocationReuseModalFirstStepProps) {
-  const [selectedSubjects, setSelesctedSubjects] = useState<Option[]>([]);
+  const [selectedSubjectsOptions, setSelectedSubjectsOptions] = useState<
+    Option[]
+  >([]);
 
   useEffect(() => {
     const subjectIds = Array.from(map.keys());
@@ -41,7 +45,7 @@ function AllocationReuseModalFirstStep({
         label: `${subject.code} - ${subject.name}`,
         value: subject.id,
       }));
-    setSelesctedSubjects(newSelectedSubjects);
+    setSelectedSubjectsOptions(newSelectedSubjects);
 
     const classesIds: number[] = [];
     for (const entry of map.values()) {
@@ -68,16 +72,14 @@ function AllocationReuseModalFirstStep({
         <HelpPopover title='Como funciona a reutilização?'>
           <Flex direction={'column'} gap={'5px'} textAlign={'justify'}>
             <Text>
-              A reutilização de alocações vai buscar as alocações das turmas das
-              disciplinas que você selecionar.
+              A reutilização de alocação permite alocar as turmas das
+              disciplinas selecionadas considerando a alocação de turmas
+              similares de um ano anterior.
             </Text>
             <Text>
-              O sistema irá tentar buscar exatamente a mesma turma, mas no ano
-              que você pedir.
-            </Text>
-            <Text>
-              Ou seja, os resultados são alocações com o mesmo período, dia,
-              horário e turma, mas no ano que você escolher.
+              Uma turma é considerada similar quando ela tem o mesmo código
+              (últimos dois dígitos), dias de semana, recorrência e horário de
+              início e fim.
             </Text>
           </Flex>
         </HelpPopover>
@@ -86,16 +88,17 @@ function AllocationReuseModalFirstStep({
         <Select
           placeholder={'Selecione as disciplinas'}
           isMulti={true}
-          value={selectedSubjects}
+          value={selectedSubjectsOptions}
           options={subjects.map((subject) => ({
             label: `${subject.code} - ${subject.name}`,
             value: subject.id,
           }))}
           onChange={(value) => {
-            const removedSubjects = selectedSubjects.filter(
+            const removedSubjects = selectedSubjectsOptions.filter(
               (s) => !value.some((v) => v.value === s.value),
             );
-            setSelesctedSubjects(value as Option[]);
+            setSelectedSubjectsOptions(value as Option[]);
+            setSelectedSubjects(new Set(value.map((v) => v.value)));
             const newMap = new Map(map);
             value.forEach((subject) => {
               if (!newMap.has(subject.value)) {
@@ -123,7 +126,7 @@ function AllocationReuseModalFirstStep({
         />
       </Box>
       <Box>
-        {selectedSubjects.length > 0 && (
+        {selectedSubjectsOptions.length > 0 && (
           <Text mt={'10px'}>
             Escolha as turmas das disciplinas ({selectedClasses.size} turmas
             selecionadas):
@@ -131,7 +134,7 @@ function AllocationReuseModalFirstStep({
         )}
         {subjects
           .filter((subject) =>
-            selectedSubjects.some((s) => s.value === subject.id),
+            selectedSubjectsOptions.some((s) => s.value === subject.id),
           )
           .map((subject) => {
             const classes = classesBySubject.get(subject.id);
@@ -150,6 +153,7 @@ function AllocationReuseModalFirstStep({
                 </Text>
                 <Collapsable
                   title={`Escolher turmas [ ${i} / ${classes ? classes.length : 0} ]`}
+                  titleColor={i > 0 ? 'uspolis.blue' : 'uspolis.red'}
                   iconSize={'25px'}
                   titleSize='sm'
                 >

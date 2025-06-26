@@ -289,10 +289,10 @@ function Classes() {
       <AllocationReuseModal
         isOpen={isOpenAllocationReuseModal}
         onClose={onCloseAllocationReuseModal}
-        data={undefined}
         subjects={subjects}
         classes={classes}
         buildings={context.loggedUser ? context.loggedUser.buildings || [] : []}
+        refetch={() => getClasses(start, end)}
       />
       <Flex align='center'>
         <PageHeaderWithFilter
