@@ -12,8 +12,11 @@ interface props {
   titleColor?: string;
   initiallyOpen?: boolean;
   border?: string;
+  borderRadius?: string;
   p?: string;
+  gap?: string;
   fontWeight?: string;
+  mb?: string;
 }
 
 const Collapsable = ({
@@ -26,13 +29,23 @@ const Collapsable = ({
   titleColor = 'uspolis.blue',
   initiallyOpen = false,
   border = 'none',
+  borderRadius = 'none',
   p = undefined,
   fontWeight = 'bold',
+  gap = undefined,
+  mb = undefined,
 }: props) => {
   const [open, setOpen] = useState(initiallyOpen);
 
   return (
-    <Flex direction='column' border={border} p={p}>
+    <Flex
+      direction='column'
+      border={border}
+      borderRadius={borderRadius}
+      p={p}
+      gap={gap}
+      mb={mb}
+    >
       <Flex alignItems='center'>
         <div
           onClick={() => {
