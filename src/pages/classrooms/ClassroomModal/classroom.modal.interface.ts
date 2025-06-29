@@ -20,5 +20,6 @@ export interface ClassroomForm {
   air_conditioning: boolean;
   audiovisual: AudiovisualType;
   accessibility: boolean;
+  observation: string;
   group_ids: number[];
 }

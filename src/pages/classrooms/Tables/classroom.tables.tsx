@@ -40,8 +40,7 @@ export function getClassroomColumns(
     },
     {
       filterFn: FilterString,
-      accessorFn: (row) =>
-        row.groups.length > 0 ? row.groups.join(', ') : '',
+      accessorFn: (row) => (row.groups.length > 0 ? row.groups.join(', ') : ''),
       header: 'Grupos',
       cell: ({ row }) => (
         <Box>
@@ -96,6 +95,26 @@ export function getClassroomColumns(
       maxSize: 100,
       meta: { isBoolean: true, isSelectable: true, isCenter: true },
       filterFn: FilterBoolean,
+    },
+    {
+      id: 'observation',
+      accessorKey: 'observation',
+      header: 'Observação',
+      maxSize: 200,
+      cell: ({ row }) => (
+        <Box>
+          <Tooltip
+            label={
+              row.original.observation ? row.original.observation : 'Nenhuma'
+            }
+          >
+            <Text
+              textOverflow={'ellipsis'}
+              overflowX={'hidden'}
+            >{`${row.original.observation ? row.original.observation : 'Nenhuma'}`}</Text>
+          </Tooltip>
+        </Box>
+      ),
     },
     {
       accessorKey: 'updated_at',
