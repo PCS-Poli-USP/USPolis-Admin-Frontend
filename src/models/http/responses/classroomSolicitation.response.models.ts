@@ -1,4 +1,5 @@
 import { ReservationType } from '../../../utils/enums/reservations.enum';
+import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
 
 export interface ClassroomSolicitationResponse {
   id: number;
@@ -17,12 +18,9 @@ export interface ClassroomSolicitationResponse {
   start_time?: string;
   end_time?: string;
   capacity: number;
-  deleted: boolean;
+  status: SolicitationStatus;
   deleted_by?: string;
-  approved: boolean;
-  denied: boolean;
-  closed: boolean;
-  closed_by: string;
+  closed_by?: string;
   created_at: string;
   updated_at: string;
 }
