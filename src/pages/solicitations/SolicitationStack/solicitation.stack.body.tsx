@@ -10,6 +10,8 @@ import {
 } from '@chakra-ui/react';
 import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import moment from 'moment';
+import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import { getSolicitationStatusText } from '../../../utils/solicitations/solicitation.formatter';
 
 interface SolicitationStackBodyProps {
   solicitations: ClassroomSolicitationResponse[];
@@ -31,6 +33,7 @@ function SolicitationStackBody({
       {solicitations.length > 0 ? (
         solicitations.map((solicitation, index) => {
           const selected = selectedIndex === index;
+          const closed = solicitation.status !== SolicitationStatus.PENDING;
           return (
             <Box
               key={index}
@@ -40,12 +43,10 @@ function SolicitationStackBody({
               border={selected ? '1px' : undefined}
               cursor={false ? 'not-allowed' : 'pointer'}
               transition='background 0.3s, opacity 0.3s'
-              opacity={solicitation.closed && !selected ? 0.6 : 1}
+              opacity={closed && !selected ? 0.6 : 1}
               _hover={false ? {} : { bg: 'gray.100', opacity: 0.8 }}
               _active={
-                solicitation.closed && !selected
-                  ? {}
-                  : { bg: 'gray.300', opacity: 0.6 }
+                closed && !selected ? {} : { bg: 'gray.300', opacity: 0.6 }
               }
               onClick={() => {
                 reset();
@@ -68,42 +69,22 @@ function SolicitationStackBody({
                   'DD/MM/YYYY, HH:mm',
                 )}`}
               </Text>
-              {solicitation.approved ||
-              solicitation.denied ||
-              solicitation.deleted ? (
-                <Text>
-                  <Highlight
-                    query={[
-                      'aprovado',
-                      'negado',
-                      'removido',
-                      solicitation.user,
-                    ]}
-                    styles={{ textColor: 'uspolis.blue', fontWeight: 'bold' }}
-                  >
-                    {`${
-                      solicitation.approved
-                        ? `Situação: Aprovado por ${solicitation.closed_by}`
-                        : solicitation.denied
-                          ? `Situação: Negado por ${solicitation.closed_by}`
-                          : solicitation.deleted
-                            ? `Situação: Removido por ${solicitation.deleted_by}`
-                            : ''
-                    } às ${moment(solicitation.updated_at).format(
-                      'DD/MM/YYYY, HH:mm',
-                    )}`}
-                  </Highlight>
-                </Text>
-              ) : (
-                <Text>
-                  <Highlight
-                    query={'pendente'}
-                    styles={{ textColor: 'uspolis.blue', fontWeight: 'bold' }}
-                  >
-                    Situação: Pendente
-                  </Highlight>
-                </Text>
-              )}
+
+              <Text>
+                <Highlight
+                  query={[
+                    'aprovado',
+                    'negado',
+                    'removida',
+                    'pendente',
+                    'cancelada',
+                    solicitation.user,
+                  ]}
+                  styles={{ textColor: 'uspolis.blue', fontWeight: 'bold' }}
+                >
+                  {getSolicitationStatusText(solicitation)}
+                </Highlight>
+              </Text>
             </Box>
           );
         })

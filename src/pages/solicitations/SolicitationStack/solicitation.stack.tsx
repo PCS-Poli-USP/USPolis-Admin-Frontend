@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import SolicitationStackBody from './solicitation.stack.body';
 import { filterString } from '../../../utils/filters';
+import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
 
 interface SolicitationStackProps {
   solicitations: ClassroomSolicitationResponse[];
@@ -154,8 +155,12 @@ function SolicitationStack({
           selectedIndex={selectedIndex}
           solicitations={
             buildingSearch || classroomSearch || requesterSearch
-              ? filtered.filter((val) => showAll || !val.closed)
-              : current.filter((val) => showAll || !val.closed)
+              ? filtered.filter(
+                  (val) => showAll || val.status === SolicitationStatus.PENDING,
+                )
+              : current.filter(
+                  (val) => showAll || val.status === SolicitationStatus.PENDING,
+                )
           }
           handleOnClick={handleOnClick}
         />

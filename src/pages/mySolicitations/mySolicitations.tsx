@@ -20,24 +20,39 @@ import { CloseIcon } from '@chakra-ui/icons';
 import { ClassroomSolicitationResponse } from '../../models/http/responses/classroomSolicitation.response.models';
 import SolicitationStack from './MySolicitationStack/mysolicitation.stack';
 import MySolicitationModal from './MySolicitationModal/mysolicitation.modal';
-import useClassroomsSolicitations from '../../hooks/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../hooks/classroomSolicitations/useClassroomSolicitations';
+import Dialog from '../../components/common/Dialog/dialog.component';
 
 const MySolicitations = () => {
-  const { loading, solicitations } = useClassroomsSolicitations();
+  const { loading, solicitations, cancelSolicitation } =
+    useClassroomsSolicitations();
   const [isMobile] = useMediaQuery('(max-width: 800px)');
+
+  const {
+    isOpen: isOpenDialog,
+    onClose: onCloseDialog,
+    onOpen: onOpenDialog,
+  } = useDisclosure();
 
   const [hiddenAlert, setHiddenAlert] = useState(false);
   const [selectedSolicitation, setSelectedSolicitation] =
     useState<ClassroomSolicitationResponse>();
   const { isOpen, onClose, onToggle } = useDisclosure();
 
-  const columns = getMySolicitationsColumns();
+  function handleCancelClick(data: ClassroomSolicitationResponse) {
+    setSelectedSolicitation(data);
+    onOpenDialog();
+  }
+
+  const columns = getMySolicitationsColumns({ handleCancelClick });
 
   return (
     <PageContent>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
         <VStack alignItems={'flex-start'} spacing={2} mb={2}>
-          <Text fontSize='4xl'>Minhas solicitações</Text>
+          <Flex>
+            <Text fontSize='4xl'>Minhas solicitações</Text>
+          </Flex>
           <HStack>
             <Alert status='info' hidden={hiddenAlert}>
               <AlertIcon color={'blue'} />O resultado das solicitações e suas
@@ -53,9 +68,27 @@ const MySolicitations = () => {
           </HStack>
         </VStack>
       </Flex>
+      <Dialog
+        title={'Cancelar Solicitação'}
+        isOpen={isOpenDialog}
+        onClose={onCloseDialog}
+        warningText='Uma vez cancelada, a solicitação não poderá ser reaberta.'
+        onConfirm={async () => {
+          if (!selectedSolicitation) return;
+          onCloseDialog();
+          await cancelSolicitation(selectedSolicitation.id);
+        }}
+      />
       <Skeleton isLoaded={!loading}>
         {!isMobile ? (
-          <DataTable columns={columns} data={solicitations} />
+          <DataTable
+            columns={columns}
+            data={solicitations}
+            columnPinning={{
+              left: ['status'],
+              right: ['options'],
+            }}
+          />
         ) : (
           <Box w={'100%'} h={'full'}>
             <SolicitationStack

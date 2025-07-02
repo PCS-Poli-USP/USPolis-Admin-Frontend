@@ -16,6 +16,7 @@ import { ModalProps } from '../../../models/interfaces';
 import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import moment from 'moment';
+import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
 
 interface MySoliciationModalProps extends ModalProps {
   solicitation?: ClassroomSolicitationResponse;
@@ -141,19 +142,9 @@ function MySolicitationModal({
                   <Text
                     pt='2'
                     fontSize='md'
-                    textColor={
-                      solicitation.approved
-                        ? 'green.500'
-                        : solicitation.denied
-                          ? 'red.500'
-                          : 'yellow.500'
-                    }
+                    textColor={SolicitationStatus.getColor(solicitation.status)}
                   >
-                    {solicitation.approved
-                      ? 'Aprovado'
-                      : solicitation.denied
-                        ? 'Negado'
-                        : 'Pendente'}
+                    {SolicitationStatus.translate(solicitation.status)}
                   </Text>
                 </Box>
               </VStack>
