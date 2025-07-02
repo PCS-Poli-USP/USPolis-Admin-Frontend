@@ -1,13 +1,14 @@
-import useCustomToast from '../hooks/useCustomToast';
+import useCustomToast from '../useCustomToast';
 import {
   ClassroomSolicitationAprove,
   ClassroomSolicitationDeny,
   CreateClassroomSolicitation,
-} from '../models/http/requests/classroomSolicitation.request.models';
-import { ClassroomSolicitationResponse } from '../models/http/responses/classroomSolicitation.response.models';
+} from '../../models/http/requests/classroomSolicitation.request.models';
+import { ClassroomSolicitationResponse } from '../../models/http/responses/classroomSolicitation.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortClassroomSolicitationResponse } from '../utils/solicitations/solicitation.sorter';
-import useClassroomSolicitationsService from './API/services/useClassroomSolicitationsService';
+import { sortClassroomSolicitationResponse } from '../../utils/solicitations/solicitation.sorter';
+import useClassroomSolicitationsService from '../API/services/useClassroomSolicitationsService';
+import { ClassroomSolicitationErrorParser } from './classroomSolicitationErrorParser';
 
 const useClassroomsSolicitations = (initialFetch = true) => {
   const service = useClassroomSolicitationsService();
@@ -17,6 +18,8 @@ const useClassroomsSolicitations = (initialFetch = true) => {
   >([]);
 
   const showToast = useCustomToast();
+
+  const parser = new ClassroomSolicitationErrorParser();
 
   const getSolicitations = useCallback(async () => {
     setLoading(true);
@@ -111,6 +114,9 @@ const useClassroomsSolicitations = (initialFetch = true) => {
         .catch((error) => {
           showToast('Erro', `Erro ao aprovar a solicitação: ${error}`, 'error');
           console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     },
     [getSolicitations, showToast, service],
@@ -128,9 +134,33 @@ const useClassroomsSolicitations = (initialFetch = true) => {
         .catch((error) => {
           showToast('Erro!', `Erro ao negar solicitação: ${error}`, 'error');
           console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     },
     [getPendingBuildingSolicitations, showToast, service],
+  );
+
+  const cancelSolicitation = useCallback(
+    async (id: number) => {
+      setLoading(true);
+      await service
+        .cancel(id)
+        .then(async () => {
+          showToast('Sucesso!', 'Sucesso ao cancelar solicitação', 'success');
+          getSolicitations();
+        })
+        .catch((error) => {
+          console.log(error);
+          showToast('Erro!', parser.parseCancelError(error), 'error');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [getSolicitations, showToast, service],
   );
 
   useEffect(() => {
@@ -147,6 +177,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
     createSolicitation,
     approveSolicitation,
     denySolicitation,
+    cancelSolicitation,
   };
 };
 
