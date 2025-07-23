@@ -31,7 +31,6 @@ import { CheckBox } from '../../../components/common/form/CheckBox';
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
 import GroupFormatter from '../../../utils/groups/group.formatter';
-import { DateInput } from '../../../components/common/form/DateInput';
 
 export default function ClassroomModal(props: ClassroomModalProps) {
   const form = useForm<ClassroomForm>({
