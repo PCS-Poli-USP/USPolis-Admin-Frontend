@@ -2,6 +2,7 @@ import {
   Alert,
   AlertIcon,
   Box,
+  Button,
   Flex,
   HStack,
   IconButton,
@@ -11,7 +12,7 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import DataTable from '../../components/common/DataTable/dataTable.component';
 import { getMySolicitationsColumns } from './Tables/mySolicitations.table';
@@ -22,16 +23,35 @@ import SolicitationStack from './MySolicitationStack/mysolicitation.stack';
 import MySolicitationModal from './MySolicitationModal/mysolicitation.modal';
 import useClassroomsSolicitations from '../../hooks/classroomSolicitations/useClassroomSolicitations';
 import Dialog from '../../components/common/Dialog/dialog.component';
+import SolicitationModal from '../allocation/SolicitationModal/solicitation.modal';
+import useBuildings from '../../hooks/useBuildings';
+import useClassrooms from '../../hooks/classrooms/useClassrooms';
 
 const MySolicitations = () => {
-  const { loading, solicitations, cancelSolicitation } =
+  const { loading, solicitations, cancelSolicitation, getSolicitations } =
     useClassroomsSolicitations();
+  const {
+    loading: loadingBuildings,
+    buildings,
+    getAllBuildings,
+  } = useBuildings(false);
+  const {
+    loading: loadingClassrooms,
+    classrooms,
+    getAllClassrooms,
+  } = useClassrooms(false);
   const [isMobile] = useMediaQuery('(max-width: 800px)');
 
   const {
     isOpen: isOpenDialog,
     onClose: onCloseDialog,
     onOpen: onOpenDialog,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenSolicitation,
+    onClose: onCloseSolicitation,
+    onOpen: onOpenSolicitation,
   } = useDisclosure();
 
   const [hiddenAlert, setHiddenAlert] = useState(false);
@@ -46,12 +66,30 @@ const MySolicitations = () => {
 
   const columns = getMySolicitationsColumns({ handleCancelClick });
 
+  useEffect(() => {
+    getAllBuildings();
+    getAllClassrooms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <PageContent>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
-        <VStack alignItems={'flex-start'} spacing={2} mb={2}>
-          <Flex>
+        <VStack alignItems={'flex-start'} spacing={2} mb={2} w={'full'}>
+          <Flex
+            direction={'row'}
+            align={'center'}
+            justifyContent={'space-between'}
+            w={'full'}
+          >
             <Text fontSize='4xl'>Minhas solicitações</Text>
+            <Button
+              borderRadius={'10px'}
+              colorScheme='blue'
+              onClick={() => onOpenSolicitation()}
+            >
+              Nova Solicitação
+            </Button>
           </Flex>
           <HStack>
             <Alert status='info' hidden={hiddenAlert}>
@@ -79,7 +117,19 @@ const MySolicitations = () => {
           await cancelSolicitation(selectedSolicitation.id);
         }}
       />
-      <Skeleton isLoaded={!loading}>
+      <SolicitationModal
+        isMobile={isMobile}
+        isOpen={isOpenSolicitation}
+        onClose={onCloseSolicitation}
+        buildings={buildings}
+        classrooms={classrooms}
+        loadingBuildings={loadingBuildings}
+        loadingClassrooms={loadingClassrooms}
+        refetch={async () => {
+          await getSolicitations();
+        }}
+      />
+      <Skeleton isLoaded={!loading && !loadingBuildings && !loadingClassrooms}>
         {!isMobile ? (
           <DataTable
             columns={columns}
@@ -90,7 +140,7 @@ const MySolicitations = () => {
             }}
           />
         ) : (
-          <Box w={'100%'} h={'full'}>
+          <Box w={'100%'} h={'full'} p={'5px'}>
             <SolicitationStack
               solicitations={solicitations}
               handleOnClick={(data) => {
