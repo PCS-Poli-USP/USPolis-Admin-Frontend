@@ -5,6 +5,7 @@ const chakraTheme = extendTheme({
   colors: {
     uspolis: {
       blue: '#408080',
+      red: '#E53E3E',
       grey: '#CCCCCC',
     },
     blue: {

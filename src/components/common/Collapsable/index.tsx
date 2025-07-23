@@ -8,6 +8,15 @@ interface props {
   openIcon?: React.ReactNode;
   closeIcon?: React.ReactNode;
   iconSize?: number | string;
+  titleSize?: string;
+  titleColor?: string;
+  initiallyOpen?: boolean;
+  border?: string;
+  borderRadius?: string;
+  p?: string;
+  gap?: string;
+  fontWeight?: string;
+  mb?: string;
 }
 
 const Collapsable = ({
@@ -16,11 +25,27 @@ const Collapsable = ({
   openIcon,
   closeIcon,
   iconSize,
+  titleSize = 'md',
+  titleColor = 'uspolis.blue',
+  initiallyOpen = false,
+  border = 'none',
+  borderRadius = 'none',
+  p = undefined,
+  fontWeight = 'bold',
+  gap = undefined,
+  mb = undefined,
 }: props) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initiallyOpen);
 
   return (
-    <Flex direction='column'>
+    <Flex
+      direction='column'
+      border={border}
+      borderRadius={borderRadius}
+      p={p}
+      gap={gap}
+      mb={mb}
+    >
       <Flex alignItems='center'>
         <div
           onClick={() => {
@@ -40,15 +65,17 @@ const Collapsable = ({
           )}
         </div>
         <Heading
-          size='md'
+          size={titleSize}
           maxW={'800px'}
           textOverflow={'ellipsis'}
           overflow={'hidden'}
+          fontWeight={fontWeight}
+          color={titleColor}
         >
           {title}
         </Heading>
       </Flex>
-      {open ? <div>{children}</div> : <></>}
+      <div style={{ display: open ? 'block' : 'none' }}>{children}</div>
     </Flex>
   );
 };

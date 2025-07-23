@@ -30,6 +30,7 @@ import useBuildings from '../../../hooks/useBuildings';
 import { useEffect, useRef, useState } from 'react';
 import { CrawlerType } from '../../../utils/enums/subjects.enum';
 import { CalendarResponse } from '../../../models/http/responses/calendar.responde.models';
+import { LuTimer } from 'react-icons/lu';
 
 type Option = {
   label: string;
@@ -115,7 +116,17 @@ export default function CrawlerPopover({
       initialFocusRef={initialFocusRef}
     >
       <PopoverTrigger>
-        <Button colorScheme='blue'>Adicionar automaticamente</Button>
+        <Button
+          colorScheme='blue'
+          variant={'ghost'}
+          color={'uspolis.blue'}
+          justifyContent={'flex-start'}
+          w={'100%'}
+          leftIcon={<LuTimer />}
+        >
+          {' '}
+          Automático
+        </Button>
       </PopoverTrigger>
       <PopoverContent>
         <PopoverCloseButton />

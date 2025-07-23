@@ -4,7 +4,7 @@ import {
   CreateBuilding,
   UpdateBuilding,
 } from '../../models/http/requests/building.request.models';
-import RegisterModal from '../../pages/buildings/RegisterModal/register.modal';
+import BuildingModal from '../../pages/buildings/BuildingModal/building.modal';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import DataTable from '../../components/common/DataTable/dataTable.component';
 import { BuildingResponse } from '../../models/http/responses/building.response.models';
@@ -63,7 +63,7 @@ const Buildings = () => {
         </Button>
       </Flex>
       <DataTable loading={loading} columns={columns} data={buildings} />
-      <RegisterModal
+      <BuildingModal
         isOpen={registerModalOpen}
         onClose={() => {
           setRegisterModalOpen(false);

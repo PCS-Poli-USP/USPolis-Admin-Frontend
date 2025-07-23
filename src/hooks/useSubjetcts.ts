@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { sortSubjectsResponse } from '../utils/subjects/subjects.sorter';
 import useSubjectsService from './API/services/useSubjectsService';
 
-const useSubjects = () => {
+const useSubjects = (initialFetch = true) => {
   const service = useSubjectsService();
   const [loading, setLoading] = useState(false);
   const [subjects, setSubjects] = useState<SubjectResponse[]>([]);
@@ -113,7 +113,7 @@ const useSubjects = () => {
   );
 
   useEffect(() => {
-    getSubjects();
+    if (initialFetch) getSubjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

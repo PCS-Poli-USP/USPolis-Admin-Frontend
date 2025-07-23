@@ -1,4 +1,15 @@
-import { Button, Flex, Spacer, useDisclosure } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuGroup,
+  MenuItem,
+  MenuList,
+  Spacer,
+  useDisclosure,
+} from '@chakra-ui/react';
 import DataTable from '../../components/common/DataTable/dataTable.component';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import Loading from '../../components/common/Loading/loading.component';
@@ -18,10 +29,15 @@ import CrawlerUpdateModal from './CrawlerUpdateModal/crawler.update.modal';
 import useCrawler from '../../hooks/useCrawler';
 import { appContext } from '../../context/AppContext';
 import { UsersValidator } from '../../utils/users/users.validator';
-import CrawlerModal from './CrawlerModal/crawler.modal';
-import CrawlerPopover from './CrawlerModal/crawler.popover';
+import CrawlerResultModal from './CrawlerModal/crawler.result.modal';
 import { CrawlerType } from '../../utils/enums/subjects.enum';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
+import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
+import { LuDownload, LuHand, LuTimer } from 'react-icons/lu';
+import CrawlerJupiterModal from './CrawlerModal/crawler.jupiter.modal';
+import { AddIcon } from '@chakra-ui/icons';
+import { IoTrashBinOutline } from 'react-icons/io5';
+import AllocationReuseModal from './AllocationReuseModal/allocation.reuse.modal';
 
 function Classes() {
   const context = useContext(appContext);
@@ -61,6 +77,18 @@ function Classes() {
     onOpen: onOpenJupiterModal,
     onClose: onCloseJupiterModal,
   } = useDisclosure();
+  const {
+    isOpen: isOpenCrawlerJupiterModal,
+    onOpen: onOpenCrawlerJupiterModal,
+    onClose: onCloseCrawlerJupiterModal,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAllocationReuseModal,
+    onOpen: onOpenAllocationReuseModal,
+    onClose: onCloseAllocationReuseModal,
+  } = useDisclosure();
+
+  const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
 
   const [selectedClass, setSelectedClass] = useState<ClassResponse | undefined>(
     undefined,
@@ -209,7 +237,7 @@ function Classes() {
           setIsUpdateClass(false);
         }}
         isUpdate={isUpdateClass}
-        refetch={getClasses}
+        refetch={() => getClasses(start, end)}
         subjects={subjects}
         calendars={calendars}
         selectedClass={selectedClass}
@@ -225,7 +253,7 @@ function Classes() {
         type={crawlerType}
         setCrawlerType={setCrawlerType}
       />
-      <CrawlerModal
+      <CrawlerResultModal
         isOpen={isOpenJupiterModal}
         onClose={onCloseJupiterModal}
         data={result}
@@ -235,7 +263,7 @@ function Classes() {
         <AllocateClassModal
           isOpen={isOpenAllocEdit}
           onClose={onCloseAllocEdit}
-          refresh={getClasses}
+          refresh={() => getClasses(start, end)}
           class_={selectedClass}
         />
       )}
@@ -249,43 +277,116 @@ function Classes() {
           }}
         />
       )}
+      <CrawlerJupiterModal
+        isOpen={isOpenCrawlerJupiterModal}
+        onClose={onCloseCrawlerJupiterModal}
+        onSave={handleCrawlerSave}
+        crawlerType={crawlerType}
+        setCrawlerType={setCrawlerType}
+        calendars={calendars}
+        loadingCalendars={loadingCalendars}
+      />
+      <AllocationReuseModal
+        isOpen={isOpenAllocationReuseModal}
+        onClose={onCloseAllocationReuseModal}
+        subjects={subjects}
+        classes={classes}
+        buildings={context.loggedUser ? context.loggedUser.buildings || [] : []}
+        refetch={() => getClasses(start, end)}
+      />
       <Flex align='center'>
         <PageHeaderWithFilter
           title='Turmas'
+          start={start}
+          end={end}
+          setStart={setStart}
+          setEnd={setEnd}
           onConfirm={(start, end) => {
             getClasses(start, end);
           }}
         />
         <Spacer />
-        <Button mr={'5px'} colorScheme={'blue'} onClick={handleRegisterClick}>
-          Adicionar manualmente
-        </Button>
-
-        <Flex align={'row'} gap={'5px'} id='crawler-buttons'>
-          <CrawlerPopover
-            onSave={handleCrawlerSave}
-            crawlerType={crawlerType}
-            setCrawlerType={setCrawlerType}
-            calendars={calendars}
-            loadingCalendars={loadingCalendars}
-          />
-
-          <Button
-            ml={'5px'}
-            colorScheme={'blue'}
-            onClick={onOpenJupiterUpdateModal}
+        <Menu>
+          <MenuButton
+            as={Button}
+            colorScheme='blue'
+            leftIcon={<AddIcon />}
+            borderRadius={'20px'}
           >
-            Atualizar automaticamente
-          </Button>
-        </Flex>
-
-        <Button
-          ml={2}
-          colorScheme={'red'}
-          onClick={handleDeleteSelectedClassesClick}
-        >
-          Excluir selecionados
-        </Button>
+            Opções
+          </MenuButton>
+          <MenuList w={'300px'} border={'1px'}>
+            <MenuGroup title='Adição' fontSize={'lg'} gap={'5px'}>
+              <MenuDivider />
+              <MenuItem
+                as={Button}
+                colorScheme={'blue'}
+                justifyContent={'flex-start'}
+                onClick={handleRegisterClick}
+                leftIcon={<LuHand />}
+                mb={'5px'}
+              >
+                Manual
+              </MenuItem>
+              <MenuDivider />
+              <MenuItem
+                as={Button}
+                colorScheme='blue'
+                color={'uspolis.blue'}
+                justifyContent={'flex-start'}
+                leftIcon={<LuTimer />}
+                mb={'5px'}
+                onClick={onOpenCrawlerJupiterModal}
+              >
+                Júpiter/Janus
+              </MenuItem>
+            </MenuGroup>
+            <MenuDivider />
+            <MenuGroup title='Atualizar' fontSize={'lg'} gap={'5px'}>
+              <MenuDivider />
+              <MenuItem
+                as={Button}
+                colorScheme={'blue'}
+                justifyContent={'flex-start'}
+                onClick={onOpenJupiterUpdateModal}
+                leftIcon={<LuTimer />}
+                mb={'5px'}
+              >
+                Júpiter/Janus
+              </MenuItem>
+            </MenuGroup>
+            <MenuDivider />
+            <MenuGroup title='Remover' fontSize={'lg'} gap={'5px'}>
+              <MenuDivider />
+              <MenuItem
+                as={Button}
+                justifyContent={'flex-start'}
+                colorScheme={'blue'}
+                onClick={handleDeleteSelectedClassesClick}
+                leftIcon={<IoTrashBinOutline />}
+                mb={'5px'}
+              >
+                Selecionados
+              </MenuItem>
+            </MenuGroup>
+            <MenuDivider />
+            <MenuGroup title='Alocações' fontSize={'lg'} gap={'5px'}>
+              <MenuDivider />
+              <MenuItem
+                as={Button}
+                justifyContent={'flex-start'}
+                colorScheme={'blue'}
+                onClick={() => {
+                  onOpenAllocationReuseModal();
+                }}
+                leftIcon={<LuDownload />}
+                mb={'5px'}
+              >
+                Reaproveitar
+              </MenuItem>
+            </MenuGroup>
+          </MenuList>
+        </Menu>
       </Flex>
       <Dialog
         isOpen={isOpenDeleteClass}

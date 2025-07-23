@@ -8,7 +8,7 @@ export default function CalendarViewEventContent(eventInfo: EventContentArg) {
 
   return (
     <Tooltip bg='white' label={ToolTipLabel(eventInfo)}>
-      <HStack ml={3} align={'center'} w={'full'}>
+      <HStack align={'center'} w={'full'}>
         <Text
           noOfLines={1}
           overflowX={'hidden'}
