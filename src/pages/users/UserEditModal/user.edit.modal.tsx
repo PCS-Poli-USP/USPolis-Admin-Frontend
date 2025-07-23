@@ -18,7 +18,7 @@ import { defaultValues, schema } from './user.edit.modal.form';
 import { yupResolver } from '@hookform/resolvers/yup/dist/yup.js';
 import { FormProvider, useForm } from 'react-hook-form';
 import { CheckBox, MultiSelect } from '../../../components/common';
-import useUsers from '../../../hooks/useUsers';
+import useUsers from '../../../hooks/users/useUsers';
 import GroupFormatter from '../../../utils/groups/group.formatter';
 
 export default function EditUserModal(props: UserEditModalProps) {

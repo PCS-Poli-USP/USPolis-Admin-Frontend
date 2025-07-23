@@ -68,7 +68,6 @@ const useClassroomsService = () => {
     params.append('start_time', data.start_time);
     params.append('end_time', data.end_time);
     data.dates.forEach((date) => params.append('dates', date));
-    params.append('type', data.type);
     return axios.get(`/classrooms/with-conflict-count/${building_id}`, {
       params,
     });

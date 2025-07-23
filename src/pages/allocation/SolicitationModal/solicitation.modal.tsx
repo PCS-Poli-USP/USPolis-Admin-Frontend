@@ -29,7 +29,7 @@ import { BuildingResponse } from '../../../models/http/responses/building.respon
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import { NumberInput } from '../../../components/common/form/NumberInput';
-import useClassroomsSolicitations from '../../../hooks/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../../hooks/classroomSolicitations/useClassroomSolicitations';
 import DateCalendarPicker, {
   useDateCalendarPicker,
 } from '../../../components/common/DateCalendarPicker';
@@ -39,6 +39,7 @@ import {
 } from '../../../models/http/responses/classroom.response.models';
 import ClassroomTimeGrid from '../../../components/common/ClassroomTimeGrid/classroom.time.grid';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
+import { ConflictType } from '../../../utils/enums/conflictType.enum';
 
 function SolicitationModal({
   buildings,
@@ -130,7 +131,12 @@ function SolicitationModal({
     const fetchClassrooms = async () => {
       if (building_id && start && end && selectedDays.length > 0) {
         const result = await getClassroomsWithConflictFromTime(
-          { start_time: start, end_time: end, dates: selectedDays },
+          {
+            start_time: start,
+            end_time: end,
+            dates: selectedDays,
+            type: ConflictType.UNINTENTIONAL,
+          },
           building_id,
         );
         setClassroomsWithConflict(result);

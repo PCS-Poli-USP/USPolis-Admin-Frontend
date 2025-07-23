@@ -14,6 +14,7 @@ export interface UserResponse {
   id: number;
   email: string;
   is_admin: boolean;
+  receive_emails: boolean;
   name: string;
   created_by: string;
   buildings?: BuildingResponse[];

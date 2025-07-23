@@ -8,10 +8,13 @@ import {
   Box,
   Center,
   Flex,
+  FormControl,
+  FormLabel,
   Grid,
   GridItem,
   Icon,
   SimpleGrid,
+  Switch,
   Text,
 } from '@chakra-ui/react';
 import PageContent from '../../components/common/PageContent';
@@ -30,16 +33,22 @@ import { PiChair } from 'react-icons/pi';
 import LoadingPage from '../../components/common/LoadingPage';
 import Page401 from '../page401';
 import GroupFormatter from '../../utils/groups/group.formatter';
+import { LuMail, LuMailX } from 'react-icons/lu';
+import useUsers from '../../hooks/users/useUsers';
+import HelpPopover from '../../components/common/HelpPopover';
 
 function Profile() {
   const { loggedUser, loading, isAuthenticated, getSelfFromBackend } =
     useContext(appContext);
   const userInfo = loggedUser?.user_info;
+  const { updateUserEmailNotifications } = useUsers(false);
 
   useEffect(() => {
     getSelfFromBackend();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  console.log(loggedUser);
 
   return (
     <PageContent>
@@ -104,6 +113,56 @@ function Profile() {
                 </Flex>
               </GridItem>
 
+              <GridItem
+                colSpan={1}
+                h={'50px'}
+                id='profile-notifications-grid'
+                hidden={
+                  (!loggedUser.buildings ||
+                    loggedUser.buildings.length === 0) &&
+                  !loggedUser.is_admin
+                }
+              >
+                <Flex dir='row' justify={'start'} align={'center'} gap={'10px'}>
+                  <FormControl display='flex' alignItems='center'>
+                    {loggedUser.receive_emails ? (
+                      <LuMail size={'25px'} />
+                    ) : (
+                      <LuMailX size={'25px'} />
+                    )}
+                    <FormLabel
+                      htmlFor='email-alerts'
+                      fontSize={'xl'}
+                      fontWeight={'bold'}
+                      ml='10px'
+                      mb='0'
+                    >
+                      Notificações por email?
+                    </FormLabel>
+                    <Switch
+                      id='email-alerts'
+                      isChecked={loggedUser.receive_emails}
+                      mr={'5px'}
+                      onChange={async (e) => {
+                        await updateUserEmailNotifications(e.target.checked);
+                        await getSelfFromBackend();
+                      }}
+                    />
+                    <HelpPopover title='O que é notificado?'>
+                      <Flex direction={'column'} gap={'5px'}>
+                        <Text fontWeight={'bold'}>
+                          Para responsáveis por prédios:
+                        </Text>
+                        <Text fontSize={'sm'}>
+                          Uma reserva foi criada ou cancelada e ela estiver no
+                          seu prédio ou for em uma sala que você tem permissão.
+                        </Text>
+                      </Flex>
+                    </HelpPopover>
+                  </FormControl>
+                </Flex>
+              </GridItem>
+
               <GridItem colSpan={1} h={'50px'} id='profile-buildings-grid'>
                 <Flex dir='row' justify={'start'} align={'center'} gap={'10px'}>
                   <LiaBuilding size={'25px'} />
@@ -129,8 +188,8 @@ function Profile() {
                   gap={'10px'}
                   mb={'20px'}
                 >
-                  <HiUserGroup size={'30px'} />
-                  <Text fontSize={'2xl'} fontWeight={'bold'}>
+                  <HiUserGroup size={'25px'} />
+                  <Text fontSize={'xl'} fontWeight={'bold'}>
                     Grupos e salas
                   </Text>
                 </Flex>

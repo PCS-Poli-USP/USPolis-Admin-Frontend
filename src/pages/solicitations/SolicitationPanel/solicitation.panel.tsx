@@ -42,6 +42,7 @@ import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import ClassroomTimeGrid from '../../../components/common/ClassroomTimeGrid/classroom.time.grid';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { ConflictType } from '../../../utils/enums/conflictType.enum';
+import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
 
 interface SolicitationPanelProps {
   solicitation?: ClassroomSolicitationResponse;
@@ -101,7 +102,9 @@ function SolicitationPanel({
   }
 
   const fetchClassrooms = async () => {
-    if (solicitation && !solicitation.closed && !isLoadingWithConflict) {
+    const closed =
+      solicitation && solicitation.status !== SolicitationStatus.PENDING;
+    if (solicitation && !closed && !isLoadingWithConflict) {
       if (start && end && validateTime(start, end)) {
         try {
           setIsLoadingWithConflict(true);
@@ -141,7 +144,9 @@ function SolicitationPanel({
     }
 
     let id = -1;
-    if (solicitation && !solicitation.closed) {
+    const closed =
+      solicitation && solicitation.status !== SolicitationStatus.PENDING;
+    if (solicitation && !closed) {
       if (classroom) {
         id = classroom.id;
       }
@@ -227,20 +232,10 @@ function SolicitationPanel({
             </HStack>
             <Heading
               size={'md'}
-              textColor={
-                solicitation.approved
-                  ? 'green'
-                  : solicitation.denied
-                    ? 'red.500'
-                    : 'yellow.500'
-              }
-            >{`${
-              solicitation.approved
-                ? 'Aprovado'
-                : solicitation.denied
-                  ? 'Negado'
-                  : 'Pendente'
-            }`}</Heading>
+              textColor={SolicitationStatus.getColor(solicitation.status)}
+            >
+              {SolicitationStatus.translate(solicitation.status)}
+            </Heading>
           </CardHeader>
 
           <CardBody>
@@ -321,7 +316,8 @@ function SolicitationPanel({
                       mt={2}
                       size={'sm'}
                       isDisabled={
-                        solicitation.required_classroom || solicitation.closed
+                        solicitation.required_classroom ||
+                        solicitation.status !== SolicitationStatus.PENDING
                       }
                       fontWeight={'bold'}
                       textColor={editingClassroom ? 'red.500' : 'yellow.500'}
@@ -356,7 +352,7 @@ function SolicitationPanel({
               </Box>
 
               {/* Time inputs if soliciation haven't times */}
-              {!solicitation.closed &&
+              {solicitation.status === SolicitationStatus.PENDING &&
               (!solicitation.start_time || !solicitation.end_time) ? (
                 <Box>
                   <Heading size={'sm'} textTransform='uppercase'>
@@ -414,7 +410,8 @@ function SolicitationPanel({
               ) : undefined}
 
               {/* Classroom Input If solicitation haven't a classroom */}
-              {(!solicitation.closed && !solicitation.classroom) ||
+              {(solicitation.status === SolicitationStatus.PENDING &&
+                !solicitation.classroom) ||
               editingClassroom ? (
                 <Box>
                   <Heading mb={2} size={'sm'} textTransform='uppercase'>
@@ -476,7 +473,7 @@ function SolicitationPanel({
               ) : undefined}
 
               {/* If solicitation has a classroom show timegrid button */}
-              {!solicitation.closed &&
+              {solicitation.status === SolicitationStatus.PENDING &&
               solicitation.classroom &&
               solicitation.start_time &&
               solicitation.end_time ? (
@@ -514,7 +511,7 @@ function SolicitationPanel({
                     rightIcon={<CheckIcon />}
                     colorScheme='green'
                     isDisabled={
-                      solicitation.closed ||
+                      solicitation.status !== SolicitationStatus.PENDING ||
                       (!solicitation.classroom && !classroom) ||
                       (!solicitation.start_time && !start) ||
                       (!solicitation.end_time && !end) ||
@@ -574,7 +571,9 @@ function SolicitationPanel({
                     isLoading={loading || loadingClassrooms}
                     rightIcon={<CloseIcon />}
                     colorScheme='red'
-                    isDisabled={solicitation.closed}
+                    isDisabled={
+                      solicitation.status !== SolicitationStatus.PENDING
+                    }
                     onClick={() => handleOpenPopover(1)}
                   >
                     Negar

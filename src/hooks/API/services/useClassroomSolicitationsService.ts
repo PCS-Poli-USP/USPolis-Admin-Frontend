@@ -61,6 +61,12 @@ const useClassroomSolicitationsService = () => {
     return axios.delete(`${PREFIX}/${id}`);
   };
 
+  const cancel = (
+    id: number,
+  ): Promise<AxiosResponse<ClassroomSolicitationResponse>> => {
+    return axios.patch(`${PREFIX}/cancel/${id}`);
+  };
+
   return {
     getAll,
     getPending,
@@ -69,6 +75,7 @@ const useClassroomSolicitationsService = () => {
     approve,
     deny,
     deleteById,
+    cancel,
   };
 };
 

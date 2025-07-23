@@ -3,6 +3,7 @@ import Select, { SelectInstance } from 'react-select';
 import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import { useEffect, useRef, useState } from 'react';
 import SolicitationStackBody from './mysolicitation.stack.body';
+import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
 
 interface SolicitationStackProps {
   solicitations: ClassroomSolicitationResponse[];
@@ -47,14 +48,17 @@ function SolicitationStack({
   useEffect(() => {
     if (hidden) {
       const initial = [
-        ...solicitations.filter((solicitation) => !solicitation.closed),
+        ...solicitations.filter(
+          (solicitation) => solicitation.status === SolicitationStatus.PENDING,
+        ),
       ];
       setCurrent(initial);
-      setFiltered((prev) => prev.filter((val) => !val.closed));
+      setFiltered((prev) =>
+        prev.filter((val) => val.status === SolicitationStatus.PENDING),
+      );
     } else {
       setCurrent([...solicitations]);
       setFiltered((prev) => {
-        // if (prev.length === 0) return [...solicitations];
         return prev;
       });
     }

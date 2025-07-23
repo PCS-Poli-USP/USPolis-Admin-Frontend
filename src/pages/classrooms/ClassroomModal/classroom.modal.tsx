@@ -185,7 +185,6 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 Selecionar todos
               </Checkbox>
               <Textarea name='observation' label='Observação' />
-              <DateInput />
             </form>
           </FormProvider>
         </ModalBody>
