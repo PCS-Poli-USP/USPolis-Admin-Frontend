@@ -13,6 +13,7 @@ import Dialog from '../../components/common/Dialog/dialog.component';
 import PageContent from '../../components/common/PageContent';
 import useClassroomsSolicitations from '../../hooks/classroomSolicitations/useClassroomSolicitations';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
+import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
 
 function Reservations() {
   const {
@@ -35,6 +36,7 @@ function Reservations() {
     solicitations,
     getPendingBuildingSolicitations,
   } = useClassroomsSolicitations(false);
+  const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
 
   const [selectedReservation, setSelectedReservation] =
     useState<ReservationResponse>();
@@ -91,12 +93,21 @@ function Reservations() {
       <Flex align='center' direction={'row'}>
         <PageHeaderWithFilter
           title='Reservas'
+          start={start}
+          end={end}
+          setStart={setStart}
+          setEnd={setEnd}
           onConfirm={(start, end) => {
             getReservations(start, end);
           }}
         />
         <Spacer />
-        <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
+        <Button
+          mr={2}
+          colorScheme={'blue'}
+          onClick={handleRegisterClick}
+          borderRadius={'10px'}
+        >
           Adicionar Reserva
         </Button>
       </Flex>
