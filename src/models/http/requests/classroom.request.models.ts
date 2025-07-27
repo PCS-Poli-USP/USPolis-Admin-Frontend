@@ -11,6 +11,8 @@ export interface CreateClassroom {
   audiovisual: AudiovisualType;
   accessibility: boolean;
   observation: string;
+  reservable: boolean;
+  remote: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
