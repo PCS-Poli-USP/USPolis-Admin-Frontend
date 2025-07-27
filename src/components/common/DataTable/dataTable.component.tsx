@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CheckIcon,
   CloseIcon,
@@ -198,7 +199,14 @@ export default function DataTable<Data extends object>({
                         <Tooltip
                           label={header.column.columnDef.header as string}
                         >
-                          <Text textOverflow={'ellipsis'}>
+                          <Text
+                            textOverflow={'ellipsis'}
+                            maxW={
+                              header.column.columnDef.maxSize
+                                ? `${header.column.columnDef.maxSize}px`
+                                : 'auto'
+                            }
+                          >
                             {flexRender(
                               header.column.columnDef.header,
                               header.getContext(),
