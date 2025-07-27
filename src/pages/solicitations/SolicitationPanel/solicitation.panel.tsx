@@ -24,7 +24,6 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import Select, { SingleValue } from 'react-select';
 import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import moment from 'moment';
@@ -43,6 +42,7 @@ import ClassroomTimeGrid from '../../../components/common/ClassroomTimeGrid/clas
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { ConflictType } from '../../../utils/enums/conflictType.enum';
 import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import TooltipSelect from '../../../components/common/TooltipSelect';
 
 interface SolicitationPanelProps {
   solicitation?: ClassroomSolicitationResponse;
@@ -50,11 +50,6 @@ interface SolicitationPanelProps {
   approve: (id: number, data: ClassroomSolicitationAprove) => Promise<void>;
   deny: (id: number, data: ClassroomSolicitationDeny) => Promise<void>;
   handleClose: () => void;
-}
-
-interface OptionType {
-  label: string;
-  value: number;
 }
 
 function SolicitationPanel({
@@ -206,7 +201,8 @@ function SolicitationPanel({
   return (
     <Card
       w={'100%'}
-      h={'100%'}
+      h={'auto'}
+      minH={'100%'}
       border={'2px solid lightgray'}
       p={'4px'}
       zIndex={2}
@@ -418,8 +414,8 @@ function SolicitationPanel({
                     Sala
                   </Heading>
                   <HStack w={'full'}>
-                    <Box w={'auto'}>
-                      <Select
+                    <Box w={'250px'}>
+                      <TooltipSelect
                         isClearable
                         isLoading={loadingClassrooms}
                         value={
@@ -443,8 +439,9 @@ function SolicitationPanel({
                             ? `⚠️ ${val.name} (${val.conflicts} conflitos)`
                             : val.name,
                           value: val.id,
+                          tooltip: val.observation,
                         }))}
-                        onChange={(newValue: SingleValue<OptionType>) => {
+                        onChange={(newValue) => {
                           if (newValue) {
                             setClassroom(
                               classrooms.find(

@@ -13,6 +13,8 @@ import AllocationLogHistory from './allocationLog.history';
 import { UserResponse } from '../../../models/http/responses/user.response.models';
 import { UsersValidator } from '../../../utils/users/users.validator';
 import IntentionalConflictPopover from './IntentionalConflictPopover';
+import TooltipSelect from '../../../components/common/TooltipSelect';
+import moment from 'moment';
 
 export interface AllocateSingleScheduleSectionRef {
   reset(): void;
@@ -272,7 +274,8 @@ const AllocateSingleScheduleSection = forwardRef<
                 </strong>
               </Text>
               <Text>
-                Periodo: {schedule.start_date} ~ {schedule.end_date}
+                Periodo: {moment(schedule.start_date).format('DD/MM/YYYY')} ~{' '}
+                {moment(schedule.end_date).format('DD/MM/YYYY')}
               </Text>
             </Flex>
             <VStack alignItems={'flex-start'}>
@@ -341,7 +344,7 @@ const AllocateSingleScheduleSection = forwardRef<
                       }
                     }}
                   />
-                  <Select
+                  <TooltipSelect
                     placeholder={
                       classroomsLoading
                         ? 'Carregando salas...'
@@ -349,10 +352,11 @@ const AllocateSingleScheduleSection = forwardRef<
                     }
                     isLoading={classroomsLoading}
                     options={classrooms.map((classroom) => ({
-                      label: formatClassroomForSelection(classroom),
                       value: Number(classroom.id),
+                      label: formatClassroomForSelection(classroom),
+                      tooltip: classroom.observation,
                     }))}
-                    onChange={(option: SingleValue<ClassroomOption>) => {
+                    onChange={(option) => {
                       if (option) {
                         const classroom = classrooms.find(
                           (classroom) => Number(classroom.id) === option.value,

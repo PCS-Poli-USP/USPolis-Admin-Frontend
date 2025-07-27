@@ -219,6 +219,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   (props.vinculatedSolicitation &&
                     props.vinculatedSolicitation.required_classroom)
                 }
+                placeholder={
+                  !selectedBuilding
+                    ? 'Selecione um prédio primeiro'
+                    : 'Selecione uma sala'
+                }
                 name={'classroom_id'}
                 options={
                   selectedBuilding
@@ -226,6 +231,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       ? conflictedClassrooms.map((cls) => ({
                           value: cls.id,
                           label: formatClassroomForSelection(cls),
+                          tooltip: cls.observation,
                         }))
                       : props.classrooms
                           .filter(
@@ -235,6 +241,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                           .map((classroom) => ({
                             value: classroom.id,
                             label: `${classroom.name} [${classroom.capacity}]`,
+                            tooltip: classroom.observation,
                           }))
                     : []
                 }
