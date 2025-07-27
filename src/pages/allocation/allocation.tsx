@@ -318,7 +318,7 @@ function Allocation() {
               isOpen={isOpenSolicitation}
               onClose={onCloseSolicitation}
               buildings={buildings}
-              classrooms={classrooms}
+              classrooms={classrooms.filter((cls) => cls.reservable)}
               loadingBuildings={loadingBuildings}
               loadingClassrooms={loadingClassrooms}
               refetch={async () => {

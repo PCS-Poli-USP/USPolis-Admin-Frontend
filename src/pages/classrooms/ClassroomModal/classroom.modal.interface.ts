@@ -21,5 +21,7 @@ export interface ClassroomForm {
   audiovisual: AudiovisualType;
   accessibility: boolean;
   observation: string;
+  reservable: boolean;
+  remote: boolean;
   group_ids: number[];
 }
