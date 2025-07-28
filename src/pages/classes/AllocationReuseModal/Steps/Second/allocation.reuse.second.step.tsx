@@ -54,6 +54,37 @@ function AllocationReuseModalSecondStep({
 
   const [allocationYear, setAllocationYear] = useState<number>(currentYear - 1);
 
+  async function handleBuildingChange() {
+    if (selectedBuilding) {
+      setLoading(true);
+      const targets = Array.from(map.values()).map((subject) => ({
+        subject_id: subject.subject_id,
+        class_ids: subject.class_ids,
+      }));
+
+      await getAllocationOptions({
+        building_id: selectedBuilding.id,
+        allocation_year: allocationYear,
+        targets: targets,
+        strict: true,
+      })
+        .then((res) => {
+          setAllocationReuseResponse(res.data);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }
+  useEffect(() => {
+    if (selectedBuilding) {
+      handleBuildingChange();
+    } else {
+      setAllocationReuseResponse(undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedBuilding]);
+
   useEffect(() => {
     if (allocationReuseResponse) {
       const newMap = new Map(allocationMap);
@@ -96,27 +127,7 @@ function AllocationReuseModalSecondStep({
           onChange={async (option) => {
             if (option) {
               const building = buildings.find((b) => b.id === option.value);
-              if (building) {
-                setLoading(true);
-                const targets = Array.from(map.values()).map((subject) => ({
-                  subject_id: subject.subject_id,
-                  class_ids: subject.class_ids,
-                }));
-
-                setSelectedBuilding(building);
-                await getAllocationOptions({
-                  building_id: building.id,
-                  allocation_year: allocationYear,
-                  targets: targets,
-                  strict: true,
-                })
-                  .then((res) => {
-                    setAllocationReuseResponse(res.data);
-                  })
-                  .finally(() => {
-                    setLoading(false);
-                  });
-              }
+              setSelectedBuilding(building);
             }
             if (!option) {
               setSelectedBuilding(undefined);
@@ -155,7 +166,7 @@ function AllocationReuseModalSecondStep({
         overflowY={'auto'}
       >
         {allocationReuseResponse &&
-          allocationReuseResponse.target_options &&
+          allocationReuseResponse.target_options.length > 0 &&
           allocationReuseResponse.target_options.map((target) => (
             <div key={target.subject_id}>
               <AllocationReuseSubjectOptions
@@ -165,6 +176,17 @@ function AllocationReuseModalSecondStep({
               />
             </div>
           ))}
+        {(!allocationReuseResponse ||
+          !allocationReuseResponse.target_options.length) && (
+          <Flex direction={'column'} alignItems={'center'} mt={'10px'}>
+            <Text fontWeight={'bold'} fontSize={'xl'}>
+              Nenhuma alocação encontrada.
+            </Text>
+            <Text fontSize={'md'}>
+              Verifique as turmas selecionadas ou o ano da alocação buscada.
+            </Text>
+          </Flex>
+        )}
       </Skeleton>
     </Flex>
   );

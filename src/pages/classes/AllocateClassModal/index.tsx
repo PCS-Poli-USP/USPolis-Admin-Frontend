@@ -74,8 +74,6 @@ export function AllocateClassModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [class_, class_id]);
 
-  console.log(class_, class_id);
-
   async function handleSave() {
     const data: AllocateManySchedulesData[] = [];
     for (const ref of sectionsRefs.current) {
