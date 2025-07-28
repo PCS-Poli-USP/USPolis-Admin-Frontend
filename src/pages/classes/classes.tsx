@@ -13,7 +13,7 @@ import {
 import DataTable from '../../components/common/DataTable/dataTable.component';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import Loading from '../../components/common/Loading/loading.component';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { getClassesColumns } from './Tables/class.table';
 import { ClassResponse } from '../../models/http/responses/class.response.models';
 import useClasses from '../../hooks/classes/useClasses';
@@ -105,6 +105,8 @@ function Classes() {
   const { calendars, loading: loadingCalendars } = useCalendars();
   const { loading, classes, getClasses, deleteClass, deleteManyClass } =
     useClasses();
+  const originalClasses = useRef<ClassResponse[]>([]);
+
   const { loading: isCrawling, result, create, update } = useCrawler();
 
   const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
@@ -226,6 +228,12 @@ function Classes() {
     getClasses();
   }
 
+  useEffect(() => {
+    if (!originalClasses.current.length) {
+      originalClasses.current = classes;
+    }
+  }, [classes]);
+
   return (
     <PageContent>
       <Loading isOpen={isCrawling} onClose={() => {}} />
@@ -290,7 +298,7 @@ function Classes() {
         isOpen={isOpenAllocationReuseModal}
         onClose={onCloseAllocationReuseModal}
         subjects={subjects}
-        classes={classes}
+        classes={originalClasses.current}
         buildings={context.loggedUser ? context.loggedUser.buildings || [] : []}
         refetch={() => getClasses(start, end)}
       />
