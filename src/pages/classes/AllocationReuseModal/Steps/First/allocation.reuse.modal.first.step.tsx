@@ -8,6 +8,7 @@ import { Collapsable } from '../../../../../components/common/Collapsable';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import { SubjectWithClasses } from '../../allocation.reuse.modal';
 import HelpPopover from '../../../../../components/common/HelpPopover';
+import moment from 'moment';
 
 interface AllocationReuseModalFirstStepProps {
   subjects: SubjectResponse[];
@@ -77,59 +78,86 @@ function AllocationReuseModalFirstStep({
               similares de um ano anterior.
             </Text>
             <Text>
-              Uma turma é considerada similar quando ela tem o mesmo código
-              (últimos dois dígitos), dias de semana, recorrência e horário de
-              início e fim.
+              Uma turma é considerada similar quando ela tem os mesmos dias de
+              semana, recorrência e horário de início e fim.
             </Text>
           </Flex>
         </HelpPopover>
       </Flex>
-      <Box w={'100%'}>
-        <Select
-          placeholder={'Selecione as disciplinas'}
-          isMulti={true}
-          value={selectedSubjectsOptions}
-          options={subjects.map((subject) => ({
-            label: `${subject.code} - ${subject.name}`,
-            value: subject.id,
-          }))}
-          onChange={(value) => {
-            const removedSubjects = selectedSubjectsOptions.filter(
-              (s) => !value.some((v) => v.value === s.value),
-            );
-            setSelectedSubjectsOptions(value as Option[]);
-            setSelectedSubjects(new Set(value.map((v) => v.value)));
-            const newMap = new Map(map);
-            value.forEach((subject) => {
-              if (!newMap.has(subject.value)) {
-                const classes = classesBySubject.get(subject.value);
-                const classIds = classes ? classes.map((cls) => cls.id) : [];
-                newMap.set(subject.value, {
-                  subject_id: subject.value,
-                  class_ids: classIds,
-                });
-              }
-            });
-            removedSubjects.forEach((subject) => {
-              const removedClasses = classesBySubject.get(subject.value);
-              if (removedClasses) {
-                const newSelectedClasses = new Set(selectedClasses);
-                removedClasses.forEach((cls) =>
-                  newSelectedClasses.delete(cls.id),
-                );
-                setSelectedClasses(newSelectedClasses);
-              }
-              newMap.delete(subject.value);
+      <Flex w={'100%'} gap={'5px'} align={'center'}>
+        <Box w={'100%'}>
+          <Select
+            placeholder={'Selecione as disciplinas'}
+            isMulti={true}
+            value={selectedSubjectsOptions}
+            options={subjects.map((subject) => ({
+              label: `${subject.code} - ${subject.name}`,
+              value: subject.id,
+            }))}
+            onChange={(value) => {
+              console.log('On change value:', value);
+              const removedSubjects = selectedSubjectsOptions.filter(
+                (s) => !value.some((v) => v.value === s.value),
+              );
+              setSelectedSubjectsOptions(value as Option[]);
+              setSelectedSubjects(new Set(value.map((v) => v.value)));
+              const newMap = new Map(map);
+              value.forEach((subject) => {
+                if (!newMap.has(subject.value)) {
+                  const classes = classesBySubject.get(subject.value);
+                  const classIds = classes ? classes.map((cls) => cls.id) : [];
+                  newMap.set(subject.value, {
+                    subject_id: subject.value,
+                    class_ids: classIds,
+                  });
+                }
+              });
+              removedSubjects.forEach((subject) => {
+                const removedClasses = classesBySubject.get(subject.value);
+                if (removedClasses) {
+                  const newSelectedClasses = new Set(selectedClasses);
+                  removedClasses.forEach((cls) =>
+                    newSelectedClasses.delete(cls.id),
+                  );
+                  setSelectedClasses(newSelectedClasses);
+                }
+                newMap.delete(subject.value);
+              });
+              setMap(newMap);
+            }}
+          />
+        </Box>
+        <Button
+          size={'sm'}
+          leftIcon={<CheckIcon />}
+          h={'40px'}
+          onClick={() => {
+            const options = subjects.map((subject) => ({
+              label: `${subject.code} - ${subject.name}`,
+              value: subject.id,
+            }));
+            setSelectedSubjectsOptions(options);
+            setSelectedSubjects(new Set(subjects.map((s) => s.id)));
+            const newMap = new Map<number, SubjectWithClasses>();
+            subjects.forEach((subject) => {
+              const classes = classesBySubject.get(subject.id);
+              const classIds = classes ? classes.map((cls) => cls.id) : [];
+              newMap.set(subject.id, {
+                subject_id: subject.id,
+                class_ids: classIds,
+              });
             });
             setMap(newMap);
           }}
-        />
-      </Box>
+        >
+          Selecionar tudo
+        </Button>
+      </Flex>
       <Box>
         {selectedSubjectsOptions.length > 0 && (
           <Text mt={'10px'}>
-            Escolha as turmas das disciplinas ({selectedClasses.size} turmas
-            selecionadas):
+            Escolha as turmas <b>atuais</b> das disciplinas (
+            {selectedClasses.size} turmas selecionadas):
           </Text>
         )}
         {subjects
@@ -253,7 +281,15 @@ function AllocationReuseModalFirstStep({
                           setSelectedClasses(newSelectedClasses);
                         }}
                       >
-                        Turma {classNumberFromClassCode(cls.code)}
+                        <Flex direction={'row'} gap={'5px'} align={'center'}>
+                          Turma {classNumberFromClassCode(cls.code)} -{' '}
+                          <Text fontSize={'sm'} fontWeight={'bold'}>
+                            Modificado em{' '}
+                            {moment(cls.updated_at).format(
+                              'DD/MM/YYYY [ás] HH:mm',
+                            )}
+                          </Text>
+                        </Flex>
                       </Checkbox>
                     ))}
                   </Flex>

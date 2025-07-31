@@ -2,6 +2,7 @@ import { CopyIcon } from '@chakra-ui/icons';
 import {
   Box,
   Checkbox,
+  Flex,
   HStack,
   IconButton,
   Text,
@@ -243,9 +244,25 @@ export const getClassesColumns = (
         ).format('DD/MM/YYYY')}`,
       cell: ({ row }) => (
         <Box>
-          <Text>{`${moment(row.original.start_date).format(
+          <Text fontWeight={'bold'}>{`Turma: ${moment(
+            row.original.start_date,
+          ).format(
             'DD/MM/YYYY',
           )} até ${moment(row.original.end_date).format('DD/MM/YYYY')}`}</Text>
+          <Flex
+            direction={'column'}
+            gap={'5px'}
+            textAlign={'center'}
+            mt={'5px'}
+          >
+            {row.original.schedules.map((schedule, index) => (
+              <Text key={index}>
+                {`Agenda: ${moment(schedule.start_date).format(
+                  'DD/MM/YYYY',
+                )} até ${moment(schedule.end_date).format('DD/MM/YYYY')}`}
+              </Text>
+            ))}
+          </Flex>
         </Box>
       ),
     },

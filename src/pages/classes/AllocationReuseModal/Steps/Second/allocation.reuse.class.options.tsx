@@ -28,7 +28,7 @@ function AllocationReuseClassOptions({
       )}
       {hasOptions && (
         <Collapsable
-          title={`Turma ${classNumberFromClassCode(data.class_code)}`}
+          title={`Turma ${classNumberFromClassCode(data.class_code)} - Atual`}
           initiallyOpen={true}
           fontWeight='normal'
           titleSize='sm'

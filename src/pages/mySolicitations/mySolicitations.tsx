@@ -122,7 +122,7 @@ const MySolicitations = () => {
         isOpen={isOpenSolicitation}
         onClose={onCloseSolicitation}
         buildings={buildings}
-        classrooms={classrooms}
+        classrooms={classrooms.filter((classroom) => classroom.reservable)}
         loadingBuildings={loadingBuildings}
         loadingClassrooms={loadingClassrooms}
         refetch={async () => {

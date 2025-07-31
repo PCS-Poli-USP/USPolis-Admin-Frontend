@@ -96,10 +96,20 @@ function AllocationReuseModalSecondStep({
             const options = scheduleOption.options.filter(
               (opt) => opt.classroom && opt.classroom_id,
             );
-            newMap.set(scheduleOption.schedule_target_id, {
-              classroom_ids: options.map((opt) => opt.classroom_id as number),
-              classrooms: options.map((opt) => opt.classroom) as string[],
-            });
+            newMap.set(
+              scheduleOption.schedule_target_id,
+              options.length === 1
+                ? {
+                    classroom_ids: options.map(
+                      (opt) => opt.classroom_id as number,
+                    ),
+                    classrooms: options.map((opt) => opt.classroom) as string[],
+                  }
+                : {
+                    classroom_ids: [],
+                    classrooms: [],
+                  },
+            );
           });
         });
       });
@@ -136,7 +146,7 @@ function AllocationReuseModalSecondStep({
           }}
         />
       </div>
-      <Text fontWeight={'bold'}>Ano da alocação anterior: </Text>
+      <Text fontWeight={'bold'}>Ano da alocação a ser reaproveitada: </Text>
       <Select
         placeholder={'Selecione um ano de alocação'}
         isMulti={false}
@@ -150,7 +160,9 @@ function AllocationReuseModalSecondStep({
           setAllocationYear(option ? option.value : currentYear - 1);
         }}
       />
-      <Heading size={'md'}>Alocações encontradas:</Heading>
+      <Heading size={'md'}>
+        Alocações encontradas para as turmas <b>atuais</b>:
+      </Heading>
       {!selectedBuilding && (
         <Alert status='warning'>
           <AlertIcon />

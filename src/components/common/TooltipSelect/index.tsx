@@ -17,7 +17,11 @@ const CustomOption = <IsMulti extends boolean = false>(
 ) => {
   const { tooltip } = props.data;
   return (
-    <Tooltip label={tooltip} placement='top' isDisabled={!tooltip}>
+    <Tooltip
+      label={tooltip}
+      placement='right'
+      isDisabled={!tooltip}
+    >
       <div>
         <SelectComponents.Option {...props} />
       </div>

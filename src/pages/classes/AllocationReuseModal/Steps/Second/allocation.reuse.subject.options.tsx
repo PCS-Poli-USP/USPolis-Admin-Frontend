@@ -35,7 +35,6 @@ function AllocationReuseSubjectOptions({
         mb={'20px'}
         divider={<StackDivider />}
       >
-        <div></div>
         {classOptions.length > 0 &&
           classOptions.map((option, idx) => (
             <AllocationReuseClassOptions
