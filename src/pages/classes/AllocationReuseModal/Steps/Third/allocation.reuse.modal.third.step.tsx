@@ -5,6 +5,7 @@ import { classNumberFromClassCode } from '../../../../../utils/classes/classes.f
 import { ScheduleAllocationData } from '../../allocation.reuse.modal';
 
 import { getScheduleWithTimeString } from '../../../../../utils/schedules/schedule.formatter';
+import moment from 'moment';
 
 interface AllocationReuseModalThirdStepProps {
   subjects: SubjectResponse[];
@@ -77,7 +78,11 @@ function AllocationReuseModalThirdStep({
                       bgColor={'gray.100'}
                     >
                       <Text fontWeight={'bold'}>
-                        {subject.name} - Turma {classCode}
+                        {subject.name} - Turma {classCode} - {' '}
+                        <Text as={'span'} fontSize={'sm'} align={'center'}>
+                          ({moment(cls.start_date).format('DD/MM/YYYY')} até{' '}
+                          {moment(cls.end_date).format('DD/MM/YYYY')})
+                        </Text>
                       </Text>
                       {schedules.map((schedule, index) => {
                         const data = allocationData.at(index) || undefined;

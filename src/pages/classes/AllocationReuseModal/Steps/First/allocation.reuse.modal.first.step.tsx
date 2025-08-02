@@ -95,7 +95,6 @@ function AllocationReuseModalFirstStep({
               value: subject.id,
             }))}
             onChange={(value) => {
-              console.log('On change value:', value);
               const removedSubjects = selectedSubjectsOptions.filter(
                 (s) => !value.some((v) => v.value === s.value),
               );
@@ -284,10 +283,8 @@ function AllocationReuseModalFirstStep({
                         <Flex direction={'row'} gap={'5px'} align={'center'}>
                           Turma {classNumberFromClassCode(cls.code)} -{' '}
                           <Text fontSize={'sm'} fontWeight={'bold'}>
-                            Modificado em{' '}
-                            {moment(cls.updated_at).format(
-                              'DD/MM/YYYY [ás] HH:mm',
-                            )}
+                            {moment(cls.start_date).format('DD/MM/YYYY')} até {' '}
+                            {moment(cls.end_date).format('DD/MM/YYYY')}
                           </Text>
                         </Flex>
                       </Checkbox>
