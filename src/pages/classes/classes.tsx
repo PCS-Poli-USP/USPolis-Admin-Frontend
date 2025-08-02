@@ -286,6 +286,7 @@ function Classes() {
         />
       )}
       <CrawlerJupiterModal
+        subjects={subjects}
         isOpen={isOpenCrawlerJupiterModal}
         onClose={onCloseCrawlerJupiterModal}
         onSave={handleCrawlerSave}

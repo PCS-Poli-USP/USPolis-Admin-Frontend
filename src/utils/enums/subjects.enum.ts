@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 export enum SubjectsResponseCode {
   NOT_FOUND = 404,
   ALREADY_EXISTS = 409,
@@ -43,5 +44,11 @@ export namespace CrawlerType {
   export function translate(type: CrawlerType | undefined): string {
     if (!type) return 'NÃO DEFINIDO';
     return translations[type];
+  }
+
+  export function values(): CrawlerType[] {
+    return Object.values(CrawlerType).filter(
+      (value) => typeof value === 'string',
+    ) as CrawlerType[];
   }
 }

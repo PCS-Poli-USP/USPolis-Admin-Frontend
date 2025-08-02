@@ -13,7 +13,7 @@ import { LuBadgeHelp } from 'react-icons/lu';
 
 interface HelpPopoverProps {
   title: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 function HelpPopover({ title, children }: HelpPopoverProps) {
