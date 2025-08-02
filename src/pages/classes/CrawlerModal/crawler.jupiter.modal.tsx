@@ -257,7 +257,7 @@ export default function CrawlerJupiterModal({
                     </InputRightElement>
                   </InputGroup>
                 </Box>
-                <Box w={'100%'}>
+                <Box w={'100%'} hidden={true}>
                   <Text>Selecionar com base em cursos:</Text>
                   <Select
                     isMulti={false}
