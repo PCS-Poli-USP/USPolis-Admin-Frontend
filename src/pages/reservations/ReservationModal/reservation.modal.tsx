@@ -122,6 +122,7 @@ function ReservationModal(props: ReservationModalProps) {
     setVinculatedSolicitation(undefined);
     setActiveStep(0);
     setDates([]);
+    calendarPicker.reset();
     props.onClose();
   }
 

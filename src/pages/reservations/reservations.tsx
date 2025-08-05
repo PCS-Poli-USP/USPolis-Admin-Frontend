@@ -13,6 +13,9 @@ import Dialog from '../../components/common/Dialog/dialog.component';
 import PageContent from '../../components/common/PageContent';
 import useClassroomsSolicitations from '../../hooks/useClassroomSolicitations';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
+import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
+import ClassroomTimeGrid from '../../components/common/ClassroomTimeGrid/classroom.time.grid';
+import { ClassroomFullResponse } from '../../models/http/responses/classroom.response.models';
 
 function Reservations() {
   const {
@@ -25,9 +28,18 @@ function Reservations() {
     onOpen: onOpenDialog,
     isOpen: isOpenDialog,
   } = useDisclosure();
+  const {
+    onClose: onCloseGrid,
+    onOpen: onOpenGrid,
+    isOpen: isOpenGrid,
+  } = useDisclosure();
 
   const { buildings } = useBuildings();
-  const { classrooms } = useClassrooms();
+  const {
+    loading: loadingClassrooms,
+    classrooms,
+    listOneFull,
+  } = useClassrooms();
   const { loading, reservations, getReservations, deleteReservation } =
     useReservations();
   const {
@@ -38,13 +50,23 @@ function Reservations() {
 
   const [selectedReservation, setSelectedReservation] =
     useState<ReservationResponse>();
+  const [classroom, setClassroom] = useState<ClassroomFullResponse>();
   const [isUpdate, setIsUpdate] = useState(false);
+  const header = usePageHeaderWithFilter();
 
   const columns = getReservationsColumns({
+    handleViewClick: handleViewClick,
     handleDuplicateClick: handleDuplicateClick,
     handleEditClick: handleEditClick,
     handleDeleteClick: handleDeleteClick,
   });
+
+  async function handleViewClick(data: ReservationResponse) {
+    setSelectedReservation(data);
+    onOpenGrid();
+    const cls = await listOneFull(data.classroom_id);
+    setClassroom(cls);
+  }
 
   function handleDuplicateClick(data: ReservationResponse) {
     setSelectedReservation(data);
@@ -90,6 +112,7 @@ function Reservations() {
       />
       <Flex align='center' direction={'row'}>
         <PageHeaderWithFilter
+          {...header}
           title='Reservas'
           onConfirm={(start, end) => {
             getReservations(start, end);
@@ -133,6 +156,31 @@ function Reservations() {
         title={`Excluir reserva ${selectedReservation?.title}`}
         onConfirm={handleDeleteConfirm}
         warningText={'Essa ação é irreversível!'}
+      />
+      <ClassroomTimeGrid
+        isOpen={isOpenGrid}
+        onClose={onCloseGrid}
+        classroom={classroom}
+        loading={loadingClassrooms}
+        scheduleDetails={
+          selectedReservation
+            ? {
+                recurrence: selectedReservation.schedule.recurrence,
+                week_day: selectedReservation.schedule.week_day,
+                month_week: selectedReservation.schedule.month_week,
+              }
+            : {
+                recurrence: undefined,
+                week_day: undefined,
+                month_week: undefined,
+              }
+        }
+        preview={{
+          title: '',
+          start_time: '',
+          end_time: '',
+          dates: [],
+        }}
       />
     </PageContent>
   );

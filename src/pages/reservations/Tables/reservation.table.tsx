@@ -11,8 +11,10 @@ import {
   FilterString,
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 import { SortPeriodFn } from '../../../utils/tanstackTableHelpers/tableSortingFns';
+import { LuEye } from 'react-icons/lu';
 
 interface ReservationsColumnsProps {
+  handleViewClick: (data: ReservationResponse) => void;
   handleDuplicateClick: (data: ReservationResponse) => void;
   handleEditClick: (data: ReservationResponse) => void;
   handleDeleteClick: (data: ReservationResponse) => void;
@@ -126,6 +128,16 @@ export const getReservationsColumns = (
     header: 'Opções',
     cell: ({ row }) => (
       <HStack spacing='0px'>
+        <Tooltip label='Visualizar Reserva'>
+          <IconButton
+            colorScheme='blackAlpha'
+            size='sm'
+            variant='ghost'
+            aria-label='visualizar-reserva'
+            icon={<LuEye />}
+            onClick={() => props.handleViewClick(row.original)}
+          />
+        </Tooltip>
         <Tooltip label='Duplicar Reserva'>
           <IconButton
             colorScheme='cyan'
