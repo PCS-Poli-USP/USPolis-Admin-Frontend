@@ -2,12 +2,11 @@ import { Alert, AlertIcon, Stack, StackDivider } from '@chakra-ui/react';
 import { Collapsable } from '../../../../../components/common/Collapsable';
 import { AllocationReuseTargetOptions } from '../../../../../models/http/responses/allocation.response.models';
 import AllocationReuseClassOptions from './allocation.reuse.class.options';
-import { ScheduleAllocationData } from '../../allocation.reuse.modal';
 
 interface AllocationReuseSubjectOptionsProps {
   data: AllocationReuseTargetOptions;
-  allocationMap: Map<number, ScheduleAllocationData>;
-  setAllocationMap: (map: Map<number, ScheduleAllocationData>) => void;
+  allocationMap: Map<number, number[]>;
+  setAllocationMap: (map: Map<number, number[]>) => void;
 }
 
 function AllocationReuseSubjectOptions({
@@ -18,28 +17,24 @@ function AllocationReuseSubjectOptions({
   const classOptions = data.class_options.sort((a, b) =>
     a.class_code.localeCompare(b.class_code),
   );
-
   return (
     <Collapsable
       title={`${data.subject_code} - ${data.subject_name}`}
       initiallyOpen={true}
       border='1px'
-      borderRadius='md'
       p='10px 0px 10px 0px'
-      mb='5px'
     >
       <Stack
         direction={'column'}
-        gap={'2px'}
+        gap={'5px'}
         ml={'20px'}
         mb={'20px'}
         divider={<StackDivider />}
       >
         <div></div>
         {classOptions.length > 0 &&
-          classOptions.map((option, idx) => (
+          classOptions.map((option) => (
             <AllocationReuseClassOptions
-              key={`${data.subject_code}-C${idx}`}
               data={option}
               allocationMap={allocationMap}
               setAllocationMap={setAllocationMap}

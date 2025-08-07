@@ -10,14 +10,11 @@ export interface ClassroomResponse {
   accessibility: boolean;
   audiovisual: AudiovisualType;
   air_conditioning: boolean;
-  observation: string;
   updated_at: string;
   created_by_id: number;
   created_by: string;
   building_id: number;
   building: string;
-  group_ids: number[];
-  groups: string[];
 }
 
 export interface ClassroomFullResponse extends ClassroomResponse {

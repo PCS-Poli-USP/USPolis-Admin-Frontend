@@ -14,9 +14,6 @@ interface AllocationReuseModalFirstStepProps {
   classesBySubject: Map<number, ClassResponse[]>;
   map: Map<number, SubjectWithClasses>;
   setMap: (map: Map<number, SubjectWithClasses>) => void;
-  selectedClasses: Set<number>;
-  setSelectedClasses: (classes: Set<number>) => void;
-  setSelectedSubjects: (subjects: Set<number>) => void;
 }
 
 interface Option {
@@ -29,13 +26,11 @@ function AllocationReuseModalFirstStep({
   classesBySubject,
   map,
   setMap,
-  selectedClasses,
-  setSelectedClasses,
-  setSelectedSubjects,
 }: AllocationReuseModalFirstStepProps) {
-  const [selectedSubjectsOptions, setSelectedSubjectsOptions] = useState<
-    Option[]
-  >([]);
+  const [selectedSubjects, setSelesctedSubjects] = useState<Option[]>([]);
+  const [selectedClasses, setSelectedClasses] = useState<Set<number>>(
+    new Set(),
+  );
 
   useEffect(() => {
     const subjectIds = Array.from(map.keys());
@@ -45,7 +40,7 @@ function AllocationReuseModalFirstStep({
         label: `${subject.code} - ${subject.name}`,
         value: subject.id,
       }));
-    setSelectedSubjectsOptions(newSelectedSubjects);
+    setSelesctedSubjects(newSelectedSubjects);
 
     const classesIds: number[] = [];
     for (const entry of map.values()) {
@@ -53,7 +48,6 @@ function AllocationReuseModalFirstStep({
     }
     const newSelectedClasses = new Set<number>(classesIds);
     setSelectedClasses(newSelectedClasses);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, subjects]);
 
   return (
@@ -72,14 +66,16 @@ function AllocationReuseModalFirstStep({
         <HelpPopover title='Como funciona a reutilização?'>
           <Flex direction={'column'} gap={'5px'} textAlign={'justify'}>
             <Text>
-              A reutilização de alocação permite alocar as turmas das
-              disciplinas selecionadas considerando a alocação de turmas
-              similares de um ano anterior.
+              A reutilização de alocações vai buscar as alocações das turmas das
+              disciplinas que você selecionar.
             </Text>
             <Text>
-              Uma turma é considerada similar quando ela tem o mesmo código
-              (últimos dois dígitos), dias de semana, recorrência e horário de
-              início e fim.
+              O sistema irá tentar buscar exatamente a mesma turma, mas no ano
+              que você pedir.
+            </Text>
+            <Text>
+              Ou seja, os resultados são alocações com o mesmo período, dia,
+              horário e turma, mas no ano que você escolher.
             </Text>
           </Flex>
         </HelpPopover>
@@ -88,17 +84,16 @@ function AllocationReuseModalFirstStep({
         <Select
           placeholder={'Selecione as disciplinas'}
           isMulti={true}
-          value={selectedSubjectsOptions}
+          value={selectedSubjects}
           options={subjects.map((subject) => ({
             label: `${subject.code} - ${subject.name}`,
             value: subject.id,
           }))}
           onChange={(value) => {
-            const removedSubjects = selectedSubjectsOptions.filter(
+            const removedSubjects = selectedSubjects.filter(
               (s) => !value.some((v) => v.value === s.value),
             );
-            setSelectedSubjectsOptions(value as Option[]);
-            setSelectedSubjects(new Set(value.map((v) => v.value)));
+            setSelesctedSubjects(value as Option[]);
             const newMap = new Map(map);
             value.forEach((subject) => {
               if (!newMap.has(subject.value)) {
@@ -113,11 +108,10 @@ function AllocationReuseModalFirstStep({
             removedSubjects.forEach((subject) => {
               const removedClasses = classesBySubject.get(subject.value);
               if (removedClasses) {
-                const newSelectedClasses = new Set(selectedClasses);
-                removedClasses.forEach((cls) =>
-                  newSelectedClasses.delete(cls.id),
-                );
-                setSelectedClasses(newSelectedClasses);
+                setSelectedClasses((prev) => {
+                  removedClasses.forEach((cls) => prev.delete(cls.id));
+                  return prev;
+                });
               }
               newMap.delete(subject.value);
             });
@@ -126,15 +120,12 @@ function AllocationReuseModalFirstStep({
         />
       </Box>
       <Box>
-        {selectedSubjectsOptions.length > 0 && (
-          <Text mt={'10px'}>
-            Escolha as turmas das disciplinas ({selectedClasses.size} turmas
-            selecionadas):
-          </Text>
+        {selectedSubjects.length > 0 && (
+          <Text mt={'10px'}>Escolha as turmas das disciplinas:</Text>
         )}
         {subjects
           .filter((subject) =>
-            selectedSubjectsOptions.some((s) => s.value === subject.id),
+            selectedSubjects.some((s) => s.value === subject.id),
           )
           .map((subject) => {
             const classes = classesBySubject.get(subject.id);
@@ -153,16 +144,10 @@ function AllocationReuseModalFirstStep({
                 </Text>
                 <Collapsable
                   title={`Escolher turmas [ ${i} / ${classes ? classes.length : 0} ]`}
-                  titleColor={i > 0 ? 'uspolis.blue' : 'uspolis.red'}
                   iconSize={'25px'}
                   titleSize='sm'
                 >
-                  <Flex
-                    direction={'column'}
-                    gap={'5px'}
-                    mb={'10px'}
-                    ml={'20px'}
-                  >
+                  <Flex direction={'column'} gap={'5px'} mb={'10px'} ml={'20px'}>
                     <Flex direction={'row'} gap={'5px'} mb={'5px'} mt={'5px'}>
                       <Button
                         size={'sm'}
@@ -243,14 +228,17 @@ function AllocationReuseModalFirstStep({
                             });
                             setMap(newMap);
                           }
-                          const newSelectedClasses = new Set(selectedClasses);
                           if (e.target.checked) {
-                            newSelectedClasses.add(cls.id);
+                            setSelectedClasses((prev) =>
+                              new Set(prev).add(cls.id),
+                            );
+                          } else {
+                            setSelectedClasses((prev) => {
+                              const newSet = new Set(prev);
+                              newSet.delete(cls.id);
+                              return newSet;
+                            });
                           }
-                          if (!e.target.checked) {
-                            newSelectedClasses.delete(cls.id);
-                          }
-                          setSelectedClasses(newSelectedClasses);
                         }}
                       >
                         Turma {classNumberFromClassCode(cls.code)}

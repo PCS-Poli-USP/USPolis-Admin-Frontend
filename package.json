@@ -29,7 +29,6 @@
     "@tanstack/react-table": "^8.20.6",
     "axios": "^1.8.4",
     "chakra-react-select": "^5.0.2",
-    "chrono-node": "^2.8.3",
     "formik": "^2.4.5",
     "framer-motion": "^12.7.4",
     "moment": "^2.30.1",

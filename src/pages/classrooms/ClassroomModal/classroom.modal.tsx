@@ -2,7 +2,6 @@ import {
   Button,
   Checkbox,
   Flex,
-  HStack,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -11,6 +10,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  VStack,
 } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import {
@@ -20,18 +20,12 @@ import {
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './classroom.modal.form';
 import { yupResolver } from '@hookform//resolvers/yup';
-import {
-  Input,
-  MultiSelect,
-  SelectInput,
-  Textarea,
-} from '../../../components/common';
+import { Input, MultiSelect, SelectInput } from '../../../components/common';
 import { NumberInput } from '../../../components/common/form/NumberInput';
 import { CheckBox } from '../../../components/common/form/CheckBox';
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
 import GroupFormatter from '../../../utils/groups/group.formatter';
-import { DateInput } from '../../../components/common/form/DateInput';
 
 export default function ClassroomModal(props: ClassroomModalProps) {
   const form = useForm<ClassroomForm>({
@@ -40,7 +34,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
   });
 
   const { trigger, reset, getValues, clearErrors, setValue, watch } = form;
-  const { createClassroom, updateClassroom } = useClassrooms(false);
+  const { createClassroom, updateClassroom } = useClassrooms();
 
   const building_id = watch('building_id');
 
@@ -134,21 +128,19 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 Recursos
               </Text>
 
-              <HStack w={'full'} alignItems={'start'} gap={'10px'} mb={'10px'}>
+              <VStack w={'full'} alignItems={'start'} gap={'10px'} mb={'10px'}>
                 <CheckBox text={'Ar condicionado'} name={'air_conditioning'} />
                 <CheckBox text={'Acessibilidade'} name={'accessibility'} />
-              </HStack>
-
-              <SelectInput
-                name='audiovisual'
-                label='Recurso audiovisual'
-                w={'250px'}
-                mb={'10px'}
-                options={AudiovisualType.values().map((type) => ({
-                  label: AudiovisualType.translate(type),
-                  value: type,
-                }))}
-              />
+                <SelectInput
+                  name='audiovisual'
+                  label='Recurso audiovisual'
+                  w={'250px'}
+                  options={AudiovisualType.values().map((type) => ({
+                    label: AudiovisualType.translate(type),
+                    value: type,
+                  }))}
+                />
+              </VStack>
 
               <MultiSelect
                 label='Grupos'
@@ -167,10 +159,8 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                     value: group.id,
                   }))}
               />
-
               <Checkbox
                 mt={'5px'}
-                mb={'10px'}
                 disabled={props.groups.length === 1 || !building_id}
                 hidden={props.groups.length === 1}
                 onChange={(event) => {
@@ -184,8 +174,6 @@ export default function ClassroomModal(props: ClassroomModalProps) {
               >
                 Selecionar todos
               </Checkbox>
-              <Textarea name='observation' label='Observação' />
-              <DateInput />
             </form>
           </FormProvider>
         </ModalBody>

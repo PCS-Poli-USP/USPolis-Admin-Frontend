@@ -10,6 +10,12 @@ export interface ScheduleBase {
   allocated?: boolean;
 }
 
+export interface CreateManySchedule extends ScheduleBase {
+  week_days: WeekDay[];
+  start_times: string[];
+  end_times: string[];
+}
+
 export interface CreateSchedule extends ScheduleBase {
   class_id?: number;
   reservation_id?: number;
@@ -21,11 +27,6 @@ export interface CreateSchedule extends ScheduleBase {
   month_week?: MonthWeek;
 }
 
-export interface CreateManySchedule {
-  inputs: CreateSchedule[];
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface UpdateSchedule extends CreateSchedule {}
 
 export interface ScheduleUpdateOccurences {

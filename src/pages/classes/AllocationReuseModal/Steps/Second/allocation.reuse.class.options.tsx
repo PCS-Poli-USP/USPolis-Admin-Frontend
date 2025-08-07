@@ -3,12 +3,11 @@ import { Collapsable } from '../../../../../components/common/Collapsable';
 import { AllocationClassOptions } from '../../../../../models/http/responses/allocation.response.models';
 import { classNumberFromClassCode } from '../../../../../utils/classes/classes.formatter';
 import AllocationReuseScheduleOptions from './allocation.reuse.schedule.options';
-import { ScheduleAllocationData } from '../../allocation.reuse.modal';
 
 interface AllocationReuseClassOptionsProps {
   data: AllocationClassOptions;
-  allocationMap: Map<number, ScheduleAllocationData>;
-  setAllocationMap: (map: Map<number, ScheduleAllocationData>) => void;
+  allocationMap: Map<number, number[]>;
+  setAllocationMap: (map: Map<number, number[]>) => void;
 }
 
 function AllocationReuseClassOptions({
@@ -38,7 +37,6 @@ function AllocationReuseClassOptions({
             {data.schedule_options.map((option) => {
               return (
                 <AllocationReuseScheduleOptions
-                  key={option.schedule_target_id}
                   data={option}
                   allocationMap={allocationMap}
                   setAllocationMap={setAllocationMap}

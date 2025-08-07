@@ -9,14 +9,10 @@ interface props {
   closeIcon?: React.ReactNode;
   iconSize?: number | string;
   titleSize?: string;
-  titleColor?: string;
   initiallyOpen?: boolean;
   border?: string;
-  borderRadius?: string;
   p?: string;
-  gap?: string;
   fontWeight?: string;
-  mb?: string;
 }
 
 const Collapsable = ({
@@ -26,26 +22,15 @@ const Collapsable = ({
   closeIcon,
   iconSize,
   titleSize = 'md',
-  titleColor = 'uspolis.blue',
   initiallyOpen = false,
   border = 'none',
-  borderRadius = 'none',
   p = undefined,
   fontWeight = 'bold',
-  gap = undefined,
-  mb = undefined,
 }: props) => {
   const [open, setOpen] = useState(initiallyOpen);
 
   return (
-    <Flex
-      direction='column'
-      border={border}
-      borderRadius={borderRadius}
-      p={p}
-      gap={gap}
-      mb={mb}
-    >
+    <Flex direction='column' border={border} p={p}>
       <Flex alignItems='center'>
         <div
           onClick={() => {
@@ -70,7 +55,6 @@ const Collapsable = ({
           textOverflow={'ellipsis'}
           overflow={'hidden'}
           fontWeight={fontWeight}
-          color={titleColor}
         >
           {title}
         </Heading>
