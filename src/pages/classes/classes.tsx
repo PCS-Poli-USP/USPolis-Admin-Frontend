@@ -369,7 +369,7 @@ function Classes() {
                 Selecionados
               </MenuItem>
             </MenuGroup>
-            <MenuDivider />
+            {/* <MenuDivider />
             <MenuGroup title='Alocações' fontSize={'lg'} gap={'5px'}>
               <MenuDivider />
               <MenuItem
@@ -384,7 +384,7 @@ function Classes() {
               >
                 Reaproveitar
               </MenuItem>
-            </MenuGroup>
+            </MenuGroup> */}
           </MenuList>
         </Menu>
       </Flex>
