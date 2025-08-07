@@ -8,7 +8,7 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import Select from 'react-select';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import useSubjects from '../../hooks/useSubjetcts';
 import { SelectInstance } from 'react-select';
 import ClassAccordion from './ClassAccordion';
@@ -23,15 +23,10 @@ type OptionType = {
 function FindClasses() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const selectRef = useRef<SelectInstance<OptionType>>(null);
-  const { loading: loadingS, subjects, getAllSubjects } = useSubjects(false);
+  const { subjects } = useSubjects();
   const { classes, getClassesBySubject, loading } = useClasses(false);
   const [subjectOption, setSubjectOption] = useState<OptionType>();
   const [classOption, setClassOption] = useState<OptionType>();
-
-  useEffect(() => {
-    getAllSubjects();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <PageContent>
@@ -46,7 +41,7 @@ function FindClasses() {
               placeholder='Selecione uma disciplina'
               value={subjectOption}
               isClearable={true}
-              isLoading={loading || loadingS}
+              isLoading={loading}
               options={subjects
                 .map<OptionType>((subject) => ({
                   value: subject.id,
@@ -74,9 +69,7 @@ function FindClasses() {
               placeholder={
                 !subjectOption
                   ? 'Selecione uma disciplina primeiro'
-                  : classes.length > 0
-                    ? 'Selecione uma turma'
-                    : 'Nenhuma turma disponível'
+                  : 'Selecione uma turma'
               }
               options={
                 classes
@@ -86,7 +79,7 @@ function FindClasses() {
                     }))
                   : []
               }
-              isDisabled={!subjectOption || classes.length === 0}
+              isDisabled={!subjectOption}
               onChange={(option: OptionType | null) => {
                 if (option) {
                   setClassOption(option);
@@ -107,26 +100,14 @@ function FindClasses() {
             <Box>
               <Text fontSize='2xl'>Turmas: </Text>
               {subjectOption ? (
-                <>
-                  {classes.length > 0 && (
-                    <ClassAccordion
-                      classes={
-                        classOption
-                          ? classes.filter(
-                              (cls) => cls.id === classOption.value,
-                            )
-                          : classes
-                      }
-                      loading={loading}
-                    />
-                  )}
-                  {classes.length == 0 && (
-                    <Alert status='warning' borderRadius={'10px'} w={'fit-content'}>
-                      <AlertIcon />
-                      Nenhum oferecimento encontrado para essa disciplina
-                    </Alert>
-                  )}
-                </>
+                <ClassAccordion
+                  classes={
+                    classOption
+                      ? classes.filter((cls) => cls.id === classOption.value)
+                      : classes
+                  }
+                  loading={loading}
+                />
               ) : undefined}
             </Box>
           )}

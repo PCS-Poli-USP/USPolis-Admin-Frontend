@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Flex,
+  HStack,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -131,7 +132,7 @@ function InstitutionalEventModal({
           <form>
             <ModalBody>
               <VStack gap={4}>
-                <Box w='100%' alignSelf='start'>
+                <Box w='50%' alignSelf='start'>
                   <Input label='Título' name='title' />
                 </Box>
                 <Textarea label='Descrição' name='description' />
@@ -191,18 +192,20 @@ function InstitutionalEventModal({
               </VStack>
             </ModalBody>
             <ModalFooter>
-              <Button onClick={onClose} colorScheme='red' mr={'10px'}>
-                Cancelar
-              </Button>
-              <Button
-                onClick={
-                  !!selectedEvent ? handleUpdateSubmit : handleCreateSubmit
-                }
-                colorScheme='blue'
-                isLoading={loading}
-              >
-                Confirmar
-              </Button>
+              <HStack gap={1}>
+                <Button
+                  onClick={
+                    !!selectedEvent ? handleUpdateSubmit : handleCreateSubmit
+                  }
+                  colorScheme='blue'
+                  isLoading={loading}
+                >
+                  Confirmar
+                </Button>
+                <Button onClick={onClose} variant='outline'>
+                  Fechar
+                </Button>
+              </HStack>
             </ModalFooter>
           </form>
         </FormProvider>

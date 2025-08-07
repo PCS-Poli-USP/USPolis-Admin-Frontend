@@ -78,7 +78,7 @@ function CalendarViewModal(props: CalendarViewModalProps) {
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={handleCloseModal} colorScheme='red'>
+          <Button mr={3} onClick={handleCloseModal}>
             Fechar
           </Button>
         </ModalFooter>

@@ -10,7 +10,6 @@ export interface CreateClassroom {
   air_conditioning: boolean;
   audiovisual: AudiovisualType;
   accessibility: boolean;
-  observation: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

@@ -9,8 +9,6 @@ import {
   FilterString,
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 
-const DEBUG = import.meta.env.VITE_DEBUG === 'true';
-
 interface SubjectColumnsProps {
   handleEditButton: (data: SubjectResponse) => void;
   handleDeleteButton: (data: SubjectResponse) => void;
@@ -137,16 +135,5 @@ export const getSubjectColumns = (
       ),
     },
   ];
-  if (DEBUG) {
-    columns.push({
-      header: 'ID',
-      accessorKey: 'id',
-      cell: ({ row }) => (
-        <Box>
-          <Text>{row.original.id}</Text>
-        </Box>
-      ),
-    });
-  }
   return columns;
 };

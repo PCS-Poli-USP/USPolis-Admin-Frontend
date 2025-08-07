@@ -8,15 +8,3 @@ export interface EventUpdate {
   occurrence_id?: number;
   schedule_id: number;
 }
-
-export interface AllocationReuseTarget {
-  subject_id: number;
-  class_ids: number[];
-}
-
-export interface AllocationReuseInput {
-  building_id: number;
-  allocation_year: number;
-  targets: AllocationReuseTarget[];
-  strict: boolean;
-}

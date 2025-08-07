@@ -115,12 +115,10 @@ export default function EditUserModal(props: UserEditModalProps) {
           </FormProvider>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={props.onClose} mr={'10px'} colorScheme='red'>
-            Cancelar
-          </Button>
-          <Button colorScheme='blue' onClick={handleSaveClick}>
+          <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
             Atualizar
           </Button>
+          <Button onClick={props.onClose}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

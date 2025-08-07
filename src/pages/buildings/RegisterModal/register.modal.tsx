@@ -16,7 +16,7 @@ import { CreateBuilding } from '../../../models/http/requests/building.request.m
 
 import { useEffect, useState } from 'react';
 
-interface BuildingModalProps {
+interface RegisterModalProps {
   isOpen: boolean;
   onClose: () => void;
   formData?: CreateBuilding;
@@ -24,7 +24,7 @@ interface BuildingModalProps {
   onSave: (data: CreateBuilding) => void;
 }
 
-export default function BuildingModal(props: BuildingModalProps) {
+export default function RegisterModal(props: RegisterModalProps) {
   const initialForm: CreateBuilding = {
     name: '',
   };
@@ -75,12 +75,10 @@ export default function BuildingModal(props: BuildingModalProps) {
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={props.onClose} colorScheme='red' mr={'10px'}>
-            Cancelar
+          <Button colorScheme='blue' mr={3} onClick={handleSaveClick}>
+            Salvar
           </Button>
-          <Button colorScheme='blue' onClick={handleSaveClick}>
-            {props.isUpdate ? 'Atualizar' : 'Cadastrar'}
-          </Button>
+          <Button onClick={props.onClose}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

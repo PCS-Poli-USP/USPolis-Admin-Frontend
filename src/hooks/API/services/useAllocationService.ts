@@ -1,16 +1,12 @@
 import { AxiosResponse } from 'axios';
 import {
-  AllocationReuseResponse,
   EventResponse,
   ResourceResponse,
 } from '../../../models/http/responses/allocation.response.models';
 import { JSONResponse } from '../../../models/http/responses/common.response.models';
 import axios from '../../../services/api/axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import {
-  AllocationReuseInput,
-  EventUpdate,
-} from '../../../models/http/requests/allocation.request.models';
+import { EventUpdate } from '../../../models/http/requests/allocation.request.models';
 
 const useAllocationsService = () => {
   const PREFIX = '/allocations';
@@ -33,13 +29,7 @@ const useAllocationsService = () => {
     return privateAxios.patch(`${PREFIX}/events`, event);
   };
 
-  const getAllocationOptions = (
-    data: AllocationReuseInput,
-  ): Promise<AxiosResponse<AllocationReuseResponse>> => {
-    return privateAxios.post(`${PREFIX}/reuse-options`, data);
-  };
-
-  return { listEvents, listResources, update, getAllocationOptions };
+  return { listEvents, listResources, update };
 };
 
 export default useAllocationsService;

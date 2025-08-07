@@ -112,90 +112,75 @@ export function AllocateClassModal({
                 <ModalCloseButton />
                 <ModalBody>
                   <Flex flexDir={'column'} gap={4}>
-                    {inputClass.schedules.length > 0 && (
-                      <>
-                        <Flex flexDir={'column'} gap={4}>
-                          {inputClass.schedules
-                            .sort((a, b) => {
-                              if (a.week_day && b.week_day) {
-                                return a.week_day - b.week_day;
-                              }
-                              return 0;
-                            })
-                            .map((schedule, index) => {
-                              const readonly = schedule.classroom_id
-                                ? !validator.checkUserClassroomPermission([
-                                    schedule.classroom_id,
-                                  ])
-                                : false;
-                              return (
-                                <Box key={index}>
-                                  <AllocateSingleScheduleSection
-                                    key={schedule.id}
-                                    user={loggedUser}
-                                    ref={(ref) => {
-                                      if (readonly) {
-                                        sectionsRefs.current[index] = null;
-                                        return;
-                                      }
-                                      sectionsRefs.current[index] = ref;
-                                    }}
-                                    schedule={schedule}
-                                    allowedBuildings={allowedBuildings}
-                                    loadingBuildings={loading}
-                                    initialBuildingId={
-                                      loggedUser
-                                        ? loggedUser.buildings &&
-                                          loggedUser.buildings.length === 1
-                                          ? loggedUser.buildings[0].id
-                                          : undefined
-                                        : undefined
-                                    }
-                                    readonly={readonly}
-                                  />
-                                  <Divider />
-                                </Box>
-                              );
-                            })}
-                        </Flex>
-                        <Flex
-                          flexGrow={1}
-                          justifyContent={'space-between'}
-                          gap={2}
-                        >
-                          <Button
-                            onClick={handleSave}
-                            flexGrow={1}
-                            colorScheme='blue'
-                          >
-                            Salvar
-                          </Button>
-                          <Button
-                            flexGrow={1}
-                            alignSelf={'stretch'}
-                            onClick={() => {
-                              reset();
-                            }}
-                          >
-                            Restaurar
-                          </Button>
-                          <Button
-                            onClick={handleClose}
-                            flexGrow={1}
-                            colorScheme='red'
-                          >
-                            Cancelar
-                          </Button>
-                        </Flex>
-                      </>
-                    )}
-                    {!inputClass.schedules ||
-                    inputClass.schedules.length === 0 ? (
-                      <Alert status='error' mb={'20px'}>
-                        <AlertIcon />
-                        Esta turma não possui horários cadastrados.
-                      </Alert>
-                    ) : null}
+                    <Flex flexDir={'column'} gap={4}>
+                      {inputClass.schedules
+                        .sort((a, b) => {
+                          if (a.week_day && b.week_day) {
+                            return a.week_day - b.week_day;
+                          }
+                          return 0;
+                        })
+                        .map((schedule, index) => {
+                          const readonly = schedule.classroom_id
+                            ? !validator.checkUserClassroomPermission([
+                                schedule.classroom_id,
+                              ])
+                            : false;
+                          return (
+                            <Box key={index}>
+                              <AllocateSingleScheduleSection
+                                key={schedule.id}
+                                user={loggedUser}
+                                ref={(ref) => {
+                                  if (readonly) {
+                                    sectionsRefs.current[index] = null;
+                                    return;
+                                  }
+                                  sectionsRefs.current[index] = ref;
+                                }}
+                                schedule={schedule}
+                                allowedBuildings={allowedBuildings}
+                                loadingBuildings={loading}
+                                initialBuildingId={
+                                  loggedUser
+                                    ? loggedUser.buildings &&
+                                      loggedUser.buildings.length === 1
+                                      ? loggedUser.buildings[0].id
+                                      : undefined
+                                    : undefined
+                                }
+                                readonly={readonly}
+                              />
+                              <Divider />
+                            </Box>
+                          );
+                        })}
+                    </Flex>
+                    <Flex flexGrow={1} justifyContent={'space-between'} gap={2}>
+                      <Button
+                        onClick={handleSave}
+                        flexGrow={1}
+                        colorScheme='blue'
+                      >
+                        Salvar
+                      </Button>
+                      <Button
+                        flexGrow={1}
+                        alignSelf={'stretch'}
+                        onClick={() => {
+                          reset();
+                        }}
+                      >
+                        Restaurar
+                      </Button>
+                      <Button
+                        onClick={handleClose}
+                        flexGrow={1}
+                        colorScheme='red'
+                      >
+                        Cancelar
+                      </Button>
+                    </Flex>
                   </Flex>
                 </ModalBody>
               </>

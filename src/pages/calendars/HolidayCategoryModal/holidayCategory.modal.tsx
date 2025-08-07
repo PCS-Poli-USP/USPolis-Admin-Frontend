@@ -114,17 +114,16 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
             </ModalBody>
 
             <ModalFooter>
-              <Button onClick={handleCloseModal} mr={'10px'} colorScheme='red'>
-                Cancelar
-              </Button>
               <Button
                 onClick={
                   props.isUpdate ? handleUpdateSubmit : handleCreateSubmit
                 }
+                mr={4}
                 colorScheme='blue'
               >
                 {props.isUpdate ? 'Atualizar' : 'Cadastrar'}
               </Button>
+              <Button onClick={handleCloseModal}>Fechar</Button>
             </ModalFooter>
           </form>
         </FormProvider>

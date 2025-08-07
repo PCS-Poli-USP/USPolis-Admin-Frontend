@@ -169,12 +169,10 @@ function GroupModal({
         </FormProvider>
 
         <ModalFooter>
-          <Button onClick={handleClose} colorScheme='red' mr={'10px'}>
-            Cancelar
-          </Button>
-          <Button colorScheme='blue' onClick={handleSubmit}>
+          <Button colorScheme='blue' mr={3} onClick={handleSubmit}>
             {isUpdate ? 'Atualizar' : 'Confirmar'}
           </Button>
+          <Button onClick={handleClose}>Fechar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

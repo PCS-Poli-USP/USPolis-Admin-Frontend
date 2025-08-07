@@ -16,19 +16,19 @@ import JupiterCrawlerAccordion from './crawler.accordion';
 import { SubjectCrawlResponse } from '../../../models/http/responses/subject.response.models';
 import { CrawlerType } from '../../../utils/enums/subjects.enum';
 
-interface CrawlerResultModalProps {
+interface CrawlerModalProps {
   isOpen: boolean;
   onClose: () => void;
   data?: SubjectCrawlResponse;
   type: CrawlerType | undefined;
 }
 
-export default function CrawlerResultModal({
+export default function CrawlerModal({
   isOpen,
   onClose,
   data,
   type,
-}: CrawlerResultModalProps) {
+}: CrawlerModalProps) {
   function handleClose() {
     onClose();
   }

@@ -211,15 +211,16 @@ function HolidayModal(props: HolidayModalProps) {
           </form>
         </FormProvider>
         <ModalFooter>
-          <Button mr={'10px'} onClick={handleCloseModal} colorScheme='red'>
-            Cancelar
-          </Button>
           <Button
             disabled={isMultipleHolidays && selectedDays.length === 0}
             onClick={props.isUpdate ? handleUpdateSubmit : handleCreateSubmit}
+            mr={4}
             colorScheme='blue'
           >
             {props.isUpdate ? 'Atualizar' : 'Cadastrar'}
+          </Button>
+          <Button mr={3} onClick={handleCloseModal}>
+            Fechar
           </Button>
         </ModalFooter>
       </ModalContent>

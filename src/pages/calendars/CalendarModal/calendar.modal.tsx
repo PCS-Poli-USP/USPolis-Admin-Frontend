@@ -127,17 +127,16 @@ function CalendarModal(props: CalendarModalProps) {
             </ModalBody>
 
             <ModalFooter>
-              <Button onClick={handleCloseModal} mr={'10px'} colorScheme='red'>
-                Cancelar
-              </Button>
               <Button
                 onClick={
                   props.isUpdate ? handleUpdateSubmit : handleCreateSubmit
                 }
                 colorScheme='blue'
+                mr={4}
               >
                 {props.isUpdate ? 'Atualizar' : 'Cadastrar'}
               </Button>
+              <Button onClick={handleCloseModal}>Fechar</Button>
             </ModalFooter>
           </form>
         </FormProvider>
