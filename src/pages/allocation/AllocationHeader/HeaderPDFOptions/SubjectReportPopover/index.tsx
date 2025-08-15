@@ -35,6 +35,7 @@ interface SubjectReportPopoverProps {
   subjects: SubjectResponse[];
   start: string;
   end: string;
+  isMobile: boolean;
 }
 
 function SubjectReportPopover({
@@ -44,6 +45,7 @@ function SubjectReportPopover({
   buildings,
   start,
   end,
+  isMobile,
 }: SubjectReportPopoverProps) {
   const [selectedSubjects, setSelectedSubjects] = useState<Option[]>([]);
   const {
@@ -71,7 +73,11 @@ function SubjectReportPopover({
         </Button>
       </PopoverTrigger>
       <Portal>
-        <PopoverContent w={'800px'} h={'500px'}>
+        <PopoverContent
+          maxW={isMobile ? '100%' : '800px'}
+          w={isMobile ? '100vw' : '800px'}
+          h={'500px'}
+        >
           <PopoverArrow />
           <PopoverHeader fontWeight={'bold'} fontSize={'lg'} maxH={'50px'}>
             Alocações de Disciplinas
@@ -148,12 +154,14 @@ function SubjectReportPopover({
               {selectedSubjects.length == 0 && (
                 <Alert
                   status='error'
-                  h={'full'}
+                  h={isMobile ? '50px' : 'full'}
                   w={'fit-content'}
                   borderRadius={'10px'}
                 >
                   <AlertIcon />
-                  Selecione pelo menos uma disciplina!
+                  {isMobile
+                    ? 'Selecione disciplinas'
+                    : 'Selecione pelo menos uma disciplina para continuar!'}
                 </Alert>
               )}
               <Button
