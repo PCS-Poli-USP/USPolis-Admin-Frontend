@@ -150,6 +150,24 @@ export function AllocateClassModal({
                                         : undefined
                                     }
                                     readonly={readonly}
+                                    readonlyData={
+                                      readonly
+                                        ? {
+                                            buildingOpt: {
+                                              label:
+                                                schedule.building as string,
+                                              value:
+                                                schedule.building_id as number,
+                                            },
+                                            classroomOpt: {
+                                              label:
+                                                schedule.classroom as string,
+                                              value:
+                                                schedule.classroom_id as number,
+                                            },
+                                          }
+                                        : undefined
+                                    }
                                   />
                                   <Divider />
                                 </Box>

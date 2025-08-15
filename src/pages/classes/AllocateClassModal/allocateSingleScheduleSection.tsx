@@ -32,6 +32,7 @@ interface props {
   allowedBuildings: BuildingResponse[];
   loadingBuildings: boolean;
   readonly: boolean;
+  readonlyData?: ReadonlyData;
   initialBuildingId?: number;
 }
 
@@ -45,6 +46,11 @@ interface ClassroomOption {
   value: number;
 }
 
+interface ReadonlyData {
+  buildingOpt: BuildingOption;
+  classroomOpt: ClassroomOption;
+}
+
 const AllocateSingleScheduleSection = forwardRef<
   AllocateSingleScheduleSectionRef,
   props
@@ -56,6 +62,7 @@ const AllocateSingleScheduleSection = forwardRef<
       allowedBuildings,
       loadingBuildings,
       readonly,
+      readonlyData,
       initialBuildingId = undefined,
     }: props,
     ref,
@@ -71,6 +78,7 @@ const AllocateSingleScheduleSection = forwardRef<
         intentional_occurrence_ids: number[];
       } | null {
         if (!schedule) return null;
+        if (readonly) return null;
         if (removeAllocation)
           return {
             schedule_id: schedule.id,
@@ -313,7 +321,7 @@ const AllocateSingleScheduleSection = forwardRef<
                 />
               </Flex>
 
-              {!removeAllocation && (
+              {!removeAllocation && !readonly && (
                 <Flex direction={'column'} gap={'5px'} w={'100%'}>
                   <Select
                     placeholder={
@@ -378,6 +386,20 @@ const AllocateSingleScheduleSection = forwardRef<
                     isDisabled={
                       !selectedBuilding || classroomsLoading || readonly
                     }
+                  />
+                </Flex>
+              )}
+
+              {readonly && (
+                <Flex direction={'column'} gap={'5px'} w={'100%'}>
+                  <Select
+                    isMulti={false}
+                    isDisabled={readonly}
+                    value={readonlyData ? readonlyData.buildingOpt : undefined}
+                  />
+                  <TooltipSelect
+                    value={readonlyData ? readonlyData.classroomOpt : undefined}
+                    isDisabled={readonly}
                   />
                 </Flex>
               )}
