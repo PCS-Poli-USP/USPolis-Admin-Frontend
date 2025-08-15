@@ -26,6 +26,7 @@ import {
 import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
 import moment from 'moment';
 import { SortPeriodFn } from '../../../utils/tanstackTableHelpers/tableSortingFns';
+import { AllocationLogResponse } from '../../../models/http/responses/allocationLog.response.models';
 
 const DEBUG = import.meta.env.VITE_DEBUG === 'true';
 interface ClassesColumnsProps {
@@ -43,6 +44,19 @@ interface ClassesColumnsProps {
 export const getClassesColumns = (
   props: ClassesColumnsProps,
 ): ColumnDef<ClassResponse>[] => {
+  function getLastUserLog(data: ClassResponse): AllocationLogResponse | null {
+    const logs = data.schedules
+      .filter((schedule) => !!schedule.last_log)
+      .map((schedule) => schedule.last_log as AllocationLogResponse);
+    logs.sort((a, b) => {
+      return (
+        new Date(b.modified_at).getTime() - new Date(a.modified_at).getTime()
+      );
+    });
+    const lastLog = logs[0];
+    return lastLog ? lastLog : null;
+  }
+
   const columns: ColumnDef<ClassResponse>[] = [
     {
       id: 'mark',
@@ -188,24 +202,30 @@ export const getClassesColumns = (
         isSelectable: true,
         isCenter: true,
       },
-      cell: ({ row }) => (
-        <Box>
-          {row.original.calendar_names.length > 0 ? (
-            row.original.calendar_names.map((calendar, index) => (
-              <Tooltip
-                label={<Text>{calendar.replace('Calendário', '')}</Text>}
-                key={index}
-              >
-                <Text maxW={140} overflowX={'hidden'} textOverflow={'ellipsis'}>
-                  {calendar.replace('Calendário', '')}
-                </Text>
-              </Tooltip>
-            ))
-          ) : (
-            <Text>Sem calendários</Text>
-          )}
-        </Box>
-      ),
+      cell: ({ row }) => {
+        return (
+          <Box>
+            {row.original.calendar_names.length > 0 ? (
+              row.original.calendar_names.map((calendar, index) => (
+                <Tooltip
+                  label={<Text>{calendar.replace('Calendário', '')}</Text>}
+                  key={index}
+                >
+                  <Text
+                    maxW={140}
+                    overflowX={'hidden'}
+                    textOverflow={'ellipsis'}
+                  >
+                    {calendar.replace('Calendário', '')}
+                  </Text>
+                </Tooltip>
+              ))
+            ) : (
+              <Text>Sem calendários</Text>
+            )}
+          </Box>
+        );
+      },
     },
     {
       accessorKey: 'vacancies',
@@ -244,89 +264,112 @@ export const getClassesColumns = (
         ).format('DD/MM/YYYY')}`,
       cell: ({ row }) => (
         <Box>
-          <Text fontWeight={'bold'}>{`Turma: ${moment(
-            row.original.start_date,
-          ).format(
+          <Text>{`${moment(row.original.start_date).format(
             'DD/MM/YYYY',
           )} até ${moment(row.original.end_date).format('DD/MM/YYYY')}`}</Text>
-          <Flex
-            direction={'column'}
-            gap={'5px'}
-            textAlign={'center'}
-            mt={'5px'}
-          >
-            {row.original.schedules.map((schedule, index) => (
-              <Text key={index}>
-                {`Agenda: ${moment(schedule.start_date).format(
-                  'DD/MM/YYYY',
-                )} até ${moment(schedule.end_date).format('DD/MM/YYYY')}`}
-              </Text>
-            ))}
-          </Flex>
         </Box>
       ),
     },
     {
       id: 'options',
       header: 'Opções',
-      cell: ({ row }) => (
-        <HStack spacing='0px'>
-          <Tooltip label='Duplicar Turma'>
-            <IconButton
-              colorScheme='cyan'
-              size='sm'
-              variant='ghost'
-              aria-label='duplicar-turma'
-              icon={<CopyIcon />}
-              onClick={() => props.handleDuplicateClick(row.original)}
-            />
-          </Tooltip>
-          <Tooltip label='Editar Turma'>
-            <IconButton
-              disabled={props.disableMap[row.index]}
-              colorScheme='yellow'
-              size='sm'
-              variant='ghost'
-              aria-label='editar-turma'
-              icon={<BsFillPenFill />}
-              onClick={() => props.handleEditClick(row.original)}
-            />
-          </Tooltip>
-          <Tooltip label='Editar Alocação'>
-            <IconButton
-              disabled={props.disableMap[row.index]}
-              colorScheme='teal'
-              size='sm'
-              variant='ghost'
-              aria-label='editar-alocacao'
-              icon={<BsCalendarDateFill />}
-              onClick={() => props.handleAllocationEditClick(row.original)}
-            />
-          </Tooltip>
-          <Tooltip label='Editar Ocorrências'>
-            <IconButton
-              disabled={props.disableMap[row.index]}
-              colorScheme='yellow'
-              size='sm'
-              variant='ghost'
-              aria-label='editar-ocorrencias'
-              icon={<BiSolidCalendarEdit />}
-              onClick={() => props.handleEditOccurrencesClick(row.original)}
-            />
-          </Tooltip>
-          <Tooltip label='Excluir Turma'>
-            <IconButton
-              disabled={props.disableMap[row.index]}
-              colorScheme='red'
-              size='sm'
-              variant='ghost'
-              aria-label='excluir-turma'
-              icon={<BsFillTrashFill />}
-              onClick={() => props.handleDeleteClassClick(row.original)}
-            />
-          </Tooltip>
-        </HStack>
-      ),
+      cell: ({ row }) => {
+        const lastUserLog = getLastUserLog(row.original);
+        return (
+          <HStack spacing='0px'>
+            {props.disableMap[row.index] ? (
+              <Flex
+                direction={'column'}
+                w={'full'}
+                justify={'center'}
+                align={'center'}
+                gap={'5px'}
+              >
+                <Text color={'uspolis.red'}>Você não tem acesso</Text>
+                <Text fontWeight={'bold'}>Alocado a última vez por:</Text>
+                <Tooltip
+                  label={
+                    lastUserLog
+                      ? lastUserLog.modified_by
+                      : 'Usuário não encontrado'
+                  }
+                >
+                  <Text
+                    maxW={'200px'}
+                    textOverflow={'ellipsis'}
+                    overflow={'hidden'}
+                  >
+                    {lastUserLog
+                      ? lastUserLog.user_email
+                      : 'Usuário não encontrado'}
+                  </Text>
+                </Tooltip>
+              </Flex>
+            ) : (
+              <>
+                <Tooltip label='Duplicar Turma'>
+                  <IconButton
+                    colorScheme='cyan'
+                    size='sm'
+                    variant='ghost'
+                    aria-label='duplicar-turma'
+                    icon={<CopyIcon />}
+                    onClick={() => props.handleDuplicateClick(row.original)}
+                  />
+                </Tooltip>
+                <Tooltip label='Editar Turma'>
+                  <IconButton
+                    disabled={props.disableMap[row.index]}
+                    colorScheme='yellow'
+                    size='sm'
+                    variant='ghost'
+                    aria-label='editar-turma'
+                    icon={<BsFillPenFill />}
+                    onClick={() => props.handleEditClick(row.original)}
+                  />
+                </Tooltip>
+                <Tooltip label='Editar Alocação'>
+                  <IconButton
+                    disabled={props.disableMap[row.index]}
+                    colorScheme='teal'
+                    size='sm'
+                    variant='ghost'
+                    aria-label='editar-alocacao'
+                    icon={<BsCalendarDateFill />}
+                    onClick={() =>
+                      props.handleAllocationEditClick(row.original)
+                    }
+                  />
+                </Tooltip>
+                <Tooltip label='Editar Ocorrências'>
+                  <IconButton
+                    disabled={props.disableMap[row.index]}
+                    colorScheme='yellow'
+                    size='sm'
+                    variant='ghost'
+                    aria-label='editar-ocorrencias'
+                    icon={<BiSolidCalendarEdit />}
+                    onClick={() =>
+                      props.handleEditOccurrencesClick(row.original)
+                    }
+                  />
+                </Tooltip>
+                <Tooltip label='Excluir Turma'>
+                  <IconButton
+                    disabled={props.disableMap[row.index]}
+                    colorScheme='red'
+                    size='sm'
+                    variant='ghost'
+                    aria-label='excluir-turma'
+                    icon={<BsFillTrashFill />}
+                    onClick={() => props.handleDeleteClassClick(row.original)}
+                  />
+                </Tooltip>
+              </>
+            )}
+          </HStack>
+        );
+      },
     },
   ];
 
