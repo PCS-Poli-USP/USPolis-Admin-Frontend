@@ -24,16 +24,32 @@ import ClassroomsCalendarPDF from '../../../../pages/allocation/pdf/ClassroomsCa
 import { ModalProps } from '../../../../models/interfaces';
 import ClassroomsEmptyCalendarReportPDF from '../../pdf/ClassroomsEmptyCalendarPDF/classrooms.empty.calendar.pdf';
 import { DownloadIcon } from '@chakra-ui/icons';
+import { SubjectResponse } from '../../../../models/http/responses/subject.response.models';
+import SubjectReportPopover from './SubjectReportPopover';
+import { BuildingResponse } from '../../../../models/http/responses/building.response.models';
 
 type Option = {
   value: string;
   label: string;
 };
 interface PDFOptionsProps extends ModalProps {
-  buildings: Option[];
+  buildings: BuildingResponse[];
+  loadingBuildings: boolean;
+  subjects: SubjectResponse[];
+  loadingSubjects: boolean;
+  isMobile: boolean;
 }
 
-function HeaderPDFOptions({ buildings, isOpen, onClose }: PDFOptionsProps) {
+function HeaderPDFOptions({
+  buildings,
+  loadingBuildings,
+  isOpen,
+  onClose,
+  subjects,
+  loadingSubjects,
+  isMobile,
+}: PDFOptionsProps) {
+
   const [selectedBuilding, setSelectedBuilding] = useState<Option | null>(null);
   const today = new Date();
   const [start, setStart] = useState<string>(getStartOfSemester());
@@ -141,7 +157,10 @@ function HeaderPDFOptions({ buildings, isOpen, onClose }: PDFOptionsProps) {
                 <Text fontWeight={'bold'}>Prédio: </Text>
                 <Select
                   placeholder={'Selecione um prédio'}
-                  options={buildings}
+                  options={buildings.map((building) => ({
+                    value: building.name,
+                    label: building.name,
+                  }))}
                   isClearable={true}
                   onChange={(option: Option | null) => {
                     setSelectedBuilding(option);
@@ -198,6 +217,22 @@ function HeaderPDFOptions({ buildings, isOpen, onClose }: PDFOptionsProps) {
                 loading={loadingC || loadingR}
                 startDate={start}
                 endDate={end}
+              />
+            </Box>
+
+            <Heading size={'md'} ml={'5px'}>
+              Alocações específicas
+            </Heading>
+
+            <Box w={'full'}>
+              <SubjectReportPopover
+                disabled={loadingC || loadingR || !start || !end}
+                loading={loadingC || loadingR || loadingSubjects || loadingBuildings}
+                subjects={subjects}
+                buildings={buildings}
+                start={start}
+                end={end}
+                isMobile={isMobile}
               />
             </Box>
 

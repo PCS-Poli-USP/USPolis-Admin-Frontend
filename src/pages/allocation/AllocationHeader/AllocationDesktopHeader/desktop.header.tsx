@@ -29,6 +29,10 @@ function AllocationDesktopHeader({
   events,
   buildingResources,
   classroomResources,
+  subjects,
+  loadingSubjects,
+  buildings,
+  loadingBuildings,
 }: AllocationHeaderProps) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -44,10 +48,11 @@ function AllocationDesktopHeader({
       <HeaderPDFOptions
         isOpen={isOpenPDF}
         onClose={onClosePDF}
-        buildings={buildingResources.map((resource) => ({
-          label: resource.title,
-          value: resource.id,
-        }))}
+        buildings={buildings}
+        subjects={subjects}
+        loadingSubjects={loadingSubjects}
+        loadingBuildings={loadingBuildings}
+        isMobile={false}
       />
       <Text fontSize={'4xl'}>Mapa de Salas</Text>
       <Flex
@@ -95,6 +100,10 @@ function AllocationDesktopHeader({
           events={events}
           buildingResources={buildingResources}
           classroomResources={classroomResources}
+          subjects={subjects}
+          loadingSubjects={loadingSubjects}
+          buildings={buildings}
+          loadingBuildings={loadingBuildings}
         />
       </Flex>
     </Flex>

@@ -20,6 +20,7 @@ import useClassroomsSolicitations from '../../hooks/classroomSolicitations/useCl
 import { EventDropArg } from '@fullcalendar/core';
 import EventDragModal from './EventDragModal';
 import { EventDef } from '@fullcalendar/core/internal';
+import useSubjects from '../../hooks/useSubjetcts';
 
 type ViewOption = {
   value: string;
@@ -86,6 +87,11 @@ function Allocation() {
     buildings,
     getAllBuildings,
   } = useBuildings(false);
+  const {
+    loading: loadingSubjects,
+    subjects,
+    getAllSubjects,
+  } = useSubjects(false);
   const {
     loading: loadingClassrooms,
     classrooms,
@@ -259,6 +265,7 @@ function Allocation() {
   useEffect(() => {
     if (loggedUser) {
       getAllBuildings();
+      getAllSubjects();
       getAllClassrooms();
       if (loggedUser.is_admin || loggedUser.buildings) {
         getPendingBuildingSolicitations();
@@ -309,6 +316,10 @@ function Allocation() {
             classroomResources={resources.filter(
               (resource) => !!resource.parentId,
             )}
+            subjects={subjects}
+            loadingSubjects={loadingSubjects}
+            buildings={buildings}
+            loadingBuildings={loadingBuildings}
           />
         </GridItem>
         <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>

@@ -31,6 +31,10 @@ function AllocationMobileHeader({
   events,
   buildingResources,
   classroomResources,
+  buildings,
+  subjects,
+  loadingSubjects,
+  loadingBuildings,
 }: AllocationHeaderProps) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -51,10 +55,11 @@ function AllocationMobileHeader({
       <HeaderPDFOptions
         isOpen={isOpenPDF}
         onClose={onClosePDF}
-        buildings={buildingResources.map((resource) => ({
-          label: resource.title,
-          value: resource.id,
-        }))}
+        subjects={subjects}
+        loadingSubjects={loadingSubjects}
+        buildings={buildings}
+        loadingBuildings={loadingBuildings}
+        isMobile={true}
       />
       <Flex direction={'row'} gap={0} w={'100%'}>
         <Text fontSize={'2xl'}>Mapa de Salas</Text>
@@ -109,6 +114,10 @@ function AllocationMobileHeader({
               events={events}
               buildingResources={buildingResources}
               classroomResources={classroomResources}
+              subjects={subjects}
+              loadingSubjects={loadingSubjects}
+              buildings={buildings}
+              loadingBuildings={loadingBuildings}
             />
           </Flex>
         </Box>
