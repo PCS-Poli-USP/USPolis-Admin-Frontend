@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import moment from 'moment';
-import { EventTypes } from '../../../utils/enums/eventTypes.enum';
+import { EventType } from '../../../utils/enums/eventTypes.enum';
 import { InstitutionalEventForm } from './institutionalEvent.modal.interface';
 
 export const formFields = {
@@ -27,7 +27,7 @@ export const formFields = {
       .string()
       .required('Campo obrigatório')
       .test('is-valid-option', 'Campo obrigatório', (value) =>
-        Object.keys(EventTypes).includes(value),
+        Object.keys(EventType).includes(value),
       ),
     defaultValue: '',
   },

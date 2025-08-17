@@ -18,7 +18,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './institutionalEvent.modal.form';
 import { Input, SelectInput, Textarea } from '../../../components/common';
 import { useEffect, useState } from 'react';
-import { EventTypes } from '../../../utils/enums/eventTypes.enum';
+import { EventType } from '../../../utils/enums/eventTypes.enum';
 import { CreateInstitutionalEvent } from '../../../models/http/requests/institutionalEvent.request.models';
 import {
   InstitutionalEventForm,
@@ -181,8 +181,8 @@ function InstitutionalEventModal({
                   <SelectInput
                     label='Categoria'
                     name='category'
-                    options={Object.keys(EventTypes).map((opt) => ({
-                      label: opt,
+                    options={Object.keys(EventType).map((opt) => ({
+                      label: EventType.translate(opt as EventType),
                       value: opt,
                     }))}
                   />
