@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 export enum AudiovisualType {
   PROJECTOR = 'projector',
   TV = 'tv',
