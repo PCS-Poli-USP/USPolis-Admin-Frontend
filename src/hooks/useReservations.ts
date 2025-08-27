@@ -78,31 +78,6 @@ const useReservations = (initialFetch = true) => {
     [showToast, service],
   );
 
-  const getReservationsById = useCallback(
-    async (id: number) => {
-      setLoading(true);
-      let reservation: ReservationResponse | undefined;
-      await service
-        .getById(id)
-        .then((response) => {
-          reservation = response.data;
-        })
-        .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao carregar reserva: ${error.response.detail}`,
-            'error',
-          );
-          reservation = undefined;
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-      return reservation;
-    },
-    [showToast, service],
-  );
-
   const createReservation = useCallback(
     async (data: CreateReservation) => {
       setLoading(true);
@@ -182,7 +157,6 @@ const useReservations = (initialFetch = true) => {
     getAllReservations,
     getReservations,
     getReservationsByBuildingName,
-    getReservationsById,
     createReservation,
     updateReservation,
     deleteReservation,
