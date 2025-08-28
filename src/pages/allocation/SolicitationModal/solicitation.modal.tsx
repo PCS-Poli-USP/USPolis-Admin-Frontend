@@ -29,7 +29,7 @@ import { BuildingResponse } from '../../../models/http/responses/building.respon
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import { NumberInput } from '../../../components/common/form/NumberInput';
-import useClassroomsSolicitations from '../../../hooks/classroomSolicitations/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../../hooks/solicitations/useSolicitations';
 import DateCalendarPicker, {
   useDateCalendarPicker,
 } from '../../../components/common/DateCalendarPicker';

@@ -2,7 +2,7 @@ import { Grid, GridItem } from '@chakra-ui/react';
 import PageContent from '../../components/common/PageContent';
 import SolicitationStack from './SolicitationStack/solicitation.stack';
 import SolicitationPanel from './SolicitationPanel/solicitation.panel';
-import useClassroomsSolicitations from '../../hooks/classroomSolicitations/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../hooks/solicitations/useSolicitations';
 import { useEffect, useState } from 'react';
 import { SolicitationResponse } from '../../models/http/responses/solicitation.response.models';
 

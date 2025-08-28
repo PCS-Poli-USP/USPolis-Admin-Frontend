@@ -1,13 +1,13 @@
 import { AxiosResponse } from 'axios';
 import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import {
-  ClassroomSolicitationAprove,
-  ClassroomSolicitationDeny,
-  CreateClassroomSolicitation,
+  ApproveSolicitation,
+  DenySolicitation,
+  CreateSolicitation,
 } from '../../../models/http/requests/solicitation.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
-const useClassroomSolicitationsService = () => {
+const useSolicitationsService = () => {
   const PREFIX = '/solicitations';
   const axios = useAxiosPrivate();
 
@@ -38,21 +38,21 @@ const useClassroomSolicitationsService = () => {
   };
 
   const create = (
-    data: CreateClassroomSolicitation,
+    data: CreateSolicitation,
   ): Promise<AxiosResponse<SolicitationResponse>> => {
     return axios.post(PREFIX, data);
   };
 
   const approve = (
     id: number,
-    data: ClassroomSolicitationAprove,
+    data: ApproveSolicitation,
   ): Promise<AxiosResponse<SolicitationResponse>> => {
     return axios.put(`${PREFIX}/approve/${id}`, data);
   };
 
   const deny = (
     id: number,
-    data: ClassroomSolicitationDeny,
+    data: DenySolicitation,
   ): Promise<AxiosResponse<SolicitationResponse>> => {
     return axios.put(`${PREFIX}/deny/${id}`, data);
   };
@@ -77,4 +77,4 @@ const useClassroomSolicitationsService = () => {
   };
 };
 
-export default useClassroomSolicitationsService;
+export default useSolicitationsService;

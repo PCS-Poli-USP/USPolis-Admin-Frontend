@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ErrorParser } from '../errorParser';
 
-export class ClassroomSolicitationErrorParser extends ErrorParser {
+export class SolicitationErrorParser extends ErrorParser {
   constructor() {
     super('Solicitação');
   }

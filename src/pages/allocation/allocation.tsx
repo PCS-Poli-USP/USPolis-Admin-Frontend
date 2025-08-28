@@ -16,7 +16,7 @@ import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import ReservationModal from '../../pages/reservations/ReservationModal/reservation.modal';
 import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
 import { loadReservationForDataClick } from './utils/allocation.utils';
-import useClassroomsSolicitations from '../../hooks/classroomSolicitations/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../hooks/solicitations/useSolicitations';
 import { EventDropArg } from '@fullcalendar/core';
 import EventDragModal from './EventDragModal';
 import { EventDef } from '@fullcalendar/core/internal';

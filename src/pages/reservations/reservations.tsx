@@ -7,11 +7,11 @@ import { ReservationResponse } from '../../models/http/responses/reservation.res
 import { useEffect, useState } from 'react';
 import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import useBuildings from '../../hooks/useBuildings';
-import useReservations from '../../hooks/useReservations';
+import useReservations from '../../hooks/reservations/useReservations';
 import ReservationModal from './ReservationModal/reservation.modal';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import PageContent from '../../components/common/PageContent';
-import useClassroomsSolicitations from '../../hooks/classroomSolicitations/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../hooks/solicitations/useSolicitations';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
 

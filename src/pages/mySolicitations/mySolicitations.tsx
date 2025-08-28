@@ -21,7 +21,7 @@ import { CloseIcon } from '@chakra-ui/icons';
 import { SolicitationResponse } from '../../models/http/responses/solicitation.response.models';
 import SolicitationStack from './MySolicitationStack/mysolicitation.stack';
 import MySolicitationModal from './MySolicitationModal/mysolicitation.modal';
-import useClassroomsSolicitations from '../../hooks/classroomSolicitations/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../hooks/solicitations/useSolicitations';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import SolicitationModal from '../allocation/SolicitationModal/solicitation.modal';
 import useBuildings from '../../hooks/useBuildings';

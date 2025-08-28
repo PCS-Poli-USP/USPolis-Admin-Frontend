@@ -29,8 +29,8 @@ import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import {
-  ClassroomSolicitationAprove,
-  ClassroomSolicitationDeny,
+  ApproveSolicitation,
+  DenySolicitation,
 } from '../../../models/http/requests/solicitation.request.models';
 import {
   ClassroomFullResponse,
@@ -47,8 +47,8 @@ import TooltipSelect from '../../../components/common/TooltipSelect';
 interface SolicitationPanelProps {
   solicitation?: SolicitationResponse;
   loading: boolean;
-  approve: (id: number, data: ClassroomSolicitationAprove) => Promise<void>;
-  deny: (id: number, data: ClassroomSolicitationDeny) => Promise<void>;
+  approve: (id: number, data: ApproveSolicitation) => Promise<void>;
+  deny: (id: number, data: DenySolicitation) => Promise<void>;
   handleClose: () => void;
 }
 

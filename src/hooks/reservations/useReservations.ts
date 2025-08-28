@@ -1,12 +1,12 @@
-import useCustomToast from '../hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 import {
   CreateReservation,
   UpdateReservation,
-} from '../models/http/requests/reservation.request.models';
-import { ReservationResponse } from '../models/http/responses/reservation.response.models';
+} from '../../models/http/requests/reservation.request.models';
+import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortReservationsResponse } from '../utils/reservations/reservations.sorter';
-import useReservationsService from './API/services/useReservationsService';
+import { sortReservationsResponse } from '../../utils/reservations/reservations.sorter';
+import useReservationsService from './../API/services/useReservationsService';
 
 const useReservations = (initialFetch = true) => {
   const service = useReservationsService();
