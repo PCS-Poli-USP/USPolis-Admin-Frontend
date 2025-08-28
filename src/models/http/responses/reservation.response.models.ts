@@ -1,4 +1,5 @@
 import { ReservationType } from '../../../utils/enums/reservations.enum';
+import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
 import {
   ScheduleResponse,
   ScheduleFullResponse,
@@ -23,8 +24,8 @@ export interface ReservationResponseBase {
   created_by: string;
 
   requester?: string;
-  has_solicitation: boolean;
   solicitation_id?: number;
+  solicitation_status?: SolicitationStatus;
 }
 
 export interface ReservationResponse extends ReservationResponseBase {
