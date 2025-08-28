@@ -13,13 +13,13 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { ModalProps } from '../../../models/interfaces';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import moment from 'moment';
 import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
 
 interface MySoliciationModalProps extends ModalProps {
-  solicitation?: ClassroomSolicitationResponse;
+  solicitation?: SolicitationResponse;
 }
 
 function MySolicitationModal({

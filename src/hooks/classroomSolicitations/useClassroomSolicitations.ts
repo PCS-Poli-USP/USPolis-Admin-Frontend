@@ -3,19 +3,19 @@ import {
   ClassroomSolicitationAprove,
   ClassroomSolicitationDeny,
   CreateClassroomSolicitation,
-} from '../../models/http/requests/classroomSolicitation.request.models';
-import { ClassroomSolicitationResponse } from '../../models/http/responses/classroomSolicitation.response.models';
+} from '../../models/http/requests/solicitation.request.models';
+import { SolicitationResponse } from '../../models/http/responses/solicitation.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortClassroomSolicitationResponse } from '../../utils/solicitations/solicitation.sorter';
+import { sortSolicitationResponse } from '../../utils/solicitations/solicitation.sorter';
 import useClassroomSolicitationsService from '../API/services/useClassroomSolicitationsService';
 import { ClassroomSolicitationErrorParser } from './classroomSolicitationErrorParser';
 
 const useClassroomsSolicitations = (initialFetch = true) => {
   const service = useClassroomSolicitationsService();
   const [loading, setLoading] = useState(false);
-  const [solicitations, setSolicitations] = useState<
-    ClassroomSolicitationResponse[]
-  >([]);
+  const [solicitations, setSolicitations] = useState<SolicitationResponse[]>(
+    [],
+  );
 
   const showToast = useCustomToast();
 
@@ -42,7 +42,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
     await service
       .getPending()
       .then((response) => {
-        setSolicitations(response.data.sort(sortClassroomSolicitationResponse));
+        setSolicitations(response.data.sort(sortSolicitationResponse));
       })
       .catch((error) => {
         console.log(error);
@@ -63,9 +63,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       await service
         .getAll(start, end)
         .then((response) => {
-          setSolicitations(
-            response.data.sort(sortClassroomSolicitationResponse),
-          );
+          setSolicitations(response.data.sort(sortSolicitationResponse));
         })
         .catch((error) => {
           console.log(error);

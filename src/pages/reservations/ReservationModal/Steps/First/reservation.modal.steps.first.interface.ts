@@ -3,7 +3,7 @@ import { ReservationResponse } from '../../../../../models/http/responses/reserv
 import { UseFormReturn } from 'react-hook-form';
 import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 import { ReservationSecondForm } from '../Second/reservation.modal.steps.second.interface';
-import { ClassroomSolicitationResponse } from '../../../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../../../models/http/responses/solicitation.response.models';
 
 export interface ReservationModalFirstStepProps {
   isUpdate: boolean;
@@ -12,9 +12,9 @@ export interface ReservationModalFirstStepProps {
   selectedReservation?: ReservationResponse;
   setSelectedDays: (value: string[]) => void;
   setDates: (value: string[]) => void;
-  vinculatedSolicitation?: ClassroomSolicitationResponse;
-  setVinculatedSolicitation: (value?: ClassroomSolicitationResponse) => void;
-  solicitations: ClassroomSolicitationResponse[];
+  vinculatedSolicitation?: SolicitationResponse;
+  setVinculatedSolicitation: (value?: SolicitationResponse) => void;
+  solicitations: SolicitationResponse[];
   loadingSolicitations: boolean;
 }
 export interface ReservationFirstForm {

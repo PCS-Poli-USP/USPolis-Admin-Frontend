@@ -9,7 +9,7 @@ import {
   StackDivider,
   VStack,
 } from '@chakra-ui/react';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import { useEffect, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import SolicitationStackBody from './solicitation.stack.body';
@@ -17,8 +17,8 @@ import { filterString } from '../../../utils/filters';
 import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
 
 interface SolicitationStackProps {
-  solicitations: ClassroomSolicitationResponse[];
-  handleOnClick: (data: ClassroomSolicitationResponse) => void;
+  solicitations: SolicitationResponse[];
+  handleOnClick: (data: SolicitationResponse) => void;
   reset: () => void;
   selectedIndex?: number;
   setSelectedIndex: (index: number) => void;
@@ -35,8 +35,8 @@ function SolicitationStack({
   loading,
   handleShowAll,
 }: SolicitationStackProps) {
-  const [current, setCurrent] = useState<ClassroomSolicitationResponse[]>([]);
-  const [filtered, setFiltered] = useState<ClassroomSolicitationResponse[]>([]);
+  const [current, setCurrent] = useState<SolicitationResponse[]>([]);
+  const [filtered, setFiltered] = useState<SolicitationResponse[]>([]);
   const [buildingSearch, setBuildingSearch] = useState('');
   const [classroomSearch, setClassroomSearch] = useState('');
   const [requesterSearch, setRequesterSearch] = useState('');

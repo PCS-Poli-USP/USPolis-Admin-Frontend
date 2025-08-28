@@ -24,14 +24,14 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import {
   ClassroomSolicitationAprove,
   ClassroomSolicitationDeny,
-} from '../../../models/http/requests/classroomSolicitation.request.models';
+} from '../../../models/http/requests/solicitation.request.models';
 import {
   ClassroomFullResponse,
   ClassroomWithConflictCount,
@@ -45,7 +45,7 @@ import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum
 import TooltipSelect from '../../../components/common/TooltipSelect';
 
 interface SolicitationPanelProps {
-  solicitation?: ClassroomSolicitationResponse;
+  solicitation?: SolicitationResponse;
   loading: boolean;
   approve: (id: number, data: ClassroomSolicitationAprove) => Promise<void>;
   deny: (id: number, data: ClassroomSolicitationDeny) => Promise<void>;

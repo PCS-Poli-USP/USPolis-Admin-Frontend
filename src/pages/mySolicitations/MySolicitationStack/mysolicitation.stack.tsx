@@ -1,13 +1,13 @@
 import { Box, Checkbox, HStack, StackDivider, VStack } from '@chakra-ui/react';
 import Select, { SelectInstance } from 'react-select';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import { useEffect, useRef, useState } from 'react';
 import SolicitationStackBody from './mysolicitation.stack.body';
 import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
 
 interface SolicitationStackProps {
-  solicitations: ClassroomSolicitationResponse[];
-  handleOnClick: (data: ClassroomSolicitationResponse) => void;
+  solicitations: SolicitationResponse[];
+  handleOnClick: (data: SolicitationResponse) => void;
   reset: () => void;
 }
 
@@ -22,8 +22,8 @@ function SolicitationStack({
   reset,
 }: SolicitationStackProps) {
   const [hidden, setHidden] = useState(true);
-  const [current, setCurrent] = useState<ClassroomSolicitationResponse[]>([]);
-  const [filtered, setFiltered] = useState<ClassroomSolicitationResponse[]>([]);
+  const [current, setCurrent] = useState<SolicitationResponse[]>([]);
+  const [filtered, setFiltered] = useState<SolicitationResponse[]>([]);
   const [buildingSearch, setBuildingSearch] = useState('');
   const [classroomSearch, setClassroomSearch] = useState<string>();
   const [classroomOptions, setClassroomOptions] = useState<Option[]>([]);

@@ -18,7 +18,7 @@ import DataTable from '../../components/common/DataTable/dataTable.component';
 import { getMySolicitationsColumns } from './Tables/mySolicitations.table';
 import PageContent from '../../components/common/PageContent';
 import { CloseIcon } from '@chakra-ui/icons';
-import { ClassroomSolicitationResponse } from '../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../models/http/responses/solicitation.response.models';
 import SolicitationStack from './MySolicitationStack/mysolicitation.stack';
 import MySolicitationModal from './MySolicitationModal/mysolicitation.modal';
 import useClassroomsSolicitations from '../../hooks/classroomSolicitations/useClassroomSolicitations';
@@ -56,10 +56,10 @@ const MySolicitations = () => {
 
   const [hiddenAlert, setHiddenAlert] = useState(false);
   const [selectedSolicitation, setSelectedSolicitation] =
-    useState<ClassroomSolicitationResponse>();
+    useState<SolicitationResponse>();
   const { isOpen, onClose, onToggle } = useDisclosure();
 
-  function handleCancelClick(data: ClassroomSolicitationResponse) {
+  function handleCancelClick(data: SolicitationResponse) {
     setSelectedSolicitation(data);
     onOpenDialog();
   }

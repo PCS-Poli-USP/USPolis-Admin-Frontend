@@ -53,7 +53,7 @@ import {
 import { useEffect, useState } from 'react';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { useDateCalendarPicker } from '../../../components/common/DateCalendarPicker';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 
 function ReservationModal(props: ReservationModalProps) {
   const firstForm = useForm<ReservationFirstForm>({
@@ -77,7 +77,7 @@ function ReservationModal(props: ReservationModalProps) {
   const [dates, setDates] = useState<string[]>([]);
   const calendarPicker = useDateCalendarPicker();
   const [vinculatedSolicitation, setVinculatedSolicitation] =
-    useState<ClassroomSolicitationResponse>();
+    useState<SolicitationResponse>();
 
   function getReservationData(): CreateReservation | UpdateReservation {
     const firstData = firstForm.getValues();

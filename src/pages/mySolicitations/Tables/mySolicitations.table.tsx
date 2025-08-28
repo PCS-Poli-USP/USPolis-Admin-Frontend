@@ -1,6 +1,6 @@
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import moment from 'moment';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import {
@@ -12,12 +12,12 @@ import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum
 import { TbCalendarCancel } from 'react-icons/tb';
 
 interface MySolicitationsColumnsProps {
-  handleCancelClick: (data: ClassroomSolicitationResponse) => void;
+  handleCancelClick: (data: SolicitationResponse) => void;
 }
 
 export const getMySolicitationsColumns = (
   props: MySolicitationsColumnsProps,
-): ColumnDef<ClassroomSolicitationResponse>[] => [
+): ColumnDef<SolicitationResponse>[] => [
   {
     id: 'status',
     accessorFn: (val) => SolicitationStatus.translate(val.status),

@@ -7,7 +7,7 @@ import { BuildingResponse } from '../../../../../models/http/responses/building.
 import { ClassroomResponse } from '../../../../../models/http/responses/classroom.response.models';
 import { ReservationResponse } from '../../../../../models/http/responses/reservation.response.models';
 import { DateCalendarPickerReturn } from '../../../../../components/common/DateCalendarPicker/hooks/useDateCalendarPicker';
-import { ClassroomSolicitationResponse } from '../../../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../../../models/http/responses/solicitation.response.models';
 
 export interface ReservationModalSecondStepProps
   extends DateCalendarPickerReturn {
@@ -18,7 +18,7 @@ export interface ReservationModalSecondStepProps
   form: UseFormReturn<ReservationSecondForm, any, ReservationSecondForm>;
   selectedReservation?: ReservationResponse;
   initialDate?: string;
-  vinculatedSolicitation?: ClassroomSolicitationResponse;
+  vinculatedSolicitation?: SolicitationResponse;
 }
 export interface ReservationSecondForm {
   building_id: number;

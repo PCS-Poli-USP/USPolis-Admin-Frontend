@@ -8,14 +8,14 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import moment from 'moment';
 import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
 import { getSolicitationStatusText } from '../../../utils/solicitations/solicitation.formatter';
 
 interface SolicitationStackBodyProps {
-  solicitations: ClassroomSolicitationResponse[];
-  handleOnClick: (data: ClassroomSolicitationResponse) => void;
+  solicitations: SolicitationResponse[];
+  handleOnClick: (data: SolicitationResponse) => void;
   reset: () => void;
   selectedIndex?: number;
   setSelectedIndex: (index: number) => void;
