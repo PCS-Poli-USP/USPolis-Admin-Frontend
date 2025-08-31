@@ -1,9 +1,16 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import { CreateReservation } from './reservation.request.models';
+import {
+  CreateReservation,
+  UpdateReservation,
+} from './reservation.request.models';
 
-interface MeetingBase extends CreateReservation {
+interface MeetingCreateBase extends CreateReservation {
   link?: string;
 }
 
-export interface CreateMeeting extends MeetingBase {}
-export interface UpdateMeeting extends MeetingBase {}
+interface MeetingUpdateBase extends UpdateReservation {
+  link?: string;
+}
+
+export interface CreateMeeting extends MeetingCreateBase {}
+export interface UpdateMeeting extends MeetingUpdateBase {}

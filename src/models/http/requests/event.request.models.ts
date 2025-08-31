@@ -1,13 +1,22 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import { EventType } from '../../../utils/enums/eventTypes.enum';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
-import { CreateReservation } from './reservation.request.models';
+import {
+  CreateReservation,
+  UpdateReservation,
+} from './reservation.request.models';
 
-interface EventBase extends CreateReservation {
+interface EventCreateBase extends CreateReservation {
   type: ReservationType.EVENT;
   event_type: EventType;
   link?: string;
 }
 
-export interface CreateEvent extends EventBase {}
-export interface UpdateEvent extends EventBase {}
+interface EventUpdateBase extends UpdateReservation {
+  type: ReservationType.EVENT;
+  event_type: EventType;
+  link?: string;
+}
+
+export interface CreateEvent extends EventCreateBase {}
+export interface UpdateEvent extends EventUpdateBase {}
