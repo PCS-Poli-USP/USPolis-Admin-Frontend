@@ -3,7 +3,7 @@ import Select, { SelectInstance } from 'react-select';
 import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import { useEffect, useRef, useState } from 'react';
 import SolicitationStackBody from './mysolicitation.stack.body';
-import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 
 interface SolicitationStackProps {
   solicitations: SolicitationResponse[];
@@ -37,8 +37,10 @@ function SolicitationStack({
       );
     if (classroom)
       newCurrent = newCurrent.filter((val) =>
-        val.classroom
-          ? val.classroom.toLowerCase().includes(classroom.toLowerCase())
+        val.reservation.classroom
+          ? val.reservation.classroom
+              .toLowerCase()
+              .includes(classroom.toLowerCase())
           : 'não especificada'.includes(classroom.toLowerCase()),
       );
 
@@ -49,12 +51,12 @@ function SolicitationStack({
     if (hidden) {
       const initial = [
         ...solicitations.filter(
-          (solicitation) => solicitation.status === SolicitationStatus.PENDING,
+          (solicitation) => solicitation.status === ReservationStatus.PENDING,
         ),
       ];
       setCurrent(initial);
       setFiltered((prev) =>
-        prev.filter((val) => val.status === SolicitationStatus.PENDING),
+        prev.filter((val) => val.status === ReservationStatus.PENDING),
       );
     } else {
       setCurrent([...solicitations]);
@@ -79,11 +81,11 @@ function SolicitationStack({
     const options = solicitations
       .filter((val) => val.building === buildingSearch)
       .map((solicitation) => ({
-        value: solicitation.classroom
-          ? solicitation.classroom
+        value: solicitation.reservation.classroom
+          ? solicitation.reservation.classroom
           : 'Não especificada',
-        label: solicitation.classroom
-          ? solicitation.classroom
+        label: solicitation.reservation.classroom
+          ? solicitation.reservation.classroom
           : 'Não especificada',
       }))
       .filter(

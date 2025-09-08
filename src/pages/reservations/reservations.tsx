@@ -14,6 +14,8 @@ import PageContent from '../../components/common/PageContent';
 import useClassroomsSolicitations from '../../hooks/solicitations/useSolicitations';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
+import useSubjects from '../../hooks/useSubjetcts';
+import useClasses from '../../hooks/classes/useClasses';
 
 function Reservations() {
   const {
@@ -29,6 +31,8 @@ function Reservations() {
 
   const { buildings } = useBuildings();
   const { classrooms } = useClassrooms();
+  const { subjects, loading: loadingSubjects } = useSubjects();
+  const { classes, loading: loadingClasses } = useClasses();
   const { loading, reservations, getReservations, deleteReservation } =
     useReservations();
   const {
@@ -123,8 +127,9 @@ function Reservations() {
         buildings={buildings}
         selectedReservation={selectedReservation}
         refetch={() => getReservations()}
-        solicitations={solicitations}
-        loadingSolicitations={loadingSolicitations}
+        subjects={subjects}
+        classes={classes}
+        loading={loadingSubjects || loadingClasses}
       />
       <DataTable
         loading={loading}

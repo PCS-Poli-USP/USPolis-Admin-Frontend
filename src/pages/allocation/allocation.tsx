@@ -368,8 +368,9 @@ function Allocation() {
               onClose={onCloseReservation}
               selectedReservation={reservation}
               initialDate={clickedDate}
-              solicitations={solicitations}
-              loadingSolicitations={loadingSolicitations}
+              subjects={subjects}
+              classes={[]}
+              loading={false}
             />
           )}
 

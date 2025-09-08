@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import useCustomToast from '../../hooks/useCustomToast';
 import {
-  ClassroomConflictCheck,
+  ClassroomConflictParams,
   CreateClassroom,
   UpdateClassroom,
 } from '../../models/http/requests/classroom.request.models';
@@ -55,12 +55,12 @@ const useClassrooms = (initialFetch: boolean = true) => {
       });
   }, [showToast, service]);
 
-  const getClassroomsWithConflictFromTime = useCallback(
-    async (data: ClassroomConflictCheck, building_id: number) => {
+  const getClassroomsWithConflict = useCallback(
+    async (data: ClassroomConflictParams, building_id: number) => {
       setLoading(true);
       let current: ClassroomWithConflictCount[] = [];
       await service
-        .getWithConflictCountFromTime(data, building_id)
+        .getWithConflictCount(data, building_id)
         .then((response) => {
           current = response.data.sort(sortClassroomResponse);
         })
@@ -166,7 +166,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
     classrooms,
     getAllClassrooms,
     getClassrooms,
-    getClassroomsWithConflictFromTime,
+    getClassroomsWithConflict,
     listOneFull,
     createClassroom,
     updateClassroom,

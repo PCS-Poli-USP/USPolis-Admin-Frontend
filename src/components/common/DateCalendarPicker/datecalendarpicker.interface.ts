@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export interface DateCalendarPickerProps {
   selectedDays: string[];
   highlightedDays: string[];
@@ -9,4 +11,6 @@ export interface DateCalendarPickerProps {
   disabled?: boolean;
   helpText?: boolean;
   header?: string;
+  minDate?: moment.Moment;
+  maxDate?: moment.Moment;
 }

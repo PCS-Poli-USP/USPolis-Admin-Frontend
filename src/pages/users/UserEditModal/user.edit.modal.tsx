@@ -20,7 +20,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { CheckBox, MultiSelectInput } from '../../../components/common';
 import useUsers from '../../../hooks/users/useUsers';
 import GroupFormatter from '../../../utils/groups/group.formatter';
-import { SwitchInput } from '../../../components/common/form/SwtichInput';
+import { SwitchInput } from '../../../components/common/form/SwitchInput';
 
 export default function EditUserModal(props: UserEditModalProps) {
   const { updateUser } = useUsers(false);

@@ -1,19 +1,21 @@
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
 import { ClassroomResponse } from '../../../models/http/responses/classroom.response.models';
-import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import { ReservationResponse } from '../../../models/http/responses/reservation.response.models';
 import { ModalProps } from '../../../models/interfaces';
 import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
+import { ClassResponse } from '../../../models/http/responses/class.response.models';
+import { SubjectResponse } from '../../../models/http/responses/subject.response.models';
 
 export interface ReservationModalProps extends ModalProps {
   isUpdate: boolean;
   classrooms: ClassroomResponse[];
   buildings: BuildingResponse[];
   selectedReservation?: ReservationResponse;
-  solicitations: SolicitationResponse[];
-  loadingSolicitations: boolean;
+  subjects: SubjectResponse[];
+  classes: ClassResponse[];
+  loading: boolean;
   refetch: () => void;
   initialDate?: string;
 }

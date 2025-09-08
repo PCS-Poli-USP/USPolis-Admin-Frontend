@@ -1,5 +1,5 @@
 import { ReservationType } from '../../../utils/enums/reservations.enum';
-import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 import {
   ScheduleResponse,
   ScheduleFullResponse,
@@ -15,17 +15,17 @@ export interface ReservationResponseBase {
   building_id: number;
   building_name: string;
 
-  classroom_id: number;
-  classroom_name: string;
+  classroom_id?: number;
+  classroom?: string;
 
   schedule_id: number;
 
   created_by_id: number;
   created_by: string;
+  status: ReservationStatus;
 
   requester?: string;
   solicitation_id?: number;
-  solicitation_status?: SolicitationStatus;
 }
 
 export interface ReservationResponse extends ReservationResponseBase {

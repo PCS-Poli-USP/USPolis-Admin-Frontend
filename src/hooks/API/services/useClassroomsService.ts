@@ -5,7 +5,7 @@ import {
   ClassroomWithConflictCount,
 } from '../../../models/http/responses/classroom.response.models';
 import {
-  ClassroomConflictCheck,
+  ClassroomConflictParams,
   CreateClassroom,
   UpdateClassroom,
 } from '../../../models/http/requests/classroom.request.models';
@@ -47,9 +47,9 @@ const useClassroomsService = () => {
     return axios.put(`/classrooms/${id}`, data);
   };
 
-  const getWithConflictCount = (
-    schedule_id: number,
+  const getWithConflictCountForSchedule = (
     building_id: number,
+    schedule_id: number,
   ): Promise<AxiosResponse<ClassroomWithConflictCount[]>> => {
     const params = new URLSearchParams();
     return axios.get(
@@ -60,14 +60,22 @@ const useClassroomsService = () => {
     );
   };
 
-  const getWithConflictCountFromTime = (
-    data: ClassroomConflictCheck,
+  const getWithConflictCount = (
+    data: ClassroomConflictParams,
     building_id: number,
   ): Promise<AxiosResponse<ClassroomWithConflictCount[]>> => {
     const params = new URLSearchParams();
-    params.append('start_time', data.start_time);
-    params.append('end_time', data.end_time);
-    data.dates.forEach((date) => params.append('dates', date));
+    Object.keys(data).forEach((key) => {
+      if (key == 'dates') return;
+      const value = data[key as keyof ClassroomConflictParams];
+      if (value) {
+        params.append(key, value as string);
+      }
+    });
+    if (data.dates)
+      data.dates.forEach((date) => {
+        params.append('dates', date);
+      });
     return axios.get(`/classrooms/with-conflict-count/${building_id}`, {
       params,
     });
@@ -80,8 +88,8 @@ const useClassroomsService = () => {
     create,
     deleteById,
     update,
+    getWithConflictCountForSchedule,
     getWithConflictCount,
-    getWithConflictCountFromTime,
   };
 };
 

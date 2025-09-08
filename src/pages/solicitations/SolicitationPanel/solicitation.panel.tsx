@@ -40,8 +40,7 @@ import { ReservationType } from '../../../utils/enums/reservations.enum';
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import ClassroomTimeGrid from '../../../components/common/ClassroomTimeGrid/classroom.time.grid';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
-import { ConflictType } from '../../../utils/enums/conflictType.enum';
-import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 import TooltipSelect from '../../../components/common/TooltipSelect';
 
 interface SolicitationPanelProps {
@@ -62,7 +61,7 @@ function SolicitationPanel({
   const { isOpen, onClose, onOpen } = useDisclosure();
   const {
     loading: loadingClassrooms,
-    getClassroomsWithConflictFromTime,
+    getClassroomsWithConflict,
     listOneFull,
   } = useClassrooms(false);
 
@@ -98,25 +97,31 @@ function SolicitationPanel({
 
   const fetchClassrooms = async () => {
     const closed =
-      solicitation && solicitation.status !== SolicitationStatus.PENDING;
+      solicitation && solicitation.status !== ReservationStatus.PENDING;
     if (solicitation && !closed && !isLoadingWithConflict) {
       if (start && end && validateTime(start, end)) {
         try {
           setIsLoadingWithConflict(true);
-          const result = await getClassroomsWithConflictFromTime(
+          const result = await getClassroomsWithConflict(
             {
               start_time: start,
               end_time: end,
-              dates: solicitation.dates,
-              type: ConflictType.UNINTENTIONAL,
+              recurrence: Recurrence.CUSTOM,
+              dates: solicitation.reservation.schedule.occurrences
+                ? solicitation.reservation.schedule.occurrences.map(
+                    (occ) => occ.date,
+                  )
+                : [],
             },
             solicitation?.building_id,
           );
 
           setClassrooms(result);
-          if (solicitation.classroom_id && !classroom) {
+          if (solicitation.reservation.classroom_id && !classroom) {
             setClassroom(
-              result.find((room) => room.id === solicitation.classroom_id),
+              result.find(
+                (room) => room.id === solicitation.reservation.classroom_id,
+              ),
             );
           } else {
             setClassroom(undefined);
@@ -140,13 +145,13 @@ function SolicitationPanel({
 
     let id = -1;
     const closed =
-      solicitation && solicitation.status !== SolicitationStatus.PENDING;
+      solicitation && solicitation.status !== ReservationStatus.PENDING;
     if (solicitation && !closed) {
       if (classroom) {
         id = classroom.id;
       }
-      if (solicitation.classroom_id && !classroom) {
-        id = solicitation.classroom_id;
+      if (solicitation.reservation.classroom_id && !classroom) {
+        id = solicitation.reservation.classroom_id;
       }
     }
 
@@ -165,9 +170,12 @@ function SolicitationPanel({
     setEditingClassroom(false);
     if (solicitation) {
       // Fetch solicitation data
-      if (solicitation.start_time && solicitation.end_time) {
-        setStart(solicitation.start_time);
-        setEnd(solicitation.end_time);
+      if (
+        solicitation.reservation.schedule.start_time &&
+        solicitation.reservation.schedule.end_time
+      ) {
+        setStart(solicitation.reservation.schedule.start_time);
+        setEnd(solicitation.reservation.schedule.end_time);
       } else {
         setStart('');
         setEnd('');
@@ -189,10 +197,12 @@ function SolicitationPanel({
 
   // Need when change between solicitations (the conclit count is not updated)
   useEffect(() => {
-    if (solicitation && solicitation.classroom_id) {
+    if (solicitation && solicitation.reservation.classroom_id) {
       if (classrooms) {
         setClassroom(
-          classrooms.find((val) => val.id === solicitation.classroom_id),
+          classrooms.find(
+            (val) => val.id === solicitation.reservation.classroom_id,
+          ),
         );
       }
     }
@@ -212,8 +222,8 @@ function SolicitationPanel({
           <CardHeader mb={-5}>
             <HStack>
               <Heading size={'lg'}>{`Reserva de Sala - ${
-                solicitation.classroom
-                  ? solicitation.classroom
+                solicitation.reservation.classroom
+                  ? solicitation.reservation.classroom
                   : 'Não especificada'
               }`}</Heading>
               <Spacer />
@@ -228,9 +238,9 @@ function SolicitationPanel({
             </HStack>
             <Heading
               size={'md'}
-              textColor={SolicitationStatus.getColor(solicitation.status)}
+              textColor={ReservationStatus.getColor(solicitation.status)}
             >
-              {SolicitationStatus.translate(solicitation.status)}
+              {ReservationStatus.translate(solicitation.status)}
             </Heading>
           </CardHeader>
 
@@ -240,8 +250,12 @@ function SolicitationPanel({
               onClose={onClose}
               classroom={classroomFull}
               preview={{
-                title: solicitation.reservation_title,
-                dates: solicitation.dates,
+                title: solicitation.reservation.title,
+                dates: solicitation.reservation.schedule.occurrences
+                  ? solicitation.reservation.schedule.occurrences.map(
+                      (occ) => occ.date,
+                    )
+                  : [],
                 start_time: start,
                 end_time: end,
               }}
@@ -260,18 +274,18 @@ function SolicitationPanel({
                   {`${solicitation.user} - ${solicitation.email}`}
                 </Text>
                 <Text pt='2' fontSize='md' fontWeight={'bold'}>
-                  Título: {`${solicitation.reservation_title}`}
+                  Título: {`${solicitation.reservation.title}`}
                 </Text>
               </Box>
               <Box>
                 <Heading size='sm' textTransform='uppercase'>
                   {`Motivo - ${ReservationType.translate(
-                    solicitation.reservation_type,
+                    solicitation.reservation.type,
                   )}`}
                 </Heading>
                 <Text pt='2' fontSize='md'>
-                  {solicitation.reason
-                    ? solicitation.reason
+                  {solicitation.reservation.reason
+                    ? solicitation.reservation.reason
                     : 'Descrição não informada.'}
                 </Text>
               </Box>
@@ -281,24 +295,30 @@ function SolicitationPanel({
                 </Heading>
                 <Text pt='2' fontSize='md'>
                   {`Local: ${solicitation.building}, sala ${
-                    solicitation.classroom
-                      ? solicitation.classroom
+                    solicitation.reservation.schedule.classroom
+                      ? solicitation.reservation.schedule.classroom
                       : 'NÃO ESPECIFICADA'
                   }`}
                   <br />
                   {`Início: ${
-                    solicitation.start_time
-                      ? moment(solicitation.start_time, 'HH:mm').format('HH:mm')
+                    solicitation.reservation.schedule.start_time
+                      ? moment(
+                          solicitation.reservation.schedule.start_time,
+                          'HH:mm',
+                        ).format('HH:mm')
                       : 'NÃO ESPECIFICADO'
                   } - `}
                   {`Fim: ${
-                    solicitation.end_time
-                      ? moment(solicitation.end_time, 'HH:mm').format('HH:mm')
+                    solicitation.reservation.schedule.end_time
+                      ? moment(
+                          solicitation.reservation.schedule.end_time,
+                          'HH:mm',
+                        ).format('HH:mm')
                       : 'NÃO ESPECIFICADO'
                   }`}
                   <br />
-                  {`Dias: ${solicitation.dates
-                    .map((date) => moment(date).format('DD/MM/YYYY'))
+                  {`Dias: ${solicitation.reservation.schedule.occurrences
+                    ?.map((occ) => moment(occ.date).format('DD/MM/YYYY'))
                     .join(', ')}`}
                 </Text>
                 <HStack
@@ -307,13 +327,13 @@ function SolicitationPanel({
                   alignItems={'center'}
                   verticalAlign={'center'}
                 >
-                  {solicitation.classroom_id && (
+                  {solicitation.reservation.classroom_id && (
                     <Button
                       mt={2}
                       size={'sm'}
                       isDisabled={
                         solicitation.required_classroom ||
-                        solicitation.status !== SolicitationStatus.PENDING
+                        solicitation.status !== ReservationStatus.PENDING
                       }
                       fontWeight={'bold'}
                       textColor={editingClassroom ? 'red.500' : 'yellow.500'}
@@ -321,7 +341,9 @@ function SolicitationPanel({
                         if (editingClassroom) {
                           setClassroom(
                             classrooms.find(
-                              (val) => val.id === solicitation.classroom_id,
+                              (val) =>
+                                val.id ===
+                                solicitation.reservation.classroom_id,
                             ),
                           );
                         }
@@ -348,8 +370,9 @@ function SolicitationPanel({
               </Box>
 
               {/* Time inputs if soliciation haven't times */}
-              {solicitation.status === SolicitationStatus.PENDING &&
-              (!solicitation.start_time || !solicitation.end_time) ? (
+              {solicitation.status === ReservationStatus.PENDING &&
+              (!solicitation.reservation.schedule.start_time ||
+                !solicitation.reservation.schedule.end_time) ? (
                 <Box>
                   <Heading size={'sm'} textTransform='uppercase'>
                     Horários
@@ -374,7 +397,10 @@ function SolicitationPanel({
                     <Button
                       isDisabled={!classroom}
                       onClick={() => onOpen()}
-                      hidden={!solicitation.classroom_id || editingClassroom}
+                      hidden={
+                        !solicitation.reservation.classroom_id ||
+                        editingClassroom
+                      }
                     >
                       Visualizar disponibilidade
                     </Button>
@@ -406,8 +432,8 @@ function SolicitationPanel({
               ) : undefined}
 
               {/* Classroom Input If solicitation haven't a classroom */}
-              {(solicitation.status === SolicitationStatus.PENDING &&
-                !solicitation.classroom) ||
+              {(solicitation.status === ReservationStatus.PENDING &&
+                !solicitation.reservation.classroom) ||
               editingClassroom ? (
                 <Box>
                   <Heading mb={2} size={'sm'} textTransform='uppercase'>
@@ -430,8 +456,10 @@ function SolicitationPanel({
                         }
                         placeholder='Selecione uma sala'
                         isDisabled={
-                          (!solicitation.start_time && !start) ||
-                          (!solicitation.end_time && !end) ||
+                          (!solicitation.reservation.schedule.start_time &&
+                            !start) ||
+                          (!solicitation.reservation.schedule.end_time &&
+                            !end) ||
                           loadingClassrooms
                         }
                         options={classrooms.map((val) => ({
@@ -470,10 +498,10 @@ function SolicitationPanel({
               ) : undefined}
 
               {/* If solicitation has a classroom show timegrid button */}
-              {solicitation.status === SolicitationStatus.PENDING &&
-              solicitation.classroom &&
-              solicitation.start_time &&
-              solicitation.end_time ? (
+              {solicitation.status === ReservationStatus.PENDING &&
+              solicitation.reservation.classroom &&
+              solicitation.reservation.schedule.start_time &&
+              solicitation.reservation.schedule.end_time ? (
                 <>
                   <Button
                     onClick={() => onOpen()}
@@ -508,10 +536,11 @@ function SolicitationPanel({
                     rightIcon={<CheckIcon />}
                     colorScheme='green'
                     isDisabled={
-                      solicitation.status !== SolicitationStatus.PENDING ||
-                      (!solicitation.classroom && !classroom) ||
-                      (!solicitation.start_time && !start) ||
-                      (!solicitation.end_time && !end) ||
+                      solicitation.status !== ReservationStatus.PENDING ||
+                      (!solicitation.reservation.classroom && !classroom) ||
+                      (!solicitation.reservation.schedule.start_time &&
+                        !start) ||
+                      (!solicitation.reservation.schedule.end_time && !end) ||
                       !validateTime(start, end)
                     }
                     onClick={() => handleOpenPopover(2)}
@@ -532,25 +561,23 @@ function SolicitationPanel({
                       </Text>
                       <Button
                         onClick={async () => {
-                          if (!solicitation.classroom_id && !classroom) return;
+                          if (
+                            !solicitation.reservation.classroom_id &&
+                            !classroom
+                          )
+                            return;
 
                           await approve(solicitation.id, {
                             classroom_id: classroom
                               ? classroom.id
-                              : solicitation.classroom_id
-                                ? solicitation.classroom_id
+                              : solicitation.reservation.classroom_id
+                                ? solicitation.reservation.classroom_id
                                 : 0,
                             classroom_name: classroom
                               ? classroom.name
-                              : solicitation.classroom
-                                ? solicitation.classroom
+                              : solicitation.reservation.classroom
+                                ? solicitation.reservation.classroom
                                 : 'Sem nome',
-                            start_time: solicitation.start_time
-                              ? solicitation.start_time
-                              : start,
-                            end_time: solicitation.end_time
-                              ? solicitation.end_time
-                              : end,
                           });
                           handleOpenPopover(2);
                         }}
@@ -569,7 +596,7 @@ function SolicitationPanel({
                     rightIcon={<CloseIcon />}
                     colorScheme='red'
                     isDisabled={
-                      solicitation.status !== SolicitationStatus.PENDING
+                      solicitation.status !== ReservationStatus.PENDING
                     }
                     onClick={() => handleOpenPopover(1)}
                   >

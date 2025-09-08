@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import SolicitationStackBody from './solicitation.stack.body';
 import { filterString } from '../../../utils/filters';
-import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 
 interface SolicitationStackProps {
   solicitations: SolicitationResponse[];
@@ -54,8 +54,8 @@ function SolicitationStack({
       );
     if (classroom)
       newCurrent = newCurrent.filter((val) =>
-        val.classroom
-          ? filterString(val.classroom, classroom)
+        val.reservation.classroom
+          ? filterString(val.reservation.classroom, classroom)
           : filterString('não especificada', classroom),
       );
     if (requester)
@@ -156,10 +156,10 @@ function SolicitationStack({
           solicitations={
             buildingSearch || classroomSearch || requesterSearch
               ? filtered.filter(
-                  (val) => showAll || val.status === SolicitationStatus.PENDING,
+                  (val) => showAll || val.status === ReservationStatus.PENDING,
                 )
               : current.filter(
-                  (val) => showAll || val.status === SolicitationStatus.PENDING,
+                  (val) => showAll || val.status === ReservationStatus.PENDING,
                 )
           }
           handleOnClick={handleOnClick}

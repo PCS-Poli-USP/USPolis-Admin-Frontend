@@ -22,7 +22,7 @@ import {
   CheckBox,
   Input,
   SelectInput,
-  Textarea,
+  TextareaInput,
 } from '../../../components/common';
 import { useEffect, useState } from 'react';
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
@@ -72,7 +72,7 @@ function SolicitationModal({
 
   const {
     loading: loadingC,
-    getClassroomsWithConflictFromTime,
+    getClassroomsWithConflict,
     listOneFull,
   } = useClassrooms(false);
 
@@ -130,7 +130,7 @@ function SolicitationModal({
   useEffect(() => {
     const fetchClassrooms = async () => {
       if (building_id && start && end && selectedDays.length > 0) {
-        const result = await getClassroomsWithConflictFromTime(
+        const result = await getClassroomsWithConflict(
           {
             start_time: start,
             end_time: end,
@@ -259,7 +259,7 @@ function SolicitationModal({
                   </VStack>
                 </HStack>
 
-                <Textarea label='Motivo (Opcional)' name='reason' />
+                <TextareaInput label='Motivo (Opcional)' name='reason' />
 
                 <VStack spacing={0} hidden={!isMobile} mt={'10px'} mb={'10px'}>
                   <DateCalendarPicker

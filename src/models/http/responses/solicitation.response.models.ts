@@ -1,11 +1,11 @@
-import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 import { ReservationResponse } from './reservation.response.models';
 
 export interface SolicitationResponse {
   id: number;
   capacity: number;
   required_classroom: boolean;
-  status: SolicitationStatus;
+  status: ReservationStatus;
   closed_by?: string;
   deleted_by?: string;
   created_at: string;

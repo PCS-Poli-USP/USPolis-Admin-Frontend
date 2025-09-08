@@ -19,7 +19,7 @@ import Select from 'react-select';
 import { useEffect, useState } from 'react';
 import useClasses from '../../../../hooks/classes/useClasses';
 import { normalizeString } from '../../../../utils/formatters';
-import useReservations from '../../../../hooks/useReservations';
+import useReservations from '../../../../hooks/reservations/useReservations';
 import ClassroomsCalendarPDF from '../../../../pages/allocation/pdf/ClassroomsCalendarPDF/classrooms.calendar.pdf';
 import { ModalProps } from '../../../../models/interfaces';
 import ClassroomsEmptyCalendarReportPDF from '../../pdf/ClassroomsEmptyCalendarPDF/classrooms.empty.calendar.pdf';
@@ -49,7 +49,6 @@ function HeaderPDFOptions({
   loadingSubjects,
   isMobile,
 }: PDFOptionsProps) {
-
   const [selectedBuilding, setSelectedBuilding] = useState<Option | null>(null);
   const today = new Date();
   const [start, setStart] = useState<string>(getStartOfSemester());
@@ -227,7 +226,9 @@ function HeaderPDFOptions({
             <Box w={'full'}>
               <SubjectReportPopover
                 disabled={loadingC || loadingR || !start || !end}
-                loading={loadingC || loadingR || loadingSubjects || loadingBuildings}
+                loading={
+                  loadingC || loadingR || loadingSubjects || loadingBuildings
+                }
                 subjects={subjects}
                 buildings={buildings}
                 start={start}

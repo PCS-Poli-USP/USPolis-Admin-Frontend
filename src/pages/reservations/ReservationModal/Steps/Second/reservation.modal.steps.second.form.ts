@@ -3,6 +3,7 @@ import { ReservationValidator } from '../../../../../utils/reservations/resevati
 import { ScheduleValidator } from '../../../../../utils/schedules/schedules.validator';
 import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
 import { ReservationSecondForm } from './reservation.modal.steps.second.interface';
+import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 
 export const secondFormFields = {
   building_id: {
@@ -132,17 +133,45 @@ export const secondFormFields = {
         'É preciso escolher um dia da semana',
         function (value) {
           const { recurrence } = this.parent;
+          console.log(recurrence, value);
           if (!recurrence) return true;
           if (
             recurrence === Recurrence.CUSTOM ||
             recurrence === Recurrence.DAILY
           )
-            return value === undefined;
+            return value === undefined || value === null;
           if (value === undefined || value === null) return false;
           return !ScheduleValidator.isInvalidWeekDay(value);
         },
       ),
     defaultValue: '',
+  },
+  labels: {
+    validator: yup
+      .array(yup.string())
+      .notRequired()
+      .test(
+        'is-valid-type',
+        'O tipo de reserva deve ser "Prova"',
+        function (value) {
+          const { type } = this.parent;
+          console.log(type, value);
+          if (!type) return false;
+          if (type !== ReservationType.EXAM) {
+            if (value != undefined) return false;
+          }
+          return true;
+        },
+      )
+      .test(
+        'is-valid-labels',
+        'É necessário especificar os rótulos',
+        function (value) {
+          if (!value) return false;
+          return true;
+        },
+      ),
+    defaultValue: undefined,
   },
 };
 
@@ -156,6 +185,7 @@ export const secondSchema = yup.object<ReservationSecondForm>().shape({
   start_time: secondFormFields.start_time.validator,
   end_time: secondFormFields.end_time.validator,
   month_week: secondFormFields.month_week.validator,
+  labels: secondFormFields.labels.validator,
 });
 
 export const secondDefaultValues: ReservationSecondForm = {
@@ -168,4 +198,6 @@ export const secondDefaultValues: ReservationSecondForm = {
   start_time: secondFormFields.start_time.defaultValue,
   end_time: secondFormFields.end_time.defaultValue,
   month_week: secondFormFields.month_week.defaultValue,
+  labels: secondFormFields.labels.defaultValue,
+  type: undefined,
 };

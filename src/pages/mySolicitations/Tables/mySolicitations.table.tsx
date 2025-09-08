@@ -8,7 +8,7 @@ import {
   FilterNumber,
   FilterString,
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
-import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 import { TbCalendarCancel } from 'react-icons/tb';
 
 interface MySolicitationsColumnsProps {
@@ -20,11 +20,11 @@ export const getMySolicitationsColumns = (
 ): ColumnDef<SolicitationResponse>[] => [
   {
     id: 'status',
-    accessorFn: (val) => SolicitationStatus.translate(val.status),
+    accessorFn: (val) => ReservationStatus.translate(val.status),
     header: 'Situação',
     meta: { isSelectable: true },
     cell: ({ row }) => (
-      <Text>{SolicitationStatus.translate(row.original.status)}</Text>
+      <Text>{ReservationStatus.translate(row.original.status)}</Text>
     ),
   },
   {
@@ -32,9 +32,9 @@ export const getMySolicitationsColumns = (
     header: 'Título',
     maxSize: 250,
     cell: ({ row }) => (
-      <Tooltip label={row.original.reservation_title}>
+      <Tooltip label={row.original.reservation.title}>
         <Text overflowX={'hidden'} textOverflow={'ellipsis'}>
-          {row.original.reservation_title}
+          {row.original.reservation.title}
         </Text>
       </Tooltip>
     ),
@@ -48,14 +48,16 @@ export const getMySolicitationsColumns = (
     header: 'Sala',
     cell: ({ row }) => (
       <Text>
-        {row.original.classroom ? row.original.classroom : 'Não informada'}
+        {row.original.reservation.classroom
+          ? row.original.reservation.classroom
+          : 'Não informada'}
       </Text>
     ),
   },
   {
     accessorFn: (row) => {
-      const start = row.start_time;
-      const end = row.end_time;
+      const start = row.reservation.schedule.start_time;
+      const end = row.reservation.schedule.end_time;
       if (start && end) {
         return `${moment(start, 'HH:mm').format('HH:mm')} ~ ${moment(
           end,
@@ -66,8 +68,8 @@ export const getMySolicitationsColumns = (
     },
     header: 'Horário',
     cell: ({ row }) => {
-      const start = row.original.start_time;
-      const end = row.original.end_time;
+      const start = row.original.reservation.schedule.start_time;
+      const end = row.original.reservation.schedule.end_time;
       return (
         <Text>{`${
           start ? moment(start, 'HH:mm').format('HH:mm') : 'Não informado'
@@ -78,30 +80,37 @@ export const getMySolicitationsColumns = (
   {
     filterFn: FilterArray,
     accessorFn: (row) =>
-      row.dates.map((date) => moment(date).format('DD/MM/YYYY')),
+      row.reservation.schedule.occurrences
+        ? row.reservation.schedule.occurrences.map((occ) =>
+            moment(occ.date).format('DD/MM/YYYY'),
+          )
+        : [],
     accessorKey: 'dates',
     header: 'Datas',
     maxSize: 250,
-    cell: ({ row }) => (
-      <Tooltip
-        label={row.original.dates
-          .map((date) => moment(date).format('DD/MM/YYYY'))
-          .join(', ')}
-      >
-        <Text overflowX={'hidden'} textOverflow={'ellipsis'}>
-          {row.original.dates
-            .map((date) => moment(date).format('DD/MM/YYYY'))
+    cell: ({ row }) => {
+      const occurrences = row.original.reservation.schedule.occurrences || [];
+      return (
+        <Tooltip
+          label={occurrences
+            .map((occ) => moment(occ.date).format('DD/MM/YYYY'))
             .join(', ')}
-        </Text>
-      </Tooltip>
-    ),
+        >
+          <Text overflowX={'hidden'} textOverflow={'ellipsis'}>
+            {occurrences
+              .map((occ) => moment(occ.date).format('DD/MM/YYYY'))
+              .join(', ')}
+          </Text>
+        </Tooltip>
+      );
+    },
   },
   {
-    accessorFn: (row) => ReservationType.translate(row.reservation_type),
+    accessorFn: (row) => ReservationType.translate(row.reservation.type),
     accessorKey: 'reservation_type',
     header: 'Tipo',
     cell: ({ row }) => (
-      <Text>{ReservationType.translate(row.original.reservation_type)}</Text>
+      <Text>{ReservationType.translate(row.original.reservation.type)}</Text>
     ),
   },
   {
@@ -134,7 +143,7 @@ export const getMySolicitationsColumns = (
             variant='ghost'
             aria-label='cancelar-solicitacao'
             icon={<TbCalendarCancel />}
-            disabled={row.original.status !== SolicitationStatus.PENDING}
+            disabled={row.original.status !== ReservationStatus.PENDING}
             onClick={() => {
               props.handleCancelClick(row.original);
             }}

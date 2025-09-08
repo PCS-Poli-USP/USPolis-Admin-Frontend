@@ -3,7 +3,9 @@ import { ReservationResponse } from '../../../../../models/http/responses/reserv
 import { UseFormReturn } from 'react-hook-form';
 import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 import { ReservationSecondForm } from '../Second/reservation.modal.steps.second.interface';
-import { SolicitationResponse } from '../../../../../models/http/responses/solicitation.response.models';
+import { EventType } from '../../../../../utils/enums/eventTypes.enum';
+import { ClassResponse } from '../../../../../models/http/responses/class.response.models';
+import { SubjectResponse } from '../../../../../models/http/responses/subject.response.models';
 
 export interface ReservationModalFirstStepProps {
   isUpdate: boolean;
@@ -12,15 +14,16 @@ export interface ReservationModalFirstStepProps {
   selectedReservation?: ReservationResponse;
   setSelectedDays: (value: string[]) => void;
   setDates: (value: string[]) => void;
-  vinculatedSolicitation?: SolicitationResponse;
-  setVinculatedSolicitation: (value?: SolicitationResponse) => void;
-  solicitations: SolicitationResponse[];
-  loadingSolicitations: boolean;
+  subjects: SubjectResponse[];
+  classes: ClassResponse[];
+  loading: boolean;
 }
 export interface ReservationFirstForm {
   title: string;
   type: ReservationType;
   reason?: string;
-  solicitation_id?: number;
-  has_solicitation: boolean;
+  link?: string;
+  subject_id?: number;
+  class_ids?: number[];
+  event_type?: EventType;
 }

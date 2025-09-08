@@ -31,8 +31,8 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
         <DateCalendar
           disabled={props.disabled}
           readOnly={props.readOnly}
-          minDate={minDate}
-          maxDate={maxDate}
+          minDate={props.minDate ? props.minDate : minDate}
+          maxDate={props.maxDate ? props.maxDate : maxDate}
           views={['day']}
           renderLoading={() => <DayCalendarSkeleton />}
           disableHighlightToday={true}

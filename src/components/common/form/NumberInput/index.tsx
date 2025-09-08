@@ -12,10 +12,6 @@ import { FieldProps } from '../form.interface';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-export type Option = {
-  label: string;
-  value: string | number;
-};
 
 interface NumberInputProps extends FieldProps {
   value?: string | number | undefined;

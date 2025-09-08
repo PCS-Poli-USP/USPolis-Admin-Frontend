@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import moment from 'moment';
-import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 import { getSolicitationStatusText } from '../../../utils/solicitations/solicitation.formatter';
 
 interface SolicitationStackBodyProps {
@@ -33,7 +33,7 @@ function SolicitationStackBody({
       {solicitations.length > 0 ? (
         solicitations.map((solicitation, index) => {
           const selected = selectedIndex === index;
-          const closed = solicitation.status !== SolicitationStatus.PENDING;
+          const closed = solicitation.status !== ReservationStatus.PENDING;
           return (
             <Box
               key={index}
@@ -56,8 +56,8 @@ function SolicitationStackBody({
             >
               <Heading size={'md'}>{`Reserva de Sala`}</Heading>
               <Text>{`Local: ${solicitation.building}, sala ${
-                solicitation.classroom
-                  ? solicitation.classroom
+                solicitation.reservation.classroom
+                  ? solicitation.reservation.classroom
                   : 'não especificada'
               }`}</Text>
               {/* <Spacer /> */}

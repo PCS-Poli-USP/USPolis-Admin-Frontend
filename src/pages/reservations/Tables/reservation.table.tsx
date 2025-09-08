@@ -11,6 +11,7 @@ import {
   FilterString,
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 import { SortPeriodFn } from '../../../utils/tanstackTableHelpers/tableSortingFns';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 
 interface ReservationsColumnsProps {
   handleDuplicateClick: (data: ReservationResponse) => void;
@@ -21,6 +22,21 @@ interface ReservationsColumnsProps {
 export const getReservationsColumns = (
   props: ReservationsColumnsProps,
 ): ColumnDef<ReservationResponse>[] => [
+  {
+    header: 'Situação',
+    meta: {
+      isSelectable: true,
+    },
+    cell: ({ row }) => (
+      <Box>
+        <Text>
+          {row.original.status
+            ? ReservationStatus.translate(row.original.status)
+            : 'Aprovada'}
+        </Text>
+      </Box>
+    ),
+  },
   {
     accessorKey: 'building_name',
     header: 'Prédio',
@@ -44,7 +60,7 @@ export const getReservationsColumns = (
             <Text>
               {row.original.requester
                 ? row.original.requester
-                : row.original.created_by + 'C'}
+                : row.original.created_by}
             </Text>
           }
         >
@@ -75,6 +91,9 @@ export const getReservationsColumns = (
     accessorFn: (row) => ReservationType.translate(row.type),
     accessorKey: 'type',
     header: 'Tipo',
+    meta: {
+      isSelectable: true,
+    },
     cell: ({ row }) => (
       <Box>
         <Text>{ReservationType.translate(row.original.type)}</Text>
@@ -155,6 +174,10 @@ export const getReservationsColumns = (
             aria-label='remover-reserva'
             icon={<BsFillTrashFill />}
             onClick={() => props.handleDeleteClick(row.original)}
+            disabled={
+              row.original.status &&
+              row.original.status === ReservationStatus.DELETED
+            }
           />
         </Tooltip>
       </HStack>

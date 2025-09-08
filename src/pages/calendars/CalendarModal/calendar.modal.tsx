@@ -13,7 +13,11 @@ import {
 } from '@chakra-ui/react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Input } from '../../../components/common';
+import {
+  Input,
+  MultiSelectInput,
+  NumberInput,
+} from '../../../components/common';
 import { useEffect } from 'react';
 import { CalendarForm, CalendarModalProps } from './calendar.modal.interface';
 import { defaultValues, schema } from './calendar.modal.form';
@@ -21,8 +25,6 @@ import {
   CreateCalendar,
   UpdateCalendar,
 } from '../../../models/http/requests/calendar.request.models';
-import { MultiSelect } from '../../../components/common/form/MultiSelect';
-import { NumberInput } from '../../../components/common/form/NumberInput';
 
 function CalendarModal(props: CalendarModalProps) {
   const form = useForm<CalendarForm>({
@@ -115,7 +117,7 @@ function CalendarModal(props: CalendarModalProps) {
                   min={2025}
                   max={2100}
                 />
-                <MultiSelect
+                <MultiSelectInput
                   label={'Categorias de Feriados (Opcional)'}
                   name={'categories_ids'}
                   options={props.categories.map((category) => ({

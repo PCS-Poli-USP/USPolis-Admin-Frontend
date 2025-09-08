@@ -189,7 +189,7 @@ const AllocateSingleScheduleSection = forwardRef<
       setSelecteClassroomOption(undefined);
       setSelectedClassroom(undefined);
       classroomsService
-        .getWithConflictCount(schedule.id, selectedBuilding.id)
+        .getWithConflictCountForSchedule(selectedBuilding.id, schedule.id)
         .then((response) => {
           const validator = new UsersValidator(user);
           setClassrooms(
