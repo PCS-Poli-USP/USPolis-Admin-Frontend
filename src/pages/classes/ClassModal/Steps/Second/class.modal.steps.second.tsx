@@ -2,7 +2,7 @@ import { HStack, Text, VStack } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
 import { Input } from '../../../../../components/common';
 import { ClassModalSecondStepProps } from './class.modal.steps.second.interface';
-import { MultiSelect } from '../../../../../components/common/form/MultiSelect';
+import { MultiSelectInput } from '../../../../../components/common/form/MultiSelectInput';
 
 function ClassModalSecondStep(props: ClassModalSecondStepProps) {
   function handleSelectClassDate(date: string, isStart: boolean) {
@@ -43,7 +43,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
               }
             />
           </HStack>
-          <MultiSelect
+          <MultiSelectInput
             label={'Calendários (Opcional)'}
             name={'calendar_ids'}
             placeholder={'Escolha nenhum ou mais'}

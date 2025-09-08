@@ -17,7 +17,7 @@ export type Option = {
   value: string | number;
 };
 
-interface MultiSelectProps extends FieldProps {
+interface NumberInputProps extends FieldProps {
   value?: string | number | undefined;
   min?: number | undefined;
   max?: number | undefined;
@@ -36,7 +36,7 @@ export function NumberInput({
   mb = undefined,
   mr = undefined,
   ml = undefined,
-}: MultiSelectProps) {
+}: NumberInputProps) {
   const {
     control,
     getValues,

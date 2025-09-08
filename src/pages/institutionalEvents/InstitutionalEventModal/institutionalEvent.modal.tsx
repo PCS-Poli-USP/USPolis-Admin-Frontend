@@ -16,7 +16,7 @@ import {
 import { yupResolver } from '@hookform//resolvers/yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './institutionalEvent.modal.form';
-import { Input, SelectInput, Textarea } from '../../../components/common';
+import { Input, SelectInput, TextareaInput } from '../../../components/common';
 import { useEffect, useState } from 'react';
 import { EventType } from '../../../utils/enums/eventTypes.enum';
 import { CreateInstitutionalEvent } from '../../../models/http/requests/institutionalEvent.request.models';
@@ -134,7 +134,7 @@ function InstitutionalEventModal({
                 <Box w='100%' alignSelf='start'>
                   <Input label='Título' name='title' />
                 </Box>
-                <Textarea label='Descrição' name='description' />
+                <TextareaInput label='Descrição' name='description' />
                 <Box alignSelf='flex-start'>
                   <Checkbox
                     isChecked={fullDayEvent}

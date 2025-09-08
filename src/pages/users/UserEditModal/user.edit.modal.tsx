@@ -17,7 +17,7 @@ import { UserEditModalProps } from './user.edit.modal.interface';
 import { defaultValues, schema } from './user.edit.modal.form';
 import { yupResolver } from '@hookform/resolvers/yup/dist/yup.js';
 import { FormProvider, useForm } from 'react-hook-form';
-import { CheckBox, MultiSelect } from '../../../components/common';
+import { CheckBox, MultiSelectInput } from '../../../components/common';
 import useUsers from '../../../hooks/users/useUsers';
 import GroupFormatter from '../../../utils/groups/group.formatter';
 import { SwitchInput } from '../../../components/common/form/SwtichInput';
@@ -82,7 +82,7 @@ export default function EditUserModal(props: UserEditModalProps) {
                   <Input value={props.user?.email} disabled />
                 </Flex>
                 <CheckBox name='is_admin' text='Administrador' />
-                <MultiSelect
+                <MultiSelectInput
                   label='Prédios'
                   name='building_ids'
                   disabled={true}
@@ -92,7 +92,7 @@ export default function EditUserModal(props: UserEditModalProps) {
                   }))}
                   placeholder='Os prédios dependem dos grupos'
                 />
-                <MultiSelect
+                <MultiSelectInput
                   label='Grupos'
                   name='group_ids'
                   options={props.groups.map((group) => ({

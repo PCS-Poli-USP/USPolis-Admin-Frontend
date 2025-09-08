@@ -6,7 +6,7 @@ import { NumberInput } from '../../../../../components/common/form/NumberInput';
 import { ClassModalFirstStepProps } from './class.modal.steps.first.interface';
 import { useEffect, useState } from 'react';
 import { SubjectResponse } from '../../../../../models/http/responses/subject.response.models';
-import { MultiSelect } from '../../../../../components/common/form/MultiSelect';
+import { MultiSelectInput } from '../../../../../components/common/form/MultiSelectInput';
 
 function ClassModalFirstStep(props: ClassModalFirstStepProps) {
   const [selectedSubject, setSelectedSubject] = useState<
@@ -93,7 +93,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
             />
           </HStack>
 
-          <MultiSelect
+          <MultiSelectInput
             label={'Professores'}
             name={'professors'}
             placeholder={'Escolha os professores'}

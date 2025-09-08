@@ -20,7 +20,7 @@ import { defaultValues, schema } from './subject.modal.form';
 import { Input, SelectInput } from '../../../components/common';
 import { CreateSubject } from '../../../models/http/requests/subject.request.models';
 import useSubjects from '../../../hooks/useSubjetcts';
-import { MultiSelect } from '../../../components/common/form/MultiSelect';
+import { MultiSelectInput } from '../../../components/common/form/MultiSelectInput';
 import ListInput from '../../../components/common/form/ListInput';
 import { ClassValidator } from '../../../utils/classes/classes.validator';
 import { sortProfessors } from '../../../utils/subjects/subjects.sorter';
@@ -94,7 +94,7 @@ export default function SubjectModal(props: SubjectModalProps) {
                 align={'stretch'}
                 w={'full'}
               >
-                <MultiSelect
+                <MultiSelectInput
                   label={'Prédios'}
                   name={'building_ids'}
                   options={props.buildings.map((building) => ({
