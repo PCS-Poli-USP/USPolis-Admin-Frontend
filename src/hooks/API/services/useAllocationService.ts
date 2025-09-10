@@ -1,8 +1,8 @@
 import { AxiosResponse } from 'axios';
 import {
   AllocationReuseResponse,
-  EventResponse,
-  ResourceResponse,
+  AllocationEventResponse,
+  AllocationResourceResponse,
 } from '../../../models/http/responses/allocation.response.models';
 import { JSONResponse } from '../../../models/http/responses/common.response.models';
 import axios from '../../../services/api/axios';
@@ -19,13 +19,15 @@ const useAllocationsService = () => {
   const listEvents = (
     start?: string,
     end?: string,
-  ): Promise<AxiosResponse<Array<EventResponse>>> => {
+  ): Promise<AxiosResponse<Array<AllocationEventResponse>>> => {
     if (start && end)
       return axios.get(`${PREFIX}/events`, { params: { start, end } });
     return axios.get(`${PREFIX}/events`);
   };
 
-  const listResources = (): Promise<AxiosResponse<Array<ResourceResponse>>> => {
+  const listResources = (): Promise<
+    AxiosResponse<Array<AllocationResourceResponse>>
+  > => {
     return axios.get(`${PREFIX}/resources`);
   };
 
