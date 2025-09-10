@@ -133,7 +133,6 @@ export const secondFormFields = {
         'É preciso escolher um dia da semana',
         function (value) {
           const { recurrence } = this.parent;
-          console.log(recurrence, value);
           if (!recurrence) return true;
           if (
             recurrence === Recurrence.CUSTOM ||
@@ -155,7 +154,6 @@ export const secondFormFields = {
         'O tipo de reserva deve ser "Prova"',
         function (value) {
           const { type } = this.parent;
-          console.log(type, value);
           if (!type) return false;
           if (type !== ReservationType.EXAM) {
             if (value != undefined) return false;
@@ -167,6 +165,8 @@ export const secondFormFields = {
         'is-valid-labels',
         'É necessário especificar os rótulos',
         function (value) {
+          const { type } = this.parent;
+          if (type != ReservationType.EXAM) return true;
           if (!value) return false;
           return true;
         },

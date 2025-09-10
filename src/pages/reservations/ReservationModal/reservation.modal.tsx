@@ -67,6 +67,8 @@ import {
 } from '../../../models/http/requests/meeting.request.models';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import useExams from '../../../hooks/exams/useExams';
+import useEvents from '../../../hooks/events/useEvents';
+import useMeetings from '../../../hooks/meetings/useMeetings';
 
 function ReservationModal(props: ReservationModalProps) {
   const firstForm = useForm<ReservationFirstForm>({
@@ -84,9 +86,10 @@ function ReservationModal(props: ReservationModalProps) {
     false,
   ]);
 
-  const { loading, createReservation, updateReservation } =
-    useReservations(false);
+  const { loading, updateReservation } = useReservations(false);
   const { createExam } = useExams();
+  const { createEvent } = useEvents();
+  const { createMeeting } = useMeetings();
 
   const [dates, setDates] = useState<string[]>([]);
   const calendarPicker = useDateCalendarPicker();
@@ -223,11 +226,14 @@ function ReservationModal(props: ReservationModalProps) {
         await createExam(data as CreateExam);
       }
       if (data.type === ReservationType.EVENT) {
-        await createReservation(data as CreateReservation);
+        await createEvent(data as CreateEvent);
+      }
+      if (data.type === ReservationType.MEETING) {
+        await createMeeting(data as CreateMeeting);
       }
     }
     props.refetch();
-    // handleCloseModal();
+    handleCloseModal();
   }
 
   useEffect(() => {

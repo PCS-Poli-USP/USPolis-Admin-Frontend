@@ -123,7 +123,9 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   }, [datesForTimeGrid, start, end]);
 
   useEffect(() => {
-    setValue('labels', Array.from(labelMap.values()));
+    if (reservation_type === ReservationType.EXAM) {
+      setValue('labels', Array.from(labelMap.values()));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [labelMap]);
 

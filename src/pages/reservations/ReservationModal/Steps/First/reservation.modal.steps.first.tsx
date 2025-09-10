@@ -9,6 +9,8 @@ import {
 import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 import { ReservationModalFirstStepProps } from './reservation.modal.steps.first.interface';
 import { classNumberFromClassCode } from '../../../../../utils/classes/classes.formatter';
+import { LinkIcon } from '@chakra-ui/icons';
+import { EventType } from '../../../../../utils/enums/eventTypes.enum';
 
 function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
   const { watch, resetField } = props.form;
@@ -108,6 +110,27 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                 }
               />
             </Flex>
+          )}
+
+          {reservationType && reservationType === ReservationType.EVENT && (
+            <SelectInput
+              label='Tipo de Evento'
+              name='event_type'
+              options={EventType.values().map((value) => ({
+                value: value,
+                label: EventType.translate(value),
+              }))}
+              mt={'10px'}
+            />
+          )}
+
+          {reservationType && reservationType !== ReservationType.EXAM && (
+            <Input
+              label='Link (Opcional)'
+              name='link'
+              icon={<LinkIcon />}
+              mt={'10px'}
+            />
           )}
         </form>
       </FormProvider>

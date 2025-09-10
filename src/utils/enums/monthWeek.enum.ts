@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 export enum MonthWeek {
   FIRST = 1,
   SECOND = 2,

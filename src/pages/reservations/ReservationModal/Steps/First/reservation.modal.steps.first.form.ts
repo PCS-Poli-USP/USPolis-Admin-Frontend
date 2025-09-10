@@ -2,6 +2,7 @@ import * as yup from 'yup';
 import { ReservationValidator } from '../../../../../utils/reservations/resevations.validator';
 import { ReservationFirstForm } from './reservation.modal.steps.first.interface';
 import { ReservationType } from '../../../../../utils/enums/reservations.enum';
+import { normalizeURL } from '../../../../../utils/formatters';
 
 export const formFields = {
   title: {
@@ -41,6 +42,7 @@ export const formFields = {
     validator: yup
       .string()
       .nullable()
+      .transform((curr, orig) => (orig === '' ? undefined : normalizeURL(curr))) // Yup treats notRequired as ''
       .test(
         'have-valid-reservation-type',
         `O tipo de reserva deve ser "Reunião" ou "Evento"`,
@@ -54,9 +56,11 @@ export const formFields = {
           return true;
         },
       )
-      .test('is-valid-link', `Campo inválido`, function (value) {
+      .test('is-valid-link', `URL inválida`, function (value) {
+        const { type } = this.parent;
+        if (type == ReservationType.EXAM) return true;
         if (!value) return true;
-        return !ReservationValidator.isEmptyString(value);
+        return ReservationValidator.isValidURL(value);
       }),
     defaultValue: undefined,
   },
@@ -83,6 +87,8 @@ export const formFields = {
         'is-valid-link',
         `É necessário escolher uma disciplina`,
         function (value) {
+          const { type } = this.parent;
+          if (type != ReservationType.EXAM) return true;
           if (!value) return false;
           return !ReservationValidator.isInvalidId(value);
         },
@@ -95,7 +101,7 @@ export const formFields = {
       .notRequired()
       .test(
         'have-valid-reservation-type',
-        `O tipo de reserva deve ser "Reunião" ou "Evento"`,
+        `O tipo de reserva deve ser "Prova"`,
         function (value) {
           const { type } = this.parent;
           if (!type) return false;
@@ -121,7 +127,7 @@ export const formFields = {
       .nullable()
       .test(
         'have-valid-reservation-type',
-        `O tipo de reserva deve ser "Reunião" ou "Evento"`,
+        `O tipo de reserva deve ser "Evento"`,
         function (value) {
           const { type } = this.parent;
           if (!type) return false;
@@ -132,10 +138,16 @@ export const formFields = {
           return true;
         },
       )
-      .test('is-valid-link', `Campo inválido`, function (value) {
-        if (!value) return true;
-        return !ReservationValidator.isEmptyString(value);
-      }),
+      .test(
+        'is-valid-link',
+        `É necessário escolher um tipo!`,
+        function (value) {
+          const { type } = this.parent;
+          if (type !== ReservationType.EVENT) return true;
+          if (!value) return false;
+          return !ReservationValidator.isEmptyString(value);
+        },
+      ),
     defaultValue: undefined,
   },
 };

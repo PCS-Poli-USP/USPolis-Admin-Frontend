@@ -3,6 +3,8 @@ import {
   Input as ChakraInput,
   FormControl,
   FormErrorMessage,
+  InputGroup,
+  InputLeftElement,
 } from '@chakra-ui/react';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -14,6 +16,7 @@ interface InputProps extends FieldProps {
   min?: string | number | undefined;
   max?: string | number | undefined;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  icon?: React.ReactNode;
 }
 
 export function Input({
@@ -32,6 +35,7 @@ export function Input({
   mr = undefined,
   ml = undefined,
   onChange = undefined,
+  icon = undefined,
 }: InputProps) {
   const {
     control,
@@ -54,22 +58,27 @@ export function Input({
         name={name}
         control={control}
         render={({ field }) => (
-          <ChakraInput
-            {...field}
-            id={name}
-            type={type}
-            disabled={disabled}
-            placeholder={placeholder}
-            value={field.value || field.value === 0 ? field.value : ''}
-            hidden={hidden}
-            min={min}
-            max={max}
-            onChange={(event) => {
-              if (max && event.target.value.length > Number(max)) return;
-              if (onChange) onChange(event);
-              field.onChange(event.target.value);
-            }}
-          />
+          <InputGroup>
+            {icon && (
+              <InputLeftElement pointerEvents='none'>{icon}</InputLeftElement>
+            )}
+            <ChakraInput
+              {...field}
+              id={name}
+              type={type}
+              disabled={disabled}
+              placeholder={placeholder}
+              value={field.value || field.value === 0 ? field.value : ''}
+              hidden={hidden}
+              min={min}
+              max={max}
+              onChange={(event) => {
+                if (max && event.target.value.length > Number(max)) return;
+                if (onChange) onChange(event);
+                field.onChange(event.target.value);
+              }}
+            />
+          </InputGroup>
         )}
       />
       {/* <ChakraInput
