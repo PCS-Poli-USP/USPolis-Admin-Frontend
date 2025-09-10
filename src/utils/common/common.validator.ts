@@ -57,4 +57,15 @@ export default class CommonValidator {
   static isInvalidAudiovisualType(value: string) {
     return !AudiovisualType.values().includes(value as AudiovisualType);
   }
+
+  static isValidURL(value: string) {
+    try {
+      const url = new URL(value);
+      if (url.protocol !== 'https:') return false;
+      const regex = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}?$/;
+      return regex.test(url.hostname);
+    } catch (_) {
+      return false;
+    }
+  }
 }

@@ -30,3 +30,9 @@ export function normalizeString(value: string) {
     .toLowerCase()
     .replace(' ', '_');
 }
+
+export function normalizeURL(url: string) {
+  if (typeof url !== 'string') return '';
+  if (!url.startsWith('https://')) return `https://${url}`;
+  return url;
+}
