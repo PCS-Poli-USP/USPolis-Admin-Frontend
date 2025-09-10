@@ -24,7 +24,7 @@ export interface RecurrenceRule {
 }
 
 // See https://fullcalendar.io/docs/event-parsing
-export interface EventResponse {
+export interface AllocationEventResponse {
   id: string;
   title: string;
   start: string; // Must be YYYY-MM-DDTHH:mm:ss
@@ -41,7 +41,7 @@ export interface EventResponse {
 }
 
 // See https://fullcalendar.io/docs/resource-data
-export interface ResourceResponse {
+export interface AllocationResourceResponse {
   id: string;
   parentId?: string;
   title: string;
