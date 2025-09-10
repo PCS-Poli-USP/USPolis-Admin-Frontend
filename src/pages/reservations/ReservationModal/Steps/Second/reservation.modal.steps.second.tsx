@@ -412,14 +412,17 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     dayClick={(day) => {
                       let newDates: string[] = [];
                       props.dayClick(day);
+                      // Remove selected day
                       if (props.selectedDays.includes(day)) {
                         newDates = props.selectedDays
                           .filter((val) => val !== day)
                           .sort(sortDates);
                         setLabelMap((prev) => {
                           const newMap = new Map(prev);
+                          newMap.delete(day);
                           return newMap;
                         });
+                        // Add selected day
                       } else {
                         newDates = [...props.selectedDays, day].sort(sortDates);
                       }

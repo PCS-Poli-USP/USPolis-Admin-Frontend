@@ -116,16 +116,17 @@ function FindExams() {
                 <>
                   {exams.length > 0 && (
                     <ExamClassAccordion
-                      exams={
-                        classOption
-                          ? exams.filter(
-                              (exam) =>
-                                exam.classes.find(
-                                  (cls) => cls.id === classOption.value,
-                                ) !== undefined,
-                            )
-                          : exams
-                      }
+                      exams={exams.filter((exam) => {
+                        if (classOption) {
+                          return (
+                            exam.subject_id == subjectOption.value &&
+                            exam.classes
+                              .map((cls) => cls.id)
+                              .includes(classOption.value)
+                          );
+                        }
+                        return exam.subject_id == subjectOption.value;
+                      })}
                       loading={loading}
                     />
                   )}
