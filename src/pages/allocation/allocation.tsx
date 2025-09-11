@@ -97,11 +97,7 @@ function Allocation() {
     classrooms,
     getAllClassrooms,
   } = useClassrooms(false);
-  const {
-    loading: loadingSolicitations,
-    solicitations,
-    getPendingBuildingSolicitations,
-  } = useClassroomsSolicitations(false);
+  const { getPendingBuildingSolicitations } = useClassroomsSolicitations(false);
 
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
   const [filteredResources, setFilteredResources] =
