@@ -35,6 +35,7 @@ export interface AllocationEventResponse {
   classroom_capacity?: number;
   rrule?: RecurrenceRule; // Used when is unallocated
   allDay: boolean;
+  backgroundColor?: string;
 
   resourceId: string;
   extendedProps: EventExtendedProps;

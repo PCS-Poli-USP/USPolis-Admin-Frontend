@@ -35,11 +35,7 @@ function Reservations() {
   const { classes, loading: loadingClasses } = useClasses();
   const { loading, reservations, getReservations, deleteReservation } =
     useReservations();
-  const {
-    loading: loadingSolicitations,
-    solicitations,
-    getPendingBuildingSolicitations,
-  } = useClassroomsSolicitations(false);
+  const { getPendingBuildingSolicitations } = useClassroomsSolicitations(false);
   const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
 
   const [selectedReservation, setSelectedReservation] =
