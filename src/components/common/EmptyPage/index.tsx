@@ -12,6 +12,7 @@ import Joyride, { CallBackProps, EVENTS, STATUS } from 'react-joyride';
 import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { FeatureTourGuideStepData } from '../../../context/FeatureGuideContext/steps';
 import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
+import { menuContext } from '../../../context/MenuContext';
 
 const drawerWidth = 300;
 
@@ -71,15 +72,15 @@ export default function EmptyPage() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { state, setState, triggerControl, pathBeforeGuide } =
     useFeatureGuideContext();
-  const [open, setOpen] = React.useState(false);
+  const { isOpen, onOpen, onClose } = React.useContext(menuContext);
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    onOpen();
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    onClose();
   };
 
   const handleGuidePreviousClick = (
@@ -183,9 +184,9 @@ export default function EmptyPage() {
 
   return (
     <Box sx={{ display: 'flex' }} width={'calc(100vw - 20px)'} height={'100vh'}>
-      <AppBar position='fixed' open={open} isMobile={isMobile}>
+      <AppBar position='fixed' open={isOpen} isMobile={isMobile}>
         <DrawerNavBar
-          open={open}
+          open={isOpen}
           handleDrawerOpen={handleDrawerOpen}
           handleDrawerClose={handleDrawerClose}
           isMobile={isMobile}
@@ -203,7 +204,7 @@ export default function EmptyPage() {
         }}
         variant='persistent'
         anchor='left'
-        open={open}
+        open={isOpen}
       >
         <DrawerHeader>
           <IconButton
@@ -266,7 +267,7 @@ export default function EmptyPage() {
         }}
       />
       <Box width={isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`}>
-        <Main open={open} isMobile={isMobile}>
+        <Main open={isOpen} isMobile={isMobile}>
           <Outlet />
         </Main>
       </Box>

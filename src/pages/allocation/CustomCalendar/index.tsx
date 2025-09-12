@@ -33,6 +33,7 @@ const viewOptions: ViewOption[] = [
   { value: 'timeGridWeek', label: 'Geral' },
 ];
 interface CustomCalendarProps {
+  calendarRef: React.RefObject<FullCalendar>;
   events: Event[];
   resources: Resource[];
   hasBuildingFilter: boolean;
@@ -51,6 +52,7 @@ interface CustomCalendarProps {
 }
 
 function CustomCalendar({
+  calendarRef,
   events,
   resources,
   hasBuildingFilter,
@@ -69,7 +71,7 @@ function CustomCalendar({
 }: CustomCalendarProps) {
   const { registerControlFn, state } = useFeatureGuideContext();
 
-  const calendarRef = useRef<FullCalendar>(null!);
+  // const calendarRef = useRef<FullCalendar>(null!);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
   const [resourcesExpanded, setResourcesExpanded] = useState(hasBuildingFilter);
   const [isGuideMode, setIsGuideMode] = useState(false);
@@ -157,6 +159,7 @@ function CustomCalendar({
       setCalendarView(viewOptions[0].value);
       setView(viewOptions[0]);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   return (

@@ -1,3 +1,4 @@
+import { AllocationEventType } from '../../../utils/enums/allocation.event.type.enum';
 import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
@@ -36,7 +37,7 @@ export interface AllocationEventResponse {
   rrule?: RecurrenceRule; // Used when is unallocated
   allDay: boolean;
   backgroundColor?: string;
-
+  type: AllocationEventType;
   resourceId: string;
   extendedProps: EventExtendedProps;
 }

@@ -1,5 +1,5 @@
 import { extendTheme } from '@chakra-ui/react';
-import { createTheme, Shadows } from '@mui/material';
+import { createTheme, Shadows } from '@mui/material/styles';
 
 const chakraTheme = extendTheme({
   colors: {
