@@ -1,5 +1,4 @@
 import {
-  Button,
   Checkbox,
   Collapse,
   Flex,
@@ -314,8 +313,6 @@ function Allocation() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenMenu, isOpenDrawer]);
-
-  console.log(showEventTypeMap);
 
   return (
     <PageContent>
