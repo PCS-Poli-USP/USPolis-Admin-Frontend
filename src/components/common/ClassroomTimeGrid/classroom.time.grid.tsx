@@ -10,6 +10,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Skeleton,
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
@@ -34,6 +35,7 @@ function ClassroomTimeGrid({
   classroom,
   preview,
   scheduleDetails,
+  loading = false,
 }: ClassroomTimeGridProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const [showWeekends, setShowWeekends] = useState(false);
@@ -42,17 +44,17 @@ function ClassroomTimeGrid({
     onClose();
   }
   const year = new Date().getFullYear(); // Obtém o ano atual
-  const events: ClassroomEvent[] = preview.dates.map((date) => ({
+  const events: ClassroomEvent[] = preview.dates.map((date, idx) => ({
     title: classroom ? classroom.name : '',
     date,
-    start: `${date}T${preview.start_time}`,
-    end: `${date}T${preview.end_time}`,
+    start: `${date}T${preview.start_times[idx]}`,
+    end: `${date}T${preview.end_times[idx]}`,
     backgroundColor: '#ff7300',
     extendedProps: {
       name: preview.title,
       type: 'Reserva',
-      start: preview.start_time,
-      end: preview.end_time,
+      start: preview.start_times[idx],
+      end: preview.end_times[idx],
     },
   }));
   if (classroom) {
@@ -136,11 +138,13 @@ function ClassroomTimeGrid({
                   <b>Agenda:</b> {formatScheduleDetails()}
                 </Text>
                 <Text>
-                  <b>Horário:</b>{' '}
+                  <b>Horário da Agenda:</b>{' '}
                   {preview.start_time ? preview.start_time : 'Não informado'}{' '}
                   até {preview.end_time ? preview.end_time : 'Não informado'}
                 </Text>
-                <Text>Datas solicitadas no rodapé do calendário</Text>
+                <Text fontWeight={'bold'}>
+                  Datas e horários solicitados no rodapé do calendário
+                </Text>
               </Box>
               <Button
                 mb={'10px'}
@@ -150,40 +154,45 @@ function ClassroomTimeGrid({
                 {showWeekends ? 'Ocultar' : 'Exibir'} finais de semana
               </Button>
             </Flex>
-            <FullCalendar
-              plugins={[timeGridPlugin]}
-              initialView='timeGridWeek'
-              initialDate={
-                preview.dates.length > 0 ? preview.dates[0] : undefined
-              }
-              locale={'pt-br'}
-              height={'auto'}
-              firstDay={1}
-              slotMinTime='07:00'
-              views={{
-                timeGridWeek: {
-                  slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
-                  eventMaxStack: 1,
-                  titleFormat: isMobile
-                    ? { year: 'numeric', month: 'short' }
-                    : { year: 'numeric', month: 'long' },
-                },
-              }}
-              eventColor='#408080'
-              eventContent={ClassroomTimeGridEventContent}
-              displayEventTime={false}
-              displayEventEnd={false}
-              allDaySlot={false}
-              validRange={{ start: `${year}-01-01`, end: `${year}-12-31` }} // Limita ao ano atual
-              events={events}
-              hiddenDays={showWeekends ? [1, 2, 3, 4, 5] : [0, 6]}
-            />
+            <Skeleton isLoaded={!loading} w={'full'} h={'full'}>
+              <FullCalendar
+                plugins={[timeGridPlugin]}
+                initialView='timeGridWeek'
+                initialDate={
+                  preview.dates.length > 0 ? preview.dates[0] : undefined
+                }
+                locale={'pt-br'}
+                height={'auto'}
+                firstDay={1}
+                slotMinTime='07:00'
+                views={{
+                  timeGridWeek: {
+                    slotLabelFormat: { hour: '2-digit', minute: '2-digit' },
+                    eventMaxStack: 1,
+                    titleFormat: isMobile
+                      ? { year: 'numeric', month: 'short' }
+                      : { year: 'numeric', month: 'long' },
+                  },
+                }}
+                eventColor='#408080'
+                eventContent={ClassroomTimeGridEventContent}
+                displayEventTime={false}
+                displayEventEnd={false}
+                allDaySlot={false}
+                validRange={{ start: `${year}-01-01`, end: `${year}-12-31` }} // Limita ao ano atual
+                events={events}
+                hiddenDays={showWeekends ? [1, 2, 3, 4, 5] : [0, 6]}
+              />
+            </Skeleton>
             <HStack>
               <Text fontWeight={'bold'}>Datas: </Text>
               <Text>
                 {preview.dates.length > 0
                   ? preview.dates
-                      .map((date) => moment(date).format('DD/MM/YYYY'))
+                      .map(
+                        (date, idx) =>
+                          `${moment(date).format('DD/MM/YYYY')} (${preview.start_times[idx]} - ${preview.end_times[idx]})`,
+                      )
                       .join(', ')
                   : 'Nenhuma data, verifique a agenda'}
               </Text>

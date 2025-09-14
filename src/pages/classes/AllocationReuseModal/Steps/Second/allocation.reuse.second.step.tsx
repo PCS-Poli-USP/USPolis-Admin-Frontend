@@ -6,7 +6,6 @@ import {
   Skeleton,
   Text,
 } from '@chakra-ui/react';
-import Select from 'react-select';
 import { BuildingResponse } from '../../../../../models/http/responses/building.response.models';
 import { useEffect, useState } from 'react';
 import { AllocationReuseResponse } from '../../../../../models/http/responses/allocation.response.models';
@@ -16,6 +15,7 @@ import {
   SubjectWithClasses,
 } from '../../allocation.reuse.modal';
 import AllocationReuseSubjectOptions from './allocation.reuse.subject.options';
+import TooltipSelect from '../../../../../components/common/TooltipSelect';
 
 interface AllocationReuseModalSecondStepProps {
   buildings: BuildingResponse[];
@@ -122,7 +122,7 @@ function AllocationReuseModalSecondStep({
     <Flex direction={'column'} gap={'10px'} w={'100%'}>
       <div hidden={buildings.length === 1}>
         <Text fontWeight={'bold'}>Prédio: </Text>
-        <Select
+        <TooltipSelect
           placeholder={'Selecione um prédio para buscar uma alocação'}
           isMulti={false}
           value={
@@ -147,7 +147,7 @@ function AllocationReuseModalSecondStep({
         />
       </div>
       <Text fontWeight={'bold'}>Ano da alocação a ser reaproveitada: </Text>
-      <Select
+      <TooltipSelect
         placeholder={'Selecione um ano de alocação'}
         isMulti={false}
         isClearable={false}
@@ -157,7 +157,9 @@ function AllocationReuseModalSecondStep({
           value: year,
         }))}
         onChange={(option) => {
-          setAllocationYear(option ? option.value : currentYear - 1);
+          setAllocationYear(
+            option ? (option.value as number) : currentYear - 1,
+          );
         }}
       />
       <Heading size={'md'}>

@@ -66,7 +66,7 @@ function SubjectReportPopover({
           fontWeight={'bold'}
           variant={'outline'}
           colorScheme={'blue'}
-          color={'uspolis.blue'}
+          color={'uspolis.text'}
           leftIcon={<DownloadIcon />}
         >
           Alocação de disciplinas escolhidas

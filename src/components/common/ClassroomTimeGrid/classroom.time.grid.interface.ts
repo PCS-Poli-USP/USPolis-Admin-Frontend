@@ -14,6 +14,7 @@ export interface ClassroomTimeGridProps extends ModalProps {
   classroom?: ClassroomFullResponse;
   preview: ClassroomPreview;
   scheduleDetails: ScheduleDetails;
+  loading?: boolean;
 }
 
 export interface ClassroomEventExtendedProps {
@@ -25,9 +26,11 @@ export interface ClassroomEventExtendedProps {
 
 export interface ClassroomPreview {
   title: string;
-  dates: string[];
   start_time: string;
   end_time: string;
+  dates: string[];
+  start_times: string[];
+  end_times: string[];
 }
 
 export interface ClassroomEvent {

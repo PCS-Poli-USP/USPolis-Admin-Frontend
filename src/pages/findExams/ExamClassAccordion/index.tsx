@@ -39,7 +39,7 @@ function ExamClassAccordion({ exams }: ExamClassAccordionProps) {
                     >
                       {examData.classes.length > 0
                         ? `Turmas: ${examData.classes.map((cls) => classNumberFromClassCode(cls.code)).join(', ')}`
-                        : 'Provas gerais da disciplina'}
+                        : 'Provas da disciplina'}
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>

@@ -181,8 +181,8 @@ function InstitutionalEventModal({
                   <SelectInput
                     label='Categoria'
                     name='category'
-                    options={Object.keys(EventType).map((opt) => ({
-                      label: EventType.translate(opt as EventType),
+                    options={EventType.values().map((opt) => ({
+                      label: EventType.translate(opt),
                       value: opt,
                     }))}
                   />

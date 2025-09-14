@@ -216,6 +216,7 @@ function SolicitationPanel({
       border={'2px solid lightgray'}
       p={'4px'}
       zIndex={2}
+      backgroundColor={'uspolis.white'}
     >
       {solicitation ? (
         <>
@@ -658,10 +659,10 @@ function SolicitationPanel({
           mt={'50px'}
           gap={'10px'}
         >
-          <Heading color={'uspolis.blue'}>
+          <Heading color={'uspolis.text'}>
             Nenhuma solicitação selecionada
           </Heading>
-          <Text color={'uspolis.blue'} fontSize={'xl'}>
+          <Text color={'uspolis.text'} fontSize={'xl'}>
             Selecione uma solicitação na pilha ao lado para visualizar os
             detalhes.
           </Text>

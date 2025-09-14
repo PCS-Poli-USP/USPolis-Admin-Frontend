@@ -62,7 +62,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(0, 1),
-  background: '#408080',
+  background: theme.palette.mode === 'dark' ? '#1a535c' : '#408080',
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: 'flex-end',
@@ -236,10 +236,10 @@ export default function EmptyPage() {
         }}
         styles={{
           options: {
-            arrowColor: '#408080',
-            primaryColor: '#408080',
+            arrowColor: 'uspolis.blue',
+            primaryColor: 'uspolis.blue',
             textColor: '#fff',
-            backgroundColor: '#408080',
+            backgroundColor: 'uspolis.blue',
             beaconSize: 36,
             overlayColor: 'rgba(0, 0, 0, 0.5)',
             spotlightShadow: '0 0 15px rgba(0, 0, 0, 0.5)',

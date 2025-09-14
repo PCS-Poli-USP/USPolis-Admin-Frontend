@@ -1,8 +1,32 @@
 .fc .fc-button-primary {
-  background-color: #408080;
+  background-color: var(--chakra-colors-blue-500);
   border: none;
   font-weight: bold;
 }
 .fc .fc-button-primary:hover {
   opacity: 0.4;
+}
+
+/* link "+3 more" */
+.fc-timegrid-more-link {
+  color: var(--chakra-colors-blue-500); /* seu uspolis.blue */
+  font-weight: bold;
+}
+
+.fc-col-header {
+  color: var(--chakra-colors-uspolis-blue);
+}
+
+/* corpo do popover */
+.fc-popover-body,
+.fc-popover-header {
+  background: var(--chakra-colors-uspolis-white);
+  color: var(--chakra-colors-uspolis-white);
+}
+
+/* eventos dentro do popover */
+.fc-more-popover .fc-event,
+.fc-timegrid-more-popover .fc-event {
+  padding: 4px 8px;
+  border-radius: 4px;
 }

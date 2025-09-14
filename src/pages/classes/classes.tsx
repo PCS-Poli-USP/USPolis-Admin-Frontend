@@ -341,7 +341,6 @@ function Classes() {
               <MenuItem
                 as={Button}
                 colorScheme='blue'
-                color={'uspolis.blue'}
                 justifyContent={'flex-start'}
                 leftIcon={<LuTimer />}
                 mb={'5px'}

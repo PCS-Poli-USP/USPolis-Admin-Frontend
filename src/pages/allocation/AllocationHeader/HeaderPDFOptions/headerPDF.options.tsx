@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import ClassesPDF from '../../pdf/ClassesPDF/classesPDF';
-import Select from 'react-select';
 import { useEffect, useState } from 'react';
 import useClasses from '../../../../hooks/classes/useClasses';
 import { normalizeString } from '../../../../utils/formatters';
@@ -27,11 +26,10 @@ import { DownloadIcon } from '@chakra-ui/icons';
 import { SubjectResponse } from '../../../../models/http/responses/subject.response.models';
 import SubjectReportPopover from './SubjectReportPopover';
 import { BuildingResponse } from '../../../../models/http/responses/building.response.models';
+import TooltipSelect, {
+  Option,
+} from '../../../../components/common/TooltipSelect';
 
-type Option = {
-  value: string;
-  label: string;
-};
 interface PDFOptionsProps extends ModalProps {
   buildings: BuildingResponse[];
   loadingBuildings: boolean;
@@ -154,14 +152,14 @@ function HeaderPDFOptions({
 
               <Flex direction={'column'} w={'100%'}>
                 <Text fontWeight={'bold'}>Prédio: </Text>
-                <Select
+                <TooltipSelect
                   placeholder={'Selecione um prédio'}
                   options={buildings.map((building) => ({
                     value: building.name,
                     label: building.name,
                   }))}
                   isClearable={true}
-                  onChange={(option: Option | null) => {
+                  onChange={(option) => {
                     setSelectedBuilding(option);
                   }}
                 />
@@ -197,7 +195,7 @@ function HeaderPDFOptions({
                   fontWeight={'bold'}
                   variant={'outline'}
                   colorScheme={'blue'}
-                  color={'uspolis.blue'}
+                  color={'uspolis.text'}
                   leftIcon={<DownloadIcon />}
                 >
                   Alocação das disciplinas

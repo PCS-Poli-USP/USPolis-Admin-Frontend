@@ -16,16 +16,11 @@ import PageContent from '../../components/common/PageContent';
 import { AllocateClassModal } from '../../pages/classes/AllocateClassModal';
 import useConflictsService from '../../hooks/API/services/useConflictsService';
 import useCustomToast from '../../hooks/useCustomToast';
-import Select from 'react-select';
 import UnintentionalConflictsTab from './UnintentionalConflictsTab';
 import IntentionalConflictsTab from './IntentionalConflictsTab';
 import { ConflictType } from '../../utils/enums/conflictType.enum';
 import moment from 'moment';
-
-type Option = {
-  value: string;
-  label: string;
-};
+import TooltipSelect from '../../components/common/TooltipSelect';
 
 const ConflictsPage = () => {
   const showToast = useCustomToast();
@@ -98,16 +93,16 @@ const ConflictsPage = () => {
         <Flex direction={'row'} gap={4} mb={4}>
           <Flex direction={'column'} flex={1}>
             <Text fontSize={'md'}>Prédio:</Text>
-            <Select
+            <TooltipSelect
               placeholder={'Selecione o prédio'}
               options={
                 buildingNames
                   ? buildingNames.map((it) => ({ value: it, label: it }))
                   : []
               }
-              onChange={(option: Option | null) => {
+              onChange={(option) => {
                 if (option) {
-                  setSelectedBuildingName(option.value);
+                  setSelectedBuildingName(option.value as string);
                 } else setSelectedBuildingName('');
               }}
               isLoading={loading}

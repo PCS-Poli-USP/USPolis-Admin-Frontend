@@ -1,12 +1,13 @@
 import { Box, Flex, Text, useMediaQuery } from '@chakra-ui/react';
-import Select, { SelectInstance, StylesConfig } from 'react-select';
+import { SelectInstance, StylesConfig } from 'react-select';
 import { AllocationHeaderProps } from '..';
 import { useRef } from 'react';
 import { classNumberFromClassCode } from '../../../../utils/classes/classes.formatter';
+import TooltipSelect, {
+  Option,
+} from '../../../../components/common/TooltipSelect';
 
-type OptionType = { value: string; label: string };
-
-const customStyles: StylesConfig<OptionType, false> = {
+const customStyles: StylesConfig<Option, false> = {
   menu: (provided) => ({
     ...provided,
     maxHeight: '200px', // Altura máxima do menu
@@ -39,9 +40,9 @@ function HeaderFilter({
   classroomResources,
 }: AllocationHeaderProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
-  const classroomSelectRef = useRef<SelectInstance<OptionType>>(null);
-  const subjectSelectRef = useRef<SelectInstance<OptionType>>(null);
-  const classSelectRef = useRef<SelectInstance<OptionType>>(null);
+  const classroomSelectRef = useRef<SelectInstance<Option>>(null);
+  const subjectSelectRef = useRef<SelectInstance<Option>>(null);
+  const classSelectRef = useRef<SelectInstance<Option>>(null);
 
   const buildingOptions = buildingResources
     .map((resource) => ({
@@ -102,10 +103,9 @@ function HeaderFilter({
           <Text fontWeight={'bold'}>Filtros: </Text>
           <Flex direction={'row'} gap={2} w={'full'}>
             <Box w={'50%'}>
-              <Select
+              <TooltipSelect
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
-                selectedOptionColorScheme={'purple'}
                 placeholder='Prédio'
                 isClearable={true}
                 options={buildingOptions}
@@ -116,7 +116,7 @@ function HeaderFilter({
                 }
                 onChange={(option) => {
                   if (option) {
-                    setBuildingSearchValue(option.value);
+                    setBuildingSearchValue(option.value as string);
                   } else {
                     setBuildingSearchValue('');
                   }
@@ -133,7 +133,7 @@ function HeaderFilter({
               />
             </Box>
             <Box w={'50%'}>
-              <Select
+              <TooltipSelect
                 ref={classroomSelectRef}
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
@@ -150,7 +150,7 @@ function HeaderFilter({
                 }
                 onChange={(option) => {
                   if (option) {
-                    setClassroomSearchValue(option.value);
+                    setClassroomSearchValue(option.value as string);
                   } else {
                     setClassroomSearchValue('');
                   }
@@ -166,7 +166,7 @@ function HeaderFilter({
           </Flex>
           <Flex direction={'column'} gap={2} w={'full'}>
             <Box w={'100%'}>
-              <Select
+              <TooltipSelect
                 ref={subjectSelectRef}
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
@@ -180,7 +180,7 @@ function HeaderFilter({
                 options={subjectOptions}
                 onChange={(option) => {
                   if (option) {
-                    setNameSearchValue(option.value);
+                    setNameSearchValue(option.value as string);
                   } else {
                     setNameSearchValue('');
                     setClassSearchValue('');
@@ -191,7 +191,7 @@ function HeaderFilter({
               />
             </Box>
             <Box w={'100%'} h={'fit-content'}>
-              <Select
+              <TooltipSelect
                 ref={classSelectRef}
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
@@ -207,9 +207,9 @@ function HeaderFilter({
                     : undefined
                 }
                 options={classOptions}
-                onChange={(option: OptionType | null) => {
+                onChange={(option) => {
                   if (option) {
-                    setClassSearchValue(option.value);
+                    setClassSearchValue(option.value as string);
                   } else {
                     setClassSearchValue('');
                   }
@@ -221,9 +221,8 @@ function HeaderFilter({
       ) : (
         <Flex direction={'row'} gap={'10px'}>
           <Box w={'250px'}>
-            <Select
+            <TooltipSelect
               styles={customStyles}
-              selectedOptionColorScheme={'purple'}
               placeholder='Prédio'
               isClearable={true}
               options={buildingOptions}
@@ -234,7 +233,7 @@ function HeaderFilter({
               }
               onChange={(option) => {
                 if (option) {
-                  setBuildingSearchValue(option.value);
+                  setBuildingSearchValue(option.value as string);
                 } else {
                   setBuildingSearchValue('');
                 }
@@ -251,7 +250,7 @@ function HeaderFilter({
           </Box>
 
           <Box w={'250px'}>
-            <Select
+            <TooltipSelect
               ref={classroomSelectRef}
               styles={customStyles}
               placeholder='Sala'
@@ -265,7 +264,7 @@ function HeaderFilter({
               }
               onChange={(option) => {
                 if (option) {
-                  setClassroomSearchValue(option.value);
+                  setClassroomSearchValue(option.value as string);
                 } else {
                   setClassroomSearchValue('');
                 }
@@ -279,7 +278,7 @@ function HeaderFilter({
           </Box>
 
           <Box w={'250px'}>
-            <Select
+            <TooltipSelect
               ref={subjectSelectRef}
               styles={customStyles}
               placeholder='Disciplina'
@@ -292,7 +291,7 @@ function HeaderFilter({
               options={subjectOptions}
               onChange={(option) => {
                 if (option) {
-                  setNameSearchValue(option.value);
+                  setNameSearchValue(option.value as string);
                 } else {
                   setNameSearchValue('');
                   setClassSearchValue('');
@@ -304,7 +303,7 @@ function HeaderFilter({
           </Box>
 
           <Box w={'250px'}>
-            <Select
+            <TooltipSelect
               ref={classSelectRef}
               styles={customStyles}
               isDisabled={!nameSearchValue}
@@ -319,9 +318,9 @@ function HeaderFilter({
                   : undefined
               }
               options={classOptions}
-              onChange={(option: OptionType | null) => {
+              onChange={(option) => {
                 if (option) {
-                  setClassSearchValue(option.value);
+                  setClassSearchValue(option.value as string);
                 } else {
                   setClassSearchValue('');
                 }

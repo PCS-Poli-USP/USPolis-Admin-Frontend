@@ -9,6 +9,7 @@ import {
   Text,
   VStack,
   Box,
+  useColorMode,
 } from '@chakra-ui/react';
 import { ModalProps } from '../../../../models/interfaces';
 import { EventApi } from '@fullcalendar/core';
@@ -29,11 +30,16 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
   const reservationData = extendedProps
     ? extendedProps.reservation_data
     : undefined;
+
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
+  const textColor = isDark ? 'uspolis.black' : 'uspolis.blue';
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
+        <ModalHeader color={isDark ? 'white' : '#408080'}>
           {event ? event.title : ''}
           <Text>{classData ? classData.subject_name : ''}</Text>
         </ModalHeader>
@@ -43,17 +49,17 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
             {classData ? (
               <>
                 <VStack spacing={'2px'} alignItems='start'>
-                  <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
+                  <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
                     {`Turma ${classNumberFromClassCode(classData.code)}`}
                   </Text>
                 </VStack>
                 <Box>
-                  <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
+                  <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
                     Professores
                   </Text>
                   {(classData.professors as string[]).map(
                     (professor, index) => (
-                      <Text fontSize='lg' textColor='#408080' key={index}>
+                      <Text fontSize='lg' textColor={textColor} key={index}>
                         {professor}
                       </Text>
                     ),
@@ -61,23 +67,23 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
                 </Box>
 
                 <Box>
-                  <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
+                  <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
                     Informações
                   </Text>
-                  <Text fontSize='lg' textColor='#408080'>{`Prédio: ${
+                  <Text fontSize='lg' textColor={textColor}>{`Prédio: ${
                     classData.building ? classData.building : 'NÃO ALOCADA'
                   }`}</Text>
-                  <Text fontSize='lg' textColor='#408080'>{`Sala: ${
+                  <Text fontSize='lg' textColor={textColor}>{`Sala: ${
                     classData.classroom_capacity
                       ? `${classData.classroom} [${classData.classroom_capacity} capacidade]`
                       : classData.classroom
                   }`}</Text>
 
-                  <Text fontSize='lg' textColor='#408080'>
+                  <Text fontSize='lg' textColor={textColor}>
                     {extendedProps ? getEventScheduleText(extendedProps) : ''}
                   </Text>
 
-                  <Text fontSize='lg' textColor='#408080'>
+                  <Text fontSize='lg' textColor={textColor}>
                     {`Horário: ${classData.start_time.substring(
                       0,
                       5,
@@ -86,7 +92,7 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
 
                   <Text
                     fontSize='lg'
-                    textColor='#408080'
+                    textColor={textColor}
                     hidden={classData.start_date ? false : true}
                   >
                     {`De ${
@@ -102,7 +108,7 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
 
                   <Text
                     fontSize='lg'
-                    textColor='#408080'
+                    textColor={textColor}
                   >{`Vagas: ${classData.vacancies}`}</Text>
                 </Box>
               </>
@@ -110,35 +116,35 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
 
             {reservationData ? (
               <>
-                <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
+                <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
                   {`Reserva - ${reservationData.title}`}
                 </Text>
 
                 <Box>
-                  <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
+                  <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
                     Motivo
                   </Text>
-                  <Text fontSize='lg' textColor='#408080'>
+                  <Text fontSize='lg' textColor={textColor}>
                     {reservationData.reason
                       ? reservationData.reason
                       : 'Não informada'}
                   </Text>
 
-                  <Text fontSize='xl' fontWeight='bold' textColor='#408080'>
+                  <Text fontSize='xl' fontWeight='bold' textColor={textColor}>
                     Local
                   </Text>
-                  <Text fontSize='lg' textColor='#408080'>
+                  <Text fontSize='lg' textColor={textColor}>
                     {`${reservationData.building} - ${reservationData.classroom}`}
                   </Text>
 
-                  <Text fontSize='xl' fontWeight='bold' textColor='#408080'>
+                  <Text fontSize='xl' fontWeight='bold' textColor={textColor}>
                     Horários
                   </Text>
-                  <Text fontSize='lg' textColor='#408080'>
+                  <Text fontSize='lg' textColor={textColor}>
                     {extendedProps ? getEventScheduleText(extendedProps) : ''}
                   </Text>
 
-                  <Text fontSize='lg' textColor='#408080'>
+                  <Text fontSize='lg' textColor={textColor}>
                     {`Horário: ${reservationData.start_time.substring(
                       0,
                       5,
@@ -147,7 +153,7 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
 
                   <Text
                     fontSize='lg'
-                    textColor='#408080'
+                    textColor={textColor}
                     hidden={reservationData.start_date ? false : true}
                   >
                     {`De ${

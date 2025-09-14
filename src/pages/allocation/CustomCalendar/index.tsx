@@ -1,5 +1,5 @@
-import { Box, Progress, useDisclosure } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import { Box, Progress, useColorMode, useDisclosure } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import { EventApi, DatesSetArg, EventDropArg } from '@fullcalendar/core';
@@ -70,6 +70,7 @@ function CustomCalendar({
   loading = false,
 }: CustomCalendarProps) {
   const { registerControlFn, state } = useFeatureGuideContext();
+  const { colorMode } = useColorMode();
 
   // const calendarRef = useRef<FullCalendar>(null!);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
@@ -159,7 +160,7 @@ function CustomCalendar({
       setCalendarView(viewOptions[0].value);
       setView(viewOptions[0]);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   return (
@@ -339,7 +340,7 @@ function CustomCalendar({
           setSelectedEvent(info.event);
           onOpenModal();
         }}
-        eventColor='#408080'
+        eventColor={colorMode === 'dark' ? '#1a535c' : '#408080'}
         displayEventTime
         resources={isGuideMode ? TourGuideResources : formatedResources}
         resourcesInitiallyExpanded={resourcesExpanded}

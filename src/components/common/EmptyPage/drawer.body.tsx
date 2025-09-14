@@ -74,7 +74,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
   const { loggedUser } = useContext(appContext);
 
   return (
-    <VStack align={'start'} p={'10px'} spacing={4} maxH={'900px'}>
+    <VStack
+      align={'start'}
+      p={'10px'}
+      spacing={4}
+      maxH={'900px'}
+      background={'uspolis.white'}
+    >
       {loggedUser ? (
         <>
           {loggedUser.is_admin ? (
@@ -263,10 +269,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
         alignItems={'flex-start'}
         gap={'0px'}
         id='menu-drawer-contact'
+        background={'uspolis.white'}
       >
-        <Text fontSize={'15px'} color={'blackAlpha.600'}>
-          © {moment().year()} USPolis
-        </Text>
+        <Text fontSize={'15px'}>© {moment().year()} USPolis</Text>
         <HStack align={'center'} justify={'center'} gap={'5px'}>
           <Text fontSize={'15px'}>Contato:</Text>
           <Link

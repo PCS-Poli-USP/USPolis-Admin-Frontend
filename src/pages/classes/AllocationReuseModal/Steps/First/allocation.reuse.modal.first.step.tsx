@@ -1,6 +1,5 @@
 import { Box, Button, Checkbox, Flex, Heading, Text } from '@chakra-ui/react';
 import { SubjectResponse } from '../../../../../models/http/responses/subject.response.models';
-import Select from 'react-select';
 import { ClassResponse } from '../../../../../models/http/responses/class.response.models';
 import { useEffect, useState } from 'react';
 import { classNumberFromClassCode } from '../../../../../utils/classes/classes.formatter';
@@ -9,6 +8,9 @@ import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import { SubjectWithClasses } from '../../allocation.reuse.modal';
 import HelpPopover from '../../../../../components/common/HelpPopover';
 import moment from 'moment';
+import TooltipSelect, {
+  Option,
+} from '../../../../../components/common/TooltipSelect';
 
 interface AllocationReuseModalFirstStepProps {
   subjects: SubjectResponse[];
@@ -18,11 +20,6 @@ interface AllocationReuseModalFirstStepProps {
   selectedClasses: Set<number>;
   setSelectedClasses: (classes: Set<number>) => void;
   setSelectedSubjects: (subjects: Set<number>) => void;
-}
-
-interface Option {
-  label: string;
-  value: number;
 }
 
 function AllocationReuseModalFirstStep({
@@ -86,7 +83,7 @@ function AllocationReuseModalFirstStep({
       </Flex>
       <Flex w={'100%'} gap={'5px'} align={'center'}>
         <Box w={'100%'}>
-          <Select
+          <TooltipSelect
             placeholder={'Selecione as disciplinas'}
             isMulti={true}
             value={selectedSubjectsOptions}
@@ -99,20 +96,22 @@ function AllocationReuseModalFirstStep({
                 (s) => !value.some((v) => v.value === s.value),
               );
               setSelectedSubjectsOptions(value as Option[]);
-              setSelectedSubjects(new Set(value.map((v) => v.value)));
+              setSelectedSubjects(new Set(value.map((v) => v.value as number)));
               const newMap = new Map(map);
               value.forEach((subject) => {
-                if (!newMap.has(subject.value)) {
-                  const classes = classesBySubject.get(subject.value);
+                if (!newMap.has(subject.value as number)) {
+                  const classes = classesBySubject.get(subject.value as number);
                   const classIds = classes ? classes.map((cls) => cls.id) : [];
-                  newMap.set(subject.value, {
-                    subject_id: subject.value,
+                  newMap.set(subject.value as number, {
+                    subject_id: subject.value as number,
                     class_ids: classIds,
                   });
                 }
               });
               removedSubjects.forEach((subject) => {
-                const removedClasses = classesBySubject.get(subject.value);
+                const removedClasses = classesBySubject.get(
+                  subject.value as number,
+                );
                 if (removedClasses) {
                   const newSelectedClasses = new Set(selectedClasses);
                   removedClasses.forEach((cls) =>
@@ -120,7 +119,7 @@ function AllocationReuseModalFirstStep({
                   );
                   setSelectedClasses(newSelectedClasses);
                 }
-                newMap.delete(subject.value);
+                newMap.delete(subject.value as number);
               });
               setMap(newMap);
             }}
@@ -283,7 +282,7 @@ function AllocationReuseModalFirstStep({
                         <Flex direction={'row'} gap={'5px'} align={'center'}>
                           Turma {classNumberFromClassCode(cls.code)} -{' '}
                           <Text fontSize={'sm'} fontWeight={'bold'}>
-                            {moment(cls.start_date).format('DD/MM/YYYY')} até {' '}
+                            {moment(cls.start_date).format('DD/MM/YYYY')} até{' '}
                             {moment(cls.end_date).format('DD/MM/YYYY')}
                           </Text>
                         </Flex>

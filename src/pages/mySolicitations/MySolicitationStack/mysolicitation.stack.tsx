@@ -1,20 +1,18 @@
 import { Box, Checkbox, HStack, StackDivider, VStack } from '@chakra-ui/react';
-import Select, { SelectInstance } from 'react-select';
+import { SelectInstance } from 'react-select';
 import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import { useEffect, useRef, useState } from 'react';
 import SolicitationStackBody from './mysolicitation.stack.body';
 import { ReservationStatus } from '../../../utils/enums/reservations.enum';
+import TooltipSelect, {
+  Option,
+} from '../../../components/common/TooltipSelect';
 
 interface SolicitationStackProps {
   solicitations: SolicitationResponse[];
   handleOnClick: (data: SolicitationResponse) => void;
   reset: () => void;
 }
-
-type Option = {
-  value: string;
-  label: string;
-};
 
 function SolicitationStack({
   solicitations,
@@ -107,7 +105,7 @@ function SolicitationStack({
     >
       <HStack w={'full'}>
         <Box w={'50%'}>
-          <Select
+          <TooltipSelect
             placeholder='Filtrar por Prédio'
             value={
               buildingSearch
@@ -117,12 +115,12 @@ function SolicitationStack({
             isClearable={true}
             isSearchable={true}
             options={buildingOptions}
-            onChange={(option: Option | null) => {
+            onChange={(option) => {
               if (option) {
-                setBuildingSearch(option.value);
+                setBuildingSearch(option.value as string);
                 if (selectRef.current) selectRef.current.clearValue();
                 setClassroomSearch(undefined);
-                filterSolicitation(option.value, undefined);
+                filterSolicitation(option.value as string, undefined);
               } else {
                 setBuildingSearch('');
                 setClassroomSearch(undefined);
@@ -132,7 +130,7 @@ function SolicitationStack({
           />
         </Box>
         <Box w={'50%'}>
-          <Select
+          <TooltipSelect
             ref={selectRef}
             placeholder='Filtrar por Sala'
             value={
@@ -144,10 +142,10 @@ function SolicitationStack({
             isSearchable={true}
             isDisabled={buildingSearch === ''}
             options={classroomOptions}
-            onChange={(option: Option | null) => {
+            onChange={(option) => {
               if (option) {
-                setClassroomSearch(option.value);
-                filterSolicitation(buildingSearch, option.value);
+                setClassroomSearch(option.value as string);
+                filterSolicitation(buildingSearch, option.value as string);
               } else {
                 setClassroomSearch(undefined);
                 filterSolicitation(buildingSearch, undefined);

@@ -1,4 +1,4 @@
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
@@ -53,6 +53,7 @@ const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={muiTheme}>
     <ChakraProvider theme={chakraTheme}>
+      <ColorModeScript initialColorMode={chakraTheme.config.initialColorMode} />
       <GoogleOAuthProvider clientId={clientId!}>
         <AppContextProvider>
           <MenuContextProvider>

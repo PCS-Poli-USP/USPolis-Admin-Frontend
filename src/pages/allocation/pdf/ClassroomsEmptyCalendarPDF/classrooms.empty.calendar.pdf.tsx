@@ -84,7 +84,7 @@ function ClassroomsEmptyCalendarReportPDF(
         fontWeight={'bold'}
         variant={'outline'}
         colorScheme={'blue'}
-        color={'uspolis.blue'}
+        color={'uspolis.text'}
         leftIcon={<DownloadIcon />}
       >
         Disponibilidade das salas
