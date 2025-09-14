@@ -152,7 +152,6 @@ export function DrawerNavBar({
                   rounded={'full'}
                   variant={'link'}
                   cursor={'pointer'}
-                  colorScheme='dark'
                 >
                   <Flex
                     id='navbar-user-menu-button'
@@ -163,10 +162,14 @@ export function DrawerNavBar({
                     <UserImage />
                   </Flex>
                 </MenuButton>
-                <MenuList>
-                  <VStack divider={<StackDivider borderColor={'black.500'} />}>
+                <MenuList bgColor={'uspolis.white'}>
+                  <VStack
+                    divider={<StackDivider borderColor={'black.500'} />}
+                    bgColor={'uspolis.white'}
+                  >
                     <MenuItem
-                      color='black'
+                      bgColor={'uspolis.white'}
+                      textColor={'uspolis.text'}
                       fontWeight={'bold'}
                       onClick={() => {
                         navigate('/profile', {
@@ -177,7 +180,11 @@ export function DrawerNavBar({
                     >
                       Acessar perfil
                     </MenuItem>
-                    <MenuItem onClick={handleClickLogout} color='black'>
+                    <MenuItem
+                      onClick={handleClickLogout}
+                      bgColor={'uspolis.white'}
+                      textColor={'uspolis.text'}
+                    >
                       Sair
                     </MenuItem>
                   </VStack>
