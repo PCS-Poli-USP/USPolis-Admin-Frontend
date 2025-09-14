@@ -86,8 +86,15 @@ const override: ThemeOverride = {
       }),
     },
     Modal: {
-      baseStyle: (props) => ({
+      baseStyle: () => ({
         dialog: {
+          bg: 'uspolis.white',
+        },
+      }),
+    },
+    Popover: {
+      baseStyle: () => ({
+        content: {
           bg: 'uspolis.white',
         },
       }),

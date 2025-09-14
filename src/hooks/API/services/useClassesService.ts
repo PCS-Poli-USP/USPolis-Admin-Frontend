@@ -37,7 +37,7 @@ const useClassesService = () => {
       params.append('start', start);
       params.append('end', end);
     }
-    return axios.get(`${PREFIX}/subjects`, { params });
+    return axiosPrivate.get(`${PREFIX}/subjects`, { params });
   };
 
   const getByBuildingName = (

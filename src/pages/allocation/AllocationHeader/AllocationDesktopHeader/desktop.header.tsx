@@ -1,7 +1,13 @@
-import { LockIcon } from '@chakra-ui/icons';
+import { AddIcon, LockIcon } from '@chakra-ui/icons';
 import {
   Button,
   Flex,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuGroup,
+  MenuItem,
+  MenuList,
   Spacer,
   Text,
   Tooltip,
@@ -12,7 +18,14 @@ import { useContext } from 'react';
 import { appContext } from '../../../../context/AppContext';
 import { AllocationHeaderProps } from '..';
 import HeaderFilter from '../HeaderFilter/header.filter';
-import HeaderPDFOptions from '../HeaderPDFOptions/headerPDF.options';
+import { TbReportAnalytics } from 'react-icons/tb';
+import { MdCalendarToday } from 'react-icons/md';
+import { FaHandPointer } from 'react-icons/fa';
+import { BsCalendar3 } from 'react-icons/bs';
+import SubjectReportModal from '../SubjectReportModal';
+import ClassesPDFModal from '../ClassesPDFModal';
+import ClassroomPDFModal from '../ClassroomCalendarPDF';
+import EmptyClassroomsReportModal from '../EmptyClassroomsrReportModal';
 
 function AllocationDesktopHeader({
   isOpen,
@@ -37,23 +50,30 @@ function AllocationDesktopHeader({
   const location = useLocation();
   const navigate = useNavigate();
   const { loggedUser } = useContext(appContext);
+
   const {
-    isOpen: isOpenPDF,
-    onClose: onClosePDF,
-    onOpen: onOpenPDF,
+    isOpen: isOpenClassesPDF,
+    onClose: onCloseClassesPDF,
+    onOpen: onOpenClassesPDF,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenClassroomsPDF,
+    onClose: onCloseClassroomsPDF,
+    onOpen: onOpenClassroomsPDF,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenSubjectReport,
+    onClose: onCloseSubjectReport,
+    onOpen: onOpenSubjectReport,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenEmptyClassroomsReport,
+    onClose: onCloseEmptyClassroomsReport,
+    onOpen: onOpenEmptyClassroomsReport,
   } = useDisclosure();
 
   return (
     <Flex direction={'column'} alignItems={'flex-start'} gap={2} w={'100%'}>
-      <HeaderPDFOptions
-        isOpen={isOpenPDF}
-        onClose={onClosePDF}
-        buildings={buildings}
-        subjects={subjects}
-        loadingSubjects={loadingSubjects}
-        loadingBuildings={loadingBuildings}
-        isMobile={false}
-      />
       <Text fontSize={'4xl'}>Mapa de Salas</Text>
       <Flex
         mb={4}
@@ -62,9 +82,70 @@ function AllocationDesktopHeader({
         direction={'row'}
         w={'full'}
       >
-        <Button colorScheme='blue' onClick={onOpenPDF}>
-          Baixar
-        </Button>
+        <Menu>
+          <MenuButton
+            as={Button}
+            colorScheme='blue'
+            leftIcon={<AddIcon />}
+            borderRadius={'20px'}
+          >
+            Baixar
+          </MenuButton>
+          <MenuList w={'300px'} border={'1px'} bgColor={'uspolis.white'}>
+            <MenuGroup title='Alocações gerais' fontSize={'lg'} gap={'5px'}>
+              <MenuDivider />
+              <MenuItem
+                as={Button}
+                bgColor={'uspolis.white'}
+                justifyContent={'flex-start'}
+                onClick={onOpenClassesPDF}
+                leftIcon={<TbReportAnalytics />}
+              >
+                Alocação das disciplinas
+              </MenuItem>
+              <MenuDivider />
+              <MenuItem
+                as={Button}
+                bgColor={'uspolis.white'}
+                justifyContent={'flex-start'}
+                onClick={onOpenClassroomsPDF}
+                leftIcon={<BsCalendar3 />}
+              >
+                Mapa de Salas
+              </MenuItem>
+            </MenuGroup>
+            <MenuDivider />
+            <MenuGroup
+              title='Alocações específicas'
+              fontSize={'lg'}
+              gap={'5px'}
+            >
+              <MenuDivider />
+              <MenuItem
+                as={Button}
+                justifyContent={'flex-start'}
+                bgColor={'uspolis.white'}
+                onClick={onOpenSubjectReport}
+                leftIcon={<FaHandPointer />}
+              >
+                Disciplinas escolhidas
+              </MenuItem>
+            </MenuGroup>
+            <MenuDivider />
+            <MenuGroup title='Relatórios' fontSize={'lg'} gap={'5px'}>
+              <MenuDivider />
+              <MenuItem
+                as={Button}
+                justifyContent={'flex-start'}
+                bgColor={'uspolis.white'}
+                onClick={onOpenEmptyClassroomsReport}
+                leftIcon={<MdCalendarToday />}
+              >
+                Disponibilidade de salas
+              </MenuItem>
+            </MenuGroup>
+          </MenuList>
+        </Menu>
         <Tooltip label={loggedUser ? '' : 'Entre para poder fazer essa ação.'}>
           <Button
             colorScheme='blue'
@@ -104,6 +185,31 @@ function AllocationDesktopHeader({
           loadingSubjects={loadingSubjects}
           buildings={buildings}
           loadingBuildings={loadingBuildings}
+        />
+
+        <ClassesPDFModal
+          isOpen={isOpenClassesPDF}
+          onClose={onCloseClassesPDF}
+          buildings={buildings}
+        />
+        <ClassroomPDFModal
+          isOpen={isOpenClassroomsPDF}
+          onClose={onCloseClassroomsPDF}
+          buildings={buildings}
+        />
+
+        <SubjectReportModal
+          // disabled={loadingC || loadingR || !start || !end}
+          isOpen={isOpenSubjectReport}
+          onClose={onCloseSubjectReport}
+          loading={loadingSubjects || loadingBuildings}
+          subjects={subjects}
+          buildings={buildings}
+        />
+        <EmptyClassroomsReportModal
+          isOpen={isOpenEmptyClassroomsReport}
+          onClose={onCloseEmptyClassroomsReport}
+          buildings={buildings}
         />
       </Flex>
     </Flex>
