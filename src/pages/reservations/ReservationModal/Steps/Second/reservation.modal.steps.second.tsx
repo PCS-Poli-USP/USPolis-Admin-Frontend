@@ -9,7 +9,6 @@ import {
   useDisclosure,
   VStack,
   Input as ChakraInput,
-  SimpleGrid,
 } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
 import { Input, SelectInput } from '../../../../../components/common';
@@ -54,6 +53,9 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   const [datesForTimeGrid, setDatesForTimeGrid] = useState<string[]>([]);
   const [isSelecting, setIsSelecting] = useState(false);
   const [labelMap, setLabelMap] = useState<Map<string, string>>(new Map());
+  const [timeMap, setTimeMap] = useState<Map<string, [string, string]>>(
+    new Map(),
+  );
 
   const { resetField, setValue, watch, formState } = props.form;
   const { errors } = formState;
@@ -68,6 +70,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
 
   const reservation_type = props.firstForm.watch('type');
   const labels = watch('labels');
+  const times = watch('times');
 
   useEffect(() => {
     const { getValues } = props.form;
@@ -125,9 +128,15 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   useEffect(() => {
     if (reservation_type === ReservationType.EXAM) {
       setValue('labels', Array.from(labelMap.values()));
+      const newTimes = Array.from(timeMap.values());
+      setValue('times', newTimes);
+      if (newTimes.length > 0) {
+        setValue('start_time', newTimes[0][0]);
+        setValue('end_time', newTimes[0][1]);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [labelMap]);
+  }, [labelMap, timeMap]);
 
   function handleChangeRecurrence(value: string) {
     if (value === Recurrence.MONTHLY) {
@@ -181,6 +190,12 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
           dates: datesForTimeGrid,
           start_time: start,
           end_time: end,
+          start_times: datesForTimeGrid.map((_, idx) =>
+            times ? (times[idx] ? times[idx][0] : '') : start,
+          ),
+          end_times: datesForTimeGrid.map((_, idx) =>
+            times ? (times[idx] ? times[idx][1] : '') : end,
+          ),
         }}
         scheduleDetails={{
           recurrence,
@@ -376,18 +391,24 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     />
                   </HStack>
 
-                  <HStack w={'full'} mt={4}>
+                  <HStack
+                    w={'full'}
+                    mt={4}
+                    hidden={reservation_type === ReservationType.EXAM}
+                  >
                     <Input
                       label={'Horário de início'}
                       name={'start_time'}
                       placeholder='Horario de início da disciplina'
                       type='time'
+                      disabled={reservation_type === ReservationType.EXAM}
                     />
                     <Input
                       label={'Horário de fim'}
                       name={'end_time'}
                       placeholder='Horário de encerramento da disciplina'
                       type='time'
+                      disabled={reservation_type === ReservationType.EXAM}
                     />
                   </HStack>
                 </VStack>
@@ -422,6 +443,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                           newMap.delete(day);
                           return newMap;
                         });
+                        setTimeMap((prev) => {
+                          const newMap = new Map(prev);
+                          newMap.delete(day);
+                          return newMap;
+                        });
                         // Add selected day
                       } else {
                         newDates = [...props.selectedDays, day].sort(sortDates);
@@ -438,8 +464,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               {reservation_type == ReservationType.EXAM && (
                 <Flex direction={'column'}>
                   <Text fontSize={'lg'} fontWeight={'bold'}>
-                    Rótulos:{' '}
-                    {`${labels ? labels.length : 0}/${props.selectedDays.length}`}{' '}
+                    Nome e horários das provas:{' '}
+                    {`${props.selectedDays.length}/${labels ? labels.length : 0}/${times ? times.length : 0}`}
                   </Text>
                   {errors['labels'] && (
                     <Text textColor={'red.500'} fontSize={'sm'}>
@@ -451,14 +477,29 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       Selecione as datas para adicionar rótulos
                     </Text>
                   )}
-                  {labels && props.selectedDays.length !== labels.length && (
-                    <Text textColor={'red.500'} fontSize={'sm'}>
-                      Cada data deve ter um rótulo
-                    </Text>
-                  )}
-                  <SimpleGrid
-                    minChildWidth='300px'
-                    spacing='20px'
+                  <Flex direction={'column'} gap={'0px'}>
+                    {labels && props.selectedDays.length !== labels.length && (
+                      <Text textColor={'red.500'} fontSize={'sm'}>
+                        Cada data deve ter um rótulo
+                      </Text>
+                    )}
+                    {times &&
+                      (props.selectedDays.length !== times.length ||
+                        times.filter((time) => !time[0] || !time[1]).length >
+                          0) && (
+                        <Text textColor={'red.500'} fontSize={'sm'}>
+                          Cada data deve ter um horário de início e fim
+                        </Text>
+                      )}
+                    {formState.errors['times'] && (
+                      <Text textColor={'red.500'} fontSize={'sm'}>
+                        {formState.errors['times']?.message as string}
+                      </Text>
+                    )}
+                  </Flex>
+                  <Flex
+                    direction={'column'}
+                    gap={'20px'}
                     justifyContent={'flex-start'}
                     justifyItems={'flex-start'}
                     h={'auto'}
@@ -473,7 +514,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       >
                         <Text>{`Data ${moment(date).format('DD/MM/YYYY')}: `}</Text>
                         <ChakraInput
-                          placeholder='Digite um rótulo'
+                          placeholder='P1, P2, PSUB, etc'
                           w={'150px'}
                           size={'sm'}
                           value={labelMap.get(date) || ''}
@@ -492,9 +533,79 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                             }
                           }}
                         />
+                        <Text>Das</Text>
+                        <ChakraInput
+                          type='time'
+                          w={'150px'}
+                          size={'sm'}
+                          value={
+                            timeMap.get(date) != undefined
+                              ? timeMap.get(date)?.[0]
+                              : ''
+                          }
+                          maxLength={15}
+                          borderRadius={'5px'}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              const newMap = new Map(timeMap);
+                              const value = newMap.get(date);
+                              newMap.set(
+                                date,
+                                value
+                                  ? [e.target.value, value[1]]
+                                  : [e.target.value, ''],
+                              );
+                              setTimeMap(newMap);
+                            }
+                            if (!e.target.value) {
+                              const newMap = new Map(timeMap);
+                              const newValue = newMap.get(date);
+                              if (newValue && newValue[1] === '')
+                                newMap.delete(date);
+                              if (newValue && newValue[1] !== '')
+                                newMap.set(date, ['', newValue[1]]);
+                              setTimeMap(newMap);
+                            }
+                          }}
+                        />
+                        <Text>Até</Text>
+                        <ChakraInput
+                          type='time'
+                          w={'150px'}
+                          size={'sm'}
+                          value={
+                            timeMap.get(date) != undefined
+                              ? timeMap.get(date)?.[1]
+                              : ''
+                          }
+                          maxLength={15}
+                          borderRadius={'5px'}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              const newMap = new Map(timeMap);
+                              const value = newMap.get(date);
+                              newMap.set(
+                                date,
+                                value
+                                  ? [value[0], e.target.value]
+                                  : ['', e.target.value],
+                              );
+                              setTimeMap(newMap);
+                            }
+                            if (!e.target.value) {
+                              const newMap = new Map(timeMap);
+                              const newValue = newMap.get(date);
+                              if (newValue && newValue[0] === '')
+                                newMap.delete(date);
+                              if (newValue && newValue[0] !== '')
+                                newMap.set(date, [newValue[0], '']);
+                              setTimeMap(newMap);
+                            }
+                          }}
+                        />
                       </Flex>
                     ))}
-                  </SimpleGrid>
+                  </Flex>
                 </Flex>
               )}
             </>

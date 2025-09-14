@@ -173,6 +173,47 @@ export const secondFormFields = {
       ),
     defaultValue: undefined,
   },
+  times: {
+    validator: yup
+      .array(yup.array(yup.string()))
+      .notRequired()
+      .test(
+        'is-valid-type',
+        'O tipo de reserva deve ser "Prova"',
+        function (value) {
+          const { type } = this.parent;
+          if (!type) return false;
+          if (type !== ReservationType.EXAM) {
+            if (value != undefined) return false;
+          }
+          return true;
+        },
+      )
+      .test(
+        'is-valid-times-length',
+        'É necessário especificar os horários',
+        function (value) {
+          const { type } = this.parent;
+          if (type != ReservationType.EXAM) return true;
+          if (!value) return false;
+          return true;
+        },
+      )
+      .test(
+        'is-valid-times',
+        'Cada horário deve ter início e fim, sendo inicio antes de fim',
+        function (value) {
+          const { type } = this.parent;
+          if (type != ReservationType.EXAM) return true;
+          if (!value) return false;
+          return ReservationValidator.isValidDayTimeOferings(
+            value as [string, string][],
+          );
+        },
+      ),
+
+    defaultValue: undefined,
+  },
 };
 
 export const secondSchema = yup.object<ReservationSecondForm>().shape({
@@ -186,6 +227,7 @@ export const secondSchema = yup.object<ReservationSecondForm>().shape({
   end_time: secondFormFields.end_time.validator,
   month_week: secondFormFields.month_week.validator,
   labels: secondFormFields.labels.validator,
+  times: secondFormFields.times.validator,
 });
 
 export const secondDefaultValues: ReservationSecondForm = {
@@ -199,5 +241,6 @@ export const secondDefaultValues: ReservationSecondForm = {
   end_time: secondFormFields.end_time.defaultValue,
   month_week: secondFormFields.month_week.defaultValue,
   labels: secondFormFields.labels.defaultValue,
+  times: secondFormFields.times.defaultValue,
   type: undefined,
 };

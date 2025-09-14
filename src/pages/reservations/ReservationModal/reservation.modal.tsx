@@ -151,6 +151,7 @@ function ReservationModal(props: ReservationModalProps) {
         schedule_data: {
           ...data.schedule_data,
           labels: secondData.labels,
+          times: secondData.times,
         },
       } as CreateExam | UpdateExam;
     }
@@ -166,6 +167,7 @@ function ReservationModal(props: ReservationModalProps) {
     secondForm.reset(secondDefaultValues);
     setActiveStep(0);
     setDates([]);
+    calendarPicker.reset();
     props.onClose();
   }
 
@@ -221,6 +223,7 @@ function ReservationModal(props: ReservationModalProps) {
         );
       }
     }
+    console.log(data);
     if (!props.isUpdate) {
       if (data.type === ReservationType.EXAM) {
         await createExam(data as CreateExam);
@@ -233,7 +236,7 @@ function ReservationModal(props: ReservationModalProps) {
       }
     }
     props.refetch();
-    handleCloseModal();
+    // handleCloseModal();
   }
 
   useEffect(() => {

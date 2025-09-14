@@ -36,4 +36,5 @@ export interface ReservationSecondForm {
 
   type?: ReservationType;
   labels?: string[];
+  times?: [string, string][];
 }

@@ -33,9 +33,6 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
           >
             A reserva possui uma solicitação vinculada
           </Text>
-
-          <Input mt={'10px'} label={'Título'} name={'title'} />
-          <TextareaInput mt={4} label='Motivo (Opcional)' name='reason' />
           <SelectInput
             mt={4}
             label={'Tipo'}
@@ -67,8 +64,11 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
               }
             }}
           />
+
+          <Input mt={'10px'} label={'Título'} name={'title'} />
+          <TextareaInput mt={4} label='Motivo (Opcional)' name='reason' />
           {!reservationType && (
-            <Alert status='error' mt={'20px'}>
+            <Alert status='error' mt={'20px'} borderRadius={'10px'}>
               <AlertIcon />
               Selecione um tipo de reserva
             </Alert>

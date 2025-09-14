@@ -12,13 +12,16 @@ import {
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 import { SortPeriodFn } from '../../../utils/tanstackTableHelpers/tableSortingFns';
 import { ReservationStatus } from '../../../utils/enums/reservations.enum';
+import { LuEye } from 'react-icons/lu';
 
 const DEBUG = import.meta.env.VITE_DEBUG === 'true';
 
 interface ReservationsColumnsProps {
+  handleViewClick: (data: ReservationResponse) => void;
   handleDuplicateClick: (data: ReservationResponse) => void;
   handleEditClick: (data: ReservationResponse) => void;
   handleDeleteClick: (data: ReservationResponse) => void;
+  darkMode: boolean;
 }
 
 export const getReservationsColumns = (
@@ -148,6 +151,17 @@ export const getReservationsColumns = (
       header: 'Opções',
       cell: ({ row }) => (
         <HStack spacing='0px'>
+          <Tooltip label='Visualizar Reserva'>
+            <IconButton
+              colorScheme={props.darkMode ? 'gray' : 'blackAlpha'}
+              size='sm'
+              variant='ghost'
+              aria-label='visualizar-reserva'
+              icon={<LuEye />}
+              onClick={() => props.handleViewClick(row.original)}
+              disabled={row.original.classroom_id ? false : true}
+            />
+          </Tooltip>
           <Tooltip label='Duplicar Reserva'>
             <IconButton
               colorScheme='cyan'

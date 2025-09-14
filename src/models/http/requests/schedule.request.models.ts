@@ -20,6 +20,7 @@ export interface CreateSchedule extends ScheduleBase {
   dates?: string[];
   month_week?: MonthWeek;
   labels?: string[];
+  times?: [string, string][];
 }
 
 export interface CreateManySchedule {

@@ -64,21 +64,7 @@ const useClassroomsService = () => {
     data: ClassroomConflictParams,
     building_id: number,
   ): Promise<AxiosResponse<ClassroomWithConflictCount[]>> => {
-    const params = new URLSearchParams();
-    Object.keys(data).forEach((key) => {
-      if (key == 'dates') return;
-      const value = data[key as keyof ClassroomConflictParams];
-      if (value) {
-        params.append(key, value as string);
-      }
-    });
-    if (data.dates)
-      data.dates.forEach((date) => {
-        params.append('dates', date);
-      });
-    return axios.get(`/classrooms/with-conflict-count/${building_id}`, {
-      params,
-    });
+    return axios.post(`/classrooms/with-conflict-count/${building_id}`, data);
   };
 
   return {
