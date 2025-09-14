@@ -62,6 +62,7 @@ export interface BaseExtendedData {
   end_time: string;
   start_date?: string;
   end_date?: string;
+  label?: string;
 }
 
 export interface ClassExtendedData extends BaseExtendedData {
@@ -78,6 +79,11 @@ export interface ReservationExtendedData extends BaseExtendedData {
   type: ReservationType;
   reason?: string;
   created_by: string;
+  subject_id?: number;
+  subject_code?: string;
+  subject_name?: string;
+  class_ids?: number[];
+  class_codes?: string[];
 }
 
 export interface EventExtendedProps {

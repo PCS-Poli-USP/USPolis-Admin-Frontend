@@ -1,12 +1,4 @@
-import {
-  Box,
-  Heading,
-  Tooltip,
-  Stack,
-  Text,
-  VStack,
-  useColorMode,
-} from '@chakra-ui/react';
+import { Box, Heading, Tooltip, Stack, Text, VStack } from '@chakra-ui/react';
 import { EventContentArg } from '@fullcalendar/core';
 import { EventExtendedProps } from '../../../../models/http/responses/allocation.response.models';
 import moment from 'moment';
@@ -21,8 +13,6 @@ export default function EventContent(eventInfo: EventContentArg) {
   const isTimeGridView = eventInfo.view.type.includes('timeGrid');
   const isTimeGridDay = eventInfo.view.type.includes('timeGridDay');
   const isTimeGridWeek = eventInfo.view.type.includes('timeGridWeek');
-  const colorMode = localStorage.getItem('chakra-ui-color-mode');
-  const isDark = colorMode === 'dark';
 
   return (
     <>
@@ -35,7 +25,7 @@ export default function EventContent(eventInfo: EventContentArg) {
           label={ToolTipLabel(eventInfo)}
           borderRadius={'10px'}
           padding={'10px'}
-          color={isDark ? '#FFFFFF' : 'uspolis.blue'}
+          color={'uspolis.text'}
           border={'1px solid'}
         >
           <Stack spacing={0}>
@@ -48,6 +38,11 @@ export default function EventContent(eventInfo: EventContentArg) {
               {eventInfo.event.title} T
               {classNumberFromClassCode(classData.code)}
             </Heading>
+            {classData.label && (
+              <Text fontWeight={'bold'} fontSize={'lg'} textColor={'white'}>
+                {classData.label}
+              </Text>
+            )}
             {isTimeGridView && (
               <>
                 <Text noOfLines={1}>
@@ -75,6 +70,11 @@ export default function EventContent(eventInfo: EventContentArg) {
             <Heading size='sm' alignContent={'center'} textColor={'white'}>
               {eventInfo.event.title}
             </Heading>
+            {reservationData.label && (
+              <Text fontWeight={'bold'} textColor={'white'} fontSize={'lg'}>
+                {reservationData.label}
+              </Text>
+            )}
             {isTimeGridView && (
               <>
                 <Text noOfLines={1}>
@@ -123,6 +123,11 @@ function ToolTipLabel(eventInfo: EventContentArg) {
             <Text fontSize='lg' textColor={textColor}>
               {`${classData.subject_name}`}
             </Text>
+            {classData.label && (
+              <Text fontWeight={'bold'} fontSize={'lg'} textColor={textColor}>
+                {classData.label}
+              </Text>
+            )}
           </VStack>
           <Box>
             <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
@@ -185,17 +190,13 @@ function ToolTipLabel(eventInfo: EventContentArg) {
           <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
             {`Reserva - ${reservationData.title}`}
           </Text>
+          {reservationData.label && (
+            <Text fontWeight={'bold'} fontSize={'xl'} textColor={textColor}>
+              {reservationData.label}
+            </Text>
+          )}
 
           <Box>
-            <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
-              Motivo
-            </Text>
-            <Text fontSize='lg' textColor={textColor}>
-              {reservationData.reason
-                ? reservationData.reason
-                : 'Não informada'}
-            </Text>
-
             <Text fontSize='xl' fontWeight='bold' textColor={textColor}>
               Local
             </Text>
@@ -231,6 +232,20 @@ function ToolTipLabel(eventInfo: EventContentArg) {
                   ? moment(reservationData.end_date).format('DD/MM/YYYY')
                   : ''
               }`}
+            </Text>
+
+            <Text
+              fontSize='xl'
+              textColor={textColor}
+              fontWeight='bold'
+              mt={'10px'}
+            >
+              Motivo
+            </Text>
+            <Text fontSize='lg' textColor={textColor}>
+              {reservationData.reason
+                ? reservationData.reason
+                : 'Não informada'}
             </Text>
           </Box>
         </>

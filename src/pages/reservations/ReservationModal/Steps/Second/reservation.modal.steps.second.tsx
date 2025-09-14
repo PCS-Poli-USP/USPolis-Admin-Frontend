@@ -205,6 +205,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
       />
       <FormProvider {...props.form}>
         <form>
+          <Text fontSize={'xl'} fontWeight={'bold'} mb={'10px'}>
+            {props.isUpdate
+              ? `Atualizando ${ReservationType.translate(reservation_type)}`
+              : `Criando ${ReservationType.translate(reservation_type)}`}
+          </Text>
           <Text fontSize={'lg'} fontWeight={'bold'}>
             Local e Disponibilidade
           </Text>
@@ -464,8 +469,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               {reservation_type == ReservationType.EXAM && (
                 <Flex direction={'column'}>
                   <Text fontSize={'lg'} fontWeight={'bold'}>
-                    Nome e horários das provas:{' '}
-                    {`${props.selectedDays.length}/${labels ? labels.length : 0}/${times ? times.length : 0}`}
+                    Nome e horários das provas:
                   </Text>
                   {errors['labels'] && (
                     <Text textColor={'red.500'} fontSize={'sm'}>

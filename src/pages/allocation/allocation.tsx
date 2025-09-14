@@ -145,7 +145,7 @@ function Allocation() {
     const nameValue = name.toLowerCase();
     const classValue = class_.toLowerCase();
 
-    if (building) {
+    if (buildingValue) {
       newEvents = newEvents.filter((event) => {
         const data =
           event.extendedProps.class_data ||
@@ -153,7 +153,7 @@ function Allocation() {
         return data && data.building.toLowerCase() === buildingValue;
       });
     }
-    if (classroom) {
+    if (classroomValue) {
       newEvents = newEvents.filter((event) => {
         const data =
           event.extendedProps.class_data ||
@@ -161,19 +161,32 @@ function Allocation() {
         return data && data.classroom.toLowerCase() === classroomValue;
       });
     }
-    if (name) {
+    if (nameValue) {
       newEvents = newEvents.filter((event) => {
         const nameFilterResult =
-          event.title.toLowerCase() === nameValue ||
-          event.extendedProps.class_data?.code.toLowerCase() === nameValue;
+          event.title.toLowerCase().includes(nameValue) ||
+          event.extendedProps.class_data?.code
+            .toLowerCase()
+            .includes(nameValue) ||
+          event.extendedProps.reservation_data?.title
+            .toLowerCase()
+            .includes(nameValue) ||
+          event.extendedProps.reservation_data?.subject_code?.includes(
+            nameValue,
+          );
         return nameFilterResult;
       });
     }
     if (classValue) {
       newEvents = newEvents.filter((event) => {
         const classFilterResult =
-          event.extendedProps.class_data &&
-          event.extendedProps.class_data?.code.toLowerCase() === classValue;
+          (event.extendedProps.class_data &&
+            event.extendedProps.class_data?.code
+              .toLowerCase()
+              .includes(classValue)) ||
+          event.extendedProps.reservation_data?.class_codes?.some((code) =>
+            code.includes(classValue),
+          );
         return classFilterResult;
       });
     }

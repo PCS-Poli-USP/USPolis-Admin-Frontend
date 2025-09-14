@@ -6,6 +6,8 @@ import { classNumberFromClassCode } from '../../../../utils/classes/classes.form
 import TooltipSelect, {
   Option,
 } from '../../../../components/common/TooltipSelect';
+import { AllocationEventType } from '../../../../utils/enums/allocation.event.type.enum';
+import { ReservationType } from '../../../../utils/enums/reservations.enum';
 
 const customStyles: StylesConfig<Option, false> = {
   menu: (provided) => ({
@@ -65,12 +67,38 @@ function HeaderFilter({
     .sort((a, b) => a.value.localeCompare(b.value));
 
   const subjectOptions = events
-    .map((event) => ({
-      value: event.extendedProps.class_data?.subject_code || event.title,
-      label: event.extendedProps.class_data
-        ? `${event.extendedProps.class_data?.subject_code} - ${event.extendedProps.class_data?.subject_name}`
-        : event.title,
-    }))
+    .filter(
+      (event) =>
+        event.type === AllocationEventType.SUBJECT ||
+        (event.extendedProps.reservation_data &&
+          event.extendedProps.reservation_data?.type === ReservationType.EXAM &&
+          event.extendedProps.reservation_data?.subject_code),
+    )
+    .flatMap((event) => {
+      const classData = event.extendedProps.class_data;
+      if (classData) {
+        return [
+          {
+            value: classData.subject_code,
+            label: `${classData.subject_code} - ${classData.subject_name}`,
+          },
+        ];
+      }
+      const reservationData = event.extendedProps.reservation_data;
+      if (
+        reservationData &&
+        reservationData.subject_code &&
+        reservationData.subject_name
+      ) {
+        return [
+          {
+            value: reservationData.subject_code,
+            label: `${reservationData.subject_code} - ${reservationData.subject_name}`,
+          },
+        ];
+      }
+      return [];
+    })
     .filter(
       (value, index, self) =>
         self.findIndex((v) => v.value === value.value) === index,
@@ -79,17 +107,36 @@ function HeaderFilter({
 
   const classOptions = events
     .filter((event) => {
+      const reservationData = event.extendedProps.reservation_data;
+      const isEnable =
+        reservationData &&
+        reservationData.type === ReservationType.EXAM &&
+        reservationData.class_codes;
+
       return (
-        event.extendedProps.class_data &&
-        event.extendedProps.class_data.subject_code.includes(nameSearchValue)
+        (event.extendedProps.class_data &&
+          event.extendedProps.class_data.subject_code.includes(
+            nameSearchValue,
+          )) ||
+        isEnable
       );
     })
-    .map((event) => ({
-      value: event.extendedProps.class_data?.code || '',
-      label: event.extendedProps.class_data
-        ? classNumberFromClassCode(event.extendedProps.class_data?.code)
-        : '',
-    }))
+    .flatMap((event) => {
+      const classData = event.extendedProps.class_data;
+      if (classData)
+        return {
+          value: classData.code,
+          label: classNumberFromClassCode(classData.code),
+        };
+      const reservationData = event.extendedProps.reservation_data;
+      if (reservationData && reservationData.class_codes) {
+        return reservationData.class_codes.map((classCode) => ({
+          value: classCode,
+          label: classNumberFromClassCode(classCode),
+        }));
+      }
+      return [];
+    })
     .filter(
       (value, index, self) =>
         self.findIndex((v) => v.value === value.value) === index,

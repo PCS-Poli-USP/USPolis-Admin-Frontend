@@ -52,6 +52,11 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
                   <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
                     {`Turma ${classNumberFromClassCode(classData.code)}`}
                   </Text>
+                  {classData.label && (
+                    <Text fontWeight={'bold'} fontSize={'xl'}>
+                      {classData.label}
+                    </Text>
+                  )}
                 </VStack>
                 <Box>
                   <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
@@ -116,20 +121,22 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
 
             {reservationData ? (
               <>
-                <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
-                  {`Reserva - ${reservationData.title}`}
-                </Text>
-
-                <Box>
+                {reservationData.label && (
+                  <Text fontWeight={'bold'} fontSize={'xl'}>
+                    {reservationData.label}
+                  </Text>
+                )}
+                {reservationData.class_codes && (
                   <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
-                    Motivo
+                    {reservationData.class_codes &&
+                    reservationData.class_codes.length > 0
+                      ? `Turmas: ${reservationData.class_codes
+                          .map((code) => classNumberFromClassCode(code))
+                          .join(', ')}`
+                      : 'Prova da disciplina'}
                   </Text>
-                  <Text fontSize='lg' textColor={textColor}>
-                    {reservationData.reason
-                      ? reservationData.reason
-                      : 'Não informada'}
-                  </Text>
-
+                )}
+                <Box>
                   <Text fontSize='xl' fontWeight='bold' textColor={textColor}>
                     Local
                   </Text>
@@ -167,6 +174,19 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
                         ? moment(reservationData.end_date).format('DD/MM/YYYY')
                         : ''
                     }`}
+                  </Text>
+                  <Text
+                    fontSize='xl'
+                    textColor={textColor}
+                    fontWeight='bold'
+                    mt={'10px'}
+                  >
+                    Motivo
+                  </Text>
+                  <Text fontSize='lg' textColor={textColor}>
+                    {reservationData.reason
+                      ? reservationData.reason
+                      : 'Não informado'}
                   </Text>
                 </Box>
               </>
