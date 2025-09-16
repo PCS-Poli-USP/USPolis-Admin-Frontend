@@ -13,7 +13,8 @@
   font-weight: bold;
 }
 
-.fc-col-header {
+.fc-col-header,
+.fc-scrollgrid-section-header {
   color: var(--chakra-colors-uspolis-blue);
 }
 
