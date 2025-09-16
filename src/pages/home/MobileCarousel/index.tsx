@@ -51,7 +51,7 @@ function MobileCarousel({ items }: VerticalCarouselProps) {
               maxW={'450px'}
               fontWeight={'bold'}
               size={'xl'}
-              color={'black'}
+              color={'uspolis.black'}
               textAlign={'center'}
             >
               {item.title}
@@ -73,7 +73,7 @@ function MobileCarousel({ items }: VerticalCarouselProps) {
               // h={'100%'}
               borderRadius={'lg'}
               border={'2px solid'}
-              borderColor={'black'}
+              borderColor={'uspolis.black'}
             />
           </Box>
         </Flex>

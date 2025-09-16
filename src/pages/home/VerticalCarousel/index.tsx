@@ -44,7 +44,7 @@ function CarouselIcon({ id, text, icon }: CarouselIconProps) {
         _hover={{ cursor: 'pointer' }}
       >
         <Icon as={icon} boxSize={'40px'} />
-        <Text textColor={'black'} fontSize={'lg'}>
+        <Text textColor={'uspolis.black'} fontSize={'lg'}>
           {text}
         </Text>
       </Flex>
@@ -136,7 +136,7 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
                   maxW={'450px'}
                   fontWeight={'bold'}
                   size={'xl'}
-                  color={'black'}
+                  color={'uspolis.black'}
                   textAlign={'center'}
                 >
                   {item.title}
@@ -153,6 +153,7 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
           // borderRadius={'lg'}
           overflow={'hidden'}
           h={`${textH + textGap - 60}px`}
+          position={'sticky'}
           w={'auto'}
           mt={relativeScroll > 0 ? `${relativeScroll}px` : '0px'}
           transition='transform 0.3s, opacity 0.3s'
@@ -177,7 +178,7 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
               h={'100%'}
               borderRadius={'lg'}
               border={'2px solid'}
-              borderColor={'black'}
+              borderColor={'uspolis.black'}
             />
           </Tooltip>
         </Box>

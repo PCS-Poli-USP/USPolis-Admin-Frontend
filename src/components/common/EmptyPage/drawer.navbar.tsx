@@ -34,6 +34,7 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
     alignItems='center'
     px={2}
     py={1}
+    textColor={'white'}
     rounded='md'
     _hover={{
       bg: 'uspolis.grey',
