@@ -1,5 +1,8 @@
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import { ReservationStatus } from '../../../utils/enums/reservations.enum';
+import { EventResponseBase } from './event.response.models';
+import { ExamResponseBase } from './exam.response.models';
+import { MeetingResponseBase } from './meeting.response.models';
 import {
   ScheduleResponse,
   ScheduleFullResponse,
@@ -28,8 +31,15 @@ export interface ReservationResponseBase {
   solicitation_id?: number;
 }
 
+export interface ReservationCoreResponse extends ReservationResponseBase {
+  schedule: ScheduleResponse;
+}
+
 export interface ReservationResponse extends ReservationResponseBase {
   schedule: ScheduleResponse;
+  exam?: ExamResponseBase;
+  event?: EventResponseBase;
+  meeting?: MeetingResponseBase;
 }
 
 export interface ReservationFullResponse extends ReservationResponseBase {

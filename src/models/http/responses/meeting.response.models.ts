@@ -1,7 +1,10 @@
-import { ReservationResponse } from './reservation.response.models';
+import { ReservationCoreResponse } from './reservation.response.models';
 
-export interface MeetingResponse {
+export interface MeetingResponseBase {
   id: number;
   link?: string;
-  reservation: ReservationResponse;
+}
+
+export interface MeetingResponse extends MeetingResponseBase {
+  reservation: ReservationCoreResponse;
 }

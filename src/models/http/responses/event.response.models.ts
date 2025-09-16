@@ -1,11 +1,13 @@
 import { EventType } from '../../../utils/enums/eventTypes.enum';
-import { ReservationResponse } from './reservation.response.models';
+import { ReservationCoreResponse } from './reservation.response.models';
 
-export interface EventResponse {
+export interface EventResponseBase {
   id: number;
   reservation_id: number;
   link?: string;
   type: EventType;
+}
 
-  reservation: ReservationResponse;
+export interface EventResponse extends EventResponseBase {
+  reservation: ReservationCoreResponse;
 }
