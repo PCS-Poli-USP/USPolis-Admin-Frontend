@@ -127,6 +127,7 @@ function CustomCalendar({
 
   const formatedResources = resources.map((res) => {
     if (res.parentId === null) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { parentId, ...rest } = res;
       return rest;
     }

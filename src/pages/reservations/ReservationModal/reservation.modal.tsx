@@ -223,7 +223,6 @@ function ReservationModal(props: ReservationModalProps) {
         );
       }
     }
-    console.log(data);
     if (!props.isUpdate) {
       if (data.type === ReservationType.EXAM) {
         await createExam(data as CreateExam);
@@ -241,10 +240,21 @@ function ReservationModal(props: ReservationModalProps) {
 
   useEffect(() => {
     if (props.selectedReservation) {
+      const examData = props.selectedReservation.exam;
+      const eventData = props.selectedReservation.event;
+      const meetingData = props.selectedReservation.meeting;
+
       firstForm.reset({
         title: props.selectedReservation.title,
         type: props.selectedReservation.type,
         reason: props.selectedReservation.reason,
+        link:
+          eventData || meetingData
+            ? eventData?.link || meetingData?.link
+            : undefined,
+        subject_id: examData ? examData.subject_id : undefined,
+        class_ids: examData ? examData.class_ids : undefined,
+        event_type: eventData ? eventData.type : undefined,
       });
       secondForm.reset({
         building_id: props.selectedReservation.building_id,
@@ -256,10 +266,26 @@ function ReservationModal(props: ReservationModalProps) {
         recurrence: props.selectedReservation.schedule.recurrence,
         week_day: props.selectedReservation.schedule.week_day,
         month_week: props.selectedReservation.schedule.month_week,
+        type: props.selectedReservation.type,
+        labels: examData ? examData.labels : undefined,
+        times:
+          examData && props.selectedReservation.schedule.occurrences
+            ? props.selectedReservation.schedule.occurrences.map((occur) => [
+                occur.start_time,
+                occur.end_time,
+              ])
+            : undefined,
       });
 
       setStepsIsValid([true, true]);
-      if (props.selectedReservation.schedule.occurrences) {
+      if (props.selectedReservation.type == ReservationType.EXAM && examData) {
+        setDates(examData.dates);
+        calendarPicker.setSelectedDays(examData.dates);
+      }
+      if (
+        props.selectedReservation.type != ReservationType.EXAM &&
+        props.selectedReservation.schedule.occurrences
+      ) {
         const dates = props.selectedReservation.schedule.occurrences.map(
           (occur) => occur.date,
         );
@@ -296,6 +322,7 @@ function ReservationModal(props: ReservationModalProps) {
           form={secondForm}
           firstForm={firstForm}
           setDates={setDates}
+          selectedDates={dates}
           isUpdate={props.isUpdate}
           buildings={props.buildings}
           classrooms={props.classrooms}

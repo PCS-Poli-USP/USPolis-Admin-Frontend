@@ -8,6 +8,10 @@ export interface ExamResponseBase {
   subject_id: number;
   subject_code: string;
   subject_name: string;
+  class_ids: number[];
+  times: [string, string][];
+  labels: string[];
+  dates: string[];
 }
 
 export interface ExamResponse extends ExamResponseBase {

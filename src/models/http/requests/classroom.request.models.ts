@@ -29,4 +29,5 @@ export interface ClassroomConflictParams{
   end_date?: string;
   week_day?: WeekDay;
   month_week?: MonthWeek;
+  exclude_ids?: number[];
 }

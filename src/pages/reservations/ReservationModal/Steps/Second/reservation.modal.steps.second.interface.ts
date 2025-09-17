@@ -16,6 +16,7 @@ export interface ReservationModalSecondStepProps
   buildings: BuildingResponse[];
   classrooms: ClassroomResponse[];
   setDates: (value: string[]) => void;
+  selectedDates: string[];
   form: UseFormReturn<ReservationSecondForm, any, ReservationSecondForm>;
   firstForm: UseFormReturn<ReservationFirstForm, any, ReservationFirstForm>;
   selectedReservation?: ReservationResponse;

@@ -87,8 +87,10 @@ export interface ReservationExtendedData extends BaseExtendedData {
 }
 
 export interface EventExtendedProps {
+  opacity?: number;
   class_data?: ClassExtendedData;
   reservation_data?: ReservationExtendedData;
+  type?: AllocationEventType;
 }
 
 export interface AllocationScheduleOptions {

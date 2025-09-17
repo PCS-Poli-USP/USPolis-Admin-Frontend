@@ -89,6 +89,23 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
 
     if (reservation_type === ReservationType.EXAM) {
       setValue('recurrence', Recurrence.CUSTOM);
+      const labels = getValues('labels');
+      const times = getValues('times');
+
+      if (labels && times) {
+        props.selectedDates.forEach((date, idx) => {
+          setLabelMap((prev) => {
+            const newMap = new Map(prev);
+            newMap.set(date, labels[idx]);
+            return newMap;
+          });
+          setTimeMap((prev) => {
+            const newMap = new Map(prev);
+            newMap.set(date, times[idx]);
+            return newMap;
+          });
+        });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -96,12 +113,20 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   async function fetchClassroomWithConflict(dates: string[]) {
     if (selectedBuilding && start && end) {
       setIsLoading(true);
+      const ids: number[] = [];
+      if (props.selectedReservation)
+        ids.push(
+          ...(props.selectedReservation.schedule.occurrences?.map(
+            (o) => o.id || 0,
+          ) || []),
+        );
       const conflict = await getClassroomsWithConflict(
         {
           start_time: start,
           end_time: end,
           recurrence: Recurrence.CUSTOM,
           dates,
+          exclude_ids: ids,
         },
         selectedBuilding.id,
       );
@@ -123,7 +148,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
       setConflictedClassrooms([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [datesForTimeGrid, start, end]);
+  }, [datesForTimeGrid, start, end, props.selectedReservation]);
 
   useEffect(() => {
     if (reservation_type === ReservationType.EXAM) {

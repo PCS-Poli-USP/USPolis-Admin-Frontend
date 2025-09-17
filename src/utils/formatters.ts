@@ -4,6 +4,7 @@ export function Capitalize(text: string) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function Textify(value: any) {
   if (typeof value === 'boolean') {
     return value ? 'Sim' : 'Não';
