@@ -28,7 +28,7 @@ export default function EventContent(eventInfo: EventContentArg) {
           color={'uspolis.text'}
           border={'1px solid'}
         >
-          <Stack spacing={0}>
+          <Stack spacing={0} overflowY={'hidden'}>
             {isTimeGridView && <Text noOfLines={1}>{eventInfo.timeText}</Text>}
             <Heading
               size='sm'
@@ -61,13 +61,25 @@ export default function EventContent(eventInfo: EventContentArg) {
       {reservationData ? (
         <Tooltip
           bg='uspolis.white'
+          placement={
+            isTimeGridWeek ? 'right-end' : isTimeGridDay ? 'top' : 'auto'
+          }
           label={ToolTipLabel(eventInfo)}
-          zIndex={2500}
-          placement={isTimeGridView ? 'right-end' : undefined}
+          borderRadius={'10px'}
+          padding={'10px'}
+          color={'uspolis.text'}
+          border={'1px solid'}
         >
-          <Stack spacing={0}>
+          <Stack spacing={0} overflowY={'hidden'}>
             {isTimeGridView && <Text noOfLines={1}>{eventInfo.timeText}</Text>}
-            <Heading size='sm' alignContent={'center'} textColor={'white'}>
+            <Heading
+              size='sm'
+              alignContent={'center'}
+              textColor={'white'}
+              noOfLines={1}
+              textOverflow={'ellipsis'}
+              overflowX={'hidden'}
+            >
               {eventInfo.event.title}
             </Heading>
             {reservationData.label && (
@@ -85,6 +97,7 @@ export default function EventContent(eventInfo: EventContentArg) {
           </Stack>
         </Tooltip>
       ) : undefined}
+
       {!classData && !reservationData ? (
         <Heading size='sm' alignContent={'center'} textColor={'white'}>
           {eventInfo.event.title}
