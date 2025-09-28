@@ -503,13 +503,13 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   )}
                   {props.selectedDays.length === 0 && (
                     <Text textColor={'red.500'} fontSize={'sm'}>
-                      Selecione as datas para adicionar rótulos
+                      Selecione as datas para adicionar nomes e horários
                     </Text>
                   )}
                   <Flex direction={'column'} gap={'0px'}>
                     {labels && props.selectedDays.length !== labels.length && (
                       <Text textColor={'red.500'} fontSize={'sm'}>
-                        Cada data deve ter um rótulo
+                        Cada data deve ter um nome de prova
                       </Text>
                     )}
                     {times &&

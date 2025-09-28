@@ -163,7 +163,7 @@ export const secondFormFields = {
       )
       .test(
         'is-valid-labels',
-        'É necessário especificar os rótulos',
+        'É necessário especificar os nomes das provas',
         function (value) {
           const { type } = this.parent;
           if (type != ReservationType.EXAM) return true;
