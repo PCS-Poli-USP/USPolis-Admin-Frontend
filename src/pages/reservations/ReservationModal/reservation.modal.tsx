@@ -69,6 +69,11 @@ import { ReservationType } from '../../../utils/enums/reservations.enum';
 import useExams from '../../../hooks/exams/useExams';
 import useEvents from '../../../hooks/events/useEvents';
 import useMeetings from '../../../hooks/meetings/useMeetings';
+import {
+  CreateSolicitation,
+  UpdateSolicitation,
+} from '../../../models/http/requests/solicitation.request.models';
+import useSolicitations from '../../../hooks/solicitations/useSolicitations';
 
 function ReservationModal(props: ReservationModalProps) {
   const firstForm = useForm<ReservationFirstForm>({
@@ -87,9 +92,11 @@ function ReservationModal(props: ReservationModalProps) {
   ]);
 
   const { loading, updateReservation } = useReservations(false);
-  const { createExam } = useExams();
-  const { createEvent } = useEvents();
-  const { createMeeting } = useMeetings();
+  const { loading: loadingSolicitations, createSolicitation } =
+    useSolicitations(false);
+  const { createExam, updateExam } = useExams();
+  const { createEvent, updateEvent } = useEvents();
+  const { createMeeting, updateMeeting } = useMeetings();
 
   const [dates, setDates] = useState<string[]>([]);
   const calendarPicker = useDateCalendarPicker();
@@ -104,7 +111,7 @@ function ReservationModal(props: ReservationModalProps) {
       title: firstData.title,
       type: firstData.type,
       reason: firstData.reason,
-      classroom_id: secondData.classroom_id,
+      classroom_id: secondData.classroom_id as number,
       schedule_data: {
         reservation_id: props.selectedReservation
           ? props.selectedReservation.id
@@ -127,7 +134,7 @@ function ReservationModal(props: ReservationModalProps) {
       },
     };
     const type = firstData.type;
-    if (type === ReservationType.EVENT) {
+    if (type === ReservationType.EVENT && firstData.event_type) {
       data = {
         ...data,
         link: firstData.link,
@@ -160,6 +167,19 @@ function ReservationModal(props: ReservationModalProps) {
       return data as UpdateReservation;
     }
     return data as CreateReservation;
+  }
+
+  function getSolicitationData(): CreateSolicitation {
+    const firstData = firstForm.getValues();
+    const secondData = secondForm.getValues();
+    const data: CreateSolicitation | UpdateSolicitation = {
+      building_id: secondData.building_id,
+      classroom_id: secondData.classroom_id,
+      required_classroom: secondData.required_classroom as boolean,
+      capacity: firstData.capacity as number,
+      reservation_data: getReservationData(),
+    };
+    return data as CreateSolicitation;
   }
 
   function handleCloseModal() {
@@ -211,11 +231,20 @@ function ReservationModal(props: ReservationModalProps) {
     }
   }
 
-  async function handleSaveClick() {
+  async function handleReservationSaveClick() {
     const data = getReservationData();
     if (props.isUpdate && props.selectedReservation) {
       if (data.type === ReservationType.EXAM) {
-        // await updateExam(props.selectedReservation.id, data as UpdateExam);
+        await updateExam(props.selectedReservation.id, data as UpdateExam);
+      }
+      if (data.type === ReservationType.MEETING) {
+        await updateMeeting(
+          props.selectedReservation.id,
+          data as UpdateMeeting,
+        );
+      }
+      if (data.type === ReservationType.EVENT) {
+        await updateEvent(props.selectedReservation.id, data as UpdateEvent);
       } else {
         await updateReservation(
           props.selectedReservation.id,
@@ -234,11 +263,29 @@ function ReservationModal(props: ReservationModalProps) {
         await createMeeting(data as CreateMeeting);
       }
     }
+  }
+
+  async function handleSolicitationSaveClick() {
+    const data = getSolicitationData();
+    if (!props.isUpdate) {
+      await createSolicitation(data);
+    }
+  }
+
+  async function handleSaveClick() {
+    if (!props.selectedSolicitation) {
+      await handleReservationSaveClick();
+    }
+    if (props.selectedReservation) {
+      await handleSolicitationSaveClick();
+    }
     props.refetch();
-    // handleCloseModal();
+    handleCloseModal();
   }
 
   useEffect(() => {
+    firstForm.setValue('is_solicitation', props.isSolicitation);
+    secondForm.setValue('is_solicitation', props.isSolicitation);
     if (props.selectedReservation) {
       const examData = props.selectedReservation.exam;
       const eventData = props.selectedReservation.event;
@@ -311,6 +358,7 @@ function ReservationModal(props: ReservationModalProps) {
           subjects={props.subjects}
           classes={props.classes}
           loading={props.loading}
+          isSolicitation={props.isSolicitation}
         />
       ),
     },
@@ -339,6 +387,17 @@ function ReservationModal(props: ReservationModalProps) {
     count: steps.length,
   });
 
+  function getModalTitle() {
+    if (!props.isSolicitation) {
+      return props.isUpdate
+        ? `Atualizar Reserva - ${steps[activeStep].description}`
+        : `Cadastrar Reserva - ${steps[activeStep].description}`;
+    }
+    return props.isUpdate
+      ? `Atualizar Solicitação de Reserva - ${steps[activeStep].description}`
+      : `Solicitar Reserva de Sala - ${steps[activeStep].description}`;
+  }
+
   return (
     <Modal
       onClose={handleCloseModal}
@@ -351,11 +410,7 @@ function ReservationModal(props: ReservationModalProps) {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          {props.isUpdate
-            ? `Atualizar Reserva - ${steps[activeStep].description}`
-            : `Cadastrar Reserva - ${steps[activeStep].description}`}
-        </ModalHeader>
+        <ModalHeader>{getModalTitle()}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack w={'full'}>
@@ -420,7 +475,7 @@ function ReservationModal(props: ReservationModalProps) {
                   colorScheme={'blue'}
                   onClick={handleNextClick}
                   rightIcon={<DownloadIcon />}
-                  isLoading={loading}
+                  isLoading={loading || loadingSolicitations}
                 >
                   {loading ? 'Salvando...' : 'Finalizar'}
                 </Button>

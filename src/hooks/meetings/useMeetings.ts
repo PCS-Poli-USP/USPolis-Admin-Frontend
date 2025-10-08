@@ -2,7 +2,10 @@
 import { useCallback, useState } from 'react';
 import useCustomToast from '../useCustomToast';
 import { MeetingResponse } from '../../models/http/responses/meeting.response.models';
-import { CreateMeeting } from '../../models/http/requests/meeting.request.models';
+import {
+  CreateMeeting,
+  UpdateMeeting,
+} from '../../models/http/requests/meeting.request.models';
 import useMeetingsService from '../API/services/useMeetingsService';
 import MeetingErrorParser from './meetingErrorParser';
 
@@ -45,11 +48,31 @@ const useMeetings = () => {
       });
   }, []);
 
+  const updateMeeting = useCallback(
+    async (meeting_id: number, data: UpdateMeeting) => {
+      setLoading(true);
+      await service
+        .update(meeting_id, data)
+        .then((response) => {
+          showToast('Sucesso', 'Reunião atualizada com sucesso', 'success');
+          return response.data;
+        })
+        .catch((error) => {
+          showToast('Erro', errorParser.parseCreateError(error), 'error');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [],
+  );
+
   return {
     meetings,
     loading,
     getMeetings,
     createMeeting,
+    updateMeeting,
   };
 };
 

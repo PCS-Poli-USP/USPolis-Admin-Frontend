@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 import TooltipSelect, {
   Option,
@@ -67,6 +68,7 @@ function EmptyClassroomsReportModal({
         <ModalHeader fontWeight={'bold'} fontSize={'lg'} maxH={'50px'}>
           Alocações de Disciplinas
         </ModalHeader>
+        <ModalCloseButton />
         <ModalBody overflowY={'auto'} h={'full'}>
           <Flex direction={'column'} gap={'10px'}>
             <Flex
@@ -126,11 +128,6 @@ function EmptyClassroomsReportModal({
                     setSelectedBuilding(option);
                   }}
                 />
-                {!selectedBuilding && (
-                  <Text color={'red.500'} ml={'5px'} mt={'5px'}>
-                    Selecione um prédio antes!
-                  </Text>
-                )}
               </Flex>
             </Flex>
           </Flex>

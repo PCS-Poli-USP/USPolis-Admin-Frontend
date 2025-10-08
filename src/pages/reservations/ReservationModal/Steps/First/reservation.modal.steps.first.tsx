@@ -3,6 +3,7 @@ import { FormProvider } from 'react-hook-form';
 import {
   Input,
   MultiSelectInput,
+  NumberInput,
   SelectInput,
   TextareaInput,
 } from '../../../../../components/common';
@@ -11,11 +12,13 @@ import { ReservationModalFirstStepProps } from './reservation.modal.steps.first.
 import { classNumberFromClassCode } from '../../../../../utils/classes/classes.formatter';
 import { LinkIcon } from '@chakra-ui/icons';
 import { EventType } from '../../../../../utils/enums/eventTypes.enum';
+import { secondDefaultValues } from '../Second/reservation.modal.steps.second.form';
 
 function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
   const { watch, resetField } = props.form;
 
   const reservationType = watch('type');
+  const is_solicitation = watch('is_solicitation');
   const subjectId = watch('subject_id');
 
   return (
@@ -33,6 +36,9 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
           >
             A reserva possui uma solicitação vinculada
           </Text>
+
+          <Input mt={'10px'} label={'Título'} name={'title'} />
+
           <SelectInput
             mt={4}
             label={'Tipo'}
@@ -48,7 +54,12 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                 resetField('link');
                 resetField('event_type');
               }
-              props.secondForm.reset();
+
+              props.secondForm.reset({
+                ...secondDefaultValues,
+                is_solicitation: props.isSolicitation,
+              });
+
               if (option) {
                 props.secondForm.setValue(
                   'type',
@@ -65,7 +76,14 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
             }}
           />
 
-          <Input mt={'10px'} label={'Título'} name={'title'} />
+          {is_solicitation && (
+            <NumberInput
+              label='Quantidade de pessoas'
+              name='capacity'
+              mt={'10px'}
+            />
+          )}
+
           <TextareaInput mt={4} label='Motivo (Opcional)' name='reason' />
           {!reservationType && (
             <Alert status='error' mt={'20px'} borderRadius={'10px'}>

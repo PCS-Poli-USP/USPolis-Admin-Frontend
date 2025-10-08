@@ -149,6 +149,7 @@ function Reservations() {
         }}
         isOpen={isOpenModal}
         isUpdate={isUpdate}
+        isSolicitation={false}
         classrooms={classrooms}
         buildings={buildings}
         selectedReservation={selectedReservation}

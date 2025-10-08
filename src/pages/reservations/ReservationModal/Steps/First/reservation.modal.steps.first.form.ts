@@ -5,6 +5,33 @@ import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 import { normalizeURL } from '../../../../../utils/formatters';
 
 export const formFields = {
+  is_solicitation: {
+    validator: yup
+      .boolean()
+      .required('Necessário informar se é uma solicitação'),
+    defaultValue: false,
+  },
+  capacity: {
+    validator: yup
+      .number()
+      .notRequired()
+      .test(
+        'solicitation-capacity-check',
+        'Capacidade deve ser informada apenas em solicitações',
+        function (value) {
+          const { is_solicitation } = this.parent as ReservationFirstForm;
+          if (is_solicitation) return true;
+          if (!is_solicitation && value != undefined) return false;
+          return true;
+        },
+      )
+      .test('is-valid-capacity', 'Campo obrigatório', function (value) {
+        const { is_solicitation } = this.parent as ReservationFirstForm;
+        if (is_solicitation && !value) return false;
+        return true;
+      }),
+    defaultValue: undefined,
+  },
   title: {
     validator: yup
       .string()
@@ -153,6 +180,8 @@ export const formFields = {
 };
 
 export const firstSchema = yup.object<ReservationFirstForm>().shape({
+  is_solicitation: formFields.is_solicitation.validator,
+  capacity: formFields.capacity.validator,
   title: formFields.title.validator,
   type: formFields.type.validator,
   reason: formFields.reason.validator,
@@ -163,6 +192,8 @@ export const firstSchema = yup.object<ReservationFirstForm>().shape({
 });
 
 export const firstDefaultValues: ReservationFirstForm = {
+  is_solicitation: formFields.is_solicitation.defaultValue,
+  capacity: formFields.capacity.defaultValue,
   title: formFields.title.defaultValue,
   type: formFields.type.defaultValue as ReservationType,
   reason: formFields.reason.defaultValue,

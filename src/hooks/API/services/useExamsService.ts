@@ -59,8 +59,11 @@ const useExamsService = () => {
     return axios.post(`${PREFIX}`, data);
   };
 
-  const update = (data: UpdateExam): Promise<AxiosResponse<JSONResponse>> => {
-    return axios.put(`${PREFIX}`, data);
+  const update = (
+    exam_id: number,
+    data: UpdateExam,
+  ): Promise<AxiosResponse<JSONResponse>> => {
+    return axios.put(`${PREFIX}/${exam_id}`, data);
   };
 
   return { get, getBySubjectId, getEvents, create, update };

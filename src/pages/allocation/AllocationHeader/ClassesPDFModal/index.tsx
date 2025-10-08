@@ -3,8 +3,6 @@ import {
   Button,
   Flex,
   Text,
-  Alert,
-  AlertIcon,
   Input,
   Modal,
   ModalOverlay,
@@ -12,6 +10,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 import TooltipSelect, {
   Option,
@@ -62,6 +61,7 @@ function ClassesPDFModal({ isOpen, onClose, buildings }: ClassesPDFModalProps) {
         <ModalHeader fontWeight={'bold'} fontSize={'lg'} maxH={'50px'}>
           Alocações de Disciplinas
         </ModalHeader>
+        <ModalCloseButton />
         <ModalBody overflowY={'auto'} h={'full'}>
           <Flex direction={'column'} gap={'10px'}>
             <Flex
@@ -121,11 +121,6 @@ function ClassesPDFModal({ isOpen, onClose, buildings }: ClassesPDFModalProps) {
                     setSelectedBuilding(option);
                   }}
                 />
-                {!selectedBuilding && (
-                  <Text color={'red.500'} ml={'5px'} mt={'5px'}>
-                    Selecione um prédio antes!
-                  </Text>
-                )}
               </Flex>
             </Flex>
           </Flex>

@@ -30,8 +30,11 @@ const useEventsService = () => {
     return axios.post(`${PREFIX}`, data);
   };
 
-  const update = (data: UpdateEvent): Promise<AxiosResponse<JSONResponse>> => {
-    return axios.put(`${PREFIX}`, data);
+  const update = (
+    event_id: number,
+    data: UpdateEvent,
+  ): Promise<AxiosResponse<JSONResponse>> => {
+    return axios.put(`${PREFIX}/${event_id}`, data);
   };
 
   return { get, create, update };

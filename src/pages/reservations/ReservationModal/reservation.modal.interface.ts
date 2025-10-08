@@ -7,16 +7,19 @@ import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
 import { ClassResponse } from '../../../models/http/responses/class.response.models';
 import { SubjectResponse } from '../../../models/http/responses/subject.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 
 export interface ReservationModalProps extends ModalProps {
   isUpdate: boolean;
   classrooms: ClassroomResponse[];
   buildings: BuildingResponse[];
   selectedReservation?: ReservationResponse;
+  selectedSolicitation?: SolicitationResponse;
   subjects: SubjectResponse[];
   classes: ClassResponse[];
   loading: boolean;
   refetch: () => void;
+  isSolicitation: boolean;
   initialDate?: string;
 }
 

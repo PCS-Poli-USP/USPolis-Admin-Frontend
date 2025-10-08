@@ -11,7 +11,7 @@ import {
   Input as ChakraInput,
 } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
-import { Input, SelectInput } from '../../../../../components/common';
+import { CheckBox, Input, SelectInput } from '../../../../../components/common';
 import { ReservationModalSecondStepProps } from './reservation.modal.steps.second.interface';
 
 import DateCalendarPicker from '../../../../../components/common/DateCalendarPicker';
@@ -42,7 +42,9 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
 
   const { listOneFull, getClassroomsWithConflict } = useClassrooms(false);
 
-  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
+  const [selectedBuilding, setSelectedBuilding] = useState<
+    BuildingResponse | undefined
+  >(undefined);
   const [selectedClassroom, setSelectedClassroom] =
     useState<ClassroomFullResponse>();
   const [conflictedClassrooms, setConflictedClassrooms] = useState<
@@ -71,6 +73,10 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   const reservation_type = props.firstForm.watch('type');
   const labels = watch('labels');
   const times = watch('times');
+  const is_solicitation = watch('is_solicitation');
+  const optional_classroom = watch('optional_classroom');
+  const required_classroom = watch('required_classroom');
+  const classroom_id = watch('classroom_id');
 
   useEffect(() => {
     const { getValues } = props.form;
@@ -238,37 +244,51 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
           <Text fontSize={'lg'} fontWeight={'bold'}>
             Local e Disponibilidade
           </Text>
-          <HStack
-            align={'center'}
-            justify={'flex-start'}
-            maxH={200}
-            w={'full'}
-            mt={'5px'}
-          >
-            <SelectInput
-              label={'Prédio'}
-              w={'390px'}
-              name={'building_id'}
-              options={props.buildings.map((building) => ({
-                value: building.id,
-                label: building.name,
-              }))}
-              onChange={(event) => {
-                if (event) {
-                  setSelectedBuilding(
-                    props.buildings.find(
-                      (building) => building.id === Number(event.value),
-                    ),
-                  );
-                } else setSelectedBuilding(undefined);
-              }}
-            />
+          <HStack align={'flex-start'} justify={'flex-start'}>
+            <VStack
+              alignItems={'flex-start'}
+              justify={'flex-start'}
+              maxH={200}
+              w={'fit-content'}
+            >
+              <SelectInput
+                label={'Prédio'}
+                w={'390px'}
+                name={'building_id'}
+                options={props.buildings.map((building) => ({
+                  value: building.id,
+                  label: building.name,
+                }))}
+                onChange={(event) => {
+                  if (event) {
+                    setSelectedBuilding(
+                      props.buildings.find(
+                        (building) => building.id === Number(event.value),
+                      ),
+                    );
+                  } else setSelectedBuilding(undefined);
+                }}
+              />
+              {is_solicitation && (
+                <CheckBox
+                  name='optional_classroom'
+                  text='Não quero especificar sala'
+                  disabled={!!required_classroom}
+                  onChange={(val) => {
+                    if (val) {
+                      setValue('optional_classroom', false);
+                      setValue('classroom_id', undefined);
+                    }
+                  }}
+                />
+              )}
+            </VStack>
 
-            <VStack>
+            <VStack alignItems={'flex-start'} w={'fit-content'}>
               <SelectInput
                 label={'Sala de Aula'}
                 w={'390px'}
-                disabled={!selectedBuilding}
+                disabled={!selectedBuilding || !!optional_classroom}
                 placeholder={
                   !selectedBuilding
                     ? 'Selecione um prédio primeiro'
@@ -303,19 +323,27 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   }
                 }}
               />
+
+              {is_solicitation && (
+                <CheckBox
+                  name='required_classroom'
+                  text='Necessariamente essa sala'
+                  disabled={
+                    !!optional_classroom || !classroom_id || !selectedBuilding
+                  }
+                />
+              )}
             </VStack>
 
-            <VStack>
-              <Button
-                mt={'30px'}
-                w={'strech'}
-                isDisabled={!selectedClassroom || isLoading}
-                isLoading={isLoading}
-                onClick={() => onOpenCGrid()}
-              >
-                Visualizar Disponibilidade
-              </Button>
-            </VStack>
+            <Button
+              mt={'30px'}
+              w={'strech'}
+              isDisabled={!selectedClassroom || isLoading}
+              isLoading={isLoading}
+              onClick={() => onOpenCGrid()}
+            >
+              Visualizar Disponibilidade
+            </Button>
           </HStack>
 
           <HStack mt={8}>

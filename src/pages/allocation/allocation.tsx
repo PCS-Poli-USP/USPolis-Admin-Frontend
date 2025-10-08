@@ -36,6 +36,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { DateCalendar } from '@mui/x-date-pickers';
 import FullCalendar from '@fullcalendar/react';
 import { AllocationEventType } from '../../utils/enums/allocation.event.type.enum';
+import useClasses from '../../hooks/classes/useClasses';
 
 type ViewOption = {
   value: string;
@@ -122,6 +123,7 @@ function Allocation() {
     subjects,
     getAllSubjects,
   } = useSubjects(false);
+  const { classes, loading: loadingClasses } = useClasses();
   const {
     loading: loadingClassrooms,
     classrooms,
@@ -537,19 +539,38 @@ function Allocation() {
           mb={'20px'}
         >
           {loggedUser && (
-            <SolicitationModal
-              isMobile={isMobile}
+            // <SolicitationModal
+            //   isMobile={isMobile}
+            //   isOpen={isOpenSolicitation}
+            //   onClose={onCloseSolicitation}
+            //   buildings={buildings}
+            //   classrooms={classrooms.filter((cls) => cls.reservable)}
+            //   loadingBuildings={loadingBuildings}
+            //   loadingClassrooms={loadingClassrooms}
+            //   refetch={async () => {
+            //     if (loggedUser.is_admin || loggedUser.buildings) {
+            //       await getPendingBuildingSolicitations();
+            //     }
+            //   }}
+            // />
+            <ReservationModal
+              onClose={() => {
+                onCloseSolicitation();
+              }}
               isOpen={isOpenSolicitation}
-              onClose={onCloseSolicitation}
+              isUpdate={false}
+              isSolicitation={true}
+              classrooms={classrooms}
               buildings={buildings}
-              classrooms={classrooms.filter((cls) => cls.reservable)}
-              loadingBuildings={loadingBuildings}
-              loadingClassrooms={loadingClassrooms}
+              selectedReservation={undefined}
               refetch={async () => {
                 if (loggedUser.is_admin || loggedUser.buildings) {
                   await getPendingBuildingSolicitations();
                 }
               }}
+              subjects={subjects}
+              classes={classes}
+              loading={loadingSubjects || loadingClasses}
             />
           )}
           {loggedUser && (
@@ -584,6 +605,7 @@ function Allocation() {
               subjects={subjects}
               classes={[]}
               loading={false}
+              isSolicitation={false}
             />
           )}
 

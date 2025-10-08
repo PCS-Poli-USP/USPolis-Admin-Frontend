@@ -24,7 +24,10 @@ export interface ReservationModalSecondStepProps
 }
 export interface ReservationSecondForm {
   building_id: number;
-  classroom_id: number;
+  classroom_id?: number;
+  optional_classroom?: boolean;
+  required_classroom?: boolean;
+  is_solicitation: boolean;
 
   start_time: string;
   end_time: string;

@@ -10,7 +10,7 @@ import { sortSolicitationResponse } from '../../utils/solicitations/solicitation
 import useSolicitationsService from '../API/services/useSolicitationsService';
 import { SolicitationErrorParser } from './solicitationErrorParser';
 
-const useClassroomsSolicitations = (initialFetch = true) => {
+const useSolicitations = (initialFetch = true) => {
   const service = useSolicitationsService();
   const [loading, setLoading] = useState(false);
   const [solicitations, setSolicitations] = useState<SolicitationResponse[]>(
@@ -179,4 +179,4 @@ const useClassroomsSolicitations = (initialFetch = true) => {
   };
 };
 
-export default useClassroomsSolicitations;
+export default useSolicitations;

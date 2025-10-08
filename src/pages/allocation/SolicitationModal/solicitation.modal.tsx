@@ -40,6 +40,7 @@ import {
 import ClassroomTimeGrid from '../../../components/common/ClassroomTimeGrid/classroom.time.grid';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { ConflictType } from '../../../utils/enums/conflictType.enum';
+import useSolicitations from '../../../hooks/solicitations/useSolicitations';
 
 function SolicitationModal({
   buildings,
@@ -76,7 +77,7 @@ function SolicitationModal({
     listOneFull,
   } = useClassrooms(false);
 
-  const { loading, createSolicitation } = useClassroomsSolicitations(false);
+  const { loading, createSolicitation } = useSolicitations(false);
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
   const [classroomsWithConflict, setClassroomsWithConflict] =
     useState<ClassroomWithConflictCount[]>();

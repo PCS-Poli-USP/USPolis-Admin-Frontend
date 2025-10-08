@@ -33,9 +33,10 @@ const useMeetingsService = () => {
   };
 
   const update = (
+    meeting_id: number,
     data: UpdateMeeting,
   ): Promise<AxiosResponse<JSONResponse>> => {
-    return axios.put(`${PREFIX}`, data);
+    return axios.put(`${PREFIX}/${meeting_id}`, data);
   };
 
   return { get, create, update };

@@ -9,6 +9,7 @@ import { SubjectResponse } from '../../../../../models/http/responses/subject.re
 
 export interface ReservationModalFirstStepProps {
   isUpdate: boolean;
+  isSolicitation: boolean;
   form: UseFormReturn<ReservationFirstForm, any, ReservationFirstForm>;
   secondForm: UseFormReturn<ReservationSecondForm, any, ReservationSecondForm>;
   selectedReservation?: ReservationResponse;
@@ -20,6 +21,8 @@ export interface ReservationModalFirstStepProps {
 }
 export interface ReservationFirstForm {
   title: string;
+  is_solicitation: boolean;
+  capacity?: number;
   type: ReservationType;
   reason?: string;
   link?: string;
