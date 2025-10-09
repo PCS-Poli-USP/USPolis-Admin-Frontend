@@ -29,7 +29,9 @@ export const getReservationsColumns = (
 ): ColumnDef<ReservationResponse>[] => {
   const columns: ColumnDef<ReservationResponse>[] = [
     {
+      accessorFn: (row) => ReservationStatus.translate(row.status),
       header: 'Situação',
+
       meta: {
         isSelectable: true,
       },

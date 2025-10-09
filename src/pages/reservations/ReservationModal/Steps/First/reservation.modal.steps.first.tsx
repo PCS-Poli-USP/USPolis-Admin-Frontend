@@ -58,6 +58,8 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
               props.secondForm.reset({
                 ...secondDefaultValues,
                 is_solicitation: props.isSolicitation,
+                required_classroom: props.isSolicitation ? false : undefined,
+                optional_classroom: props.isSolicitation ? false : undefined,
               });
 
               if (option) {

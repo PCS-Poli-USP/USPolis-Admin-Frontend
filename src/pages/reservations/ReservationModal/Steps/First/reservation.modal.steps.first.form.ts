@@ -25,11 +25,15 @@ export const formFields = {
           return true;
         },
       )
-      .test('is-valid-capacity', 'Campo obrigatório', function (value) {
-        const { is_solicitation } = this.parent as ReservationFirstForm;
-        if (is_solicitation && !value) return false;
-        return true;
-      }),
+      .test(
+        'is-valid-capacity',
+        'É necessário informar a capacidade',
+        function (value) {
+          const { is_solicitation } = this.parent as ReservationFirstForm;
+          if (is_solicitation && !value) return false;
+          return true;
+        },
+      ),
     defaultValue: undefined,
   },
   title: {

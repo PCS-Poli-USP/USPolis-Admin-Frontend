@@ -126,12 +126,19 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             (o) => o.id || 0,
           ) || []),
         );
+      const filteredTimes = Array(...timeMap.values()).filter(
+        (val) => val[0] && val[1],
+      );
       const conflict = await getClassroomsWithConflict(
         {
           start_time: start,
           end_time: end,
           recurrence: Recurrence.CUSTOM,
           dates,
+          times:
+            filteredTimes && filteredTimes.length == dates.length
+              ? filteredTimes
+              : undefined,
           exclude_ids: ids,
         },
         selectedBuilding.id,
@@ -145,7 +152,14 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     const dates = getDatesForTimeGrid();
     setDatesForTimeGrid(dates);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [start_date, end_date, recurrence, month_week, week_day]);
+  }, [
+    start_date,
+    end_date,
+    recurrence,
+    month_week,
+    week_day,
+    props.selectedDates,
+  ]);
 
   useEffect(() => {
     if (datesForTimeGrid.length > 0) {
@@ -154,7 +168,14 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
       setConflictedClassrooms([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [datesForTimeGrid, start, end, props.selectedReservation]);
+  }, [
+    datesForTimeGrid,
+    start,
+    end,
+    props.selectedReservation,
+    props.selectedDates,
+    timeMap,
+  ]);
 
   useEffect(() => {
     if (reservation_type === ReservationType.EXAM) {
@@ -378,8 +399,19 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
 
           {!!reservation_type && (
             <>
-              <HStack w={'full'} h={'full'} mt={-5}>
-                <VStack h={'full'} w={'full'}>
+              <HStack
+                w={'full'}
+                h={'full'}
+                mt={0}
+                justify={'flex-start'}
+                align={'flex-start'}
+              >
+                <VStack
+                  h={'full'}
+                  w={'full'}
+                  align={'flex-start'}
+                  justify={'flex-start'}
+                >
                   <HStack align={'center'} w={'full'} mt={4}>
                     <SelectInput
                       label={'Recorrência'}

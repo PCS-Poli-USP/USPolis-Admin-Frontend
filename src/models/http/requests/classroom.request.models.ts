@@ -20,11 +20,12 @@ export interface CreateClassroom {
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface UpdateClassroom extends CreateClassroom {}
 
-export interface ClassroomConflictParams{
+export interface ClassroomConflictParams {
   start_time: string;
   end_time: string;
   recurrence: Recurrence;
   dates?: string[];
+  times?: [string, string][];
   start_date?: string;
   end_date?: string;
   week_day?: WeekDay;

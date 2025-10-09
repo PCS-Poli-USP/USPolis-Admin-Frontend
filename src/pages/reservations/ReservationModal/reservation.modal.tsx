@@ -273,19 +273,25 @@ function ReservationModal(props: ReservationModalProps) {
   }
 
   async function handleSaveClick() {
-    if (!props.selectedSolicitation) {
+    if (!props.isSolicitation) {
       await handleReservationSaveClick();
     }
-    if (props.selectedReservation) {
+    if (props.isSolicitation) {
       await handleSolicitationSaveClick();
     }
     props.refetch();
-    handleCloseModal();
+    // handleCloseModal();
   }
 
   useEffect(() => {
     firstForm.setValue('is_solicitation', props.isSolicitation);
     secondForm.setValue('is_solicitation', props.isSolicitation);
+
+    if (props.isSolicitation) {
+      secondForm.setValue('required_classroom', false);
+      secondForm.setValue('optional_classroom', false);
+    }
+
     if (props.selectedReservation) {
       const examData = props.selectedReservation.exam;
       const eventData = props.selectedReservation.event;

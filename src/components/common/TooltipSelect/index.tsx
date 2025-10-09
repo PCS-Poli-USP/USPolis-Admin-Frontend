@@ -44,47 +44,91 @@ function TooltipSelect<IsMulti extends boolean = false>(
   const uspolis = theme.colors.uspolis as Record<string, string>;
 
   const defaultStyles: StylesConfig<Option, IsMulti, GroupBase<Option>> = {
-    input: (base) => ({
+    input: (base, state) => ({
       ...base,
-      color: isDark ? uspolis.white : uspolis.black,
+      color: state.isDisabled
+        ? isDark
+          ? uspolis.gray
+          : uspolis.lightGray
+        : isDark
+          ? uspolis.white
+          : uspolis.black,
+      cursor: state.isDisabled ? 'not-allowed' : 'text',
     }),
-    placeholder: (base) => ({
+
+    placeholder: (base, state) => ({
       ...base,
-      color: isDark ? uspolis.white : uspolis.black,
+      color: state.isDisabled
+        ? isDark
+          ? uspolis.gray
+          : uspolis.lightGray
+        : isDark
+          ? uspolis.white
+          : uspolis.black,
     }),
-    singleValue: (base) => ({
+
+    singleValue: (base, state) => ({
       ...base,
-      color: isDark ? uspolis.white : uspolis.black,
+      color: state.isDisabled
+        ? isDark
+          ? uspolis.gray
+          : uspolis.lightGray
+        : isDark
+          ? uspolis.white
+          : uspolis.black,
+      cursor: state.isDisabled ? 'not-allowed' : 'default',
     }),
-    multiValue: (base) => ({
+
+    multiValue: (base, state) => ({
       ...base,
       backgroundColor: isDark ? uspolis.darkBlue : uspolis.blue,
-      color: isDark ? uspolis.white : uspolis.black,
+      opacity: state.isDisabled ? 0.6 : 1,
+      cursor: state.isDisabled ? 'not-allowed' : 'default',
     }),
-    multiValueLabel: (base) => ({
+
+    multiValueLabel: (base, state) => ({
       ...base,
       color: isDark ? uspolis.white : uspolis.black,
+      opacity: state.isDisabled ? 0.6 : 1,
+      cursor: state.isDisabled ? 'not-allowed' : 'default',
     }),
-    multiValueRemove: (base) => ({
+
+    multiValueRemove: (base, state) => ({
       ...base,
       color: isDark ? uspolis.white : uspolis.black,
-      ':hover': {
-        backgroundColor: isDark ? uspolis.darkRed : uspolis.red,
-        color: uspolis.white,
-      },
+      cursor: state.isDisabled ? 'not-allowed' : 'pointer',
+      ':hover': !state.isDisabled
+        ? {
+            backgroundColor: isDark ? uspolis.darkRed : uspolis.red,
+            color: uspolis.white,
+          }
+        : undefined,
     }),
+
     control: (base, state) => ({
       ...base,
       backgroundColor: isDark ? uspolis.black : uspolis.white,
-      borderColor: state.isFocused
+      borderColor: state.isDisabled
         ? isDark
-          ? uspolis.darkBlue
-          : uspolis.blue
-        : isDark
-          ? uspolis.white
-          : uspolis.blue,
+          ? uspolis.gray
+          : uspolis.lightGray
+        : state.isFocused
+          ? isDark
+            ? uspolis.darkBlue
+            : uspolis.blue
+          : isDark
+            ? uspolis.white
+            : uspolis.blue,
       color: isDark ? uspolis.white : uspolis.black,
+      opacity: state.isDisabled ? 0.6 : 1,
+      cursor: state.isDisabled ? 'not-allowed' : 'default',
     }),
+
+    valueContainer: (base, state) => ({
+      ...base,
+      cursor: state.isDisabled ? 'not-allowed' : 'default',
+    }),
+
     menu: (base) => ({
       ...base,
       backgroundColor: isDark ? uspolis.black : uspolis.white,
@@ -92,15 +136,31 @@ function TooltipSelect<IsMulti extends boolean = false>(
     }),
     option: (base, state) => ({
       ...base,
-      backgroundColor:
-        state.isFocused || state.isSelected
+      backgroundColor: state.isDisabled
+        ? isDark
+          ? uspolis.black
+          : uspolis.white
+        : state.isFocused || state.isSelected
           ? isDark
-            ? uspolis.darkBlue // hover dark
-            : uspolis.lightBlue // hover light
+            ? uspolis.darkBlue
+            : uspolis.lightBlue
           : isDark
-            ? uspolis.black // normal dark
-            : uspolis.white, // normal light
-      color: isDark ? uspolis.white : uspolis.blue,
+            ? uspolis.black
+            : uspolis.white,
+      color: state.isDisabled
+        ? isDark
+          ? uspolis.gray
+          : uspolis.lightGray
+        : isDark
+          ? uspolis.white
+          : uspolis.blue,
+      cursor: state.isDisabled
+        ? 'not-allowed'
+        : state.isSelected
+          ? 'default'
+          : 'pointer',
+      pointerEvents: state.isDisabled ? 'none' : 'auto',
+      opacity: state.isDisabled ? 0.5 : 1,
     }),
   };
 
@@ -131,16 +191,6 @@ function TooltipSelect<IsMulti extends boolean = false>(
         Option: CustomOption,
       }}
       styles={mergedStyles}
-      // theme={(reactSelectTheme) => ({
-      //   ...reactSelectTheme,
-      //   colors: {
-      //     ...reactSelectTheme.colors,
-      //     primary: isDark ? uspolis.darkBlue : uspolis.blue,
-      //     primary25: isDark ? uspolis.darkBlue : uspolis.blue,
-      //     neutral0: isDark ? uspolis.black : uspolis.white, // background
-      //     neutral80: isDark ? uspolis.darkBlue : uspolis.blue, // texto
-      //   },
-      // })}
     />
   );
 }

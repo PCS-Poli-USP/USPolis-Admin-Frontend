@@ -1,9 +1,4 @@
-import {
-  background,
-  extendTheme,
-  type ThemeConfig,
-  ThemeOverride,
-} from '@chakra-ui/react';
+import { extendTheme, type ThemeConfig, ThemeOverride } from '@chakra-ui/react';
 import { createTheme, Shadows } from '@mui/material/styles';
 
 const config: ThemeConfig = {
@@ -19,7 +14,8 @@ const override: ThemeOverride = {
       darkBlue: '#1a535c',
       lightBlue: '#B4F4F4',
       red: '#E53E3E',
-      grey: '#CCCCCC',
+      gray: '#CCCCCC',
+      lightGray: '#CCCCCC',
       white: '#FFFFFF',
       black: '#1A202C',
       text: '#408080',
@@ -32,7 +28,7 @@ const override: ThemeOverride = {
       'blue.700': { default: '#264d4d', _dark: '#193333' },
       'uspolis.blue': { default: '#408080', _dark: '#1a535c' },
       'uspolis.red': { default: '#E53E3E', _dark: '#E53E3E' },
-      'uspolis.grey': { default: '#CCCCCC', _dark: '#CCCCCC' },
+      'uspolis.gray': { default: '#CCCCCC', _dark: '#CCCCCC' },
       'uspolis.white': { default: '#FFFFFF', _dark: '#1A202C' },
       'uspolis.black': { default: '#1A202C', _dark: '#FFFFFF' },
       'uspolis.text': { default: '#408080', _dark: '#FFFFFF' },
@@ -54,6 +50,20 @@ const override: ThemeOverride = {
       },
     },
     Input: {
+      defaultProps: {
+        focusBorderColor: 'uspolis.blue',
+        backgroundColor: 'uspolis.white',
+        borderColor: 'uspolis.black',
+      },
+    },
+    NumberInput: {
+      defaultProps: {
+        focusBorderColor: 'uspolis.blue',
+        backgroundColor: 'uspolis.white',
+        borderColor: 'uspolis.black',
+      },
+    },
+    Select: {
       defaultProps: {
         focusBorderColor: 'uspolis.blue',
         backgroundColor: 'uspolis.white',
