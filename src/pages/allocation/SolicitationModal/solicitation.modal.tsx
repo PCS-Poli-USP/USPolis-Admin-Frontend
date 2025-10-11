@@ -331,7 +331,8 @@ function SolicitationModal({
                           ? classrooms
                               .filter(
                                 (val) =>
-                                  val.building_id === selectedBuilding.id,
+                                  val.building_id === selectedBuilding.id &&
+                                  (selectedBuilding.id != 6 || val.id != 119), // Building 'Mecânica' and Classroom A10
                               )
                               .map((val) => ({
                                 value: val.id,
