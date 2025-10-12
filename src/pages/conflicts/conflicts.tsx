@@ -52,7 +52,9 @@ const ConflictsPage = () => {
   const [selectedClassId, setSelectedClassId] = useState<number>(0);
 
   useEffect(() => {
-    setBuildingNames(conflicts?.map((it) => it.name) || []);
+    const newBuildingNames = conflicts?.map((it) => it.name) || [];
+    newBuildingNames.sort((a, b) => a.localeCompare(b));
+    setBuildingNames(newBuildingNames);
   }, [conflicts]);
 
   useEffect(() => {
