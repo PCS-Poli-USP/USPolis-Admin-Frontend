@@ -112,6 +112,12 @@ function SolicitationPanel({
                     (occ) => occ.date,
                   )
                 : [],
+              times: solicitation.reservation.schedule.occurrences
+                ? solicitation.reservation.schedule.occurrences.map((occ) => [
+                    occ.start_time,
+                    occ.end_time,
+                  ])
+                : [],
             },
             solicitation?.building_id,
           );
@@ -259,6 +265,16 @@ function SolicitationPanel({
                   : [],
                 start_time: start,
                 end_time: end,
+                start_times: solicitation.reservation.schedule.occurrences
+                  ? solicitation.reservation.schedule.occurrences.map(
+                      (occ) => occ.start_time,
+                    )
+                  : [],
+                end_times: solicitation.reservation.schedule.occurrences
+                  ? solicitation.reservation.schedule.occurrences.map(
+                      (occ) => occ.end_time,
+                    )
+                  : [],
               }}
               scheduleDetails={{
                 recurrence: Recurrence.CUSTOM,

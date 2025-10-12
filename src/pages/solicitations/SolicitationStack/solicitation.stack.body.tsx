@@ -44,9 +44,21 @@ function SolicitationStackBody({
               cursor={false ? 'not-allowed' : 'pointer'}
               transition='background 0.3s, opacity 0.3s'
               opacity={closed && !selected ? 0.6 : 1}
-              _hover={false ? {} : { bg: 'gray.100', opacity: 0.8 }}
+              _hover={
+                false
+                  ? {}
+                  : {
+                      bg: 'uspolis.gray',
+                      opacity: 0.8,
+                    }
+              }
               _active={
-                closed && !selected ? {} : { bg: 'gray.300', opacity: 0.6 }
+                closed && !selected
+                  ? {}
+                  : {
+                      bg: 'uspolis.gray',
+                      opacity: 0.6,
+                    }
               }
               onClick={() => {
                 reset();
@@ -60,7 +72,6 @@ function SolicitationStackBody({
                   ? solicitation.reservation.classroom
                   : 'não especificada'
               }`}</Text>
-              {/* <Spacer /> */}
               <Text>
                 <Text
                   as={'span'}
