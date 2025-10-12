@@ -59,24 +59,26 @@ function ClassroomTimeGrid({
   }));
   if (classroom) {
     classroom.schedules.forEach((schedule) => {
-      schedule.occurrences.forEach((occurrence) =>
-        events.push({
-          title: classroom.name,
-          date: occurrence.date,
-          start: `${occurrence.date}T${occurrence.start_time}`,
-          end: `${occurrence.date}T${occurrence.end_time}`,
-          extendedProps: {
-            name: schedule.reservation || schedule.subject || '',
-            type: schedule.reservation
-              ? 'Reserva'
-              : schedule.subject && schedule.class_code
-                ? `Turma ${classNumberFromClassCode(schedule.class_code)}`
-                : 'Não indentificado',
-            start: occurrence.start_time,
-            end: occurrence.end_time,
-          },
-        }),
-      );
+      if (schedule.allocated) {
+        schedule.occurrences.forEach((occurrence) =>
+          events.push({
+            title: classroom.name,
+            date: occurrence.date,
+            start: `${occurrence.date}T${occurrence.start_time}`,
+            end: `${occurrence.date}T${occurrence.end_time}`,
+            extendedProps: {
+              name: schedule.reservation || schedule.subject || '',
+              type: schedule.reservation
+                ? 'Reserva'
+                : schedule.subject && schedule.class_code
+                  ? `Turma ${classNumberFromClassCode(schedule.class_code)}`
+                  : 'Não indentificado',
+              start: occurrence.start_time,
+              end: occurrence.end_time,
+            },
+          }),
+        );
+      }
     });
   }
 
@@ -191,7 +193,7 @@ function ClassroomTimeGrid({
                   ? preview.dates
                       .map(
                         (date, idx) =>
-                          `${moment(date).format('DD/MM/YYYY')} (${preview.start_times[idx]} - ${preview.end_times[idx]})`,
+                          `${moment(date).format('DD/MM/YYYY')} (${preview.start_times[idx] || preview.start_time} - ${preview.end_times[idx] || preview.end_time})`,
                       )
                       .join(', ')
                   : 'Nenhuma data, verifique a agenda'}
