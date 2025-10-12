@@ -78,7 +78,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
       align={'start'}
       p={'10px'}
       spacing={4}
-      maxH={'900px'}
+      h={'full'}
       background={'uspolis.white'}
     >
       {loggedUser ? (

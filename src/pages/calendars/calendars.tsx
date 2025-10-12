@@ -12,6 +12,7 @@ import HolidaysContentModal from './HolidaysContentModal/holidaysContent.modal';
 import PageContent from '../../components/common/PageContent';
 import { appContext } from '../../context/AppContext';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
+import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
 
 function Calendars() {
   const { loggedUser } = useContext(appContext);
@@ -51,6 +52,8 @@ function Calendars() {
     updateCalendar,
     deleteCalendar,
   } = useCalendars();
+  
+  const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
 
   const [isUpdateCalendar, setIsUpdateCalendar] = useState(false);
   const [selectedCalendar, setSelectedCalendar] = useState<
@@ -90,6 +93,10 @@ function Calendars() {
       <Flex align={'center'}>
         <PageHeaderWithFilter
           title='Calendários'
+          start={start}
+          end={end}
+          setStart={setStart}
+          setEnd={setEnd}
           onConfirm={() => {}}
           type='year'
           onConfirmYear={(year: string) => {
