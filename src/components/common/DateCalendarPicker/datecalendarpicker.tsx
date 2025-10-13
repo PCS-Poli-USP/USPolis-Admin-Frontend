@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DateCalendar, DayCalendarSkeleton } from '@mui/x-date-pickers';
 import ServerDay from './ServerDay/serverday';
 import moment, { Moment } from 'moment';
@@ -7,7 +8,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 function DateCalendarPicker(props: DateCalendarPickerProps) {
   const currentYear = moment().year();
   const minDate = moment({ year: currentYear, month: 0, day: 1 }); // Janeiro 1º do ano atual
-  const maxDate = moment({ year: currentYear, month: 11, day: 31 }); // Dezembro 31 do ano atual
+  const maxDate = moment({ year: currentYear + 1, month: 11, day: 31 }); // Dezembro 31 do ano atual
   return (
     <Flex direction={'column'} justify={'stretch'} h={'fit-content'}>
       <Flex direction={'row'} justify={'center'} align={'center'} gap={'5px'}>
