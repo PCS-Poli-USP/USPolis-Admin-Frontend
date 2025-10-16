@@ -15,7 +15,6 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import { Event } from './interfaces/allocation.interfaces';
 import useAllocation from '../../pages/allocation/hooks/useAllocation';
 import PageContent from '../../components/common/PageContent';
-import SolicitationModal from './SolicitationModal/solicitation.modal';
 import CustomCalendar from './CustomCalendar';
 import AllocationHeader from './AllocationHeader';
 import moment, { Moment } from 'moment';
@@ -123,7 +122,7 @@ function Allocation() {
     subjects,
     getAllSubjects,
   } = useSubjects(false);
-  const { classes, loading: loadingClasses } = useClasses();
+  const { classes, loading: loadingClasses, getClasses } = useClasses(false);
   const {
     loading: loadingClassrooms,
     classrooms,
@@ -308,6 +307,7 @@ function Allocation() {
       getAllBuildings();
       getAllSubjects();
       getAllClassrooms();
+      getClasses();
       if (loggedUser.is_admin || loggedUser.buildings) {
         getPendingBuildingSolicitations();
       }
@@ -570,7 +570,7 @@ function Allocation() {
               }}
               subjects={subjects}
               classes={classes}
-              loading={loadingSubjects || loadingClasses}
+              loading={loadingSubjects || loadingClasses || loadingClassrooms}
             />
           )}
           {loggedUser && (
@@ -604,7 +604,7 @@ function Allocation() {
               initialDate={clickedDate}
               subjects={subjects}
               classes={[]}
-              loading={false}
+              loading={loadingClassrooms || loadingSubjects || loadingBuildings}
               isSolicitation={false}
             />
           )}
