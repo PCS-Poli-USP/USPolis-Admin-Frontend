@@ -346,6 +346,14 @@ function ReservationModal(props: ReservationModalProps) {
         calendarPicker.setSelectedDays(dates);
       }
     }
+
+    if (!props.selectedReservation) {
+      firstForm.reset(firstDefaultValues);
+      secondForm.reset(secondDefaultValues);
+      setActiveStep(0);
+      setDates([]);
+      calendarPicker.reset();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
 

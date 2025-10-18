@@ -179,7 +179,11 @@ function Reservations() {
       />
       <ClassroomTimeGrid
         isOpen={isOpenGrid}
-        onClose={onCloseGrid}
+        onClose={() => {
+          setSelectedReservation(undefined);
+          setClassroom(undefined);
+          onCloseGrid();
+        }}
         classroom={classroom}
         loading={loadingClassrooms}
         scheduleDetails={
