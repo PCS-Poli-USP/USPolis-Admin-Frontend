@@ -24,7 +24,7 @@ import { EmailIcon } from '@chakra-ui/icons';
 
 function HomeDesktopView() {
   return (
-    <Flex w={'full'} direction={'column'} overflowY='hidden'>
+    <Flex w={'full'} direction={'column'}>
       <Header />
       <Flex
         id='section1'
@@ -230,7 +230,7 @@ function HomeDesktopView() {
         h={'200px'}
         alignContent={'center'}
         justifyContent={'center'}
-        p={"50px"}
+        p={'50px'}
       >
         <Flex direction={'row'} gap={'25px'}>
           <Flex
