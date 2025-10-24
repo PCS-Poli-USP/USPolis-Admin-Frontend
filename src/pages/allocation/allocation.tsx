@@ -326,6 +326,13 @@ function Allocation() {
         setAlreadyChange(true);
       }, 200);
     }
+
+    // Force drawer to open when menu closes to avoid render bug when
+    // the drawer is first closed and menu is open, after that closing the menu causes
+    // Calendar not render correctly on all avaliable
+    if (isOpenMenu) {
+      setAlreadyChange(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenMenu, isOpenDrawer]);
 
@@ -471,7 +478,11 @@ function Allocation() {
                   setCurrentEndDate(date);
                   calendarRef.current
                     .getApi()
-                    .gotoDate(new Date(date).toISOString());
+                    .gotoDate(
+                      new Date(
+                        val.add(1, 'days').format('YYYY-MM-DD'),
+                      ).toISOString(),
+                    );
                 }}
               />
               <Flex direction={'column'} pl={'10px'} w={'100%'} gap={'10px'}>
