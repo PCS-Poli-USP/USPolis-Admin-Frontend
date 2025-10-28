@@ -258,9 +258,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
       <FormProvider {...props.form}>
         <form>
           <Text fontSize={'xl'} fontWeight={'bold'} mb={'10px'}>
-            {props.isUpdate
-              ? `Atualizando ${ReservationType.translate(reservation_type)}`
-              : `Criando ${ReservationType.translate(reservation_type)}`}
+            {reservation_type
+              ? props.isUpdate
+                ? `Atualizando ${ReservationType.translate(reservation_type)}`
+                : `Criando ${ReservationType.translate(reservation_type)}`
+              : 'Escolha um tipo de reserva primeiro'}
           </Text>
           <Text fontSize={'lg'} fontWeight={'bold'}>
             Local e Disponibilidade

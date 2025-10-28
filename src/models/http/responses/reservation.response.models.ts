@@ -19,7 +19,7 @@ export interface ReservationResponseBase {
   building_name: string;
 
   classroom_id?: number;
-  classroom?: string;
+  classroom_name?: string;
 
   schedule_id: number;
 

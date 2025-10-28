@@ -54,8 +54,8 @@ function SolicitationStack({
       );
     if (classroom)
       newCurrent = newCurrent.filter((val) =>
-        val.reservation.classroom
-          ? filterString(val.reservation.classroom, classroom)
+        val.reservation.classroom_name
+          ? filterString(val.reservation.classroom_name, classroom)
           : filterString('não especificada', classroom),
       );
     if (requester)

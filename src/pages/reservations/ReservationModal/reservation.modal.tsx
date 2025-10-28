@@ -348,8 +348,14 @@ function ReservationModal(props: ReservationModalProps) {
     }
 
     if (!props.selectedReservation) {
-      firstForm.reset(firstDefaultValues);
-      secondForm.reset(secondDefaultValues);
+      firstForm.reset({
+        ...firstDefaultValues,
+        is_solicitation: props.isSolicitation,
+      });
+      secondForm.reset({
+        ...secondDefaultValues,
+        is_solicitation: props.isSolicitation,
+      });
       setActiveStep(0);
       setDates([]);
       calendarPicker.reset();

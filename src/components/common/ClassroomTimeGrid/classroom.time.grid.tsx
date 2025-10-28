@@ -113,7 +113,7 @@ function ClassroomTimeGrid({
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseModal} size={'4xl'}>
+    <Modal isOpen={isOpen} onClose={handleCloseModal} size={'5xl'}>
       <ModalOverlay />
       <ModalContent maxH={'90vh'} overflowY={'auto'}>
         <ModalHeader>{`Sala ${classroom ? classroom.name : ''} - ${

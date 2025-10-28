@@ -9,7 +9,6 @@ import {
   Heading,
   HStack,
   IconButton,
-  Input,
   Popover,
   PopoverBody,
   PopoverCloseButton,
@@ -229,8 +228,8 @@ function SolicitationPanel({
           <CardHeader mb={-5}>
             <HStack>
               <Heading size={'lg'}>{`Reserva de Sala - ${
-                solicitation.reservation.classroom
-                  ? solicitation.reservation.classroom
+                solicitation.reservation.classroom_name
+                  ? solicitation.reservation.classroom_name
                   : 'Não especificada'
               }`}</Heading>
               <Spacer />
@@ -308,6 +307,14 @@ function SolicitationPanel({
               </Box>
               <Box>
                 <Heading size='sm' textTransform='uppercase'>
+                  Requisitos
+                </Heading>
+                <Text pt='2' fontSize='md'>
+                  {`Capacidade para ${solicitation.capacity} pessoas`}
+                </Text>
+              </Box>
+              <Box>
+                <Heading size='sm' textTransform='uppercase'>
                   Local, Horário e Datas
                 </Heading>
                 <Text pt='2' fontSize='md'>
@@ -377,80 +384,10 @@ function SolicitationPanel({
                   </Text>
                 </HStack>
               </Box>
-              <Box>
-                <Heading size='sm' textTransform='uppercase'>
-                  Requisitos
-                </Heading>
-                <Text pt='2' fontSize='md'>
-                  {`Capacidade para ${solicitation.capacity} pessoas`}
-                </Text>
-              </Box>
-
-              {/* Time inputs if soliciation haven't times */}
-              {solicitation.status === ReservationStatus.PENDING &&
-              (!solicitation.reservation.schedule.start_time ||
-                !solicitation.reservation.schedule.end_time) ? (
-                <Box>
-                  <Heading size={'sm'} textTransform='uppercase'>
-                    Horários
-                  </Heading>
-                  <HStack mt={2} w={'full'} flex={'1'}>
-                    <Input
-                      w={'auto'}
-                      type={'time'}
-                      placeholder='Horário de início'
-                      value={start}
-                      isDisabled={loadingClassrooms}
-                      onChange={(event) => setStart(event.target.value)}
-                    />
-                    <Input
-                      w={'auto'}
-                      type={'time'}
-                      placeholder='Horário de fim'
-                      value={end}
-                      onChange={(event) => setEnd(event.target.value)}
-                      isDisabled={loadingClassrooms}
-                    />
-                    <Button
-                      isDisabled={!classroom}
-                      onClick={() => onOpen()}
-                      hidden={
-                        !solicitation.reservation.classroom_id ||
-                        editingClassroom
-                      }
-                    >
-                      Visualizar disponibilidade
-                    </Button>
-                  </HStack>
-                  <Text
-                    hidden={validateTime(start, end)}
-                    textColor={'red.500'}
-                    mt={2}
-                  >
-                    Horário de início deve ser antes do horário de fim
-                  </Text>
-                  {classroom ? (
-                    <>
-                      <Text
-                        textColor={
-                          classroom && classroom.conflicts > 0
-                            ? 'red.500'
-                            : 'green.500'
-                        }
-                        mt={2}
-                      >
-                        {`Esse horário gerará ${
-                          classroom ? classroom.conflicts : '0'
-                        } conflito(s).`}
-                      </Text>
-                    </>
-                  ) : undefined}
-                </Box>
-              ) : undefined}
 
               {/* Classroom Input If solicitation haven't a classroom */}
               {(solicitation.status === ReservationStatus.PENDING &&
-                !solicitation.reservation.classroom) ||
+                !solicitation.reservation.classroom_name) ||
               editingClassroom ? (
                 <Box>
                   <Heading mb={2} size={'sm'} textTransform='uppercase'>
@@ -516,7 +453,7 @@ function SolicitationPanel({
 
               {/* If solicitation has a classroom show timegrid button */}
               {solicitation.status === ReservationStatus.PENDING &&
-              solicitation.reservation.classroom &&
+              solicitation.reservation.classroom_name &&
               solicitation.reservation.schedule.start_time &&
               solicitation.reservation.schedule.end_time ? (
                 <>
@@ -554,7 +491,8 @@ function SolicitationPanel({
                     colorScheme='green'
                     isDisabled={
                       solicitation.status !== ReservationStatus.PENDING ||
-                      (!solicitation.reservation.classroom && !classroom) ||
+                      (!solicitation.reservation.classroom_name &&
+                        !classroom) ||
                       (!solicitation.reservation.schedule.start_time &&
                         !start) ||
                       (!solicitation.reservation.schedule.end_time && !end) ||
@@ -592,8 +530,8 @@ function SolicitationPanel({
                                 : 0,
                             classroom_name: classroom
                               ? classroom.name
-                              : solicitation.reservation.classroom
-                                ? solicitation.reservation.classroom
+                              : solicitation.reservation.classroom_name
+                                ? solicitation.reservation.classroom_name
                                 : 'Sem nome',
                           });
                           handleOpenPopover(2);
