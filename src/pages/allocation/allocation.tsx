@@ -80,6 +80,7 @@ function Allocation() {
   } = useDisclosure();
 
   const [alreadyChange, setAlreadyChange] = useState(false);
+  const [setupInitialFilters, setSetupInitialFilters] = useState(false);
 
   const [reservation, setReservation] = useState<ReservationResponse>();
   const [buildingSearchValue, setBuildingSearchValue] = useState('');
@@ -336,6 +337,36 @@ function Allocation() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenMenu, isOpenDrawer]);
 
+  useEffect(() => {
+    if (setupInitialFilters) return;
+
+    const buildingResources = resources
+      .filter((resource) => !resource.parentId)
+      .sort((a, b) => a.title.localeCompare(b.title));
+    const classroomResources = resources.filter(
+      (resource) => !!resource.parentId,
+    );
+
+    if (buildingResources.length > 0) {
+      const defaultBuilding = buildingResources.find(
+        (building) => building.title === 'Biênio',
+      );
+      if (defaultBuilding) {
+        setBuildingSearchValue(defaultBuilding.title);
+        const filteredClassrooms = classroomResources.filter(
+          (classroom) =>
+            classroom.parentId &&
+            classroom.parentId.includes(defaultBuilding.id),
+        );
+        if (filteredClassrooms.length > 0) {
+          const random = Math.floor(Math.random() * filteredClassrooms.length);
+          setClassroomSearchValue(filteredClassrooms[random].title);
+        }
+        setSetupInitialFilters(true);
+      }
+    }
+  }, [setupInitialFilters, resources]);
+
   return (
     <PageContent>
       <Loading
@@ -550,20 +581,6 @@ function Allocation() {
           mb={'20px'}
         >
           {loggedUser && (
-            // <SolicitationModal
-            //   isMobile={isMobile}
-            //   isOpen={isOpenSolicitation}
-            //   onClose={onCloseSolicitation}
-            //   buildings={buildings}
-            //   classrooms={classrooms.filter((cls) => cls.reservable)}
-            //   loadingBuildings={loadingBuildings}
-            //   loadingClassrooms={loadingClassrooms}
-            //   refetch={async () => {
-            //     if (loggedUser.is_admin || loggedUser.buildings) {
-            //       await getPendingBuildingSolicitations();
-            //     }
-            //   }}
-            // />
             <ReservationModal
               onClose={() => {
                 onCloseSolicitation();

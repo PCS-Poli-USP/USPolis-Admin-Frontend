@@ -87,7 +87,7 @@ function AllocationDesktopHeader({
             as={Button}
             colorScheme='blue'
             leftIcon={<AddIcon />}
-            borderRadius={'20px'}
+            borderRadius={'10px'}
           >
             Baixar
           </MenuButton>
