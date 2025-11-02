@@ -44,8 +44,6 @@ function Calendars() {
     loading: loadingCategories,
   } = useHolidaysCategories();
 
-  const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
-
   const {
     loading: loadingCalendars,
     calendars,
@@ -90,7 +88,7 @@ function Calendars() {
     }
   }
 
-  return ( 
+  return (
     <PageContent>
       <Flex align={'center'}>
         <PageHeaderWithFilter

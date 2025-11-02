@@ -2,6 +2,7 @@ import {
   Button,
   Checkbox,
   Flex,
+  HStack,
   Modal,
   ModalBody,
   ModalCloseButton,

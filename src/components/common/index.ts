@@ -2,7 +2,6 @@ export * from './form/Input';
 export * from './form/TextareaInput';
 export * from './form/SelectInput';
 export * from './form/MultiSelectInput';
-export * from './form/DateInput';
 export * from './form/CheckBox';
 export * from './form/ListInput';
 export * from './form/NumberInput';
