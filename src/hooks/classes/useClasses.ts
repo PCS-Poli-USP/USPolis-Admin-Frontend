@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import useCustomToast from '../../hooks/useCustomToast';
 import {
   CreateClass,
@@ -69,6 +70,25 @@ const useClasses = (initialFetch: boolean = true) => {
         })
         .catch((error) => {
           showToast('Erro', 'Erro ao carregar turmas', 'error');
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
+
+  const getClassesBySubjects = useCallback(
+    async (subject_ids: number[], start?: string, end?: string) => {
+      setLoading(true);
+      await service
+        .getBySubjects(subject_ids, start, end)
+        .then((response) => {
+          setClasses(response.data.sort(sortClassResponse));
+        })
+        .catch((error) => {
+          showToast('Erro', `Erro ao carregar turmas`, 'error');
           console.log(error);
         })
         .finally(() => {
@@ -245,6 +265,7 @@ const useClasses = (initialFetch: boolean = true) => {
     getClasses,
     getAllClasses,
     getClassesBySubject,
+    getClassesBySubjects,
     getClassesByBuildingName,
     getClassFull,
     createClass,

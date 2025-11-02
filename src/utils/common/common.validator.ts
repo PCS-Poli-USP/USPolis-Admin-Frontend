@@ -48,13 +48,45 @@ export default class CommonValidator {
     return !timeRegex.test(value) && !timeRegex2.test(value);
   }
 
+  static isValidDayTimes(values: string[]) {
+    for (const value of values) {
+      if (this.isInvalidDayTime(value)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   static isInvalidDayTimeOfering(start_time: string, end_time: string) {
     const start = moment(start_time, 'HH:mm');
     const end = moment(end_time, 'HH:mm');
     return !start.isSameOrBefore(end);
   }
 
+  static isValidDayTimeOferings(oferings: [string, string][]) {
+    for (const [start_time, end_time] of oferings) {
+      if (this.isInvalidDayTime(start_time) || this.isInvalidDayTime(end_time))
+        return false;
+      const start = moment(start_time, 'HH:mm');
+      const end = moment(end_time, 'HH:mm');
+      if (start.isSameOrAfter(end)) return false;
+    }
+    return true;
+  }
+
   static isInvalidAudiovisualType(value: string) {
     return !AudiovisualType.values().includes(value as AudiovisualType);
+  }
+
+  static isValidURL(value: string) {
+    try {
+      const url = new URL(value);
+      if (url.protocol !== 'https:') return false;
+      const regex =
+        /^(?!:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}?$/;
+      return regex.test(url.hostname);
+    } catch (_) {
+      return false;
+    }
   }
 }

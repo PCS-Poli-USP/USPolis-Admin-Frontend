@@ -55,6 +55,8 @@ function Calendars() {
     deleteCalendar,
   } = useCalendars();
 
+  const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
+
   const [isUpdateCalendar, setIsUpdateCalendar] = useState(false);
   const [selectedCalendar, setSelectedCalendar] = useState<
     CalendarResponse | undefined

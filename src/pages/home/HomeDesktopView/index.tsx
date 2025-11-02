@@ -4,7 +4,9 @@ import {
   Flex,
   Heading,
   Highlight,
+  Icon,
   Image,
+  Link,
   ListItem,
   Text,
   UnorderedList,
@@ -15,13 +17,14 @@ import USPolisPhoneLaptop from '../Images/USPolisPhoneLaptop.png';
 import VerticalCarousel from '../VerticalCarousel';
 import { items, icons } from '../carousel.items';
 
-import { FaApple, FaMobileAlt } from 'react-icons/fa';
+import { FaApple, FaGithub, FaMobileAlt } from 'react-icons/fa';
 import { MdOutlineAdminPanelSettings } from 'react-icons/md';
 import { IoLogoGooglePlaystore } from 'react-icons/io5';
+import { EmailIcon } from '@chakra-ui/icons';
 
 function HomeDesktopView() {
   return (
-    <Flex w={'full'} direction={'column'} overflowY='hidden'>
+    <Flex w={'full'} direction={'column'}>
       <Header />
       <Flex
         id='section1'
@@ -34,7 +37,7 @@ function HomeDesktopView() {
         gap={10}
       >
         <Flex direction={'column'} w={'500px'} gap={5}>
-          <Heading textColor={'black'} fontWeight={'bold'} size={'2xl'}>
+          <Heading textColor={'uspolis.black'} fontWeight={'bold'} size={'2xl'}>
             <Highlight
               query={'uspolis:'}
               styles={{ textColor: 'uspolis.blue' }}
@@ -42,7 +45,7 @@ function HomeDesktopView() {
               USPolis: solução para alocação de salas.
             </Highlight>
           </Heading>
-          <Text textColor={'black'}>
+          <Text textColor={'uspolis.black'}>
             Administre seus espaços e agendas, encontre os horários e as salas
             das suas disciplinas. Solicite reservas de salas. Utilizando o
             sistema administrativo distribua para alunos.
@@ -51,7 +54,7 @@ function HomeDesktopView() {
             <Button
               as={'a'}
               fontSize={'xl'}
-              colorScheme='teal'
+              colorScheme='uspolis.blue'
               leftIcon={<FaMobileAlt />}
               href='#section4'
             >
@@ -61,7 +64,7 @@ function HomeDesktopView() {
               as={'a'}
               href='#section2'
               fontSize={'xl'}
-              colorScheme='teal'
+              colorScheme='uspolis.blue'
               leftIcon={<MdOutlineAdminPanelSettings />}
             >
               Administrativo
@@ -75,7 +78,7 @@ function HomeDesktopView() {
           boxSize={'800px'}
         />
       </Flex>
-      <Flex h={'200px'} bg={'teal'} align={'center'} justify={'center'}>
+      <Flex h={'200px'} bg={'uspolis.blue'} align={'center'} justify={'center'}>
         <Heading textColor={'white'} size={'2xl'}>
           Recursos
         </Heading>
@@ -86,7 +89,7 @@ function HomeDesktopView() {
       <Flex
         id='section4'
         h={'200px'}
-        bg={'teal'}
+        bg={'uspolis.blue'}
         align={'center'}
         justify={'center'}
       >
@@ -116,8 +119,8 @@ function HomeDesktopView() {
                 size={'lg'}
                 leftIcon={<IoLogoGooglePlaystore />}
                 mt={5}
-                bg={'black'}
-                textColor={'white'}
+                bg={'uspolis.black'}
+                textColor={'uspolis.white'}
                 _hover={{ bg: 'gray.500' }}
               >
                 <Text noOfLines={2}>
@@ -131,8 +134,8 @@ function HomeDesktopView() {
                 size={'lg'}
                 leftIcon={<FaApple />}
                 mt={5}
-                bg={'black'}
-                textColor={'white'}
+                bg={'uspolis.black'}
+                textColor={'uspolis.white'}
                 _hover={{ bg: 'gray.500' }}
               >
                 <Text noOfLines={2}>
@@ -150,12 +153,12 @@ function HomeDesktopView() {
           />
         </Flex>
       </Box>
-      <Flex h={'200px'} bg={'teal'} align={'center'} justify={'center'}>
+      <Flex h={'200px'} bg={'uspolis.blue'} align={'center'} justify={'center'}>
         <Heading textColor={'white'} size={'2xl'}>
           Sobre
         </Heading>
       </Flex>
-      <Box id='section5' bg={'white'} h={'400px'}>
+      <Box id='section5' bg={'uspolis.white'} h={'400px'}>
         <Flex
           h={'full'}
           direction={'row'}
@@ -172,22 +175,30 @@ function HomeDesktopView() {
             gap={5}
             mr={30}
           >
-            <Text fontSize={'xl'} textColor={'black'} textAlign={'justify'}>
+            <Text
+              fontSize={'xl'}
+              textColor={'uspolis.black'}
+              textAlign={'justify'}
+            >
               O USPolis foi inicialmente desenvolvido como projeto de formatura
               no PCS, contando com um sistema de alocação automático de salas.
               Ao longo do tempo outros projetos de formatura continuaram seu
               desenvolvimento. Atualmente o USPolis possui uma bolsa PUB para
               financiar o seu desenvolvimento.
             </Text>
-            <Text fontSize={'xl'} textColor={'black'} textAlign={'justify'}>
+            <Text
+              fontSize={'xl'}
+              textColor={'uspolis.black'}
+              textAlign={'justify'}
+            >
               O USPolis é um projeto open-source, caso queira contribuir, tenha
               dúvidas, sugestões ou comentários entre em contato conosco. Sua
               ajuda será mais do que bem vinda!
             </Text>
           </Flex>
           <Flex direction={'column'} gap={5} h={'100%'}>
-            <Heading textColor={'black'}>Desenvolvedores</Heading>
-            <UnorderedList textColor={'black'}>
+            <Heading textColor={'uspolis.black'}>Desenvolvedores</Heading>
+            <UnorderedList textColor={'uspolis.black'}>
               <ListItem>Daniel Hiroki Yamashita</ListItem>
               <ListItem>Gabriel Di Vanna Camargo</ListItem>
               <ListItem>Henrique Fuga Duran</ListItem>
@@ -206,8 +217,8 @@ function HomeDesktopView() {
             justify={'flex-start'}
             align={'flex-start'}
           >
-            <Heading textColor={'black'}>Orientação</Heading>
-            <UnorderedList textColor={'black'}>
+            <Heading textColor={'uspolis.black'}>Orientação</Heading>
+            <UnorderedList textColor={'uspolis.black'}>
               <ListItem>Prof. Dr. Fábio Levy Siqueira (PCS|Poli-USP)</ListItem>
               <ListItem>Renan Ávila (criador original do USPolis)</ListItem>
             </UnorderedList>
@@ -215,28 +226,40 @@ function HomeDesktopView() {
         </Flex>
       </Box>
       <Box
-        bg={'teal'}
+        bg={'uspolis.blue'}
         h={'200px'}
         alignContent={'center'}
         justifyContent={'center'}
-        p={5}
+        p={'50px'}
       >
-        <Flex direction={'row'} gap={'50px'}>
-          <Flex direction={'column'}>
-            <Heading textColor={'white'} size={'lg'}>
-              Contato:
-            </Heading>
-            <Text textColor={'white'} fontSize={'lg'}>
+        <Flex direction={'row'} gap={'25px'}>
+          <Flex
+            direction={'row'}
+            justify={'center'}
+            align={'center'}
+            gap={'4px'}
+          >
+            <Icon as={EmailIcon} boxSize={'25px'} />
+            <Text textColor={'white'} fontSize={'xl'}>
               uspolis@usp.br
             </Text>
           </Flex>
-          <Flex direction={'column'}>
-            <Heading textColor={'white'} size={'lg'}>
-              Repositório:
-            </Heading>
-            <Text as={'a'} textColor={'white'} fontSize={'lg'}>
-              https://github.com/PCS-Poli-USP
-            </Text>
+          <Flex
+            direction={'row'}
+            justify={'center'}
+            align={'center'}
+            gap={'4px'}
+          >
+            <Icon as={FaGithub} boxSize={'25px'} />
+            <Link
+              as={'a'}
+              textColor={'white'}
+              fontSize={'lg'}
+              isExternal
+              href={'https://github.com/PCS-Poli-USP/USPolis-Admin'}
+            >
+              Github
+            </Link>
           </Flex>
         </Flex>
       </Box>

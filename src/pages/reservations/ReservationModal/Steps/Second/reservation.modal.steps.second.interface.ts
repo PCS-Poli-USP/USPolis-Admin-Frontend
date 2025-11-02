@@ -7,7 +7,8 @@ import { BuildingResponse } from '../../../../../models/http/responses/building.
 import { ClassroomResponse } from '../../../../../models/http/responses/classroom.response.models';
 import { ReservationResponse } from '../../../../../models/http/responses/reservation.response.models';
 import { DateCalendarPickerReturn } from '../../../../../components/common/DateCalendarPicker/hooks/useDateCalendarPicker';
-import { ClassroomSolicitationResponse } from '../../../../../models/http/responses/classroomSolicitation.response.models';
+import { ReservationFirstForm } from '../First/reservation.modal.steps.first.interface';
+import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 
 export interface ReservationModalSecondStepProps
   extends DateCalendarPickerReturn {
@@ -15,14 +16,18 @@ export interface ReservationModalSecondStepProps
   buildings: BuildingResponse[];
   classrooms: ClassroomResponse[];
   setDates: (value: string[]) => void;
+  selectedDates: string[];
   form: UseFormReturn<ReservationSecondForm, any, ReservationSecondForm>;
+  firstForm: UseFormReturn<ReservationFirstForm, any, ReservationFirstForm>;
   selectedReservation?: ReservationResponse;
   initialDate?: string;
-  vinculatedSolicitation?: ClassroomSolicitationResponse;
 }
 export interface ReservationSecondForm {
   building_id: number;
-  classroom_id: number;
+  classroom_id?: number;
+  optional_classroom?: boolean;
+  required_classroom?: boolean;
+  is_solicitation: boolean;
 
   start_time: string;
   end_time: string;
@@ -32,4 +37,8 @@ export interface ReservationSecondForm {
   recurrence: Recurrence;
   week_day?: WeekDay | string;
   month_week?: MonthWeek | string;
+
+  type?: ReservationType;
+  labels?: string[];
+  times?: [string, string][];
 }

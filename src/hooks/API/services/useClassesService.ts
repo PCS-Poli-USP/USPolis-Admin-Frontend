@@ -25,6 +25,21 @@ const useClassesService = () => {
     return axiosPrivate.get(`${PREFIX}/subject/${subject_id}`);
   };
 
+  const getBySubjects = (
+    subject_ids: number[],
+    start?: string,
+    end?: string,
+  ): Promise<AxiosResponse<Array<ClassResponse>>> => {
+    const params = new URLSearchParams();
+    subject_ids.forEach((id) => params.append('subject_ids', id.toString()));
+
+    if (start && end) {
+      params.append('start', start);
+      params.append('end', end);
+    }
+    return axiosPrivate.get(`${PREFIX}/subjects`, { params });
+  };
+
   const getByBuildingName = (
     building_name: string,
     start?: string,
@@ -94,6 +109,7 @@ const useClassesService = () => {
   return {
     get,
     getBySubject,
+    getBySubjects,
     getByBuildingName,
     getFull,
     getOneFull,

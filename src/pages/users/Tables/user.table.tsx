@@ -79,6 +79,13 @@ export const getUsersColumns = (
     filterFn: FilterBoolean,
   },
   {
+    accessorKey: 'receive_emails',
+    header: 'Emails',
+    meta: { isBoolean: true, isSelectable: true },
+    maxSize: 120,
+    filterFn: FilterBoolean,
+  },
+  {
     accessorKey: 'created_by',
     header: 'Criado por',
   },

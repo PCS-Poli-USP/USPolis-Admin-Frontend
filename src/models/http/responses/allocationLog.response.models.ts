@@ -1,6 +1,7 @@
 export interface AllocationLogResponse {
   id: number;
   schedule_id: number;
+  user_email: string;
   modified_by: string;
   modified_at: string;
   action: string;

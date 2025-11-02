@@ -7,5 +7,6 @@ export interface CreateUser {
 
 export interface UpdateUser {
   is_admin: boolean;
-  building_ids?: Array<number>;
+  group_ids?: Array<number>;
+  receive_emails?: boolean;
 }

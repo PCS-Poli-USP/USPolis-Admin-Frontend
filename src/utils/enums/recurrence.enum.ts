@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 export enum Recurrence {
   DAILY = 'Daily',
   WEEKLY = 'Weekly',

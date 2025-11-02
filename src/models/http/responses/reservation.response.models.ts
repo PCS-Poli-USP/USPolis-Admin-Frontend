@@ -1,4 +1,8 @@
 import { ReservationType } from '../../../utils/enums/reservations.enum';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
+import { EventResponseBase } from './event.response.models';
+import { ExamResponseBase } from './exam.response.models';
+import { MeetingResponseBase } from './meeting.response.models';
 import {
   ScheduleResponse,
   ScheduleFullResponse,
@@ -14,21 +18,28 @@ export interface ReservationResponseBase {
   building_id: number;
   building_name: string;
 
-  classroom_id: number;
-  classroom_name: string;
+  classroom_id?: number;
+  classroom_name?: string;
 
   schedule_id: number;
 
   created_by_id: number;
   created_by: string;
+  status: ReservationStatus;
 
   requester?: string;
-  has_solicitation: boolean;
   solicitation_id?: number;
+}
+
+export interface ReservationCoreResponse extends ReservationResponseBase {
+  schedule: ScheduleResponse;
 }
 
 export interface ReservationResponse extends ReservationResponseBase {
   schedule: ScheduleResponse;
+  exam?: ExamResponseBase;
+  event?: EventResponseBase;
+  meeting?: MeetingResponseBase;
 }
 
 export interface ReservationFullResponse extends ReservationResponseBase {

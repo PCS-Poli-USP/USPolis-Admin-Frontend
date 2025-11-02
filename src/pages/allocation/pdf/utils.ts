@@ -216,7 +216,7 @@ export function getReservationClassroomMap(
 ): ReservationClassroomMap {
   const map = new Map<string, ReservationResponse[]>();
   reservations.forEach((reservation) => {
-    const classroom = reservation.classroom_name;
+    const classroom = reservation.classroom || AllocationEnum.UNALLOCATED;
     const reservationList = map.get(classroom);
     if (reservationList) {
       reservationList.push(reservation);
@@ -299,7 +299,7 @@ function getScheduleMap(
   reservations.forEach((reservation) =>
     schedulesMap.push([
       reservation.building_name,
-      reservation.classroom_name,
+      reservation.classroom || AllocationEnum.UNALLOCATED,
       `${reservation.title}`,
       reservation.schedule,
     ]),

@@ -10,6 +10,9 @@ export interface ClassroomResponse {
   accessibility: boolean;
   audiovisual: AudiovisualType;
   air_conditioning: boolean;
+  observation: string;
+  reservable: boolean;
+  remote: boolean;
   updated_at: string;
   created_by_id: number;
   created_by: string;

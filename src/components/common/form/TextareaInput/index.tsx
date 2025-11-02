@@ -10,7 +10,7 @@ import { useFormContext } from 'react-hook-form';
 
 interface InputProps extends FieldProps {}
 
-export function Textarea({
+export function TextareaInput({
   label,
   name,
   disabled,

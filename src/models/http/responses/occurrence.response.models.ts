@@ -5,4 +5,5 @@ export interface OccurrenceResponse {
   date: string;
   classroom_id?: number;
   classroom?: string;
+  label?: string;
 }

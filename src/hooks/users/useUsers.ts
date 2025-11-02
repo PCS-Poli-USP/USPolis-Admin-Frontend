@@ -1,15 +1,16 @@
-import useCustomToast from '../hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 // import { CreateUser } from 'models/common/user.common.model';
 import {
   CreateUser,
   UpdateUser,
-} from '../models/http/requests/user.request.models';
+} from '../../models/http/requests/user.request.models';
 
-import { UserResponse } from '../models/http/responses/user.response.models';
-import { useCallback, useEffect, useState } from 'react';
-import { sortUsersResponse } from '../utils/users/users.sorter';
-import useUsersService from './API/services/useUsersService';
-import useSelfService from './API/services/useSelfService';
+import { UserResponse } from '../../models/http/responses/user.response.models';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { sortUsersResponse } from '../../utils/users/users.sorter';
+import useUsersService from './../API/services/useUsersService';
+import useSelfService from './../API/services/useSelfService';
+import { UserErrorParser } from './userErrorParser';
 
 const useUsers = (initialFetch: boolean = true) => {
   const service = useUsersService();
@@ -19,6 +20,7 @@ const useUsers = (initialFetch: boolean = true) => {
   const [users, setUsers] = useState<UserResponse[]>([]);
 
   const showToast = useCustomToast();
+  const parser = useMemo(() => new UserErrorParser(), []);
 
   const getSelf = useCallback(async () => {
     setLoading(true);
@@ -27,13 +29,13 @@ const useUsers = (initialFetch: boolean = true) => {
       const respopnse = await selfService.getSelf();
       self = respopnse.data;
     } catch (error) {
-      showToast('Erro', 'Erro ao carregar sua conta', 'error');
+      showToast('Erro', parser.parseCreateError(error), 'error');
       self = undefined;
     } finally {
       setLoading(false);
     }
     return self;
-  }, [showToast, selfService]);
+  }, [selfService, showToast, parser]);
 
   const getUsers = useCallback(async () => {
     setLoading(true);
@@ -93,6 +95,33 @@ const useUsers = (initialFetch: boolean = true) => {
     [getUsers, showToast, service],
   );
 
+  const updateUserEmailNotifications = useCallback(
+    async (receive_emails: boolean) => {
+      setLoading(true);
+      await service
+        .updateEmailNotifications(receive_emails)
+        .then(() => {
+          showToast(
+            'Sucesso',
+            `Notificações por e-mail atualizadas!`,
+            'success',
+          );
+        })
+        .catch((error) => {
+          showToast(
+            'Erro',
+            parser.parseUpdateEmailNotificationsError(error),
+            'error',
+          );
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service, parser],
+  );
+
   const deleteUser = useCallback(
     async (id: number) => {
       setLoading(true);
@@ -126,6 +155,7 @@ const useUsers = (initialFetch: boolean = true) => {
     getUsers,
     createUser,
     updateUser,
+    updateUserEmailNotifications,
     deleteUser,
   };
 };

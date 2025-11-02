@@ -79,7 +79,7 @@ function ClassroomsCalendarPDF(props: ClassroomsCalendarPDFProps) {
         fontWeight={'bold'}
         variant={'outline'}
         colorScheme={'blue'}
-        color={'uspolis.blue'}
+        color={'uspolis.text'}
         leftIcon={<DownloadIcon />}
       >
         Mapa de salas

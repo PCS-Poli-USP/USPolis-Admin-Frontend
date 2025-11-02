@@ -6,13 +6,13 @@ import {
   Skeleton,
   Text,
 } from '@chakra-ui/react';
-import Select from 'react-select';
 import { BuildingResponse } from '../../../../../models/http/responses/building.response.models';
 import { useState } from 'react';
 import { AllocationReuseResponse } from '../../../../../models/http/responses/allocation.response.models';
 import useAllocationsService from '../../../../../hooks/API/services/useAllocationService';
 import { SubjectWithClasses } from '../../allocation.reuse.modal';
 import AllocationReuseSubjectOptions from './allocation.reuse.subject.options';
+import TooltipSelect from '../../../../../components/common/TooltipSelect';
 
 interface AllocationReuseModalSecondStepProps {
   buildings: BuildingResponse[];
@@ -36,15 +36,76 @@ function AllocationReuseModalSecondStep({
   const { getAllocationOptions } = useAllocationsService();
 
   const [allocationYear, setAllocationYear] = useState<number>(currentYear - 1);
-  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
-  const [data, setData] = useState<AllocationReuseResponse>();
-  const [loading, setLoading] = useState<boolean>(false);
+
+  async function handleBuildingChange() {
+    if (selectedBuilding) {
+      setLoading(true);
+      const targets = Array.from(map.values()).map((subject) => ({
+        subject_id: subject.subject_id,
+        class_ids: subject.class_ids,
+      }));
+
+      await getAllocationOptions({
+        building_id: selectedBuilding.id,
+        allocation_year: allocationYear,
+        targets: targets,
+        strict: true,
+      })
+        .then((res) => {
+          setAllocationReuseResponse(res.data);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }
+  useEffect(() => {
+    if (selectedBuilding) {
+      handleBuildingChange();
+    } else {
+      setAllocationReuseResponse(undefined);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedBuilding]);
+
+  useEffect(() => {
+    if (allocationReuseResponse) {
+      const newMap = new Map(allocationMap);
+      const subjectOptions = allocationReuseResponse.target_options;
+      subjectOptions.forEach((subject) => {
+        const classOptions = subject.class_options;
+        classOptions.forEach((option) => {
+          option.schedule_options.forEach((scheduleOption) => {
+            const options = scheduleOption.options.filter(
+              (opt) => opt.classroom && opt.classroom_id,
+            );
+            newMap.set(
+              scheduleOption.schedule_target_id,
+              options.length === 1
+                ? {
+                    classroom_ids: options.map(
+                      (opt) => opt.classroom_id as number,
+                    ),
+                    classrooms: options.map((opt) => opt.classroom) as string[],
+                  }
+                : {
+                    classroom_ids: [],
+                    classrooms: [],
+                  },
+            );
+          });
+        });
+      });
+      setAllocationMap(newMap);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allocationReuseResponse]);
 
   return (
     <Flex direction={'column'} gap={'10px'} w={'100%'}>
       <div hidden={buildings.length === 1}>
         <Text fontWeight={'bold'}>Prédio: </Text>
-        <Select
+        <TooltipSelect
           placeholder={'Selecione um prédio para buscar uma alocação'}
           isMulti={false}
           value={
@@ -59,27 +120,7 @@ function AllocationReuseModalSecondStep({
           onChange={async (option) => {
             if (option) {
               const building = buildings.find((b) => b.id === option.value);
-              if (building) {
-                setLoading(true);
-                const targets = Array.from(map.values()).map((subject) => ({
-                  subject_id: subject.subject_id,
-                  class_ids: subject.class_ids,
-                }));
-
-                setSelectedBuilding(building);
-                await getAllocationOptions({
-                  building_id: building.id,
-                  allocation_year: allocationYear,
-                  targets: targets,
-                  strict: true,
-                })
-                  .then((res) => {
-                    setData(res.data);
-                  })
-                  .finally(() => {
-                    setLoading(false);
-                  });
-              }
+              setSelectedBuilding(building);
             }
             if (!option) {
               setSelectedBuilding(undefined);
@@ -88,8 +129,8 @@ function AllocationReuseModalSecondStep({
           }}
         />
       </div>
-      <Text fontWeight={'bold'}>Ano da alocação anterior: </Text>
-      <Select
+      <Text fontWeight={'bold'}>Ano da alocação a ser reaproveitada: </Text>
+      <TooltipSelect
         placeholder={'Selecione um ano de alocação'}
         isMulti={false}
         isClearable={false}
@@ -99,26 +140,50 @@ function AllocationReuseModalSecondStep({
           value: year,
         }))}
         onChange={(option) => {
-          setAllocationYear(option ? option.value : currentYear - 1);
+          setAllocationYear(
+            option ? (option.value as number) : currentYear - 1,
+          );
         }}
       />
-      <Heading size={'md'}>Alocações encontradas:</Heading>
+      <Heading size={'md'}>
+        Alocações encontradas para as turmas <b>atuais</b>:
+      </Heading>
       {!selectedBuilding && (
         <Alert status='warning'>
           <AlertIcon />
           Selecione um prédio para buscar alocações.
         </Alert>
       )}
-      <Skeleton isLoaded={!loading} w={'100%'} h={'100%'} minH={'200px'}>
-        {data &&
-          data.target_options &&
-          data.target_options.map((target) => (
-            <AllocationReuseSubjectOptions
-              data={target}
-              allocationMap={allocationMap}
-              setAllocationMap={setAllocationMap}
-            />
+      <Skeleton
+        isLoaded={!loading}
+        w={'100%'}
+        h={'100%'}
+        minH={'200px'}
+        maxH={'400px'}
+        overflowY={'auto'}
+      >
+        {allocationReuseResponse &&
+          allocationReuseResponse.target_options.length > 0 &&
+          allocationReuseResponse.target_options.map((target) => (
+            <div key={target.subject_id}>
+              <AllocationReuseSubjectOptions
+                data={target}
+                allocationMap={allocationMap}
+                setAllocationMap={setAllocationMap}
+              />
+            </div>
           ))}
+        {(!allocationReuseResponse ||
+          !allocationReuseResponse.target_options.length) && (
+          <Flex direction={'column'} alignItems={'center'} mt={'10px'}>
+            <Text fontWeight={'bold'} fontSize={'xl'}>
+              Nenhuma alocação encontrada.
+            </Text>
+            <Text fontSize={'md'}>
+              Verifique as turmas selecionadas ou o ano da alocação buscada.
+            </Text>
+          </Flex>
+        )}
       </Skeleton>
     </Flex>
   );

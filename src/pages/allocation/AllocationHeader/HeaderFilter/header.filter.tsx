@@ -1,12 +1,15 @@
 import { Box, Flex, Text, useMediaQuery } from '@chakra-ui/react';
-import Select, { SelectInstance, StylesConfig } from 'react-select';
+import { SelectInstance, StylesConfig } from 'react-select';
 import { AllocationHeaderProps } from '..';
 import { useRef } from 'react';
 import { classNumberFromClassCode } from '../../../../utils/classes/classes.formatter';
+import TooltipSelect, {
+  Option,
+} from '../../../../components/common/TooltipSelect';
+import { AllocationEventType } from '../../../../utils/enums/allocation.event.type.enum';
+import { ReservationType } from '../../../../utils/enums/reservations.enum';
 
-type OptionType = { value: string; label: string };
-
-const customStyles: StylesConfig<OptionType, false> = {
+const customStyles: StylesConfig<Option, false> = {
   menu: (provided) => ({
     ...provided,
     maxHeight: '200px', // Altura máxima do menu
@@ -39,9 +42,9 @@ function HeaderFilter({
   classroomResources,
 }: AllocationHeaderProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
-  const classroomSelectRef = useRef<SelectInstance<OptionType>>(null);
-  const subjectSelectRef = useRef<SelectInstance<OptionType>>(null);
-  const classSelectRef = useRef<SelectInstance<OptionType>>(null);
+  const classroomSelectRef = useRef<SelectInstance<Option>>(null);
+  const subjectSelectRef = useRef<SelectInstance<Option>>(null);
+  const classSelectRef = useRef<SelectInstance<Option>>(null);
 
   const buildingOptions = buildingResources
     .map((resource) => ({
@@ -64,12 +67,38 @@ function HeaderFilter({
     .sort((a, b) => a.value.localeCompare(b.value));
 
   const subjectOptions = events
-    .map((event) => ({
-      value: event.extendedProps.class_data?.subject_code || event.title,
-      label: event.extendedProps.class_data
-        ? `${event.extendedProps.class_data?.subject_code} - ${event.extendedProps.class_data?.subject_name}`
-        : event.title,
-    }))
+    .filter(
+      (event) =>
+        event.type === AllocationEventType.SUBJECT ||
+        (event.extendedProps.reservation_data &&
+          event.extendedProps.reservation_data?.type === ReservationType.EXAM &&
+          event.extendedProps.reservation_data?.subject_code),
+    )
+    .flatMap((event) => {
+      const classData = event.extendedProps.class_data;
+      if (classData) {
+        return [
+          {
+            value: classData.subject_code,
+            label: `${classData.subject_code} - ${classData.subject_name}`,
+          },
+        ];
+      }
+      const reservationData = event.extendedProps.reservation_data;
+      if (
+        reservationData &&
+        reservationData.subject_code &&
+        reservationData.subject_name
+      ) {
+        return [
+          {
+            value: reservationData.subject_code,
+            label: `${reservationData.subject_code} - ${reservationData.subject_name}`,
+          },
+        ];
+      }
+      return [];
+    })
     .filter(
       (value, index, self) =>
         self.findIndex((v) => v.value === value.value) === index,
@@ -78,17 +107,36 @@ function HeaderFilter({
 
   const classOptions = events
     .filter((event) => {
+      const reservationData = event.extendedProps.reservation_data;
+      const isEnable =
+        reservationData &&
+        reservationData.type === ReservationType.EXAM &&
+        reservationData.class_codes;
+
       return (
-        event.extendedProps.class_data &&
-        event.extendedProps.class_data.subject_code.includes(nameSearchValue)
+        (event.extendedProps.class_data &&
+          event.extendedProps.class_data.subject_code.includes(
+            nameSearchValue,
+          )) ||
+        isEnable
       );
     })
-    .map((event) => ({
-      value: event.extendedProps.class_data?.code || '',
-      label: event.extendedProps.class_data
-        ? classNumberFromClassCode(event.extendedProps.class_data?.code)
-        : '',
-    }))
+    .flatMap((event) => {
+      const classData = event.extendedProps.class_data;
+      if (classData)
+        return {
+          value: classData.code,
+          label: classNumberFromClassCode(classData.code),
+        };
+      const reservationData = event.extendedProps.reservation_data;
+      if (reservationData && reservationData.class_codes) {
+        return reservationData.class_codes.map((classCode) => ({
+          value: classCode,
+          label: classNumberFromClassCode(classCode),
+        }));
+      }
+      return [];
+    })
     .filter(
       (value, index, self) =>
         self.findIndex((v) => v.value === value.value) === index,
@@ -102,10 +150,9 @@ function HeaderFilter({
           <Text fontWeight={'bold'}>Filtros: </Text>
           <Flex direction={'row'} gap={2} w={'full'}>
             <Box w={'50%'}>
-              <Select
+              <TooltipSelect
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
-                selectedOptionColorScheme={'purple'}
                 placeholder='Prédio'
                 isClearable={true}
                 options={buildingOptions}
@@ -116,7 +163,7 @@ function HeaderFilter({
                 }
                 onChange={(option) => {
                   if (option) {
-                    setBuildingSearchValue(option.value);
+                    setBuildingSearchValue(option.value as string);
                   } else {
                     setBuildingSearchValue('');
                   }
@@ -133,7 +180,7 @@ function HeaderFilter({
               />
             </Box>
             <Box w={'50%'}>
-              <Select
+              <TooltipSelect
                 ref={classroomSelectRef}
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
@@ -150,7 +197,7 @@ function HeaderFilter({
                 }
                 onChange={(option) => {
                   if (option) {
-                    setClassroomSearchValue(option.value);
+                    setClassroomSearchValue(option.value as string);
                   } else {
                     setClassroomSearchValue('');
                   }
@@ -166,7 +213,7 @@ function HeaderFilter({
           </Flex>
           <Flex direction={'column'} gap={2} w={'full'}>
             <Box w={'100%'}>
-              <Select
+              <TooltipSelect
                 ref={subjectSelectRef}
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
@@ -180,7 +227,7 @@ function HeaderFilter({
                 options={subjectOptions}
                 onChange={(option) => {
                   if (option) {
-                    setNameSearchValue(option.value);
+                    setNameSearchValue(option.value as string);
                   } else {
                     setNameSearchValue('');
                     setClassSearchValue('');
@@ -191,7 +238,7 @@ function HeaderFilter({
               />
             </Box>
             <Box w={'100%'} h={'fit-content'}>
-              <Select
+              <TooltipSelect
                 ref={classSelectRef}
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
@@ -207,9 +254,9 @@ function HeaderFilter({
                     : undefined
                 }
                 options={classOptions}
-                onChange={(option: OptionType | null) => {
+                onChange={(option) => {
                   if (option) {
-                    setClassSearchValue(option.value);
+                    setClassSearchValue(option.value as string);
                   } else {
                     setClassSearchValue('');
                   }
@@ -221,9 +268,8 @@ function HeaderFilter({
       ) : (
         <Flex direction={'row'} gap={'10px'}>
           <Box w={'250px'}>
-            <Select
+            <TooltipSelect
               styles={customStyles}
-              selectedOptionColorScheme={'purple'}
               placeholder='Prédio'
               isClearable={true}
               options={buildingOptions}
@@ -234,7 +280,7 @@ function HeaderFilter({
               }
               onChange={(option) => {
                 if (option) {
-                  setBuildingSearchValue(option.value);
+                  setBuildingSearchValue(option.value as string);
                 } else {
                   setBuildingSearchValue('');
                 }
@@ -251,7 +297,7 @@ function HeaderFilter({
           </Box>
 
           <Box w={'250px'}>
-            <Select
+            <TooltipSelect
               ref={classroomSelectRef}
               styles={customStyles}
               placeholder='Sala'
@@ -265,7 +311,7 @@ function HeaderFilter({
               }
               onChange={(option) => {
                 if (option) {
-                  setClassroomSearchValue(option.value);
+                  setClassroomSearchValue(option.value as string);
                 } else {
                   setClassroomSearchValue('');
                 }
@@ -279,7 +325,7 @@ function HeaderFilter({
           </Box>
 
           <Box w={'250px'}>
-            <Select
+            <TooltipSelect
               ref={subjectSelectRef}
               styles={customStyles}
               placeholder='Disciplina'
@@ -292,7 +338,7 @@ function HeaderFilter({
               options={subjectOptions}
               onChange={(option) => {
                 if (option) {
-                  setNameSearchValue(option.value);
+                  setNameSearchValue(option.value as string);
                 } else {
                   setNameSearchValue('');
                   setClassSearchValue('');
@@ -304,7 +350,7 @@ function HeaderFilter({
           </Box>
 
           <Box w={'250px'}>
-            <Select
+            <TooltipSelect
               ref={classSelectRef}
               styles={customStyles}
               isDisabled={!nameSearchValue}
@@ -319,9 +365,9 @@ function HeaderFilter({
                   : undefined
               }
               options={classOptions}
-              onChange={(option: OptionType | null) => {
+              onChange={(option) => {
                 if (option) {
-                  setClassSearchValue(option.value);
+                  setClassSearchValue(option.value as string);
                 } else {
                   setClassSearchValue('');
                 }

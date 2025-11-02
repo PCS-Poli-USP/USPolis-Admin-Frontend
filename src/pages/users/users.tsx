@@ -7,7 +7,7 @@ import Dialog from '../../components/common/Dialog/dialog.component';
 import PageContent from '../../components/common/PageContent';
 import { UserResponse } from '../../models/http/responses/user.response.models';
 import { getUsersColumns } from './Tables/user.table';
-import useUsers from '../../hooks/useUsers';
+import useUsers from '../../hooks/users/useUsers';
 import useBuildings from '../../hooks/useBuildings';
 import useGroups from '../../hooks/groups/useGroups';
 

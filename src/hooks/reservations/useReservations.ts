@@ -1,12 +1,12 @@
-import useCustomToast from '../hooks/useCustomToast';
+import useCustomToast from '../../hooks/useCustomToast';
 import {
   CreateReservation,
   UpdateReservation,
-} from '../models/http/requests/reservation.request.models';
-import { ReservationResponse } from '../models/http/responses/reservation.response.models';
+} from '../../models/http/requests/reservation.request.models';
+import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortReservationsResponse } from '../utils/reservations/reservations.sorter';
-import useReservationsService from './API/services/useReservationsService';
+import { sortReservationsResponse } from '../../utils/reservations/reservations.sorter';
+import useReservationsService from './../API/services/useReservationsService';
 
 const useReservations = (initialFetch = true) => {
   const service = useReservationsService();
@@ -74,31 +74,6 @@ const useReservations = (initialFetch = true) => {
         .finally(() => {
           setLoading(false);
         });
-    },
-    [showToast, service],
-  );
-
-  const getReservationsById = useCallback(
-    async (id: number) => {
-      setLoading(true);
-      let reservation: ReservationResponse | undefined;
-      await service
-        .getById(id)
-        .then((response) => {
-          reservation = response.data;
-        })
-        .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao carregar reserva: ${error.response.detail}`,
-            'error',
-          );
-          reservation = undefined;
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-      return reservation;
     },
     [showToast, service],
   );
@@ -182,7 +157,6 @@ const useReservations = (initialFetch = true) => {
     getAllReservations,
     getReservations,
     getReservationsByBuildingName,
-    getReservationsById,
     createReservation,
     updateReservation,
     deleteReservation,

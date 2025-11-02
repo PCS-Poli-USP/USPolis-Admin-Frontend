@@ -44,7 +44,7 @@ function CarouselIcon({ id, text, icon }: CarouselIconProps) {
         _hover={{ cursor: 'pointer' }}
       >
         <Icon as={icon} boxSize={'40px'} />
-        <Text textColor={'black'} fontSize={'lg'}>
+        <Text textColor={'uspolis.black'} fontSize={'lg'}>
           {text}
         </Text>
       </Flex>
@@ -96,7 +96,7 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
   }, [currentImageIndex]);
 
   return (
-    <Box ref={containerRef} h={'full'} overflowY={'hidden'}>
+    <Box ref={containerRef} h={'full'}>
       <Box h={`${boxH}px`} w={'full'}>
         <Flex
           direction={'row'}
@@ -136,7 +136,7 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
                   maxW={'450px'}
                   fontWeight={'bold'}
                   size={'xl'}
-                  color={'black'}
+                  color={'uspolis.black'}
                   textAlign={'center'}
                 >
                   {item.title}
@@ -151,10 +151,13 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
         </VStack>
         <Box
           // borderRadius={'lg'}
-          overflow={'hidden'}
+          // overflow={'hidden'}
           h={`${textH + textGap - 60}px`}
+          position={'sticky'}
+          top={'100px'}
+          alignSelf='flex-start'
           w={'auto'}
-          mt={relativeScroll > 0 ? `${relativeScroll}px` : '0px'}
+          // mt={relativeScroll > 0 ? `${relativeScroll}px` : '0px'}
           transition='transform 0.3s, opacity 0.3s'
           _hover={{
             transform: 'scale(1.1)',
@@ -177,7 +180,7 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
               h={'100%'}
               borderRadius={'lg'}
               border={'2px solid'}
-              borderColor={'black'}
+              borderColor={'uspolis.black'}
             />
           </Tooltip>
         </Box>

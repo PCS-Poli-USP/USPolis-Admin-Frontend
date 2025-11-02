@@ -5,20 +5,23 @@ import {
   Image,
   Text,
   Link,
-  Spacer,
   Menu,
   MenuButton,
-  Icon,
   MenuList,
   MenuItem,
+  IconButton,
+  useColorMode,
 } from '@chakra-ui/react';
 import Logo from '../../../assets/uspolis.logo.png';
 import { appContext } from '../../../context/AppContext';
 import { useContext } from 'react';
-import { FaUser } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
+import UserImage from '../../../components/common/UserImage/user.image';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 function MobileHeader() {
+  const { colorMode, setColorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
   const context = useContext(appContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -34,7 +37,7 @@ function MobileHeader() {
       shadow={'md'}
       gap={4}
       h={'60px'}
-      bg={'white'}
+      bg={'uspolis.white'}
       zIndex={100}
     >
       <Link
@@ -53,7 +56,6 @@ function MobileHeader() {
           <Text fontSize={'2xl'}>USPolis</Text>
         </HStack>
       </Link>
-      <Spacer />
       <Flex
         direction={'row'}
         justify={'center'}
@@ -92,15 +94,7 @@ function MobileHeader() {
               colorScheme='dark'
             >
               <Flex alignItems={'center'} gap='1'>
-                <Text
-                  textColor={'uspolis.blue'}
-                  overflow={'hidden'}
-                  textOverflow={'ellipsis'}
-                  maxW={'100px'}
-                >
-                  {context.loggedUser.name.split(' ')[0]}
-                </Text>
-                <Icon as={FaUser} />
+                <UserImage />
               </Flex>
             </MenuButton>
             <MenuList>
@@ -114,7 +108,7 @@ function MobileHeader() {
             hidden={context.isAuthenticated}
             // as={'a'}
             variant={'solid'}
-            colorScheme={'teal'}
+            bg={'uspolis.blue'}
             size={'md'}
             onClick={() => {
               navigate('/auth', {
@@ -126,6 +120,13 @@ function MobileHeader() {
             Entrar
           </Button>
         )}
+        <IconButton
+          aria-label='Toggle dark mode'
+          variant={'ghost'}
+          ml={'5px'}
+          icon={isDark ? <SunIcon /> : <MoonIcon />}
+          onClick={() => setColorMode(isDark ? 'light' : 'dark')}
+        />
       </Flex>
     </Flex>
   );

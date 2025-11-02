@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AxiosErrorResponse } from '../models/http/responses/common.response.models';
 
 export class ErrorParser {

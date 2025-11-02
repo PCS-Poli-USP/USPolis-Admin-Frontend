@@ -1,14 +1,23 @@
-import { Grid, GridItem, useDisclosure, useMediaQuery } from '@chakra-ui/react';
+import {
+  Checkbox,
+  Collapse,
+  Flex,
+  Grid,
+  GridItem,
+  IconButton,
+  Text,
+  useDisclosure,
+  useMediaQuery,
+} from '@chakra-ui/react';
 import Loading from '../../components/common/Loading/loading.component';
 import { appContext } from '../../context/AppContext';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Event } from './interfaces/allocation.interfaces';
 import useAllocation from '../../pages/allocation/hooks/useAllocation';
 import PageContent from '../../components/common/PageContent';
-import SolicitationModal from './SolicitationModal/solicitation.modal';
 import CustomCalendar from './CustomCalendar';
 import AllocationHeader from './AllocationHeader';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { Resource } from '../../models/http/responses/allocation.response.models';
 import { DateClickArg, EventResizeDoneArg } from '@fullcalendar/interaction';
 import useBuildings from '../../hooks/useBuildings';
@@ -16,10 +25,17 @@ import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import ReservationModal from '../../pages/reservations/ReservationModal/reservation.modal';
 import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
 import { loadReservationForDataClick } from './utils/allocation.utils';
-import useClassroomsSolicitations from '../../hooks/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../hooks/solicitations/useSolicitations';
 import { EventDropArg } from '@fullcalendar/core';
 import EventDragModal from './EventDragModal';
 import { EventDef } from '@fullcalendar/core/internal';
+import useSubjects from '../../hooks/useSubjetcts';
+import { menuContext } from '../../context/MenuContext';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { DateCalendar } from '@mui/x-date-pickers';
+import FullCalendar from '@fullcalendar/react';
+import { AllocationEventType } from '../../utils/enums/allocation.event.type.enum';
+import useClasses from '../../hooks/classes/useClasses';
 
 type ViewOption = {
   value: string;
@@ -36,6 +52,7 @@ const viewOptions: ViewOption[] = [
 function Allocation() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { loading, setLoading, loggedUser } = useContext(appContext);
+  const { isOpen: isOpenMenu } = useContext(menuContext);
 
   const {
     isOpen: isOpenSolicitation,
@@ -55,6 +72,16 @@ function Allocation() {
     onClose: onCloseEventModal,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenDrawer,
+    onOpen: onOpenDrawer,
+    onClose: onCloseDrawer,
+    onToggle: onToggleDrawer,
+  } = useDisclosure();
+
+  const [alreadyChange, setAlreadyChange] = useState(false);
+  const [setupInitialFilters, setSetupInitialFilters] = useState(false);
+
   const [reservation, setReservation] = useState<ReservationResponse>();
   const [buildingSearchValue, setBuildingSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
@@ -72,6 +99,11 @@ function Allocation() {
 
   const [clickedDate, setClickedDate] = useState<string>();
   const [dragEvent, setDragEvent] = useState<EventDropArg>();
+  const calendarRef = useRef<FullCalendar>(null!);
+
+  const [showEventTypeMap, setShowEventTypeMap] = useState<
+    Map<AllocationEventType, boolean>
+  >(new Map(AllocationEventType.getValues().map((type) => [type, true])));
 
   const {
     loading: loadingAllocation,
@@ -87,15 +119,17 @@ function Allocation() {
     getAllBuildings,
   } = useBuildings(false);
   const {
+    loading: loadingSubjects,
+    subjects,
+    getAllSubjects,
+  } = useSubjects(false);
+  const { classes, loading: loadingClasses, getClasses } = useClasses(false);
+  const {
     loading: loadingClassrooms,
     classrooms,
     getAllClassrooms,
   } = useClassrooms(false);
-  const {
-    loading: loadingSolicitations,
-    solicitations,
-    getPendingBuildingSolicitations,
-  } = useClassroomsSolicitations(false);
+  const { getPendingBuildingSolicitations } = useClassroomsSolicitations(false);
 
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
   const [filteredResources, setFilteredResources] =
@@ -113,7 +147,7 @@ function Allocation() {
     const nameValue = name.toLowerCase();
     const classValue = class_.toLowerCase();
 
-    if (building) {
+    if (buildingValue) {
       newEvents = newEvents.filter((event) => {
         const data =
           event.extendedProps.class_data ||
@@ -121,7 +155,7 @@ function Allocation() {
         return data && data.building.toLowerCase() === buildingValue;
       });
     }
-    if (classroom) {
+    if (classroomValue) {
       newEvents = newEvents.filter((event) => {
         const data =
           event.extendedProps.class_data ||
@@ -129,19 +163,32 @@ function Allocation() {
         return data && data.classroom.toLowerCase() === classroomValue;
       });
     }
-    if (name) {
+    if (nameValue) {
       newEvents = newEvents.filter((event) => {
         const nameFilterResult =
-          event.title.toLowerCase() === nameValue ||
-          event.extendedProps.class_data?.code.toLowerCase() === nameValue;
+          event.title.toLowerCase().includes(nameValue) ||
+          event.extendedProps.class_data?.code
+            .toLowerCase()
+            .includes(nameValue) ||
+          event.extendedProps.reservation_data?.title
+            .toLowerCase()
+            .includes(nameValue) ||
+          event.extendedProps.reservation_data?.subject_code?.includes(
+            nameValue,
+          );
         return nameFilterResult;
       });
     }
     if (classValue) {
       newEvents = newEvents.filter((event) => {
         const classFilterResult =
-          event.extendedProps.class_data &&
-          event.extendedProps.class_data?.code.toLowerCase() === classValue;
+          (event.extendedProps.class_data &&
+            event.extendedProps.class_data?.code
+              .toLowerCase()
+              .includes(classValue)) ||
+          event.extendedProps.reservation_data?.class_codes?.some((code) =>
+            code.includes(classValue),
+          );
         return classFilterResult;
       });
     }
@@ -259,13 +306,66 @@ function Allocation() {
   useEffect(() => {
     if (loggedUser) {
       getAllBuildings();
+      getAllSubjects();
       getAllClassrooms();
+      getClasses();
       if (loggedUser.is_admin || loggedUser.buildings) {
         getPendingBuildingSolicitations();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedUser]);
+
+  useEffect(() => {
+    if (isOpenMenu && isOpenDrawer) {
+      onCloseDrawer();
+      setAlreadyChange(false);
+    }
+    if (!isOpenMenu && !isOpenDrawer && !alreadyChange) {
+      setTimeout(() => {
+        onOpenDrawer();
+        setAlreadyChange(true);
+      }, 200);
+    }
+
+    // Force drawer to open when menu closes to avoid render bug when
+    // the drawer is first closed and menu is open, after that closing the menu causes
+    // Calendar not render correctly on all avaliable
+    if (isOpenMenu) {
+      setAlreadyChange(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpenMenu, isOpenDrawer]);
+
+  useEffect(() => {
+    if (setupInitialFilters) return;
+
+    const buildingResources = resources
+      .filter((resource) => !resource.parentId)
+      .sort((a, b) => a.title.localeCompare(b.title));
+    const classroomResources = resources.filter(
+      (resource) => !!resource.parentId,
+    );
+
+    if (buildingResources.length > 0) {
+      const defaultBuilding = buildingResources.find(
+        (building) => building.title === 'Biênio',
+      );
+      if (defaultBuilding) {
+        setBuildingSearchValue(defaultBuilding.title);
+        const filteredClassrooms = classroomResources.filter(
+          (classroom) =>
+            classroom.parentId &&
+            classroom.parentId.includes(defaultBuilding.id),
+        );
+        if (filteredClassrooms.length > 0) {
+          const random = Math.floor(Math.random() * filteredClassrooms.length);
+          setClassroomSearchValue(filteredClassrooms[random].title);
+        }
+        setSetupInitialFilters(true);
+      }
+    }
+  }, [setupInitialFilters, resources]);
 
   return (
     <PageContent>
@@ -275,12 +375,21 @@ function Allocation() {
       />
 
       <Grid
-        templateAreas={`"header"
-                        "main"`}
+        templateAreas={
+          isMobile
+            ? `"header"
+               "main"`
+            : `"drawer header"
+               "drawer main"`
+        }
         gridTemplateRows={'1 1fr'}
-        gridTemplateColumns={'1fr'}
+        gridTemplateColumns={
+          isMobile ? '1fr' : `${isOpenDrawer ? 250 : 65}px 1fr`
+        }
         w={'calc(100% - 0rem)'}
+        h={'100vh'}
         id='allocation-grid'
+        gap={'5px'}
       >
         <GridItem p={2} area={'header'} display='flex' alignItems='center'>
           <AllocationHeader
@@ -309,23 +418,187 @@ function Allocation() {
             classroomResources={resources.filter(
               (resource) => !!resource.parentId,
             )}
+            subjects={subjects}
+            loadingSubjects={loadingSubjects}
+            buildings={buildings}
+            loadingBuildings={loadingBuildings}
           />
         </GridItem>
-        <GridItem px='2' pb='2' area={'main'} justifyContent='flex-end'>
+
+        <GridItem area={'drawer'} hidden={isMobile} paddingRight={'10px'}>
+          <Flex justify={'flex-end'}>
+            <IconButton
+              aria-label='Expandir menu'
+              mt={'10px'}
+              variant={'outline'}
+              colorScheme='blue'
+              color={'uspolis.blue'}
+              onClick={() => {
+                onToggleDrawer();
+              }}
+              disabled={isOpenMenu}
+              icon={isOpenDrawer ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            />
+          </Flex>
+          {!isOpenDrawer && (
+            <Flex direction={'column'} mt={'350px'} gap={'10px'}>
+              <Checkbox
+                fontWeight={'bold'}
+                isChecked={showEventTypeMap.get(AllocationEventType.SUBJECT)}
+                onChange={(e) => {
+                  const newMap = new Map(showEventTypeMap);
+                  newMap.set(AllocationEventType.SUBJECT, e.target.checked);
+                  setShowEventTypeMap(newMap);
+                }}
+              >
+                📚
+              </Checkbox>
+              <Checkbox
+                fontWeight={'bold'}
+                isChecked={showEventTypeMap.get(AllocationEventType.EXAM)}
+                onChange={(e) => {
+                  const newMap = new Map(showEventTypeMap);
+                  newMap.set(AllocationEventType.EXAM, e.target.checked);
+                  setShowEventTypeMap(newMap);
+                }}
+              >
+                📝
+              </Checkbox>
+              <Checkbox
+                fontWeight={'bold'}
+                isChecked={showEventTypeMap.get(AllocationEventType.EVENT)}
+                onChange={(e) => {
+                  const newMap = new Map(showEventTypeMap);
+                  newMap.set(AllocationEventType.EVENT, e.target.checked);
+                  setShowEventTypeMap(newMap);
+                }}
+              >
+                📅
+              </Checkbox>
+              <Checkbox
+                fontWeight={'bold'}
+                isChecked={showEventTypeMap.get(AllocationEventType.MEETING)}
+                onChange={(e) => {
+                  const newMap = new Map(showEventTypeMap);
+                  newMap.set(AllocationEventType.MEETING, e.target.checked);
+                  setShowEventTypeMap(newMap);
+                }}
+              >
+                👥
+              </Checkbox>
+            </Flex>
+          )}
+          <Collapse in={isOpenDrawer} animateOpacity>
+            <Flex
+              direction={'column'}
+              w={isOpenDrawer ? '250px' : '50px'}
+              justify={'flex-start'}
+              align={'flex-start'}
+              gap={'10px'}
+            >
+              <DateCalendar
+                showDaysOutsideCurrentMonth
+                sx={{
+                  width: '240px',
+                  height: '290px',
+                }}
+                value={moment(currentStartDate)}
+                onChange={(val: Moment) => {
+                  const date = val.format('YYYY-MM-DD');
+                  setCurrentStartDate(date);
+                  setCurrentEndDate(date);
+                  calendarRef.current
+                    .getApi()
+                    .gotoDate(
+                      new Date(
+                        val.add(1, 'days').format('YYYY-MM-DD'),
+                      ).toISOString(),
+                    );
+                }}
+              />
+              <Flex direction={'column'} pl={'10px'} w={'100%'} gap={'10px'}>
+                <Text fontWeight={'bold'} mb={'10px'} fontSize={'lg'}>
+                  Exibir categorias:
+                </Text>
+                <Checkbox
+                  fontWeight={'bold'}
+                  isChecked={showEventTypeMap.get(AllocationEventType.SUBJECT)}
+                  onChange={(e) => {
+                    const newMap = new Map(showEventTypeMap);
+                    newMap.set(AllocationEventType.SUBJECT, e.target.checked);
+                    setShowEventTypeMap(newMap);
+                  }}
+                >
+                  📚 Disciplinas
+                </Checkbox>
+                <Checkbox
+                  fontWeight={'bold'}
+                  isChecked={showEventTypeMap.get(AllocationEventType.EXAM)}
+                  onChange={(e) => {
+                    const newMap = new Map(showEventTypeMap);
+                    newMap.set(AllocationEventType.EXAM, e.target.checked);
+                    setShowEventTypeMap(newMap);
+                  }}
+                >
+                  📝 Provas
+                </Checkbox>
+                <Checkbox
+                  fontWeight={'bold'}
+                  isChecked={showEventTypeMap.get(AllocationEventType.EVENT)}
+                  onChange={(e) => {
+                    const newMap = new Map(showEventTypeMap);
+                    newMap.set(AllocationEventType.EVENT, e.target.checked);
+                    setShowEventTypeMap(newMap);
+                  }}
+                >
+                  📅 Eventos
+                </Checkbox>
+                <Checkbox
+                  fontWeight={'bold'}
+                  isChecked={showEventTypeMap.get(AllocationEventType.MEETING)}
+                  onChange={(e) => {
+                    const newMap = new Map(showEventTypeMap);
+                    newMap.set(AllocationEventType.MEETING, e.target.checked);
+                    setShowEventTypeMap(newMap);
+                  }}
+                >
+                  👥 Reuniões
+                </Checkbox>
+              </Flex>
+            </Flex>
+          </Collapse>
+        </GridItem>
+
+        <GridItem
+          px='2'
+          pb='2'
+          area={'main'}
+          justifyContent='flex-end'
+          border={'1px solid'}
+          borderRadius={'20px'}
+          mt={'10px'}
+          padding={'20px'}
+          mb={'20px'}
+        >
           {loggedUser && (
-            <SolicitationModal
-              isMobile={isMobile}
+            <ReservationModal
+              onClose={() => {
+                onCloseSolicitation();
+              }}
               isOpen={isOpenSolicitation}
-              onClose={onCloseSolicitation}
-              buildings={buildings}
+              isUpdate={false}
+              isSolicitation={true}
               classrooms={classrooms}
-              loadingBuildings={loadingBuildings}
-              loadingClassrooms={loadingClassrooms}
+              buildings={buildings}
+              selectedReservation={undefined}
               refetch={async () => {
                 if (loggedUser.is_admin || loggedUser.buildings) {
                   await getPendingBuildingSolicitations();
                 }
               }}
+              subjects={subjects}
+              classes={classes}
+              loading={loadingSubjects || loadingClasses || loadingClassrooms}
             />
           )}
           {loggedUser && (
@@ -357,19 +630,24 @@ function Allocation() {
               onClose={onCloseReservation}
               selectedReservation={reservation}
               initialDate={clickedDate}
-              solicitations={solicitations}
-              loadingSolicitations={loadingSolicitations}
+              subjects={subjects}
+              classes={[]}
+              loading={loadingClassrooms || loadingSubjects || loadingBuildings}
+              isSolicitation={false}
             />
           )}
 
           <CustomCalendar
+            calendarRef={calendarRef}
             events={
               !!buildingSearchValue ||
               !!classroomSearchValue ||
               !!nameSearchValue ||
               !!classSearchValue
-                ? filteredEvents
-                : events
+                ? filteredEvents.filter((event) =>
+                    showEventTypeMap.get(event.type),
+                  )
+                : events.filter((event) => showEventTypeMap.get(event.type))
             }
             resources={
               !!buildingSearchValue || !!classroomSearchValue
