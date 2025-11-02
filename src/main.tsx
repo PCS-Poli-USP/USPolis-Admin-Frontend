@@ -39,9 +39,7 @@ import Groups from './pages/groups/groups';
 import Home from './pages/home';
 import InstitutionalEvents from './pages/institutionalEvents';
 import LoadingPage from './components/common/LoadingPage';
-import LoadingRedirect from './pages/auth/loadingRedirect';
 import Profile from './pages/profile/profile';
-import RedirectError from './pages/auth/redirectError';
 import Reservations from './pages/reservations';
 import Subjects from './pages/subjects/subjects';
 import Users from './pages/users/users';
@@ -68,14 +66,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     <Route
                       path='auth-callback'
                       element={<AuthCallbackPage />}
-                    />
-                    <Route
-                      path='/test-auth-callback'
-                      element={<LoadingRedirect />}
-                    />
-                    <Route
-                      path='/test-auth-callback-error'
-                      element={<RedirectError error='Mock error bro' />}
                     />
                     <Route path='/loading-page' element={<LoadingPage />} />
                     <Route element={<AxiosInterceptorRoute />}>
