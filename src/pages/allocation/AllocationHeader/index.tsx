@@ -3,6 +3,8 @@ import { useMediaQuery } from '@chakra-ui/react';
 import AllocationMobileHeader from './AllocationMobileHeader/mobile.header';
 import AllocationDesktopHeader from './AllocationDesktopHeader/desktop.header';
 import { Event, Resource } from '../interfaces/allocation.interfaces';
+import { SubjectResponse } from '../../../models/http/responses/subject.response.models';
+import { BuildingResponse } from '../../../models/http/responses/building.response.models';
 
 export interface AllocationHeaderProps {
   isOpen: boolean;
@@ -24,6 +26,12 @@ export interface AllocationHeaderProps {
   events: Event[];
   buildingResources: Resource[];
   classroomResources: Resource[];
+
+  subjects: SubjectResponse[];
+  loadingSubjects: boolean;
+
+  buildings: BuildingResponse[];
+  loadingBuildings: boolean;
 }
 
 function AllocationHeader({
@@ -41,6 +49,10 @@ function AllocationHeader({
   events,
   buildingResources,
   classroomResources,
+  subjects,
+  loadingSubjects,
+  buildings,
+  loadingBuildings,
 }: AllocationHeaderProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
 
@@ -60,6 +72,10 @@ function AllocationHeader({
       events={events}
       buildingResources={buildingResources}
       classroomResources={classroomResources}
+      subjects={subjects}
+      loadingSubjects={loadingSubjects}
+      buildings={buildings}
+      loadingBuildings={loadingBuildings}
     />
   ) : (
     <AllocationDesktopHeader
@@ -77,6 +93,10 @@ function AllocationHeader({
       events={events}
       buildingResources={buildingResources}
       classroomResources={classroomResources}
+      subjects={subjects}
+      loadingSubjects={loadingSubjects}
+      buildings={buildings}
+      loadingBuildings={loadingBuildings}
     />
   );
 }

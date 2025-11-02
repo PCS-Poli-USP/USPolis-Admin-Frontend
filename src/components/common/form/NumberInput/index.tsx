@@ -12,12 +12,8 @@ import { FieldProps } from '../form.interface';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-export type Option = {
-  label: string;
-  value: string | number;
-};
 
-interface MultiSelectProps extends FieldProps {
+interface NumberInputProps extends FieldProps {
   value?: string | number | undefined;
   min?: number | undefined;
   max?: number | undefined;
@@ -36,7 +32,7 @@ export function NumberInput({
   mb = undefined,
   mr = undefined,
   ml = undefined,
-}: MultiSelectProps) {
+}: NumberInputProps) {
   const {
     control,
     getValues,

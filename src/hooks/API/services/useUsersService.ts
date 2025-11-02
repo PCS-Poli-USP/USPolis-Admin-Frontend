@@ -32,7 +32,15 @@ const useUsersService = () => {
     return axios.delete(`${PREFIX}/${user_id}`);
   };
 
-  return { create, list, update, deleteById };
+  const updateEmailNotifications = (
+    receive_emails: boolean,
+  ): Promise<AxiosResponse<UserResponse>> => {
+    return axios.patch(`/users/notifications/email`, null, {
+      params: { receive_emails },
+    });
+  };
+
+  return { create, list, update, deleteById, updateEmailNotifications };
 };
 
 export default useUsersService;

@@ -1,12 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext, useEffect } from 'react';
 import { AuthHttpService } from '../../../services/auth/auth.service';
 import { axiosPrivate } from '../../../services/api/axios';
 import { appContext } from '../../../context/AppContext';
+import useCustomToast from '../../useCustomToast';
+import { AxiosErrorResponse } from '../../../models/http/responses/common.response.models';
 
 const authHttpService = new AuthHttpService();
 
 const useAxiosPrivate = () => {
   const context = useContext(appContext);
+  const showToast = useCustomToast();
 
   useEffect(() => {
     if (!context.accessToken) {
@@ -64,8 +68,13 @@ const useAxiosPrivate = () => {
             const retryResponse = await axiosPrivate(originalRequest);
             return retryResponse;
           } catch (refreshError: any) {
-            console.log('Error refreshing access token!', refreshError);
-            alert('Error refreshing token! Please, login again!');
+            const re = refreshError as AxiosErrorResponse;
+            showToast(
+              'Erro ao autenticar',
+              re.response?.data.detail ||
+                'Erro não indentificado, tente logar novamente',
+              'error',
+            );
             context.logout();
             return Promise.reject(error);
           }

@@ -37,16 +37,28 @@ export const formFields = {
       }),
     defaultValue: [],
   },
+  receive_emails: {
+    validator: yup
+      .boolean()
+      .required('Campo obrigatório')
+      .test('is-valid-option', 'Campo obrigatório', (value) => {
+        if (value === undefined) return false;
+        return true;
+      }),
+    defaultValue: true,
+  },
 };
 
 export const schema = yup.object<UserEditForm>().shape({
   is_admin: formFields.is_admin.validator,
   building_ids: formFields.building_ids.validator,
   group_ids: formFields.group_ids.validator,
+  receive_emails: formFields.receive_emails.validator,
 });
 
 export const defaultValues: UserEditForm = {
   is_admin: formFields.is_admin.defaultValue,
   building_ids: formFields.building_ids.defaultValue,
   group_ids: formFields.group_ids.defaultValue,
+  receive_emails: formFields.receive_emails.defaultValue,
 };

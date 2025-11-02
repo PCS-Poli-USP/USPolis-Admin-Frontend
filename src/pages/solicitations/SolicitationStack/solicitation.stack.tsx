@@ -9,15 +9,16 @@ import {
   StackDivider,
   VStack,
 } from '@chakra-ui/react';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import { useEffect, useState } from 'react';
 import { BsSearch } from 'react-icons/bs';
 import SolicitationStackBody from './solicitation.stack.body';
 import { filterString } from '../../../utils/filters';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 
 interface SolicitationStackProps {
-  solicitations: ClassroomSolicitationResponse[];
-  handleOnClick: (data: ClassroomSolicitationResponse) => void;
+  solicitations: SolicitationResponse[];
+  handleOnClick: (data: SolicitationResponse) => void;
   reset: () => void;
   selectedIndex?: number;
   setSelectedIndex: (index: number) => void;
@@ -34,8 +35,8 @@ function SolicitationStack({
   loading,
   handleShowAll,
 }: SolicitationStackProps) {
-  const [current, setCurrent] = useState<ClassroomSolicitationResponse[]>([]);
-  const [filtered, setFiltered] = useState<ClassroomSolicitationResponse[]>([]);
+  const [current, setCurrent] = useState<SolicitationResponse[]>([]);
+  const [filtered, setFiltered] = useState<SolicitationResponse[]>([]);
   const [buildingSearch, setBuildingSearch] = useState('');
   const [classroomSearch, setClassroomSearch] = useState('');
   const [requesterSearch, setRequesterSearch] = useState('');
@@ -53,8 +54,8 @@ function SolicitationStack({
       );
     if (classroom)
       newCurrent = newCurrent.filter((val) =>
-        val.classroom
-          ? filterString(val.classroom, classroom)
+        val.reservation.classroom_name
+          ? filterString(val.reservation.classroom_name, classroom)
           : filterString('não especificada', classroom),
       );
     if (requester)
@@ -154,8 +155,12 @@ function SolicitationStack({
           selectedIndex={selectedIndex}
           solicitations={
             buildingSearch || classroomSearch || requesterSearch
-              ? filtered.filter((val) => showAll || !val.closed)
-              : current.filter((val) => showAll || !val.closed)
+              ? filtered.filter(
+                  (val) => showAll || val.status === ReservationStatus.PENDING,
+                )
+              : current.filter(
+                  (val) => showAll || val.status === ReservationStatus.PENDING,
+                )
           }
           handleOnClick={handleOnClick}
         />

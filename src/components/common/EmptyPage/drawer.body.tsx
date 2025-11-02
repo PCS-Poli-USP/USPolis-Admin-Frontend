@@ -7,9 +7,10 @@ import {
   useMediaQuery,
   Link,
 } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useContext } from 'react';
 import { FaList, FaRegCalendarTimes, FaRegUser } from 'react-icons/fa';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { appContext } from '../../../context/AppContext';
 import {
   CalendarIcon,
@@ -21,7 +22,7 @@ import { LiaBuilding } from 'react-icons/lia';
 import { MdAddChart, MdEvent, MdOutlinePendingActions } from 'react-icons/md';
 import { LuCalendarClock } from 'react-icons/lu';
 import { GiBookCover, GiTeacher } from 'react-icons/gi';
-import { PiChair } from 'react-icons/pi';
+import { PiChair, PiExamLight } from 'react-icons/pi';
 import { BsCalendar3, BsEnvelopeCheck } from 'react-icons/bs';
 import { HiUserGroup } from 'react-icons/hi';
 import { IconType } from 'react-icons';
@@ -47,21 +48,20 @@ function DrawerButton({
   onClose,
 }: DrawerButtonProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
-  const navigate = useNavigate();
   const location = useLocation();
 
   return (
     <Button
+      as={RouterLink}
+      to={to}
+      replace={replace_location}
+      state={replace_location ? { from: location } : undefined}
       leftIcon={icon}
       variant={'ghost'}
       w={'full'}
       justifyContent={'flex-start'}
       fontWeight={'normal'}
       onClick={() => {
-        if (replace_location) {
-          navigate(to, { replace: true, state: { from: location } });
-        } else navigate(to);
-
         if (isMobile) onClose();
       }}
     >
@@ -74,7 +74,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
   const { loggedUser } = useContext(appContext);
 
   return (
-    <VStack align={'start'} p={'10px'} spacing={4} maxH={'900px'}>
+    <VStack
+      align={'start'}
+      p={'10px'}
+      spacing={4}
+      h={'full'}
+      background={'uspolis.white'}
+    >
       {loggedUser ? (
         <>
           {loggedUser.is_admin ? (
@@ -126,17 +132,24 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
               </Text>
             </HStack>
             <DrawerButton
+              icon={<PiExamLight />}
+              to='/find-exams'
+              text='Encontre suas provas'
+              replace_location={false}
+              onClose={onClose}
+            />
+            <DrawerButton
               icon={<Search2Icon />}
               to='/find-classes'
               text='Encontre suas aulas'
-              replace_location={true}
+              replace_location={false}
               onClose={onClose}
             />
             <DrawerButton
               icon={<BsCalendar3 />}
               to='/allocation'
               text='Mapa de Salas'
-              replace_location={true}
+              replace_location={false}
               onClose={onClose}
             />
           </VStack>
@@ -152,7 +165,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
               icon={<FaList />}
               to='/my-solicitations'
               text='Minhas solicitações'
-              replace_location={true}
+              replace_location={false}
               onClose={onClose}
             />
             {loggedUser.is_admin ||
@@ -162,14 +175,14 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   icon={<MdEvent />}
                   to='/reservations'
                   text='Reservas'
-                  replace_location={true}
+                  replace_location={false}
                   onClose={onClose}
                 />
                 <DrawerButton
                   icon={<BsEnvelopeCheck />}
                   to='/solicitations'
                   text='Solicitações'
-                  replace_location={true}
+                  replace_location={false}
                   onClose={onClose}
                 />
               </>
@@ -190,7 +203,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   icon={<CalendarIcon />}
                   to='/calendars'
                   text='Calendários'
-                  replace_location={true}
+                  replace_location={false}
                   onClose={onClose}
                 />
               </VStack>
@@ -206,28 +219,28 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   icon={<PiChair />}
                   to='/classrooms'
                   text='Salas'
-                  replace_location={true}
+                  replace_location={false}
                   onClose={onClose}
                 />
                 <DrawerButton
                   icon={<GiBookCover />}
                   to='/subjects'
                   text='Disciplinas'
-                  replace_location={true}
+                  replace_location={false}
                   onClose={onClose}
                 />
                 <DrawerButton
                   icon={<GiTeacher />}
                   to='/classes'
                   text='Turmas'
-                  replace_location={true}
+                  replace_location={false}
                   onClose={onClose}
                 />
                 <DrawerButton
                   icon={<FaRegCalendarTimes />}
                   to='/conflicts'
                   text='Conflitos'
-                  replace_location={true}
+                  replace_location={false}
                   onClose={onClose}
                 />
               </VStack>
@@ -246,7 +259,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
             icon={<BsCalendar3 />}
             to='/allocation'
             text='Mapa de Salas'
-            replace_location={true}
+            replace_location={false}
             onClose={onClose}
           />
         </VStack>
@@ -256,10 +269,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
         alignItems={'flex-start'}
         gap={'0px'}
         id='menu-drawer-contact'
+        background={'uspolis.white'}
       >
-        <Text fontSize={'15px'} color={'blackAlpha.600'}>
-          © {moment().year()} USPolis
-        </Text>
+        <Text fontSize={'15px'}>© {moment().year()} USPolis</Text>
         <HStack align={'center'} justify={'center'} gap={'5px'}>
           <Text fontSize={'15px'}>Contato:</Text>
           <Link

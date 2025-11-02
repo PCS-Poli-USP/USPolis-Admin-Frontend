@@ -2,20 +2,17 @@ import { FormLabel, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FieldProps } from '../form.interface';
 import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import Select, { MultiValue } from 'react-select';
+import { MultiValue } from 'react-select';
+import TooltipSelect from '../../TooltipSelect';
+import { Option } from '../form.types';
 
-export type Option = {
-  label: string;
-  value: string | number;
-};
-
-interface MultiSelectProps extends FieldProps {
+interface MultiSelectInputProps extends FieldProps {
   options: Option[];
   isLoading?: boolean;
   onChange?: (options: Option[]) => void;
 }
 
-export function MultiSelect({
+export function MultiSelectInput({
   label,
   name,
   options,
@@ -28,7 +25,7 @@ export function MultiSelect({
   mr = undefined,
   ml = undefined,
   onChange = undefined,
-}: MultiSelectProps) {
+}: MultiSelectInputProps) {
   const {
     control,
     setValue,
@@ -64,7 +61,7 @@ export function MultiSelect({
         name={name}
         control={control}
         render={({ field }) => (
-          <Select
+          <TooltipSelect
             {...field}
             id={name}
             value={selectedOptions}

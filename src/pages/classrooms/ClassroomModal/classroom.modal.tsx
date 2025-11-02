@@ -2,6 +2,7 @@ import {
   Button,
   Checkbox,
   Flex,
+  HStack,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -20,12 +21,18 @@ import {
 import { FormProvider, useForm } from 'react-hook-form';
 import { defaultValues, schema } from './classroom.modal.form';
 import { yupResolver } from '@hookform//resolvers/yup';
-import { Input, MultiSelect, SelectInput } from '../../../components/common';
+import {
+  Input,
+  MultiSelectInput,
+  SelectInput,
+  TextareaInput,
+} from '../../../components/common';
 import { NumberInput } from '../../../components/common/form/NumberInput';
 import { CheckBox } from '../../../components/common/form/CheckBox';
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import { AudiovisualType } from '../../../utils/enums/audiovisualType.enum';
 import GroupFormatter from '../../../utils/groups/group.formatter';
+import HelpPopover from '../../../components/common/HelpPopover';
 
 export default function ClassroomModal(props: ClassroomModalProps) {
   const form = useForm<ClassroomForm>({
@@ -142,7 +149,38 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 />
               </VStack>
 
-              <MultiSelect
+              <HStack
+                w={'full'}
+                align={'center'}
+                justify={'start'}
+                gap={'10px'}
+                mb={'10px'}
+              >
+                <Text fontWeight={'bold'}>Preferências</Text>
+                <HelpPopover title='O que são preferências?'>
+                  <Flex direction={'column'} gap={'5px'} textAlign={'justify'}>
+                    <Text fontSize={'sm'}>
+                      As preferências são configurações que determinam como a
+                      sala pode ser utilizada.
+                    </Text>
+                    <Text fontSize={'sm'}>
+                      Se uma sala é reservável, ela pode ser solicitada pelos
+                      usuários.
+                    </Text>
+                    <Text fontSize={'sm'}>
+                      Se ela é remota, não vai aparecer no mapa de salas nem nos
+                      relatórios.
+                    </Text>
+                  </Flex>
+                </HelpPopover>
+              </HStack>
+
+              <HStack w={'full'} alignItems={'start'} gap={'10px'} mb={'10px'}>
+                <CheckBox text={'Reservável'} name={'reservable'} />
+                <CheckBox text={'Remota'} name={'remote'} />
+              </HStack>
+
+              <MultiSelectInput
                 label='Grupos'
                 name='group_ids'
                 hidden={props.groups.length === 1}
@@ -174,6 +212,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
               >
                 Selecionar todos
               </Checkbox>
+              <TextareaInput name='observation' label='Observação' />
             </form>
           </FormProvider>
         </ModalBody>

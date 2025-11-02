@@ -77,7 +77,11 @@ function AllocationReuseModal({
       description: 'Disciplinas e Turmas',
       content: (
         <AllocationReuseModalFirstStep
-          subjects={subjects}
+          subjects={subjects.filter(
+            (sub) =>
+              classesBySubject.has(sub.id) &&
+              classesBySubject.get(sub.id)?.length,
+          )}
           classesBySubject={classesBySubject}
           map={map}
           setMap={setMap}

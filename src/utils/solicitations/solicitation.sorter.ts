@@ -1,9 +1,9 @@
-import { ClassroomSolicitationResponse } from '../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../models/http/responses/solicitation.response.models';
 import moment from 'moment';
 
-export function sortClassroomSolicitationResponse(
-  A: ClassroomSolicitationResponse,
-  B: ClassroomSolicitationResponse,
+export function sortSolicitationResponse(
+  A: SolicitationResponse,
+  B: SolicitationResponse,
 ) {
   if (!A.closed && B.closed) return -1;
   if (A.closed && !B.closed) return 1;

@@ -3,8 +3,15 @@ import { ReservationValidator } from '../../../../../utils/reservations/resevati
 import { ScheduleValidator } from '../../../../../utils/schedules/schedules.validator';
 import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
 import { ReservationSecondForm } from './reservation.modal.steps.second.interface';
+import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 
 export const secondFormFields = {
+  is_solicitation: {
+    validator: yup
+      .boolean()
+      .required('Necessário informar se é uma solicitação'),
+    defaultValue: false,
+  },
   building_id: {
     validator: yup
       .number()
@@ -15,15 +22,98 @@ export const secondFormFields = {
       }),
     defaultValue: 0,
   },
+  optional_classroom: {
+    validator: yup
+      .boolean()
+      .notRequired()
+      .test(
+        'optional_classroom-solicitation-only',
+        'Apenas solicitação deve ter sala opcional',
+        function (value) {
+          const { is_solicitation } = this.parent as ReservationSecondForm;
+          if (!is_solicitation && value != undefined) return false;
+          return true;
+        },
+      )
+      .test(
+        'solicitation-must-have-optional_classroom-value',
+        'Campo obrigatório',
+        function (value) {
+          const { is_solicitation } = this.parent as ReservationSecondForm;
+          if (is_solicitation && value == undefined) return false;
+          return true;
+        },
+      ),
+    defaultValue: undefined,
+  },
   classroom_id: {
     validator: yup
       .number()
-      .required('Campo Obrigatório')
-      .transform((curr, orig) => (orig === '' ? undefined : Number(curr)))
-      .test('is-valid-id', 'Selecione uma sala', function (value) {
-        return !ReservationValidator.isInvalidId(value);
+      .notRequired()
+      .test(
+        'classroom_id-reservation',
+        'Reserva deve ter uma sala',
+        function (value) {
+          const { is_solicitation } = this.parent as ReservationSecondForm;
+          if (!is_solicitation && !value) return false;
+          if (!is_solicitation && value)
+            return !ReservationValidator.isInvalidId(value);
+          return true;
+        },
+      )
+      .test(
+        'required_classroom-solicitation',
+        'Sala deve ser fornecida para sala obrigatória',
+        function (value) {
+          const { required_classroom, is_solicitation } = this
+            .parent as ReservationSecondForm;
+          if (required_classroom && is_solicitation && !value) return false;
+          if (required_classroom && is_solicitation && value)
+            return !ReservationValidator.isInvalidId(value);
+          return true;
+        },
+      )
+      .test('is-valid-classroom-id', 'Campo obrigatório', function (value) {
+        const { optional_classroom } = this.parent;
+        if (optional_classroom) return true;
+        if (!value && !optional_classroom) return false;
+        if (value) return !ReservationValidator.isInvalidId(value);
+        return true;
       }),
-    defaultValue: 0,
+    defaultValue: undefined,
+  },
+  required_classroom: {
+    validator: yup
+      .boolean()
+      .notRequired()
+      .test(
+        'solicitation-capacity-check',
+        'Sala obrigatória deve ser informada apenas em solicitações',
+        function (value) {
+          const { is_solicitation } = this.parent as ReservationSecondForm;
+          if (!is_solicitation && value != undefined) return false;
+          return true;
+        },
+      )
+      .test(
+        'required-classroom-with-solicitation',
+        'Campo obrigatório',
+        function (value) {
+          const { is_solicitation } = this.parent as ReservationSecondForm;
+          if (is_solicitation && value == undefined) return false;
+          return true;
+        },
+      )
+      .test(
+        'valid-required-and-optional-classroom',
+        'Sala opcional deve ser falso para esse valor',
+        function (value) {
+          const { optional_classroom } = this.parent as ReservationSecondForm;
+          if (!!optional_classroom && !!value) return false;
+          return true;
+        },
+      ),
+    defaultValue: undefined,
   },
   start_time: {
     validator: yup
@@ -137,18 +227,90 @@ export const secondFormFields = {
             recurrence === Recurrence.CUSTOM ||
             recurrence === Recurrence.DAILY
           )
-            return value === undefined;
+            return value === undefined || value === null;
           if (value === undefined || value === null) return false;
           return !ScheduleValidator.isInvalidWeekDay(value);
         },
       ),
     defaultValue: '',
   },
+  labels: {
+    validator: yup
+      .array(yup.string())
+      .notRequired()
+      .test(
+        'is-valid-type',
+        'O tipo de reserva deve ser "Prova"',
+        function (value) {
+          const { type } = this.parent;
+          if (!type) return false;
+          if (type !== ReservationType.EXAM) {
+            if (value != undefined) return false;
+          }
+          return true;
+        },
+      )
+      .test(
+        'is-valid-labels',
+        'É necessário especificar os nomes das provas',
+        function (value) {
+          const { type } = this.parent;
+          if (type != ReservationType.EXAM) return true;
+          if (!value) return false;
+          return true;
+        },
+      ),
+    defaultValue: undefined,
+  },
+  times: {
+    validator: yup
+      .array(yup.array(yup.string()))
+      .notRequired()
+      .test(
+        'is-valid-type',
+        'O tipo de reserva deve ser "Prova"',
+        function (value) {
+          const { type } = this.parent;
+          if (!type) return false;
+          if (type !== ReservationType.EXAM) {
+            if (value != undefined) return false;
+          }
+          return true;
+        },
+      )
+      .test(
+        'is-valid-times-length',
+        'É necessário especificar os horários',
+        function (value) {
+          const { type } = this.parent;
+          if (type != ReservationType.EXAM) return true;
+          if (!value) return false;
+          return true;
+        },
+      )
+      .test(
+        'is-valid-times',
+        'Cada horário deve ter início e fim, sendo inicio antes de fim',
+        function (value) {
+          const { type } = this.parent;
+          if (type != ReservationType.EXAM) return true;
+          if (!value) return false;
+          return ReservationValidator.isValidDayTimeOferings(
+            value as [string, string][],
+          );
+        },
+      ),
+
+    defaultValue: undefined,
+  },
 };
 
 export const secondSchema = yup.object<ReservationSecondForm>().shape({
+  is_solicitation: secondFormFields.is_solicitation.validator,
   building_id: secondFormFields.building_id.validator,
   classroom_id: secondFormFields.classroom_id.validator,
+  optional_classroom: secondFormFields.optional_classroom.validator,
+  required_classroom: secondFormFields.required_classroom.validator,
   start_date: secondFormFields.start_date.validator,
   end_date: secondFormFields.end_date.validator,
   recurrence: secondFormFields.recurrence.validator,
@@ -156,11 +318,16 @@ export const secondSchema = yup.object<ReservationSecondForm>().shape({
   start_time: secondFormFields.start_time.validator,
   end_time: secondFormFields.end_time.validator,
   month_week: secondFormFields.month_week.validator,
+  labels: secondFormFields.labels.validator,
+  times: secondFormFields.times.validator,
 });
 
 export const secondDefaultValues: ReservationSecondForm = {
+  is_solicitation: secondFormFields.is_solicitation.defaultValue,
   building_id: secondFormFields.building_id.defaultValue,
   classroom_id: secondFormFields.classroom_id.defaultValue,
+  optional_classroom: secondFormFields.optional_classroom.defaultValue,
+  required_classroom: secondFormFields.required_classroom.defaultValue,
   start_date: secondFormFields.start_date.defaultValue,
   end_date: secondFormFields.end_date.defaultValue,
   recurrence: secondFormFields.recurrence.defaultValue as Recurrence,
@@ -168,4 +335,7 @@ export const secondDefaultValues: ReservationSecondForm = {
   start_time: secondFormFields.start_time.defaultValue,
   end_time: secondFormFields.end_time.defaultValue,
   month_week: secondFormFields.month_week.defaultValue,
+  labels: secondFormFields.labels.defaultValue,
+  times: secondFormFields.times.defaultValue,
+  type: undefined,
 };

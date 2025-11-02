@@ -7,26 +7,21 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
-import Select from 'react-select';
 import { useEffect, useRef, useState } from 'react';
 import useSubjects from '../../hooks/useSubjetcts';
 import { SelectInstance } from 'react-select';
 import ClassAccordion from './ClassAccordion';
 import useClasses from '../../hooks/classes/useClasses';
 import { classNumberFromClassCode } from '../../utils/classes/classes.formatter';
-
-type OptionType = {
-  value: number;
-  label: string;
-};
+import TooltipSelect, { Option } from '../../components/common/TooltipSelect';
 
 function FindClasses() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
-  const selectRef = useRef<SelectInstance<OptionType>>(null);
+  const selectRef = useRef<SelectInstance<Option>>(null);
   const { loading: loadingS, subjects, getAllSubjects } = useSubjects(false);
   const { classes, getClassesBySubject, loading } = useClasses(false);
-  const [subjectOption, setSubjectOption] = useState<OptionType>();
-  const [classOption, setClassOption] = useState<OptionType>();
+  const [subjectOption, setSubjectOption] = useState<Option>();
+  const [classOption, setClassOption] = useState<Option>();
 
   useEffect(() => {
     getAllSubjects();
@@ -42,21 +37,21 @@ function FindClasses() {
         <Flex direction={isMobile ? 'column' : 'row'} gap={'20px'}>
           <Box w={isMobile ? '100%' : '400px'}>
             <Text>Disciplina: </Text>
-            <Select
+            <TooltipSelect
               placeholder='Selecione uma disciplina'
               value={subjectOption}
               isClearable={true}
               isLoading={loading || loadingS}
               options={subjects
-                .map<OptionType>((subject) => ({
+                .map<Option>((subject) => ({
                   value: subject.id,
                   label: `${subject.code} - ${subject.name}`,
                 }))
                 .sort((a, b) => a.label.localeCompare(b.label))}
-              onChange={(option: OptionType | null) => {
+              onChange={(option) => {
                 if (option) {
                   setSubjectOption(option);
-                  getClassesBySubject(option.value);
+                  getClassesBySubject(option.value as number);
                 } else {
                   setSubjectOption(undefined);
                   if (selectRef.current) selectRef.current.clearValue();
@@ -67,7 +62,7 @@ function FindClasses() {
 
           <Box hidden={!subjectOption} w={isMobile ? '100%' : '400px'}>
             <Text>Turma: </Text>
-            <Select
+            <TooltipSelect
               ref={selectRef}
               value={classOption}
               isClearable={true}
@@ -80,14 +75,14 @@ function FindClasses() {
               }
               options={
                 classes
-                  ? classes.map<OptionType>((c) => ({
+                  ? classes.map<Option>((c) => ({
                       value: c.id,
                       label: classNumberFromClassCode(c.code),
                     }))
                   : []
               }
               isDisabled={!subjectOption || classes.length === 0}
-              onChange={(option: OptionType | null) => {
+              onChange={(option) => {
                 if (option) {
                   setClassOption(option);
                 } else {
@@ -121,7 +116,11 @@ function FindClasses() {
                     />
                   )}
                   {classes.length == 0 && (
-                    <Alert status='warning' borderRadius={'10px'} w={'fit-content'}>
+                    <Alert
+                      status='warning'
+                      borderRadius={'10px'}
+                      w={'fit-content'}
+                    >
                       <AlertIcon />
                       Nenhum oferecimento encontrado para essa disciplina
                     </Alert>

@@ -1,20 +1,20 @@
 import { AxiosResponse } from 'axios';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import {
-  ClassroomSolicitationAprove,
-  ClassroomSolicitationDeny,
-  CreateClassroomSolicitation,
-} from '../../../models/http/requests/classroomSolicitation.request.models';
+  ApproveSolicitation,
+  DenySolicitation,
+  CreateSolicitation,
+} from '../../../models/http/requests/solicitation.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
-const useClassroomSolicitationsService = () => {
-  const PREFIX = '/solicitations/classroom';
+const useSolicitationsService = () => {
+  const PREFIX = '/solicitations';
   const axios = useAxiosPrivate();
 
   const getAll = (
     start?: string,
     end?: string,
-  ): Promise<AxiosResponse<Array<ClassroomSolicitationResponse>>> => {
+  ): Promise<AxiosResponse<Array<SolicitationResponse>>> => {
     const params = new URLSearchParams();
     if (start && end) {
       params.append('start', start);
@@ -26,39 +26,43 @@ const useClassroomSolicitationsService = () => {
   };
 
   const getPending = (): Promise<
-    AxiosResponse<Array<ClassroomSolicitationResponse>>
+    AxiosResponse<Array<SolicitationResponse>>
   > => {
     return axios.get(`${PREFIX}/pending`);
   };
 
   const getMySolicitations = (): Promise<
-    AxiosResponse<Array<ClassroomSolicitationResponse>>
+    AxiosResponse<Array<SolicitationResponse>>
   > => {
     return axios.get('/users/my-solicitations');
   };
 
   const create = (
-    data: CreateClassroomSolicitation,
-  ): Promise<AxiosResponse<ClassroomSolicitationResponse>> => {
+    data: CreateSolicitation,
+  ): Promise<AxiosResponse<SolicitationResponse>> => {
     return axios.post(PREFIX, data);
   };
 
   const approve = (
     id: number,
-    data: ClassroomSolicitationAprove,
-  ): Promise<AxiosResponse<ClassroomSolicitationResponse>> => {
+    data: ApproveSolicitation,
+  ): Promise<AxiosResponse<SolicitationResponse>> => {
     return axios.put(`${PREFIX}/approve/${id}`, data);
   };
 
   const deny = (
     id: number,
-    data: ClassroomSolicitationDeny,
-  ): Promise<AxiosResponse<ClassroomSolicitationResponse>> => {
+    data: DenySolicitation,
+  ): Promise<AxiosResponse<SolicitationResponse>> => {
     return axios.put(`${PREFIX}/deny/${id}`, data);
   };
 
   const deleteById = (id: number): Promise<AxiosResponse<undefined>> => {
     return axios.delete(`${PREFIX}/${id}`);
+  };
+
+  const cancel = (id: number): Promise<AxiosResponse<SolicitationResponse>> => {
+    return axios.patch(`${PREFIX}/cancel/${id}`);
   };
 
   return {
@@ -69,7 +73,8 @@ const useClassroomSolicitationsService = () => {
     approve,
     deny,
     deleteById,
+    cancel,
   };
 };
 
-export default useClassroomSolicitationsService;
+export default useSolicitationsService;
