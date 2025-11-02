@@ -7,6 +7,7 @@ import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import { getScheduleString } from '../../../utils/schedules/schedule.formatter';
 import {
+  FilterBoolean,
   FilterRequester,
   FilterString,
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
@@ -44,6 +45,15 @@ export const getReservationsColumns = (
           </Text>
         </Box>
       ),
+    },
+    {
+      accessorFn: (row) => (row.solicitation_id ? 'Sim' : 'Não'),
+      header: 'Solicitação',
+      maxSize: 120,
+      meta: {
+        isCenter: true,
+        isSelectable: true,
+      },
     },
     {
       accessorKey: 'building_name',

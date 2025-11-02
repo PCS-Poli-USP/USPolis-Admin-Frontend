@@ -26,6 +26,9 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
       <FormProvider {...props.form}>
         <form>
           <Text
+            fontWeight={'bold'}
+            fontSize={'xl'}
+            color={'yellow'}
             hidden={
               !(
                 props.isUpdate &&
@@ -34,7 +37,7 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
               )
             }
           >
-            A reserva possui uma solicitação vinculada
+            A reserva possui uma solicitação vinculada (olhe a aba Solicitações)
           </Text>
 
           <Input mt={'10px'} label={'Título'} name={'title'} />

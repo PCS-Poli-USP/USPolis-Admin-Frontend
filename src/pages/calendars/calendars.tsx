@@ -44,8 +44,6 @@ function Calendars() {
     loading: loadingCategories,
   } = useHolidaysCategories();
 
-  const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
-
   const {
     loading: loadingCalendars,
     calendars,
@@ -54,7 +52,7 @@ function Calendars() {
     updateCalendar,
     deleteCalendar,
   } = useCalendars();
-  
+
   const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
 
   const [isUpdateCalendar, setIsUpdateCalendar] = useState(false);
