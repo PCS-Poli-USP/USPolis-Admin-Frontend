@@ -22,9 +22,9 @@ import { defaultValues, schema } from './classroom.modal.form';
 import { yupResolver } from '@hookform//resolvers/yup';
 import {
   Input,
-  MultiSelect,
+  MultiSelectInput,
   SelectInput,
-  Textarea,
+  TextareaInput,
 } from '../../../components/common';
 import { NumberInput } from '../../../components/common/form/NumberInput';
 import { CheckBox } from '../../../components/common/form/CheckBox';
@@ -181,7 +181,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 <CheckBox text={'Remota'} name={'remote'} />
               </HStack>
 
-              <MultiSelect
+              <MultiSelectInput
                 label='Grupos'
                 name='group_ids'
                 hidden={props.groups.length === 1}
@@ -215,7 +215,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
               >
                 Selecionar todos
               </Checkbox>
-              <Textarea name='observation' label='Observação' />
+              <TextareaInput name='observation' label='Observação' />
             </form>
           </FormProvider>
         </ModalBody>

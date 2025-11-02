@@ -154,8 +154,8 @@ function Profile() {
                           Para responsáveis por prédios:
                         </Text>
                         <Text fontSize={'sm'}>
-                          Uma reserva foi criada ou cancelada e ela estiver no
-                          seu prédio ou for em uma sala que você tem permissão.
+                          Uma reserva foi criada/cancelada e ela estiver no seu
+                          prédio ou for em uma sala que você tem permissão.
                         </Text>
                       </Flex>
                     </HelpPopover>

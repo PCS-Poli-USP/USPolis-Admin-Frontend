@@ -11,7 +11,7 @@ import { useFormContext } from 'react-hook-form';
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface InputProps extends FieldProps {}
 
-export function Textarea({
+export function TextareaInput({
   label,
   name,
   disabled,

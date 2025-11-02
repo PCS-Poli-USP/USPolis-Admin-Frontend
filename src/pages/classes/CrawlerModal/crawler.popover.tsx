@@ -25,17 +25,15 @@ import {
   HStack,
   Box,
 } from '@chakra-ui/react';
-import Select, { MultiValue } from 'react-select';
+import { MultiValue } from 'react-select';
 import useBuildings from '../../../hooks/useBuildings';
 import { useEffect, useRef, useState } from 'react';
 import { CrawlerType } from '../../../utils/enums/subjects.enum';
 import { CalendarResponse } from '../../../models/http/responses/calendar.responde.models';
 import { LuTimer } from 'react-icons/lu';
-
-type Option = {
-  label: string;
-  value: number;
-};
+import TooltipSelect, {
+  Option,
+} from '../../../components/common/TooltipSelect';
 
 interface CrawlerPopoverProps {
   subjects?: string[];
@@ -168,7 +166,7 @@ export default function CrawlerPopover({
 
             <Box w={'100%'}>
               <Text>Calendários das turmas:</Text>
-              <Select
+              <TooltipSelect
                 placeholder='Selecione os calendários'
                 isMulti
                 options={calendars.map((calendar) => ({
@@ -176,7 +174,9 @@ export default function CrawlerPopover({
                   value: calendar.id,
                 }))}
                 onChange={(selectedOptions: MultiValue<Option>) =>
-                  setCalendarIds(selectedOptions.map((option) => option.value))
+                  setCalendarIds(
+                    selectedOptions.map((option) => option.value as number),
+                  )
                 }
                 isLoading={loadingCalendars}
               />

@@ -13,7 +13,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { appContext } from '../../../../context/AppContext';
 import { AllocationHeaderProps } from '../index';
-import HeaderPDFOptions from '../HeaderPDFOptions/headerPDF.options';
 import HeaderFilter from '../HeaderFilter/header.filter';
 
 function AllocationMobileHeader({
@@ -43,24 +42,15 @@ function AllocationMobileHeader({
   const { isOpen: isOpenOptions, onToggle } = useDisclosure({
     defaultIsOpen: true,
   });
-  const {
-    isOpen: isOpenPDF,
-    onClose: onClosePDF,
-    onOpen: onOpenPDF,
-  } = useDisclosure({
-    defaultIsOpen: false,
-  });
+  // const {
+  //   isOpen: isOpenPDF,
+  //   onClose: onClosePDF,
+  //   onOpen: onOpenPDF,
+  // } = useDisclosure({
+  //   defaultIsOpen: false,
+  // });
   return (
     <Flex direction={'column'} alignItems={'flex-start'} gap={5} w={'100%'}>
-      <HeaderPDFOptions
-        isOpen={isOpenPDF}
-        onClose={onClosePDF}
-        subjects={subjects}
-        loadingSubjects={loadingSubjects}
-        buildings={buildings}
-        loadingBuildings={loadingBuildings}
-        isMobile={true}
-      />
       <Flex direction={'row'} gap={0} w={'100%'}>
         <Text fontSize={'2xl'}>Mapa de Salas</Text>
         <Button
@@ -75,9 +65,6 @@ function AllocationMobileHeader({
         <Box rounded='md' w={'calc(100vw - 48px)'}>
           <Flex mb={4} gap={2} direction={'column'} w={'100%'}>
             <Flex direction={'row'} gap={5} w={'full'}>
-              <Button onClick={() => onOpenPDF()} colorScheme='blue'>
-                Baixar
-              </Button>
               <Tooltip
                 label={loggedUser ? '' : 'Entre para poder fazer essa ação.'}
               >

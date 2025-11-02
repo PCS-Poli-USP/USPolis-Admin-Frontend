@@ -1,3 +1,4 @@
+import { AllocationEventType } from '../../../utils/enums/allocation.event.type.enum';
 import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
@@ -24,7 +25,7 @@ export interface RecurrenceRule {
 }
 
 // See https://fullcalendar.io/docs/event-parsing
-export interface EventResponse {
+export interface AllocationEventResponse {
   id: string;
   title: string;
   start: string; // Must be YYYY-MM-DDTHH:mm:ss
@@ -35,13 +36,14 @@ export interface EventResponse {
   classroom_capacity?: number;
   rrule?: RecurrenceRule; // Used when is unallocated
   allDay: boolean;
-
+  backgroundColor?: string;
+  type: AllocationEventType;
   resourceId: string;
   extendedProps: EventExtendedProps;
 }
 
 // See https://fullcalendar.io/docs/resource-data
-export interface ResourceResponse {
+export interface AllocationResourceResponse {
   id: string;
   parentId?: string;
   title: string;
@@ -60,6 +62,7 @@ export interface BaseExtendedData {
   end_time: string;
   start_date?: string;
   end_date?: string;
+  label?: string;
 }
 
 export interface ClassExtendedData extends BaseExtendedData {
@@ -76,11 +79,18 @@ export interface ReservationExtendedData extends BaseExtendedData {
   type: ReservationType;
   reason?: string;
   created_by: string;
+  subject_id?: number;
+  subject_code?: string;
+  subject_name?: string;
+  class_ids?: number[];
+  class_codes?: string[];
 }
 
 export interface EventExtendedProps {
+  opacity?: number;
   class_data?: ClassExtendedData;
   reservation_data?: ReservationExtendedData;
+  type?: AllocationEventType;
 }
 
 export interface AllocationScheduleOptions {

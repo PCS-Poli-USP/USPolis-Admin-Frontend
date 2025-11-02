@@ -18,13 +18,17 @@ export default function EventContent(eventInfo: EventContentArg) {
     <>
       {classData ? (
         <Tooltip
-          bg='white'
+          bg='uspolis.white'
           placement={
             isTimeGridWeek ? 'right-end' : isTimeGridDay ? 'top' : 'auto'
           }
           label={ToolTipLabel(eventInfo)}
+          borderRadius={'10px'}
+          padding={'10px'}
+          color={'uspolis.text'}
+          border={'1px solid'}
         >
-          <Stack spacing={0}>
+          <Stack spacing={0} overflowY={'hidden'}>
             {isTimeGridView && <Text noOfLines={1}>{eventInfo.timeText}</Text>}
             <Heading
               size='sm'
@@ -34,6 +38,11 @@ export default function EventContent(eventInfo: EventContentArg) {
               {eventInfo.event.title} T
               {classNumberFromClassCode(classData.code)}
             </Heading>
+            {classData.label && (
+              <Text fontWeight={'bold'} fontSize={'lg'} textColor={'white'}>
+                {classData.label}
+              </Text>
+            )}
             {isTimeGridView && (
               <>
                 <Text noOfLines={1}>
@@ -51,16 +60,33 @@ export default function EventContent(eventInfo: EventContentArg) {
 
       {reservationData ? (
         <Tooltip
-          bg='white'
+          bg='uspolis.white'
+          placement={
+            isTimeGridWeek ? 'right-end' : isTimeGridDay ? 'top' : 'auto'
+          }
           label={ToolTipLabel(eventInfo)}
-          zIndex={2500}
-          placement={isTimeGridView ? 'right-end' : undefined}
+          borderRadius={'10px'}
+          padding={'10px'}
+          color={'uspolis.text'}
+          border={'1px solid'}
         >
-          <Stack spacing={0}>
+          <Stack spacing={0} overflowY={'hidden'}>
             {isTimeGridView && <Text noOfLines={1}>{eventInfo.timeText}</Text>}
-            <Heading size='sm' alignContent={'center'} textColor={'white'}>
+            <Heading
+              size='sm'
+              alignContent={'center'}
+              textColor={'white'}
+              noOfLines={1}
+              textOverflow={'ellipsis'}
+              overflowX={'hidden'}
+            >
               {eventInfo.event.title}
             </Heading>
+            {reservationData.label && (
+              <Text fontWeight={'bold'} textColor={'white'} fontSize={'lg'}>
+                {reservationData.label}
+              </Text>
+            )}
             {isTimeGridView && (
               <>
                 <Text noOfLines={1}>
@@ -71,6 +97,7 @@ export default function EventContent(eventInfo: EventContentArg) {
           </Stack>
         </Tooltip>
       ) : undefined}
+
       {!classData && !reservationData ? (
         <Heading size='sm' alignContent={'center'} textColor={'white'}>
           {eventInfo.event.title}
@@ -86,9 +113,13 @@ function ToolTipLabel(eventInfo: EventContentArg) {
   const classData = extendedProps.class_data;
   const reservationData = extendedProps.reservation_data;
 
+  const colorMode = localStorage.getItem('chakra-ui-color-mode');
+  const isDark = colorMode === 'dark';
+  const textColor = isDark ? '#FFFFFF' : 'uspolis.blue';
+
   return (
     <VStack
-      bg='white'
+      bg='uspolis.white'
       spacing={2}
       w='300px'
       alignItems='start'
@@ -97,41 +128,46 @@ function ToolTipLabel(eventInfo: EventContentArg) {
       {classData ? (
         <>
           <VStack spacing={'2px'} alignItems='start'>
-            <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
+            <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
               {`${classData.subject_code} - Turma ${classNumberFromClassCode(
                 classData.code,
               )}`}
             </Text>
-            <Text fontSize='lg' textColor='#408080'>
+            <Text fontSize='lg' textColor={textColor}>
               {`${classData.subject_name}`}
             </Text>
+            {classData.label && (
+              <Text fontWeight={'bold'} fontSize={'lg'} textColor={textColor}>
+                {classData.label}
+              </Text>
+            )}
           </VStack>
           <Box>
-            <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
+            <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
               Professores
             </Text>
             {(classData.professors as string[]).map((professor, index) => (
-              <Text fontSize='lg' textColor='#408080' key={index}>
+              <Text fontSize='lg' textColor={textColor} key={index}>
                 {professor}
               </Text>
             ))}
           </Box>
 
           <Box>
-            <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
+            <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
               Informações
             </Text>
-            <Text fontSize='lg' textColor='#408080'>{`Sala: ${
+            <Text fontSize='lg' textColor={textColor}>{`Sala: ${
               classData.classroom_capacity
                 ? `${classData.classroom} [${classData.classroom_capacity} capacidade]`
                 : classData.classroom
             }`}</Text>
 
-            <Text fontSize='lg' textColor='#408080'>
+            <Text fontSize='lg' textColor={textColor}>
               {getEventScheduleText(extendedProps)}
             </Text>
 
-            <Text fontSize='lg' textColor='#408080'>
+            <Text fontSize='lg' textColor={textColor}>
               {`Horário: ${classData.start_time.substring(
                 0,
                 5,
@@ -140,7 +176,7 @@ function ToolTipLabel(eventInfo: EventContentArg) {
 
             <Text
               fontSize='lg'
-              textColor='#408080'
+              textColor={textColor}
               hidden={classData.start_date ? false : true}
             >
               {`De ${
@@ -156,7 +192,7 @@ function ToolTipLabel(eventInfo: EventContentArg) {
 
             <Text
               fontSize='lg'
-              textColor='#408080'
+              textColor={textColor}
             >{`Vagas: ${classData.vacancies}`}</Text>
           </Box>
         </>
@@ -164,35 +200,31 @@ function ToolTipLabel(eventInfo: EventContentArg) {
 
       {reservationData ? (
         <>
-          <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
+          <Text fontSize='xl' textColor={textColor} fontWeight='bold'>
             {`Reserva - ${reservationData.title}`}
           </Text>
+          {reservationData.label && (
+            <Text fontWeight={'bold'} fontSize={'xl'} textColor={textColor}>
+              {reservationData.label}
+            </Text>
+          )}
 
           <Box>
-            <Text fontSize='xl' textColor='#408080' fontWeight='bold'>
-              Motivo
-            </Text>
-            <Text fontSize='lg' textColor='#408080'>
-              {reservationData.reason
-                ? reservationData.reason
-                : 'Não informada'}
-            </Text>
-
-            <Text fontSize='xl' fontWeight='bold' textColor='#408080'>
+            <Text fontSize='xl' fontWeight='bold' textColor={textColor}>
               Local
             </Text>
-            <Text fontSize='lg' textColor='#408080'>
+            <Text fontSize='lg' textColor={textColor}>
               {`${reservationData.building} - ${reservationData.classroom}`}
             </Text>
 
-            <Text fontSize='xl' fontWeight='bold' textColor='#408080'>
+            <Text fontSize='xl' fontWeight='bold' textColor={textColor}>
               Horários
             </Text>
-            <Text fontSize='lg' textColor='#408080'>
+            <Text fontSize='lg' textColor={textColor}>
               {getEventScheduleText(extendedProps)}
             </Text>
 
-            <Text fontSize='lg' textColor='#408080'>
+            <Text fontSize='lg' textColor={textColor}>
               {`Horário: ${reservationData.start_time.substring(
                 0,
                 5,
@@ -201,7 +233,7 @@ function ToolTipLabel(eventInfo: EventContentArg) {
 
             <Text
               fontSize='lg'
-              textColor='#408080'
+              textColor={textColor}
               hidden={reservationData.start_date ? false : true}
             >
               {`De ${
@@ -213,6 +245,20 @@ function ToolTipLabel(eventInfo: EventContentArg) {
                   ? moment(reservationData.end_date).format('DD/MM/YYYY')
                   : ''
               }`}
+            </Text>
+
+            <Text
+              fontSize='xl'
+              textColor={textColor}
+              fontWeight='bold'
+              mt={'10px'}
+            >
+              Motivo
+            </Text>
+            <Text fontSize='lg' textColor={textColor}>
+              {reservationData.reason
+                ? reservationData.reason
+                : 'Não informada'}
             </Text>
           </Box>
         </>

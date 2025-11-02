@@ -8,14 +8,14 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import moment from 'moment';
-import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 import { getSolicitationStatusText } from '../../../utils/solicitations/solicitation.formatter';
 
 interface SolicitationStackBodyProps {
-  solicitations: ClassroomSolicitationResponse[];
-  handleOnClick: (data: ClassroomSolicitationResponse) => void;
+  solicitations: SolicitationResponse[];
+  handleOnClick: (data: SolicitationResponse) => void;
   reset: () => void;
   selectedIndex?: number;
   setSelectedIndex: (index: number) => void;
@@ -33,7 +33,7 @@ function SolicitationStackBody({
       {solicitations.length > 0 ? (
         solicitations.map((solicitation, index) => {
           const selected = selectedIndex === index;
-          const closed = solicitation.status !== SolicitationStatus.PENDING;
+          const closed = solicitation.status !== ReservationStatus.PENDING;
           return (
             <Box
               key={index}
@@ -44,9 +44,21 @@ function SolicitationStackBody({
               cursor={false ? 'not-allowed' : 'pointer'}
               transition='background 0.3s, opacity 0.3s'
               opacity={closed && !selected ? 0.6 : 1}
-              _hover={false ? {} : { bg: 'gray.100', opacity: 0.8 }}
+              _hover={
+                false
+                  ? {}
+                  : {
+                      bg: 'uspolis.gray',
+                      opacity: 0.8,
+                    }
+              }
               _active={
-                closed && !selected ? {} : { bg: 'gray.300', opacity: 0.6 }
+                closed && !selected
+                  ? {}
+                  : {
+                      bg: 'uspolis.gray',
+                      opacity: 0.6,
+                    }
               }
               onClick={() => {
                 reset();
@@ -56,11 +68,10 @@ function SolicitationStackBody({
             >
               <Heading size={'md'}>{`Reserva de Sala`}</Heading>
               <Text>{`Local: ${solicitation.building}, sala ${
-                solicitation.classroom
-                  ? solicitation.classroom
+                solicitation.reservation.classroom_name
+                  ? solicitation.reservation.classroom_name
                   : 'não especificada'
               }`}</Text>
-              {/* <Spacer /> */}
               <Text>
                 <Text
                   as={'span'}
@@ -80,7 +91,10 @@ function SolicitationStackBody({
                     'cancelada',
                     solicitation.user,
                   ]}
-                  styles={{ textColor: 'uspolis.blue', fontWeight: 'bold' }}
+                  styles={{
+                    textColor: ReservationStatus.getColor(solicitation.status),
+                    fontWeight: 'bold',
+                  }}
                 >
                   {getSolicitationStatusText(solicitation)}
                 </Highlight>

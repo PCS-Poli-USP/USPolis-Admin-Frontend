@@ -81,11 +81,17 @@ export const useDateCalendarPicker = () => {
     });
   }, []);
 
-  const removeManyHighlightDays = useCallback((days: string[]) => {
+  const removeManyHighlightDays = useCallback(() => {
     setHighlightedDays((prev) => {
       const newHighlightDays = prev.filter((day) => !prev.includes(day));
       return [...newHighlightDays].sort(sortDates);
     });
+  }, []);
+
+  const reset = useCallback(() => {
+    setSelectedDays([]);
+    setHighlightedDays([]);
+    setOccupiedDays([]);
   }, []);
 
   return {
@@ -103,5 +109,6 @@ export const useDateCalendarPicker = () => {
     highlightDay,
     hightlightManyDays,
     removeManyHighlightDays,
+    reset,
   };
 };

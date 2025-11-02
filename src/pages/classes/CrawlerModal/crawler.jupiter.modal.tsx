@@ -25,7 +25,7 @@ import {
   Icon,
   Tooltip,
 } from '@chakra-ui/react';
-import Select, { MultiValue } from 'react-select';
+import { MultiValue } from 'react-select';
 import useBuildings from '../../../hooks/useBuildings';
 import { useEffect, useState } from 'react';
 import { CrawlerType } from '../../../utils/enums/subjects.enum';
@@ -33,11 +33,9 @@ import { CalendarResponse } from '../../../models/http/responses/calendar.respon
 import { ModalProps } from '../../../models/interfaces';
 import { MdCheckCircle } from 'react-icons/md';
 import { SubjectResponse } from '../../../models/http/responses/subject.response.models';
-
-type Option = {
-  label: string;
-  value: number;
-};
+import TooltipSelect, {
+  Option,
+} from '../../../components/common/TooltipSelect';
 
 interface CrawlerJupiterModalProps extends ModalProps {
   subjects: SubjectResponse[];
@@ -139,14 +137,14 @@ export default function CrawlerJupiterModal({
               <VStack gap={'10px'} alignItems={'flex-start'} w={'50%'}>
                 <Box w={'100%'} hidden={buildings.length === 1}>
                   <Text>Prédio:</Text>
-                  <Select
+                  <TooltipSelect
                     placeholder='Selecionar prédio'
                     onChange={(option) => {
                       if (!option) {
                         setBuildingIdSelection(undefined);
                         return;
                       }
-                      setBuildingIdSelection(option.value);
+                      setBuildingIdSelection(option.value as number);
                     }}
                     isLoading={buildingsLoading}
                     options={buildings.map((building) => ({
@@ -158,7 +156,7 @@ export default function CrawlerJupiterModal({
 
                 <Box w={'100%'}>
                   <Text>Fonte:</Text>
-                  <Select
+                  <TooltipSelect
                     isMulti={false}
                     placeholder='Selecionar Jupiter ou Janus'
                     value={
@@ -187,7 +185,7 @@ export default function CrawlerJupiterModal({
 
                 <Box w={'100%'}>
                   <Text>Calendários das turmas:</Text>
-                  <Select
+                  <TooltipSelect
                     placeholder='Selecione os calendários'
                     isMulti
                     options={calendars.map((calendar) => ({
@@ -196,7 +194,7 @@ export default function CrawlerJupiterModal({
                     }))}
                     onChange={(selectedOptions: MultiValue<Option>) =>
                       setCalendarIds(
-                        selectedOptions.map((option) => option.value),
+                        selectedOptions.map((option) => option.value as number),
                       )
                     }
                     isLoading={loadingCalendars}
@@ -207,7 +205,7 @@ export default function CrawlerJupiterModal({
               <VStack w={'50%'} h={'100%'} alignItems={'flex-start'}>
                 <Box w={'100%'}>
                   <Text>Selecionar disciplinas já cadastradas:</Text>
-                  <Select
+                  <TooltipSelect
                     isMulti={false}
                     isClearable
                     placeholder='Selecione as disciplinas'
@@ -217,8 +215,11 @@ export default function CrawlerJupiterModal({
                     }))}
                     onChange={(option) => {
                       if (!option) return;
-                      if (subjectsList.includes(option.value || '')) return;
-                      setSubjectsList((prev) => prev.concat(option.value));
+                      if (subjectsList.includes((option.value as string) || ''))
+                        return;
+                      setSubjectsList((prev) =>
+                        prev.concat(option.value as string),
+                      );
                     }}
                   />
                 </Box>
@@ -259,7 +260,7 @@ export default function CrawlerJupiterModal({
                 </Box>
                 <Box w={'100%'} hidden={true}>
                   <Text>Selecionar com base em cursos:</Text>
-                  <Select
+                  <TooltipSelect
                     isMulti={false}
                     placeholder='Selecione os cursos'
                     options={subjects.map((val) => ({
@@ -268,8 +269,11 @@ export default function CrawlerJupiterModal({
                     }))}
                     onChange={(option) => {
                       if (!option) return;
-                      if (subjectsList.includes(option.value || '')) return;
-                      setSubjectsList((prev) => prev.concat(option.value));
+                      if (subjectsList.includes((option.value as string) || ''))
+                        return;
+                      setSubjectsList((prev) =>
+                        prev.concat(option.value as string),
+                      );
                     }}
                   />
                 </Box>

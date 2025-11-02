@@ -7,16 +7,16 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
-import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 import {
   getRequesterText,
   getSolicitationStatusText,
 } from '../../../utils/solicitations/solicitation.formatter';
 
 interface SolicitationStackBodyProps {
-  solicitations: ClassroomSolicitationResponse[];
-  handleOnClick: (data: ClassroomSolicitationResponse) => void;
+  solicitations: SolicitationResponse[];
+  handleOnClick: (data: SolicitationResponse) => void;
   reset: () => void;
 }
 
@@ -29,7 +29,7 @@ function SolicitationStackBody({
     <VStack w={'full'}>
       {solicitations.length > 0 ? (
         solicitations.map((solicitation, index) => {
-          const pending = solicitation.status === SolicitationStatus.PENDING;
+          const pending = solicitation.status === ReservationStatus.PENDING;
 
           return (
             <Box
@@ -51,8 +51,8 @@ function SolicitationStackBody({
             >
               <Heading size={'md'}>{`Reserva de Sala`}</Heading>
               <Text>{`Local: ${solicitation.building}, sala ${
-                solicitation.classroom
-                  ? solicitation.classroom
+                solicitation.reservation.classroom
+                  ? solicitation.reservation.classroom
                   : 'não especificada'
               }`}</Text>
 

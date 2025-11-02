@@ -22,14 +22,14 @@ import {
   CheckBox,
   Input,
   SelectInput,
-  Textarea,
+  TextareaInput,
 } from '../../../components/common';
 import { useEffect, useState } from 'react';
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import { NumberInput } from '../../../components/common/form/NumberInput';
-import useClassroomsSolicitations from '../../../hooks/classroomSolicitations/useClassroomSolicitations';
+import useClassroomsSolicitations from '../../../hooks/solicitations/useSolicitations';
 import DateCalendarPicker, {
   useDateCalendarPicker,
 } from '../../../components/common/DateCalendarPicker';
@@ -40,6 +40,7 @@ import {
 import ClassroomTimeGrid from '../../../components/common/ClassroomTimeGrid/classroom.time.grid';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { ConflictType } from '../../../utils/enums/conflictType.enum';
+import useSolicitations from '../../../hooks/solicitations/useSolicitations';
 
 function SolicitationModal({
   buildings,
@@ -72,11 +73,11 @@ function SolicitationModal({
 
   const {
     loading: loadingC,
-    getClassroomsWithConflictFromTime,
+    getClassroomsWithConflict,
     listOneFull,
   } = useClassrooms(false);
 
-  const { loading, createSolicitation } = useClassroomsSolicitations(false);
+  const { loading, createSolicitation } = useSolicitations(false);
   const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
   const [classroomsWithConflict, setClassroomsWithConflict] =
     useState<ClassroomWithConflictCount[]>();
@@ -130,7 +131,7 @@ function SolicitationModal({
   useEffect(() => {
     const fetchClassrooms = async () => {
       if (building_id && start && end && selectedDays.length > 0) {
-        const result = await getClassroomsWithConflictFromTime(
+        const result = await getClassroomsWithConflict(
           {
             start_time: start,
             end_time: end,
@@ -259,7 +260,7 @@ function SolicitationModal({
                   </VStack>
                 </HStack>
 
-                <Textarea label='Motivo (Opcional)' name='reason' />
+                <TextareaInput label='Motivo (Opcional)' name='reason' />
 
                 <VStack spacing={0} hidden={!isMobile} mt={'10px'} mb={'10px'}>
                   <DateCalendarPicker

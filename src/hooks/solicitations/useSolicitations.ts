@@ -1,25 +1,25 @@
 import useCustomToast from '../useCustomToast';
 import {
-  ClassroomSolicitationAprove,
-  ClassroomSolicitationDeny,
-  CreateClassroomSolicitation,
-} from '../../models/http/requests/classroomSolicitation.request.models';
-import { ClassroomSolicitationResponse } from '../../models/http/responses/classroomSolicitation.response.models';
+  ApproveSolicitation,
+  DenySolicitation,
+  CreateSolicitation,
+} from '../../models/http/requests/solicitation.request.models';
+import { SolicitationResponse } from '../../models/http/responses/solicitation.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortClassroomSolicitationResponse } from '../../utils/solicitations/solicitation.sorter';
-import useClassroomSolicitationsService from '../API/services/useClassroomSolicitationsService';
-import { ClassroomSolicitationErrorParser } from './classroomSolicitationErrorParser';
+import { sortSolicitationResponse } from '../../utils/solicitations/solicitation.sorter';
+import useSolicitationsService from '../API/services/useSolicitationsService';
+import { SolicitationErrorParser } from './solicitationErrorParser';
 
-const useClassroomsSolicitations = (initialFetch = true) => {
-  const service = useClassroomSolicitationsService();
+const useSolicitations = (initialFetch = true) => {
+  const service = useSolicitationsService();
   const [loading, setLoading] = useState(false);
-  const [solicitations, setSolicitations] = useState<
-    ClassroomSolicitationResponse[]
-  >([]);
+  const [solicitations, setSolicitations] = useState<SolicitationResponse[]>(
+    [],
+  );
 
   const showToast = useCustomToast();
 
-  const parser = new ClassroomSolicitationErrorParser();
+  const parser = new SolicitationErrorParser();
 
   const getSolicitations = useCallback(async () => {
     setLoading(true);
@@ -42,7 +42,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
     await service
       .getPending()
       .then((response) => {
-        setSolicitations(response.data.sort(sortClassroomSolicitationResponse));
+        setSolicitations(response.data.sort(sortSolicitationResponse));
       })
       .catch((error) => {
         console.log(error);
@@ -63,9 +63,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
       await service
         .getAll(start, end)
         .then((response) => {
-          setSolicitations(
-            response.data.sort(sortClassroomSolicitationResponse),
-          );
+          setSolicitations(response.data.sort(sortSolicitationResponse));
         })
         .catch((error) => {
           console.log(error);
@@ -83,7 +81,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
   );
 
   const createSolicitation = useCallback(
-    async (data: CreateClassroomSolicitation) => {
+    async (data: CreateSolicitation) => {
       setLoading(true);
       await service
         .create(data)
@@ -103,7 +101,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
   );
 
   const approveSolicitation = useCallback(
-    async (id: number, data: ClassroomSolicitationAprove) => {
+    async (id: number, data: ApproveSolicitation) => {
       setLoading(true);
       await service
         .approve(id, data)
@@ -123,7 +121,7 @@ const useClassroomsSolicitations = (initialFetch = true) => {
   );
 
   const denySolicitation = useCallback(
-    async (id: number, data: ClassroomSolicitationDeny) => {
+    async (id: number, data: DenySolicitation) => {
       setLoading(true);
       await service
         .deny(id, data)
@@ -181,4 +179,4 @@ const useClassroomsSolicitations = (initialFetch = true) => {
   };
 };
 
-export default useClassroomsSolicitations;
+export default useSolicitations;

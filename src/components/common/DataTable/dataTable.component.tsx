@@ -156,6 +156,7 @@ export default function DataTable<Data extends object>({
                           ? `${header.column.columnDef.maxSize}px`
                           : undefined
                       }
+                      background={isPinned ? 'uspolis.white' : 'transparent'}
                       style={{
                         boxShadow: isLastLeftPinnedColumn
                           ? '-4px 0 4px -4px gray inset'
@@ -174,7 +175,6 @@ export default function DataTable<Data extends object>({
                         position: isPinned ? 'sticky' : 'relative',
                         width: header.column.getSize(),
                         zIndex: isPinned ? 1 : 0,
-                        background: isPinned ? 'white' : 'uspolis.blue',
                       }}
                     >
                       <Box
@@ -291,6 +291,7 @@ export default function DataTable<Data extends object>({
                           ? `${cell.column.columnDef.maxSize}px`
                           : 'auto'
                       }
+                      background={isPinned ? 'uspolis.white' : 'transparent'}
                       style={{
                         boxShadow: isLastLeftPinnedColumn
                           ? '-4px 0 4px -4px gray inset'
@@ -309,7 +310,6 @@ export default function DataTable<Data extends object>({
                         position: isPinned ? 'sticky' : 'relative',
                         width: cell.column.getSize(),
                         zIndex: isPinned ? 1 : 0,
-                        background: isPinned ? 'white' : 'uspolis.blue',
                       }}
                       overflowX={'hidden'}
                       textOverflow={'ellipsis'}

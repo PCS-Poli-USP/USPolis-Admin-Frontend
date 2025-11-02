@@ -9,14 +9,19 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  useColorMode,
+  IconButton,
 } from '@chakra-ui/react';
 import Logo from '../../../assets/uspolis.logo.png';
 import { appContext } from '../../../context/AppContext';
 import { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserImage from '../../../components/common/UserImage/user.image';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 function Header() {
+  const { colorMode, setColorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
   const context = useContext(appContext);
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,7 +37,7 @@ function Header() {
       shadow={'md'}
       gap={4}
       h={'60px'}
-      bg={'white'}
+      bg={isDark ? 'uspolis.blue' : 'uspolis.white'}
       zIndex={100}
     >
       <Link
@@ -55,7 +60,7 @@ function Header() {
         as={'a'}
         href='#section2'
         variant={'link'}
-        color={'black'}
+        color={isDark ? 'white' : 'black'}
         _hover={{
           textDecoration: 'none',
           color: 'teal',
@@ -67,7 +72,7 @@ function Header() {
         as={'a'}
         href='#section4'
         variant={'link'}
-        color={'black'}
+        color={isDark ? 'white' : 'black'}
         _hover={{
           textDecoration: 'none',
           color: 'teal',
@@ -79,7 +84,7 @@ function Header() {
         as={'a'}
         href='#section5'
         variant={'link'}
-        color={'black'}
+        color={isDark ? 'white' : 'black'}
         _hover={{
           textDecoration: 'none',
           color: 'teal',
@@ -87,12 +92,12 @@ function Header() {
       >
         Sobre
       </Button>
-      <Flex direction={'row'} justify={'center'} gap={2} align={'center'}>
+      <Flex direction={'row'} justify={'center'} gap={'10px'} align={'center'}>
         <Button
           // as={'a'}
           ml={'100px'}
           variant={'link'}
-          color={'teal'}
+          color={isDark ? 'white' : 'teal'}
           _hover={{
             textDecoration: 'none',
             color: 'teal',
@@ -157,6 +162,13 @@ function Header() {
             Entrar
           </Button>
         )}
+        <IconButton
+          aria-label='Toggle dark mode'
+          variant={'ghost'}
+          ml={'10px'}
+          icon={isDark ? <SunIcon /> : <MoonIcon />}
+          onClick={() => setColorMode(isDark ? 'light' : 'dark')}
+        />
       </Flex>
     </Flex>
   );

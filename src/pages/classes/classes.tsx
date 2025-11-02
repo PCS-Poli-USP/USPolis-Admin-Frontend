@@ -324,27 +324,24 @@ function Classes() {
           >
             Opções
           </MenuButton>
-          <MenuList w={'300px'} border={'1px'}>
+          <MenuList w={'300px'} border={'1px'} bgColor={'uspolis.white'}>
             <MenuGroup title='Adição' fontSize={'lg'} gap={'5px'}>
               <MenuDivider />
               <MenuItem
                 as={Button}
-                colorScheme={'blue'}
+                bgColor={'uspolis.white'}
                 justifyContent={'flex-start'}
                 onClick={handleRegisterClick}
                 leftIcon={<LuHand />}
-                mb={'5px'}
               >
                 Manual
               </MenuItem>
               <MenuDivider />
               <MenuItem
                 as={Button}
-                colorScheme='blue'
-                color={'uspolis.blue'}
+                bgColor={'uspolis.white'}
                 justifyContent={'flex-start'}
                 leftIcon={<LuTimer />}
-                mb={'5px'}
                 onClick={onOpenCrawlerJupiterModal}
               >
                 Júpiter/Janus
@@ -355,11 +352,10 @@ function Classes() {
               <MenuDivider />
               <MenuItem
                 as={Button}
-                colorScheme={'blue'}
+                bgColor={'uspolis.white'}
                 justifyContent={'flex-start'}
                 onClick={onOpenJupiterUpdateModal}
                 leftIcon={<LuTimer />}
-                mb={'5px'}
               >
                 Júpiter/Janus
               </MenuItem>
@@ -370,10 +366,9 @@ function Classes() {
               <MenuItem
                 as={Button}
                 justifyContent={'flex-start'}
-                colorScheme={'blue'}
+                bgColor={'uspolis.white'}
                 onClick={handleDeleteSelectedClassesClick}
                 leftIcon={<IoTrashBinOutline />}
-                mb={'5px'}
               >
                 Selecionados
               </MenuItem>
@@ -384,12 +379,11 @@ function Classes() {
               <MenuItem
                 as={Button}
                 justifyContent={'flex-start'}
-                colorScheme={'blue'}
+                bgColor={'uspolis.white'}
                 onClick={() => {
                   onOpenAllocationReuseModal();
                 }}
                 leftIcon={<LuDownload />}
-                mb={'5px'}
               >
                 Reaproveitar
               </MenuItem>

@@ -7,7 +7,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from '@chakra-ui/react';
-import { Select } from 'chakra-react-select';
+import TooltipSelect from '../../../../components/common/TooltipSelect';
 
 type ViewOption = {
   value: string;
@@ -41,14 +41,14 @@ function ViewPickerModal({
         <ModalHeader>Selecione uma visualização</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Select
+          <TooltipSelect
             value={view}
             options={options}
             onChange={(newOption) => {
               if (newOption)
                 onSelectView({
                   label: newOption.label,
-                  value: newOption.value,
+                  value: newOption.value as string,
                 });
               onClose();
             }}

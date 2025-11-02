@@ -13,7 +13,11 @@ import { GroupModalProps } from './group.modal.interface';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform//resolvers/yup';
 import { schema, defaultValues } from './group.modal.form';
-import { Input, MultiSelect, SelectInput } from '../../../components/common';
+import {
+  Input,
+  MultiSelectInput,
+  SelectInput,
+} from '../../../components/common';
 import { useEffect, useState } from 'react';
 import { filterString } from '../../../utils/filters';
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
@@ -95,7 +99,7 @@ function GroupModal({
                     placeholder='Insira o nome do grupo'
                   />
                 </Flex>
-                <MultiSelect
+                <MultiSelectInput
                   name='user_ids'
                   label={`Usuários`}
                   options={users.map((user) => ({
@@ -134,7 +138,7 @@ function GroupModal({
                   />
                 </Flex>
 
-                <MultiSelect
+                <MultiSelectInput
                   name='classroom_ids'
                   disabled={group && group.main}
                   label={

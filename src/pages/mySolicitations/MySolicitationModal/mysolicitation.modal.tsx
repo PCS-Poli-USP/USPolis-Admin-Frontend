@@ -13,13 +13,13 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { ModalProps } from '../../../models/interfaces';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import moment from 'moment';
-import { SolicitationStatus } from '../../../utils/enums/solicitationStatus.enum';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 
 interface MySoliciationModalProps extends ModalProps {
-  solicitation?: ClassroomSolicitationResponse;
+  solicitation?: SolicitationResponse;
 }
 
 function MySolicitationModal({
@@ -59,7 +59,7 @@ function MySolicitationModal({
                     textColor={'black'}
                   >
                     {`Motivo - ${ReservationType.translate(
-                      solicitation.reservation_type,
+                      solicitation.reservation.type,
                     )}`}
                   </Heading>
                   <Text
@@ -68,8 +68,8 @@ function MySolicitationModal({
                     textColor={'black'}
                     textAlign={'justify'}
                   >
-                    {solicitation.reason
-                      ? solicitation.reason
+                    {solicitation.reservation.reason
+                      ? solicitation.reservation.reason
                       : 'Descrição não informada.'}
                   </Text>
                 </Box>
@@ -83,28 +83,32 @@ function MySolicitationModal({
                   </Heading>
                   <Text pt='2' fontSize='md' textColor={'black'}>
                     {`Local: ${solicitation.building}, sala ${
-                      solicitation.classroom
-                        ? solicitation.classroom
+                      solicitation.reservation.classroom_name
+                        ? solicitation.reservation.classroom_name
                         : 'NÃO ESPECIFICADA'
                     }`}
                     <br />
                     {`Início: ${
-                      solicitation.start_time
-                        ? moment(solicitation.start_time, 'HH:mm').format(
+                      solicitation.reservation.schedule.start_time
+                        ? moment(
+                            solicitation.reservation.schedule.start_time,
                             'HH:mm',
-                          )
+                          ).format('HH:mm')
                         : 'NÃO ESPECIFICADO'
                     }`}
                     <br />
                     {`Fim: ${
-                      solicitation.end_time
-                        ? moment(solicitation.end_time, 'HH:mm').format('HH:mm')
+                      solicitation.reservation.schedule.end_time
+                        ? moment(
+                            solicitation.reservation.schedule.end_time,
+                            'HH:mm',
+                          ).format('HH:mm')
                         : 'NÃO ESPECIFICADO'
                     }`}
                     <br />
-                    {`Dias: ${solicitation.dates
+                    {/* {`Dias: ${solicitation.dates
                       .map((date) => moment(date).format('DD/MM/YYYY'))
-                      .join(', ')}`}
+                      .join(', ')}`} */}
                   </Text>
                   <HStack
                     align={'center'}
@@ -142,9 +146,9 @@ function MySolicitationModal({
                   <Text
                     pt='2'
                     fontSize='md'
-                    textColor={SolicitationStatus.getColor(solicitation.status)}
+                    textColor={ReservationStatus.getColor(solicitation.status)}
                   >
-                    {SolicitationStatus.translate(solicitation.status)}
+                    {ReservationStatus.translate(solicitation.status)}
                   </Text>
                 </Box>
               </VStack>

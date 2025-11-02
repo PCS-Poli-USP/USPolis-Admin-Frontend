@@ -45,7 +45,7 @@ import {
   DownloadIcon,
   SmallCloseIcon,
 } from '@chakra-ui/icons';
-import useReservations from '../../../hooks/useReservations';
+import useReservations from '../../../hooks/reservations/useReservations';
 import {
   CreateReservation,
   UpdateReservation,
@@ -53,7 +53,27 @@ import {
 import { useEffect, useState } from 'react';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { useDateCalendarPicker } from '../../../components/common/DateCalendarPicker';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import {
+  CreateExam,
+  UpdateExam,
+} from '../../../models/http/requests/exam.request.models';
+import {
+  CreateEvent,
+  UpdateEvent,
+} from '../../../models/http/requests/event.request.models';
+import {
+  CreateMeeting,
+  UpdateMeeting,
+} from '../../../models/http/requests/meeting.request.models';
+import { ReservationType } from '../../../utils/enums/reservations.enum';
+import useExams from '../../../hooks/exams/useExams';
+import useEvents from '../../../hooks/events/useEvents';
+import useMeetings from '../../../hooks/meetings/useMeetings';
+import {
+  CreateSolicitation,
+  UpdateSolicitation,
+} from '../../../models/http/requests/solicitation.request.models';
+import useSolicitations from '../../../hooks/solicitations/useSolicitations';
 
 function ReservationModal(props: ReservationModalProps) {
   const firstForm = useForm<ReservationFirstForm>({
@@ -71,24 +91,27 @@ function ReservationModal(props: ReservationModalProps) {
     false,
   ]);
 
-  const { loading, createReservation, updateReservation } =
-    useReservations(false);
+  const { loading, updateReservation } = useReservations(false);
+  const { loading: loadingSolicitations, createSolicitation } =
+    useSolicitations(false);
+  const { createExam, updateExam } = useExams();
+  const { createEvent, updateEvent } = useEvents();
+  const { createMeeting, updateMeeting } = useMeetings();
 
   const [dates, setDates] = useState<string[]>([]);
   const calendarPicker = useDateCalendarPicker();
-  const [vinculatedSolicitation, setVinculatedSolicitation] =
-    useState<ClassroomSolicitationResponse>();
 
-  function getReservationData(): CreateReservation | UpdateReservation {
+  type ReservationCreateData = CreateExam | CreateEvent | CreateMeeting;
+  type ReservationUpdateData = UpdateExam | UpdateEvent | UpdateMeeting;
+
+  function getReservationData(): ReservationCreateData | ReservationUpdateData {
     const firstData = firstForm.getValues();
     const secondData = secondForm.getValues();
-    const data: UpdateReservation | CreateReservation = {
+    let data: ReservationCreateData | ReservationUpdateData = {
       title: firstData.title,
       type: firstData.type,
       reason: firstData.reason,
-      has_solicitation: firstData.has_solicitation,
-      solicitation_id: firstData.solicitation_id,
-      classroom_id: secondData.classroom_id,
+      classroom_id: secondData.classroom_id as number,
       schedule_data: {
         reservation_id: props.selectedReservation
           ? props.selectedReservation.id
@@ -110,18 +133,61 @@ function ReservationModal(props: ReservationModalProps) {
         all_day: false,
       },
     };
+    const type = firstData.type;
+    if (type === ReservationType.EVENT && firstData.event_type) {
+      data = {
+        ...data,
+        link: firstData.link,
+        event_type: firstData.event_type,
+      };
+    }
+    if (type === ReservationType.MEETING) {
+      data = {
+        ...data,
+        link: firstData.link,
+      };
+    }
+    if (type === ReservationType.EXAM) {
+      if (!firstData.subject_id) {
+        throw new Error('Subject ID are required for Exam reservations');
+      }
+      data = {
+        ...data,
+        subject_id: firstData.subject_id,
+        class_ids: firstData.class_ids,
+        schedule_data: {
+          ...data.schedule_data,
+          labels: secondData.labels,
+          times: secondData.times,
+        },
+      } as CreateExam | UpdateExam;
+    }
+
     if (props.isUpdate) {
       return data as UpdateReservation;
     }
     return data as CreateReservation;
   }
 
+  function getSolicitationData(): CreateSolicitation {
+    const firstData = firstForm.getValues();
+    const secondData = secondForm.getValues();
+    const data: CreateSolicitation | UpdateSolicitation = {
+      building_id: secondData.building_id,
+      classroom_id: secondData.classroom_id,
+      required_classroom: secondData.required_classroom as boolean,
+      capacity: firstData.capacity as number,
+      reservation_data: getReservationData(),
+    };
+    return data as CreateSolicitation;
+  }
+
   function handleCloseModal() {
     firstForm.reset(firstDefaultValues);
     secondForm.reset(secondDefaultValues);
-    setVinculatedSolicitation(undefined);
     setActiveStep(0);
     setDates([]);
+    calendarPicker.reset();
     props.onClose();
   }
 
@@ -145,6 +211,12 @@ function ReservationModal(props: ReservationModalProps) {
       return;
     if (getValues('recurrence') === Recurrence.CUSTOM && dates.length === 0)
       return;
+
+    if (getValues('type') === ReservationType.EXAM) {
+      const labels = getValues('labels');
+      if (!labels) return;
+      if (labels.length !== dates.length) return;
+    }
     handleSaveClick();
   }
 
@@ -159,28 +231,83 @@ function ReservationModal(props: ReservationModalProps) {
     }
   }
 
-  async function handleSaveClick() {
+  async function handleReservationSaveClick() {
     const data = getReservationData();
     if (props.isUpdate && props.selectedReservation) {
-      await updateReservation(
-        props.selectedReservation.id,
-        data as UpdateReservation,
-      );
-    } else if (!props.isUpdate) {
-      await createReservation(data as CreateReservation);
+      if (data.type === ReservationType.EXAM) {
+        await updateExam(props.selectedReservation.id, data as UpdateExam);
+      }
+      if (data.type === ReservationType.MEETING) {
+        await updateMeeting(
+          props.selectedReservation.id,
+          data as UpdateMeeting,
+        );
+      }
+      if (data.type === ReservationType.EVENT) {
+        await updateEvent(props.selectedReservation.id, data as UpdateEvent);
+      } else {
+        await updateReservation(
+          props.selectedReservation.id,
+          data as UpdateReservation,
+        );
+      }
+    }
+    if (!props.isUpdate) {
+      if (data.type === ReservationType.EXAM) {
+        await createExam(data as CreateExam);
+      }
+      if (data.type === ReservationType.EVENT) {
+        await createEvent(data as CreateEvent);
+      }
+      if (data.type === ReservationType.MEETING) {
+        await createMeeting(data as CreateMeeting);
+      }
+    }
+  }
+
+  async function handleSolicitationSaveClick() {
+    const data = getSolicitationData();
+    if (!props.isUpdate) {
+      await createSolicitation(data);
+    }
+  }
+
+  async function handleSaveClick() {
+    if (!props.isSolicitation) {
+      await handleReservationSaveClick();
+    }
+    if (props.isSolicitation) {
+      await handleSolicitationSaveClick();
     }
     props.refetch();
-    handleCloseModal();
+    // handleCloseModal();
   }
 
   useEffect(() => {
+    firstForm.setValue('is_solicitation', props.isSolicitation);
+    secondForm.setValue('is_solicitation', props.isSolicitation);
+
+    if (props.isSolicitation) {
+      secondForm.setValue('required_classroom', false);
+      secondForm.setValue('optional_classroom', false);
+    }
+
     if (props.selectedReservation) {
+      const examData = props.selectedReservation.exam;
+      const eventData = props.selectedReservation.event;
+      const meetingData = props.selectedReservation.meeting;
+
       firstForm.reset({
         title: props.selectedReservation.title,
         type: props.selectedReservation.type,
         reason: props.selectedReservation.reason,
-        has_solicitation: props.selectedReservation.has_solicitation,
-        solicitation_id: props.selectedReservation.solicitation_id,
+        link:
+          eventData || meetingData
+            ? eventData?.link || meetingData?.link
+            : undefined,
+        subject_id: examData ? examData.subject_id : undefined,
+        class_ids: examData ? examData.class_ids : undefined,
+        event_type: eventData ? eventData.type : undefined,
       });
       secondForm.reset({
         building_id: props.selectedReservation.building_id,
@@ -192,10 +319,26 @@ function ReservationModal(props: ReservationModalProps) {
         recurrence: props.selectedReservation.schedule.recurrence,
         week_day: props.selectedReservation.schedule.week_day,
         month_week: props.selectedReservation.schedule.month_week,
+        type: props.selectedReservation.type,
+        labels: examData ? examData.labels : undefined,
+        times:
+          examData && props.selectedReservation.schedule.occurrences
+            ? props.selectedReservation.schedule.occurrences.map((occur) => [
+                occur.start_time,
+                occur.end_time,
+              ])
+            : undefined,
       });
 
       setStepsIsValid([true, true]);
-      if (props.selectedReservation.schedule.occurrences) {
+      if (props.selectedReservation.type == ReservationType.EXAM && examData) {
+        setDates(examData.dates);
+        calendarPicker.setSelectedDays(examData.dates);
+      }
+      if (
+        props.selectedReservation.type != ReservationType.EXAM &&
+        props.selectedReservation.schedule.occurrences
+      ) {
         const dates = props.selectedReservation.schedule.occurrences.map(
           (occur) => occur.date,
         );
@@ -203,13 +346,27 @@ function ReservationModal(props: ReservationModalProps) {
         calendarPicker.setSelectedDays(dates);
       }
     }
+
+    if (!props.selectedReservation) {
+      firstForm.reset({
+        ...firstDefaultValues,
+        is_solicitation: props.isSolicitation,
+      });
+      secondForm.reset({
+        ...secondDefaultValues,
+        is_solicitation: props.isSolicitation,
+      });
+      setActiveStep(0);
+      setDates([]);
+      calendarPicker.reset();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
 
   const steps = [
     {
       title: 'Primeiro',
-      description: 'Informações e Solicitação',
+      description: 'Informações',
       content: (
         <ReservationModalFirstStep
           isUpdate={props.isUpdate}
@@ -218,10 +375,10 @@ function ReservationModal(props: ReservationModalProps) {
           setDates={setDates}
           {...calendarPicker}
           selectedReservation={props.selectedReservation}
-          vinculatedSolicitation={vinculatedSolicitation}
-          setVinculatedSolicitation={setVinculatedSolicitation}
-          solicitations={props.solicitations}
-          loadingSolicitations={props.loadingSolicitations}
+          subjects={props.subjects}
+          classes={props.classes}
+          loading={props.loading}
+          isSolicitation={props.isSolicitation}
         />
       ),
     },
@@ -231,14 +388,15 @@ function ReservationModal(props: ReservationModalProps) {
       content: (
         <ReservationModalSecondStep
           form={secondForm}
+          firstForm={firstForm}
           setDates={setDates}
+          selectedDates={dates}
           isUpdate={props.isUpdate}
           buildings={props.buildings}
           classrooms={props.classrooms}
           selectedReservation={props.selectedReservation}
           initialDate={props.initialDate}
           {...calendarPicker}
-          vinculatedSolicitation={vinculatedSolicitation}
         />
       ),
     },
@@ -248,6 +406,17 @@ function ReservationModal(props: ReservationModalProps) {
     index: 0,
     count: steps.length,
   });
+
+  function getModalTitle() {
+    if (!props.isSolicitation) {
+      return props.isUpdate
+        ? `Atualizar Reserva - ${steps[activeStep].description}`
+        : `Cadastrar Reserva - ${steps[activeStep].description}`;
+    }
+    return props.isUpdate
+      ? `Atualizar Solicitação de Reserva - ${steps[activeStep].description}`
+      : `Solicitar Reserva de Sala - ${steps[activeStep].description}`;
+  }
 
   return (
     <Modal
@@ -261,11 +430,7 @@ function ReservationModal(props: ReservationModalProps) {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          {props.isUpdate
-            ? `Atualizar Reserva - ${steps[activeStep].description}`
-            : `Cadastrar Reserva - ${steps[activeStep].description}`}
-        </ModalHeader>
+        <ModalHeader>{getModalTitle()}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <VStack w={'full'}>
@@ -330,7 +495,7 @@ function ReservationModal(props: ReservationModalProps) {
                   colorScheme={'blue'}
                   onClick={handleNextClick}
                   rightIcon={<DownloadIcon />}
-                  isLoading={loading}
+                  isLoading={loading || loadingSolicitations}
                 >
                   {loading ? 'Salvando...' : 'Finalizar'}
                 </Button>

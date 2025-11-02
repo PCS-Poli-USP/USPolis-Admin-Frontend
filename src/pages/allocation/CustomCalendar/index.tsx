@@ -1,5 +1,5 @@
-import { Box, Progress, useDisclosure } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import { Box, Progress, useColorMode, useDisclosure } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import { EventApi, DatesSetArg, EventDropArg } from '@fullcalendar/core';
@@ -33,6 +33,7 @@ const viewOptions: ViewOption[] = [
   { value: 'timeGridWeek', label: 'Geral' },
 ];
 interface CustomCalendarProps {
+  calendarRef: React.RefObject<FullCalendar>;
   events: Event[];
   resources: Resource[];
   hasBuildingFilter: boolean;
@@ -51,6 +52,7 @@ interface CustomCalendarProps {
 }
 
 function CustomCalendar({
+  calendarRef,
   events,
   resources,
   hasBuildingFilter,
@@ -68,8 +70,9 @@ function CustomCalendar({
   loading = false,
 }: CustomCalendarProps) {
   const { registerControlFn, state } = useFeatureGuideContext();
+  const { colorMode } = useColorMode();
 
-  const calendarRef = useRef<FullCalendar>(null!);
+  // const calendarRef = useRef<FullCalendar>(null!);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
   const [resourcesExpanded, setResourcesExpanded] = useState(hasBuildingFilter);
   const [isGuideMode, setIsGuideMode] = useState(false);
@@ -124,6 +127,7 @@ function CustomCalendar({
 
   const formatedResources = resources.map((res) => {
     if (res.parentId === null) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { parentId, ...rest } = res;
       return rest;
     }
@@ -157,6 +161,7 @@ function CustomCalendar({
       setCalendarView(viewOptions[0].value);
       setView(viewOptions[0]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   return (
@@ -336,7 +341,7 @@ function CustomCalendar({
           setSelectedEvent(info.event);
           onOpenModal();
         }}
-        eventColor='#408080'
+        eventColor={colorMode === 'dark' ? '#1a535c' : '#408080'}
         displayEventTime
         resources={isGuideMode ? TourGuideResources : formatedResources}
         resourcesInitiallyExpanded={resourcesExpanded}

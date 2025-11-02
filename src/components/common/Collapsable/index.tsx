@@ -26,7 +26,7 @@ const Collapsable = ({
   closeIcon,
   iconSize,
   titleSize = 'md',
-  titleColor = 'uspolis.blue',
+  titleColor = 'uspolis.text',
   initiallyOpen = false,
   border = 'none',
   borderRadius = 'none',
