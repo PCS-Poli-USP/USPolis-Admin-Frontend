@@ -91,7 +91,7 @@ const useSolicitations = (initialFetch = true) => {
         })
         .catch((error) => {
           console.log(error);
-          showToast('Erro', `Erro ao criar solicita;ção: ${error}`, 'error');
+          showToast('Erro', `Erro ao criar solicitação: ${error}`, 'error');
         })
         .finally(() => {
           setLoading(false);

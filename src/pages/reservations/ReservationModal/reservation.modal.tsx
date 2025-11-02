@@ -280,7 +280,7 @@ function ReservationModal(props: ReservationModalProps) {
       await handleSolicitationSaveClick();
     }
     props.refetch();
-    // handleCloseModal();
+    handleCloseModal();
   }
 
   useEffect(() => {

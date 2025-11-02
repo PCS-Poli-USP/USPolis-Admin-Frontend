@@ -41,6 +41,8 @@ import ClassroomTimeGrid from '../../../components/common/ClassroomTimeGrid/clas
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 import TooltipSelect from '../../../components/common/TooltipSelect';
+import { ScheduleResponse } from '../../../models/http/responses/schedule.response.models';
+import { generateRecurrenceDates } from '../../../utils/common/common.generator';
 
 interface SolicitationPanelProps {
   solicitation?: SolicitationResponse;
@@ -101,22 +103,23 @@ function SolicitationPanel({
       if (start && end && validateTime(start, end)) {
         try {
           setIsLoadingWithConflict(true);
+          const isCustom =
+            solicitation.reservation.schedule.recurrence === Recurrence.CUSTOM;
           const result = await getClassroomsWithConflict(
             {
               start_time: start,
               end_time: end,
-              recurrence: Recurrence.CUSTOM,
-              dates: solicitation.reservation.schedule.occurrences
-                ? solicitation.reservation.schedule.occurrences.map(
-                    (occ) => occ.date,
-                  )
+              recurrence: solicitation.reservation.schedule.recurrence,
+              dates: isCustom
+                ? getScheduleDates(solicitation.reservation.schedule)
                 : [],
-              times: solicitation.reservation.schedule.occurrences
-                ? solicitation.reservation.schedule.occurrences.map((occ) => [
-                    occ.start_time,
-                    occ.end_time,
-                  ])
+              times: isCustom
+                ? getScheduleTimes(solicitation.reservation.schedule)
                 : [],
+              start_date: solicitation.reservation.schedule.start_date,
+              end_date: solicitation.reservation.schedule.end_date,
+              week_day: solicitation.reservation.schedule.week_day,
+              month_week: solicitation.reservation.schedule.month_week,
             },
             solicitation?.building_id,
           );
@@ -212,6 +215,41 @@ function SolicitationPanel({
       }
     }
   }, [classrooms, solicitation]);
+
+  function getScheduleDates(schedule: ScheduleResponse) {
+    if (schedule.recurrence === Recurrence.CUSTOM) {
+      return schedule.occurrences
+        ? schedule.occurrences.map((occ) => occ.date)
+        : [];
+    }
+    return generateRecurrenceDates(
+      schedule.start_date,
+      schedule.end_date,
+      schedule.recurrence,
+      schedule.week_day,
+      schedule.month_week,
+    );
+  }
+
+  function getScheduleTimes(schedule: ScheduleResponse): [string, string][] {
+    if (schedule.recurrence === Recurrence.CUSTOM) {
+      return schedule.occurrences
+        ? schedule.occurrences.map((occ) => [occ.start_time, occ.end_time])
+        : [];
+    }
+    const times: [string, string][] = [];
+    const dates = generateRecurrenceDates(
+      schedule.start_date,
+      schedule.end_date,
+      schedule.recurrence,
+      schedule.week_day,
+      schedule.month_week,
+    );
+    dates.forEach(() => {
+      times.push([schedule.start_time, schedule.end_time]);
+    });
+    return times;
+  }
 
   return (
     <Card
@@ -341,9 +379,14 @@ function SolicitationPanel({
                       : 'NÃO ESPECIFICADO'
                   }`}
                   <br />
-                  {`Dias: ${solicitation.reservation.schedule.occurrences
-                    ?.map((occ) => moment(occ.date).format('DD/MM/YYYY'))
+                  {`Recorrência: ${Recurrence.translate(
+                    solicitation.reservation.schedule.recurrence,
+                  )}`}
+                  <br />
+                  {`Dias: ${getScheduleDates(solicitation.reservation.schedule)
+                    .map((date) => moment(date).format('DD/MM/YYYY'))
                     .join(', ')}`}
+                  <br />
                 </Text>
                 <HStack
                   align={'center'}
