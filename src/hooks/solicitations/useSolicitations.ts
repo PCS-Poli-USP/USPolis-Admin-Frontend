@@ -107,7 +107,7 @@ const useSolicitations = (initialFetch = true) => {
         .approve(id, data)
         .then(() => {
           showToast('Sucesso', `Solicitação aprovada com sucesso!`, 'success');
-          getSolicitations();
+          getPendingBuildingSolicitations();
         })
         .catch((error) => {
           showToast('Erro', `Erro ao aprovar a solicitação: ${error}`, 'error');
@@ -117,7 +117,7 @@ const useSolicitations = (initialFetch = true) => {
           setLoading(false);
         });
     },
-    [getSolicitations, showToast, service],
+    [getPendingBuildingSolicitations, showToast, service],
   );
 
   const denySolicitation = useCallback(

@@ -558,6 +558,7 @@ function SolicitationPanel({
                         não poderá mudar seu estado.
                       </Text>
                       <Button
+                        isLoading={loading || loadingClassrooms}
                         onClick={async () => {
                           if (
                             !solicitation.reservation.classroom_id &&
