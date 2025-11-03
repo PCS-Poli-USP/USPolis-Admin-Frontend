@@ -28,7 +28,7 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
           <Text
             fontWeight={'bold'}
             fontSize={'xl'}
-            color={'yellow'}
+            color={'orange'}
             hidden={
               !(
                 props.isUpdate &&
