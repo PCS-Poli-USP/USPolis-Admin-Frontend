@@ -48,7 +48,7 @@ function SolicitationStackBody({
                 false
                   ? {}
                   : {
-                      bg: 'uspolis.gray',
+                      bg: 'uspolis.lightGray',
                       opacity: 0.8,
                     }
               }
@@ -56,7 +56,7 @@ function SolicitationStackBody({
                 closed && !selected
                   ? {}
                   : {
-                      bg: 'uspolis.gray',
+                      bg: 'uspolis.lightGray',
                       opacity: 0.6,
                     }
               }
