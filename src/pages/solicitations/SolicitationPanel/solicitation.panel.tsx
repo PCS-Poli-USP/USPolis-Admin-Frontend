@@ -299,24 +299,28 @@ function SolicitationPanel({
                   ? solicitation.reservation.schedule.occurrences.map(
                       (occ) => occ.date,
                     )
-                  : [],
+                  : getScheduleDates(solicitation.reservation.schedule),
                 start_time: start,
                 end_time: end,
                 start_times: solicitation.reservation.schedule.occurrences
                   ? solicitation.reservation.schedule.occurrences.map(
                       (occ) => occ.start_time,
                     )
-                  : [],
+                  : getScheduleDates(solicitation.reservation.schedule).map(
+                      () => start.substring(0, 5),
+                    ),
                 end_times: solicitation.reservation.schedule.occurrences
                   ? solicitation.reservation.schedule.occurrences.map(
                       (occ) => occ.end_time,
                     )
-                  : [],
+                  : getScheduleDates(solicitation.reservation.schedule).map(
+                      () => end.substring(0, 5),
+                    ),
               }}
               scheduleDetails={{
-                recurrence: Recurrence.CUSTOM,
-                week_day: undefined,
-                month_week: undefined,
+                recurrence: solicitation.reservation.schedule.recurrence,
+                week_day: solicitation.reservation.schedule.week_day,
+                month_week: solicitation.reservation.schedule.month_week,
               }}
             />
             <Stack divider={<StackDivider />} spacing='4'>

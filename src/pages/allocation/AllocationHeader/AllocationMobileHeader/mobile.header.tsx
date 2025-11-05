@@ -34,6 +34,7 @@ function AllocationMobileHeader({
   subjects,
   loadingSubjects,
   loadingBuildings,
+  loadingSolicitation,
 }: AllocationHeaderProps) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,13 +43,7 @@ function AllocationMobileHeader({
   const { isOpen: isOpenOptions, onToggle } = useDisclosure({
     defaultIsOpen: true,
   });
-  // const {
-  //   isOpen: isOpenPDF,
-  //   onClose: onClosePDF,
-  //   onOpen: onOpenPDF,
-  // } = useDisclosure({
-  //   defaultIsOpen: false,
-  // });
+
   return (
     <Flex direction={'column'} alignItems={'flex-start'} gap={5} w={'100%'}>
       <Flex direction={'row'} gap={0} w={'100%'}>
@@ -105,6 +100,7 @@ function AllocationMobileHeader({
               loadingSubjects={loadingSubjects}
               buildings={buildings}
               loadingBuildings={loadingBuildings}
+              loadingSolicitation={loadingSolicitation}
             />
           </Flex>
         </Box>

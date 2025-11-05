@@ -26,6 +26,7 @@ export interface AllocationHeaderProps {
   events: Event[];
   buildingResources: Resource[];
   classroomResources: Resource[];
+  loadingSolicitation: boolean;
 
   subjects: SubjectResponse[];
   loadingSubjects: boolean;
@@ -49,6 +50,7 @@ function AllocationHeader({
   events,
   buildingResources,
   classroomResources,
+  loadingSolicitation,
   subjects,
   loadingSubjects,
   buildings,
@@ -76,6 +78,7 @@ function AllocationHeader({
       loadingSubjects={loadingSubjects}
       buildings={buildings}
       loadingBuildings={loadingBuildings}
+      loadingSolicitation={loadingSolicitation}
     />
   ) : (
     <AllocationDesktopHeader
@@ -97,6 +100,7 @@ function AllocationHeader({
       loadingSubjects={loadingSubjects}
       buildings={buildings}
       loadingBuildings={loadingBuildings}
+      loadingSolicitation={loadingSolicitation}
     />
   );
 }

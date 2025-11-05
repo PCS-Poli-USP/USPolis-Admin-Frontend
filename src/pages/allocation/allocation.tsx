@@ -422,6 +422,9 @@ function Allocation() {
             loadingSubjects={loadingSubjects}
             buildings={buildings}
             loadingBuildings={loadingBuildings}
+            loadingSolicitation={
+              loadingSubjects || loadingClasses || loadingClassrooms
+            }
           />
         </GridItem>
 
