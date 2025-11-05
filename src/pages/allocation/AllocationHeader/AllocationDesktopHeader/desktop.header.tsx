@@ -46,6 +46,7 @@ function AllocationDesktopHeader({
   loadingSubjects,
   buildings,
   loadingBuildings,
+  loadingSolicitation,
 }: AllocationHeaderProps) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -159,6 +160,7 @@ function AllocationDesktopHeader({
               onOpen();
             }}
             leftIcon={loggedUser ? undefined : <LockIcon />}
+            isLoading={loadingSolicitation}
           >
             Solicitar Sala
           </Button>
@@ -185,6 +187,7 @@ function AllocationDesktopHeader({
           loadingSubjects={loadingSubjects}
           buildings={buildings}
           loadingBuildings={loadingBuildings}
+          loadingSolicitation={loadingSolicitation}
         />
 
         <ClassesPDFModal

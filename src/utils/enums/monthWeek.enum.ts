@@ -48,6 +48,10 @@ export namespace MonthWeek {
     return translations[day];
   }
 
+  export function maleTranslate(day: MonthWeek): string {
+    return translations[day].replace('a', 'o');
+  }
+
   export function toString(day: MonthWeek): string {
     return stringMapping[day];
   }

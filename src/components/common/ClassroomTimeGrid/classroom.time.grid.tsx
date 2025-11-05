@@ -100,14 +100,14 @@ function ClassroomTimeGrid({
     if (recurrence && week_day && !month_week) {
       return `${Recurrence.translate(
         recurrence as Recurrence,
-      )} às ${WeekDay.translate(week_day as WeekDay)}'s`;
+      )} ${Number(week_day) > 4 ? 'aos' : 'às'} ${WeekDay.translate(week_day as WeekDay).toLowerCase()}s`;
     }
     if (recurrence && week_day && month_week) {
       return `${Recurrence.translate(
         recurrence as Recurrence,
-      )}, às ${WeekDay.translate(
+      )}, ${Number(week_day) > 4 ? 'aos' : 'às'} ${WeekDay.translate(
         week_day as WeekDay,
-      )}'s no ${MonthWeek.translate(month_week as MonthWeek)} dia do mês`;
+      ).toLowerCase()}s ${Number(week_day) > 4 ? 'no' : 'no'} ${MonthWeek.maleTranslate(month_week as MonthWeek).toLowerCase()} dia do mês`;
     }
     return Recurrence.translate(recurrence as Recurrence) || 'Não definido';
   }
@@ -193,9 +193,9 @@ function ClassroomTimeGrid({
                   ? preview.dates
                       .map(
                         (date, idx) =>
-                          `${moment(date).format('DD/MM/YYYY')} (${preview.start_times[idx] || preview.start_time} - ${preview.end_times[idx] || preview.end_time})`,
+                          `${moment(date).format('DD/MM/YYYY')} [${preview.start_times[idx] || preview.start_time} - ${preview.end_times[idx] || preview.end_time}]`,
                       )
-                      .join(', ')
+                      .join(' - ')
                   : 'Nenhuma data, verifique a agenda'}
               </Text>
             </HStack>
