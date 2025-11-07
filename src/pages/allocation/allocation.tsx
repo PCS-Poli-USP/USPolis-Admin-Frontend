@@ -95,7 +95,7 @@ function Allocation() {
     moment().endOf('isoWeek').format('YYYY-MM-DD'),
   );
 
-  const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[3]);
+  const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[1]);
 
   const [clickedDate, setClickedDate] = useState<string>();
   const [dragEvent, setDragEvent] = useState<EventDropArg>();
@@ -197,7 +197,7 @@ function Allocation() {
 
   function handleDateClick(info: DateClickArg) {
     if (!loggedUser) return;
-    if (!loggedUser.buildings) return;
+    if (!loggedUser.buildings && !loggedUser.is_admin) return;
     const date = info.dateStr;
     setClickedDate(moment(date).format('YYYY-MM-DD'));
     const building = info.resource?._resource.parentId;
@@ -205,6 +205,7 @@ function Allocation() {
     if (building) {
       if (
         !loggedUser.is_admin &&
+        loggedUser.buildings &&
         !loggedUser.buildings.map((value) => value.name).includes(building)
       )
         return;
@@ -343,29 +344,24 @@ function Allocation() {
     const buildingResources = resources
       .filter((resource) => !resource.parentId)
       .sort((a, b) => a.title.localeCompare(b.title));
-    const classroomResources = resources.filter(
-      (resource) => !!resource.parentId,
-    );
 
     if (buildingResources.length > 0) {
-      const defaultBuilding = buildingResources.find(
-        (building) => building.title === 'Biênio',
-      );
+      const initialBuilding =
+        loggedUser && loggedUser.buildings
+          ? loggedUser.buildings[0] || null
+          : null;
+      const defaultBuilding = initialBuilding
+        ? buildingResources.find(
+            (building) => building.title == initialBuilding.name,
+          )
+        : buildingResources.find((building) => building.title === 'Biênio');
+
       if (defaultBuilding) {
         setBuildingSearchValue(defaultBuilding.title);
-        const filteredClassrooms = classroomResources.filter(
-          (classroom) =>
-            classroom.parentId &&
-            classroom.parentId.includes(defaultBuilding.id),
-        );
-        if (filteredClassrooms.length > 0) {
-          const random = Math.floor(Math.random() * filteredClassrooms.length);
-          setClassroomSearchValue(filteredClassrooms[random].title);
-        }
         setSetupInitialFilters(true);
       }
     }
-  }, [setupInitialFilters, resources]);
+  }, [setupInitialFilters, resources, loggedUser]);
 
   return (
     <PageContent>

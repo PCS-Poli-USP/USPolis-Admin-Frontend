@@ -18,6 +18,32 @@
   color: var(--chakra-colors-uspolis-blue);
 }
 
+.fc .fc-header-toolbar {
+  position: sticky;
+  top: 60px;
+  z-index: 50;
+  /* background: var(--chakra-colors-uspolis-white); */
+}
+
+.fc .fc-scrollgrid-section-header {
+  position: sticky;
+  top: calc(60px + 3rem); /* navbar + toolbar */
+  z-index: 40;
+  /* background: var(--chakra-colors-uspolis-white); */
+}
+
+.fc .fc-datagrid-header {
+  position: sticky;
+  top: calc(60px + 3rem);
+  z-index: 45;
+  /* background: var(--chakra-colors-uspolis-white); */
+}
+
+/*
+.fc .fc-timeline-header {
+  /* background: var(--chakra-colors-uspolis-white); */
+/*}
+
 /* corpo do popover */
 .fc-popover-body,
 .fc-popover-header {
