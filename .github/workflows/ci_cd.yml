@@ -24,6 +24,16 @@ jobs:
 
       - name: Build project
         run: yarn build
+        
+      - name: Clean old build
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSCODE }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            rm -rf /diskb/home/frontend/*
 
       - name: Deploy build to server
         uses: appleboy/scp-action@v0.1.7
@@ -33,7 +43,7 @@ jobs:
           password: ${{ secrets.SSH_PASSCODE }}
           port: ${{ secrets.SSH_PORT }}
           source: 'build/*'
-          target: '/diskb/home/frontend/build'
+          target: '/diskb/home/frontend'
 
       - name: Restart frontend service
         uses: appleboy/ssh-action@v0.1.10
