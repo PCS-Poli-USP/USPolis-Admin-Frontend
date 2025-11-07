@@ -4,6 +4,7 @@ import YearInput from './YearInput';
 
 interface PageHeaderWithFilterProps {
   title: string;
+  tooltip?: string;
   start: string;
   end: string;
   setStart: (start: string) => void;
@@ -24,6 +25,7 @@ function PageHeaderWithFilter({
   setEnd,
   setYear = () => {},
   onConfirm,
+  tooltip = `Ver ${title} anteriores`,
   type = 'dateRange',
   onConfirmYear = undefined,
 }: PageHeaderWithFilterProps) {
@@ -41,7 +43,7 @@ function PageHeaderWithFilter({
       <Flex gap={'5px'} align={'center'}>
         {type === 'dateRange' && (
           <DateRangeInput
-            title={title}
+            title={tooltip}
             start={start}
             end={end}
             setStart={setStart}

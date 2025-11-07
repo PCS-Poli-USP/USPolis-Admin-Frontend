@@ -234,21 +234,28 @@ function ReservationModal(props: ReservationModalProps) {
   async function handleReservationSaveClick() {
     const data = getReservationData();
     if (props.isUpdate && props.selectedReservation) {
-      if (data.type === ReservationType.EXAM) {
-        await updateExam(props.selectedReservation.id, data as UpdateExam);
+      if (
+        data.type === ReservationType.EXAM &&
+        props.selectedReservation.exam
+      ) {
+        await updateExam(props.selectedReservation.exam.id, data as UpdateExam);
       }
-      if (data.type === ReservationType.MEETING) {
+      if (
+        data.type === ReservationType.MEETING &&
+        props.selectedReservation.meeting
+      ) {
         await updateMeeting(
-          props.selectedReservation.id,
+          props.selectedReservation.meeting.id,
           data as UpdateMeeting,
         );
       }
-      if (data.type === ReservationType.EVENT) {
-        await updateEvent(props.selectedReservation.id, data as UpdateEvent);
-      } else {
-        await updateReservation(
-          props.selectedReservation.id,
-          data as UpdateReservation,
+      if (
+        data.type === ReservationType.EVENT &&
+        props.selectedReservation.event
+      ) {
+        await updateEvent(
+          props.selectedReservation.event.id,
+          data as UpdateEvent,
         );
       }
     }
@@ -298,6 +305,7 @@ function ReservationModal(props: ReservationModalProps) {
       const meetingData = props.selectedReservation.meeting;
 
       firstForm.reset({
+        is_solicitation: props.isSolicitation,
         title: props.selectedReservation.title,
         type: props.selectedReservation.type,
         reason: props.selectedReservation.reason,
@@ -310,6 +318,7 @@ function ReservationModal(props: ReservationModalProps) {
         event_type: eventData ? eventData.type : undefined,
       });
       secondForm.reset({
+        is_solicitation: props.isSolicitation,
         building_id: props.selectedReservation.building_id,
         classroom_id: props.selectedReservation.classroom_id,
         start_time: props.selectedReservation.schedule.start_time,

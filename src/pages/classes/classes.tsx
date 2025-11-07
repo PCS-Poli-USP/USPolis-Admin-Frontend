@@ -333,6 +333,7 @@ function Classes() {
                 justifyContent={'flex-start'}
                 onClick={handleRegisterClick}
                 leftIcon={<LuHand />}
+                _hover={{ textColor: 'uspolis.white' }}
               >
                 Manual
               </MenuItem>
@@ -343,6 +344,7 @@ function Classes() {
                 justifyContent={'flex-start'}
                 leftIcon={<LuTimer />}
                 onClick={onOpenCrawlerJupiterModal}
+                _hover={{ textColor: 'uspolis.white' }}
               >
                 Júpiter/Janus
               </MenuItem>
@@ -356,6 +358,7 @@ function Classes() {
                 justifyContent={'flex-start'}
                 onClick={onOpenJupiterUpdateModal}
                 leftIcon={<LuTimer />}
+                _hover={{ textColor: 'uspolis.white' }}
               >
                 Júpiter/Janus
               </MenuItem>
@@ -369,11 +372,12 @@ function Classes() {
                 bgColor={'uspolis.white'}
                 onClick={handleDeleteSelectedClassesClick}
                 leftIcon={<IoTrashBinOutline />}
+                _hover={{ textColor: 'uspolis.white' }}
               >
                 Selecionados
               </MenuItem>
             </MenuGroup>
-            {/* <MenuDivider />
+            <MenuDivider />
             <MenuGroup title='Alocações' fontSize={'lg'} gap={'5px'}>
               <MenuDivider />
               <MenuItem
@@ -384,10 +388,11 @@ function Classes() {
                   onOpenAllocationReuseModal();
                 }}
                 leftIcon={<LuDownload />}
+                _hover={{ textColor: 'uspolis.white' }}
               >
                 Reaproveitar
               </MenuItem>
-            </MenuGroup> */}
+            </MenuGroup>
           </MenuList>
         </Menu>
       </Flex>

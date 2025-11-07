@@ -111,7 +111,7 @@ function DateRangeInput({
   return (
     <Popover isOpen={isOpen} onClose={onClose} placement='right'>
       <PopoverTrigger>
-        <Tooltip label={`Ver ${title} anteriores`} placement='top'>
+        <Tooltip label={title} placement='top'>
           <Flex
             gap={'10px'}
             align={'center'}
