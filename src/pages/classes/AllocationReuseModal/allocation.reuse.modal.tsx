@@ -77,9 +77,6 @@ function AllocationReuseModal({
     );
   });
 
-  console.log('SubMap: ', map);
-  console.log('Alloc', allocationMap);
-
   const steps = [
     {
       title: 'Primeiro',

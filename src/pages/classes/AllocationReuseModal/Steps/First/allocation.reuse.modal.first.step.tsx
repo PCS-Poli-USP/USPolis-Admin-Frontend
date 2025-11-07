@@ -29,8 +29,6 @@ function AllocationReuseModalFirstStep({
     Option[]
   >([]);
 
-  console.log(map);
-
   useEffect(() => {
     const subjectIds = Array.from(map.keys());
     const newSelectedSubjects = subjects
