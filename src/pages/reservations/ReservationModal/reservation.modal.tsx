@@ -91,7 +91,7 @@ function ReservationModal(props: ReservationModalProps) {
     false,
   ]);
 
-  const { loading, updateReservation } = useReservations(false);
+  const { loading } = useReservations(false);
   const { loading: loadingSolicitations, createSolicitation } =
     useSolicitations(false);
   const { createExam, updateExam } = useExams();

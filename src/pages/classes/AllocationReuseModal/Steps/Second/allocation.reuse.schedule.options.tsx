@@ -2,17 +2,16 @@ import { Checkbox, Flex } from '@chakra-ui/react';
 import { Collapsable } from '../../../../../components/common/Collapsable';
 import { AllocationScheduleOptions } from '../../../../../models/http/responses/allocation.response.models';
 import { getScheduleWithTimeString } from '../../../../../utils/schedules/schedule.formatter';
+import { ScheduleAllocationData } from '../../allocation.reuse.modal';
 
 interface AllocationReuseScheduleOptionsProps {
   data: AllocationScheduleOptions;
-  allocationMap: Map<number, number[]>;
-  setAllocationMap: (map: Map<number, number[]>) => void;
+  allocationMap: Map<number, ScheduleAllocationData>;
+  setAllocationMap: (map: Map<number, ScheduleAllocationData>) => void;
 }
 
 function AllocationReuseScheduleOptions({
   data,
-  allocationMap,
-  setAllocationMap,
 }: AllocationReuseScheduleOptionsProps) {
   const schedules = data.options.filter((option) => !!option.classroom);
   const target = data.schedule_target;

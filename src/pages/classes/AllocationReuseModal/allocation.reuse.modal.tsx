@@ -38,6 +38,7 @@ import { SubjectResponse } from '../../../models/http/responses/subject.response
 import { ClassResponse } from '../../../models/http/responses/class.response.models';
 import AllocationReuseModalSecondStep from './Steps/Second/allocation.reuse.second.step';
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
+import AllocationReuseModalThirdStep from './Steps/Third/allocation.reuse.modal.third.step';
 
 interface AllocationReuseModalProps extends ModalProps {
   data?: AllocationReuseResponse;
@@ -46,13 +47,17 @@ interface AllocationReuseModalProps extends ModalProps {
   buildings: BuildingResponse[];
 }
 
+export interface ScheduleAllocationData {
+  classroom_ids: number[];
+  classrooms: string[];
+}
+
 export interface SubjectWithClasses {
   subject_id: number;
   class_ids: number[];
 }
 
 function AllocationReuseModal({
-  data,
   isOpen,
   onClose,
   subjects,
@@ -60,9 +65,10 @@ function AllocationReuseModal({
   buildings,
 }: AllocationReuseModalProps) {
   const [map, setMap] = useState<Map<number, SubjectWithClasses>>(new Map());
-  const [allocationMap, setAllocationMap] = useState<Map<number, number[]>>(
-    new Map(),
-  );
+  const [allocationMap, setAllocationMap] = useState<
+    Map<number, ScheduleAllocationData>
+  >(new Map());
+
   const classesBySubject = new Map<number, ClassResponse[]>();
   subjects.forEach((subject) => {
     classesBySubject.set(
@@ -97,6 +103,21 @@ function AllocationReuseModal({
           map={map}
           allocationMap={allocationMap}
           setAllocationMap={setAllocationMap}
+        />
+      ),
+    },
+    {
+      title: 'Terceiro',
+      description: 'Revisão',
+      content: (
+        <AllocationReuseModalThirdStep
+          subjects={subjects}
+          classesBySubject={classesBySubject}
+          selectedClasses={
+            new Set(Array.from(map.values()).flatMap((val) => val.class_ids))
+          }
+          selectedSubjects={new Set(map.keys())}
+          allocationMap={allocationMap}
         />
       ),
     },

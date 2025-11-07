@@ -75,10 +75,10 @@ function AllocationReuseModalThirdStep({
                       borderWidth={'1px'}
                       borderRadius={'md'}
                       p={'10px'}
-                      bgColor={'gray.100'}
+                      bgColor={'uspolis.gray'}
                     >
                       <Text fontWeight={'bold'}>
-                        {subject.name} - Turma {classCode} - {' '}
+                        {subject.name} - Turma {classCode} -{' '}
                         <Text as={'span'} fontSize={'sm'} align={'center'}>
                           ({moment(cls.start_date).format('DD/MM/YYYY')} até{' '}
                           {moment(cls.end_date).format('DD/MM/YYYY')})

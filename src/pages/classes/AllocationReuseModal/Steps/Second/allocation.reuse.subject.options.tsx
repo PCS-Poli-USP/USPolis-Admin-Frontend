@@ -2,11 +2,12 @@ import { Alert, AlertIcon, Stack, StackDivider } from '@chakra-ui/react';
 import { Collapsable } from '../../../../../components/common/Collapsable';
 import { AllocationReuseTargetOptions } from '../../../../../models/http/responses/allocation.response.models';
 import AllocationReuseClassOptions from './allocation.reuse.class.options';
+import { ScheduleAllocationData } from '../../allocation.reuse.modal';
 
 interface AllocationReuseSubjectOptionsProps {
   data: AllocationReuseTargetOptions;
-  allocationMap: Map<number, number[]>;
-  setAllocationMap: (map: Map<number, number[]>) => void;
+  allocationMap: Map<number, ScheduleAllocationData>;
+  setAllocationMap: (map: Map<number, ScheduleAllocationData>) => void;
 }
 
 function AllocationReuseSubjectOptions({

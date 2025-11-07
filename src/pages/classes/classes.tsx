@@ -101,7 +101,7 @@ function Classes() {
     CrawlerType.JUPITER,
   );
 
-  const { subjects, getSubjects } = useSubjects();
+  const { loading: loadingSubjects, subjects, getSubjects } = useSubjects();
   const { calendars, loading: loadingCalendars } = useCalendars();
   const { loading, classes, getClasses, deleteClass, deleteManyClass } =
     useClasses();
@@ -389,6 +389,7 @@ function Classes() {
                 }}
                 leftIcon={<LuDownload />}
                 _hover={{ textColor: 'uspolis.white' }}
+                isLoading={loading || loadingSubjects || context.loading}
               >
                 Reaproveitar
               </MenuItem>

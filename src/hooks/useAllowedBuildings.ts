@@ -21,7 +21,8 @@ const useAllowedBuildings = () => {
             setAllowedBuildings(response.data.sort(sortBuildingsResponse));
           });
         } else {
-          setAllowedBuildings(loggedUser.buildings || []);
+          const buildings = loggedUser.buildings || [];
+          setAllowedBuildings(buildings.sort(sortBuildingsResponse));
         }
       }
       setLoading(false);
