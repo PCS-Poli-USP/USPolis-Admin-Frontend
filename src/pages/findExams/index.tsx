@@ -16,6 +16,9 @@ import useExams from '../../hooks/exams/useExams';
 import ExamClassAccordion from './ExamClassAccordion';
 import { classNumberFromClassCode } from '../../utils/classes/classes.formatter';
 import TooltipSelect, { Option } from '../../components/common/TooltipSelect';
+import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
+import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
+import HelpPopover from '../../components/common/HelpPopover';
 
 type OptionType = {
   value: number;
@@ -32,6 +35,8 @@ function FindExams() {
   const [subjectOption, setSubjectOption] = useState<Option>();
   const [classOption, setClassOption] = useState<Option>();
 
+  const pageHeaderProps = usePageHeaderWithFilter();
+
   useEffect(() => {
     getAllSubjects();
     getExams();
@@ -40,9 +45,37 @@ function FindExams() {
 
   return (
     <PageContent>
-      <Text fontSize='4xl' mb={4}>
-        Encontre suas provas
-      </Text>
+      <Flex
+        direction={'row'}
+        justify={'flex-start'}
+        align={'center'}
+        gap={'10px'}
+      >
+        <PageHeaderWithFilter
+          {...pageHeaderProps}
+          title='Encontre suas provas'
+          tooltip='Buscar provas em outro período'
+          onConfirm={(start, end) => {
+            getExams(start, end);
+          }}
+        />
+        <Box h={'full'} mb={'10px'}>
+          <HelpPopover title='Não encontrou sua prova?' size='md'>
+            <Flex direction={'column'} gap={'5px'} textAlign={'justify'}>
+              <Text>
+                A página mostra apenas provas que ainda <b>não</b> passaram.
+              </Text>
+              <Text>
+                Se quiser encontrar uma prova que já aconteceu, utilize o filtro
+                ao lado.
+              </Text>
+              <Text>
+                Escolha um período <b>grande</b> o suficiente.
+              </Text>
+            </Flex>
+          </HelpPopover>
+        </Box>
+      </Flex>
       <Flex direction={'column'} gap={'20px'}>
         <Flex direction={isMobile ? 'column' : 'row'} gap={'20px'}>
           <Box w={isMobile ? '100%' : '400px'}>
