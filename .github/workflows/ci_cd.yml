@@ -24,6 +24,11 @@ jobs:
 
       - name: Build project
         run: yarn build
+        env:
+          VITE_USPOLIS_API_ENDPOINT: ${{ secrets.VITE_USPOLIS_API_ENDPOINT }}
+          VITE_REDIRECT_URI: ${{ secrets.VITE_REDIRECT_URI }}
+          VITE_GOOGLE_AUTH_CLIENT_ID: ${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}
+          VITE_ENVIROMENT: ${{ secrets.VITE_ENVIROMENT }}
         
       - name: Clean old build
         uses: appleboy/ssh-action@v1.0.3
