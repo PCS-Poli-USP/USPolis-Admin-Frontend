@@ -7,18 +7,21 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { BuildingResponse } from '../../../../../models/http/responses/building.response.models';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AllocationReuseResponse } from '../../../../../models/http/responses/allocation.response.models';
 import useAllocationsService from '../../../../../hooks/API/services/useAllocationService';
-import { SubjectWithClasses } from '../../allocation.reuse.modal';
+import {
+  ScheduleAllocationData,
+  SubjectWithClasses,
+} from '../../allocation.reuse.modal';
 import AllocationReuseSubjectOptions from './allocation.reuse.subject.options';
 import TooltipSelect from '../../../../../components/common/TooltipSelect';
 
 interface AllocationReuseModalSecondStepProps {
   buildings: BuildingResponse[];
   map: Map<number, SubjectWithClasses>;
-  allocationMap: Map<number, number[]>;
-  setAllocationMap: (map: Map<number, number[]>) => void;
+  allocationMap: Map<number, ScheduleAllocationData>;
+  setAllocationMap: (map: Map<number, ScheduleAllocationData>) => void;
 }
 
 function AllocationReuseModalSecondStep({
@@ -36,6 +39,10 @@ function AllocationReuseModalSecondStep({
   const { getAllocationOptions } = useAllocationsService();
 
   const [allocationYear, setAllocationYear] = useState<number>(currentYear - 1);
+  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
+  const [allocationReuseResponse, setAllocationReuseResponse] =
+    useState<AllocationReuseResponse>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   async function handleBuildingChange() {
     if (selectedBuilding) {
@@ -59,6 +66,7 @@ function AllocationReuseModalSecondStep({
         });
     }
   }
+
   useEffect(() => {
     if (selectedBuilding) {
       handleBuildingChange();
@@ -124,7 +132,7 @@ function AllocationReuseModalSecondStep({
             }
             if (!option) {
               setSelectedBuilding(undefined);
-              setData(undefined);
+              setAllocationReuseResponse(undefined);
             }
           }}
         />

@@ -48,7 +48,6 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
               occupiedDays: props.occupiedDays,
               selectIcon: props.selectIcon,
               highlightIcon: props.highlightIcon,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } as any,
           }}
           onChange={(newValue: Moment) => {
