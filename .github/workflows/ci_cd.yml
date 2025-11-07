@@ -33,7 +33,7 @@ jobs:
           password: ${{ secrets.SSH_PASSCODE }}
           port: ${{ secrets.SSH_PORT }}
           source: 'build/*'
-          target: '/diskb/home/frontend'
+          target: '/diskb/home/frontend/build'
 
       - name: Restart frontend service
         uses: appleboy/ssh-action@v0.1.10
