@@ -49,7 +49,7 @@ import MenuContextProvider from './context/MenuContext';
 const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <ThemeProvider theme={muiTheme}>
+  <ThemeProvider theme={muiTheme} defaultMode='light'>
     <ChakraProvider theme={chakraTheme}>
       <ColorModeScript initialColorMode={chakraTheme.config.initialColorMode} />
       <GoogleOAuthProvider clientId={clientId!}>
