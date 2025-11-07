@@ -28,7 +28,7 @@ function AllocationReuseModalFirstStep({
   map,
   setMap,
 }: AllocationReuseModalFirstStepProps) {
-  const [selectedSubjects, setSelesctedSubjects] = useState<Option[]>([]);
+  const [selectedSubjects, setSelectedSubjects] = useState<Option[]>([]);
   const [selectedClasses, setSelectedClasses] = useState<Set<number>>(
     new Set(),
   );
@@ -41,7 +41,7 @@ function AllocationReuseModalFirstStep({
         label: `${subject.code} - ${subject.name}`,
         value: subject.id,
       }));
-    setSelesctedSubjects(newSelectedSubjects);
+    setSelectedSubjects(newSelectedSubjects);
 
     const classesIds: number[] = [];
     for (const entry of map.values()) {
@@ -86,17 +86,16 @@ function AllocationReuseModalFirstStep({
           <TooltipSelect
             placeholder={'Selecione as disciplinas'}
             isMulti={true}
-            value={selectedSubjectsOptions}
+            value={selectedSubjects}
             options={subjects.map((subject) => ({
               label: `${subject.code} - ${subject.name}`,
               value: subject.id,
             }))}
             onChange={(value) => {
-              const removedSubjects = selectedSubjectsOptions.filter(
+              const removedSubjects = selectedSubjects.filter(
                 (s) => !value.some((v) => v.value === s.value),
               );
-              setSelectedSubjectsOptions(value as Option[]);
-              setSelectedSubjects(new Set(value.map((v) => v.value as number)));
+              setSelectedSubjects(value as Option[]);
               const newMap = new Map(map);
               value.forEach((subject) => {
                 if (!newMap.has(subject.value as number)) {
@@ -134,8 +133,7 @@ function AllocationReuseModalFirstStep({
               label: `${subject.code} - ${subject.name}`,
               value: subject.id,
             }));
-            setSelectedSubjectsOptions(options);
-            setSelectedSubjects(new Set(subjects.map((s) => s.id)));
+            setSelectedSubjects(options);
             const newMap = new Map<number, SubjectWithClasses>();
             subjects.forEach((subject) => {
               const classes = classesBySubject.get(subject.id);
@@ -152,7 +150,7 @@ function AllocationReuseModalFirstStep({
         </Button>
       </Flex>
       <Box>
-        {selectedSubjectsOptions.length > 0 && (
+        {selectedSubjects.length > 0 && (
           <Text mt={'10px'}>
             Escolha as turmas <b>atuais</b> das disciplinas (
             {selectedClasses.size} turmas selecionadas):
@@ -182,7 +180,12 @@ function AllocationReuseModalFirstStep({
                   iconSize={'25px'}
                   titleSize='sm'
                 >
-                  <Flex direction={'column'} gap={'5px'} mb={'10px'} ml={'20px'}>
+                  <Flex
+                    direction={'column'}
+                    gap={'5px'}
+                    mb={'10px'}
+                    ml={'20px'}
+                  >
                     <Flex direction={'row'} gap={'5px'} mb={'5px'} mt={'5px'}>
                       <Button
                         size={'sm'}
