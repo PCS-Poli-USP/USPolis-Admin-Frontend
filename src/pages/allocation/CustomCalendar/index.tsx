@@ -74,7 +74,9 @@ function CustomCalendar({
 
   // const calendarRef = useRef<FullCalendar>(null!);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
-  const [resourcesExpanded, setResourcesExpanded] = useState(hasBuildingFilter);
+  const [resourcesExpanded, setResourcesExpanded] = useState(
+    hasBuildingFilter || true,
+  );
   const [isGuideMode, setIsGuideMode] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -198,6 +200,7 @@ function CustomCalendar({
           resourceTimelinePlugin,
           rrulePlugin,
         ]}
+        stickyHeaderDates={true}
         selectable={true}
         editable={true}
         droppable={true}
