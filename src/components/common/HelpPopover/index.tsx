@@ -14,9 +14,10 @@ import { LuBadgeHelp } from 'react-icons/lu';
 interface HelpPopoverProps {
   title: string;
   children?: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg';
 }
 
-function HelpPopover({ title, children }: HelpPopoverProps) {
+function HelpPopover({ title, children, size = 'sm' }: HelpPopoverProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Popover
@@ -27,7 +28,7 @@ function HelpPopover({ title, children }: HelpPopoverProps) {
     >
       <PopoverTrigger>
         <IconButton
-          size='sm'
+          size={size}
           aria-label={'help-popover-button'}
           icon={<LuBadgeHelp />}
           variant={'ghost'}
