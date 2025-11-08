@@ -19,6 +19,7 @@ const override: ThemeOverride = {
       white: '#FFFFFF',
       black: '#262626',
       text: '#408080',
+      yellow: '#dcb709',
     },
   },
   semanticTokens: {
@@ -33,6 +34,7 @@ const override: ThemeOverride = {
       'uspolis.white': { default: '#FFFFFF', _dark: '#262626' },
       'uspolis.black': { default: '#262626', _dark: '#FFFFFF' },
       'uspolis.text': { default: '#408080', _dark: '#FFFFFF' },
+      'uspolis.yellow': { default: '#dcb709', _dark: '#f6d123' },
     },
   },
   components: {
