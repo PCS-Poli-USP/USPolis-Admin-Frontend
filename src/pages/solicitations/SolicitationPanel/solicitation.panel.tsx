@@ -466,8 +466,8 @@ function SolicitationPanel({
                         }
                         options={classrooms.map((val) => ({
                           label: val.conflicts
-                            ? `⚠️ ${val.name} (${val.conflicts} conflitos)`
-                            : val.name,
+                            ? `⚠️ ${val.name} [${val.capacity}] (${val.conflicts} conflitos)`
+                            : `${val.name} [${val.capacity}]`,
                           value: val.id,
                           tooltip: val.observation,
                         }))}
