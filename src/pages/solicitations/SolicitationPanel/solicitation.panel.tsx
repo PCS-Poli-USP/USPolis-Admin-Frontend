@@ -452,6 +452,7 @@ function SolicitationPanel({
                                   ? `⚠️ ${classroom.name} [${classroom.capacity}] (${classroom.conflicts} conflitos)`
                                   : `${classroom.name} [${classroom.capacity}]`,
                                 value: classroom.id,
+                                tooltip: classroom.observation,
                               }
                             : null
                         }
