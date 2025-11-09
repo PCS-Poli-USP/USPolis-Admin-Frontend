@@ -17,6 +17,7 @@ interface AllocationReuseModalFirstStepProps {
   classesBySubject: Map<number, ClassResponse[]>;
   map: Map<number, SubjectWithClasses>;
   setMap: (map: Map<number, SubjectWithClasses>) => void;
+  isValid: boolean;
 }
 
 function AllocationReuseModalFirstStep({
@@ -24,6 +25,7 @@ function AllocationReuseModalFirstStep({
   classesBySubject,
   map,
   setMap,
+  isValid,
 }: AllocationReuseModalFirstStepProps) {
   const [selectedSubjectsOptions, setSelectedSubjectsOptions] = useState<
     Option[]
@@ -80,6 +82,7 @@ function AllocationReuseModalFirstStep({
               label: `${subject.code} - ${subject.name}`,
               value: subject.id,
             }))}
+            hasError={!isValid && Array.from(map.keys()).length == 0}
             onChange={(value) => {
               const removedSubjects = selectedSubjectsOptions.filter(
                 (s) => !value.some((v) => v.value === s.value),
@@ -154,6 +157,9 @@ function AllocationReuseModalFirstStep({
                   title={`Escolher turmas [ ${classes.length} / ${allClasses ? allClasses.length : 0} ]`}
                   iconSize={'25px'}
                   titleSize='sm'
+                  titleColor={
+                    classes.length == 0 ? 'uspolis.red' : 'uspolis.text'
+                  }
                 >
                   <Flex
                     direction={'column'}
