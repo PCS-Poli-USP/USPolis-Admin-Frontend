@@ -20,3 +20,12 @@ export interface AllocationReuseInput {
   targets: AllocationReuseTarget[];
   strict: boolean;
 }
+
+export interface AllocationMapValue {
+  schedule_id: number;
+  classroom_ids: number[];
+}
+
+export interface AllocationMapInput {
+  allocation_map: AllocationMapValue[];
+}
