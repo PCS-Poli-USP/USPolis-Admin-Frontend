@@ -33,6 +33,7 @@ type TooltipSelectProps<IsMulti extends boolean> = SelectProps<
   GroupBase<Option>
 > & {
   ref?: React.Ref<SelectInstance<Option, IsMulti, GroupBase<Option>>>;
+  hasError?: boolean;
 };
 
 function TooltipSelect<IsMulti extends boolean = false>(
@@ -167,22 +168,48 @@ function TooltipSelect<IsMulti extends boolean = false>(
   const customStyles = props.styles;
 
   // merge: customStyles sobrescreve default apenas onde definido
-  const mergedStyles: StylesConfig<Option, IsMulti, GroupBase<Option>> = {
+  const mergedStyles = (
+    hasError: boolean | undefined,
+  ): StylesConfig<Option, IsMulti, GroupBase<Option>> => ({
     ...defaultStyles,
     ...customStyles,
     control: (base, state) => ({
       ...(defaultStyles.control ? defaultStyles.control(base, state) : {}),
+      ...(hasError
+        ? {
+            borderColor: hasError ? uspolis.red : base.borderColor,
+            '&:hover': {
+              borderColor: hasError ? uspolis.red : base.borderColor,
+            },
+          }
+        : {}),
       ...(customStyles?.control ? customStyles.control(base, state) : {}),
     }),
     menu: (base, state) => ({
       ...(defaultStyles.menu ? defaultStyles.menu(base, state) : {}),
+      ...(hasError
+        ? {
+            borderColor: hasError ? uspolis.red : base.borderColor,
+            '&:hover': {
+              borderColor: hasError ? uspolis.red : base.borderColor,
+            },
+          }
+        : {}),
       ...(customStyles?.menu ? customStyles.menu(base, state) : {}),
     }),
     option: (base, state) => ({
       ...(defaultStyles.option ? defaultStyles.option(base, state) : {}),
+      ...(hasError
+        ? {
+            borderColor: hasError ? uspolis.red : base.borderColor,
+            '&:hover': {
+              borderColor: hasError ? uspolis.red : base.borderColor,
+            },
+          }
+        : {}),
       ...(customStyles?.option ? customStyles.option(base, state) : {}),
     }),
-  };
+  });
 
   return (
     <Select
@@ -190,7 +217,7 @@ function TooltipSelect<IsMulti extends boolean = false>(
       components={{
         Option: CustomOption,
       }}
-      styles={mergedStyles}
+      styles={mergedStyles(props.hasError)}
     />
   );
 }

@@ -9,19 +9,32 @@ import {
 import { BuildingResponse } from '../../../../../models/http/responses/building.response.models';
 import { useEffect, useState } from 'react';
 import { AllocationReuseResponse } from '../../../../../models/http/responses/allocation.response.models';
-import useAllocationsService from '../../../../../hooks/API/services/useAllocationService';
 import {
   ScheduleAllocationData,
   SubjectWithClasses,
 } from '../../allocation.reuse.modal';
 import AllocationReuseSubjectOptions from './allocation.reuse.subject.options';
 import TooltipSelect from '../../../../../components/common/TooltipSelect';
+import { AllocationReuseInput } from '../../../../../models/http/requests/allocation.request.models';
+import { AxiosResponse } from 'axios';
 
 interface AllocationReuseModalSecondStepProps {
   buildings: BuildingResponse[];
   map: Map<number, SubjectWithClasses>;
   allocationMap: Map<number, ScheduleAllocationData>;
   setAllocationMap: (map: Map<number, ScheduleAllocationData>) => void;
+  getAllocationOptions: (
+    data: AllocationReuseInput,
+  ) => Promise<AxiosResponse<AllocationReuseResponse>>;
+  allocationReuseResponse: AllocationReuseResponse | undefined;
+  setAllocationReuseResponse: (
+    val: AllocationReuseResponse | undefined,
+  ) => void;
+  selectedBuilding: BuildingResponse | undefined;
+  setSelectedBuilding: (value: BuildingResponse | undefined) => void;
+  mustRefetch: boolean;
+  setMustRefetch: (value: boolean) => void;
+  isValid: boolean;
 }
 
 function AllocationReuseModalSecondStep({
@@ -29,6 +42,14 @@ function AllocationReuseModalSecondStep({
   map,
   allocationMap,
   setAllocationMap,
+  getAllocationOptions,
+  allocationReuseResponse,
+  setAllocationReuseResponse,
+  selectedBuilding,
+  setSelectedBuilding,
+  mustRefetch,
+  setMustRefetch,
+  isValid,
 }: AllocationReuseModalSecondStepProps) {
   const currentYear = new Date().getFullYear();
   const years: number[] = [];
@@ -36,16 +57,14 @@ function AllocationReuseModalSecondStep({
     years.push(i);
   }
 
-  const { getAllocationOptions } = useAllocationsService();
-
+  const validSchedules = Array.from(allocationMap.values()).filter(
+    (val) => val.classroom_ids.length > 0,
+  );
   const [allocationYear, setAllocationYear] = useState<number>(currentYear - 1);
-  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
-  const [allocationReuseResponse, setAllocationReuseResponse] =
-    useState<AllocationReuseResponse>();
   const [loading, setLoading] = useState<boolean>(false);
 
   async function handleBuildingChange() {
-    if (selectedBuilding) {
+    if (selectedBuilding && mustRefetch) {
       setLoading(true);
       const targets = Array.from(map.values()).map((subject) => ({
         subject_id: subject.subject_id,
@@ -77,7 +96,7 @@ function AllocationReuseModalSecondStep({
   }, [selectedBuilding]);
 
   useEffect(() => {
-    if (allocationReuseResponse) {
+    if (allocationReuseResponse && mustRefetch) {
       const newMap = new Map(allocationMap);
       const subjectOptions = allocationReuseResponse.target_options;
       subjectOptions.forEach((subject) => {
@@ -105,9 +124,10 @@ function AllocationReuseModalSecondStep({
         });
       });
       setAllocationMap(newMap);
+      setMustRefetch(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allocationReuseResponse]);
+  }, [allocationReuseResponse, mustRefetch]);
 
   return (
     <Flex direction={'column'} gap={'10px'} w={'100%'}>
@@ -121,6 +141,7 @@ function AllocationReuseModalSecondStep({
               ? { label: selectedBuilding.name, value: selectedBuilding.id }
               : undefined
           }
+          hasError={!isValid && !selectedBuilding}
           options={buildings.map((building) => ({
             label: building.name,
             value: building.id,
@@ -128,7 +149,10 @@ function AllocationReuseModalSecondStep({
           onChange={async (option) => {
             if (option) {
               const building = buildings.find((b) => b.id === option.value);
-              setSelectedBuilding(building);
+              if (building && building.id != selectedBuilding?.id) {
+                setMustRefetch(true);
+                setSelectedBuilding(building);
+              }
             }
             if (!option) {
               setSelectedBuilding(undefined);
@@ -157,11 +181,19 @@ function AllocationReuseModalSecondStep({
         Alocações encontradas para as turmas <b>atuais</b>:
       </Heading>
       {!selectedBuilding && (
-        <Alert status='warning'>
+        <Alert status='error'>
           <AlertIcon />
           Selecione um prédio para buscar alocações.
         </Alert>
       )}
+
+      {!isValid && validSchedules.length == 0 && (
+        <Alert status='error'>
+          <AlertIcon />
+          Selecione pelo menos uma sala para pelo menos uma agenda
+        </Alert>
+      )}
+
       <Skeleton
         isLoaded={!loading}
         w={'100%'}
@@ -182,16 +214,18 @@ function AllocationReuseModalSecondStep({
             </div>
           ))}
         {(!allocationReuseResponse ||
-          !allocationReuseResponse.target_options.length) && (
-          <Flex direction={'column'} alignItems={'center'} mt={'10px'}>
-            <Text fontWeight={'bold'} fontSize={'xl'}>
-              Nenhuma alocação encontrada.
-            </Text>
-            <Text fontSize={'md'}>
-              Verifique as turmas selecionadas ou o ano da alocação buscada.
-            </Text>
-          </Flex>
-        )}
+          !allocationReuseResponse.target_options.length) &&
+          isValid &&
+          selectedBuilding && (
+            <Flex direction={'column'} alignItems={'center'} mt={'10px'}>
+              <Text fontWeight={'bold'} fontSize={'xl'}>
+                Nenhuma alocação encontrada.
+              </Text>
+              <Text fontSize={'md'}>
+                Verifique as turmas selecionadas ou o ano da alocação buscada.
+              </Text>
+            </Flex>
+          )}
       </Skeleton>
     </Flex>
   );

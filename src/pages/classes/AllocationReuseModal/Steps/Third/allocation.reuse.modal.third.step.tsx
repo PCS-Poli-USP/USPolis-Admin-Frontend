@@ -1,4 +1,5 @@
-import { Flex, Heading, Text } from '@chakra-ui/react';
+import React from 'react';
+import { Alert, AlertIcon, Flex, Heading, Text } from '@chakra-ui/react';
 import { SubjectResponse } from '../../../../../models/http/responses/subject.response.models';
 import { ClassResponse } from '../../../../../models/http/responses/class.response.models';
 import { classNumberFromClassCode } from '../../../../../utils/classes/classes.formatter';
@@ -88,10 +89,12 @@ function AllocationReuseModalThirdStep({
                         const data = allocationData.at(index) || undefined;
                         if (data && data.classrooms.length > 0) {
                           return (
-                            <>
+                            <React.Fragment
+                              key={`Class-${clsIndex}-Classroom-${index}`}
+                            >
                               <Text>{getScheduleWithTimeString(schedule)}</Text>
                               <Text>Salas: {data.classrooms.join(', ')}</Text>
-                            </>
+                            </React.Fragment>
                           );
                         }
                         return <></>;
@@ -101,9 +104,23 @@ function AllocationReuseModalThirdStep({
                 }
                 return <></>;
               })}
+
+              {classesSelected.length == 0 && (
+                <Alert status='warning'>
+                  <AlertIcon />
+                  <Text>Nenhuma turma selecionada na etapa 2</Text>
+                </Alert>
+              )}
             </Flex>
           );
         })}
+
+        {subjectData.length == 0 && (
+          <Alert status='warning'>
+            <AlertIcon />
+            <Text>Nenhuma disciplina selecionada</Text>
+          </Alert>
+        )}
       </Flex>
     </Flex>
   );

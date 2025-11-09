@@ -48,7 +48,12 @@ export default function AppContextProvider({
     try {
       setLoading(true);
       const self = await selfService.getSelf();
-      setLoggedUser(self.data);
+      setLoggedUser({
+        ...self.data,
+        buildings: !!self.data.buildings
+          ? self.data.buildings.sort((a, b) => a.name.localeCompare(b.name))
+          : [],
+      });
       setIsAuthenticated(true);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {

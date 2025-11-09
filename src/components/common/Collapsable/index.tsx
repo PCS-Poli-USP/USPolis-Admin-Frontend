@@ -9,6 +9,7 @@ interface props {
   closeIcon?: React.ReactNode;
   iconSize?: number | string;
   titleSize?: string;
+  titleColor?: string;
   initiallyOpen?: boolean;
   border?: string;
   p?: string;
@@ -56,6 +57,7 @@ const Collapsable = ({
           textOverflow={'ellipsis'}
           overflow={'hidden'}
           fontWeight={fontWeight}
+          textColor={titleColor}
         >
           {title}
         </Heading>

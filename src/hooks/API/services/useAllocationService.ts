@@ -8,6 +8,7 @@ import { JSONResponse } from '../../../models/http/responses/common.response.mod
 import axios from '../../../services/api/axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 import {
+  AllocationMapInput,
   AllocationReuseInput,
   EventUpdate,
 } from '../../../models/http/requests/allocation.request.models';
@@ -41,7 +42,19 @@ const useAllocationsService = () => {
     return privateAxios.post(`${PREFIX}/reuse-options`, data);
   };
 
-  return { listEvents, listResources, update, getAllocationOptions };
+  const applyAllocationMap = (
+    data: AllocationMapInput,
+  ): Promise<AxiosResponse<JSONResponse>> => {
+    return privateAxios.post(`${PREFIX}/allocate-allocation-map`, data);
+  };
+
+  return {
+    listEvents,
+    listResources,
+    update,
+    getAllocationOptions,
+    applyAllocationMap,
+  };
 };
 
 export default useAllocationsService;

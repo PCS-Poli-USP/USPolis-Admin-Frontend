@@ -302,6 +302,7 @@ function Classes() {
         subjects={subjects}
         classes={originalClasses.current}
         buildings={context.loggedUser ? context.loggedUser.buildings || [] : []}
+        refetch={() => getClasses()}
       />
       <Flex align='center'>
         <PageHeaderWithFilter
