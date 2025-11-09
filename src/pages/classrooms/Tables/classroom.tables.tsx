@@ -39,6 +39,13 @@ export function getClassroomColumns(
       meta: { isSelectable: true, isCenter: true },
     },
     {
+      id: 'observation',
+      accessorKey: 'observation',
+      header: 'Observação',
+      maxSize: 100,
+      meta: { isCenter: true },
+    },
+    {
       id: 'floor',
       accessorKey: 'floor',
       header: 'Andar',
