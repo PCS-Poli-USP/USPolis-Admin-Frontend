@@ -8,7 +8,10 @@ import {
 import { FieldProps } from '../form.interface';
 import { useFormContext } from 'react-hook-form';
 
-interface InputProps extends FieldProps {}
+interface InputProps extends FieldProps {
+  maxSize?: number;
+  height?: string | number;
+}
 
 export function TextareaInput({
   label,
@@ -18,6 +21,9 @@ export function TextareaInput({
   mb,
   mr,
   ml,
+  maxSize,
+  height = undefined,
+  placeholder = '',
 }: InputProps) {
   const {
     register,
@@ -25,7 +31,7 @@ export function TextareaInput({
     watch,
   } = useFormContext();
 
-  const MAX_TEXT_LENGHT = 256;
+  const MAX_TEXT_LENGHT = !maxSize ? 256 : maxSize;
   const current: string = watch(name);
   const currentLenght = current ? current.length : 0;
 
@@ -36,7 +42,9 @@ export function TextareaInput({
         {...register(name)}
         resize='vertical'
         disabled={disabled}
-        maxLength={256}
+        maxLength={MAX_TEXT_LENGHT}
+        height={height}
+        placeholder={placeholder}
       />
       <Text>{`Caracteres restantes: ${MAX_TEXT_LENGHT - currentLenght}`}</Text>
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>
