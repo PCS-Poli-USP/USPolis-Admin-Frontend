@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { CloseIcon } from '@chakra-ui/icons';
-import { IconButton, useMediaQuery } from '@chakra-ui/react';
+import { IconButton, useDisclosure, useMediaQuery } from '@chakra-ui/react';
 import DrawerBody from './drawer.body';
 import { DrawerNavBar } from './drawer.navbar';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { FeatureTourGuideStepData } from '../../../context/FeatureGuideContext/steps';
 import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
 import { menuContext } from '../../../context/MenuContext';
+import ContactUsModal from '../ContactUsModal';
 
 const drawerWidth = 300;
 
@@ -73,6 +74,12 @@ export default function EmptyPage() {
   const { state, setState, triggerControl, pathBeforeGuide } =
     useFeatureGuideContext();
   const { isOpen, onOpen, onClose } = React.useContext(menuContext);
+  const {
+    isOpen: isOpenContactModal,
+    onClose: onCloseContactModal,
+    onOpen: onOpenContactModal,
+  } = useDisclosure();
+
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
@@ -190,6 +197,8 @@ export default function EmptyPage() {
           handleDrawerOpen={handleDrawerOpen}
           handleDrawerClose={handleDrawerClose}
           isMobile={isMobile}
+          onOpenContactModal={onOpenContactModal}
+          onCloseContactModal={onCloseContactModal}
         />
       </AppBar>
       <Drawer
@@ -266,6 +275,11 @@ export default function EmptyPage() {
           return;
         }}
       />
+      <ContactUsModal
+        isOpen={isOpenContactModal}
+        onClose={onCloseContactModal}
+      />
+      
       <Box width={isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`}>
         <Main open={isOpen} isMobile={isMobile}>
           <Outlet />

@@ -27,6 +27,7 @@ import { FeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { UsersValidator } from '../../../utils/users/users.validator';
 import UserImage from '../UserImage/user.image';
 import { useColorScheme } from '@mui/material';
+import { LuMessageCircleMore } from 'react-icons/lu';
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
@@ -50,12 +51,15 @@ interface DrawerNavBarProps {
   handleDrawerClose: () => void;
   open: boolean;
   isMobile: boolean;
+  onOpenContactModal: () => void;
+  onCloseContactModal: () => void;
 }
 
 export function DrawerNavBar({
   handleDrawerOpen,
   handleDrawerClose,
   open,
+  onOpenContactModal,
 }: DrawerNavBarProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { isAuthenticated, loggedUser, logout } = useContext(appContext);
@@ -110,6 +114,19 @@ export function DrawerNavBar({
         <Flex alignItems={'center'} gap={'10px'}>
           {isAuthenticated ? (
             <>
+              <Button
+                variant={'ghost'}
+                onClick={() => {
+                  onOpenContactModal();
+                }}
+                textColor={'white'}
+                textAlign={'center'}
+                alignContent={'center'}
+                rightIcon={<LuMessageCircleMore />}
+              >
+                {`${isMobile ? 'Contato' : 'Fale conosco'}`}
+              </Button>
+
               {validator.checkUserRestrictedPermission() && (
                 <Button
                   variant={'ghost'}
