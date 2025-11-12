@@ -16,7 +16,7 @@ export function ImageDropzone(props: ImageDropzoneProps) {
       },
       maxFiles: props.maxFiles,
       multiple: !!props.maxFiles,
-      maxSize: 5 * 1024 * 1024, // 5 MB
+      maxSize: 2 * 1024 * 1024, // 5 MB
     });
 
   return (

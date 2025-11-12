@@ -59,7 +59,7 @@ export enum BugType {
 export namespace BugType {
   const translations: { [key in BugType]: string } = {
     [BugType.FUNCTIONALITY]: 'Funcionalidade',
-    [BugType.PERFORMANCE]: 'Performance',
+    [BugType.PERFORMANCE]: 'Desempenho',
     [BugType.SECURITY]: 'Segurança',
     [BugType.CRASH_ERROR]: 'Erro inesperado',
     [BugType.UI]: 'Interface/Tela',
