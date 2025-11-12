@@ -5,5 +5,6 @@ export interface FeedbackResponse {
   user_id: number;
   user_email: string;
   user_name: string;
-  created_by: string;
+  user_picture_url?: string;
+  created_at: string;
 }

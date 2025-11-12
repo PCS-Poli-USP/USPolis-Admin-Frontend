@@ -5,9 +5,13 @@ import { appContext } from '../../../context/AppContext';
 
 interface UserImageProps {
   boxSize?: string;
+  url?: string;
 }
 
-export default function UserImage({ boxSize = '40px' }: UserImageProps) {
+export default function UserImage({
+  boxSize = '40px',
+  url = undefined,
+}: UserImageProps) {
   const { loading, loggedUser } = useContext(appContext);
   const numBoxSize = Number(boxSize.replace('px', ''));
   return (
@@ -23,7 +27,7 @@ export default function UserImage({ boxSize = '40px' }: UserImageProps) {
           <Image
             boxSize={boxSize}
             borderRadius={'full'}
-            src={loggedUser.user_info?.picture}
+            src={url || loggedUser.user_info?.picture}
             border={'1px black solid'}
             onLoad={() => {
               console.log('Image loaded successfully');

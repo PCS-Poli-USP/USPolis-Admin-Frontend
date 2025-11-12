@@ -5,21 +5,23 @@ import useFeedbackService from '../API/services/useFeedbackService';
 import { FeedbackResponse } from '../../models/http/responses/feedback.response.models';
 import FeedbackErrorParser from './feedbackErrorParser';
 import { CreateFeedback } from '../../models/http/requests/feedback.request.models';
+import { usePaginatedResponse } from '../API/usePaginatedResponse';
 
 const useFeedbacks = () => {
   const service = useFeedbackService();
-  const [feedbacks, setFeedbacks] = useState<Array<FeedbackResponse>>([]);
+  const { pageResponse, setPageResponse } =
+    usePaginatedResponse<FeedbackResponse>();
   const [loading, setLoading] = useState(false);
 
   const errorParser = new FeedbackErrorParser();
   const showToast = useCustomToast();
 
-  const getFeedbacks = useCallback(async () => {
+  const getFeedbacks = useCallback(async (page?: number, pageSize?: number) => {
     setLoading(true);
     await service
-      .getAll()
+      .getAllPaginated(page, pageSize)
       .then((response) => {
-        setFeedbacks(response.data);
+        setPageResponse(response.data);
       })
       .catch((error) => {
         showToast('Erro', errorParser.parseGetError(error), 'error');
@@ -46,7 +48,7 @@ const useFeedbacks = () => {
   }, []);
 
   return {
-    feedbacks,
+    pageResponse,
     loading,
     getFeedbacks,
     createFeedback,

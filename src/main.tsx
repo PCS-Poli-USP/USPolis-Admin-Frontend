@@ -46,6 +46,7 @@ import Users from './pages/users/users';
 import FindExams from './pages/findExams';
 import MenuContextProvider from './context/MenuContext';
 import Reports from './pages/reports';
+import Feedbacks from './pages/feedbacks';
 
 const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 
@@ -126,6 +127,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                               <Route path='groups' element={<Groups />} />
                               <Route path='buildings' element={<Buildings />} />
                               <Route path='reports' element={<Reports />} />
+                              <Route path='feedbacks' element={<Feedbacks />} />
                               <Route
                                 path='institutional-events'
                                 element={<InstitutionalEvents />}

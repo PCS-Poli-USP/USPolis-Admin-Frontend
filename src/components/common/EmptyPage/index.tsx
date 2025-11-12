@@ -220,7 +220,7 @@ export default function EmptyPage() {
             size={'md'}
             icon={<CloseIcon />}
             variant={'ghost'}
-            textColor={'black'}
+            textColor={'uspolis.black'}
             aria-label={'open-menu'}
             onClick={() => handleDrawerClose()}
           />
@@ -279,7 +279,7 @@ export default function EmptyPage() {
         isOpen={isOpenContactModal}
         onClose={onCloseContactModal}
       />
-      
+
       <Box width={isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`}>
         <Main open={isOpen} isMobile={isMobile}>
           <Outlet />
