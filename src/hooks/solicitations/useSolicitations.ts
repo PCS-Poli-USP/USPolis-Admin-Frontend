@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import useCustomToast from '../useCustomToast';
 import {
   ApproveSolicitation,
@@ -91,7 +92,7 @@ const useSolicitations = (initialFetch = true) => {
         })
         .catch((error) => {
           console.log(error);
-          showToast('Erro', `Erro ao criar solicitação: ${error}`, 'error');
+          showToast('Erro', parser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
@@ -110,7 +111,7 @@ const useSolicitations = (initialFetch = true) => {
           getPendingBuildingSolicitations();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao aprovar a solicitação: ${error}`, 'error');
+          showToast('Erro', parser.parseApproveError(error), 'error');
           console.log(error);
         })
         .finally(() => {
@@ -130,7 +131,7 @@ const useSolicitations = (initialFetch = true) => {
           getPendingBuildingSolicitations();
         })
         .catch((error) => {
-          showToast('Erro!', `Erro ao negar solicitação: ${error}`, 'error');
+          showToast('Erro!', parser.parseDenyError(error), 'error');
           console.log(error);
         })
         .finally(() => {
@@ -157,13 +158,11 @@ const useSolicitations = (initialFetch = true) => {
           setLoading(false);
         });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getSolicitations, showToast, service],
   );
 
   useEffect(() => {
     if (initialFetch) getSolicitations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

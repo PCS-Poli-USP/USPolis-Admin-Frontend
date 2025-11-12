@@ -121,9 +121,9 @@ function Allocation() {
   const {
     loading: loadingSubjects,
     subjects,
-    getAllSubjects,
+    getAllSubjectsActives,
   } = useSubjects(false);
-  const { classes, loading: loadingClasses, getClasses } = useClasses(false);
+  const { classes, loading: loadingClasses, getAllClasses } = useClasses(false);
   const {
     loading: loadingClassrooms,
     classrooms,
@@ -307,9 +307,9 @@ function Allocation() {
   useEffect(() => {
     if (loggedUser) {
       getAllBuildings();
-      getAllSubjects();
+      getAllSubjectsActives();
       getAllClassrooms();
-      getClasses();
+      getAllClasses();
       if (loggedUser.is_admin || loggedUser.buildings) {
         getPendingBuildingSolicitations();
       }
