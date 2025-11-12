@@ -10,4 +10,14 @@ export class SolicitationErrorParser extends ErrorParser {
     const detail = this.getDetailFromError(error);
     return `Erro ao cancelar ${this.model_name}: ${detail}`;
   }
+
+  parseDenyError(error: any) {
+    const detail = this.getDetailFromError(error);
+    return `Erro ao negar ${this.model_name}: ${detail}`;
+  }
+
+  parseApproveError(error: any) {
+    const detail = this.getDetailFromError(error);
+    return `Erro ao aprovar ${this.model_name}: ${detail}`;
+  }
 }

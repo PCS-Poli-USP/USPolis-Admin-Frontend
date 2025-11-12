@@ -19,6 +19,19 @@ const useSubjectsService = () => {
     return axios.get(PREFIX);
   };
 
+  const getActive = (
+    start?: string,
+    end?: string,
+  ): Promise<AxiosResponse<Array<SubjectResponse>>> => {
+    if (start && end) {
+      const params = new URLSearchParams();
+      params.append('start', start);
+      params.append('end', end);
+      return axios.get(`${PREFIX}/actives`, { params });
+    }
+    return axios.get(`${PREFIX}/actives`);
+  };
+
   const getMine = (): Promise<AxiosResponse<Array<SubjectResponse>>> => {
     return axios.get(`/users/my-subjects`);
   };
@@ -55,7 +68,16 @@ const useSubjectsService = () => {
     return axios.patch(`${PREFIX}/crawl`, data);
   };
 
-  return { get, getMine, create, deleteById, update, crawl, updateCrawl };
+  return {
+    get,
+    getActive,
+    getMine,
+    create,
+    deleteById,
+    update,
+    crawl,
+    updateCrawl,
+  };
 };
 
 export default useSubjectsService;
