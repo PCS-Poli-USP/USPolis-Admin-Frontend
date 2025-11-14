@@ -17,6 +17,8 @@ interface InputProps extends FieldProps {
   max?: string | number | undefined;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   icon?: React.ReactNode;
+  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 export function Input({
@@ -26,7 +28,6 @@ export function Input({
   disabled = false,
   hidden = false,
   placeholder = undefined,
-  value = undefined,
   min = undefined,
   max = undefined,
   w = undefined,
@@ -36,6 +37,8 @@ export function Input({
   ml = undefined,
   onChange = undefined,
   icon = undefined,
+  onFocus = undefined,
+  onBlur = undefined,
 }: InputProps) {
   const {
     control,
@@ -77,6 +80,8 @@ export function Input({
                 if (onChange) onChange(event);
                 field.onChange(event.target.value);
               }}
+              onFocus={onFocus}
+              onBlur={onBlur}
             />
           </InputGroup>
         )}

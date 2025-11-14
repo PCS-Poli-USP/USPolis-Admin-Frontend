@@ -11,6 +11,8 @@ import { useFormContext } from 'react-hook-form';
 interface InputProps extends FieldProps {
   maxSize?: number;
   height?: string | number;
+  onFocus?: (event: React.FocusEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLTextAreaElement>) => void;
 }
 
 export function TextareaInput({
@@ -24,6 +26,8 @@ export function TextareaInput({
   maxSize,
   height = undefined,
   placeholder = '',
+  onFocus = undefined,
+  onBlur = undefined,
 }: InputProps) {
   const {
     register,
@@ -45,6 +49,8 @@ export function TextareaInput({
         maxLength={MAX_TEXT_LENGHT}
         height={height}
         placeholder={placeholder}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
       <Text>{`Caracteres restantes: ${MAX_TEXT_LENGHT - currentLenght}`}</Text>
       <FormErrorMessage>{errors[name]?.message?.toString()}</FormErrorMessage>

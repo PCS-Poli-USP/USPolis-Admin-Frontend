@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Box,
   HStack,
@@ -66,7 +67,7 @@ export function RadioButton(props: RadioButtonProps) {
   const group = getRootProps();
 
   return (
-    <>
+    <React.Fragment>
       {props.wrap ? (
         <Wrap {...group} flexWrap={props.wrap ? 'wrap' : 'nowrap'}>
           {props.options.map((opt, i) => {
@@ -100,6 +101,6 @@ export function RadioButton(props: RadioButtonProps) {
           })}
         </HStack>
       )}
-    </>
+    </React.Fragment>
   );
 }

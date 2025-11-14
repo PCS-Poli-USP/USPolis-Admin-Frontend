@@ -8,6 +8,8 @@ interface SelectProps extends FieldProps {
   options: Option[];
   onChange?: (value: Option | undefined) => void;
   validator?: (value: string | number) => boolean;
+  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 export function SelectInput({
@@ -25,6 +27,8 @@ export function SelectInput({
   w = undefined,
   validator = undefined,
   onChange = undefined,
+  onFocus = undefined,
+  onBlur = undefined,
 }: SelectProps) {
   const {
     control,
@@ -74,6 +78,8 @@ export function SelectInput({
             isMulti={false}
             isClearable={true}
             closeMenuOnSelect={true}
+            onFocus={onFocus}
+            onBlur={onBlur}
             onChange={(option: Option | null) => {
               if (onChange) onChange(option ? option : undefined);
               setValue(name, option ? option.value : '');
