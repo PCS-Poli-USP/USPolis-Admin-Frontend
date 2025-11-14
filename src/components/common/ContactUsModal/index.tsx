@@ -11,6 +11,7 @@ import {
   SlideFade,
   Text,
   useDisclosure,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { ModalProps } from '../../../models/interfaces';
 import { useState } from 'react';
@@ -54,6 +55,7 @@ function ContactUsModal({ isOpen, onClose }: ContactUsModalProps) {
   const { createReport } = useBugReports();
   const [selectedView, setSelectedVIew] = useState<ViewType>();
   const [files, setFiles] = useState<File[]>([]);
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
 
   const feedbackForm = useForm<FeedbackForm>({
     defaultValues: defaultValues,
@@ -101,7 +103,12 @@ function ContactUsModal({ isOpen, onClose }: ContactUsModalProps) {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} size={'4xl'}>
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      size={'4xl'}
+      closeOnEsc={false}
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Fale conosco</ModalHeader>
@@ -117,7 +124,12 @@ function ContactUsModal({ isOpen, onClose }: ContactUsModalProps) {
             <Text fontWeight={'bold'} fontSize={'2xl'}>
               Escolha uma opção:
             </Text>
-            <Flex direction={'row'} align={'center'} justify={'center'}>
+            <Flex
+              direction={'row'}
+              align={'center'}
+              justify={'center'}
+              id='view-radio-button'
+            >
               <RadioButton
                 name='view'
                 options={[
@@ -140,10 +152,14 @@ function ContactUsModal({ isOpen, onClose }: ContactUsModalProps) {
           </Flex>
           <SlideFade in={isOpenSlide} offsetY='20px'>
             {selectedView == ViewType.FEEDBACK && (
-              <FeedbackContent form={feedbackForm} />
+              <FeedbackContent form={feedbackForm} isMobile={isMobile} />
             )}
             {selectedView == ViewType.BUG_REPORT && (
-              <BugReportContent form={bugReportForm} setFiles={setFiles} />
+              <BugReportContent
+                form={bugReportForm}
+                setFiles={setFiles}
+                isMobile={isMobile}
+              />
             )}
           </SlideFade>
         </ModalBody>

@@ -14,6 +14,8 @@ import { FeatureTourGuideStepData } from '../../../context/FeatureGuideContext/s
 import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
 import { menuContext } from '../../../context/MenuContext';
 import ContactUsModal from '../ContactUsModal';
+import ContactUsNews from '../NewsJoyride/ContactUsNews';
+import { appContext } from '../../../context/AppContext';
 
 const drawerWidth = 300;
 
@@ -73,6 +75,7 @@ export default function EmptyPage() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { state, setState, triggerControl, pathBeforeGuide } =
     useFeatureGuideContext();
+  const { isAuthenticated } = React.useContext(appContext);
   const { isOpen, onOpen, onClose } = React.useContext(menuContext);
   const {
     isOpen: isOpenContactModal,
@@ -227,6 +230,14 @@ export default function EmptyPage() {
         </DrawerHeader>
         <DrawerBody onClose={handleDrawerClose} />
       </Drawer>
+      {isAuthenticated && (
+        <ContactUsNews
+          isMobile={isMobile}
+          onOpen={onOpenContactModal}
+          onClose={onCloseContactModal}
+          isOpen={isOpenContactModal}
+        />
+      )}
       <Joyride
         {...state}
         continuous={true}
@@ -247,7 +258,7 @@ export default function EmptyPage() {
           options: {
             arrowColor: 'uspolis.blue',
             primaryColor: 'uspolis.blue',
-            textColor: '#fff',
+            textColor: 'uspolis.text',
             backgroundColor: 'uspolis.blue',
             beaconSize: 36,
             overlayColor: 'rgba(0, 0, 0, 0.5)',

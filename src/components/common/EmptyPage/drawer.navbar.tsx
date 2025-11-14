@@ -115,6 +115,7 @@ export function DrawerNavBar({
           {isAuthenticated ? (
             <>
               <Button
+                id='contact-us-button'
                 variant={'ghost'}
                 onClick={() => {
                   onOpenContactModal();
