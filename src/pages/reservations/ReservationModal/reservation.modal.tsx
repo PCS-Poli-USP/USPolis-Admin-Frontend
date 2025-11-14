@@ -286,7 +286,7 @@ function ReservationModal(props: ReservationModalProps) {
     if (props.isSolicitation) {
       await handleSolicitationSaveClick();
     }
-    props.refetch();
+    if (!props.isSolicitation) props.refetch();
     handleCloseModal();
   }
 
@@ -385,7 +385,6 @@ function ReservationModal(props: ReservationModalProps) {
           {...calendarPicker}
           selectedReservation={props.selectedReservation}
           subjects={props.subjects}
-          classes={props.classes}
           loading={props.loading}
           isSolicitation={props.isSolicitation}
         />

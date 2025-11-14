@@ -13,13 +13,23 @@ import { classNumberFromClassCode } from '../../../../../utils/classes/classes.f
 import { LinkIcon } from '@chakra-ui/icons';
 import { EventType } from '../../../../../utils/enums/eventTypes.enum';
 import { secondDefaultValues } from '../Second/reservation.modal.steps.second.form';
+import useClasses from '../../../../../hooks/classes/useClasses';
+import { useEffect } from 'react';
 
 function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
   const { watch, resetField } = props.form;
+  const { loading, classes, getClassesBySubject } = useClasses(false);
 
   const reservationType = watch('type');
   const is_solicitation = watch('is_solicitation');
   const subjectId = watch('subject_id');
+
+  useEffect(() => {
+    if (reservationType == ReservationType.EXAM && subjectId) {
+      getClassesBySubject(subjectId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reservationType, subjectId]);
 
   return (
     <VStack w={'full'} align={'stretch'} h={'full'}>
@@ -121,9 +131,10 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                     ? 'Selecione as turmas'
                     : 'Selecione primeiro a disciplina'
                 }
+                isLoading={loading}
                 options={
                   subjectId
-                    ? props.classes
+                    ? classes
                         .filter((cls) => cls.subject_id === subjectId)
                         .map((cls) => ({
                           value: cls.id,
