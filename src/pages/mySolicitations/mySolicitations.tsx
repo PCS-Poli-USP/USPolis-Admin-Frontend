@@ -23,13 +23,16 @@ import SolicitationStack from './MySolicitationStack/mysolicitation.stack';
 import MySolicitationModal from './MySolicitationModal/mysolicitation.modal';
 import useClassroomsSolicitations from '../../hooks/solicitations/useSolicitations';
 import Dialog from '../../components/common/Dialog/dialog.component';
-import SolicitationModal from '../allocation/SolicitationModal/solicitation.modal';
 import useBuildings from '../../hooks/useBuildings';
 import useClassrooms from '../../hooks/classrooms/useClassrooms';
+import ReservationModal from '../reservations/ReservationModal/reservation.modal';
+import useSubjects from '../../hooks/useSubjetcts';
+import useClasses from '../../hooks/classes/useClasses';
 
 const MySolicitations = () => {
   const { loading, solicitations, cancelSolicitation, getSolicitations } =
     useClassroomsSolicitations();
+
   const {
     loading: loadingBuildings,
     buildings,
@@ -40,6 +43,13 @@ const MySolicitations = () => {
     classrooms,
     getAllClassrooms,
   } = useClassrooms(false);
+  const {
+    loading: loadingSubjects,
+    subjects,
+    getAllSubjectsActives,
+  } = useSubjects(false);
+  const { classes, loading: loadingClasses, getAllClasses } = useClasses(false);
+
   const [isMobile] = useMediaQuery('(max-width: 800px)');
 
   const {
@@ -68,7 +78,9 @@ const MySolicitations = () => {
 
   useEffect(() => {
     getAllBuildings();
+    getAllSubjectsActives();
     getAllClassrooms();
+    getAllClasses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -87,6 +99,12 @@ const MySolicitations = () => {
               borderRadius={'10px'}
               colorScheme='blue'
               onClick={() => onOpenSolicitation()}
+              isLoading={
+                loadingSubjects ||
+                loadingClasses ||
+                loadingClassrooms ||
+                loadingBuildings
+              }
             >
               Nova Solicitação
             </Button>
@@ -117,7 +135,7 @@ const MySolicitations = () => {
           await cancelSolicitation(selectedSolicitation.id);
         }}
       />
-      <SolicitationModal
+      {/* <SolicitationModal
         isMobile={isMobile}
         isOpen={isOpenSolicitation}
         onClose={onCloseSolicitation}
@@ -128,8 +146,30 @@ const MySolicitations = () => {
         refetch={async () => {
           await getSolicitations();
         }}
+      /> */}
+      <ReservationModal
+        onClose={() => {
+          onCloseSolicitation();
+        }}
+        isOpen={isOpenSolicitation}
+        isUpdate={false}
+        isSolicitation={true}
+        classrooms={classrooms}
+        buildings={buildings}
+        selectedReservation={undefined}
+        refetch={async () => {
+          await getSolicitations();
+        }}
+        subjects={subjects}
+        classes={classes}
+        loading={
+          loadingSubjects ||
+          loadingClasses ||
+          loadingClassrooms ||
+          loadingBuildings
+        }
       />
-      <Skeleton isLoaded={!loading && !loadingBuildings && !loadingClassrooms}>
+      <Skeleton isLoaded={!loading}>
         {!isMobile ? (
           <DataTable
             columns={columns}
