@@ -74,8 +74,11 @@ import {
   UpdateSolicitation,
 } from '../../../models/http/requests/solicitation.request.models';
 import useSolicitations from '../../../hooks/solicitations/useSolicitations';
+import { useOnFocusMobile } from '../../../hooks/useOnFocusMobile/useOnFocusMobile';
 
 function ReservationModal(props: ReservationModalProps) {
+  const focusMobile = useOnFocusMobile();
+
   const firstForm = useForm<ReservationFirstForm>({
     defaultValues: firstDefaultValues,
     resolver: yupResolver(firstSchema),
@@ -387,6 +390,7 @@ function ReservationModal(props: ReservationModalProps) {
           subjects={props.subjects}
           loading={props.loading}
           isSolicitation={props.isSolicitation}
+          focusMobile={focusMobile}
         />
       ),
     },
@@ -404,6 +408,7 @@ function ReservationModal(props: ReservationModalProps) {
           classrooms={props.classrooms}
           selectedReservation={props.selectedReservation}
           initialDate={props.initialDate}
+          focusMobile={focusMobile}
           {...calendarPicker}
         />
       ),
@@ -440,7 +445,15 @@ function ReservationModal(props: ReservationModalProps) {
       <ModalContent>
         <ModalHeader>{getModalTitle()}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
+        <ModalBody
+          paddingBottom={
+            focusMobile.isMobile && focusMobile.isOnFocus
+              ? `${focusMobile.paddingBottom}px`
+              : undefined
+          }
+          overflowY={'auto'}
+          transition={'padding-bottom 0.25s'}
+        >
           <VStack w={'full'}>
             <Stepper size='lg' index={activeStep} alignItems={'center'}>
               {steps.map((step, index) => (

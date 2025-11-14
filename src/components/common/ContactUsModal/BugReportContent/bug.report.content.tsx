@@ -5,9 +5,10 @@ import { BugReportContentProps } from './bug.report.interface';
 import { RadioButton } from '../../form/RadioButton';
 import { BugPriority, BugType } from '../../../../utils/enums/bugReport.enum';
 import { ImageDropzone } from '../../form/ImageDropzone';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 function BugReportContent(props: BugReportContentProps) {
+  const [isOnFocus, setIsOnFocus] = useState(false);
   const description = props.form.watch('description');
 
   useEffect(() => {
@@ -16,7 +17,12 @@ function BugReportContent(props: BugReportContentProps) {
   }, [description]);
 
   return (
-    <Flex direction={'column'} h={'fit-content'}>
+    <Flex
+      direction={'column'}
+      h={'fit-content'}
+      overflowY={'auto'}
+      mb={props.isMobile && isOnFocus ? '300px' : undefined}
+    >
       <FormProvider {...props.form}>
         <form>
           <Flex mb={'15px'} direction={'column'} gap={'0px'}>
@@ -42,6 +48,16 @@ function BugReportContent(props: BugReportContentProps) {
             maxSize={2000}
             height={'250px'}
             mb={'20px'}
+            onFocus={(e) => {
+              setTimeout(() => {
+                e.target.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'center',
+                });
+              }, 200);
+              setIsOnFocus(true);
+            }}
+            onBlur={() => setIsOnFocus(false)}
           />
 
           <Flex mb={'15px'} direction={'column'} gap={'0px'}>

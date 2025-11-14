@@ -5,6 +5,7 @@ import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 import { ReservationSecondForm } from '../Second/reservation.modal.steps.second.interface';
 import { EventType } from '../../../../../utils/enums/eventTypes.enum';
 import { SubjectResponse } from '../../../../../models/http/responses/subject.response.models';
+import { FocusMobileReturn } from '../../../../../hooks/useOnFocusMobile/useOnFocusMobile';
 
 export interface ReservationModalFirstStepProps {
   isUpdate: boolean;
@@ -16,6 +17,7 @@ export interface ReservationModalFirstStepProps {
   setDates: (value: string[]) => void;
   subjects: SubjectResponse[];
   loading: boolean;
+  focusMobile: FocusMobileReturn;
 }
 export interface ReservationFirstForm {
   title: string;

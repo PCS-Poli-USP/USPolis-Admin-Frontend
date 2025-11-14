@@ -3,9 +3,11 @@ import { FormProvider } from 'react-hook-form';
 import { FeedbackContentProps } from './feedback.interface';
 import { Input } from '../../form/Input';
 import { TextareaInput } from '../../form/TextareaInput';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 function FeedbackContent(props: FeedbackContentProps) {
+  const [isOnFocus, setIsOnFocus] = useState(false);
+
   const title = props.form.watch('title');
   const message = props.form.watch('message');
 
@@ -20,7 +22,12 @@ function FeedbackContent(props: FeedbackContentProps) {
   }, [title, message]);
 
   return (
-    <Flex direction={'column'} h={'400px'}>
+    <Flex
+      direction={'column'}
+      h={'400px'}
+      overflowY={'auto'}
+      mb={props.isMobile && isOnFocus ? '300px' : undefined}
+    >
       <FormProvider {...props.form}>
         <form>
           <Input name='title' label='Título' mb={'10px'} />
@@ -30,6 +37,16 @@ function FeedbackContent(props: FeedbackContentProps) {
             maxSize={2000}
             height={'250px'}
             placeholder='Alguma sugestão de melhoria ou funcionalidade? Algum comentário? Nos envie!'
+            onFocus={(e) => {
+              setTimeout(() => {
+                e.target.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'center',
+                });
+              }, 200);
+              setIsOnFocus(true);
+            }}
+            onBlur={() => setIsOnFocus(false)}
           />
         </form>
       </FormProvider>

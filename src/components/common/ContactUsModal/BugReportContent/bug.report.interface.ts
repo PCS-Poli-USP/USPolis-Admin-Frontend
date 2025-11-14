@@ -11,4 +11,5 @@ export interface BugReportContentProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<BugReportForm, any, BugReportForm>;
   setFiles: (files: File[]) => void;
+  isMobile: boolean;
 }

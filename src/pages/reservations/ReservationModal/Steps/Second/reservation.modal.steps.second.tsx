@@ -34,6 +34,8 @@ import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 import moment from 'moment';
 
 function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
+  const isMobile = props.focusMobile.isMobile;
+
   const {
     isOpen: isOpenCGrid,
     onClose: onCloseCGrid,
@@ -267,7 +269,12 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
           <Text fontSize={'lg'} fontWeight={'bold'}>
             Local e Disponibilidade
           </Text>
-          <HStack align={'flex-start'} justify={'flex-start'}>
+          <Flex
+            direction={isMobile ? 'column' : 'row'}
+            align={'flex-start'}
+            justify={'flex-start'}
+            gap={isMobile ? '10px' : '0px'}
+          >
             <VStack
               alignItems={'flex-start'}
               justify={'flex-start'}
@@ -276,7 +283,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             >
               <SelectInput
                 label={'Prédio'}
-                w={'390px'}
+                w={isMobile ? '360px' : '390px'}
                 name={'building_id'}
                 options={props.buildings.map((building) => ({
                   value: building.id,
@@ -291,6 +298,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     );
                   } else setSelectedBuilding(undefined);
                 }}
+                onFocus={props.focusMobile.onFocusInput}
+                onBlur={props.focusMobile.onBlur}
               />
               {is_solicitation && (
                 <CheckBox
@@ -310,7 +319,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             <VStack alignItems={'flex-start'} w={'fit-content'}>
               <SelectInput
                 label={'Sala de Aula'}
-                w={'390px'}
+                w={isMobile ? '360px' : '390px'}
                 disabled={!selectedBuilding || !!optional_classroom}
                 placeholder={
                   !selectedBuilding
@@ -345,6 +354,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     setSelectedClassroom(undefined);
                   }
                 }}
+                onFocus={props.focusMobile.onFocusInput}
+                onBlur={props.focusMobile.onBlur}
               />
 
               {is_solicitation && (
@@ -359,7 +370,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             </VStack>
 
             <Button
-              mt={'30px'}
+              mt={isMobile ? '10px' : '30px'}
               w={'strech'}
               isDisabled={!selectedClassroom || isLoading}
               isLoading={isLoading}
@@ -367,8 +378,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             >
               Visualizar Disponibilidade
             </Button>
-          </HStack>
-
+          </Flex>
           <HStack mt={8}>
             <Text fontSize={'lg'} fontWeight={'bold'}>
               Horários
@@ -398,24 +408,36 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               Selecione um tipo de reserva primeiro!
             </Alert>
           )}
-
           {!!reservation_type && (
             <>
-              <HStack
+              <Flex
                 w={'full'}
                 h={'full'}
                 mt={0}
+                gap={'5px'}
                 justify={'flex-start'}
                 align={'flex-start'}
+                direction={isMobile ? 'column' : 'row'}
+                mb={isMobile ? '20px' : '0px'}
               >
                 <VStack
                   h={'full'}
                   w={'full'}
                   align={'flex-start'}
                   justify={'flex-start'}
+                  hidden={isMobile && reservation_type === ReservationType.EXAM}
                 >
-                  <HStack align={'center'} w={'full'} mt={4}>
+                  <Flex
+                    direction={isMobile ? 'column' : 'row'}
+                    gap={'5px'}
+                    align={'center'}
+                    w={'full'}
+                    mt={4}
+                  >
                     <SelectInput
+                      hidden={
+                        isMobile && reservation_type === ReservationType.EXAM
+                      }
                       label={'Recorrência'}
                       name={'recurrence'}
                       placeholder={'Escolha uma recorrência'}
@@ -429,8 +451,13 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                         }
                       }}
                       disabled={reservation_type === ReservationType.EXAM}
+                      onFocus={props.focusMobile.onFocusInput}
+                      onBlur={props.focusMobile.onBlur}
                     />
                     <SelectInput
+                      hidden={
+                        isMobile && reservation_type === ReservationType.EXAM
+                      }
                       label={'Dia da semana'}
                       name={'week_day'}
                       placeholder='Escolha o dia da semana'
@@ -443,9 +470,14 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                         label: WeekDay.translate(value),
                         value: value,
                       }))}
+                      onFocus={props.focusMobile.onFocusInput}
+                      onBlur={props.focusMobile.onBlur}
                     />
 
                     <SelectInput
+                      hidden={
+                        isMobile && reservation_type === ReservationType.EXAM
+                      }
                       label={'Semana do mês'}
                       name={'month_week'}
                       placeholder='Escolha a semana do mês'
@@ -456,8 +488,10 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                           value: value,
                         }),
                       )}
+                      onFocus={props.focusMobile.onFocusInput}
+                      onBlur={props.focusMobile.onBlur}
                     />
-                  </HStack>
+                  </Flex>
 
                   <HStack
                     spacing='5px'
@@ -466,20 +500,30 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     mt={4}
                   >
                     <Input
+                      hidden={
+                        isMobile && reservation_type === ReservationType.EXAM
+                      }
                       label={'Início da agenda'}
                       name={'start_date'}
                       placeholder='Data de inicio'
                       type='date'
                       disabled={recurrence === Recurrence.CUSTOM}
                       max={end_date ? end_date : undefined}
+                      onFocus={props.focusMobile.onFocusInput}
+                      onBlur={props.focusMobile.onBlur}
                     />
                     <Input
+                      hidden={
+                        isMobile && reservation_type === ReservationType.EXAM
+                      }
                       label={'Fim da agenda'}
                       name={'end_date'}
                       placeholder='Data de fim'
                       type='date'
                       disabled={recurrence === Recurrence.CUSTOM}
                       min={start_date ? start_date : undefined}
+                      onFocus={props.focusMobile.onFocusInput}
+                      onBlur={props.focusMobile.onBlur}
                     />
                   </HStack>
 
@@ -494,6 +538,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       placeholder='Horario de início da disciplina'
                       type='time'
                       disabled={reservation_type === ReservationType.EXAM}
+                      onFocus={props.focusMobile.onFocusInput}
+                      onBlur={props.focusMobile.onBlur}
                     />
                     <Input
                       label={'Horário de fim'}
@@ -501,6 +547,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       placeholder='Horário de encerramento da disciplina'
                       type='time'
                       disabled={reservation_type === ReservationType.EXAM}
+                      onFocus={props.focusMobile.onFocusInput}
+                      onBlur={props.focusMobile.onBlur}
                     />
                   </HStack>
                 </VStack>
@@ -552,7 +600,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     helpText={recurrence === Recurrence.CUSTOM}
                   />
                 </VStack>
-              </HStack>
+              </Flex>
+
               {reservation_type == ReservationType.EXAM && (
                 <Flex direction={'column'}>
                   <Text fontSize={'lg'} fontWeight={'bold'}>
@@ -588,6 +637,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       </Text>
                     )}
                   </Flex>
+
                   <Flex
                     direction={'column'}
                     gap={'20px'}
@@ -595,10 +645,10 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     justifyItems={'flex-start'}
                     h={'auto'}
                   >
-                    {props.selectedDays.map((date) => (
+                    {props.selectedDays.map((date, i) => (
                       <Flex
                         key={date}
-                        direction={'row'}
+                        direction={isMobile ? 'column' : 'row'}
                         align={'center'}
                         gap={'10px'}
                         w={'fit-content'}
@@ -623,77 +673,103 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                               setLabelMap(newMap);
                             }
                           }}
-                        />
-                        <Text>Das</Text>
-                        <ChakraInput
-                          type='time'
-                          w={'150px'}
-                          size={'sm'}
-                          value={
-                            timeMap.get(date) != undefined
-                              ? timeMap.get(date)?.[0]
-                              : ''
+                          onFocus={(event) =>
+                            props.focusMobile.onFocusInput(
+                              event,
+                              Math.max(100 * i + 250, 400),
+                            )
                           }
-                          maxLength={15}
-                          borderRadius={'5px'}
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              const newMap = new Map(timeMap);
-                              const value = newMap.get(date);
-                              newMap.set(
-                                date,
-                                value
-                                  ? [e.target.value, value[1]]
-                                  : [e.target.value, ''],
-                              );
-                              setTimeMap(newMap);
-                            }
-                            if (!e.target.value) {
-                              const newMap = new Map(timeMap);
-                              const newValue = newMap.get(date);
-                              if (newValue && newValue[1] === '')
-                                newMap.delete(date);
-                              if (newValue && newValue[1] !== '')
-                                newMap.set(date, ['', newValue[1]]);
-                              setTimeMap(newMap);
-                            }
-                          }}
+                          onBlur={props.focusMobile.onBlur}
                         />
-                        <Text>Até</Text>
-                        <ChakraInput
-                          type='time'
-                          w={'150px'}
-                          size={'sm'}
-                          value={
-                            timeMap.get(date) != undefined
-                              ? timeMap.get(date)?.[1]
-                              : ''
-                          }
-                          maxLength={15}
-                          borderRadius={'5px'}
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              const newMap = new Map(timeMap);
-                              const value = newMap.get(date);
-                              newMap.set(
-                                date,
-                                value
-                                  ? [value[0], e.target.value]
-                                  : ['', e.target.value],
-                              );
-                              setTimeMap(newMap);
+                        <Flex
+                          direction={isMobile ? 'row' : 'column'}
+                          gap={'5px'}
+                        >
+                          <Text hidden={isMobile}>Das</Text>
+                          <ChakraInput
+                            type='time'
+                            w={'150px'}
+                            size={'sm'}
+                            value={
+                              timeMap.get(date) != undefined
+                                ? timeMap.get(date)?.[0]
+                                : ''
                             }
-                            if (!e.target.value) {
-                              const newMap = new Map(timeMap);
-                              const newValue = newMap.get(date);
-                              if (newValue && newValue[0] === '')
-                                newMap.delete(date);
-                              if (newValue && newValue[0] !== '')
-                                newMap.set(date, [newValue[0], '']);
-                              setTimeMap(newMap);
+                            maxLength={15}
+                            borderRadius={'5px'}
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                const newMap = new Map(timeMap);
+                                const value = newMap.get(date);
+                                newMap.set(
+                                  date,
+                                  value
+                                    ? [e.target.value, value[1]]
+                                    : [e.target.value, ''],
+                                );
+                                setTimeMap(newMap);
+                              }
+                              if (!e.target.value) {
+                                const newMap = new Map(timeMap);
+                                const newValue = newMap.get(date);
+                                if (newValue && newValue[1] === '')
+                                  newMap.delete(date);
+                                if (newValue && newValue[1] !== '')
+                                  newMap.set(date, ['', newValue[1]]);
+                                setTimeMap(newMap);
+                              }
+                            }}
+                            onFocus={(event) =>
+                              props.focusMobile.onFocusInput(
+                                event,
+                                Math.max(100 * i + 250, 400),
+                              )
                             }
-                          }}
-                        />
+                            onBlur={props.focusMobile.onBlur}
+                          />
+                          <Text>Até</Text>
+                          <ChakraInput
+                            type='time'
+                            w={'150px'}
+                            size={'sm'}
+                            value={
+                              timeMap.get(date) != undefined
+                                ? timeMap.get(date)?.[1]
+                                : ''
+                            }
+                            maxLength={15}
+                            borderRadius={'5px'}
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                const newMap = new Map(timeMap);
+                                const value = newMap.get(date);
+                                newMap.set(
+                                  date,
+                                  value
+                                    ? [value[0], e.target.value]
+                                    : ['', e.target.value],
+                                );
+                                setTimeMap(newMap);
+                              }
+                              if (!e.target.value) {
+                                const newMap = new Map(timeMap);
+                                const newValue = newMap.get(date);
+                                if (newValue && newValue[0] === '')
+                                  newMap.delete(date);
+                                if (newValue && newValue[0] !== '')
+                                  newMap.set(date, [newValue[0], '']);
+                                setTimeMap(newMap);
+                              }
+                            }}
+                            onFocus={(event) =>
+                              props.focusMobile.onFocusInput(
+                                event,
+                                Math.max(100 * i + 250, 400),
+                              )
+                            }
+                            onBlur={props.focusMobile.onBlur}
+                          />
+                        </Flex>
                       </Flex>
                     ))}
                   </Flex>

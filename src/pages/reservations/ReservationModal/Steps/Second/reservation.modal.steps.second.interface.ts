@@ -9,6 +9,7 @@ import { ReservationResponse } from '../../../../../models/http/responses/reserv
 import { DateCalendarPickerReturn } from '../../../../../components/common/DateCalendarPicker/hooks/useDateCalendarPicker';
 import { ReservationFirstForm } from '../First/reservation.modal.steps.first.interface';
 import { ReservationType } from '../../../../../utils/enums/reservations.enum';
+import { FocusMobileReturn } from '../../../../../hooks/useOnFocusMobile/useOnFocusMobile';
 
 export interface ReservationModalSecondStepProps
   extends DateCalendarPickerReturn {
@@ -19,6 +20,7 @@ export interface ReservationModalSecondStepProps
   selectedDates: string[];
   form: UseFormReturn<ReservationSecondForm, any, ReservationSecondForm>;
   firstForm: UseFormReturn<ReservationFirstForm, any, ReservationFirstForm>;
+  focusMobile: FocusMobileReturn;
   selectedReservation?: ReservationResponse;
   initialDate?: string;
 }
