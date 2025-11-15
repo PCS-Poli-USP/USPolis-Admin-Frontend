@@ -2,6 +2,7 @@ import useSelfService from '../hooks/API/services/useSelfService';
 import { UserResponse } from '../models/http/responses/user.response.models';
 import React, { createContext, useEffect, useState } from 'react';
 import { AuthHttpService } from '../services/auth/auth.service';
+import { useMediaQuery } from '@chakra-ui/react';
 
 interface AppContext {
   loading: boolean;
@@ -15,6 +16,7 @@ interface AppContext {
   getSelfFromBackend: () => Promise<void>;
   persist: boolean;
   setPersist: (value: boolean) => void;
+  isMobile: boolean;
 }
 
 const DEFAULT_VALUE = {
@@ -29,6 +31,7 @@ const DEFAULT_VALUE = {
   getSelfFromBackend: async () => {},
   persist: false,
   setPersist: () => {},
+  isMobile: false,
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -37,6 +40,7 @@ export default function AppContextProvider({
   children,
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 }: React.PropsWithChildren<{}>) {
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
   const [loading, setLoading] = useState(false);
   const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
   const [accessToken, setAccessToken] = useState<string>('');
@@ -117,6 +121,7 @@ export default function AppContextProvider({
         getSelfFromBackend,
         persist,
         setPersist,
+        isMobile,
       }}
     >
       {children}

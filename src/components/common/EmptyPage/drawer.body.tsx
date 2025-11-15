@@ -1,12 +1,4 @@
-import {
-  Button,
-  VStack,
-  HStack,
-  Text,
-  Icon,
-  useMediaQuery,
-  Link,
-} from '@chakra-ui/react';
+import { Button, VStack, HStack, Text, Icon, Link } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useContext } from 'react';
 import { FaList, FaRegCalendarTimes, FaRegUser } from 'react-icons/fa';
@@ -48,7 +40,7 @@ function DrawerButton({
   replace_location,
   onClose,
 }: DrawerButtonProps) {
-  const [isMobile] = useMediaQuery('(max-width: 800px)');
+  const { isMobile } = useContext(appContext);
   const location = useLocation();
 
   return (

@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { CloseIcon } from '@chakra-ui/icons';
-import { IconButton, useDisclosure, useMediaQuery } from '@chakra-ui/react';
+import { IconButton, useDisclosure } from '@chakra-ui/react';
 import DrawerBody from './drawer.body';
 import { DrawerNavBar } from './drawer.navbar';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -72,10 +72,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function EmptyPage() {
-  const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { state, setState, triggerControl, pathBeforeGuide } =
     useFeatureGuideContext();
-  const { isAuthenticated } = React.useContext(appContext);
+  const { isMobile, isAuthenticated } = React.useContext(appContext);
   const { isOpen, onOpen, onClose } = React.useContext(menuContext);
   const {
     isOpen: isOpenContactModal,
