@@ -79,7 +79,7 @@ export function DrawerNavBar({
     });
   }
   return (
-    <Box bg='uspolis.blue' color='uspolis.text' px={4}>
+    <Box bg='uspolis.blue' color='uspolis.text' px={4} w={'100vw'}>
       <Flex
         h={'60px'}
         alignItems={'center'}
@@ -114,19 +114,30 @@ export function DrawerNavBar({
         <Flex alignItems={'center'} gap={'10px'}>
           {isAuthenticated ? (
             <>
-              <Button
-                id='contact-us-button'
-                variant={'ghost'}
-                onClick={() => {
-                  onOpenContactModal();
-                }}
-                textColor={'white'}
-                textAlign={'center'}
-                alignContent={'center'}
-                rightIcon={<LuMessageCircleMore />}
-              >
-                {`${isMobile ? 'Contato' : 'Fale conosco'}`}
-              </Button>
+              {isMobile ? (
+                <IconButton
+                  id='contact-us-button'
+                  aria-label='contact-us'
+                  icon={<LuMessageCircleMore />}
+                  onClick={() => {
+                    onOpenContactModal();
+                  }}
+                />
+              ) : (
+                <Button
+                  id='contact-us-button'
+                  variant={'ghost'}
+                  onClick={() => {
+                    onOpenContactModal();
+                  }}
+                  textColor={'white'}
+                  textAlign={'center'}
+                  alignContent={'center'}
+                  rightIcon={<LuMessageCircleMore />}
+                >
+                  {`Fale conosco`}
+                </Button>
+              )}
 
               {validator.checkUserRestrictedPermission() && (
                 <Button
