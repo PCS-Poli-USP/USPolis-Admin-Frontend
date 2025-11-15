@@ -11,6 +11,7 @@ function useQuery() {
 
 const AuthCallbackPage = () => {
   const authService = new AuthHttpService();
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const query = useQuery();
   const { setAccessToken, setIsAuthenticated } = useContext(appContext);
@@ -29,13 +30,27 @@ const AuthCallbackPage = () => {
       );
       return;
     }
-    const response = await authService.getTokens(code);
-    const { access_token, refresh_token } = response.data;
-    setAccessToken(access_token);
-    setIsAuthenticated(true);
-    localStorage.setItem('refresh_token', refresh_token);
-    // await getSelfFromBackend(); // Not use like this, let useEffect in appContext fetch the user (axios interceptor isn`t fast enough to get the token)
-    navigate('/allocation');
+    if (!loading) {
+      try {
+        console.log('Aqui, cahamdno get tokesn./....');
+        setLoading(true);
+        const response = await authService.getTokens(code);
+        const { access_token, refresh_token } = response.data;
+        setAccessToken(access_token);
+        setIsAuthenticated(true);
+        localStorage.setItem('refresh_token', refresh_token);
+        // await getSelfFromBackend(); // Not use like this, let useEffect in appContext fetch the user (axios interceptor isn`t fast enough to get the token)
+        navigate('/allocation');
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        console.log(error);
+        setError(
+          'Erro ao utilizar seu código de autenticação, tente logar novamente.',
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
   }
 
   return (
