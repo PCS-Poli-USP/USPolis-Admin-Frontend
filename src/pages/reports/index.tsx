@@ -7,6 +7,7 @@ import { getBugReportsColumns } from './Tables/reports.table';
 import { BugReportResponse } from '../../models/http/responses/bugReport.response.models';
 import EvidenceModal from './EvidenceModal';
 import BugReportModal from './BugReportModal';
+import BugDescriptionModal from './BugDescriptionModal';
 
 function Reports() {
   const { colorMode } = useColorMode();
@@ -21,6 +22,11 @@ function Reports() {
     isOpen: isOpenModal,
     onClose: onCloseModal,
     onOpen: onOpenModal,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenDescModal,
+    onClose: onCloseDescModal,
+    onOpen: onOpenDescModal,
   } = useDisclosure();
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [selectedReport, setSelectedReport] = useState<BugReportResponse>();
@@ -39,6 +45,10 @@ function Reports() {
       setSelectedReport(data);
       onOpenModal();
     },
+    handleDescriptionClick: (data) => {
+      setSelectedReport(data);
+      onOpenDescModal();
+    },
     darkMode: colorMode == 'dark',
     isOpen: isOpenDescription,
     onClose: onCloseDescription,
@@ -48,7 +58,7 @@ function Reports() {
   return (
     <PageContent>
       <Text fontSize='4xl' mb={4}>
-        Bugs Reportados
+        Reportes
       </Text>
       <DataTable
         loading={loading}
@@ -59,9 +69,20 @@ function Reports() {
           right: ['options'],
         }}
       />
+      <BugDescriptionModal
+        isOpen={isOpenDescModal}
+        onClose={() => {
+          onCloseDescModal();
+          setSelectedReport(undefined);
+        }}
+        selectedBugResponse={selectedReport}
+      />
       <EvidenceModal
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+          setSelectedReport(undefined);
+        }}
         selectedReport={selectedReport}
       />
       <BugReportModal

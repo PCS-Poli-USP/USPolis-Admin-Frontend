@@ -3,15 +3,7 @@ import {
   Button,
   HStack,
   IconButton,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Text,
-  Textarea,
   Tooltip,
 } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
@@ -29,6 +21,7 @@ const DEBUG = import.meta.env.VITE_DEBUG === 'true';
 interface BugReportsColumnsProps {
   handleViewClick: (data: BugReportResponse) => void;
   handleUpdateClick: (data: BugReportResponse) => void;
+  handleDescriptionClick: (data: BugReportResponse) => void;
   darkMode: boolean;
   onOpen: () => void;
   onClose: () => void;
@@ -115,21 +108,9 @@ export const getBugReportsColumns = (
       maxSize: 150,
       cell: ({ row }) => {
         return (
-          <>
-            <Button onClick={props.onOpen}>Ver descrição</Button>
-
-            <Modal isOpen={props.isOpen} onClose={props.onClose}>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Descrição: </ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <Textarea value={row.original.description} />
-                </ModalBody>
-                <ModalFooter />
-              </ModalContent>
-            </Modal>
-          </>
+          <Button onClick={() => props.handleDescriptionClick(row.original)}>
+            Ver descrição
+          </Button>
         );
       },
     },
