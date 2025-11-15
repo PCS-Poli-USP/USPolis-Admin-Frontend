@@ -3,6 +3,9 @@
 # vscode
 /.vscode
 
+# dev
+/certs
+
 # dependencies
 /node_modules
 /.pnp
