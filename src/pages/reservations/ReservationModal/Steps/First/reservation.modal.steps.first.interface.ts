@@ -4,8 +4,8 @@ import { UseFormReturn } from 'react-hook-form';
 import { ReservationType } from '../../../../../utils/enums/reservations.enum';
 import { ReservationSecondForm } from '../Second/reservation.modal.steps.second.interface';
 import { EventType } from '../../../../../utils/enums/eventTypes.enum';
-import { ClassResponse } from '../../../../../models/http/responses/class.response.models';
 import { SubjectResponse } from '../../../../../models/http/responses/subject.response.models';
+import { FocusMobileReturn } from '../../../../../hooks/useOnFocusMobile/useOnFocusMobile';
 
 export interface ReservationModalFirstStepProps {
   isUpdate: boolean;
@@ -16,8 +16,8 @@ export interface ReservationModalFirstStepProps {
   setSelectedDays: (value: string[]) => void;
   setDates: (value: string[]) => void;
   subjects: SubjectResponse[];
-  classes: ClassResponse[];
   loading: boolean;
+  focusMobile: FocusMobileReturn;
 }
 export interface ReservationFirstForm {
   title: string;

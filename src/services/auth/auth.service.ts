@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { JSONResponse } from '../../models/http/responses/common.response.models';
 
 const USPOLIS_SERVER_URL = import.meta.env.VITE_USPOLIS_API_ENDPOINT;
 
@@ -22,6 +23,7 @@ class AuthHttpService {
   async getTokens(authCode: string): Promise<AxiosResponse<GetTokensReponse>> {
     const response = await this.http.get(
       `/get-tokens?auth_code=${encodeURIComponent(authCode)}`,
+      { withCredentials: true },
     );
     return response;
   }
@@ -31,8 +33,13 @@ class AuthHttpService {
   ): Promise<AxiosResponse<RefreshTokenResponse>> {
     const response = await this.http.get(
       `/refresh-token?refresh_token=${encodeURIComponent(refresh_token)}`,
+      { withCredentials: true },
     );
     return response;
+  }
+
+  async logout(): Promise<AxiosResponse<JSONResponse>> {
+    return await this.http.post('/logout', null, { withCredentials: true });
   }
 }
 

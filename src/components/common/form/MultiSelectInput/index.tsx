@@ -10,6 +10,8 @@ interface MultiSelectInputProps extends FieldProps {
   options: Option[];
   isLoading?: boolean;
   onChange?: (options: Option[]) => void;
+  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 export function MultiSelectInput({
@@ -25,6 +27,8 @@ export function MultiSelectInput({
   mr = undefined,
   ml = undefined,
   onChange = undefined,
+  onFocus = undefined,
+  onBlur = undefined,
 }: MultiSelectInputProps) {
   const {
     control,
@@ -81,6 +85,8 @@ export function MultiSelectInput({
               setValue(name, values);
               setSelectedOptions(selectedOption as Option[]);
             }}
+            onFocus={onFocus}
+            onBlur={onBlur}
             options={options}
           />
         )}

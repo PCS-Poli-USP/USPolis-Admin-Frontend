@@ -13,16 +13,26 @@ import { classNumberFromClassCode } from '../../../../../utils/classes/classes.f
 import { LinkIcon } from '@chakra-ui/icons';
 import { EventType } from '../../../../../utils/enums/eventTypes.enum';
 import { secondDefaultValues } from '../Second/reservation.modal.steps.second.form';
+import useClasses from '../../../../../hooks/classes/useClasses';
+import { useEffect } from 'react';
 
 function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
   const { watch, resetField } = props.form;
+  const { loading, classes, getClassesBySubject } = useClasses(false);
 
   const reservationType = watch('type');
   const is_solicitation = watch('is_solicitation');
   const subjectId = watch('subject_id');
 
+  useEffect(() => {
+    if (reservationType == ReservationType.EXAM && subjectId) {
+      getClassesBySubject(subjectId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reservationType, subjectId]);
+
   return (
-    <VStack w={'full'} align={'stretch'} h={'full'}>
+    <VStack w={'full'} align={'stretch'} h={'full'} overflowY={'auto'}>
       <FormProvider {...props.form}>
         <form>
           <Text
@@ -57,7 +67,8 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                 resetField('link');
                 resetField('event_type');
               }
-
+              props.setDates([]);
+              props.setSelectedDays([]);
               props.secondForm.reset({
                 ...secondDefaultValues,
                 is_solicitation: props.isSolicitation,
@@ -86,10 +97,18 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
               label='Quantidade de pessoas'
               name='capacity'
               mt={'10px'}
+              onFocus={props.focusMobile.onFocusInput}
+              onBlur={props.focusMobile.onBlur}
             />
           )}
 
-          <TextareaInput mt={4} label='Motivo (Opcional)' name='reason' />
+          <TextareaInput
+            mt={4}
+            label='Motivo (Opcional)'
+            name='reason'
+            onFocus={props.focusMobile.onFocusTextArea}
+            onBlur={props.focusMobile.onBlur}
+          />
           {!reservationType && (
             <Alert status='error' mt={'20px'} borderRadius={'10px'}>
               <AlertIcon />
@@ -112,6 +131,8 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                   }
                 }}
                 placeholder='Selecione a disciplina'
+                onFocus={props.focusMobile.onFocusInput}
+                onBlur={props.focusMobile.onBlur}
               />
               <MultiSelectInput
                 name='class_ids'
@@ -121,16 +142,17 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                     ? 'Selecione as turmas'
                     : 'Selecione primeiro a disciplina'
                 }
+                isLoading={loading}
                 options={
                   subjectId
-                    ? props.classes
-                        .filter((cls) => cls.subject_id === subjectId)
-                        .map((cls) => ({
-                          value: cls.id,
-                          label: `${cls.subject_code} - T${classNumberFromClassCode(cls.code)}`,
-                        }))
+                    ? classes.map((cls) => ({
+                        value: cls.id,
+                        label: `${cls.subject_code} - T${classNumberFromClassCode(cls.code)}`,
+                      }))
                     : []
                 }
+                onFocus={props.focusMobile.onFocusInput}
+                onBlur={props.focusMobile.onBlur}
               />
             </Flex>
           )}
@@ -144,6 +166,8 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                 label: EventType.translate(value),
               }))}
               mt={'10px'}
+              onFocus={props.focusMobile.onFocusInput}
+              onBlur={props.focusMobile.onBlur}
             />
           )}
 
@@ -153,6 +177,8 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
               name='link'
               icon={<LinkIcon />}
               mt={'10px'}
+              onFocus={props.focusMobile.onFocusInput}
+              onBlur={props.focusMobile.onBlur}
             />
           )}
         </form>

@@ -26,6 +26,7 @@ import { PiChair, PiExamLight } from 'react-icons/pi';
 import { BsCalendar3, BsEnvelopeCheck } from 'react-icons/bs';
 import { HiUserGroup } from 'react-icons/hi';
 import { IconType } from 'react-icons';
+import { VscFeedback, VscReport } from 'react-icons/vsc';
 import moment from 'moment';
 
 interface DrawerBodyProps {
@@ -116,6 +117,20 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                 icon={<MdEvent />}
                 to='/institutional-events'
                 text='Eventos'
+                replace_location={false}
+                onClose={onClose}
+              />
+              <DrawerButton
+                icon={<VscReport />}
+                to='/reports'
+                text='Reportes'
+                replace_location={false}
+                onClose={onClose}
+              />
+              <DrawerButton
+                icon={<VscFeedback />}
+                to='/feedbacks'
+                text='Feedbacks'
                 replace_location={false}
                 onClose={onClose}
               />

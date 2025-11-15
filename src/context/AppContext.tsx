@@ -1,6 +1,7 @@
 import useSelfService from '../hooks/API/services/useSelfService';
 import { UserResponse } from '../models/http/responses/user.response.models';
 import React, { createContext, useEffect, useState } from 'react';
+import { AuthHttpService } from '../services/auth/auth.service';
 
 interface AppContext {
   loading: boolean;
@@ -43,6 +44,7 @@ export default function AppContextProvider({
   const [persist, setPersist] = useState<boolean>(true);
 
   const selfService = useSelfService();
+  const authHttpService = new AuthHttpService();
 
   async function getSelfFromBackend() {
     try {
@@ -79,6 +81,13 @@ export default function AppContextProvider({
 
   async function logout() {
     console.log('Logging out...');
+    try {
+      await authHttpService.logout();
+      console.log('Logout user session on backend!');
+    } catch (e) {
+      console.error(e);
+    }
+
     localStorage.removeItem('refresh_token');
     setLoggedUser(null);
     setAccessToken('');

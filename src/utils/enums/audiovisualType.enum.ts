@@ -15,6 +15,7 @@ export namespace AudiovisualType {
   export function translate(type: AudiovisualType): string {
     return translations[type];
   }
+  
   export function values(): AudiovisualType[] {
     return Object.values(AudiovisualType).filter(
       (value) => typeof value === 'string',

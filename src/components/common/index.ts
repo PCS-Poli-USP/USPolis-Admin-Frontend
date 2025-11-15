@@ -6,3 +6,4 @@ export * from './form/CheckBox';
 export * from './form/ListInput';
 export * from './form/NumberInput';
 export * from './form/SwitchInput';
+export * from './form/RadioButton';

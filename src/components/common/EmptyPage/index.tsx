@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { CloseIcon } from '@chakra-ui/icons';
-import { IconButton, useMediaQuery } from '@chakra-ui/react';
+import { IconButton, useDisclosure, useMediaQuery } from '@chakra-ui/react';
 import DrawerBody from './drawer.body';
 import { DrawerNavBar } from './drawer.navbar';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -13,6 +13,9 @@ import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { FeatureTourGuideStepData } from '../../../context/FeatureGuideContext/steps';
 import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
 import { menuContext } from '../../../context/MenuContext';
+import ContactUsModal from '../ContactUsModal';
+import ContactUsNews from '../NewsJoyride/ContactUsNews';
+import { appContext } from '../../../context/AppContext';
 
 const drawerWidth = 300;
 
@@ -72,7 +75,14 @@ export default function EmptyPage() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { state, setState, triggerControl, pathBeforeGuide } =
     useFeatureGuideContext();
+  const { isAuthenticated } = React.useContext(appContext);
   const { isOpen, onOpen, onClose } = React.useContext(menuContext);
+  const {
+    isOpen: isOpenContactModal,
+    onClose: onCloseContactModal,
+    onOpen: onOpenContactModal,
+  } = useDisclosure();
+
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
@@ -190,6 +200,8 @@ export default function EmptyPage() {
           handleDrawerOpen={handleDrawerOpen}
           handleDrawerClose={handleDrawerClose}
           isMobile={isMobile}
+          onOpenContactModal={onOpenContactModal}
+          onCloseContactModal={onCloseContactModal}
         />
       </AppBar>
       <Drawer
@@ -211,13 +223,21 @@ export default function EmptyPage() {
             size={'md'}
             icon={<CloseIcon />}
             variant={'ghost'}
-            textColor={'black'}
+            textColor={'uspolis.black'}
             aria-label={'open-menu'}
             onClick={() => handleDrawerClose()}
           />
         </DrawerHeader>
         <DrawerBody onClose={handleDrawerClose} />
       </Drawer>
+      {isAuthenticated && (
+        <ContactUsNews
+          isMobile={isMobile}
+          onOpen={onOpenContactModal}
+          onClose={onCloseContactModal}
+          isOpen={isOpenContactModal}
+        />
+      )}
       <Joyride
         {...state}
         continuous={true}
@@ -238,7 +258,7 @@ export default function EmptyPage() {
           options: {
             arrowColor: 'uspolis.blue',
             primaryColor: 'uspolis.blue',
-            textColor: '#fff',
+            textColor: 'uspolis.text',
             backgroundColor: 'uspolis.blue',
             beaconSize: 36,
             overlayColor: 'rgba(0, 0, 0, 0.5)',
@@ -266,6 +286,11 @@ export default function EmptyPage() {
           return;
         }}
       />
+      <ContactUsModal
+        isOpen={isOpenContactModal}
+        onClose={onCloseContactModal}
+      />
+
       <Box width={isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`}>
         <Main open={isOpen} isMobile={isMobile}>
           <Outlet />

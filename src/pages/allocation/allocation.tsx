@@ -25,7 +25,6 @@ import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import ReservationModal from '../../pages/reservations/ReservationModal/reservation.modal';
 import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
 import { loadReservationForDataClick } from './utils/allocation.utils';
-import useClassroomsSolicitations from '../../hooks/solicitations/useSolicitations';
 import { EventDropArg } from '@fullcalendar/core';
 import EventDragModal from './EventDragModal';
 import { EventDef } from '@fullcalendar/core/internal';
@@ -35,7 +34,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { DateCalendar } from '@mui/x-date-pickers';
 import FullCalendar from '@fullcalendar/react';
 import { AllocationEventType } from '../../utils/enums/allocation.event.type.enum';
-import useClasses from '../../hooks/classes/useClasses';
 
 type ViewOption = {
   value: string;
@@ -123,13 +121,11 @@ function Allocation() {
     subjects,
     getAllSubjectsActives,
   } = useSubjects(false);
-  const { classes, loading: loadingClasses, getAllClasses } = useClasses(false);
   const {
     loading: loadingClassrooms,
     classrooms,
     getAllClassrooms,
   } = useClassrooms(false);
-  const { getPendingBuildingSolicitations } = useClassroomsSolicitations(false);
 
   const [filteredEvents, setFilteredEvents] = useState<Event[]>(events);
   const [filteredResources, setFilteredResources] =
@@ -309,10 +305,6 @@ function Allocation() {
       getAllBuildings();
       getAllSubjectsActives();
       getAllClassrooms();
-      getAllClasses();
-      if (loggedUser.is_admin || loggedUser.buildings) {
-        getPendingBuildingSolicitations();
-      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedUser]);
@@ -418,9 +410,7 @@ function Allocation() {
             loadingSubjects={loadingSubjects}
             buildings={buildings}
             loadingBuildings={loadingBuildings}
-            loadingSolicitation={
-              loadingSubjects || loadingClasses || loadingClassrooms
-            }
+            loadingSolicitation={loadingSubjects || loadingClassrooms}
           />
         </GridItem>
 
@@ -592,12 +582,11 @@ function Allocation() {
               selectedReservation={undefined}
               refetch={async () => {
                 if (loggedUser.is_admin || loggedUser.buildings) {
-                  await getPendingBuildingSolicitations();
+                  await getEvents(currentStartDate, currentEndDate);
                 }
               }}
               subjects={subjects}
-              classes={classes}
-              loading={loadingSubjects || loadingClasses || loadingClassrooms}
+              loading={loadingSubjects || loadingClassrooms}
             />
           )}
           {loggedUser && (
@@ -630,7 +619,6 @@ function Allocation() {
               selectedReservation={reservation}
               initialDate={clickedDate}
               subjects={subjects}
-              classes={[]}
               loading={loadingClassrooms || loadingSubjects || loadingBuildings}
               isSolicitation={false}
             />

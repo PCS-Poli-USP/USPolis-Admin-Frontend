@@ -5,7 +5,6 @@ import { ModalProps } from '../../../models/interfaces';
 import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
-import { ClassResponse } from '../../../models/http/responses/class.response.models';
 import { SubjectResponse } from '../../../models/http/responses/subject.response.models';
 import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 
@@ -16,7 +15,6 @@ export interface ReservationModalProps extends ModalProps {
   selectedReservation?: ReservationResponse;
   selectedSolicitation?: SolicitationResponse;
   subjects: SubjectResponse[];
-  classes: ClassResponse[];
   loading: boolean;
   refetch: () => void;
   isSolicitation: boolean;
