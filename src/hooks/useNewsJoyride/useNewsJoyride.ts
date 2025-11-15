@@ -1,28 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+
+const LAST_FEATURE = 'contact-us';
 
 const useNewsJoyride = () => {
   const [showNews, setShowNews] = useState<boolean>(
-    localStorage.getItem('show-news')
-      ? localStorage.getItem('show-news')?.toLowerCase() == 'true'
-      : false,
+    localStorage.getItem('last-feature')
+      ? localStorage.getItem('last-feature') != LAST_FEATURE
+      : true,
   );
 
-  useEffect(() => {
-    const show = localStorage.getItem('show-news');
-    if (typeof show == 'string') {
-      setShowNews(show == 'true');
-    } else {
-      resetState();
-    }
-  }, []);
-
   const resetState = () => {
-    localStorage.setItem('show-news', 'true');
+    localStorage.removeItem('last-feature');
     setShowNews(true);
   };
 
   const seeNews = () => {
-    localStorage.setItem('show-news', 'false');
+    localStorage.setItem('last-feature', LAST_FEATURE);
     setShowNews(false);
   };
 
