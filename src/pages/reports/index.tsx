@@ -80,8 +80,8 @@ function Reports() {
       <EvidenceModal
         isOpen={isOpen}
         onClose={() => {
-          onClose();
           setSelectedReport(undefined);
+          onClose();
         }}
         selectedReport={selectedReport}
       />

@@ -12,6 +12,12 @@ const useBugReportService = () => {
     return axios.get('/admin/reports');
   };
 
+  const getEvidence = (id: number): Promise<AxiosResponse<Blob>> => {
+    return axios.get(`/admin/reports/evidences/${id}`, {
+      responseType: 'blob',
+    });
+  };
+
   const create = (
     data: CreateBugReport,
   ): Promise<AxiosResponse<JSONResponse>> => {
@@ -36,7 +42,7 @@ const useBugReportService = () => {
     return axios.patch(`/admin/reports/${report_id}`, { status });
   };
 
-  return { getAll, create, updateStatus };
+  return { getAll, getEvidence, create, updateStatus };
 };
 
 export default useBugReportService;

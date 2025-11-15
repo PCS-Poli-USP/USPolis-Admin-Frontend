@@ -6,6 +6,7 @@ import BugReportErrorParser from './bugReportErrorParser';
 import { BugReportResponse } from '../../models/http/responses/bugReport.response.models';
 import { CreateBugReport } from '../../models/http/requests/bugReport.request.models';
 import { BugPriority, BugStatus } from '../../utils/enums/bugReport.enum';
+import BugReportEvidenceErrorParser from './bugReportEvidenceErrorParser';
 
 const useBugReports = () => {
   const service = useBugReportService();
@@ -13,6 +14,7 @@ const useBugReports = () => {
   const [loading, setLoading] = useState(false);
 
   const errorParser = new BugReportErrorParser();
+  const evidenceErrorParser = new BugReportEvidenceErrorParser();
   const showToast = useCustomToast();
 
   const getReports = useCallback(async () => {
@@ -34,6 +36,26 @@ const useBugReports = () => {
         setLoading(false);
       });
   }, []);
+
+  const getReportEvidence = useCallback(
+    async (id: number): Promise<Blob | undefined> => {
+      setLoading(true);
+      let data: Blob | undefined = undefined;
+      await service
+        .getEvidence(id)
+        .then((response) => {
+          data = response.data;
+        })
+        .catch((error) => {
+          showToast('Erro', evidenceErrorParser.parseGetError(error), 'error');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+      return data;
+    },
+    [],
+  );
 
   const createReport = useCallback(async (data: CreateBugReport) => {
     setLoading(true);
@@ -74,6 +96,7 @@ const useBugReports = () => {
     reports,
     loading,
     getReports,
+    getReportEvidence,
     createReport,
     updateReportStatus,
   };
