@@ -3,6 +3,7 @@ import {
   AlertIcon,
   Box,
   Button,
+  Flex,
   HStack,
   IconButton,
   Modal,
@@ -76,6 +77,10 @@ import {
 } from '../../../models/http/requests/solicitation.request.models';
 import useSolicitations from '../../../hooks/solicitations/useSolicitations';
 import { useOnFocusMobile } from '../../../hooks/useOnFocusMobile/useOnFocusMobile';
+import { generateRecurrenceDates } from '../../../utils/common/common.generator';
+import { WeekDay } from '../../../utils/enums/weekDays.enum';
+import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
+import HelpPopover from '../../../components/common/HelpPopover';
 
 function ReservationModal(props: ReservationModalProps) {
   const focusMobile = useOnFocusMobile();
@@ -94,6 +99,7 @@ function ReservationModal(props: ReservationModalProps) {
     false,
     false,
   ]);
+  const [invalidCombination, setInvalidCombination] = useState(false);
 
   const { loading } = useReservations(false);
   const { loading: loadingSolicitations, createSolicitation } =
@@ -211,15 +217,31 @@ function ReservationModal(props: ReservationModalProps) {
     if (!isValidFirst) return;
     if (!isValidSecond) return;
 
-    if (getValues('recurrence') !== Recurrence.CUSTOM && dates.length !== 0)
-      return;
-    if (getValues('recurrence') === Recurrence.CUSTOM && dates.length === 0)
-      return;
+    const recurrence = getValues('recurrence');
+    if (recurrence !== Recurrence.CUSTOM && dates.length !== 0) return;
+    if (recurrence === Recurrence.CUSTOM && dates.length === 0) return;
 
     if (getValues('type') === ReservationType.EXAM) {
       const labels = getValues('labels');
       if (!labels) return;
       if (labels.length !== dates.length) return;
+    }
+    if (recurrence !== Recurrence.CUSTOM) {
+      const start = getValues('start_date');
+      const end = getValues('end_date');
+      const week_day = getValues('week_day');
+      const month_week = getValues('month_week');
+      const generated = generateRecurrenceDates(
+        start,
+        end,
+        recurrence,
+        week_day as WeekDay | undefined,
+        month_week as MonthWeek | undefined,
+      );
+      if (generated.length == 0) {
+        setInvalidCombination(false);
+        return;
+      }
     }
     handleSaveClick();
   }
@@ -495,6 +517,36 @@ function ReservationModal(props: ReservationModalProps) {
         </ModalBody>
         <ModalFooter>
           <VStack width={'full'}>
+            {invalidCombination && (
+              <Flex
+                direction={'row'}
+                gap={'5px'}
+                justifyContent={'flex-end'}
+                alignItems={'center'}
+                width={'100%'}
+              >
+                <Alert
+                  status='error'
+                  borderRadius={'10px'}
+                  w={focusMobile.isMobile ? 'full' : '335px'}
+                >
+                  <AlertIcon />A agenda formada é inválida
+                </Alert>
+                <HelpPopover
+                  title='O que isso significa?'
+                  size='md'
+                  placement='top'
+                >
+                  <Flex direction={'column'} gap={'5px'}>
+                    <Text>
+                      A combinação de <b>data de início</b>, <b>data de fim</b>,{' '}
+                      <b>recorrência</b>, <b>dia da semana</b> e{' '}
+                      <b>semana do mês</b> geram <b>nenhuma data</b>.
+                    </Text>
+                  </Flex>
+                </HelpPopover>
+              </Flex>
+            )}
             <HStack
               spacing='10px'
               alignSelf={'flex-end'}
