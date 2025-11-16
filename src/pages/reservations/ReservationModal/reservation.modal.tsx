@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   HStack,
+  IconButton,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -494,14 +495,31 @@ function ReservationModal(props: ReservationModalProps) {
         </ModalBody>
         <ModalFooter>
           <VStack width={'full'}>
-            <HStack spacing='10px' alignSelf={'flex-end'}>
-              <Button
-                colorScheme={'red'}
-                onClick={handleCloseModal}
-                rightIcon={<SmallCloseIcon />}
-              >
-                Cancelar
-              </Button>
+            <HStack
+              spacing='10px'
+              alignSelf={'flex-end'}
+              justifyContent={'flex-end'}
+              width={'100%'}
+            >
+              {focusMobile.isMobile && (
+                <IconButton
+                  aria-label='close-form'
+                  colorScheme={'red'}
+                  onClick={handleCloseModal}
+                  icon={<SmallCloseIcon />}
+                  width={'max-content'}
+                  flexGrow={1}
+                />
+              )}
+              {!focusMobile.isMobile && (
+                <Button
+                  colorScheme={'red'}
+                  onClick={handleCloseModal}
+                  rightIcon={<SmallCloseIcon />}
+                >
+                  Cancelar
+                </Button>
+              )}
               <Button
                 colorScheme={'blue'}
                 isDisabled={activeStep === 0}

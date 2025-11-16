@@ -53,7 +53,7 @@ function FindExams() {
       >
         <PageHeaderWithFilter
           {...pageHeaderProps}
-          title='Encontre suas provas'
+          title={isMobile ? 'Provas' : 'Encontre suas provas'}
           tooltip='Buscar provas em outro período'
           onConfirm={(start, end) => {
             getExams(start, end);

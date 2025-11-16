@@ -18,13 +18,17 @@ import TooltipSelect, { Option } from '../../components/common/TooltipSelect';
 function FindClasses() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const selectRef = useRef<SelectInstance<Option>>(null);
-  const { loading: loadingS, subjects, getAllSubjects } = useSubjects(false);
+  const {
+    loading: loadingS,
+    subjects,
+    getAllSubjectsActives,
+  } = useSubjects(false);
   const { classes, getClassesBySubject, loading } = useClasses(false);
   const [subjectOption, setSubjectOption] = useState<Option>();
   const [classOption, setClassOption] = useState<Option>();
 
   useEffect(() => {
-    getAllSubjects();
+    getAllSubjectsActives();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
