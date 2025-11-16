@@ -33,7 +33,9 @@ function MySolicitationModal({
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader textColor={'black'}>Reserva de Sala</ModalHeader>
+            <ModalHeader textColor={'uspolis.text'}>
+              Reserva de Sala
+            </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <VStack align={'flex-start'} spacing={4}>
@@ -41,14 +43,14 @@ function MySolicitationModal({
                   <Heading
                     size='sm'
                     textTransform='uppercase'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                   >
                     Solicitante
                   </Heading>
-                  <Text pt='2' fontSize='md' textColor={'black'}>
+                  <Text pt='2' fontSize='md' textColor={'uspolis.text'}>
                     {`${solicitation.user}`}
                   </Text>
-                  <Text pt='2' fontSize='md' textColor={'black'}>
+                  <Text pt='2' fontSize='md' textColor={'uspolis.text'}>
                     {`${solicitation.email}`}
                   </Text>
                 </Box>
@@ -56,7 +58,7 @@ function MySolicitationModal({
                   <Heading
                     size='sm'
                     textTransform='uppercase'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                   >
                     {`Motivo - ${ReservationType.translate(
                       solicitation.reservation.type,
@@ -65,7 +67,7 @@ function MySolicitationModal({
                   <Text
                     pt='2'
                     fontSize='md'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                     textAlign={'justify'}
                   >
                     {solicitation.reservation.reason
@@ -77,11 +79,11 @@ function MySolicitationModal({
                   <Heading
                     size='sm'
                     textTransform='uppercase'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                   >
                     Local, Horário e Datas
                   </Heading>
-                  <Text pt='2' fontSize='md' textColor={'black'}>
+                  <Text pt='2' fontSize='md' textColor={'uspolis.text'}>
                     {`Local: ${solicitation.building}, sala ${
                       solicitation.reservation.classroom_name
                         ? solicitation.reservation.classroom_name
@@ -127,11 +129,11 @@ function MySolicitationModal({
                   <Heading
                     size='sm'
                     textTransform='uppercase'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                   >
                     Requisitos
                   </Heading>
-                  <Text pt='2' fontSize='md' textColor={'black'}>
+                  <Text pt='2' fontSize='md' textColor={'uspolis.text'}>
                     {`Capacidade para ${solicitation.capacity} pessoas`}
                   </Text>
                 </Box>
@@ -139,7 +141,7 @@ function MySolicitationModal({
                   <Heading
                     size='sm'
                     textTransform='uppercase'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                   >
                     Situação
                   </Heading>

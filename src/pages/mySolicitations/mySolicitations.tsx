@@ -27,7 +27,6 @@ import useBuildings from '../../hooks/useBuildings';
 import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import ReservationModal from '../reservations/ReservationModal/reservation.modal';
 import useSubjects from '../../hooks/useSubjetcts';
-import useClasses from '../../hooks/classes/useClasses';
 
 const MySolicitations = () => {
   const { loading, solicitations, cancelSolicitation, getSolicitations } =
@@ -48,7 +47,6 @@ const MySolicitations = () => {
     subjects,
     getAllSubjectsActives,
   } = useSubjects(false);
-  const { classes, loading: loadingClasses, getAllClasses } = useClasses(false);
 
   const [isMobile] = useMediaQuery('(max-width: 800px)');
 
@@ -80,7 +78,6 @@ const MySolicitations = () => {
     getAllBuildings();
     getAllSubjectsActives();
     getAllClassrooms();
-    getAllClasses();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -100,10 +97,7 @@ const MySolicitations = () => {
               colorScheme='blue'
               onClick={() => onOpenSolicitation()}
               isLoading={
-                loadingSubjects ||
-                loadingClasses ||
-                loadingClassrooms ||
-                loadingBuildings
+                loadingSubjects || loadingClassrooms || loadingBuildings
               }
             >
               Nova Solicitação
@@ -161,13 +155,7 @@ const MySolicitations = () => {
           await getSolicitations();
         }}
         subjects={subjects}
-        classes={classes}
-        loading={
-          loadingSubjects ||
-          loadingClasses ||
-          loadingClassrooms ||
-          loadingBuildings
-        }
+        loading={loadingSubjects || loadingClassrooms || loadingBuildings}
       />
       <Skeleton isLoaded={!loading}>
         {!isMobile ? (

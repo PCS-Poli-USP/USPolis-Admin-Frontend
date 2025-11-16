@@ -51,15 +51,15 @@ function SolicitationStackBody({
             >
               <Heading size={'md'}>{`Reserva de Sala`}</Heading>
               <Text>{`Local: ${solicitation.building}, sala ${
-                solicitation.reservation.classroom
-                  ? solicitation.reservation.classroom
+                solicitation.reservation.classroom_name
+                  ? solicitation.reservation.classroom_name
                   : 'não especificada'
               }`}</Text>
 
               <Text>
                 <Highlight
                   query={['solicitante:', solicitation.user]}
-                  styles={{ textColor: 'uspolis.blue', fontWeight: 'bold' }}
+                  styles={{ textColor: 'uspolis.text', fontWeight: 'bold' }}
                 >
                   {getRequesterText(solicitation)}
                 </Highlight>
@@ -74,7 +74,10 @@ function SolicitationStackBody({
                     'cancelada',
                     'removida',
                   ]}
-                  styles={{ textColor: 'uspolis.blue', fontWeight: 'bold' }}
+                  styles={{
+                    textColor: ReservationStatus.getColor(solicitation.status),
+                    fontWeight: 'bold',
+                  }}
                 >
                   {getSolicitationStatusText(solicitation)}
                 </Highlight>

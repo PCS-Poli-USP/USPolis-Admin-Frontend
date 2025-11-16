@@ -30,6 +30,7 @@ interface DateRangeInputProps {
   setStart: (start: string) => void;
   setEnd: (end: string) => void;
   onConfirm: (start: string, end: string) => void;
+  isMobile: boolean;
 }
 
 function DateRangeInput({
@@ -39,6 +40,7 @@ function DateRangeInput({
   setStart,
   setEnd,
   onConfirm,
+  isMobile,
 }: DateRangeInputProps) {
   const { isOpen, onClose, onToggle } = useDisclosure();
   const [rangeApplied, setRangeApplied] = useState(false);
@@ -111,7 +113,7 @@ function DateRangeInput({
   return (
     <Popover isOpen={isOpen} onClose={onClose} placement='right'>
       <PopoverTrigger>
-        <Tooltip label={title} placement='top'>
+        <Tooltip label={title} placement={isMobile ? 'auto' : 'top'}>
           <Flex
             gap={'10px'}
             align={'center'}
@@ -142,7 +144,9 @@ function DateRangeInput({
                 align={'center'}
               >
                 <Text fontWeight={'bold'} onClick={onToggle}>
-                  Período: {formatDate(start)} até {formatDate(end)}
+                  {isMobile
+                    ? `${formatDate(start)} até ${formatDate(end)}`
+                    : `Período: ${formatDate(start)} até ${formatDate(end)}`}
                 </Text>
                 <IconButton
                   aria-label='Remover período'
@@ -161,12 +165,12 @@ function DateRangeInput({
           </Flex>
         </Tooltip>
       </PopoverTrigger>
-      <PopoverContent w={'400px'}>
+      <PopoverContent w={isMobile ? '100vw' : '400px'}>
         <PopoverCloseButton />
         <PopoverHeader fontWeight={'bold'}>Selecione o período</PopoverHeader>
-        <PopoverArrow />
+        {!isMobile && <PopoverArrow />}
         <PopoverBody>
-          <Flex direction={'row'} gap={'10px'}>
+          <Flex direction={isMobile ? 'column' : 'row'} gap={'10px'}>
             <Flex direction={'column'} gap={'10px'} w={'50%'}>
               <FormControl isInvalid={hasStartError}>
                 <FormLabel>Início:</FormLabel>
