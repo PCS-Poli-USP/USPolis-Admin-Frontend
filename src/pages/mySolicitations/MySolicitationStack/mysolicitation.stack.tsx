@@ -35,8 +35,8 @@ function SolicitationStack({
       );
     if (classroom)
       newCurrent = newCurrent.filter((val) =>
-        val.reservation.classroom
-          ? val.reservation.classroom
+        val.reservation.classroom_name
+          ? val.reservation.classroom_name
               .toLowerCase()
               .includes(classroom.toLowerCase())
           : 'não especificada'.includes(classroom.toLowerCase()),
@@ -79,11 +79,11 @@ function SolicitationStack({
     const options = solicitations
       .filter((val) => val.building === buildingSearch)
       .map((solicitation) => ({
-        value: solicitation.reservation.classroom
-          ? solicitation.reservation.classroom
+        value: solicitation.reservation.classroom_name
+          ? solicitation.reservation.classroom_name
           : 'Não especificada',
-        label: solicitation.reservation.classroom
-          ? solicitation.reservation.classroom
+        label: solicitation.reservation.classroom_name
+          ? solicitation.reservation.classroom_name
           : 'Não especificada',
       }))
       .filter(
