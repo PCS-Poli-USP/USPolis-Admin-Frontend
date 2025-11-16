@@ -17,11 +17,10 @@ import useReservations from '../../hooks/reservations/useReservations';
 import ReservationModal from './ReservationModal/reservation.modal';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import PageContent from '../../components/common/PageContent';
-import useClassroomsSolicitations from '../../hooks/solicitations/useSolicitations';
+import useSolicitations from '../../hooks/solicitations/useSolicitations';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
 import useSubjects from '../../hooks/useSubjetcts';
-import useClasses from '../../hooks/classes/useClasses';
 import { ClassroomFullResponse } from '../../models/http/responses/classroom.response.models';
 import ClassroomTimeGrid from '../../components/common/ClassroomTimeGrid/classroom.time.grid';
 
@@ -51,10 +50,9 @@ function Reservations() {
     listOneFull,
   } = useClassrooms();
   const { subjects, loading: loadingSubjects } = useSubjects();
-  const { classes, loading: loadingClasses } = useClasses();
   const { loading, reservations, getReservations, deleteReservation } =
     useReservations();
-  const { getPendingBuildingSolicitations } = useClassroomsSolicitations(false);
+  const { getPendingBuildingSolicitations } = useSolicitations(false);
   const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
 
   const [selectedReservation, setSelectedReservation] =
@@ -157,8 +155,7 @@ function Reservations() {
         selectedReservation={selectedReservation}
         refetch={() => getReservations()}
         subjects={subjects}
-        classes={classes}
-        loading={loadingSubjects || loadingClasses}
+        loading={loadingSubjects}
       />
       <DataTable
         loading={loading}

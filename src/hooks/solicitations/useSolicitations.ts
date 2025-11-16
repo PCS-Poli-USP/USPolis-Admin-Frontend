@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { sortSolicitationResponse } from '../../utils/solicitations/solicitation.sorter';
 import useSolicitationsService from '../API/services/useSolicitationsService';
 import { SolicitationErrorParser } from './solicitationErrorParser';
+import { usePaginatedResponse } from '../API/usePaginatedResponse';
 
 const useSolicitations = (initialFetch = true) => {
   const service = useSolicitationsService();
@@ -17,6 +18,8 @@ const useSolicitations = (initialFetch = true) => {
   const [solicitations, setSolicitations] = useState<SolicitationResponse[]>(
     [],
   );
+  const { pageResponse, setPageResponse } =
+    usePaginatedResponse<SolicitationResponse>();
 
   const showToast = useCustomToast();
 
@@ -59,12 +62,12 @@ const useSolicitations = (initialFetch = true) => {
   }, [showToast, service]);
 
   const getAllBuildingSolicitations = useCallback(
-    async (start?: string, end?: string) => {
+    async (page?: number, pageSize?: number) => {
       setLoading(true);
       await service
-        .getAll(start, end)
+        .getAllPaginated(page, pageSize)
         .then((response) => {
-          setSolicitations(response.data.sort(sortSolicitationResponse));
+          setPageResponse(response.data);
         })
         .catch((error) => {
           console.log(error);
@@ -168,6 +171,8 @@ const useSolicitations = (initialFetch = true) => {
   return {
     loading,
     solicitations,
+    pageResponse,
+    setPageResponse,
     getSolicitations,
     getPendingBuildingSolicitations,
     getAllBuildingSolicitations,

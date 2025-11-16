@@ -5,29 +5,52 @@ import SolicitationPanel from './SolicitationPanel/solicitation.panel';
 import useClassroomsSolicitations from '../../hooks/solicitations/useSolicitations';
 import { useEffect, useState } from 'react';
 import { SolicitationResponse } from '../../models/http/responses/solicitation.response.models';
+import { PageSize } from '../../utils/enums/pageSize.enum';
 
 function Solicitations() {
   const {
     loading,
     solicitations,
+    pageResponse,
     getPendingBuildingSolicitations,
     getAllBuildingSolicitations,
     approveSolicitation,
     denySolicitation,
   } = useClassroomsSolicitations(false);
-  const [solicitation, setSolicitation] = useState<
+  const [fetchPages, setFetchPages] = useState(false);
+  const [selectedSolicitation, setSelectedSolicitation] = useState<
     SolicitationResponse | undefined
   >(undefined);
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>(
     undefined,
   );
+  const [solicitationsPaginated, setSolicitationsPaginated] = useState<
+    Array<SolicitationResponse>
+  >([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PageSize.SIZE_5);
 
-  const [loadedAll, setLoadedAll] = useState(false);
+  async function fetchData() {
+    await getPendingBuildingSolicitations();
+    await getAllBuildingSolicitations(1, pageSize);
+  }
 
   useEffect(() => {
-    getPendingBuildingSolicitations();
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (fetchPages) {
+      if (pageResponse.data) {
+        setSolicitationsPaginated((prev) => [...prev, ...pageResponse.data]);
+      }
+    }
+    if (!fetchPages && pageResponse.data) {
+      setSolicitationsPaginated(pageResponse.data);
+      setFetchPages(true);
+    }
+  }, [pageResponse, fetchPages]);
 
   return (
     <PageContent>
@@ -39,25 +62,25 @@ function Solicitations() {
           borderRadius={'10px'}
           borderColor={'lightgray'}
           p={'10px'}
-          overflowY={'auto'}
+          overflowY={'hidden'}
         >
           <SolicitationStack
+            selectedSolicitation={selectedSolicitation}
             selectedIndex={selectedIndex}
             setSelectedIndex={setSelectedIndex}
-            solicitations={solicitations}
-            handleOnClick={setSolicitation}
-            reset={() => setSolicitation(undefined)}
+            pendingSolicitations={solicitations}
+            solicitationsPaginated={solicitationsPaginated}
+            handleOnClick={setSelectedSolicitation}
+            reset={() => setSelectedSolicitation(undefined)}
             loading={loading}
-            handleShowAll={(showAll) => {
-              if (!loadedAll && showAll) {
-                getAllBuildingSolicitations();
-                setLoadedAll(showAll);
-              }
-
-              if (!showAll) {
-                getPendingBuildingSolicitations();
-                setLoadedAll(showAll);
-              }
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            pageSize={pageSize}
+            setPageSize={setPageSize}
+            totalPages={pageResponse.total_pages}
+            totalItems={pageResponse.total_items}
+            handleShowMore={async (page) => {
+              await getAllBuildingSolicitations(page, pageSize);
             }}
           />
         </GridItem>
@@ -70,16 +93,16 @@ function Solicitations() {
           <SolicitationPanel
             handleClose={() => {
               setSelectedIndex(undefined);
-              setSolicitation(undefined);
+              setSelectedSolicitation(undefined);
             }}
-            solicitation={solicitation}
+            solicitation={selectedSolicitation}
             approve={async (id, data) => {
               await approveSolicitation(id, data);
-              setSolicitation(undefined);
+              setSelectedSolicitation(undefined);
             }}
             deny={async (id, data) => {
               await denySolicitation(id, data);
-              setSolicitation(undefined);
+              setSelectedSolicitation(undefined);
             }}
             loading={loading}
           />

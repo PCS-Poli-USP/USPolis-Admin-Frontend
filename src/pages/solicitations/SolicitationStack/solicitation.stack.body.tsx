@@ -2,6 +2,7 @@ import {
   Alert,
   AlertIcon,
   Box,
+  Button,
   Heading,
   Highlight,
   StackDivider,
@@ -17,22 +18,41 @@ interface SolicitationStackBodyProps {
   solicitations: SolicitationResponse[];
   handleOnClick: (data: SolicitationResponse) => void;
   reset: () => void;
+  selectedSolicitation?: SolicitationResponse;
   selectedIndex?: number;
   setSelectedIndex: (index: number) => void;
+  showAll: boolean;
+  totalItems: number;
+  hasMore: boolean;
+  handleShowMoreClick: (target: HTMLButtonElement) => Promise<void>;
 }
 
 function SolicitationStackBody({
   solicitations,
   handleOnClick,
   reset,
-  selectedIndex,
+  selectedSolicitation,
   setSelectedIndex,
+  showAll,
+  hasMore,
+  handleShowMoreClick,
 }: SolicitationStackBodyProps) {
   return (
     <VStack w={'full'} divider={<StackDivider />}>
+      {showAll && hasMore && (
+        <Button
+          w={'full'}
+          onClick={(event) => handleShowMoreClick(event.currentTarget)}
+        >
+          Ver mais
+        </Button>
+      )}
+
       {solicitations.length > 0 ? (
-        solicitations.map((solicitation, index) => {
-          const selected = selectedIndex === index;
+        solicitations.map((_, index) => {
+          const solicitation = solicitations[solicitations.length - 1 - index];
+          const selected =
+            selectedSolicitation && selectedSolicitation.id == solicitation.id;
           const closed = solicitation.status !== ReservationStatus.PENDING;
           return (
             <Box

@@ -6,6 +6,8 @@ import {
   CreateSolicitation,
 } from '../../../models/http/requests/solicitation.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
+import { PageSize } from '../../../utils/enums/pageSize.enum';
+import { PaginatedResponse } from '../../../models/http/responses/paginated.response.models';
 
 const useSolicitationsService = () => {
   const PREFIX = '/solicitations';
@@ -23,6 +25,18 @@ const useSolicitationsService = () => {
     return axios.get(`${PREFIX}`, {
       params,
     });
+  };
+
+  const getAllPaginated = (
+    page?: number,
+    page_size?: number,
+  ): Promise<AxiosResponse<PaginatedResponse<SolicitationResponse>>> => {
+    if (!page) page = 1;
+    if (!page_size) page_size = PageSize.SIZE_10;
+    const params = new URLSearchParams();
+    params.set('page', String(page));
+    params.set('page_size', String(page_size));
+    return axios.get(`${PREFIX}`, { params });
   };
 
   const getPending = (): Promise<
@@ -67,6 +81,7 @@ const useSolicitationsService = () => {
 
   return {
     getAll,
+    getAllPaginated,
     getPending,
     getMySolicitations,
     create,
