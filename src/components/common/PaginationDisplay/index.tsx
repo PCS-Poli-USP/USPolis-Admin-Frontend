@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Flex,
   Heading,
@@ -37,6 +39,7 @@ function PaginationDisplay<T>({
       padding={'1rem'}
       gap={'20px'}
       w={'fit-content'}
+      minW={'800px'}
     >
       <Flex
         position={'relative'}
@@ -93,6 +96,12 @@ function PaginationDisplay<T>({
           gap={'10px'}
         >
           {pageResponse.data.map((val) => renderPageItem(val))}
+          {pageResponse.data.length == 0 && (
+            <Alert status='warning' borderRadius={'5px'}>
+              <AlertIcon />
+              Nenhuma dado encontrado
+            </Alert>
+          )}
         </Flex>
       </Skeleton>
     </Flex>
