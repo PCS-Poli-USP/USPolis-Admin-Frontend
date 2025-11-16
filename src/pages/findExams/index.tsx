@@ -19,6 +19,7 @@ import TooltipSelect, { Option } from '../../components/common/TooltipSelect';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
 import HelpPopover from '../../components/common/HelpPopover';
+import { ReservationStatus } from '../../utils/enums/reservations.enum';
 
 type OptionType = {
   value: number;
@@ -31,6 +32,9 @@ function FindExams() {
   const { loading: loadingS, subjects, getAllSubjects } = useSubjects(false);
   const { classes, getClassesBySubject, loading } = useClasses(false);
   const { loading: loadingExams, exams, getExams } = useExams();
+  const activeExams = exams.filter(
+    (exam) => exam.reservation.status == ReservationStatus.APPROVED,
+  );
 
   const [subjectOption, setSubjectOption] = useState<Option>();
   const [classOption, setClassOption] = useState<Option>();
@@ -148,9 +152,9 @@ function FindExams() {
               </Text>
               {subjectOption ? (
                 <>
-                  {exams.length > 0 && (
+                  {activeExams.length > 0 && (
                     <ExamClassAccordion
-                      exams={exams.filter((exam) => {
+                      exams={activeExams.filter((exam) => {
                         if (classOption) {
                           return (
                             exam.subject_id == subjectOption.value &&
@@ -164,7 +168,7 @@ function FindExams() {
                       loading={loading}
                     />
                   )}
-                  {exams.length == 0 && (
+                  {activeExams.length == 0 && (
                     <Alert
                       status='warning'
                       borderRadius={'10px'}
