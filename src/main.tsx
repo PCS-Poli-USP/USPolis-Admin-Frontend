@@ -47,6 +47,9 @@ import FindExams from './pages/findExams';
 import MenuContextProvider from './context/MenuContext';
 import Reports from './pages/reports';
 import Feedbacks from './pages/feedbacks';
+import Docs from './pages/docs';
+import { MDXProvider } from '@mdx-js/react';
+import { mdxComponents } from './mdx/components';
 
 const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 
@@ -54,96 +57,108 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={muiTheme} defaultMode='light'>
     <ChakraProvider theme={chakraTheme}>
       <ColorModeScript initialColorMode={chakraTheme.config.initialColorMode} />
-      <GoogleOAuthProvider clientId={clientId!}>
-        <AppContextProvider>
-          <MenuContextProvider>
-            <LocalizationProvider
-              dateAdapter={AdapterMoment}
-              adapterLocale='pt-br'
-            >
-              <FeatureGuideProvider>
-                <BrowserRouter>
-                  <Routes>
-                    <Route path='/auth' element={<AuthPage />} />
-                    <Route
-                      path='auth-callback'
-                      element={<AuthCallbackPage />}
-                    />
-                    <Route path='/loading-page' element={<LoadingPage />} />
-                    <Route element={<AxiosInterceptorRoute />}>
-                      <Route element={<PersistLogin />}>
-                        <Route
-                          path='/print/classroom-calendar'
-                          element={<ClassroomCalendarPrintPage />}
-                        />
-                        <Route path='/' element={<Navigate to='/index' />} />
-                        <Route path='/index' element={<Home />} />
-                        <Route path='/' element={<EmptyPage />}>
-                          {/* Not found */}
-                          <Route path='*' element={<Page404 />} />
-
-                          {/* Public routes */}
-                          <Route path='allocation' element={<Allocation />} />
+      <MDXProvider components={mdxComponents}>
+        <GoogleOAuthProvider clientId={clientId!}>
+          <AppContextProvider>
+            <MenuContextProvider>
+              <LocalizationProvider
+                dateAdapter={AdapterMoment}
+                adapterLocale='pt-br'
+              >
+                <FeatureGuideProvider>
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path='/auth' element={<AuthPage />} />
+                      <Route
+                        path='auth-callback'
+                        element={<AuthCallbackPage />}
+                      />
+                      <Route path='/loading-page' element={<LoadingPage />} />
+                      <Route element={<AxiosInterceptorRoute />}>
+                        <Route element={<PersistLogin />}>
                           <Route
-                            path='find-classes'
-                            element={<FindClasses />}
+                            path='/print/classroom-calendar'
+                            element={<ClassroomCalendarPrintPage />}
                           />
-                          <Route path='find-exams' element={<FindExams />} />
+                          <Route path='/' element={<Navigate to='/index' />} />
+                          <Route path='/index' element={<Home />} />
+                          <Route path='/' element={<EmptyPage />}>
+                            {/* Not found */}
+                            <Route path='*' element={<Page404 />} />
 
-                          {/* Private routes */}
-                          <Route element={<PrivateRoute />}>
-                            <Route path='profile' element={<Profile />} />
+                            {/* Public routes */}
+                            <Route path='docs' element={<Docs />} />
+                            <Route path='allocation' element={<Allocation />} />
                             <Route
-                              path='my-solicitations'
-                              element={<MySolicitations />}
+                              path='find-classes'
+                              element={<FindClasses />}
                             />
+                            <Route path='find-exams' element={<FindExams />} />
 
-                            {/* Restricted routes */}
-                            <Route element={<RestrictedRoute />}>
-                              <Route path='subjects' element={<Subjects />} />
-                              <Route path='calendars' element={<Calendars />} />
+                            {/* Private routes */}
+                            <Route element={<PrivateRoute />}>
+                              <Route path='profile' element={<Profile />} />
                               <Route
-                                path='classrooms'
-                                element={<Classrooms />}
+                                path='my-solicitations'
+                                element={<MySolicitations />}
                               />
-                              <Route path='classes' element={<Classes />} />
-                              <Route
-                                path='reservations'
-                                element={<Reservations />}
-                              />
-                              <Route
-                                path='conflicts'
-                                element={<ConflictsPage />}
-                              />
-                              <Route
-                                path='solicitations'
-                                element={<Solicitations />}
-                              />
-                            </Route>
 
-                            {/* Admin routes */}
-                            <Route path='' element={<AdminRoute />}>
-                              <Route path='users' element={<Users />} />
-                              <Route path='groups' element={<Groups />} />
-                              <Route path='buildings' element={<Buildings />} />
-                              <Route path='reports' element={<Reports />} />
-                              <Route path='feedbacks' element={<Feedbacks />} />
-                              <Route
-                                path='institutional-events'
-                                element={<InstitutionalEvents />}
-                              />
+                              {/* Restricted routes */}
+                              <Route element={<RestrictedRoute />}>
+                                <Route path='subjects' element={<Subjects />} />
+                                <Route
+                                  path='calendars'
+                                  element={<Calendars />}
+                                />
+                                <Route
+                                  path='classrooms'
+                                  element={<Classrooms />}
+                                />
+                                <Route path='classes' element={<Classes />} />
+                                <Route
+                                  path='reservations'
+                                  element={<Reservations />}
+                                />
+                                <Route
+                                  path='conflicts'
+                                  element={<ConflictsPage />}
+                                />
+                                <Route
+                                  path='solicitations'
+                                  element={<Solicitations />}
+                                />
+                              </Route>
+
+                              {/* Admin routes */}
+                              <Route path='' element={<AdminRoute />}>
+                                <Route path='users' element={<Users />} />
+                                <Route path='groups' element={<Groups />} />
+                                <Route
+                                  path='buildings'
+                                  element={<Buildings />}
+                                />
+                                <Route path='reports' element={<Reports />} />
+                                <Route
+                                  path='feedbacks'
+                                  element={<Feedbacks />}
+                                />
+                                <Route
+                                  path='institutional-events'
+                                  element={<InstitutionalEvents />}
+                                />
+                              </Route>
                             </Route>
                           </Route>
                         </Route>
                       </Route>
-                    </Route>
-                  </Routes>
-                </BrowserRouter>
-              </FeatureGuideProvider>
-            </LocalizationProvider>
-          </MenuContextProvider>
-        </AppContextProvider>
-      </GoogleOAuthProvider>
+                    </Routes>
+                  </BrowserRouter>
+                </FeatureGuideProvider>
+              </LocalizationProvider>
+            </MenuContextProvider>
+          </AppContextProvider>
+        </GoogleOAuthProvider>
+      </MDXProvider>
     </ChakraProvider>
   </ThemeProvider>,
 );
