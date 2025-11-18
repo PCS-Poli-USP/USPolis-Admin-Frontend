@@ -18,10 +18,11 @@ const AuthCallbackPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (error) return;
     const code = query.get('code');
     redirect(code);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, error]);
 
   async function redirect(code: string | null): Promise<void> {
     if (code == null) {
