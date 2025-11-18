@@ -1,7 +1,7 @@
 export default {
   lang: 'pt-BR',
   base: '/docs',
-  title: 'USPolis',
+  title: 'USPolis - Documentação',
   description: 'Docs dentro do app React',
 
   themeConfig: {
@@ -66,6 +66,9 @@ export default {
         link: 'https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/tree/main/docs',
       },
     ],
+
+    lightModeSwitchTitle: 'Mudar para tema claro',
+    darkModeSwitchTitle: 'Mudar para tema escuro',
 
     footer: {
       message: 'Released under the MIT License.',
