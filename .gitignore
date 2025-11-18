@@ -6,6 +6,9 @@
 # dev
 /certs
 
+# docs
+/docs/.vitepress/cache
+
 # dependencies
 /node_modules
 /.pnp
