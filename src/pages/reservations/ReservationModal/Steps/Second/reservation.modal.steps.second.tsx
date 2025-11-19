@@ -193,8 +193,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   }, [labelMap, timeMap]);
 
   function handleChangeRecurrence(value: string) {
-    if (value === Recurrence.MONTHLY) {
-    } else if (value === Recurrence.CUSTOM) {
+    if (value === Recurrence.CUSTOM) {
       resetField('month_week', { defaultValue: undefined });
       resetField('week_day', { defaultValue: '' });
       resetField('start_date', { defaultValue: '' });

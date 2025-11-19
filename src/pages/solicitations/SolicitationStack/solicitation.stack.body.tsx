@@ -61,17 +61,13 @@ function SolicitationStackBody({
               borderRadius='md'
               p={'10px'}
               border={selected ? '1px' : undefined}
-              cursor={false ? 'not-allowed' : 'pointer'}
+              cursor={'pointer'}
               transition='background 0.3s, opacity 0.3s'
               opacity={closed && !selected ? 0.6 : 1}
-              _hover={
-                false
-                  ? {}
-                  : {
-                      bg: 'uspolis.lightGray',
-                      opacity: 0.8,
-                    }
-              }
+              _hover={{
+                bg: 'uspolis.lightGray',
+                opacity: 0.8,
+              }}
               _active={
                 closed && !selected
                   ? {}

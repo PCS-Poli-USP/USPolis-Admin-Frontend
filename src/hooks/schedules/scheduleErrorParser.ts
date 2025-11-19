@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ErrorParser } from '../errorParser';
 
 export class ScheduleErrorParser extends ErrorParser {

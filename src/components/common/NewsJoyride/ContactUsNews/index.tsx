@@ -42,9 +42,6 @@ function ContactUsNews({
   }
 
   function handleGuideNextClick(type: Events, index: number) {
-    if (type == EVENTS.STEP_BEFORE) {
-    }
-
     if (type == EVENTS.STEP_AFTER) {
       if (index === CONTACT_US_STEP_INDEX.INTRODUCTION) {
         onOpen();
