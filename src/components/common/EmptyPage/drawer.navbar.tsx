@@ -79,7 +79,12 @@ export function DrawerNavBar({
     });
   }
   return (
-    <Box bg='uspolis.blue' color='uspolis.text' px={4} w={'100vw'}>
+    <Box
+      bg='uspolis.blue'
+      color='uspolis.text'
+      px={4}
+      w={open && !isMobile ? 'calc(100vw - 300px)' : '100vw'}
+    >
       <Flex
         h={'60px'}
         alignItems={'center'}

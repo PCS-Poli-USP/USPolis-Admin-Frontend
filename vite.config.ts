@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     base: '/',
+
     server: {
       https: isDev
         ? {
@@ -25,9 +26,11 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       host: true,
     },
+
     plugins: [react(), eslintPlugin()],
     build: {
       outDir: 'build',
     },
+    publicDir: 'public',
   };
 });

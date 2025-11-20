@@ -1,6 +1,6 @@
 export default {
   lang: 'pt-BR',
-  base: '/docs',
+  base: '/docs/',
   title: 'USPolis - Documentação',
   description: 'Docs dentro do app React',
 
@@ -60,10 +60,10 @@ export default {
 
     nav: [
       { text: 'Guias', link: '/' },
-      { text: 'Referencia', link: '/dev' },
+      { text: 'Referencia', link: './dev' },
       {
         text: 'Changelog',
-        link: 'https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/tree/main/docs',
+        link: './changelog',
       },
     ],
 
@@ -83,25 +83,26 @@ export default {
           items: [
             {
               text: 'O que é o USPolis?',
-              link: '/introduction/what-is-uspolis',
+              link: '/what-is-uspolis',
             },
-            { text: 'Como usar?', link: '/introduction/getting-started' },
+            { text: 'Como usar?', link: '/getting-started' },
           ],
         },
         {
           text: 'Mapa de Salas',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
+            { text: 'Introdução', link: '/allocation' },
+            { text: 'Visualizações', link: '/allocation/views' },
+            { text: 'Reservar pelo Mapa de Salas', link: '/allocation/reservations' },
+            { text: 'Relatórios em PDF', link: '/allocation/pdfs' },
           ],
         },
         {
           text: 'Solicitar uma Sala',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
+            { text: 'Introdução', link: '/solicitate-a-classroom' },
           ],
         },
         {
@@ -109,7 +110,6 @@ export default {
           collapsed: true,
           items: [
             { text: 'Introdução', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
           ],
         },
         {
@@ -117,7 +117,6 @@ export default {
           collapsed: true,
           items: [
             { text: 'Introdução', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
           ],
         },
         {
@@ -125,7 +124,6 @@ export default {
           collapsed: true,
           items: [
             { text: 'Introdução', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
           ],
         },
         {
@@ -133,7 +131,6 @@ export default {
           collapsed: true,
           items: [
             { text: 'Introdução', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
           ],
         },
         {
@@ -141,55 +138,48 @@ export default {
           collapsed: true,
           items: [
             { text: 'Introdução', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
           ],
         },
         {
           text: 'Calendários',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
+            { text: 'Introdução', link: './introduction' },
           ],
         },
         {
           text: 'Salas',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
+            { text: 'Introdução', link: './introduction' },
           ],
         },
         {
           text: 'Disciplinas',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
+            { text: 'Introdução', link: './introduction' },
           ],
         },
         {
           text: 'Turmas',
           collapsed: true,
           items: [
-            { text: 'Introduction', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
+            { text: 'Introduction', link: './introduction' },
           ],
         },
         {
           text: 'Conflitos',
           collapsed: true,
           items: [
-            { text: 'Introduction', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
+            { text: 'Introduction', link: './introduction' },
           ],
         },
         {
           text: 'Relatórios',
           collapsed: true,
           items: [
-            { text: 'Introduction', link: '/introduction' },
-            { text: 'Getting Started', link: '/getting-started' },
+            { text: 'Introduction', link: './introduction' },
           ],
         },
       ],
@@ -199,8 +189,7 @@ export default {
           text: 'Dev Guide',
           collapsed: true,
           items: [
-            { text: 'Introduction devs', link: '/introduction' },
-            { text: 'Getting Started devs', link: '/getting-started' },
+            { text: 'Introduction devs', link: './introduction' },
           ],
         },
       ],

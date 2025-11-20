@@ -1,3 +1,16 @@
+/*
+  Images
+*/
+.img-center {
+  display: block;
+  margin: 0 auto;
+  border-radius: 8px;
+  max-width: 80%;
+  height: auto;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+
 /**
  * Colors: Solid
  * -------------------------------------------------------------------------- */
