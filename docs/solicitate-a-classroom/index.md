@@ -4,8 +4,17 @@ prev:
   link: '/allocation/pdfs'
 
 next:
-  text: 'Como usar?'
-  link: './getting-started'
+  text: 'Encontre suas provas'
+  link: '/find-exams'
 ---
 
 # Solicitar uma Sala
+
+> [!WARNING]
+> Documentação em construção...
+
+## Provas
+
+## Eventos
+
+## Reuniões

@@ -1,12 +1,14 @@
 ---
 prev:
-  text: 'Markdown'
-  link: '/guide/markdown'
+  text: 'Salas'
+  link: '/classrooms'
+
 next:
-  text: 'Markdown'
-  link: '/guide/markdown'
+  text: 'Turmas'
+  link: '/classes'
 ---
 
 # Disciplinas
 
-Esta é a docs dos subjects
+> [!WARNING]
+> Documentação em construção...

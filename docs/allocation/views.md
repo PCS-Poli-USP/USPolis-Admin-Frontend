@@ -12,7 +12,7 @@ next:
 
 Ao todo temos quatro tipos de visualizações do Mapa de Salas, sendo dois deles orientados no ponto de vista prédios e salas, já os outros dois são orientados no ponto de vista de tempo e dias da semana. 
 
-A visualização padrão é a [Sala / Semana](#sala--semana), sendo que você pode mudar clicando nos botões no cabeçalho do calendário, conforme a imagem a seguir:
+A visualização padrão é a [Sala / Semana](#sala-semana), sendo que você pode mudar clicando nos botões no cabeçalho do calendário, conforme a imagem a seguir:
 
 <div style="
   display: flex;

@@ -1,9 +1,15 @@
 ---
 prev:
-  text: 'Introdução'
-  link: './'
+  text: 'Disciplinas'
+  link: '/subjects'
 
 next:
-  text: 'Reservar pelo Mapa de Salas'
-  link: './reservations'
+  text: 'Conflitos'
+  link: '/conflicts'
 ---
+
+
+# Turmas
+
+> [!WARNING]
+> Documentação em construção...

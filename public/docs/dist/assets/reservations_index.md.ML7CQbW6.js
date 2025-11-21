@@ -1,1 +1,0 @@
-import{_ as e,c as t,o as r}from"./chunks/framework.CxQVUucW.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"reservations/index.md","filePath":"reservations/index.md"}'),a={name:"reservations/index.md"};function n(s,o,i,c,d,p){return r(),t("div")}const f=e(a,[["render",n]]);export{m as __pageData,f as default};

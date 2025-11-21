@@ -60,10 +60,10 @@ export default {
 
     nav: [
       { text: 'Guias', link: '/' },
-      { text: 'Referencia', link: './dev' },
+      { text: 'Referencia', link: '/dev' },
       {
         text: 'Changelog',
-        link: './changelog',
+        link: '/changelog',
       },
     ],
 
@@ -102,28 +102,35 @@ export default {
           text: 'Solicitar uma Sala',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: '/solicitate-a-classroom' },
+            { text: 'Como solicitar uma sala?', link: '/solicitate-a-classroom' },
           ],
         },
         {
           text: 'Encontre suas provas',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: '/introduction' },
+            { text: 'Como achar uma prova?', link: '/find-exams' },
           ],
         },
         {
           text: 'Encontre suas aulas',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: '/introduction' },
+            { text: 'Como achar suas aulas?', link: '/find-classes' },
           ],
         },
         {
           text: 'Minhas Solicitações',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: '/introduction' },
+            { text: 'Introdução', link: '/my-solicitations' },
+          ],
+        },
+        {
+          text: 'Minha Conta',
+          collapsed: true,
+          items: [
+            { text: 'Introdução', link: '/profile' },
           ],
         },
         {
@@ -137,59 +144,80 @@ export default {
           text: 'Solicitações',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: '/introduction' },
+            { text: 'Como aprovar uma solicitação?', link: '/solicitations' },
           ],
         },
         {
           text: 'Calendários',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: './introduction' },
+            { text: 'Como criar um calendário?', link: '/calendars' },
           ],
         },
         {
           text: 'Salas',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: './introduction' },
+            { text: 'Introdução', link: '/classrooms' },
           ],
         },
         {
           text: 'Disciplinas',
           collapsed: true,
           items: [
-            { text: 'Introdução', link: './introduction' },
+            { text: 'Introdução', link: '/subjects' },
           ],
         },
         {
           text: 'Turmas',
           collapsed: true,
           items: [
-            { text: 'Introduction', link: './introduction' },
+            { text: 'Introduction', link: '/classes' },
           ],
         },
         {
           text: 'Conflitos',
           collapsed: true,
           items: [
-            { text: 'Introduction', link: './introduction' },
+            { text: 'Introduction', link: '/conflicts' },
           ],
         },
         {
-          text: 'Relatórios',
+          text: 'Relatórios e Métricas',
           collapsed: true,
           items: [
-            { text: 'Introduction', link: './introduction' },
+            { text: 'Introduction', link: '/reports' },
           ],
         },
       ],
 
       '/dev/': [
         {
-          text: 'Dev Guide',
+          text: 'Guia para Desenvolvedores',
+          collapsed: false,
+          items: [
+            { text: 'Introduction', link: '' },
+          ],
+        },
+        {
+          text: 'Backend',
           collapsed: true,
           items: [
-            { text: 'Introduction devs', link: './introduction' },
+            { text: 'Introduction', link: '' },
+          ],
+        },
+        {
+          text: 'Frontend',
+          collapsed: true,
+          items: [
+            { text: 'Introduction', link: '' },
+          ],
+        },
+        {
+          text: 'Banco de Dados',
+          collapsed: true,
+          items: [
+            { text: 'Introduction', link: '' },
           ],
         },
       ],

@@ -1,11 +1,14 @@
 ---
 prev:
-  text: 'Como usar?'
-  link: './introduction/getting-started'
+  text: 'Solicitar uma Sala'
+  link: '/solicitate-a-classroom'
 
 next:
-  text: 'Visualizações'
-  link: './allocation/views'
+  text: 'Encontre suas aulas'
+  link: '/find-classes'
 ---
 
-# Encotnre suas provas
+# Encontre suas provas
+
+> [!WARNING]
+> Documentação em construção...

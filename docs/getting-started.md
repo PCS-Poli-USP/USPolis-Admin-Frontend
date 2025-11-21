@@ -51,7 +51,7 @@ Ao clicar no botão você verá a seguinte tela, utilize a sua conta **usp**, ca
   />
 </div>
 
-Pronto, agora você tem uma conta no USPolis! Agora você será redirecionado para a tela do [Mapa de Salas](/allocation). No canto superior esquero você encontra um botão para abrir o menu lateral, nele você pode encontrar todas as funcionalidades disponíveis para o seu usuário.
+Pronto, agora você tem uma conta no USPolis! Agora você será redirecionado para a tela do [Mapa de Salas](/allocation/). No canto superior esquero você encontra um botão para abrir o menu lateral, nele você pode encontrar todas as funcionalidades disponíveis para o seu usuário.
 
 
 <div style="

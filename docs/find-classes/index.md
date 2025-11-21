@@ -1,11 +1,14 @@
 ---
 prev:
-  text: 'Como usar?'
-  link: './introduction/getting-started'
+  text: 'Encontre suas provas'
+  link: '/find-exams'
 
 next:
-  text: 'Visualizações'
-  link: './allocation/views'
+  text: 'Minhas solicitações'
+  link: '/my-solicitations'
 ---
 
 # Encontre suas aulas
+
+> [!WARNING]
+> Documentação em construção...

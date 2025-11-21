@@ -1,9 +1,14 @@
 ---
 prev:
-  text: 'Introdução'
-  link: './'
+  text: 'Minha Conta'
+  link: '/profile'
 
 next:
-  text: 'Reservar pelo Mapa de Salas'
-  link: './reservations'
+  text: 'Solicitações'
+  link: '/solicitations'
 ---
+
+# Reservas
+
+> [!WARNING]
+> Documentação em construção...
