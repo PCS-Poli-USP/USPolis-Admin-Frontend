@@ -1,11 +1,11 @@
 ---
-prev:
-  text: 'Reservar pelo Mapa de Salas'
-  link: './reservations'
-
 next:
-  text: 'Solicitar uma Sala'
-  link: '/solicitate-a-classroom'
+  text: 'Gerenciar a alocação pelo Mapa de Salas'
+  link: './management'
+
+prev:
+  text: 'Visualizações'
+  link: './views'
 ---
 
 # Relatórios em PDF
@@ -50,7 +50,7 @@ Um menu irá abrir com todas as opções disponíveis, vamos entrar em detalhes 
   />
 </div>
 
-Para todos os tipos de relatórios você pode especificar um início e fim, isso se refere ao intervalo que ele irá considerar para gerar esses relatórios, por exemplo: 
+Para todos os tipos de relatórios você pode especificar um início e fim, isso se refere ao intervalo que ele irá considerar para gerar esses relatórios, por exemplo:
 
 para um início de 21/07/2025 até 31/12/2025, serão consideras todas as disciplinas e turmas que estão **DENTRO** desse intervalo.
 
@@ -77,7 +77,6 @@ Esse relatório mostra todas as alocações de determinado prédio no formato de
 </div>
 
 Basta escolher o prédio que o botão para baixar o pdf irá ser desbloqueado, ao clicar no botão o relatório será baixado. Um exemplo do formato desse relatório pode ser visto a seguir:
-
 
 <div style="
   display: flex;
@@ -161,7 +160,6 @@ Aqui um exemplo de cada página do relatório.
   />
 </div>
 
-
 ## Disciplinas escolhidas (PDF)
 
 Esse relatório é igual ao [Alocação das Disciplinas](#alocação-das-disciplinas-pdf) com a diferença de que você que escolhe quais disciplinas serão consideras, sem estar limitado a um mesmo prédio. A seguir, está a imagem do menu com algumas disciplinas já selecionadas.
@@ -186,11 +184,9 @@ Esse relatório é igual ao [Alocação das Disciplinas](#alocação-das-discipl
 
 Basta então clicar em confirmar que o botão de baixar será liberado.
 
-
 ## Disponibilidade de salas (PDF)
 
 Esse relatório funciona igual ao relatório [Mapa de Salas](#mapa-de-salas-pdf), com a diferença de que ao invés de mostrar as alocações, mostra o inverso, ou seja, os horários disponíveis.
-
 
 <div style="
   display: flex;

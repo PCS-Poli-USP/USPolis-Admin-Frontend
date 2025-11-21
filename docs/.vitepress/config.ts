@@ -94,8 +94,8 @@ export default {
           items: [
             { text: 'Introdução', link: '/allocation' },
             { text: 'Visualizações', link: '/allocation/views' },
-            { text: 'Reservar pelo Mapa de Salas', link: '/allocation/reservations' },
             { text: 'Relatórios em PDF', link: '/allocation/pdfs' },
+            { text: 'Gerenciar a alocação pelo Mapa de Salas', link: '/allocation/management' },
           ],
         },
         {
