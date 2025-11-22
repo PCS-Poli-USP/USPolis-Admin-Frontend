@@ -272,7 +272,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             direction={isMobile ? 'column' : 'row'}
             align={'flex-start'}
             justify={'flex-start'}
-            gap={isMobile ? '10px' : '0px'}
+            gap={isMobile ? '10px' : '5px'}
           >
             <VStack
               alignItems={'flex-start'}
