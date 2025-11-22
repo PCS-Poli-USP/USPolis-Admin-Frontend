@@ -58,7 +58,47 @@ Nele você coloca o **título**, o **tipo** de reserva, a **capacidade** e um **
 - [Eventos](#eventos)
 - [Reuniões](#reuniões)
 
-Para qualquer tipo de reserva você tem a opção de **não escolher uma sala** e deixar na mão de quem aprovar sua solicitação ou de escolher uma sala e dizer que **quer necessariamente essa sala**, ou seja, ao menos que você diga que quer aquela sala, a sala aprovada **pode ser diferente da solicitada**. Vamos entrar em detalhes de cada uma a seguir.
+Para qualquer tipo de reserva você tem a opção de **não escolher uma sala** e deixar na mão de quem aprovar sua solicitação ou de escolher uma sala e dizer que **quer necessariamente essa sala**, ou seja, ao menos que você diga que quer aquela sala, a sala aprovada **pode ser diferente da solicitada**.
+
+<div style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+">
+  <img 
+    src="/solicitate-a-classroom/image-5.png"
+    alt="Descrição"
+    style="
+      border-radius: 8px;
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    "
+  />
+</div>
+
+O botão "Visualizar" serve para você ver como ficará a sua reserva, ao clicar nesse botão você consegue ver um calendário com os horários da sala escolhida.
+
+<div style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+">
+  <img 
+    src="/solicitate-a-classroom/image-6.png"
+    alt="Descrição"
+    style="
+      border-radius: 8px;
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    "
+  />
+</div>
+
+Agora, vamos entrar em detalhes sobre cada tipo de reserva.
 
 ## Provas
 
