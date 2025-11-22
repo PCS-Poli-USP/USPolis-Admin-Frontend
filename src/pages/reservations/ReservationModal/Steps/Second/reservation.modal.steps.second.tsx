@@ -681,7 +681,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                           onBlur={props.focusMobile.onBlur}
                         />
                         <Flex
-                          direction={isMobile ? 'row' : 'column'}
+                          direction={isMobile ? 'column' : 'row'}
                           gap={'5px'}
                         >
                           <Text hidden={isMobile}>Das</Text>

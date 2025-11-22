@@ -7,7 +7,8 @@ Essa documentação é divida por páginas, cada seção no menu lateral esquerd
 - [Solicitar uma Sala](./solicitate-a-classroom/)
 - [Encontre suas provas](./find-exams/)
 - [Encontre suas aulas](./find-classes/)
-- [Minhas solicitações](./my-solicitations/)
+- [Minhas Solicitações](./my-solicitations/) 
+- [Minhas Conta](./profile/) 
 
 Cada seção contem um ou mais itens com explicações, imagens e possívelmente vídeos mostrando como usar.
 
