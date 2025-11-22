@@ -4,6 +4,14 @@ Categorias: <span style="color: green">FEATURE</span>, <span style="color: #4080
 
 O changelog começou a ser registrado a partir do dia 15/11/2025.
 
+## Correção de bug - 21/11/2025
+<span style="orange: red">BUGFIX</span>
+PR's: [#111](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/111)
+
+**Descrição:**
+
+Correção de bug onde a criação de reservas pelo Mapa de Salas não estava corretamente preenchendo o formulário. Removido código antigo que não é mais utilizado.
+
 ## Correção de bug - 18/11/2025
 <span style="color: red">HOTFIX</span>
 
