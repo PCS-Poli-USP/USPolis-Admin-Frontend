@@ -4,8 +4,8 @@ prev:
   link: './'
 
 next:
-  text: 'Reservar pelo Mapa de Salas'
-  link: './reservations'
+  text: 'Relatórios em PDF'
+  link: './pdfs'
 ---
 
 # Visualizações

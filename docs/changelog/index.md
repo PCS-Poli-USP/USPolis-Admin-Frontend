@@ -10,7 +10,7 @@ PR's: [#111](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/111)
 
 **Descrição:**
 
-Correção de bug onde a criação de reservas pelo Mapa de Salas não estava corretamente preenchendo o formulário. Removido código antigo que não é mais utilizado.
+Correção de bug onde a criação de reservas pelo Mapa de Salas não estava corretamente preenchendo o formulário. Removido código antigo que não é mais utilizado. Agora uma combinação inválida da agenda está mostrando o erro, ao invés de só bloquear a criação da reserva.
 
 ## Correção de bug - 18/11/2025
 <span style="color: red">HOTFIX</span>
