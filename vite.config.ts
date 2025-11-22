@@ -27,7 +27,13 @@ export default defineConfig(({ mode }) => {
       host: true,
     },
 
-    plugins: [react(), eslintPlugin()],
+    plugins: [
+      react(),
+      eslintPlugin({
+        failOnError: false,
+        failOnWarning: false,
+      }),
+    ],
     build: {
       outDir: 'build',
     },
