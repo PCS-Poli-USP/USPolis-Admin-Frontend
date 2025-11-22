@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import {
   Button,
   Flex,
@@ -74,7 +75,7 @@ function InstitutionalEvents() {
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
         onConfirm={() => {
-          if (!!selectedEvent) {
+          if (selectedEvent) {
             deleteEvent(selectedEvent.id);
             onCloseDelete();
           }
