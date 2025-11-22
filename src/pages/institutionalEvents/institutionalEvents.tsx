@@ -75,7 +75,7 @@ function InstitutionalEvents() {
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
         onConfirm={() => {
-          if (!!selectedEvent) {
+          if (selectedEvent) {
             deleteEvent(selectedEvent.id);
             onCloseDelete();
           }

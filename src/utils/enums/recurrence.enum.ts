@@ -9,7 +9,7 @@ export enum Recurrence {
 
 export namespace Recurrence {
   const translations: { [key in Recurrence]: string } = {
-    [Recurrence.DAILY]: 'Dia útil',
+    [Recurrence.DAILY]: 'Dias úteis',
     [Recurrence.WEEKLY]: 'Semanal',
     [Recurrence.BIWEEKLY]: 'Quinzenal',
     [Recurrence.MONTHLY]: 'Mensal',

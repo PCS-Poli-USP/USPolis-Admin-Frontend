@@ -239,7 +239,7 @@ function ReservationModal(props: ReservationModalProps) {
         month_week as MonthWeek | undefined,
       );
       if (generated.length == 0) {
-        setInvalidCombination(false);
+        setInvalidCombination(true);
         return;
       }
     }
@@ -517,36 +517,35 @@ function ReservationModal(props: ReservationModalProps) {
         </ModalBody>
         <ModalFooter>
           <VStack width={'full'}>
-            {invalidCombination && (
-              <Flex
-                direction={'row'}
-                gap={'5px'}
-                justifyContent={'flex-end'}
-                alignItems={'center'}
-                width={'100%'}
+            <Flex
+              direction={'row'}
+              gap={'5px'}
+              justifyContent={'flex-end'}
+              alignItems={'center'}
+              width={'100%'}
+              hidden={!invalidCombination}
+            >
+              <Alert
+                status='error'
+                borderRadius={'10px'}
+                w={focusMobile.isMobile ? 'full' : '335px'}
               >
-                <Alert
-                  status='error'
-                  borderRadius={'10px'}
-                  w={focusMobile.isMobile ? 'full' : '335px'}
-                >
-                  <AlertIcon />A agenda formada é inválida
-                </Alert>
-                <HelpPopover
-                  title='O que isso significa?'
-                  size='md'
-                  placement='top'
-                >
-                  <Flex direction={'column'} gap={'5px'}>
-                    <Text>
-                      A combinação de <b>data de início</b>, <b>data de fim</b>,{' '}
-                      <b>recorrência</b>, <b>dia da semana</b> e{' '}
-                      <b>semana do mês</b> geram <b>nenhuma data</b>.
-                    </Text>
-                  </Flex>
-                </HelpPopover>
-              </Flex>
-            )}
+                <AlertIcon />A agenda formada é inválida
+              </Alert>
+              <HelpPopover
+                title='O que isso significa?'
+                size='md'
+                placement='top'
+              >
+                <Flex direction={'column'} gap={'5px'}>
+                  <Text>
+                    A combinação de <b>data de início</b>, <b>data de fim</b>,{' '}
+                    <b>recorrência</b>, <b>dia da semana</b> e{' '}
+                    <b>semana do mês</b> geram <b>nenhuma data</b>.
+                  </Text>
+                </Flex>
+              </HelpPopover>
+            </Flex>
             <HStack
               spacing='10px'
               alignSelf={'flex-end'}

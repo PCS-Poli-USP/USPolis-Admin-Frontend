@@ -193,8 +193,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   }, [labelMap, timeMap]);
 
   function handleChangeRecurrence(value: string) {
-    if (value === Recurrence.MONTHLY) {
-    } else if (value === Recurrence.CUSTOM) {
+    if (value === Recurrence.CUSTOM) {
       resetField('month_week', { defaultValue: undefined });
       resetField('week_day', { defaultValue: '' });
       resetField('start_date', { defaultValue: '' });
@@ -273,7 +272,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             direction={isMobile ? 'column' : 'row'}
             align={'flex-start'}
             justify={'flex-start'}
-            gap={isMobile ? '10px' : '0px'}
+            gap={isMobile ? '10px' : '5px'}
           >
             <VStack
               alignItems={'flex-start'}
