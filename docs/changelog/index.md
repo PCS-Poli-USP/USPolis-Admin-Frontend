@@ -4,8 +4,21 @@ Categorias: <span style="color: green">FEATURE</span>, <span style="color: #4080
 
 O changelog começou a ser registrado a partir do dia 15/11/2025.
 
+## Melhorias - 22/11/2025
+<span style="color: #408080">IMPROVEMENT</span>
+
+PR's: [#113](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/113) [#114](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/114)
+
+**Descrição:**
+
+Melhorias na criação de reservas para dispositivos mobile, agora ao interagir com os seletores ou campos do formulário está corretamente "subindo" a tela para que o teclado virtual não seja um problema, melhorias visuais e de organização dos componentes.
+
+Melhorias no Navbar para dispositivos desktop, agora ele tem tamanho correto quando o menu está aberto, não mais escondendo os botões da direita e o ícone de perfil.
+
+
 ## Correção de bug - 21/11/2025
-<span style="orange: red">BUGFIX</span>
+<span style="color: orange">BUGFIX</span>
+
 PR's: [#111](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/111)
 
 **Descrição:**
@@ -28,7 +41,7 @@ PR's: [#106](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/106)
 
 **Descrição:**
 
-Correção do tamanho da Navbar para usuários mobile, limitando para 100vw. Agora o beacon de novas funcionalidades funciona corretamente para celulares.
+Correção do tamanho do Navbar para usuários mobile, limitando para 100vw. Agora o beacon de novas funcionalidades funciona corretamente para celulares.
 
 
 ## Fale Conosco - 15/11/2025
