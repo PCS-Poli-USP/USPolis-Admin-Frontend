@@ -32,7 +32,7 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
   }, [reservationType, subjectId]);
 
   return (
-    <VStack w={'full'} align={'stretch'} h={'full'} overflowY={'auto'}>
+    <VStack w={'full'} align={'stretch'} h={'full'}>
       <FormProvider {...props.form}>
         <form>
           <Text
@@ -50,7 +50,15 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
             A reserva possui uma solicitação vinculada (olhe a aba Solicitações)
           </Text>
 
-          <Input mt={'10px'} label={'Título'} name={'title'} />
+          <Input
+            mt={'10px'}
+            label={'Título'}
+            name={'title'}
+            onFocus={(el) =>
+              props.focusMobile.onFocusInput(el, props.container)
+            }
+            onBlur={() => props.focusMobile.onBlur(props.container)}
+          />
 
           <SelectInput
             mt={4}
@@ -90,6 +98,10 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                   resetField('event_type');
               }
             }}
+            onFocus={(el) =>
+              props.focusMobile.onFocusInput(el, props.container)
+            }
+            onBlur={() => props.focusMobile.onBlur(props.container)}
           />
 
           {is_solicitation && (
@@ -97,8 +109,10 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
               label='Quantidade de pessoas'
               name='capacity'
               mt={'10px'}
-              onFocus={props.focusMobile.onFocusInput}
-              onBlur={props.focusMobile.onBlur}
+              onFocus={(el) =>
+                props.focusMobile.onFocusInput(el, props.container)
+              }
+              onBlur={() => props.focusMobile.onBlur(props.container)}
             />
           )}
 
@@ -106,8 +120,10 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
             mt={4}
             label='Motivo (Opcional)'
             name='reason'
-            onFocus={props.focusMobile.onFocusTextArea}
-            onBlur={props.focusMobile.onBlur}
+            onFocus={(el) =>
+              props.focusMobile.onFocusTextArea(el, props.container)
+            }
+            onBlur={() => props.focusMobile.onBlur(props.container)}
           />
           {!reservationType && (
             <Alert status='error' mt={'20px'} borderRadius={'10px'}>
@@ -126,13 +142,16 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                   label: `${subject.code} - ${subject.name}`,
                 }))}
                 onChange={(option) => {
+                  props.focusMobile.markIgnoreNextBlur()
                   if (!option) {
                     resetField('class_ids');
                   }
                 }}
                 placeholder='Selecione a disciplina'
-                onFocus={props.focusMobile.onFocusInput}
-                onBlur={props.focusMobile.onBlur}
+                onFocus={(el) =>
+                  props.focusMobile.onFocusInput(el, props.container, 600)
+                }
+                onBlur={() => props.focusMobile.onBlur(props.container)}
               />
               <MultiSelectInput
                 name='class_ids'
@@ -151,8 +170,10 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                       }))
                     : []
                 }
-                onFocus={props.focusMobile.onFocusInput}
-                onBlur={props.focusMobile.onBlur}
+                onFocus={(el) =>
+                  props.focusMobile.onFocusInput(el, props.container, 600)
+                }
+                onBlur={() => props.focusMobile.onBlur(props.container)}
               />
             </Flex>
           )}
@@ -166,8 +187,10 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                 label: EventType.translate(value),
               }))}
               mt={'10px'}
-              onFocus={props.focusMobile.onFocusInput}
-              onBlur={props.focusMobile.onBlur}
+              onFocus={(el) =>
+                props.focusMobile.onFocusInput(el, props.container)
+              }
+              onBlur={() => props.focusMobile.onBlur(props.container)}
             />
           )}
 
@@ -177,8 +200,10 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
               name='link'
               icon={<LinkIcon />}
               mt={'10px'}
-              onFocus={props.focusMobile.onFocusInput}
-              onBlur={props.focusMobile.onBlur}
+              onFocus={(el) =>
+                props.focusMobile.onFocusInput(el, props.container)
+              }
+              onBlur={() => props.focusMobile.onBlur(props.container)}
             />
           )}
         </form>

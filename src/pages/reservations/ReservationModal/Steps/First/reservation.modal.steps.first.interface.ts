@@ -18,6 +18,7 @@ export interface ReservationModalFirstStepProps {
   subjects: SubjectResponse[];
   loading: boolean;
   focusMobile: FocusMobileReturn;
+  container: HTMLDivElement | null;
 }
 export interface ReservationFirstForm {
   title: string;

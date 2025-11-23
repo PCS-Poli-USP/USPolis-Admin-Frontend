@@ -23,6 +23,7 @@ export interface ReservationModalSecondStepProps
   focusMobile: FocusMobileReturn;
   selectedReservation?: ReservationResponse;
   initialDate?: string;
+  container: HTMLDivElement | null;
 }
 export interface ReservationSecondForm {
   building_id: number;

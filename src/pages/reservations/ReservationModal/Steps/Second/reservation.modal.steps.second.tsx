@@ -289,6 +289,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   label: building.name,
                 }))}
                 onChange={(event) => {
+                  props.focusMobile.markIgnoreNextBlur();
                   if (event) {
                     setSelectedBuilding(
                       props.buildings.find(
@@ -297,8 +298,10 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     );
                   } else setSelectedBuilding(undefined);
                 }}
-                onFocus={props.focusMobile.onFocusInput}
-                onBlur={props.focusMobile.onBlur}
+                onFocus={(el) =>
+                  props.focusMobile.onFocusInput(el, props.container)
+                }
+                onBlur={() => props.focusMobile.onBlur(props.container)}
               />
               {is_solicitation && (
                 <CheckBox
@@ -353,8 +356,10 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     setSelectedClassroom(undefined);
                   }
                 }}
-                onFocus={props.focusMobile.onFocusInput}
-                onBlur={props.focusMobile.onBlur}
+                onFocus={(el) =>
+                  props.focusMobile.onFocusInput(el, props.container)
+                }
+                onBlur={() => props.focusMobile.onBlur(props.container)}
               />
 
               {is_solicitation && (
@@ -451,7 +456,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       }}
                       disabled={reservation_type === ReservationType.EXAM}
                       onFocus={props.focusMobile.onFocusInput}
-                      onBlur={props.focusMobile.onBlur}
+                      onBlur={() => props.focusMobile.onBlur(props.container)}
                     />
                     <SelectInput
                       hidden={
@@ -470,7 +475,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                         value: value,
                       }))}
                       onFocus={props.focusMobile.onFocusInput}
-                      onBlur={props.focusMobile.onBlur}
+                      onBlur={() => props.focusMobile.onBlur(props.container)}
                     />
 
                     <SelectInput
@@ -488,7 +493,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                         }),
                       )}
                       onFocus={props.focusMobile.onFocusInput}
-                      onBlur={props.focusMobile.onBlur}
+                      onBlur={() => props.focusMobile.onBlur(props.container)}
                     />
                   </Flex>
 
@@ -509,7 +514,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       disabled={recurrence === Recurrence.CUSTOM}
                       max={end_date ? end_date : undefined}
                       onFocus={props.focusMobile.onFocusInput}
-                      onBlur={props.focusMobile.onBlur}
+                      onBlur={() => props.focusMobile.onBlur(props.container)}
                     />
                     <Input
                       hidden={
@@ -522,7 +527,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       disabled={recurrence === Recurrence.CUSTOM}
                       min={start_date ? start_date : undefined}
                       onFocus={props.focusMobile.onFocusInput}
-                      onBlur={props.focusMobile.onBlur}
+                      onBlur={() => props.focusMobile.onBlur(props.container)}
                     />
                   </HStack>
 
@@ -538,7 +543,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       type='time'
                       disabled={reservation_type === ReservationType.EXAM}
                       onFocus={props.focusMobile.onFocusInput}
-                      onBlur={props.focusMobile.onBlur}
+                      onBlur={() => props.focusMobile.onBlur(props.container)}
                     />
                     <Input
                       label={'Horário de fim'}
@@ -547,7 +552,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       type='time'
                       disabled={reservation_type === ReservationType.EXAM}
                       onFocus={props.focusMobile.onFocusInput}
-                      onBlur={props.focusMobile.onBlur}
+                      onBlur={() => props.focusMobile.onBlur(props.container)}
                     />
                   </HStack>
                 </VStack>
@@ -602,7 +607,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               </Flex>
 
               {reservation_type == ReservationType.EXAM && (
-                <Flex direction={'column'}>
+                <Flex direction={'column'} mt={isMobile ? undefined : '-200px'}>
                   <Text fontSize={'lg'} fontWeight={'bold'}>
                     Nome e horários das provas:
                   </Text>
@@ -640,8 +645,9 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   <Flex
                     direction={'column'}
                     gap={'20px'}
-                    justifyContent={'flex-start'}
-                    justifyItems={'flex-start'}
+                    justifyContent={isMobile ? 'center' : 'flex-start'}
+                    justifyItems={isMobile ? 'center' : 'flex-start'}
+                    align={isMobile ? 'center' : undefined}
                     h={'auto'}
                   >
                     {props.selectedDays.map((date, i) => (
@@ -652,7 +658,9 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                         gap={'10px'}
                         w={'fit-content'}
                       >
-                        <Text>{`Data ${moment(date).format('DD/MM/YYYY')}: `}</Text>
+                        <Text
+                          fontWeight={'bold'}
+                        >{`Data ${moment(date).format('DD/MM/YYYY')}: `}</Text>
                         <ChakraInput
                           placeholder='P1, P2, PSUB, etc'
                           w={'150px'}
@@ -675,16 +683,19 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                           onFocus={(event) =>
                             props.focusMobile.onFocusInput(
                               event,
+                              props.container,
                               Math.max(100 * i + 250, 400),
                             )
                           }
-                          onBlur={props.focusMobile.onBlur}
+                          onBlur={() =>
+                            props.focusMobile.onBlur(props.container)
+                          }
                         />
                         <Flex
                           direction={isMobile ? 'column' : 'row'}
                           gap={'5px'}
                         >
-                          <Text hidden={isMobile}>Das</Text>
+                          <Text>Das</Text>
                           <ChakraInput
                             type='time'
                             w={'150px'}
@@ -721,10 +732,13 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                             onFocus={(event) =>
                               props.focusMobile.onFocusInput(
                                 event,
+                                props.container,
                                 Math.max(100 * i + 250, 400),
                               )
                             }
-                            onBlur={props.focusMobile.onBlur}
+                            onBlur={() =>
+                              props.focusMobile.onBlur(props.container)
+                            }
                           />
                           <Text>Até</Text>
                           <ChakraInput
@@ -763,10 +777,13 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                             onFocus={(event) =>
                               props.focusMobile.onFocusInput(
                                 event,
+                                props.container,
                                 Math.max(100 * i + 250, 400),
                               )
                             }
-                            onBlur={props.focusMobile.onBlur}
+                            onBlur={() =>
+                              props.focusMobile.onBlur(props.container)
+                            }
                           />
                         </Flex>
                       </Flex>
