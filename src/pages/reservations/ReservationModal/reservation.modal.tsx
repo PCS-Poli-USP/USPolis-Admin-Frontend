@@ -52,7 +52,7 @@ import {
   CreateReservation,
   UpdateReservation,
 } from '../../../models/http/requests/reservation.request.models';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { useDateCalendarPicker } from '../../../components/common/DateCalendarPicker';
 import {
@@ -83,6 +83,7 @@ import { MonthWeek } from '../../../utils/enums/monthWeek.enum';
 import HelpPopover from '../../../components/common/HelpPopover';
 
 function ReservationModal(props: ReservationModalProps) {
+  const modalBodyRef = useRef<HTMLDivElement>(null);
   const focusMobile = useOnFocusMobile();
 
   const firstForm = useForm<ReservationFirstForm>({
@@ -414,6 +415,7 @@ function ReservationModal(props: ReservationModalProps) {
           loading={props.loading}
           isSolicitation={props.isSolicitation}
           focusMobile={focusMobile}
+          container={modalBodyRef.current}
         />
       ),
     },
@@ -432,6 +434,7 @@ function ReservationModal(props: ReservationModalProps) {
           selectedReservation={props.selectedReservation}
           initialDate={props.initialDate}
           focusMobile={focusMobile}
+          container={modalBodyRef.current}
           {...calendarPicker}
         />
       ),
@@ -461,7 +464,7 @@ function ReservationModal(props: ReservationModalProps) {
       closeOnOverlayClick={false}
       size='6xl'
       isCentered
-      scrollBehavior='outside'
+      scrollBehavior='inside'
       motionPreset='slideInBottom'
     >
       <ModalOverlay />
@@ -469,6 +472,7 @@ function ReservationModal(props: ReservationModalProps) {
         <ModalHeader>{getModalTitle()}</ModalHeader>
         <ModalCloseButton />
         <ModalBody
+          ref={modalBodyRef}
           paddingBottom={
             focusMobile.isMobile && focusMobile.isOnFocus
               ? `${focusMobile.paddingBottom}px`
