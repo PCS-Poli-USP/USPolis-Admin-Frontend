@@ -607,7 +607,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               </Flex>
 
               {reservation_type == ReservationType.EXAM && (
-                <Flex direction={'column'}>
+                <Flex direction={'column'} mt={isMobile ? undefined : '-200px'}>
                   <Text fontSize={'lg'} fontWeight={'bold'}>
                     Nome e horários das provas:
                   </Text>
@@ -658,7 +658,9 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                         gap={'10px'}
                         w={'fit-content'}
                       >
-                        <Text fontWeight={'bold'}>{`Data ${moment(date).format('DD/MM/YYYY')}: `}</Text>
+                        <Text
+                          fontWeight={'bold'}
+                        >{`Data ${moment(date).format('DD/MM/YYYY')}: `}</Text>
                         <ChakraInput
                           placeholder='P1, P2, PSUB, etc'
                           w={'150px'}
@@ -690,7 +692,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                           }
                         />
                         <Flex
-                          direction={isMobile ? 'row' : 'column'}
+                          direction={isMobile ? 'column' : 'row'}
                           gap={'5px'}
                         >
                           <Text>Das</Text>

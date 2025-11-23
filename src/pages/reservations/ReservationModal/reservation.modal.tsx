@@ -464,7 +464,7 @@ function ReservationModal(props: ReservationModalProps) {
       closeOnOverlayClick={false}
       size='6xl'
       isCentered
-      scrollBehavior='inside'
+      scrollBehavior={focusMobile.isMobile ? 'inside' : 'outside'}
       motionPreset='slideInBottom'
     >
       <ModalOverlay />
