@@ -44,6 +44,7 @@ import RedirectError from './pages/auth/redirectError';
 import Reservations from './pages/reservations';
 import Subjects from './pages/subjects/subjects';
 import Users from './pages/users/users';
+import ReportsPage from './pages/reports/reports';
 
 const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 
@@ -112,6 +113,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                               path='solicitations'
                               element={<Solicitations />}
                             />
+                            <Route path='reports' element={<ReportsPage />} />
                           </Route>
 
                           {/* Admin routes */}

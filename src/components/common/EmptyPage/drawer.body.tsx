@@ -8,7 +8,7 @@ import {
   Link,
 } from '@chakra-ui/react';
 import { useContext } from 'react';
-import { FaList, FaRegCalendarTimes, FaRegUser } from 'react-icons/fa';
+import { FaList, FaRegCalendarTimes, FaRegUser, FaBook } from 'react-icons/fa';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { appContext } from '../../../context/AppContext';
 import {
@@ -227,6 +227,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   icon={<FaRegCalendarTimes />}
                   to='/conflicts'
                   text='Conflitos'
+                  replace_location={true}
+                  onClose={onClose}
+                />
+                <DrawerButton
+                  icon={<FaBook />}
+                  to='/reports'
+                  text='Relatórios'
                   replace_location={true}
                   onClose={onClose}
                 />
