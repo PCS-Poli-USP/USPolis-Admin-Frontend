@@ -12,15 +12,12 @@ import { FieldProps } from '../form.interface';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-export type Option = {
-  label: string;
-  value: string | number;
-};
-
-interface MultiSelectProps extends FieldProps {
+interface NumberInputProps extends FieldProps {
   value?: string | number | undefined;
   min?: number | undefined;
   max?: number | undefined;
+  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 export function NumberInput({
@@ -36,7 +33,9 @@ export function NumberInput({
   mb = undefined,
   mr = undefined,
   ml = undefined,
-}: MultiSelectProps) {
+  onFocus = undefined,
+  onBlur = undefined,
+}: NumberInputProps) {
   const {
     control,
     getValues,
@@ -70,6 +69,8 @@ export function NumberInput({
               field.onChange(valueAsNumber);
               setInputValue(valueAsNumber);
             }}
+            onFocus={onFocus}
+            onBlur={onBlur}
           >
             <NumberInputField disabled={disabled} placeholder={placeholder} />
             <NumberInputStepper>

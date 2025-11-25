@@ -8,15 +8,23 @@ import {
   PopoverCloseButton,
   IconButton,
   useDisclosure,
+  PlacementWithLogical,
 } from '@chakra-ui/react';
 import { LuBadgeHelp } from 'react-icons/lu';
 
 interface HelpPopoverProps {
   title: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg';
+  placement?: PlacementWithLogical;
 }
 
-function HelpPopover({ title, children }: HelpPopoverProps) {
+function HelpPopover({
+  title,
+  children,
+  size = 'sm',
+  placement = undefined,
+}: HelpPopoverProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Popover
@@ -24,10 +32,11 @@ function HelpPopover({ title, children }: HelpPopoverProps) {
       onOpen={onOpen}
       onClose={onClose}
       closeOnBlur={false}
+      placement={placement}
     >
       <PopoverTrigger>
         <IconButton
-          size='sm'
+          size={size}
           aria-label={'help-popover-button'}
           icon={<LuBadgeHelp />}
           variant={'ghost'}

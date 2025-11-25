@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { CloseIcon } from '@chakra-ui/icons';
-import { IconButton, useMediaQuery } from '@chakra-ui/react';
+import { IconButton, useDisclosure } from '@chakra-ui/react';
 import DrawerBody from './drawer.body';
 import { DrawerNavBar } from './drawer.navbar';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -12,6 +12,10 @@ import Joyride, { CallBackProps, EVENTS, STATUS } from 'react-joyride';
 import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { FeatureTourGuideStepData } from '../../../context/FeatureGuideContext/steps';
 import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
+import { menuContext } from '../../../context/MenuContext';
+import ContactUsModal from '../ContactUsModal';
+import ContactUsNews from '../NewsJoyride/ContactUsNews';
+import { appContext } from '../../../context/AppContext';
 
 const drawerWidth = 300;
 
@@ -61,25 +65,31 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(0, 1),
-  background: '#408080',
+  background: theme.palette.mode === 'dark' ? '#1a535c' : '#408080',
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: 'flex-end',
 }));
 
 export default function EmptyPage() {
-  const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { state, setState, triggerControl, pathBeforeGuide } =
     useFeatureGuideContext();
-  const [open, setOpen] = React.useState(false);
+  const { isMobile, isAuthenticated } = React.useContext(appContext);
+  const { isOpen, onOpen, onClose } = React.useContext(menuContext);
+  const {
+    isOpen: isOpenContactModal,
+    onClose: onCloseContactModal,
+    onOpen: onOpenContactModal,
+  } = useDisclosure();
+
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    onOpen();
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    onClose();
   };
 
   const handleGuidePreviousClick = (
@@ -183,12 +193,14 @@ export default function EmptyPage() {
 
   return (
     <Box sx={{ display: 'flex' }} width={'calc(100vw - 20px)'} height={'100vh'}>
-      <AppBar position='fixed' open={open} isMobile={isMobile}>
+      <AppBar position='fixed' open={isOpen} isMobile={isMobile}>
         <DrawerNavBar
-          open={open}
+          open={isOpen}
           handleDrawerOpen={handleDrawerOpen}
           handleDrawerClose={handleDrawerClose}
           isMobile={isMobile}
+          onOpenContactModal={onOpenContactModal}
+          onCloseContactModal={onCloseContactModal}
         />
       </AppBar>
       <Drawer
@@ -203,20 +215,28 @@ export default function EmptyPage() {
         }}
         variant='persistent'
         anchor='left'
-        open={open}
+        open={isOpen}
       >
         <DrawerHeader>
           <IconButton
             size={'md'}
             icon={<CloseIcon />}
             variant={'ghost'}
-            textColor={'black'}
+            textColor={'uspolis.black'}
             aria-label={'open-menu'}
             onClick={() => handleDrawerClose()}
           />
         </DrawerHeader>
         <DrawerBody onClose={handleDrawerClose} />
       </Drawer>
+      {isAuthenticated && (
+        <ContactUsNews
+          isMobile={isMobile}
+          onOpen={onOpenContactModal}
+          onClose={onCloseContactModal}
+          isOpen={isOpenContactModal}
+        />
+      )}
       <Joyride
         {...state}
         continuous={true}
@@ -235,10 +255,10 @@ export default function EmptyPage() {
         }}
         styles={{
           options: {
-            arrowColor: '#408080',
-            primaryColor: '#408080',
-            textColor: '#fff',
-            backgroundColor: '#408080',
+            arrowColor: 'uspolis.blue',
+            primaryColor: 'uspolis.blue',
+            textColor: 'uspolis.text',
+            backgroundColor: 'uspolis.blue',
             beaconSize: 36,
             overlayColor: 'rgba(0, 0, 0, 0.5)',
             spotlightShadow: '0 0 15px rgba(0, 0, 0, 0.5)',
@@ -265,8 +285,13 @@ export default function EmptyPage() {
           return;
         }}
       />
+      <ContactUsModal
+        isOpen={isOpenContactModal}
+        onClose={onCloseContactModal}
+      />
+
       <Box width={isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`}>
-        <Main open={open} isMobile={isMobile}>
+        <Main open={isOpen} isMobile={isMobile}>
           <Outlet />
         </Main>
       </Box>

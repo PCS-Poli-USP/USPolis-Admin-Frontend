@@ -1,18 +1,15 @@
 import { FormLabel, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { FieldProps } from '../form.interface';
 import { Controller, useFormContext } from 'react-hook-form';
-import Select from 'react-select';
 import { useEffect, useState } from 'react';
-
-type Option = {
-  label: string;
-  value: string | number;
-};
+import TooltipSelect, { Option } from '../../TooltipSelect';
 
 interface SelectProps extends FieldProps {
   options: Option[];
   onChange?: (value: Option | undefined) => void;
   validator?: (value: string | number) => boolean;
+  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
 }
 
 export function SelectInput({
@@ -30,6 +27,8 @@ export function SelectInput({
   w = undefined,
   validator = undefined,
   onChange = undefined,
+  onFocus = undefined,
+  onBlur = undefined,
 }: SelectProps) {
   const {
     control,
@@ -69,7 +68,7 @@ export function SelectInput({
         name={name}
         control={control}
         render={({ field }) => (
-          <Select
+          <TooltipSelect
             {...field}
             id={name}
             value={selectedOption}
@@ -79,6 +78,8 @@ export function SelectInput({
             isMulti={false}
             isClearable={true}
             closeMenuOnSelect={true}
+            onFocus={onFocus}
+            onBlur={onBlur}
             onChange={(option: Option | null) => {
               if (onChange) onChange(option ? option : undefined);
               setValue(name, option ? option.value : '');
@@ -89,6 +90,7 @@ export function SelectInput({
             }}
             options={options}
             classNames={{
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               control: (state: any) =>
                 state.isFocused ? 'border-red-600' : 'border-grey-300',
             }}

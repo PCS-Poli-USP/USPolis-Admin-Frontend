@@ -25,6 +25,8 @@ export interface CreateSchedule extends ScheduleBase {
   end_time: string;
   dates?: string[];
   month_week?: MonthWeek;
+  labels?: string[];
+  times?: [string, string][];
 }
 
 export interface UpdateSchedule extends CreateSchedule {}

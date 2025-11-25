@@ -3,6 +3,13 @@
 # vscode
 /.vscode
 
+# dev
+/certs
+
+# docs
+/docs/.vitepress/cache
+/docs/.vitepress/dist
+
 # dependencies
 /node_modules
 /.pnp

@@ -14,7 +14,7 @@ import GroupAccordion from './GroupAccordion/group.accordion';
 import { MdGroupAdd } from 'react-icons/md';
 import GroupModal from './GroupModal/group.modal';
 import useClassrooms from '../../hooks/classrooms/useClassrooms';
-import useUsers from '../../hooks/useUsers';
+import useUsers from '../../hooks/users/useUsers';
 import { useEffect, useState } from 'react';
 import useGroups from '../../hooks/groups/useGroups';
 import { GroupResponse } from '../../models/http/responses/group.response.models';

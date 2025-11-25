@@ -13,7 +13,7 @@ import {
 import DataTable from '../../components/common/DataTable/dataTable.component';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import Loading from '../../components/common/Loading/loading.component';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { getClassesColumns } from './Tables/class.table';
 import { ClassResponse } from '../../models/http/responses/class.response.models';
 import useClasses from '../../hooks/classes/useClasses';
@@ -101,10 +101,12 @@ function Classes() {
     CrawlerType.JUPITER,
   );
 
-  const { subjects, getSubjects } = useSubjects();
+  const { loading: loadingSubjects, subjects, getSubjects } = useSubjects();
   const { calendars, loading: loadingCalendars } = useCalendars();
   const { loading, classes, getClasses, deleteClass, deleteManyClass } =
     useClasses();
+  const originalClasses = useRef<ClassResponse[]>([]);
+
   const { loading: isCrawling, result, create, update } = useCrawler();
 
   const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
@@ -226,6 +228,12 @@ function Classes() {
     getClasses();
   }
 
+  useEffect(() => {
+    if (!originalClasses.current.length) {
+      originalClasses.current = classes;
+    }
+  }, [classes]);
+
   return (
     <PageContent>
       <Loading isOpen={isCrawling} onClose={() => {}} />
@@ -278,6 +286,7 @@ function Classes() {
         />
       )}
       <CrawlerJupiterModal
+        subjects={subjects}
         isOpen={isOpenCrawlerJupiterModal}
         onClose={onCloseCrawlerJupiterModal}
         onSave={handleCrawlerSave}
@@ -291,8 +300,9 @@ function Classes() {
         onClose={onCloseAllocationReuseModal}
         data={undefined}
         subjects={subjects}
-        classes={classes}
+        classes={originalClasses.current}
         buildings={context.loggedUser ? context.loggedUser.buildings || [] : []}
+        refetch={() => getClasses()}
       />
       <Flex align='center'>
         <PageHeaderWithFilter
@@ -315,28 +325,27 @@ function Classes() {
           >
             Opções
           </MenuButton>
-          <MenuList w={'300px'} border={'1px'}>
+          <MenuList w={'300px'} border={'1px'} bgColor={'uspolis.white'}>
             <MenuGroup title='Adição' fontSize={'lg'} gap={'5px'}>
               <MenuDivider />
               <MenuItem
                 as={Button}
-                colorScheme={'blue'}
+                bgColor={'uspolis.white'}
                 justifyContent={'flex-start'}
                 onClick={handleRegisterClick}
                 leftIcon={<LuHand />}
-                mb={'5px'}
+                _hover={{ textColor: 'uspolis.white' }}
               >
                 Manual
               </MenuItem>
               <MenuDivider />
               <MenuItem
                 as={Button}
-                colorScheme='blue'
-                color={'uspolis.blue'}
+                bgColor={'uspolis.white'}
                 justifyContent={'flex-start'}
                 leftIcon={<LuTimer />}
-                mb={'5px'}
                 onClick={onOpenCrawlerJupiterModal}
+                _hover={{ textColor: 'uspolis.white' }}
               >
                 Júpiter/Janus
               </MenuItem>
@@ -346,11 +355,11 @@ function Classes() {
               <MenuDivider />
               <MenuItem
                 as={Button}
-                colorScheme={'blue'}
+                bgColor={'uspolis.white'}
                 justifyContent={'flex-start'}
                 onClick={onOpenJupiterUpdateModal}
                 leftIcon={<LuTimer />}
-                mb={'5px'}
+                _hover={{ textColor: 'uspolis.white' }}
               >
                 Júpiter/Janus
               </MenuItem>
@@ -361,30 +370,31 @@ function Classes() {
               <MenuItem
                 as={Button}
                 justifyContent={'flex-start'}
-                colorScheme={'blue'}
+                bgColor={'uspolis.white'}
                 onClick={handleDeleteSelectedClassesClick}
                 leftIcon={<IoTrashBinOutline />}
-                mb={'5px'}
+                _hover={{ textColor: 'uspolis.white' }}
               >
                 Selecionados
               </MenuItem>
             </MenuGroup>
-            {/* <MenuDivider />
+            <MenuDivider />
             <MenuGroup title='Alocações' fontSize={'lg'} gap={'5px'}>
               <MenuDivider />
               <MenuItem
                 as={Button}
                 justifyContent={'flex-start'}
-                colorScheme={'blue'}
+                bgColor={'uspolis.white'}
                 onClick={() => {
                   onOpenAllocationReuseModal();
                 }}
                 leftIcon={<LuDownload />}
-                mb={'5px'}
+                _hover={{ textColor: 'uspolis.white' }}
+                isLoading={loading || loadingSubjects || context.loading}
               >
                 Reaproveitar
               </MenuItem>
-            </MenuGroup> */}
+            </MenuGroup>
           </MenuList>
         </Menu>
       </Flex>

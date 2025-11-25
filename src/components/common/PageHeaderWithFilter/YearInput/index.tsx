@@ -32,9 +32,16 @@ interface DateRangeInputProps {
   year: string;
   setYear: (year: string) => void;
   onConfirm: (year: string) => void;
+  isMobile: boolean;
 }
 
-function YearInput({ title, year, setYear, onConfirm }: DateRangeInputProps) {
+function YearInput({
+  title,
+  year,
+  setYear,
+  onConfirm,
+  isMobile,
+}: DateRangeInputProps) {
   const { isOpen, onClose, onToggle } = useDisclosure();
   const [filterApplied, setFilterApplied] = useState(false);
 
@@ -115,12 +122,12 @@ function YearInput({ title, year, setYear, onConfirm }: DateRangeInputProps) {
           </Flex>
         </Tooltip>
       </PopoverTrigger>
-      <PopoverContent w={'400px'}>
+      <PopoverContent w={isMobile ? '100vw' : '400px'}>
         <PopoverCloseButton />
         <PopoverHeader fontWeight={'bold'}>Selecione o ano</PopoverHeader>
-        <PopoverArrow />
+        {!isMobile && <PopoverArrow />}
         <PopoverBody>
-          <Flex direction={'row'} gap={'10px'}>
+          <Flex direction={isMobile ? 'column' : 'row'} gap={'10px'}>
             <Flex direction={'column'} gap={'10px'} w={'100%'}>
               <FormControl isInvalid={hasYearError}>
                 <FormLabel>Ano:</FormLabel>

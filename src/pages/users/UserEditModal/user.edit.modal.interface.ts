@@ -14,4 +14,5 @@ export interface UserEditForm {
   is_admin: boolean;
   building_ids: number[];
   group_ids: number[];
+  receive_emails: boolean;
 }

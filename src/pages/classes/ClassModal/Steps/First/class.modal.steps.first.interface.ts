@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { SubjectResponse } from '../../../../../models/http/responses/subject.response.models';
 import { ClassModalStepsProps } from '../class.modal.steps.interface';
 import { UseFormReturn } from 'react-hook-form';

@@ -1,9 +1,9 @@
 import {
-  EventResponse,
-  ResourceResponse,
+  AllocationEventResponse,
+  AllocationResourceResponse,
 } from '../../../models/http/responses/allocation.response.models';
 
-export interface Resource extends ResourceResponse {
+export interface Resource extends AllocationResourceResponse {
   eventColor?: string;
   eventBackgroundColor?: string;
   eventBorderColor?: string;
@@ -11,7 +11,7 @@ export interface Resource extends ResourceResponse {
 }
 
 // See https://fullcalendar.io/docs/event-parsing
-export interface Event extends EventResponse {
+export interface Event extends AllocationEventResponse {
   backgroundColor?: string;
   borderColor?: string;
   textColor?: string;

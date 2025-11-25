@@ -74,8 +74,6 @@ export function AllocateClassModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [class_, class_id]);
 
-  console.log(class_, class_id);
-
   async function handleSave() {
     const data: AllocateManySchedulesData[] = [];
     for (const ref of sectionsRefs.current) {
@@ -152,6 +150,24 @@ export function AllocateClassModal({
                                         : undefined
                                     }
                                     readonly={readonly}
+                                    readonlyData={
+                                      readonly
+                                        ? {
+                                            buildingOpt: {
+                                              label:
+                                                schedule.building as string,
+                                              value:
+                                                schedule.building_id as number,
+                                            },
+                                            classroomOpt: {
+                                              label:
+                                                schedule.classroom as string,
+                                              value:
+                                                schedule.classroom_id as number,
+                                            },
+                                          }
+                                        : undefined
+                                    }
                                   />
                                   <Divider />
                                 </Box>

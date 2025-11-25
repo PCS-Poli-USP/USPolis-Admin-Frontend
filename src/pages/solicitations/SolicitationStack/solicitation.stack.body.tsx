@@ -2,35 +2,58 @@ import {
   Alert,
   AlertIcon,
   Box,
+  Button,
   Heading,
   Highlight,
   StackDivider,
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import moment from 'moment';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
+import { getSolicitationStatusText } from '../../../utils/solicitations/solicitation.formatter';
 
 interface SolicitationStackBodyProps {
-  solicitations: ClassroomSolicitationResponse[];
-  handleOnClick: (data: ClassroomSolicitationResponse) => void;
+  solicitations: SolicitationResponse[];
+  handleOnClick: (data: SolicitationResponse) => void;
   reset: () => void;
+  selectedSolicitation?: SolicitationResponse;
   selectedIndex?: number;
   setSelectedIndex: (index: number) => void;
+  showAll: boolean;
+  totalItems: number;
+  hasMore: boolean;
+  handleShowMoreClick: (target: HTMLButtonElement) => Promise<void>;
 }
 
 function SolicitationStackBody({
   solicitations,
   handleOnClick,
   reset,
-  selectedIndex,
+  selectedSolicitation,
   setSelectedIndex,
+  showAll,
+  hasMore,
+  handleShowMoreClick,
 }: SolicitationStackBodyProps) {
   return (
     <VStack w={'full'} divider={<StackDivider />}>
+      {showAll && hasMore && (
+        <Button
+          w={'full'}
+          onClick={(event) => handleShowMoreClick(event.currentTarget)}
+        >
+          Ver mais
+        </Button>
+      )}
+
       {solicitations.length > 0 ? (
-        solicitations.map((solicitation, index) => {
-          const selected = selectedIndex === index;
+        solicitations.map((_, index) => {
+          const solicitation = solicitations[solicitations.length - 1 - index];
+          const selected =
+            selectedSolicitation && selectedSolicitation.id == solicitation.id;
+          const closed = solicitation.status !== ReservationStatus.PENDING;
           return (
             <Box
               key={index}
@@ -40,12 +63,22 @@ function SolicitationStackBody({
               border={selected ? '1px' : undefined}
               cursor={false ? 'not-allowed' : 'pointer'}
               transition='background 0.3s, opacity 0.3s'
-              opacity={solicitation.closed && !selected ? 0.6 : 1}
-              _hover={false ? {} : { bg: 'gray.100', opacity: 0.8 }}
-              _active={
-                solicitation.closed && !selected
+              opacity={closed && !selected ? 0.6 : 1}
+              _hover={
+                false
                   ? {}
-                  : { bg: 'gray.300', opacity: 0.6 }
+                  : {
+                      bg: 'uspolis.lightGray',
+                      opacity: 0.8,
+                    }
+              }
+              _active={
+                closed && !selected
+                  ? {}
+                  : {
+                      bg: 'uspolis.lightGray',
+                      opacity: 0.6,
+                    }
               }
               onClick={() => {
                 reset();
@@ -55,11 +88,10 @@ function SolicitationStackBody({
             >
               <Heading size={'md'}>{`Reserva de Sala`}</Heading>
               <Text>{`Local: ${solicitation.building}, sala ${
-                solicitation.classroom
-                  ? solicitation.classroom
+                solicitation.reservation.classroom_name
+                  ? solicitation.reservation.classroom_name
                   : 'não especificada'
               }`}</Text>
-              {/* <Spacer /> */}
               <Text>
                 <Text
                   as={'span'}
@@ -68,42 +100,25 @@ function SolicitationStackBody({
                   'DD/MM/YYYY, HH:mm',
                 )}`}
               </Text>
-              {solicitation.approved ||
-              solicitation.denied ||
-              solicitation.deleted ? (
-                <Text>
-                  <Highlight
-                    query={[
-                      'aprovado',
-                      'negado',
-                      'removido',
-                      solicitation.user,
-                    ]}
-                    styles={{ textColor: 'uspolis.blue', fontWeight: 'bold' }}
-                  >
-                    {`${
-                      solicitation.approved
-                        ? `Situação: Aprovado por ${solicitation.closed_by}`
-                        : solicitation.denied
-                          ? `Situação: Negado por ${solicitation.closed_by}`
-                          : solicitation.deleted
-                            ? `Situação: Removido por ${solicitation.deleted_by}`
-                            : ''
-                    } às ${moment(solicitation.updated_at).format(
-                      'DD/MM/YYYY, HH:mm',
-                    )}`}
-                  </Highlight>
-                </Text>
-              ) : (
-                <Text>
-                  <Highlight
-                    query={'pendente'}
-                    styles={{ textColor: 'uspolis.blue', fontWeight: 'bold' }}
-                  >
-                    Situação: Pendente
-                  </Highlight>
-                </Text>
-              )}
+
+              <Text>
+                <Highlight
+                  query={[
+                    'aprovado',
+                    'negado',
+                    'removida',
+                    'pendente',
+                    'cancelada',
+                    solicitation.user,
+                  ]}
+                  styles={{
+                    textColor: ReservationStatus.getColor(solicitation.status),
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {getSolicitationStatusText(solicitation)}
+                </Highlight>
+              </Text>
             </Box>
           );
         })

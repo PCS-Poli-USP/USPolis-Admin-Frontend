@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 export enum Recurrence {
   DAILY = 'Daily',
   WEEKLY = 'Weekly',
@@ -8,7 +9,7 @@ export enum Recurrence {
 
 export namespace Recurrence {
   const translations: { [key in Recurrence]: string } = {
-    [Recurrence.DAILY]: 'Dia útil',
+    [Recurrence.DAILY]: 'Dias úteis',
     [Recurrence.WEEKLY]: 'Semanal',
     [Recurrence.BIWEEKLY]: 'Quinzenal',
     [Recurrence.MONTHLY]: 'Mensal',

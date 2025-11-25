@@ -1,4 +1,10 @@
-import { Button, Flex, Spacer, useDisclosure } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  Spacer,
+  useColorMode,
+  useDisclosure,
+} from '@chakra-ui/react';
 
 import DataTable from '../../components/common/DataTable/dataTable.component';
 import Loading from '../../components/common/Loading/loading.component';
@@ -7,17 +13,20 @@ import { ReservationResponse } from '../../models/http/responses/reservation.res
 import { useEffect, useState } from 'react';
 import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import useBuildings from '../../hooks/useBuildings';
-import useReservations from '../../hooks/useReservations';
+import useReservations from '../../hooks/reservations/useReservations';
 import ReservationModal from './ReservationModal/reservation.modal';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import PageContent from '../../components/common/PageContent';
-import useClassroomsSolicitations from '../../hooks/useClassroomSolicitations';
+import useSolicitations from '../../hooks/solicitations/useSolicitations';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
-import ClassroomTimeGrid from '../../components/common/ClassroomTimeGrid/classroom.time.grid';
+import useSubjects from '../../hooks/useSubjetcts';
 import { ClassroomFullResponse } from '../../models/http/responses/classroom.response.models';
+import ClassroomTimeGrid from '../../components/common/ClassroomTimeGrid/classroom.time.grid';
 
 function Reservations() {
+  const { colorMode } = useColorMode();
+
   const {
     onClose: onCloseModal,
     onOpen: onOpenModal,
@@ -40,13 +49,11 @@ function Reservations() {
     classrooms,
     listOneFull,
   } = useClassrooms();
+  const { subjects, loading: loadingSubjects } = useSubjects();
   const { loading, reservations, getReservations, deleteReservation } =
     useReservations();
-  const {
-    loading: loadingSolicitations,
-    solicitations,
-    getPendingBuildingSolicitations,
-  } = useClassroomsSolicitations(false);
+  const { getPendingBuildingSolicitations } = useSolicitations(false);
+  const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
 
   const [selectedReservation, setSelectedReservation] =
     useState<ReservationResponse>();
@@ -59,9 +66,11 @@ function Reservations() {
     handleDuplicateClick: handleDuplicateClick,
     handleEditClick: handleEditClick,
     handleDeleteClick: handleDeleteClick,
+    darkMode: colorMode === 'dark',
   });
 
   async function handleViewClick(data: ReservationResponse) {
+    if (!data.classroom_id) return;
     setSelectedReservation(data);
     onOpenGrid();
     const cls = await listOneFull(data.classroom_id);
@@ -114,12 +123,21 @@ function Reservations() {
         <PageHeaderWithFilter
           {...header}
           title='Reservas'
+          start={start}
+          end={end}
+          setStart={setStart}
+          setEnd={setEnd}
           onConfirm={(start, end) => {
             getReservations(start, end);
           }}
         />
         <Spacer />
-        <Button mr={2} colorScheme={'blue'} onClick={handleRegisterClick}>
+        <Button
+          mr={2}
+          colorScheme={'blue'}
+          onClick={handleRegisterClick}
+          borderRadius={'10px'}
+        >
           Adicionar Reserva
         </Button>
       </Flex>
@@ -131,12 +149,13 @@ function Reservations() {
         }}
         isOpen={isOpenModal}
         isUpdate={isUpdate}
+        isSolicitation={false}
         classrooms={classrooms}
         buildings={buildings}
         selectedReservation={selectedReservation}
         refetch={() => getReservations()}
-        solicitations={solicitations}
-        loadingSolicitations={loadingSolicitations}
+        subjects={subjects}
+        loading={loadingSubjects}
       />
       <DataTable
         loading={loading}
@@ -159,19 +178,27 @@ function Reservations() {
       />
       <ClassroomTimeGrid
         isOpen={isOpenGrid}
-        onClose={onCloseGrid}
+        onClose={() => {
+          setSelectedReservation(undefined);
+          setClassroom(undefined);
+          onCloseGrid();
+        }}
         classroom={classroom}
         loading={loadingClassrooms}
         scheduleDetails={
           selectedReservation
             ? {
                 recurrence: selectedReservation.schedule.recurrence,
+
                 week_day: selectedReservation.schedule.week_day,
+
                 month_week: selectedReservation.schedule.month_week,
               }
             : {
                 recurrence: undefined,
+
                 week_day: undefined,
+
                 month_week: undefined,
               }
         }
@@ -179,6 +206,8 @@ function Reservations() {
           title: '',
           start_time: '',
           end_time: '',
+          start_times: [],
+          end_times: [],
           dates: [],
         }}
       />

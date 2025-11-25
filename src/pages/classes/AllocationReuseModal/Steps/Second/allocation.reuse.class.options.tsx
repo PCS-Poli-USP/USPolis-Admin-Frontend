@@ -3,11 +3,12 @@ import { Collapsable } from '../../../../../components/common/Collapsable';
 import { AllocationClassOptions } from '../../../../../models/http/responses/allocation.response.models';
 import { classNumberFromClassCode } from '../../../../../utils/classes/classes.formatter';
 import AllocationReuseScheduleOptions from './allocation.reuse.schedule.options';
+import { ScheduleAllocationData } from '../../allocation.reuse.modal';
 
 interface AllocationReuseClassOptionsProps {
   data: AllocationClassOptions;
-  allocationMap: Map<number, number[]>;
-  setAllocationMap: (map: Map<number, number[]>) => void;
+  allocationMap: Map<number, ScheduleAllocationData>;
+  setAllocationMap: (map: Map<number, ScheduleAllocationData>) => void;
 }
 
 function AllocationReuseClassOptions({
@@ -27,7 +28,7 @@ function AllocationReuseClassOptions({
       )}
       {hasOptions && (
         <Collapsable
-          title={`Turma ${classNumberFromClassCode(data.class_code)}`}
+          title={`Turma ${classNumberFromClassCode(data.class_code)} - Atual`}
           initiallyOpen={true}
           fontWeight='normal'
           titleSize='sm'

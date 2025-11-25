@@ -1,5 +1,5 @@
 import { Checkbox, Flex, Text, VStack } from '@chakra-ui/react';
-import Select, { SingleValue } from 'react-select';
+import { SingleValue } from 'react-select';
 import useClassroomsService from '../../../hooks/API/services/useClassroomsService';
 import { ClassroomWithConflictCount } from '../../../models/http/responses/classroom.response.models';
 import { BuildingResponse } from '../../../models/http/responses/building.response.models';
@@ -13,6 +13,10 @@ import AllocationLogHistory from './allocationLog.history';
 import { UserResponse } from '../../../models/http/responses/user.response.models';
 import { UsersValidator } from '../../../utils/users/users.validator';
 import IntentionalConflictPopover from './IntentionalConflictPopover';
+import TooltipSelect, {
+  Option,
+} from '../../../components/common/TooltipSelect';
+import moment from 'moment';
 
 export interface AllocateSingleScheduleSectionRef {
   reset(): void;
@@ -30,17 +34,13 @@ interface props {
   allowedBuildings: BuildingResponse[];
   loadingBuildings: boolean;
   readonly: boolean;
+  readonlyData?: ReadonlyData;
   initialBuildingId?: number;
 }
 
-interface BuildingOption {
-  label: string;
-  value: number;
-}
-
-interface ClassroomOption {
-  label: string;
-  value: number;
+interface ReadonlyData {
+  buildingOpt: Option;
+  classroomOpt: Option;
 }
 
 const AllocateSingleScheduleSection = forwardRef<
@@ -54,6 +54,7 @@ const AllocateSingleScheduleSection = forwardRef<
       allowedBuildings,
       loadingBuildings,
       readonly,
+      readonlyData,
       initialBuildingId = undefined,
     }: props,
     ref,
@@ -69,6 +70,7 @@ const AllocateSingleScheduleSection = forwardRef<
         intentional_occurrence_ids: number[];
       } | null {
         if (!schedule) return null;
+        if (readonly) return null;
         if (removeAllocation)
           return {
             schedule_id: schedule.id,
@@ -97,11 +99,11 @@ const AllocateSingleScheduleSection = forwardRef<
     const [selectedBuilding, setSelectedBuilding] =
       useState<BuildingResponse>();
     const [selecteBuildingOption, setSelecteBuildingOption] =
-      useState<BuildingOption>();
+      useState<Option>();
     const [selectedClassroom, setSelectedClassroom] =
       useState<ClassroomWithConflictCount>();
     const [selecteClassroomOption, setSelecteClassroomOption] =
-      useState<BuildingOption>();
+      useState<Option>();
 
     // loadings
     const [classroomsLoading, setClassroomsLoading] = useState(false);
@@ -179,7 +181,7 @@ const AllocateSingleScheduleSection = forwardRef<
       setSelecteClassroomOption(undefined);
       setSelectedClassroom(undefined);
       classroomsService
-        .getWithConflictCount(schedule.id, selectedBuilding.id)
+        .getWithConflictCountForSchedule(selectedBuilding.id, schedule.id)
         .then((response) => {
           const validator = new UsersValidator(user);
           setClassrooms(
@@ -272,7 +274,8 @@ const AllocateSingleScheduleSection = forwardRef<
                 </strong>
               </Text>
               <Text>
-                Periodo: {schedule.start_date} ~ {schedule.end_date}
+                Periodo: {moment(schedule.start_date).format('DD/MM/YYYY')} ~{' '}
+                {moment(schedule.end_date).format('DD/MM/YYYY')}
               </Text>
             </Flex>
             <VStack alignItems={'flex-start'}>
@@ -310,9 +313,9 @@ const AllocateSingleScheduleSection = forwardRef<
                 />
               </Flex>
 
-              {!removeAllocation && (
+              {!removeAllocation && !readonly && (
                 <Flex direction={'column'} gap={'5px'} w={'100%'}>
-                  <Select
+                  <TooltipSelect
                     placeholder={
                       loadingBuildings
                         ? 'Carregando prédios...'
@@ -326,9 +329,9 @@ const AllocateSingleScheduleSection = forwardRef<
                       label: building.name,
                       value: building.id,
                     }))}
-                    onChange={(option: SingleValue<BuildingOption>) => {
+                    onChange={(option: SingleValue<Option>) => {
                       if (option) {
-                        setSelecteBuildingOption(option as BuildingOption);
+                        setSelecteBuildingOption(option);
                         setSelectedBuilding(
                           allowedBuildings.find(
                             (building) => building.id === option?.value,
@@ -341,7 +344,7 @@ const AllocateSingleScheduleSection = forwardRef<
                       }
                     }}
                   />
-                  <Select
+                  <TooltipSelect
                     placeholder={
                       classroomsLoading
                         ? 'Carregando salas...'
@@ -349,15 +352,16 @@ const AllocateSingleScheduleSection = forwardRef<
                     }
                     isLoading={classroomsLoading}
                     options={classrooms.map((classroom) => ({
-                      label: formatClassroomForSelection(classroom),
                       value: Number(classroom.id),
+                      label: formatClassroomForSelection(classroom),
+                      tooltip: classroom.observation,
                     }))}
-                    onChange={(option: SingleValue<ClassroomOption>) => {
+                    onChange={(option) => {
                       if (option) {
                         const classroom = classrooms.find(
                           (classroom) => Number(classroom.id) === option.value,
                         );
-                        setSelecteClassroomOption(option as ClassroomOption);
+                        setSelecteClassroomOption(option);
                         setSelectedClassroom(classroom);
                         setHasConflict(
                           classroom
@@ -374,6 +378,20 @@ const AllocateSingleScheduleSection = forwardRef<
                     isDisabled={
                       !selectedBuilding || classroomsLoading || readonly
                     }
+                  />
+                </Flex>
+              )}
+
+              {readonly && (
+                <Flex direction={'column'} gap={'5px'} w={'100%'}>
+                  <TooltipSelect
+                    isMulti={false}
+                    isDisabled={readonly}
+                    value={readonlyData ? readonlyData.buildingOpt : undefined}
+                  />
+                  <TooltipSelect
+                    value={readonlyData ? readonlyData.classroomOpt : undefined}
+                    isDisabled={readonly}
                   />
                 </Flex>
               )}

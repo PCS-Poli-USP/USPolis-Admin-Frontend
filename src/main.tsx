@@ -1,19 +1,18 @@
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { chakraTheme, muiTheme } from './utils/theme';
-import { ThemeProvider } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+
 import 'moment/locale/pt-br';
 import AppContextProvider from './context/AppContext';
 import EmptyPage from './components/common/EmptyPage';
 import Solicitations from './pages/solicitations/solicitations';
 import MySolicitations from './pages/mySolicitations/mySolicitations';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import Page404 from './pages/page404';
-import AuthPage from './pages/auth';
 import RestrictedRoute from './routes/restricted.route';
 // Providers, Contexts
 import FeatureGuideProvider from './context/FeatureGuideContext';
@@ -25,6 +24,8 @@ import PersistLogin from './routes/persistLogin.route';
 import PrivateRoute from './routes/private.route';
 
 // Pages
+import Page404 from './pages/page404';
+import AuthPage from './pages/auth';
 import Allocation from './pages/allocation/allocation';
 import AuthCallbackPage from './pages/auth/auth-callback';
 import Buildings from './pages/buildings/buildings';
@@ -38,102 +39,111 @@ import Groups from './pages/groups/groups';
 import Home from './pages/home';
 import InstitutionalEvents from './pages/institutionalEvents';
 import LoadingPage from './components/common/LoadingPage';
-import LoadingRedirect from './pages/auth/loadingRedirect';
 import Profile from './pages/profile/profile';
-import RedirectError from './pages/auth/redirectError';
 import Reservations from './pages/reservations';
 import Subjects from './pages/subjects/subjects';
 import Users from './pages/users/users';
-import ReportsPage from './pages/reports/reports';
+import FindExams from './pages/findExams';
+import MenuContextProvider from './context/MenuContext';
+import Reports from './pages/reports';
+import Feedbacks from './pages/feedbacks';
+import ReportsPage from './pages/occupationReports/reports';
 
 const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <ThemeProvider theme={muiTheme}>
+  <ThemeProvider theme={muiTheme} defaultMode='light'>
     <ChakraProvider theme={chakraTheme}>
+      <ColorModeScript initialColorMode={chakraTheme.config.initialColorMode} />
       <GoogleOAuthProvider clientId={clientId!}>
         <AppContextProvider>
-          <LocalizationProvider
-            dateAdapter={AdapterMoment}
-            adapterLocale='pt-br'
-          >
-            <FeatureGuideProvider>
-              <BrowserRouter>
-                <Routes>
-                  <Route path='/auth' element={<AuthPage />} />
-                  <Route path='auth-callback' element={<AuthCallbackPage />} />
-                  <Route
-                    path='/test-auth-callback'
-                    element={<LoadingRedirect />}
-                  />
-                  <Route
-                    path='/test-auth-callback-error'
-                    element={<RedirectError error='Mock error bro' />}
-                  />
-                  <Route path='/loading-page' element={<LoadingPage />} />
-                  <Route element={<AxiosInterceptorRoute />}>
-                    <Route element={<PersistLogin />}>
-                      <Route
-                        path='/print/classroom-calendar'
-                        element={<ClassroomCalendarPrintPage />}
-                      />
-                      <Route path='/' element={<Navigate to='/index' />} />
-                      <Route path='/index' element={<Home />} />
-                      <Route path='/' element={<EmptyPage />}>
-                        {/* Not found */}
-                        <Route path='*' element={<Page404 />} />
+          <MenuContextProvider>
+            <LocalizationProvider
+              dateAdapter={AdapterMoment}
+              adapterLocale='pt-br'
+            >
+              <FeatureGuideProvider>
+                <BrowserRouter>
+                  <Routes>
+                    <Route path='/auth' element={<AuthPage />} />
+                    <Route
+                      path='auth-callback'
+                      element={<AuthCallbackPage />}
+                    />
+                    <Route path='/loading-page' element={<LoadingPage />} />
+                    <Route element={<AxiosInterceptorRoute />}>
+                      <Route element={<PersistLogin />}>
+                        <Route
+                          path='/print/classroom-calendar'
+                          element={<ClassroomCalendarPrintPage />}
+                        />
+                        <Route path='/' element={<Navigate to='/index' />} />
+                        <Route path='/index' element={<Home />} />
+                        <Route path='/' element={<EmptyPage />}>
+                          {/* Not found */}
+                          <Route path='*' element={<Page404 />} />
 
-                        {/* Public routes */}
-                        <Route path='allocation' element={<Allocation />} />
-                        <Route path='find-classes' element={<FindClasses />} />
-
-                        {/* Private routes */}
-                        <Route element={<PrivateRoute />}>
-                          <Route path='profile' element={<Profile />} />
+                          {/* Public routes */}
+                          <Route path='allocation' element={<Allocation />} />
                           <Route
-                            path='my-solicitations'
-                            element={<MySolicitations />}
+                            path='find-classes'
+                            element={<FindClasses />}
                           />
+                          <Route path='find-exams' element={<FindExams />} />
 
-                          {/* Restricted routes */}
-                          <Route element={<RestrictedRoute />}>
-                            <Route path='subjects' element={<Subjects />} />
-                            <Route path='calendars' element={<Calendars />} />
-                            <Route path='classrooms' element={<Classrooms />} />
-                            <Route path='classes' element={<Classes />} />
+                          {/* Private routes */}
+                          <Route element={<PrivateRoute />}>
+                            <Route path='profile' element={<Profile />} />
                             <Route
-                              path='reservations'
-                              element={<Reservations />}
+                              path='my-solicitations'
+                              element={<MySolicitations />}
                             />
-                            <Route
-                              path='conflicts'
-                              element={<ConflictsPage />}
-                            />
-                            <Route
-                              path='solicitations'
-                              element={<Solicitations />}
-                            />
-                            <Route path='reports' element={<ReportsPage />} />
+
+                            {/* Restricted routes */}
+                            <Route element={<RestrictedRoute />}>
+                              <Route path='subjects' element={<Subjects />} />
+                              <Route path='calendars' element={<Calendars />} />
+                              <Route
+                                path='classrooms'
+                                element={<Classrooms />}
+                              />
+                              <Route path='classes' element={<Classes />} />
+                              <Route
+                                path='reservations'
+                                element={<Reservations />}
+                              />
+                              <Route
+                                path='conflicts'
+                                element={<ConflictsPage />}
+                              />
+                              <Route
+                                path='solicitations'
+                                element={<Solicitations />}
+                              />
+                              <Route path='reports' element={<ReportsPage />} />
                           </Route>
 
-                          {/* Admin routes */}
-                          <Route path='' element={<AdminRoute />}>
-                            <Route path='users' element={<Users />} />
-                            <Route path='groups' element={<Groups />} />
-                            <Route path='buildings' element={<Buildings />} />
-                            <Route
-                              path='institutional-events'
-                              element={<InstitutionalEvents />}
-                            />
+                            {/* Admin routes */}
+                            <Route path='' element={<AdminRoute />}>
+                              <Route path='users' element={<Users />} />
+                              <Route path='groups' element={<Groups />} />
+                              <Route path='buildings' element={<Buildings />} />
+                              <Route path='bug-reports' element={<Reports />} />
+                              <Route path='feedbacks' element={<Feedbacks />} />
+                              <Route
+                                path='institutional-events'
+                                element={<InstitutionalEvents />}
+                              />
+                            </Route>
                           </Route>
                         </Route>
                       </Route>
                     </Route>
-                  </Route>
-                </Routes>
-              </BrowserRouter>
-            </FeatureGuideProvider>
-          </LocalizationProvider>
+                  </Routes>
+                </BrowserRouter>
+              </FeatureGuideProvider>
+            </LocalizationProvider>
+          </MenuContextProvider>
         </AppContextProvider>
       </GoogleOAuthProvider>
     </ChakraProvider>

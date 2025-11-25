@@ -1,8 +1,59 @@
 .fc .fc-button-primary {
-  background-color: #408080;
+  background-color: var(--chakra-colors-blue-500);
   border: none;
   font-weight: bold;
 }
 .fc .fc-button-primary:hover {
   opacity: 0.4;
+}
+
+/* link "+3 more" */
+.fc-timegrid-more-link {
+  color: var(--chakra-colors-blue-500); /* seu uspolis.blue */
+  font-weight: bold;
+}
+
+.fc-col-header,
+.fc-scrollgrid-section-header {
+  color: var(--chakra-colors-uspolis-blue);
+}
+
+.fc .fc-header-toolbar {
+  position: sticky;
+  top: 60px;
+  z-index: 50;
+  /* background: var(--chakra-colors-uspolis-white); */
+}
+
+.fc .fc-scrollgrid-section-header {
+  position: sticky;
+  top: calc(60px + 3rem); /* navbar + toolbar */
+  z-index: 40;
+  /* background: var(--chakra-colors-uspolis-white); */
+}
+
+.fc .fc-datagrid-header {
+  position: sticky;
+  top: calc(60px + 3rem);
+  z-index: 45;
+  /* background: var(--chakra-colors-uspolis-white); */
+}
+
+/*
+.fc .fc-timeline-header {
+  /* background: var(--chakra-colors-uspolis-white); */
+/*}
+
+/* corpo do popover */
+.fc-popover-body,
+.fc-popover-header {
+  background: var(--chakra-colors-uspolis-white);
+  color: var(--chakra-colors-uspolis-white);
+}
+
+/* eventos dentro do popover */
+.fc-more-popover .fc-event,
+.fc-timegrid-more-popover .fc-event {
+  padding: 4px 8px;
+  border-radius: 4px;
 }

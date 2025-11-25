@@ -44,39 +44,41 @@ function ClassroomTimeGrid({
     onClose();
   }
   const year = new Date().getFullYear(); // Obtém o ano atual
-  const events: ClassroomEvent[] = preview.dates.map((date) => ({
+  const events: ClassroomEvent[] = preview.dates.map((date, idx) => ({
     title: classroom ? classroom.name : '',
     date,
-    start: `${date}T${preview.start_time}`,
-    end: `${date}T${preview.end_time}`,
+    start: `${date}T${preview.start_times[idx]}`,
+    end: `${date}T${preview.end_times[idx]}`,
     backgroundColor: '#ff7300',
     extendedProps: {
       name: preview.title,
       type: 'Reserva',
-      start: preview.start_time,
-      end: preview.end_time,
+      start: preview.start_times[idx],
+      end: preview.end_times[idx],
     },
   }));
   if (classroom) {
     classroom.schedules.forEach((schedule) => {
-      schedule.occurrences.forEach((occurrence) =>
-        events.push({
-          title: classroom.name,
-          date: occurrence.date,
-          start: `${occurrence.date}T${occurrence.start_time}`,
-          end: `${occurrence.date}T${occurrence.end_time}`,
-          extendedProps: {
-            name: schedule.reservation || schedule.subject || '',
-            type: schedule.reservation
-              ? 'Reserva'
-              : schedule.subject && schedule.class_code
-                ? `Turma ${classNumberFromClassCode(schedule.class_code)}`
-                : 'Não indentificado',
-            start: occurrence.start_time,
-            end: occurrence.end_time,
-          },
-        }),
-      );
+      if (schedule.allocated) {
+        schedule.occurrences.forEach((occurrence) =>
+          events.push({
+            title: classroom.name,
+            date: occurrence.date,
+            start: `${occurrence.date}T${occurrence.start_time}`,
+            end: `${occurrence.date}T${occurrence.end_time}`,
+            extendedProps: {
+              name: schedule.reservation || schedule.subject || '',
+              type: schedule.reservation
+                ? 'Reserva'
+                : schedule.subject && schedule.class_code
+                  ? `Turma ${classNumberFromClassCode(schedule.class_code)}`
+                  : 'Não indentificado',
+              start: occurrence.start_time,
+              end: occurrence.end_time,
+            },
+          }),
+        );
+      }
     });
   }
 
@@ -98,20 +100,20 @@ function ClassroomTimeGrid({
     if (recurrence && week_day && !month_week) {
       return `${Recurrence.translate(
         recurrence as Recurrence,
-      )} às ${WeekDay.translate(week_day as WeekDay)}'s`;
+      )} ${Number(week_day) > 4 ? 'aos' : 'às'} ${WeekDay.translate(week_day as WeekDay).toLowerCase()}s`;
     }
     if (recurrence && week_day && month_week) {
       return `${Recurrence.translate(
         recurrence as Recurrence,
-      )}, às ${WeekDay.translate(
+      )}, ${Number(week_day) > 4 ? 'aos' : 'às'} ${WeekDay.translate(
         week_day as WeekDay,
-      )}'s no ${MonthWeek.translate(month_week as MonthWeek)} dia do mês`;
+      ).toLowerCase()}s ${Number(week_day) > 4 ? 'no' : 'no'} ${MonthWeek.maleTranslate(month_week as MonthWeek).toLowerCase()} dia do mês`;
     }
     return Recurrence.translate(recurrence as Recurrence) || 'Não definido';
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseModal} size={'4xl'}>
+    <Modal isOpen={isOpen} onClose={handleCloseModal} size={'5xl'}>
       <ModalOverlay />
       <ModalContent maxH={'90vh'} overflowY={'auto'}>
         <ModalHeader>{`Sala ${classroom ? classroom.name : ''} - ${
@@ -138,11 +140,13 @@ function ClassroomTimeGrid({
                   <b>Agenda:</b> {formatScheduleDetails()}
                 </Text>
                 <Text>
-                  <b>Horário:</b>{' '}
+                  <b>Horário da Agenda:</b>{' '}
                   {preview.start_time ? preview.start_time : 'Não informado'}{' '}
                   até {preview.end_time ? preview.end_time : 'Não informado'}
                 </Text>
-                <Text>Datas solicitadas no rodapé do calendário</Text>
+                <Text fontWeight={'bold'}>
+                  Datas e horários solicitados no rodapé do calendário
+                </Text>
               </Box>
               <Button
                 mb={'10px'}
@@ -187,8 +191,11 @@ function ClassroomTimeGrid({
               <Text>
                 {preview.dates.length > 0
                   ? preview.dates
-                      .map((date) => moment(date).format('DD/MM/YYYY'))
-                      .join(', ')
+                      .map(
+                        (date, idx) =>
+                          `${moment(date).format('DD/MM/YYYY')} [${preview.start_times[idx] || preview.start_time} - ${preview.end_times[idx] || preview.end_time}]`,
+                      )
+                      .join(' - ')
                   : 'Nenhuma data, verifique a agenda'}
               </Text>
             </HStack>

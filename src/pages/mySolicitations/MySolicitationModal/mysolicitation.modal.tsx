@@ -13,12 +13,13 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { ModalProps } from '../../../models/interfaces';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import moment from 'moment';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 
 interface MySoliciationModalProps extends ModalProps {
-  solicitation?: ClassroomSolicitationResponse;
+  solicitation?: SolicitationResponse;
 }
 
 function MySolicitationModal({
@@ -32,7 +33,9 @@ function MySolicitationModal({
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader textColor={'black'}>Reserva de Sala</ModalHeader>
+            <ModalHeader textColor={'uspolis.text'}>
+              Reserva de Sala
+            </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <VStack align={'flex-start'} spacing={4}>
@@ -40,14 +43,14 @@ function MySolicitationModal({
                   <Heading
                     size='sm'
                     textTransform='uppercase'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                   >
                     Solicitante
                   </Heading>
-                  <Text pt='2' fontSize='md' textColor={'black'}>
+                  <Text pt='2' fontSize='md' textColor={'uspolis.text'}>
                     {`${solicitation.user}`}
                   </Text>
-                  <Text pt='2' fontSize='md' textColor={'black'}>
+                  <Text pt='2' fontSize='md' textColor={'uspolis.text'}>
                     {`${solicitation.email}`}
                   </Text>
                 </Box>
@@ -55,20 +58,20 @@ function MySolicitationModal({
                   <Heading
                     size='sm'
                     textTransform='uppercase'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                   >
                     {`Motivo - ${ReservationType.translate(
-                      solicitation.reservation_type,
+                      solicitation.reservation.type,
                     )}`}
                   </Heading>
                   <Text
                     pt='2'
                     fontSize='md'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                     textAlign={'justify'}
                   >
-                    {solicitation.reason
-                      ? solicitation.reason
+                    {solicitation.reservation.reason
+                      ? solicitation.reservation.reason
                       : 'Descrição não informada.'}
                   </Text>
                 </Box>
@@ -76,34 +79,38 @@ function MySolicitationModal({
                   <Heading
                     size='sm'
                     textTransform='uppercase'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                   >
                     Local, Horário e Datas
                   </Heading>
-                  <Text pt='2' fontSize='md' textColor={'black'}>
+                  <Text pt='2' fontSize='md' textColor={'uspolis.text'}>
                     {`Local: ${solicitation.building}, sala ${
-                      solicitation.classroom
-                        ? solicitation.classroom
+                      solicitation.reservation.classroom_name
+                        ? solicitation.reservation.classroom_name
                         : 'NÃO ESPECIFICADA'
                     }`}
                     <br />
                     {`Início: ${
-                      solicitation.start_time
-                        ? moment(solicitation.start_time, 'HH:mm').format(
+                      solicitation.reservation.schedule.start_time
+                        ? moment(
+                            solicitation.reservation.schedule.start_time,
                             'HH:mm',
-                          )
+                          ).format('HH:mm')
                         : 'NÃO ESPECIFICADO'
                     }`}
                     <br />
                     {`Fim: ${
-                      solicitation.end_time
-                        ? moment(solicitation.end_time, 'HH:mm').format('HH:mm')
+                      solicitation.reservation.schedule.end_time
+                        ? moment(
+                            solicitation.reservation.schedule.end_time,
+                            'HH:mm',
+                          ).format('HH:mm')
                         : 'NÃO ESPECIFICADO'
                     }`}
                     <br />
-                    {`Dias: ${solicitation.dates
+                    {/* {`Dias: ${solicitation.dates
                       .map((date) => moment(date).format('DD/MM/YYYY'))
-                      .join(', ')}`}
+                      .join(', ')}`} */}
                   </Text>
                   <HStack
                     align={'center'}
@@ -122,11 +129,11 @@ function MySolicitationModal({
                   <Heading
                     size='sm'
                     textTransform='uppercase'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                   >
                     Requisitos
                   </Heading>
-                  <Text pt='2' fontSize='md' textColor={'black'}>
+                  <Text pt='2' fontSize='md' textColor={'uspolis.text'}>
                     {`Capacidade para ${solicitation.capacity} pessoas`}
                   </Text>
                 </Box>
@@ -134,26 +141,16 @@ function MySolicitationModal({
                   <Heading
                     size='sm'
                     textTransform='uppercase'
-                    textColor={'black'}
+                    textColor={'uspolis.text'}
                   >
                     Situação
                   </Heading>
                   <Text
                     pt='2'
                     fontSize='md'
-                    textColor={
-                      solicitation.approved
-                        ? 'green.500'
-                        : solicitation.denied
-                          ? 'red.500'
-                          : 'yellow.500'
-                    }
+                    textColor={ReservationStatus.getColor(solicitation.status)}
                   >
-                    {solicitation.approved
-                      ? 'Aprovado'
-                      : solicitation.denied
-                        ? 'Negado'
-                        : 'Pendente'}
+                    {ReservationStatus.translate(solicitation.status)}
                   </Text>
                 </Box>
               </VStack>

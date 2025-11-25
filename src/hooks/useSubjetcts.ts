@@ -30,6 +30,24 @@ const useSubjects = (initialFetch = true) => {
       });
   }, [showToast, service]);
 
+  const getAllSubjectsActives = useCallback(
+    async (start?: string, end?: string) => {
+      setLoading(true);
+      await service
+        .getActive(start, end)
+        .then((response) => {
+          setSubjects(response.data.sort(sortSubjectsResponse));
+        })
+        .catch(() => {
+          showToast('Erro', 'Erro ao carregar todas disciplinas', 'error');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [showToast, service],
+  );
+
   const getSubjects = useCallback(async () => {
     setLoading(true);
     await service
@@ -121,6 +139,7 @@ const useSubjects = (initialFetch = true) => {
     loading,
     subjects,
     getAllSubjects,
+    getAllSubjectsActives,
     getSubjects,
     createSubject,
     updateSubject,

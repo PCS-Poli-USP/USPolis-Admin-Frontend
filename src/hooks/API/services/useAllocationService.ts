@@ -1,13 +1,14 @@
 import { AxiosResponse } from 'axios';
 import {
   AllocationReuseResponse,
-  EventResponse,
-  ResourceResponse,
+  AllocationEventResponse,
+  AllocationResourceResponse,
 } from '../../../models/http/responses/allocation.response.models';
 import { JSONResponse } from '../../../models/http/responses/common.response.models';
 import axios from '../../../services/api/axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 import {
+  AllocationMapInput,
   AllocationReuseInput,
   EventUpdate,
 } from '../../../models/http/requests/allocation.request.models';
@@ -19,13 +20,15 @@ const useAllocationsService = () => {
   const listEvents = (
     start?: string,
     end?: string,
-  ): Promise<AxiosResponse<Array<EventResponse>>> => {
+  ): Promise<AxiosResponse<Array<AllocationEventResponse>>> => {
     if (start && end)
       return axios.get(`${PREFIX}/events`, { params: { start, end } });
     return axios.get(`${PREFIX}/events`);
   };
 
-  const listResources = (): Promise<AxiosResponse<Array<ResourceResponse>>> => {
+  const listResources = (): Promise<
+    AxiosResponse<Array<AllocationResourceResponse>>
+  > => {
     return axios.get(`${PREFIX}/resources`);
   };
 
@@ -39,7 +42,19 @@ const useAllocationsService = () => {
     return privateAxios.post(`${PREFIX}/reuse-options`, data);
   };
 
-  return { listEvents, listResources, update, getAllocationOptions };
+  const applyAllocationMap = (
+    data: AllocationMapInput,
+  ): Promise<AxiosResponse<JSONResponse>> => {
+    return privateAxios.post(`${PREFIX}/allocate-allocation-map`, data);
+  };
+
+  return {
+    listEvents,
+    listResources,
+    update,
+    getAllocationOptions,
+    applyAllocationMap,
+  };
 };
 
 export default useAllocationsService;

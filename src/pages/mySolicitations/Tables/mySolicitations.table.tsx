@@ -1,6 +1,6 @@
-import { Box, Text, Tooltip } from '@chakra-ui/react';
+import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ClassroomSolicitationResponse } from '../../../models/http/responses/classroomSolicitation.response.models';
+import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import moment from 'moment';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import {
@@ -8,126 +8,148 @@ import {
   FilterNumber,
   FilterString,
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
+import { ReservationStatus } from '../../../utils/enums/reservations.enum';
+import { TbCalendarCancel } from 'react-icons/tb';
 
-export const getMySolicitationsColumns =
-  (): ColumnDef<ClassroomSolicitationResponse>[] => [
-    {
-      accessorFn: (row) =>
-        row.closed ? (row.approved ? 'Aprovada' : 'Negada') : 'Pendente',
-      header: 'Situação',
-      meta: { isSelectable: true },
-      cell: ({ row }) => (
-        <Text>
-          {row.original.closed
-            ? row.original.approved
-              ? 'Aprovada'
-              : 'Negada'
-            : 'Pendente'}
+interface MySolicitationsColumnsProps {
+  handleCancelClick: (data: SolicitationResponse) => void;
+}
+
+export const getMySolicitationsColumns = (
+  props: MySolicitationsColumnsProps,
+): ColumnDef<SolicitationResponse>[] => [
+  {
+    id: 'status',
+    accessorFn: (val) => ReservationStatus.translate(val.status),
+    header: 'Situação',
+    meta: { isSelectable: true },
+    cell: ({ row }) => (
+      <Text>{ReservationStatus.translate(row.original.status)}</Text>
+    ),
+  },
+  {
+    accessorKey: 'reservation_title',
+    header: 'Título',
+    maxSize: 250,
+    cell: ({ row }) => (
+      <Tooltip label={row.original.reservation.title}>
+        <Text overflowX={'hidden'} textOverflow={'ellipsis'}>
+          {row.original.reservation.title}
         </Text>
-      ),
+      </Tooltip>
+    ),
+  },
+  {
+    accessorKey: 'building',
+    header: 'Prédio',
+  },
+  {
+    accessorKey: 'classroom',
+    header: 'Sala',
+    cell: ({ row }) => (
+      <Text>
+        {row.original.reservation.classroom
+          ? row.original.reservation.classroom
+          : 'Não informada'}
+      </Text>
+    ),
+  },
+  {
+    accessorFn: (row) => {
+      const start = row.reservation.schedule.start_time;
+      const end = row.reservation.schedule.end_time;
+      if (start && end) {
+        return `${moment(start, 'HH:mm').format('HH:mm')} ~ ${moment(
+          end,
+          'HH:mm',
+        ).format('HH:mm')}`;
+      }
+      return 'Não informado';
     },
-    {
-      accessorKey: 'reservation_title',
-      header: 'Título',
-      maxSize: 250,
-      cell: ({ row }) => (
-        <Tooltip label={row.original.reservation_title}>
-          <Text overflowX={'hidden'} textOverflow={'ellipsis'}>
-            {row.original.reservation_title}
-          </Text>
-        </Tooltip>
-      ),
+    header: 'Horário',
+    cell: ({ row }) => {
+      const start = row.original.reservation.schedule.start_time;
+      const end = row.original.reservation.schedule.end_time;
+      return (
+        <Text>{`${
+          start ? moment(start, 'HH:mm').format('HH:mm') : 'Não informado'
+        }${end ? ' ~ ' + moment(end, 'HH:mm').format('HH:mm') : ''}`}</Text>
+      );
     },
-    {
-      accessorKey: 'building',
-      header: 'Prédio',
-    },
-    {
-      accessorKey: 'classroom',
-      header: 'Sala',
-      cell: ({ row }) => (
-        <Text>
-          {row.original.classroom ? row.original.classroom : 'Não informada'}
-        </Text>
-      ),
-    },
-    {
-      accessorFn: (row) => {
-        const start = row.start_time;
-        const end = row.end_time;
-        if (start && end) {
-          return `${moment(start, 'HH:mm').format('HH:mm')} ~ ${moment(
-            end,
-            'HH:mm',
-          ).format('HH:mm')}`;
-        }
-        return 'Não informado';
-      },
-      header: 'Horário',
-      cell: ({ row }) => {
-        const start = row.original.start_time;
-        const end = row.original.end_time;
-        return (
-          <Text>{`${
-            start ? moment(start, 'HH:mm').format('HH:mm') : 'Não informado'
-          }${end ? ' ~ ' + moment(end, 'HH:mm').format('HH:mm') : ''}`}</Text>
-        );
-      },
-    },
-    {
-      filterFn: FilterArray,
-      accessorFn: (row) =>
-        row.dates.map((date) => moment(date).format('DD/MM/YYYY')),
-      accessorKey: 'dates',
-      header: 'Datas',
-      maxSize: 250,
-      cell: ({ row }) => (
+  },
+  {
+    filterFn: FilterArray,
+    accessorFn: (row) =>
+      row.reservation.schedule.occurrences
+        ? row.reservation.schedule.occurrences.map((occ) =>
+            moment(occ.date).format('DD/MM/YYYY'),
+          )
+        : [],
+    accessorKey: 'dates',
+    header: 'Datas',
+    maxSize: 250,
+    cell: ({ row }) => {
+      const occurrences = row.original.reservation.schedule.occurrences || [];
+      return (
         <Tooltip
-          label={row.original.dates
-            .map((date) => moment(date).format('DD/MM/YYYY'))
+          label={occurrences
+            .map((occ) => moment(occ.date).format('DD/MM/YYYY'))
             .join(', ')}
         >
           <Text overflowX={'hidden'} textOverflow={'ellipsis'}>
-            {row.original.dates
-              .map((date) => moment(date).format('DD/MM/YYYY'))
+            {occurrences
+              .map((occ) => moment(occ.date).format('DD/MM/YYYY'))
               .join(', ')}
           </Text>
         </Tooltip>
-      ),
+      );
     },
-    {
-      accessorFn: (row) => ReservationType.translate(row.reservation_type),
-      accessorKey: 'reservation_type',
-      header: 'Tipo',
-      cell: ({ row }) => (
-        <Text>{ReservationType.translate(row.original.reservation_type)}</Text>
-      ),
-    },
-    // {
-    //   accessorFn: (row) => (row.reason ? row.reason : 'Não informado'),
-    //   accessorKey: 'reason',
-    //   header: 'Motivo',
-    //   cell: ({ row }) => (
-    //     <Text>{row.original.reason ? row.original.reason : 'Não informado'}</Text>
-    //   ),
-    // },
-    {
-      filterFn: FilterNumber,
-      accessorKey: 'capacity',
-      header: 'Capacidade',
-    },
-    {
-      accessorKey: 'updated_at',
-      header: 'Atualizada em',
-      filterFn: FilterString,
-      accessorFn: (row) =>
-        moment(row.updated_at).format('DD/MM/YYYY [às] HH:mm'),
-      cell: ({ row }) => (
-        <Box>
-          <Text>{`${moment(row.original.updated_at).format(
-            'DD/MM/YYYY [às] HH:mm',
-          )}`}</Text>
-        </Box>
-      ),
-    },
-  ];
+  },
+  {
+    accessorFn: (row) => ReservationType.translate(row.reservation.type),
+    accessorKey: 'reservation_type',
+    header: 'Tipo',
+    cell: ({ row }) => (
+      <Text>{ReservationType.translate(row.original.reservation.type)}</Text>
+    ),
+  },
+  {
+    filterFn: FilterNumber,
+    accessorKey: 'capacity',
+    header: 'Capacidade',
+  },
+  {
+    accessorKey: 'updated_at',
+    header: 'Atualizada em',
+    filterFn: FilterString,
+    accessorFn: (row) => moment(row.updated_at).format('DD/MM/YYYY [às] HH:mm'),
+    cell: ({ row }) => (
+      <Box>
+        <Text>{`${moment(row.original.updated_at).format(
+          'DD/MM/YYYY [às] HH:mm',
+        )}`}</Text>
+      </Box>
+    ),
+  },
+  {
+    id: 'options',
+    header: 'Opções',
+    cell: ({ row }) => (
+      <HStack spacing='0px'>
+        <Tooltip label='Cancelar Solicitação'>
+          <IconButton
+            colorScheme='red'
+            size='lg'
+            variant='ghost'
+            aria-label='cancelar-solicitacao'
+            icon={<TbCalendarCancel />}
+            disabled={row.original.status !== ReservationStatus.PENDING}
+            onClick={() => {
+              props.handleCancelClick(row.original);
+            }}
+          />
+        </Tooltip>
+      </HStack>
+    ),
+  },
+];

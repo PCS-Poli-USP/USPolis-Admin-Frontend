@@ -141,6 +141,7 @@ export const getSubjectColumns = (
     columns.push({
       header: 'ID',
       accessorKey: 'id',
+      maxSize: 50,
       cell: ({ row }) => (
         <Box>
           <Text>{row.original.id}</Text>

@@ -1,0 +1,61 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build project
+        run: yarn build
+        env:
+          VITE_USPOLIS_API_ENDPOINT: ${{ secrets.VITE_USPOLIS_API_ENDPOINT }}
+          VITE_REDIRECT_URI: ${{ secrets.VITE_REDIRECT_URI }}
+          VITE_GOOGLE_AUTH_CLIENT_ID: ${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}
+          VITE_ENVIROMENT: ${{ secrets.VITE_ENVIROMENT }}
+        
+      - name: Clean old build
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSCODE }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            rm -rf /diskb/home/frontend/*
+
+      - name: Deploy build to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSCODE }}
+          port: ${{ secrets.SSH_PORT }}
+          source: 'build/*'
+          target: '/diskb/home/frontend'
+
+      - name: Restart frontend service
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSCODE }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            sudo systemctl restart uspolis-frontend.service

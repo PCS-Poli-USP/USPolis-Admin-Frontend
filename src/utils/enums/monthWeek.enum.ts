@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 export enum MonthWeek {
   FIRST = 1,
   SECOND = 2,
@@ -45,6 +46,10 @@ export namespace MonthWeek {
 
   export function translate(day: MonthWeek): string {
     return translations[day];
+  }
+
+  export function maleTranslate(day: MonthWeek): string {
+    return translations[day].replace('a', 'o');
   }
 
   export function toString(day: MonthWeek): string {

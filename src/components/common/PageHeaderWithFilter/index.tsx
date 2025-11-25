@@ -1,9 +1,10 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, useMediaQuery } from '@chakra-ui/react';
 import DateRangeInput from './DataRangeInput';
 import YearInput from './YearInput';
 
 interface PageHeaderWithFilterProps {
   title: string;
+  tooltip?: string;
   start: string;
   end: string;
   setStart: (start: string) => void;
@@ -24,9 +25,12 @@ function PageHeaderWithFilter({
   setEnd,
   setYear = () => {},
   onConfirm,
+  tooltip = `Ver ${title} anteriores`,
   type = 'dateRange',
   onConfirmYear = undefined,
 }: PageHeaderWithFilterProps) {
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
+
   return (
     <Flex
       direction={'row'}
@@ -41,7 +45,7 @@ function PageHeaderWithFilter({
       <Flex gap={'5px'} align={'center'}>
         {type === 'dateRange' && (
           <DateRangeInput
-            title={title}
+            title={tooltip}
             start={start}
             end={end}
             setStart={setStart}
@@ -49,6 +53,7 @@ function PageHeaderWithFilter({
             onConfirm={(start, end) => {
               onConfirm(start, end);
             }}
+            isMobile={isMobile}
           />
         )}
         {type === 'year' && onConfirmYear && (
@@ -59,6 +64,7 @@ function PageHeaderWithFilter({
             onConfirm={(year) => {
               onConfirmYear(year);
             }}
+            isMobile={isMobile}
           />
         )}
       </Flex>
