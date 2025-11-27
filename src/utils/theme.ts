@@ -137,6 +137,13 @@ const muiTheme = createTheme({
   colorSchemes: {
     dark: true,
   },
+  palette: {
+    mode: 'dark',
+    background: {
+      default: '#262626', // cor do fundo da página
+      paper: '#262626', // cor dos cards, containers etc.
+    },
+  },
   components: {
     MuiPaper: {
       variants: [
@@ -144,7 +151,7 @@ const muiTheme = createTheme({
           props: { variant: 'elevation' },
           style: ({ theme }) => ({
             backgroundColor:
-              theme.palette.mode === 'dark' ? 'uspolis.black' : '#408080',
+              theme.palette.mode === 'dark' ? '#262626' : '#408080',
             boxShadow: theme.shadows[4],
           }),
         },
