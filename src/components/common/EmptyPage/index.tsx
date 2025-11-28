@@ -14,8 +14,8 @@ import { FeatureTourGuideStepData } from '../../../context/FeatureGuideContext/s
 import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
 import { menuContext } from '../../../context/MenuContext';
 import ContactUsModal from '../ContactUsModal';
-import ContactUsNews from '../NewsJoyride/ContactUsNews';
 import { appContext } from '../../../context/AppContext';
+import DocsNews from '../NewsJoyride/DocsNews';
 
 const drawerWidth = 300;
 
@@ -246,14 +246,7 @@ export default function EmptyPage() {
         </DrawerHeader>
         <DrawerBody onClose={handleDrawerClose} />
       </Drawer>
-      {isAuthenticated && (
-        <ContactUsNews
-          isMobile={isMobile}
-          onOpen={onOpenContactModal}
-          onClose={onCloseContactModal}
-          isOpen={isOpenContactModal}
-        />
-      )}
+      {isAuthenticated && <DocsNews isMobile={isMobile} />}
       <Joyride
         {...state}
         continuous={true}

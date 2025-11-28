@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const LAST_FEATURE = 'contact-us';
+const LAST_FEATURE = 'docs';
 
 const useNewsJoyride = () => {
   const [showNews, setShowNews] = useState<boolean>(
