@@ -5,6 +5,20 @@ export default {
   description: 'Docs dentro do app React',
 
   themeConfig: {
+    lastUpdated: {
+      text: 'Atualizado em',
+      formatOptions: {
+        locale: 'pt-BR',
+        dateStyle: 'long',
+        timeStyle: 'medium',
+        hour12: false,
+      },
+    },
+    editLink: {
+      pattern:
+        'https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/tree/main/docs/:path',
+      text: 'Edite essa página',
+    },
     logo: '/favicon.ico',
     search: {
       provider: 'local', // ou 'algolia', se você usa algolia
@@ -95,50 +109,46 @@ export default {
             { text: 'Introdução', link: '/allocation' },
             { text: 'Visualizações', link: '/allocation/views' },
             { text: 'Relatórios em PDF', link: '/allocation/pdfs' },
-            { text: 'Gerenciar a alocação pelo Mapa de Salas', link: '/allocation/management' },
+            {
+              text: 'Gerenciar a alocação pelo Mapa de Salas',
+              link: '/allocation/management',
+            },
           ],
         },
         {
           text: 'Solicitar uma Sala',
           collapsed: true,
           items: [
-            { text: 'Como solicitar uma sala?', link: '/solicitate-a-classroom' },
+            {
+              text: 'Como solicitar uma sala?',
+              link: '/solicitate-a-classroom',
+            },
           ],
         },
         {
           text: 'Encontre suas provas',
           collapsed: true,
-          items: [
-            { text: 'Como achar uma prova?', link: '/find-exams' },
-          ],
+          items: [{ text: 'Como achar uma prova?', link: '/find-exams' }],
         },
         {
           text: 'Encontre suas aulas',
           collapsed: true,
-          items: [
-            { text: 'Como achar suas aulas?', link: '/find-classes' },
-          ],
+          items: [{ text: 'Como achar suas aulas?', link: '/find-classes' }],
         },
         {
           text: 'Minhas Solicitações',
           collapsed: true,
-          items: [
-            { text: 'Introdução', link: '/my-solicitations' },
-          ],
+          items: [{ text: 'Introdução', link: '/my-solicitations' }],
         },
         {
           text: 'Minha Conta',
           collapsed: true,
-          items: [
-            { text: 'Introdução', link: '/profile' },
-          ],
+          items: [{ text: 'Introdução', link: '/profile' }],
         },
         {
           text: 'Reservas',
           collapsed: true,
-          items: [
-            { text: 'Introdução', link: '/introduction' },
-          ],
+          items: [{ text: 'Introdução', link: '/introduction' }],
         },
         {
           text: 'Solicitações',
@@ -150,44 +160,32 @@ export default {
         {
           text: 'Calendários',
           collapsed: true,
-          items: [
-            { text: 'Como criar um calendário?', link: '/calendars' },
-          ],
+          items: [{ text: 'Como criar um calendário?', link: '/calendars' }],
         },
         {
           text: 'Salas',
           collapsed: true,
-          items: [
-            { text: 'Introdução', link: '/classrooms' },
-          ],
+          items: [{ text: 'Introdução', link: '/classrooms' }],
         },
         {
           text: 'Disciplinas',
           collapsed: true,
-          items: [
-            { text: 'Introdução', link: '/subjects' },
-          ],
+          items: [{ text: 'Introdução', link: '/subjects' }],
         },
         {
           text: 'Turmas',
           collapsed: true,
-          items: [
-            { text: 'Introduction', link: '/classes' },
-          ],
+          items: [{ text: 'Introduction', link: '/classes' }],
         },
         {
           text: 'Conflitos',
           collapsed: true,
-          items: [
-            { text: 'Introduction', link: '/conflicts' },
-          ],
+          items: [{ text: 'Introduction', link: '/conflicts' }],
         },
         {
           text: 'Relatórios e Métricas',
           collapsed: true,
-          items: [
-            { text: 'Introduction', link: '/reports' },
-          ],
+          items: [{ text: 'Introduction', link: '/reports' }],
         },
       ],
 
@@ -195,30 +193,22 @@ export default {
         {
           text: 'Guia para Desenvolvedores',
           collapsed: false,
-          items: [
-            { text: 'Introduction', link: '' },
-          ],
+          items: [{ text: 'Introduction', link: '' }],
         },
         {
           text: 'Backend',
           collapsed: true,
-          items: [
-            { text: 'Introduction', link: '' },
-          ],
+          items: [{ text: 'Introduction', link: '' }],
         },
         {
           text: 'Frontend',
           collapsed: true,
-          items: [
-            { text: 'Introduction', link: '' },
-          ],
+          items: [{ text: 'Introduction', link: '' }],
         },
         {
           text: 'Banco de Dados',
           collapsed: true,
-          items: [
-            { text: 'Introduction', link: '' },
-          ],
+          items: [{ text: 'Introduction', link: '' }],
         },
       ],
     },
