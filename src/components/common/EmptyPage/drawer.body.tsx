@@ -1,4 +1,12 @@
-import { Button, VStack, HStack, Text, Icon, Link } from '@chakra-ui/react';
+import {
+  Button,
+  VStack,
+  HStack,
+  Text,
+  Icon,
+  Link,
+  useColorMode,
+} from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useContext } from 'react';
 import {
@@ -75,6 +83,7 @@ function DrawerButton({
 
 export default function DrawerBody({ onClose }: DrawerBodyProps) {
   const { loggedUser } = useContext(appContext);
+  const { colorMode } = useColorMode();
 
   return (
     <VStack
@@ -82,7 +91,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
       p={'10px'}
       spacing={4}
       h={'full'}
-      background={'uspolis.white'}
+      backgroundColor={'uspolis.white'}
     >
       {loggedUser ? (
         <>
@@ -244,9 +253,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
               <VStack
                 w={'full'}
                 alignItems={'flex-start'}
-                background={'uspolis.white'}
+                backgroundColor={'uspolis.white'}
               >
-                <HStack background={'uspolis.white'}>
+                <HStack>
                   <Icon as={MdAddChart} color={'uspolis.blue'} />
                   <Text color={'uspolis.blue'} fontWeight={'bold'}>
                     Oferecimentos
@@ -290,7 +299,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           alignItems={'flex-start'}
           backgroundColor={'uspolis.white'}
         >
-          <HStack background={'uspolis.white'}>
+          <HStack>
             <Icon as={UnlockIcon} color={'uspolis.blue'} />
             <Text color={'uspolis.blue'} fontWeight={'bold'}>
               Público
@@ -320,12 +329,11 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           align={'center'}
           justify={'center'}
           gap={'5px'}
-          background={'uspolis.white'}
         >
-          <EmailIcon />
+          <EmailIcon color={colorMode === 'dark' ? 'white' : 'black'} />
           <Link
             fontSize={'15px'}
-            color={'uspolis.text'}
+            textColor={'uspolis.black'}
             href={
               'https://mail.google.com/mail/?view=cm&fs=1&to=uspolis@usp.br'
             }
@@ -341,10 +349,10 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           gap={'5px'}
           background={'uspolis.white'}
         >
-          <FaGithub />
+          <FaGithub color={colorMode === 'dark' ? 'white' : 'black'} />
           <Link
             fontSize={'15px'}
-            color={'uspolis.text'}
+            textColor={'uspolis.black'}
             href={'https://github.com/PCS-Poli-USP/USPolis-Admin'}
             rel='noopener noreferrer'
             target='_blank'
@@ -358,10 +366,10 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           gap={'5px'}
           background={'uspolis.white'}
         >
-          <GrDocumentText />
+          <GrDocumentText color={colorMode === 'dark' ? 'white' : 'black'} />
           <Link
             fontSize={'15px'}
-            color={'uspolis.text'}
+            textColor={'uspolis.black'}
             href={DOCS_URL + '/'}
             rel='noopener noreferrer'
             target='_blank'
@@ -369,7 +377,9 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
             Documentação
           </Link>
         </HStack>
-        <Text fontSize={'15px'}>© {moment().year()} USPolis</Text>
+        <Text fontSize={'15px'} textColor={'uspolis.black'}>
+          © {moment().year()} USPolis
+        </Text>
       </VStack>
     </VStack>
   );

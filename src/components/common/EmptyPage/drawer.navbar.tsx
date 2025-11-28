@@ -74,8 +74,6 @@ export function DrawerNavBar({
   const { colorMode, toggleColorMode } = useColorMode();
   const { setMode } = useColorScheme();
 
-  console.log(location);
-
   async function handleClickLogout() {
     await logout();
     navigate('/', {

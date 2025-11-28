@@ -42,11 +42,12 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
   isMobile: boolean;
+  colorMode: string;
 }
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open, isMobile }) => ({
+})<AppBarProps>(({ theme, open, isMobile, colorMode }) => ({
   transition: theme.transitions.create(['margin', 'width'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -54,6 +55,7 @@ const AppBar = styled(MuiAppBar, {
   ...(open && {
     width: isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`,
     marginLeft: isMobile ? '0px' : `${drawerWidth}px`,
+    backgroundColor: colorMode === 'dark' ? '#262626' : '#FFFFFF',
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
@@ -61,15 +63,17 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: theme.spacing(0, 1),
-  background: theme.palette.mode === 'dark' ? '#1a535c' : '#408080',
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: 'flex-end',
-}));
+const DrawerHeader = styled('div')<{ colorMode?: string }>(
+  ({ theme, colorMode }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+    background: colorMode === 'dark' ? '#1a535c' : '#408080',
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-end',
+  }),
+);
 
 export default function EmptyPage() {
   const { colorMode } = useColorMode();
@@ -199,7 +203,12 @@ export default function EmptyPage() {
       height={'100vh'}
       bgcolor={colorMode === 'dark' ? '#262626' : '#FFFFFF'}
     >
-      <AppBar position='fixed' open={isOpen} isMobile={isMobile}>
+      <AppBar
+        position='fixed'
+        open={isOpen}
+        isMobile={isMobile}
+        colorMode={colorMode}
+      >
         <DrawerNavBar
           open={isOpen}
           handleDrawerOpen={handleDrawerOpen}
@@ -214,17 +223,18 @@ export default function EmptyPage() {
         sx={{
           width: isMobile ? '100vw' : drawerWidth,
           flexShrink: 0,
-          backgroundColor: colorMode === 'dark' ? '#262626' : '#FFFFFF',
+          bgcolor: colorMode === 'dark' ? '#262626' : '#FFFFFF',
           '& .MuiDrawer-paper': {
             width: isMobile ? '100vw' : drawerWidth,
             boxSizing: 'border-box',
+            backgroundColor: colorMode === 'dark' ? '#262626' : '#FFFFFF',
           },
         }}
         variant='persistent'
         anchor='left'
         open={isOpen}
       >
-        <DrawerHeader>
+        <DrawerHeader colorMode={colorMode}>
           <IconButton
             size={'md'}
             icon={<CloseIcon />}
@@ -297,7 +307,10 @@ export default function EmptyPage() {
         onClose={onCloseContactModal}
       />
 
-      <Box width={isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`}>
+      <Box
+        width={isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`}
+        bgcolor={colorMode === 'dark' ? '#262626' : '#FFFFFF'}
+      >
         <Main open={isOpen} isMobile={isMobile}>
           <Outlet />
         </Main>
