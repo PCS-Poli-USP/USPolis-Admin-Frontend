@@ -12,7 +12,6 @@ import {
   Divider,
   Grid,
 } from '@chakra-ui/react';
-import Select from 'react-select';
 import PageContent from '../../components/common/PageContent';
 import useCustomToast from '../../hooks/useCustomToast';
 import useBuildingsService from '../../hooks/API/services/useBuildingsService';
@@ -22,11 +21,6 @@ import OccupanceReports from '../../models/http/responses/occupanceReports.respo
 import { appContext } from '../../context/AppContext';
 import { WeekDay } from '../../utils/enums/weekDays.enum';
 import TooltipSelect from '../../components/common/TooltipSelect';
-
-type Option = {
-  value: number;
-  label: string;
-};
 
 type filter_options =
   | 'all'

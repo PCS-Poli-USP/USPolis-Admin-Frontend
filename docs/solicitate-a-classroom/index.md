@@ -166,4 +166,24 @@ Para cada data escolhida você precisa informar um nome (P1, P2, P3, ...) e um h
 
 ## Eventos
 
+Ao selecionar o tipo "Evento" dois campos irão aparecer, um para selecionar o tipo de evento e outro para informar um link para esse evento, note que o link é **opcional**.
+
+<div style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+">
+  <img 
+    src="/solicitate-a-classroom/image-7.png"
+    alt="Descrição"
+    style="
+      border-radius: 8px;
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    "
+  />
+</div>
+
 ## Reuniões
