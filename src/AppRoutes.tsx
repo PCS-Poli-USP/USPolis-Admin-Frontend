@@ -1,4 +1,3 @@
-import { useLocation } from 'react-router-dom';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import 'moment/locale/pt-br';
@@ -36,6 +35,7 @@ import Users from './pages/users/users';
 import FindExams from './pages/findExams';
 import Reports from './pages/reports';
 import Feedbacks from './pages/feedbacks';
+import ReportsPage from './pages/occupationReports/reports';
 
 function AppRoutes() {
 //   const location = useLocation();
@@ -81,6 +81,7 @@ function AppRoutes() {
                 <Route path='reservations' element={<Reservations />} />
                 <Route path='conflicts' element={<ConflictsPage />} />
                 <Route path='solicitations' element={<Solicitations />} />
+                <Route path='reports' element={<ReportsPage />} />
               </Route>
 
               {/* Admin routes */}
@@ -88,7 +89,7 @@ function AppRoutes() {
                 <Route path='users' element={<Users />} />
                 <Route path='groups' element={<Groups />} />
                 <Route path='buildings' element={<Buildings />} />
-                <Route path='reports' element={<Reports />} />
+                <Route path='bug-reports' element={<Reports />} />
                 <Route path='feedbacks' element={<Feedbacks />} />
                 <Route
                   path='institutional-events'

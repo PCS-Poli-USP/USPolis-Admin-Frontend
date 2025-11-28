@@ -13,7 +13,8 @@ import {
   FaGithub,
   FaList,
   FaRegCalendarTimes,
-  FaRegUser,
+  FaRegUser, 
+  FaBook,
 } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 import { appContext } from '../../../context/AppContext';
@@ -137,7 +138,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
               />
               <DrawerButton
                 icon={<VscReport />}
-                to='/reports'
+                to='/bug-reports'
                 text='Reportes'
                 replace_location={false}
                 onClose={onClose}
@@ -286,6 +287,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   icon={<FaRegCalendarTimes />}
                   to='/conflicts'
                   text='Conflitos'
+                  replace_location={false}
+                  onClose={onClose}
+                />
+                <DrawerButton
+                  icon={<FaBook />}
+                  to='/reports'
+                  text='Relatórios'
                   replace_location={false}
                   onClose={onClose}
                 />
