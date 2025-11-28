@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { CloseIcon } from '@chakra-ui/icons';
-import { IconButton, useDisclosure } from '@chakra-ui/react';
+import { IconButton, useColorMode, useDisclosure } from '@chakra-ui/react';
 import DrawerBody from './drawer.body';
 import { DrawerNavBar } from './drawer.navbar';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -72,6 +72,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function EmptyPage() {
+  const { colorMode } = useColorMode();
   const { state, setState, triggerControl, pathBeforeGuide } =
     useFeatureGuideContext();
   const { isMobile, isAuthenticated } = React.useContext(appContext);
@@ -192,7 +193,12 @@ export default function EmptyPage() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }} width={'calc(100vw - 20px)'} height={'100vh'}>
+    <Box
+      sx={{ display: 'flex' }}
+      width={'calc(100vw - 20px)'}
+      height={'100vh'}
+      bgcolor={colorMode === 'dark' ? '#262626' : '#FFFFFF'}
+    >
       <AppBar position='fixed' open={isOpen} isMobile={isMobile}>
         <DrawerNavBar
           open={isOpen}
@@ -208,6 +214,7 @@ export default function EmptyPage() {
         sx={{
           width: isMobile ? '100vw' : drawerWidth,
           flexShrink: 0,
+          backgroundColor: colorMode === 'dark' ? '#262626' : '#FFFFFF',
           '& .MuiDrawer-paper': {
             width: isMobile ? '100vw' : drawerWidth,
             boxSizing: 'border-box',

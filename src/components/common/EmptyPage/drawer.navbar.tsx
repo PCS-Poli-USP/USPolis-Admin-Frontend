@@ -28,6 +28,9 @@ import { UsersValidator } from '../../../utils/users/users.validator';
 import UserImage from '../UserImage/user.image';
 import { useColorScheme } from '@mui/material';
 import { LuMessageCircleMore } from 'react-icons/lu';
+import { GrDocumentText } from 'react-icons/gr';
+
+const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
@@ -70,6 +73,8 @@ export function DrawerNavBar({
   const validator = new UsersValidator(loggedUser);
   const { colorMode, toggleColorMode } = useColorMode();
   const { setMode } = useColorScheme();
+
+  console.log(location);
 
   async function handleClickLogout() {
     await logout();
@@ -117,6 +122,32 @@ export function DrawerNavBar({
           </NavLink>
         </HStack>
         <Flex alignItems={'center'} gap={'10px'}>
+          {isMobile ? (
+            <IconButton
+              id='docs-button'
+              as={'a'}
+              href={DOCS_URL + location.pathname}
+              rel='noopener noreferrer'
+              target='_blank'
+              aria-label='docs'
+              icon={<GrDocumentText />}
+            />
+          ) : (
+            <Button
+              id='docs-button'
+              as={'a'}
+              href={DOCS_URL + location.pathname}
+              rel='noopener noreferrer'
+              target='_blank'
+              variant={'ghost'}
+              textColor={'white'}
+              textAlign={'center'}
+              alignContent={'center'}
+              rightIcon={<GrDocumentText />}
+            >
+              {`Documentação`}
+            </Button>
+          )}
           {isAuthenticated ? (
             <>
               {isMobile ? (
