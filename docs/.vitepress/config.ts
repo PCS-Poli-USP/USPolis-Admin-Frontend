@@ -4,6 +4,10 @@ export default {
   title: 'USPolis - Documentação',
   description: 'Docs dentro do app React',
 
+  markdown: {
+    mermaid: true,
+  },
+
   themeConfig: {
     lastUpdated: {
       text: 'Atualizado em',
@@ -86,7 +90,7 @@ export default {
 
     footer: {
       message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2019-present Evan You',
+      copyright: 'Copyright © 2025-USPolis',
     },
 
     sidebar: {
@@ -193,22 +197,30 @@ export default {
         {
           text: 'Guia para Desenvolvedores',
           collapsed: false,
-          items: [{ text: 'Introduction', link: '' }],
+          items: [{ text: 'Introdução', link: '/dev' }],
         },
         {
           text: 'Backend',
-          collapsed: true,
-          items: [{ text: 'Introduction', link: '' }],
+          collapsed: false,
+          items: [{ text: 'Introdução', link: '/dev/backend' }],
         },
         {
           text: 'Frontend',
-          collapsed: true,
-          items: [{ text: 'Introduction', link: '' }],
+          collapsed: false,
+          items: [{ text: 'Introdução', link: '/dev/frontend' }],
         },
         {
           text: 'Banco de Dados',
-          collapsed: true,
-          items: [{ text: 'Introduction', link: '' }],
+          collapsed: false,
+          items: [{ text: 'Introdução', link: '/dev/database' }],
+        },
+        {
+          text: 'Servidor',
+          collapsed: false,
+          items: [
+            { text: 'Introdução', link: '/dev/server' },
+            { text: 'Arquivos principais', link: '/dev/server/files' },
+          ],
         },
       ],
     },

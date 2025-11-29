@@ -10,8 +10,8 @@ next:
 
 # Solicitar uma Sala
 
-> [!WARNING]
-> Documentação em construção...
+<!-- > [!WARNING]
+> Documentação em construção... -->
 
 É possível solicitar uma reserva de sala através do USPolis, para isso basta acessar o [Mapa de Salas](/allocation), e clicar no botão "Solicitar Sala", é **necessário você estar logado**:
 
@@ -186,4 +186,48 @@ Ao selecionar o tipo "Evento" dois campos irão aparecer, um para selecionar o t
   />
 </div>
 
+Ao preencher com os demais dados (título, quantidade de pessoas, motivo) e avançar para a próxima etapa você verá a seguinte tela:
+
+<div style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+">
+  <img 
+    src="/solicitate-a-classroom/image-8.png"
+    alt="Descrição"
+    style="
+      border-radius: 8px;
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    "
+  />
+</div>
+
+A principal diferença é aba "horários", para reservas do tipo "Evento", você pode escolher uma recorrência, um data de início e uma data de fim para ser considerada junto com sua recorrência, um horário de início e um horário de fim.
+
 ## Reuniões
+
+Por fim, a última opção é a de reservas do tipo "Reuniões", ela é idêntica a reservas do tipo "Evento", com a única diferença sendo que aqui temos apenas a opção de adicionar um link (por exemplo, um link do Google Meet para reuniões remotas).
+
+<div style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+">
+  <img 
+    src="/solicitate-a-classroom/image-9.png"
+    alt="Descrição"
+    style="
+      border-radius: 8px;
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    "
+  />
+</div>
+
+As demais etapas não mudam.

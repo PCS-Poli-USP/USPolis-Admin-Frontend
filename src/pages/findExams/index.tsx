@@ -34,6 +34,8 @@ function FindExams() {
     (exam) => exam.reservation.status == ReservationStatus.APPROVED,
   );
 
+  const subjectWithExams = activeExams.map((exam) => exam.subject_id);
+
   const [selectedSubjectId, setSelectedSubjectId] = useState<number>();
   const [selectedClassId, setSelectedClassId] = useState<number>();
 
@@ -46,6 +48,7 @@ function FindExams() {
   }, []);
 
   const subjectOptions = subjects
+    .filter((subject) => subjectWithExams.includes(subject.id))
     .map<OptionType>((subject) => ({
       value: subject.id,
       label: `${subject.code} - ${subject.name}`,
@@ -97,7 +100,12 @@ function FindExams() {
           <Box w={isMobile ? '100%' : '400px'}>
             <Text>Disciplina: </Text>
             <TooltipSelect
-              placeholder='Selecione uma disciplina'
+              placeholder={
+                subjectOptions.length > 0
+                  ? 'Selecione uma disciplina'
+                  : 'Nenhuma disciplina com prova encontrada'
+              }
+              isDisabled={subjectOptions.length == 0}
               isClearable={true}
               isMulti={false}
               value={subjectOptions.filter(
@@ -143,11 +151,13 @@ function FindExams() {
             />
           </Box>
         </Flex>
-        <Box>
+        <Box w={isMobile ? '100%' : '820px'}>
           {!selectedSubjectId ? (
-            <Alert status='warning' borderRadius={'5px'}>
+            <Alert status='warning' borderRadius={'5px'} w={'full'}>
               <AlertIcon />
-              Selecione uma disciplina
+              {subjectOptions.length > 0
+                ? 'Selecione uma disciplina'
+                : 'Nenhuma disciplina com prova encontrada'}
             </Alert>
           ) : (
             <Box>

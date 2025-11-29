@@ -4,7 +4,7 @@ Categorias: <span style="color: green">FEATURE</span>, <span style="color: #4080
 
 O changelog começou a ser registrado a partir do dia 15/11/2025.
 
-## Docs - 27/11/2025
+## Docs - 29/11/2025
 
 <span style="color: green">FEATURE</span>
 
@@ -13,6 +13,8 @@ PR's: [#143](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/143)
 **Descrição:**
 
 - Criação dessa docs que você está vendo!
+- Melhorias na página "Encontre suas aulas"
+- Melhorias na págona "Encontre suas provas"
 
 ## Correção de bug - 26/11/2025
 

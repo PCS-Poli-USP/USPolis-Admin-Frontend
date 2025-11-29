@@ -1,13 +1,17 @@
 ---
+prev:
+  text: 'Guia para Desenvolvedores'
+  link: '/dev/'
+
 next:
-  text: 'Backend'
-  link: '/dev/backend'
+  text: 'Frontend'
+  link: '/dev/frontend'
 ---
 
-
-# Documentação para Desenvolvedores
+# Backend
 
 > [!IMPORTANT]
-> Essa documentação é técnica e é destinada para **desenvolvedores**.
 > **A documentação está em desenvolvimento**. Não encontrou uma explicação para a sua dúvida? Fale conosco através de **uspolis@usp.br**
 
+> [!WARNING]
+> Documentação em construção...

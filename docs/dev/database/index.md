@@ -1,13 +1,18 @@
 ---
+prev:
+  text: 'Frontend'
+  link: '/dev/frontend'
+
 next:
-  text: 'Backend'
-  link: '/dev/backend'
+  text: 'Servidor'
+  link: '/dev/server'
 ---
 
 
-# Documentação para Desenvolvedores
+# Banco de Dados
 
 > [!IMPORTANT]
-> Essa documentação é técnica e é destinada para **desenvolvedores**.
 > **A documentação está em desenvolvimento**. Não encontrou uma explicação para a sua dúvida? Fale conosco através de **uspolis@usp.br**
 
+> [!WARNING]
+> Documentação em construção...
