@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import 'moment/locale/pt-br';
 import EmptyPage from './components/common/EmptyPage';
@@ -36,16 +36,9 @@ import FindExams from './pages/findExams';
 import Reports from './pages/reports';
 import Feedbacks from './pages/feedbacks';
 import ReportsPage from './pages/occupationReports/reports';
+import ExternalDocsRedirect from './routes/externalDocsRedirect';
 
 function AppRoutes() {
-  const location = useLocation();
-
-  // IGNORA todas as rotas /docs e deixa o Vite servir os arquivos estáticos
-  if (location.pathname.startsWith('/docs')) {
-    window.location.replace(location.pathname); // /docs/... vai direto pro servidor
-    return null;
-  }
-
   return (
     <Routes>
       <Route path='/auth' element={<AuthPage />} />
@@ -60,6 +53,9 @@ function AppRoutes() {
           <Route path='/' element={<Navigate to='/index' />} />
           <Route path='/index' element={<Home />} />
           <Route path='/' element={<EmptyPage />}>
+            {/* Docs */}
+            <Route path='/docs/*' element={<ExternalDocsRedirect />} />
+
             {/* Not found */}
             <Route path='*' element={<Page404 />} />
 
