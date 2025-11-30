@@ -8,7 +8,7 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 <span style="color: green">FEATURE</span>
 
-PR's: [#143](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/143)
+PR's: [#117](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/117) e [#117](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/117)
 
 **Descrição:**
 
@@ -20,7 +20,7 @@ PR's: [#143](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/143)
 
 <span style="color: orange">BUGFIX</span>
 
-PR's: [#142](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/142)
+PR's: [#142](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/142)
 
 **Descrição:**
 
