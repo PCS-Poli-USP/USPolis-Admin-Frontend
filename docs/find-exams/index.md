@@ -10,7 +10,7 @@ next:
 
 # Encontre suas provas
 
-No USPolis as provas são divididas em provas de disciplinas sem especificar para quais turmas daquela disciplina ou provas onde as turmas são especificadas, ao acessar a página "Encontre suas provas" você vai ver:
+No USPolis as provas são divididas em provas de disciplinas sem turmas específicas ou provas onde as turmas são especificadas, ao acessar a página "Encontre suas provas" você vai ver:
 
 <div style="
   display: flex;

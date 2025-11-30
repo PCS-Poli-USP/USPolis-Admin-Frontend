@@ -8,13 +8,13 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 <span style="color: green">FEATURE</span>
 
-PR's: [#117](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/117) e [#117](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/117)
+PR's: [#125](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/125) e [#143](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/143)
 
 **Descrição:**
 
 - Criação dessa docs que você está vendo!
 - Melhorias na página "Encontre suas aulas"
-- Melhorias na págona "Encontre suas provas"
+- Melhorias na página "Encontre suas provas"
 
 ## Correção de bug - 26/11/2025
 
