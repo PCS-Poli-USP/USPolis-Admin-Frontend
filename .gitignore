@@ -9,6 +9,7 @@
 # docs
 /docs/.vitepress/cache
 /docs/.vitepress/dist
+/public/docs
 
 # dependencies
 /node_modules

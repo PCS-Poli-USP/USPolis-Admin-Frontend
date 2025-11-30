@@ -43,7 +43,6 @@ function AppRoutes() {
       <Route path='/auth' element={<AuthPage />} />
       <Route path='auth-callback' element={<AuthCallbackPage />} />
       <Route path='/loading-page' element={<LoadingPage />} />
-      <Route path='/docs/*' element={<Navigate to='/docs/' replace />} />
       <Route element={<AxiosInterceptorRoute />}>
         <Route element={<PersistLogin />}>
           <Route
