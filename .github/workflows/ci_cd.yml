@@ -63,7 +63,7 @@ jobs:
           password: ${{ secrets.SSH_PASSCODE }}
           port: ${{ secrets.SSH_PORT }}
           source: 'docs/.vitepress/dist/*'
-          target: '/var/www/html/docs'
+          target: '/var/www/html/docs/'
 
       - name: Restart frontend service
         uses: appleboy/ssh-action@v0.1.10
