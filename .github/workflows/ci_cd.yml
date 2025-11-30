@@ -36,6 +36,7 @@ jobs:
           VITE_USPOLIS_API_ENDPOINT: ${{ secrets.VITE_USPOLIS_API_ENDPOINT }}
           VITE_REDIRECT_URI: ${{ secrets.VITE_REDIRECT_URI }}
           VITE_GOOGLE_AUTH_CLIENT_ID: ${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}
+          VITE_USPOLIS_DOCS_URL: ${{ secrets.VITE_USPOLIS_DOCS_URL }}
           VITE_ENVIROMENT: ${{ secrets.VITE_ENVIROMENT }}
 
       - name: Clean old build
