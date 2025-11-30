@@ -380,7 +380,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
             textColor={'uspolis.black'}
             href={DOCS_URL + '/'}
             rel='noopener noreferrer'
-            target='_self'
+            target='_blank'
           >
             Documentação
           </Link>

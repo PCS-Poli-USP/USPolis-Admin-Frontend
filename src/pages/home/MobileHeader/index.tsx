@@ -97,7 +97,7 @@ function MobileHeader() {
             });
           }}
         >
-          Mapa de Salas
+          Alocações
         </Button>
         <Text fontSize={'3xl'}>|</Text>
         {context.loggedUser ? (
@@ -124,6 +124,7 @@ function MobileHeader() {
           <Button
             hidden={context.isAuthenticated}
             // as={'a'}
+            maxW={"60px"}
             variant={'solid'}
             bg={'uspolis.blue'}
             size={'md'}
