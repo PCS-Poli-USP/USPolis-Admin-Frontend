@@ -18,9 +18,15 @@ import { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserImage from '../../../components/common/UserImage/user.image';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { GrDocumentText } from 'react-icons/gr';
+import { useColorScheme } from '@mui/material';
+
+const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
 
 function MobileHeader() {
   const { colorMode, setColorMode } = useColorMode();
+  const { setMode } = useColorScheme();
+
   const isDark = colorMode === 'dark';
   const context = useContext(appContext);
   const location = useLocation();
@@ -56,16 +62,27 @@ function MobileHeader() {
           <Text fontSize={'2xl'}>USPolis</Text>
         </HStack>
       </Link>
+
       <Flex
         direction={'row'}
         justify={'center'}
-        gap={2}
+        gap={'10px'}
         align={'center'}
         mr={'15px'}
       >
+        <IconButton
+          id='docs-button'
+          as={'a'}
+          href={DOCS_URL + '/'}
+          rel='noopener noreferrer'
+          target='_blank'
+          aria-label='docs'
+          icon={<GrDocumentText />}
+          variant={'ghost'}
+        />
+
         <Button
           // as={'a'}
-          ml={'50px'}
           variant={'link'}
           color={'teal'}
           _hover={{
@@ -125,7 +142,10 @@ function MobileHeader() {
           variant={'ghost'}
           ml={'5px'}
           icon={isDark ? <SunIcon /> : <MoonIcon />}
-          onClick={() => setColorMode(isDark ? 'light' : 'dark')}
+          onClick={() => {
+            setColorMode(isDark ? 'light' : 'dark');
+            setMode(isDark ? 'light' : 'dark');
+          }}
         />
       </Flex>
     </Flex>

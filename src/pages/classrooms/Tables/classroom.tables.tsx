@@ -162,7 +162,7 @@ export function getClassroomColumns(
     },
   ];
   if (loggedUser && loggedUser.is_admin) {
-    columns.unshift({
+    columns.push({
       id: 'created_by',
       accessorKey: 'created_by',
       header: 'Usuário',

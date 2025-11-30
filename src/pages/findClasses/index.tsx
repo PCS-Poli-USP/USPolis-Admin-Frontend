@@ -40,9 +40,13 @@ function FindClasses() {
       <Flex direction={'column'} gap={'20px'}>
         <Flex direction={isMobile ? 'column' : 'row'} gap={'20px'}>
           <Box w={isMobile ? '100%' : '400px'}>
-            <Text>Disciplina: </Text>
+            <Text fontWeight={'bold'}>Disciplina: </Text>
             <TooltipSelect
-              placeholder='Selecione uma disciplina'
+              placeholder={
+                subjects.length > 0
+                  ? 'Selecione uma disciplina'
+                  : 'Nenhuma disciplina ativa encontrda'
+              }
               value={subjectOption}
               isClearable={true}
               isLoading={loading || loadingS}
@@ -65,7 +69,7 @@ function FindClasses() {
           </Box>
 
           <Box hidden={!subjectOption} w={isMobile ? '100%' : '400px'}>
-            <Text>Turma: </Text>
+            <Text fontWeight={'bold'}>Turma: </Text>
             <TooltipSelect
               ref={selectRef}
               value={classOption}
@@ -97,13 +101,22 @@ function FindClasses() {
           </Box>
         </Flex>
         <Box>
-          {!subjectOption ? (
-            <Alert status='warning'>
+          {subjects.length == 0 && (
+            <Alert status='warning' w={isMobile ? '100%' : '400px'}>
+              <AlertIcon />
+              Nenhuma disciplina com turmas foi encontrada
+            </Alert>
+          )}
+
+          {subjects.length > 0 && !subjectOption && (
+            <Alert status='warning' w={isMobile ? '100%' : '400px'}>
               <AlertIcon />
               Selecione uma disciplina
             </Alert>
-          ) : (
-            <Box>
+          )}
+
+          {subjectOption && (
+            <Box w={isMobile ? '100%' : '820px'}>
               <Text fontSize='2xl'>Turmas: </Text>
               {subjectOption ? (
                 <>

@@ -51,7 +51,7 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
             } as any,
           }}
           onChange={(newValue: Moment) => {
-            if (!!props.readOnly) return;
+            if (props.readOnly) return;
             const date = moment(newValue).format('YYYY-MM-DD');
             props.dayClick(date);
           }}

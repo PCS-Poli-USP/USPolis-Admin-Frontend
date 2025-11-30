@@ -24,6 +24,25 @@ import { IoLogoGooglePlaystore } from 'react-icons/io5';
 import { EmailIcon } from '@chakra-ui/icons';
 
 function HomeMobileView() {
+  function scrollInto(
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    id: string,
+    offset: number = -60,
+  ) {
+    e.preventDefault();
+
+    const target = document.querySelector(id);
+    if (!target) return;
+
+    const rect = target.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    window.scrollTo({
+      top: rect.top + scrollTop + offset,
+      behavior: 'smooth',
+    });
+  }
+
   return (
     <Flex w={'full'} direction={'column'} overflowY='hidden'>
       <MobileHeader />
@@ -63,6 +82,7 @@ function HomeMobileView() {
               colorScheme='uspolis.blue'
               leftIcon={<FaMobileAlt />}
               href='#section4'
+              onClick={(e) => scrollInto(e, '#section4')}
             >
               Mobile
             </Button>
@@ -72,6 +92,7 @@ function HomeMobileView() {
               fontSize={'xl'}
               colorScheme='uspolis.blue'
               leftIcon={<MdOutlineAdminPanelSettings />}
+              onClick={(e) => scrollInto(e, '#section2')}
             >
               Administrativo
             </Button>
@@ -84,12 +105,18 @@ function HomeMobileView() {
           boxSize={'full'}
         />
       </Flex>
-      <Flex h={'100px'} bg={'uspolis.blue'} align={'center'} justify={'center'}>
+      <Flex
+        h={'100px'}
+        bg={'uspolis.blue'}
+        align={'center'}
+        justify={'center'}
+        id='section2'
+      >
         <Heading textColor={'white'} size={'2xl'}>
           Recursos
         </Heading>
       </Flex>
-      <Box id='section2' h={'auto'}>
+      <Box h={'auto'}>
         <MobileCarousel items={items} />
       </Box>
       <Flex
