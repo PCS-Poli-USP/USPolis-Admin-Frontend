@@ -14,8 +14,8 @@ Com o objetivo de auxiliar os futuros desenvolvedores e espalhar o conhecimento,
 
 Todos os principais assuntos referente a detalhes técnicos do USPolis estão listados no menu esquerdo, recomendamos que você veja os assuntos em ordem, de cima para baixo, ou seja:
 
-- [Tecnologias Utilizadas](./stack/)
-- [Arquitetura](./architecture/)
+- [Tecnologias Utilizadas](/dev/stack)
+- [Arquitetura](/dev/architecture)
 - [Configurando seu Ambiente](./enviroment/)
 - [Backend](./backend/)
 - [Frontend](./frontend/)
