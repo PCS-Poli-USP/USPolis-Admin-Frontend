@@ -126,7 +126,7 @@ export function DrawerNavBar({
               as={'a'}
               href={DOCS_URL + location.pathname}
               rel='noopener noreferrer'
-              target='_blank'
+              target='_self'
               aria-label='docs'
               icon={<GrDocumentText />}
             />
@@ -136,7 +136,7 @@ export function DrawerNavBar({
               as={'a'}
               href={DOCS_URL + location.pathname}
               rel='noopener noreferrer'
-              target='_blank'
+              target='_self'
               variant={'ghost'}
               textColor={'white'}
               textAlign={'center'}
