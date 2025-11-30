@@ -44,6 +44,8 @@ function AppRoutes() {
       <Route path='/auth' element={<AuthPage />} />
       <Route path='auth-callback' element={<AuthCallbackPage />} />
       <Route path='/loading-page' element={<LoadingPage />} />
+      {/* Docs */}
+      <Route path='/docs/*' element={<ExternalDocsRedirect />} />
       <Route element={<AxiosInterceptorRoute />}>
         <Route element={<PersistLogin />}>
           <Route
@@ -53,9 +55,6 @@ function AppRoutes() {
           <Route path='/' element={<Navigate to='/index' />} />
           <Route path='/index' element={<Home />} />
           <Route path='/' element={<EmptyPage />}>
-            {/* Docs */}
-            <Route path='/docs/*' element={<ExternalDocsRedirect />} />
-
             {/* Not found */}
             <Route path='*' element={<Page404 />} />
 
