@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import 'moment/locale/pt-br';
 import EmptyPage from './components/common/EmptyPage';
@@ -38,12 +38,13 @@ import Feedbacks from './pages/feedbacks';
 import ReportsPage from './pages/occupationReports/reports';
 
 function AppRoutes() {
-//   const location = useLocation();
+  const location = useLocation();
 
-//   // IGNORA todas as rotas /docs e deixa o Vite servir os arquivos estáticos
-//   if (location.pathname.startsWith('/docs')) {
-//     return null;
-//   }
+  // IGNORA todas as rotas /docs e deixa o Vite servir os arquivos estáticos
+  if (location.pathname.startsWith('/docs')) {
+    window.location.replace(location.pathname); // /docs/... vai direto pro servidor
+    return null;
+  }
 
   return (
     <Routes>
