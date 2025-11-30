@@ -10,7 +10,7 @@ next:
 
 # Minhas Solicitações
 
-Ao solicitar uma reserva de sala ([Solicitar uma Sala](/solicitate-a-classroom)) você pode acompanhar a situação dela através da página **"Minhas solicitações"**, que pode ser acessada no menu lateral esquerdo, ao entrar nessa página você verá:
+Ao solicitar uma reserva de sala ([Solicitar uma Sala](../solicitate-a-classroom/)) você pode acompanhar a situação dela através da página **"Minhas solicitações"**, que pode ser acessada no menu lateral esquerdo, ao entrar nessa página você verá:
 
 <div style="
   display: flex;
@@ -53,7 +53,7 @@ Nessa página você vê uma tabela com todas as solicitações que você fez, in
 
 Aqui você pode acompanhar e verificar os dados da sua solicitação, no canto direito você pode **CANCELAR** uma solicitação caso ela tenha sido feita errada ou você queira desistir do pedido, note que uma vez cancelada **NÃO É POSSÍVEL DESFAZER**.
 
-No canto superior direito existe um botão para solicitar uma sala, o processo é o mesmo descrito em [Solicitar uma Sala](/solicitate-a-classroom).
+No canto superior direito existe um botão para solicitar uma sala, o processo é o mesmo descrito em [Solicitar uma Sala](../solicitate-a-classroom/).
 
 <div style="
   display: flex;

@@ -7,6 +7,7 @@ prev:
 
 
 # Arquivos principais
+**Usamos o site [Tree](https://tree.nathanfriend.com/) para gerar essas imagens**
 
 A árvore de diretório com os principais arquivos do sistema está listado a seguir:
 

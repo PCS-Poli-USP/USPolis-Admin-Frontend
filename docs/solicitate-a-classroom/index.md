@@ -13,7 +13,7 @@ next:
 <!-- > [!WARNING]
 > Documentação em construção... -->
 
-É possível solicitar uma reserva de sala através do USPolis, para isso basta acessar o [Mapa de Salas](/allocation), e clicar no botão "Solicitar Sala", é **necessário você estar logado**:
+É possível solicitar uma reserva de sala através do USPolis, para isso basta acessar o [Mapa de Salas](../allocation/), e clicar no botão "Solicitar Sala", é **necessário você estar logado**:
 
 <div style="
   display: flex;

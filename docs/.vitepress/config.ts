@@ -197,7 +197,16 @@ export default {
         {
           text: 'Guia para Desenvolvedores',
           collapsed: false,
-          items: [{ text: 'Introdução', link: '/dev' }],
+          items: [
+            { text: 'Introdução', link: '/dev' },
+            { text: 'Tecnologias Utilizadas', link: '/dev/stack' },
+            { text: 'Arquitetura', link: '/dev/architecture' },
+          ],
+        },
+        {
+          text: 'Configurando seu Ambiente',
+          collapsed: false,
+          items: [{ text: 'Introdução', link: '/dev/enviroment' }],
         },
         {
           text: 'Backend',
@@ -212,7 +221,13 @@ export default {
         {
           text: 'Banco de Dados',
           collapsed: false,
-          items: [{ text: 'Introdução', link: '/dev/database' }],
+          items: [
+            { text: 'Introdução', link: '/dev/database' },
+            {
+              text: 'Tabelas, Modelos e Relacionamentos',
+              link: '/dev/database/models',
+            },
+          ],
         },
         {
           text: 'Servidor',
