@@ -25,11 +25,6 @@ jobs:
       - name: Build project docs
         run: yarn docs:build
 
-      - name: Move docs build to public folder
-        run: |
-          rm -rf public/docs
-          mv docs/.vitepress/dist public/docs
-
       - name: Build project
         run: yarn build
         env:
@@ -47,7 +42,8 @@ jobs:
           password: ${{ secrets.SSH_PASSCODE }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            rm -rf /diskb/home/frontend/*
+            sudo rm -rf /diskb/home/frontend/*
+            sudo rm -rf /var/www/html/docs/*
 
       - name: Deploy build to server
         uses: appleboy/scp-action@v0.1.7
@@ -58,6 +54,16 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: 'build/*'
           target: '/diskb/home/frontend'
+
+      - name: Deploy docs to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSCODE }}
+          port: ${{ secrets.SSH_PORT }}
+          source: 'docs/.vitepress/dist/*'
+          target: '/var/www/html/docs'
 
       - name: Restart frontend service
         uses: appleboy/ssh-action@v0.1.10
