@@ -36,7 +36,6 @@ import FindExams from './pages/findExams';
 import Reports from './pages/reports';
 import Feedbacks from './pages/feedbacks';
 import ReportsPage from './pages/occupationReports/reports';
-import ExternalDocsRedirect from './routes/externalDocsRedirect';
 
 function AppRoutes() {
   return (
@@ -44,8 +43,6 @@ function AppRoutes() {
       <Route path='/auth' element={<AuthPage />} />
       <Route path='auth-callback' element={<AuthCallbackPage />} />
       <Route path='/loading-page' element={<LoadingPage />} />
-      {/* Docs */}
-      <Route path='/docs/*' element={<ExternalDocsRedirect />} />
       <Route element={<AxiosInterceptorRoute />}>
         <Route element={<PersistLogin />}>
           <Route
