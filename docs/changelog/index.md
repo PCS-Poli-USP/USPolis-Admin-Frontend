@@ -4,7 +4,22 @@ Categorias: <span style="color: green">FEATURE</span>, <span style="color: #4080
 
 O changelog começou a ser registrado a partir do dia 15/11/2025.
 
-## Docs - 29/11/2025
+## 2025
+
+Aqui estão todas as principais mudanças realizadas no USPolis em 2025.
+
+### Docs - 03/12/2025
+
+<span style="color: #408080">IMPROVEMENT</span>
+
+PR's: [#125](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/125) e [#143](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/143)
+
+**Descrição:**
+
+- Melhorias na docs de dev, adição uma seção de deploy, arquivos, tecnologias e mais
+
+
+### Docs - 29/11/2025
 
 <span style="color: green">FEATURE</span>
 
@@ -16,7 +31,7 @@ PR's: [#125](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/125) e 
 - Melhorias na página "Encontre suas aulas"
 - Melhorias na página "Encontre suas provas"
 
-## Correção de bug - 26/11/2025
+### Correção de bug - 26/11/2025
 
 <span style="color: orange">BUGFIX</span>
 
@@ -26,7 +41,7 @@ PR's: [#142](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/142)
 
 - Correção de bug na rota do relatório de ocupação, para agendas sem dia da semana
 
-## Relatórios de Ocupação - 24/11/2025
+### Relatórios de Ocupação - 24/11/2025
 
 <span style="color: green">FEATURE</span>
 
@@ -36,7 +51,7 @@ PR's: [#115](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/115) e 
 
 - Página "Relatórios" com relatórios de taxa de ocupação das salas dos prédios
 
-## Melhorias - 22/11/2025
+### Melhorias - 22/11/2025
 
 <span style="color: #408080">IMPROVEMENT</span>
 
@@ -47,7 +62,7 @@ PR's: [#113](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/113) [#
 - Melhorias na criação de reservas para dispositivos mobile
 - Correção da Navbar para dispositivos desktop
 
-## Correção de bug - 21/11/2025
+### Correção de bug - 21/11/2025
 
 <span style="color: orange">BUGFIX</span>
 
@@ -59,7 +74,7 @@ PR's: [#111](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/111)
 - Remoção de código antigo que não é mais utilizado.
 - Agora uma combinação inválida da agenda está mostrando o erro.
 
-## Correção de bug - 18/11/2025
+### Correção de bug - 18/11/2025
 
 <span style="color: red">HOTFIX</span>
 
@@ -70,7 +85,7 @@ PR's: [#110](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/110) e 
 - Correção de bug de autenticação para usuários novos, agora são corretamente criados.
 - Remoção de loop na página de redirecionamento que constantemente tentava autenticar o usuário, agora ele tenta apenas uma vez.
 
-## Correção de bug - 15/11/2025
+### Correção de bug - 15/11/2025
 
 <span style="color: orange">BUGFIX</span>
 
@@ -81,7 +96,7 @@ PR's: [#106](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/106)
 - Correção do tamanho do Navbar para usuários mobile, limitando para 100vw.
 - Agora o beacon de novas funcionalidades funciona corretamente para celulares.
 
-## Fale Conosco - 15/11/2025
+### Fale Conosco - 15/11/2025
 
 <span style="color: green">FEATURE</span>
 
