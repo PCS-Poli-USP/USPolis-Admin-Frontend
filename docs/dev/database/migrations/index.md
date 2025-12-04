@@ -1,15 +1,16 @@
 ---
 prev:
-  text: 'Frontend'
-  link: '/dev/frontend'
-
-next:
   text: 'Tabelas, Modelos e Relacionamentos'
   link: '/dev/database/models'
+
+next:
+  text: 'Backup'
+  link: '/dev/database/backup'
+
 ---
 
 
-# Banco de Dados
+# Migrações
 
 > [!WARNING]
 > Documentação em construção...

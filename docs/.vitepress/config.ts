@@ -227,6 +227,8 @@ export default {
               text: 'Tabelas, Modelos e Relacionamentos',
               link: '/dev/database/models',
             },
+            { text: 'Migrações', link: '/dev/database/migrations' },
+            { text: 'Backup', link: '/dev/database/backup' },
           ],
         },
         {
@@ -235,6 +237,7 @@ export default {
           items: [
             { text: 'Introdução', link: '/dev/server' },
             { text: 'Arquivos principais', link: '/dev/server/files' },
+            { text: 'Deploy', link: '/dev/server/deploy' },
           ],
         },
       ],

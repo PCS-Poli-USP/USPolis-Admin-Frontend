@@ -81,3 +81,8 @@ ESLint é um analisador estático, usamos ele no frontend.
 
 [![Static Badge](https://img.shields.io/badge/Prettier-4f2f03)](https://prettier.io/docs/)
 Prettier é um formator de código, focado em desenvolvimento web.
+
+## Docs
+
+[![Static Badge](https://img.shields.io/badge/VitePress-8A2BE2)](https://vitepress.dev/)
+Um gerador de site estáticos (SSG), utilizamos ele para gerar nossa docs através de arquivos markdown.

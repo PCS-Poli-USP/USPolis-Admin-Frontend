@@ -1,3 +1,14 @@
+---
+prev:
+  text: 'Banco de Dados'
+  link: '/dev/database'
+
+next:
+  text: 'Migrações'
+  link: '/dev/database/migrations'
+---
+
+
 # Tabelas, Modelos e Relacionamentos
 
 > [!WARNING]
@@ -14,7 +25,7 @@ Cada agenda possui um histórico de alocações, sua modelagem é:
   width: 100%;
 ">
   <img 
-    src="/dev/database/models/image.png"
+    src="/dev/database/models/images/image.png"
     alt="Descrição"
     style="
       border-radius: 8px;
