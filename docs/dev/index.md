@@ -19,3 +19,5 @@ Todos os principais assuntos referente a detalhes técnicos do USPolis estão li
 - [Configurando seu Ambiente](./enviroment/)
 - [Backend](./backend/)
 - [Frontend](./frontend/)
+- [Banco de Dados](./database/)
+- [Servidor](./server/)
