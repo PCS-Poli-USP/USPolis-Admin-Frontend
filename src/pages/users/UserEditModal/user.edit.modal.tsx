@@ -34,12 +34,8 @@ export default function EditUserModal(props: UserEditModalProps) {
       form.reset({
         ...defaultValues,
         is_admin: props.user.is_admin,
-        group_ids: props.user.groups
-          ? props.user.groups.map((group) => group.id)
-          : [],
-        building_ids: props.user.buildings
-          ? props.user.buildings.map((building) => building.id)
-          : [],
+        group_ids: props.user.group_ids,
+        building_ids: props.user.building_ids,
         receive_emails: props.user.receive_emails,
       });
     }

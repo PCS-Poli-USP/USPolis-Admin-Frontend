@@ -10,19 +10,28 @@ export interface UserInfoResponse {
   email_verified: boolean;
 }
 
-export interface UserResponse {
+export interface UserCoreResponse {
   id: number;
   email: string;
   is_admin: boolean;
   receive_emails: boolean;
   name: string;
   created_by: string;
-  buildings?: BuildingResponse[];
   updated_at: string;
+  user_info?: UserInfoResponse;
   last_visited: string;
+
+  building_ids: number[];
+  building_names: string[];
+  
+  group_ids: number[];
+  group_names: string[];
+}
+
+export interface UserResponse extends UserCoreResponse {
+  buildings?: BuildingResponse[];
   solicitations: Array<SolicitationResponse>;
   groups: Array<UserGroupResponse>;
-  user_info?: UserInfoResponse;
 }
 
 export interface UserGroupResponse {

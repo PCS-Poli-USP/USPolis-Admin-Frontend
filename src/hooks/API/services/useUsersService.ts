@@ -4,7 +4,7 @@ import {
   UpdateUser,
 } from '../../../models/http/requests/user.request.models';
 import { AxiosResponse } from 'axios';
-import { UserResponse } from '../../../models/http/responses/user.response.models';
+import { UserCoreResponse, UserResponse } from '../../../models/http/responses/user.response.models';
 import { JSONResponse } from '../../../models/http/responses/common.response.models';
 
 const useUsersService = () => {
@@ -15,7 +15,7 @@ const useUsersService = () => {
     return axios.post(PREFIX, data);
   };
 
-  const list = (): Promise<AxiosResponse<Array<UserResponse>>> => {
+  const list = (): Promise<AxiosResponse<Array<UserCoreResponse>>> => {
     return axios.get(PREFIX);
   };
 
