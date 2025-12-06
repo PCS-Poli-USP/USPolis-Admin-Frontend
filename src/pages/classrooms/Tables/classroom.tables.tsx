@@ -45,7 +45,7 @@ export function getClassroomColumns(
       maxSize: 150,
       meta: { isCenter: true },
       cell: ({ row }) => (
-        <Box w={'100%'} bg={'red'}>
+        <Box w={'100%'}>
           <Tooltip label={row.original.observation}>
             <Text textOverflow={'ellipsis'} overflow='hidden'>
               {row.original.observation}
