@@ -187,7 +187,7 @@ export function DrawerNavBar({
                 <Button
                   variant={'ghost'}
                   mr={'5px'}
-                  hidden={isMobile}
+                  hidden={true}
                   onClick={() => {
                     setPathBeforeGuide(location.pathname);
                     if (location.pathname !== '/allocation') {

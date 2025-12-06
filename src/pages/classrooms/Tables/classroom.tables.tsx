@@ -42,8 +42,17 @@ export function getClassroomColumns(
       id: 'observation',
       accessorKey: 'observation',
       header: 'Observação',
-      maxSize: 100,
+      maxSize: 150,
       meta: { isCenter: true },
+      cell: ({ row }) => (
+        <Box w={'100%'}>
+          <Tooltip label={row.original.observation}>
+            <Text textOverflow={'ellipsis'} overflow='hidden'>
+              {row.original.observation}
+            </Text>
+          </Tooltip>
+        </Box>
+      ),
     },
     {
       id: 'floor',
@@ -165,7 +174,7 @@ export function getClassroomColumns(
     columns.push({
       id: 'created_by',
       accessorKey: 'created_by',
-      header: 'Usuário',
+      header: 'Criado por',
     });
   }
   return columns;

@@ -5,7 +5,7 @@ import {
   UpdateUser,
 } from '../../models/http/requests/user.request.models';
 
-import { UserResponse } from '../../models/http/responses/user.response.models';
+import { UserCoreResponse, UserResponse } from '../../models/http/responses/user.response.models';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { sortUsersResponse } from '../../utils/users/users.sorter';
 import useUsersService from './../API/services/useUsersService';
@@ -17,7 +17,7 @@ const useUsers = (initialFetch: boolean = true) => {
   const selfService = useSelfService();
 
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState<UserResponse[]>([]);
+  const [users, setUsers] = useState<UserCoreResponse[]>([]);
 
   const showToast = useCustomToast();
   const parser = useMemo(() => new UserErrorParser(), []);

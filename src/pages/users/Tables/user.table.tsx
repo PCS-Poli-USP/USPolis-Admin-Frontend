@@ -1,6 +1,6 @@
 import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { UserResponse } from '../../../models/http/responses/user.response.models';
+import { UserCoreResponse } from '../../../models/http/responses/user.response.models';
 import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import {
@@ -10,14 +10,14 @@ import {
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 
 interface UsersColumnsProps {
-  handleEditClick: (data: UserResponse) => void;
-  handleDeleteClick: (data: UserResponse) => void;
+  handleEditClick: (data: UserCoreResponse) => void;
+  handleDeleteClick: (data: UserCoreResponse) => void;
   isLoading: boolean;
 }
 
 export const getUsersColumns = (
   props: UsersColumnsProps,
-): ColumnDef<UserResponse>[] => [
+): ColumnDef<UserCoreResponse>[] => [
   {
     accessorKey: 'id',
     header: 'ID',
@@ -36,17 +36,17 @@ export const getUsersColumns = (
   {
     filterFn: FilterString,
     accessorFn: (row) =>
-      row.buildings
-        ? row.buildings.length > 0
-          ? row.buildings.map((b) => b.name).join(', ')
+      row.building_names
+        ? row.building_names.length > 0
+          ? row.building_names.join(', ')
           : ''
         : '',
     header: 'Prédios',
     cell: ({ row }) => (
       <Box>
-        {row.original.buildings ? (
-          row.original.buildings.map((b, index) => (
-            <Text key={index}>{`${b.name}`}</Text>
+        {row.original.building_names ? (
+          row.original.building_names.map((name, index) => (
+            <Text key={index}>{`${name}`}</Text>
           ))
         ) : (
           <Text></Text>
@@ -57,13 +57,13 @@ export const getUsersColumns = (
   {
     filterFn: FilterString,
     accessorFn: (row) =>
-      row.groups.length > 0 ? row.groups.map((g) => g.name).join(', ') : '',
+      row.group_names.length > 0 ? row.group_names.join(', ') : '',
     header: 'Grupos',
     cell: ({ row }) => (
       <Box>
-        {row.original.groups.length ? (
-          row.original.groups.map((b, index) => (
-            <Text key={index}>{`${b.name}`}</Text>
+        {row.original.group_names.length ? (
+          row.original.group_names.map((name, index) => (
+            <Text key={index}>{`${name}`}</Text>
           ))
         ) : (
           <Text></Text>
