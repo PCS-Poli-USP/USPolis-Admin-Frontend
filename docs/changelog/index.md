@@ -8,22 +8,32 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 Aqui estão todas as principais mudanças realizadas no USPolis em 2025.
 
+### API - 05/12/2025
+
+<span style="color: #408080">IMPROVEMENT</span>
+
+PR's: [#131](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/131) e [#144](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/144)
+
+**Descrição:**
+
+- Melhorias na performance das rotas de usuários e grupos, agora existe um response core para usuários
+- Ajustes na tabela de salas
+
 ### Docs - 03/12/2025
 
 <span style="color: #408080">IMPROVEMENT</span>
 
-PR's: [#125](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/125) e [#143](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/143)
+PR's: [#129](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/129)
 
 **Descrição:**
 
 - Melhorias na docs de dev, adição uma seção de deploy, arquivos, tecnologias e mais
 
-
 ### Docs - 29/11/2025
 
 <span style="color: green">FEATURE</span>
 
-PR's: [#125](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/125) e [#143](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/143)
+PR's: [#125](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/125) e [#143](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/143)
 
 **Descrição:**
 
