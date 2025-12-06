@@ -16,7 +16,7 @@ PR's: [#131](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/131) e 
 
 **Descrição:**
 
-- Melhorias na performance das rotas de usuários e grupos, agora existe um response core para usuários
+- Melhorias no desempenho das rotas de usuários e grupos, agora existe um response core para usuários
 - Ajustes na tabela de salas
 
 ### Docs - 03/12/2025
