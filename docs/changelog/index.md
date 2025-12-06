@@ -8,6 +8,17 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 Aqui estão todas as principais mudanças realizadas no USPolis em 2025.
 
+### Docs - 06/12/2025
+
+<span style="color: #408080">IMPROVEMENT</span>
+
+PR's: [#132](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/132)
+
+**Descrição:**
+
+- Adição da seção de deploy na docs de dev
+
+
 ### API - 05/12/2025
 
 <span style="color: #408080">IMPROVEMENT</span>
