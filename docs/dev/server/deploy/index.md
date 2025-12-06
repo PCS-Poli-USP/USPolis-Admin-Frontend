@@ -222,7 +222,7 @@ Aí sim você terá tudo que precisa saber para fazer um deploy completo e limpo
 
 ### Arquivos relevantes
 
-Para uma explicação detalhada acesse [Arquivos principais](/dev/server/files).
+Para uma explicação detalhada acesse [Arquivos principais](/dev/server/files/).
 
 Aqui a árvore de arquivos relevantes:
 
