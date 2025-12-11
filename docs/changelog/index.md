@@ -8,6 +8,17 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 Aqui estão todas as principais mudanças realizadas no USPolis em 2025.
 
+### Docs - 11/12/2025
+
+<span style="color: orange">BUGFIX</span>
+
+PR's: [#134](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/132) e [#145](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/145)
+
+**Descrição:**
+
+- Correção na listagem de calendários e turmas, agora mostram os dado do ano atual e seguintes
+- Correção nas imagens suportadas no "Fale Conosco"
+
 ### Docs - 06/12/2025
 
 <span style="color: #408080">IMPROVEMENT</span>
@@ -17,7 +28,6 @@ PR's: [#132](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/132)
 **Descrição:**
 
 - Adição da seção de deploy na docs de dev
-
 
 ### API - 05/12/2025
 
