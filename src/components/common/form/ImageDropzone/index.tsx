@@ -11,8 +11,7 @@ export function ImageDropzone(props: ImageDropzoneProps) {
     useDropzone({
       onDrop: props.onDrop,
       accept: {
-        'image/jpeg': ['.jpeg', '.jpg'],
-        'image/png': ['.png'],
+        'image/*': [],
       },
       maxFiles: props.maxFiles,
       multiple: !!props.maxFiles,
