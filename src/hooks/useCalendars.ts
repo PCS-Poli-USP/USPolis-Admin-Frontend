@@ -5,23 +5,38 @@ import {
 } from '../models/http/requests/calendar.request.models';
 import { CalendarResponse } from '../models/http/responses/calendar.responde.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortCalendarResponse } from '../utils/calendars/calendar.sorter';
 import useCalendarsService from './API/services/useCalendarsService';
 
-const useCalendars = (initialFetch = true) => {
+const useCalendars = (initialFetch = true, initialYear?: string) => {
   const service = useCalendarsService();
   const [loading, setLoading] = useState(false);
   const [calendars, setCalendars] = useState<CalendarResponse[]>([]);
 
   const showToast = useCustomToast();
 
-  const getCalendars = useCallback(
+  const getCalendars = useCallback(async () => {
+    setLoading(true);
+    await service
+      .list()
+      .then((response) => {
+        setCalendars(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        showToast('Erro', 'Erro ao carregar calendários', 'error');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [showToast, service]);
+
+  const getCalendarsByYear = useCallback(
     async (year?: string) => {
       setLoading(true);
       await service
-        .list(year)
+        .listByYear(year)
         .then((response) => {
-          setCalendars(response.data.sort(sortCalendarResponse));
+          setCalendars(response.data);
         })
         .catch((error) => {
           console.log(error);
@@ -105,15 +120,19 @@ const useCalendars = (initialFetch = true) => {
 
   useEffect(() => {
     if (initialFetch) {
+      if (initialYear) {
+        getCalendarsByYear(initialYear);
+        return;
+      }
       getCalendars();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialFetch]);
-
+  }, [initialFetch, initialYear]);
   return {
     loading,
     calendars,
     getCalendars,
+    getCalendarsByYear,
     createCalendar,
     updateCalendar,
     deleteCalendar,
