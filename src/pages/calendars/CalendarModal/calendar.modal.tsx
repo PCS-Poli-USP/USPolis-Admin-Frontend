@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library */
 import {
   Alert,
   AlertIcon,
@@ -32,7 +33,9 @@ function CalendarModal(props: CalendarModalProps) {
     resolver: yupResolver(schema),
   });
 
-  const { trigger, getValues, reset, clearErrors } = form;
+  const { trigger, getValues, reset, clearErrors, watch } = form;
+
+  const calendar_year = watch('year');
 
   async function handleCreateSubmit() {
     const isValid = await trigger();
@@ -116,14 +119,19 @@ function CalendarModal(props: CalendarModalProps) {
                   placeholder='Ano do calendário'
                   min={2025}
                   max={2100}
+                  onChange={() => {
+                    form.resetField('categories_ids');
+                  }}
                 />
                 <MultiSelectInput
                   label={'Categorias de Feriados (Opcional)'}
                   name={'categories_ids'}
-                  options={props.categories.map((category) => ({
-                    value: category.id,
-                    label: category.name,
-                  }))}
+                  options={props.categories
+                    .filter((val) => val.year === Number(calendar_year))
+                    .map((category) => ({
+                      value: category.id,
+                      label: `${category.name} (${category.year})`,
+                    }))}
                 />
               </VStack>
             </ModalBody>

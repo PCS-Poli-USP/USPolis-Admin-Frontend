@@ -47,13 +47,14 @@ function Calendars() {
   const {
     loading: loadingCalendars,
     calendars,
-    getCalendars,
+    getCalendarsByYear,
     createCalendar,
     updateCalendar,
     deleteCalendar,
-  } = useCalendars();
+  } = useCalendars(true, new Date().getFullYear().toString());
 
-  const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
+  const { start, setStart, end, setEnd, year, setYear } =
+    usePageHeaderWithFilter();
 
   const [isUpdateCalendar, setIsUpdateCalendar] = useState(false);
   const [selectedCalendar, setSelectedCalendar] = useState<
@@ -97,10 +98,12 @@ function Calendars() {
           end={end}
           setStart={setStart}
           setEnd={setEnd}
+          year={year}
+          setYear={setYear}
           onConfirm={() => {}}
           type='year'
           onConfirmYear={(year: string) => {
-            getCalendars(year);
+            getCalendarsByYear(year);
           }}
         />
         <Spacer />
@@ -157,9 +160,10 @@ function Calendars() {
           onCloseHolidaysModal();
         }}
         categories={categories}
+        year={Number(year)}
         refetch={() => {
           getHolidaysCategories();
-          getCalendars();
+          getCalendarsByYear(year);
         }}
         loggedUser={loggedUser}
       />
