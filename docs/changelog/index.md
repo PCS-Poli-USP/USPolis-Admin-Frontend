@@ -12,7 +12,7 @@ Aqui estão todas as principais mudanças realizadas no USPolis em 2025.
 
 <span style="color: orange">BUGFIX</span>
 
-PR's: [#134](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/132) e [#145](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/145)
+PR's: [#134](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/134) e [#145](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/145)
 
 **Descrição:**
 
