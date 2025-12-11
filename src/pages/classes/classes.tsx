@@ -300,6 +300,7 @@ function Classes() {
         onClose={onCloseAllocationReuseModal}
         data={undefined}
         subjects={subjects}
+        // eslint-disable-next-line react-hooks/refs
         classes={originalClasses.current}
         buildings={context.loggedUser ? context.loggedUser.buildings || [] : []}
         refetch={() => getClasses()}

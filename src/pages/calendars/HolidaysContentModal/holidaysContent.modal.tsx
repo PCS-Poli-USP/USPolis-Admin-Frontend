@@ -132,7 +132,7 @@ function HolidaysContentModal(props: HolidaysContentModalProps) {
               onHolidayDelete={handleDeleteHolidayButton}
             />
             <Dialog
-              title={`Deletar categoria ${selectedHolidayCategory?.name}`}
+              title={`Deletar categoria ${selectedHolidayCategory?.name} (${selectedHolidayCategory?.year})`}
               warningText={
                 'Essa mudança é irreversível e irá apagar todas os feriados dessa categoria, juntamente com as alocações desses dias!'
               }

@@ -48,6 +48,14 @@ function HolidayModal(props: HolidayModalProps) {
     resolver: yupResolver(schema),
   });
 
+  const minDate = moment()
+    .year(props.category?.year || new Date().getFullYear())
+    .startOf('year');
+
+  const maxDate = moment()
+    .year(props.category?.year || new Date().getFullYear())
+    .endOf('year');
+
   const { trigger, reset, getValues, clearErrors } = form;
   const { createHoliday, createManyHolidays, updateHoliday } =
     useHolidays(false);
@@ -154,7 +162,7 @@ function HolidayModal(props: HolidayModalProps) {
                   name={'category_id'}
                   placeholder={'Selecione uma opção'}
                   options={props.categories.map((category) => ({
-                    label: category.name,
+                    label: `${category.name} (${category.year})`,
                     value: category.id,
                   }))}
                 />
@@ -171,6 +179,8 @@ function HolidayModal(props: HolidayModalProps) {
                   placeholder={'Selecione uma data'}
                   type={'date'}
                   hidden={isMultipleHolidays}
+                  min={minDate.format('YYYY-MM-DD')}
+                  max={maxDate.format('YYYY-MM-DD')}
                 />
                 <Checkbox
                   hidden={props.isUpdate}
@@ -190,6 +200,8 @@ function HolidayModal(props: HolidayModalProps) {
                       highlightedDays={highlightedDays}
                       occupiedDays={occupiedDays}
                       dayClick={dayClick}
+                      minDate={minDate}
+                      maxDate={maxDate}
                     />
                     <Text fontSize={'sm'}>
                       Clique para adicionar, clique novamente para remover

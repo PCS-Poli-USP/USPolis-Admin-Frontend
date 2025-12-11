@@ -10,13 +10,17 @@ const useCalendarsService = () => {
   const PREFIX = '/calendars';
   const axios = useAxiosPrivate();
 
-  const list = (
+  const list = (): Promise<AxiosResponse<Array<CalendarResponse>>> => {
+    return axios.get(PREFIX);
+  };
+
+  const listByYear = (
     year?: string,
   ): Promise<AxiosResponse<Array<CalendarResponse>>> => {
     if (year) {
-      return axios.get(`${PREFIX}?year=${year}`);
+      return axios.get(`${PREFIX}/year/${year}`);
     }
-    return axios.get(PREFIX);
+    return axios.get(`${PREFIX}/year/`);
   };
 
   const create = (
@@ -36,7 +40,7 @@ const useCalendarsService = () => {
     return axios.delete(`${PREFIX}/${id}`);
   };
 
-  return { list, create, update, deleteById };
+  return { list, listByYear, create, update, deleteById };
 };
 
 export default useCalendarsService;

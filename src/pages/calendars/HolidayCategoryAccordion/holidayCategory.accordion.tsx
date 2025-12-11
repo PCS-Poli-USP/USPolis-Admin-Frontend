@@ -67,7 +67,7 @@ export function HolidayCategoryAccordion(props: HolidayCategoryAccordionProps) {
                     <Box as='span' flex='1' textAlign='left'>
                       <Text
                         as={'b'}
-                      >{`Categoria de Feriado: ${category.name}`}</Text>
+                      >{`Categoria de Feriado: ${category.name} (${category.year})`}</Text>
                     </Box>
                     {isExpanded ? (
                       <MinusIcon fontSize='12px' />

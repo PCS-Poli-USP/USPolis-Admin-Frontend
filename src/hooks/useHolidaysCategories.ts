@@ -5,7 +5,6 @@ import {
 } from '../models/http/requests/holidayCategory.request.models';
 import { HolidayCategoryResponse } from '../models/http/responses/holidayCategory.response.models';
 import { useCallback, useEffect, useState } from 'react';
-import { sortHolidaysCategoriesResponse } from '../utils/holidaysCategories/holidaysCategories.sorter';
 import useHolidayCategoryService from './API/services/useHolidayCategoryService';
 
 const useHolidaysCategories = (initialFetch = true) => {
@@ -22,9 +21,7 @@ const useHolidaysCategories = (initialFetch = true) => {
     await service
       .list()
       .then((response) => {
-        setHolidaysCategories(
-          response.data.sort(sortHolidaysCategoriesResponse),
-        );
+        setHolidaysCategories(response.data);
       })
       .catch((error) => {
         console.log(error);

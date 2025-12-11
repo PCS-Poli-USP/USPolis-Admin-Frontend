@@ -73,6 +73,7 @@ export default function CrawlerJupiterModal({
 
   useEffect(() => {
     if (buildings.length === 1) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBuildingIdSelection(buildings[0].id);
     }
   }, [buildings]);
@@ -189,7 +190,7 @@ export default function CrawlerJupiterModal({
                     placeholder='Selecione os calendários'
                     isMulti
                     options={calendars.map((calendar) => ({
-                      label: calendar.name,
+                      label: `${calendar.name} (${calendar.year})`,
                       value: calendar.id,
                     }))}
                     onChange={(selectedOptions: MultiValue<Option>) =>
