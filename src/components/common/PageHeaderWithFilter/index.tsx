@@ -5,6 +5,7 @@ import YearInput from './YearInput';
 interface PageHeaderWithFilterProps {
   title: string;
   tooltip?: string;
+  label?: string;
   start: string;
   end: string;
   setStart: (start: string) => void;
@@ -26,6 +27,7 @@ function PageHeaderWithFilter({
   setYear = () => {},
   onConfirm,
   tooltip = `Ver ${title} anteriores`,
+  label = 'Período: Atual',
   type = 'dateRange',
   onConfirmYear = undefined,
 }: PageHeaderWithFilterProps) {
@@ -48,6 +50,7 @@ function PageHeaderWithFilter({
             title={tooltip}
             start={start}
             end={end}
+            label={label}
             setStart={setStart}
             setEnd={setEnd}
             onConfirm={(start, end) => {

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/incompatible-library */
 import {
   Button,
   Checkbox,
@@ -168,8 +169,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                       usuários.
                     </Text>
                     <Text fontSize={'sm'}>
-                      Se ela é remota, não vai aparecer no mapa de salas nem nos
-                      relatórios.
+                      Se ela é oculta, não vai aparecer no mapa de salas, nos relatórios e será ignorada para verificar CONFLITOS.
                     </Text>
                   </Flex>
                 </HelpPopover>
@@ -177,7 +177,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
 
               <HStack w={'full'} alignItems={'start'} gap={'10px'} mb={'10px'}>
                 <CheckBox text={'Reservável'} name={'reservable'} />
-                <CheckBox text={'Remota'} name={'remote'} />
+                <CheckBox text={'Oculta'} name={'remote'} />
               </HStack>
 
               <MultiSelectInput
@@ -212,7 +212,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
               >
                 Selecionar todos
               </Checkbox>
-              <TextareaInput name='observation' label='Observação' />
+              <TextareaInput name='observation' label='Observação' mt={'5px'} />
             </form>
           </FormProvider>
         </ModalBody>

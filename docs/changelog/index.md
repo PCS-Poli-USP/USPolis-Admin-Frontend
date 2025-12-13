@@ -8,7 +8,19 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 Aqui estão todas as principais mudanças realizadas no USPolis em 2025.
 
-### Docs - 11/12/2025
+### Correção de bug - 12/12/2025
+
+<span style="color: orange">BUGFIX</span>
+
+PR's: [#135](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/135) e [#146](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/146)
+
+**Descrição:**
+
+- Correção na página de conflitos, agora mostra por padrão datas que ainda não passarram
+- Melhorias no desempenho da rotas de conflito, agora é um prédio por vez
+- Correção 
+
+### Correção de bug - 11/12/2025
 
 <span style="color: orange">BUGFIX</span>
 

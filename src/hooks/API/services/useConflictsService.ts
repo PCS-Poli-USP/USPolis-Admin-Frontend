@@ -7,19 +7,22 @@ const useConflictsService = () => {
   const PREFIX = '/conflicts';
   const axios = useAxiosPrivate();
 
-  const list = (
-    start: string,
-    end: string,
+  const listByBuilding = (
+    building_id: number,
     type: ConflictType,
-  ): Promise<AxiosResponse<Conflict[]>> => {
+    start?: string,
+    end?: string,
+  ): Promise<AxiosResponse<Conflict>> => {
     const params = new URLSearchParams();
-    params.append('start', start);
-    params.append('end', end);
     params.append('type', type);
-    return axios.get(PREFIX, { params });
+    if (start && end) {
+      params.append('start', start);
+      params.append('end', end);
+    }
+    return axios.get(`${PREFIX}/building/${building_id}`, { params });
   };
 
-  return { list };
+  return { listByBuilding };
 };
 
 export default useConflictsService;
