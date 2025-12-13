@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   Flex,
   Text,
@@ -8,7 +8,6 @@ import {
   TabPanel,
   Tab,
   TabIndicator,
-  Input,
   Skeleton,
 } from '@chakra-ui/react';
 import Conflict from '../../models/http/responses/conflict.response.models';
@@ -19,53 +18,57 @@ import useCustomToast from '../../hooks/useCustomToast';
 import UnintentionalConflictsTab from './UnintentionalConflictsTab';
 import IntentionalConflictsTab from './IntentionalConflictsTab';
 import { ConflictType } from '../../utils/enums/conflictType.enum';
-import moment from 'moment';
 import TooltipSelect from '../../components/common/TooltipSelect';
+import { appContext } from '../../context/AppContext';
+import { BuildingResponse } from '../../models/http/responses/building.response.models';
+import useBuildings from '../../hooks/useBuildings';
+import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
+import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
 
 const ConflictsPage = () => {
-  const showToast = useCustomToast();
+  const { loading: loadingUser, loggedUser } = useContext(appContext);
+  const { loading: loadingBuildings, buildings } = useBuildings();
 
+  const { start, end, setStart, setEnd } = usePageHeaderWithFilter();
+
+  const showToast = useCustomToast();
   const conflictsService = useConflictsService();
 
-  const [conflicts, setConflicts] = useState<Conflict[] | null>(null);
-  const [intentionalConflicts, setIntentionalConflicts] = useState<
-    Conflict[] | null
-  >(null);
-
-  const today = moment();
-
+  const [initialLoad, setInitialLoad] = useState<boolean>(false);
+  const [conflicts, setConflicts] = useState<Conflict | null>(null);
+  const [intentionalConflicts, setIntentionalConflicts] =
+    useState<Conflict | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [buildingNames, setBuildingNames] = useState<string[] | null>(null);
-  const [selectedBuildingName, setSelectedBuildingName] = useState<string>('');
-  const [start, setStart] = useState<string>(
-    today.month() < 6
-      ? moment({ year: today.year(), month: 0, day: 1 }).format('YYYY-MM-DD') // 1º janeiro
-      : moment({ year: today.year(), month: 6, day: 1 }).format('YYYY-MM-DD'),
+  const [buildingOptions, setBuildingOptions] = useState<BuildingResponse[]>(
+    [],
   );
-  const [end, setEnd] = useState<string>(
-    today.month() < 6
-      ? moment({ year: today.year(), month: 5, day: 30 }).format('YYYY-MM-DD') // 1º janeiro
-      : moment({ year: today.year(), month: 11, day: 31 }).format('YYYY-MM-DD'),
-  );
+  const [selectedBuilding, setSelectedBuilding] = useState<number>();
 
   const [isOpenAllocate, setIsOpenAllocate] = useState<boolean>(false);
   const [selectedClassId, setSelectedClassId] = useState<number>(0);
 
   useEffect(() => {
-    const newBuildingNames = conflicts?.map((it) => it.name) || [];
-    newBuildingNames.sort((a, b) => a.localeCompare(b));
-    setBuildingNames(newBuildingNames);
-  }, [conflicts]);
+    if (loggedUser && !loggedUser.is_admin) {
+      setBuildingOptions(loggedUser.buildings || []);
+    }
+
+    if (loggedUser && loggedUser.is_admin && buildings) {
+      setBuildingOptions(buildings);
+    }
+  }, [loggedUser, buildings, loadingUser, loadingBuildings]);
 
   useEffect(() => {
-    fetchData();
+    if (!initialLoad && buildingOptions.length === 1) {
+      setInitialLoad(true);
+      fetchData(buildingOptions[0].id);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [start, end]);
+  }, [buildingOptions, initialLoad, loggedUser]);
 
-  async function fetchData() {
+  async function fetchData(building_id: number, start?: string, end?: string) {
     setLoading(true);
     await conflictsService
-      .list(start, end, ConflictType.UNINTENTIONAL)
+      .listByBuilding(building_id, ConflictType.UNINTENTIONAL, start, end)
       .then((res) => {
         setConflicts(res.data);
       })
@@ -75,7 +78,7 @@ const ConflictsPage = () => {
       });
 
     await conflictsService
-      .list(start, end, ConflictType.INTENTIONAL)
+      .listByBuilding(building_id, ConflictType.INTENTIONAL, start, end)
       .then((res) => {
         setIntentionalConflicts(res.data);
       })
@@ -89,28 +92,39 @@ const ConflictsPage = () => {
   return (
     <PageContent>
       <Flex paddingX={4} direction={'column'}>
-        <Text fontSize='4xl' mb={4}>
-          Conflitos
-        </Text>
+        <Flex>
+          <PageHeaderWithFilter
+            title={'Conflitos'}
+            tooltip='Ver conflitos de outros períodos'
+            start={start}
+            end={end}
+            setStart={setStart}
+            setEnd={setEnd}
+            onConfirm={(start, end) => {
+              if (selectedBuilding) fetchData(selectedBuilding, start, end);
+            }}
+          />
+        </Flex>
         <Flex direction={'row'} gap={4} mb={4}>
           <Flex direction={'column'} flex={1}>
             <Text fontSize={'md'}>Prédio:</Text>
             <TooltipSelect
               placeholder={'Selecione o prédio'}
-              options={
-                buildingNames
-                  ? buildingNames.map((it) => ({ value: it, label: it }))
-                  : []
-              }
+              isDisabled={loading || buildingOptions.length <= 1}
+              options={buildingOptions.map((it) => ({
+                value: it.id,
+                label: it.name,
+              }))}
               onChange={(option) => {
                 if (option) {
-                  setSelectedBuildingName(option.value as string);
-                } else setSelectedBuildingName('');
+                  setSelectedBuilding(option.value as number);
+                  fetchData(option.value as number);
+                } else setSelectedBuilding(undefined);
               }}
               isLoading={loading}
             />
           </Flex>
-          <Flex direction={'column'} flex={1}>
+          {/* <Flex direction={'column'} flex={1}>
             <Text fontSize={'md'}>Início:</Text>
             <Input
               type='date'
@@ -119,7 +133,11 @@ const ConflictsPage = () => {
                 const date = moment(e.target.value);
                 if (date.isValid()) {
                   const newStart = date.format('YYYY-MM-DD');
-                  if (newStart != start) setStart(newStart);
+                  setStart(newStart);
+                  setChangePeriod(true);
+                  if (date.isAfter(moment(end))) {
+                    setEnd(newStart);
+                  }
                 }
               }}
               max={end}
@@ -135,11 +153,28 @@ const ConflictsPage = () => {
                 const date = moment(e.target.value);
                 if (date.isValid()) {
                   const newEnd = date.format('YYYY-MM-DD');
-                  if (newEnd != end) setEnd(newEnd);
+                  setEnd(newEnd);
+                  setChangePeriod(true);
+                  if (date.isBefore(moment(start))) {
+                    setStart(newEnd);
+                  }
                 }
               }}
             />
           </Flex>
+          <Flex direction={'column-reverse'}>
+            <Button
+              rightIcon={<CheckIcon />}
+              onClick={() => {
+                if (selectedBuilding && changePeriod) {
+                  fetchData(selectedBuilding);
+                  setChangePeriod(false);
+                }
+              }}
+            >
+              Confirmar novo período
+            </Button>
+          </Flex> */}
         </Flex>
         <Tabs position='relative' variant='unstyled'>
           <TabList>
@@ -162,10 +197,8 @@ const ConflictsPage = () => {
             <TabPanel>
               <Skeleton isLoaded={!loading}>
                 <UnintentionalConflictsTab
-                  conflicts={conflicts}
-                  selectedBuildingName={selectedBuildingName}
+                  conflictSpec={conflicts}
                   setSelectedClassId={(id) => {
-                    console.log('setSelectedClassId', id);
                     setSelectedClassId(id);
                   }}
                   setIsOpenAllocate={(value) => {
@@ -177,10 +210,8 @@ const ConflictsPage = () => {
             <TabPanel>
               <Skeleton isLoaded={!loading}>
                 <IntentionalConflictsTab
-                  conflicts={intentionalConflicts}
-                  selectedBuildingName={selectedBuildingName}
+                  conflictSpec={intentionalConflicts}
                   setSelectedClassId={(id) => {
-                    console.log('setSelectedClassId', id);
                     setSelectedClassId(id);
                   }}
                   setIsOpenAllocate={(value) => {
@@ -198,7 +229,9 @@ const ConflictsPage = () => {
           setIsOpenAllocate(false);
           setSelectedClassId(0);
         }}
-        refresh={fetchData}
+        refresh={() => {
+          if (selectedBuilding) fetchData(selectedBuilding);
+        }}
         class_id={selectedClassId}
       />
     </PageContent>

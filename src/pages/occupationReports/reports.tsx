@@ -11,6 +11,7 @@ import {
   Box,
   Divider,
   Grid,
+  useColorMode,
 } from '@chakra-ui/react';
 import PageContent from '../../components/common/PageContent';
 import useCustomToast from '../../hooks/useCustomToast';
@@ -51,6 +52,7 @@ const getPercentageColor = (value: number) => {
 };
 
 const ReportsPage = () => {
+  const { colorMode } = useColorMode();
   const showToast = useCustomToast();
   const buildingsService = useBuildingsService();
   const occupanceReportsService = useOccupanceReportsService();
@@ -162,7 +164,10 @@ const ReportsPage = () => {
             <TooltipSelect
               placeholder='Selecione o prédio'
               options={buildings
-                .filter((value) => userBuildingIds.includes(value.id))
+                .filter(
+                  (value) =>
+                    loggedUser?.is_admin || userBuildingIds.includes(value.id),
+                )
                 .map((b) => ({
                   label: b.name,
                   value: b.id,
@@ -205,7 +210,6 @@ const ReportsPage = () => {
         </Flex>
 
         <Skeleton isLoaded={!loading}>
-          {' '}
           {/*exibe um loading enquanto os dados ainda não carregaram*/}
           {filteredReports.length > 0 ? (
             <Accordion allowMultiple>
@@ -228,7 +232,15 @@ const ReportsPage = () => {
                       mb={3}
                     >
                       <h2>
-                        <AccordionButton _expanded={{ bg: 'blue.50' }}>
+                        <AccordionButton
+                          _expanded={{
+                            bg: 'blue.50',
+                            textColor:
+                              colorMode == 'dark'
+                                ? 'uspolis.white'
+                                : 'uspolis.text',
+                          }}
+                        >
                           <Flex w='100%' align='center'>
                             <Box
                               flex='1'
