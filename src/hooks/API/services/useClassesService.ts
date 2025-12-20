@@ -9,7 +9,6 @@ import {
 } from '../../../models/http/requests/class.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
-import axios from '../../../services/api/axios';
 
 const useClassesService = () => {
   const PREFIX = '/classes';
@@ -49,9 +48,9 @@ const useClassesService = () => {
       const params = new URLSearchParams();
       params.append('start', start);
       params.append('end', end);
-      return axios.get(`${PREFIX}/building/${building_name}`, { params });
+      return axiosPrivate.get(`${PREFIX}/building/${building_name}`, { params });
     }
-    return axios.get(`${PREFIX}/building/${building_name}`);
+    return axiosPrivate.get(`${PREFIX}/building/${building_name}`);
   };
 
   const getFull = (): Promise<AxiosResponse<Array<ClassFullResponse>>> => {
