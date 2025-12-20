@@ -1,5 +1,4 @@
 import { AxiosResponse } from 'axios';
-import * as service from '../../../services/api/axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 import {
   ExamEventResponse,
@@ -12,7 +11,6 @@ import {
 } from '../../../models/http/requests/exam.request.models';
 
 const useExamsService = () => {
-  const axiosCommon = service.default;
   const axios = useAxiosPrivate();
   const PREFIX = '/reservations/exams';
 
@@ -24,9 +22,9 @@ const useExamsService = () => {
       const params = new URLSearchParams();
       params.append('start', start);
       params.append('end', end);
-      return axiosCommon.get(`${PREFIX}`, { params });
+      return axios.get(`${PREFIX}`, { params });
     }
-    return axiosCommon.get(`${PREFIX}`);
+    return axios.get(`${PREFIX}`);
   };
 
   const getBySubjectId = (
@@ -39,7 +37,7 @@ const useExamsService = () => {
       params.append('start', start);
       params.append('end', end);
     }
-    return axiosCommon.get(`${PREFIX}/subject/${subjectId}`, { params });
+    return axios.get(`${PREFIX}/subject/${subjectId}`, { params });
   };
 
   const getEvents = (
@@ -50,9 +48,9 @@ const useExamsService = () => {
       const params = new URLSearchParams();
       params.append('start', start);
       params.append('end', end);
-      return axiosCommon.get(`${PREFIX}/events`, { params });
+      return axios.get(`${PREFIX}/events`, { params });
     }
-    return axiosCommon.get(`${PREFIX}/events`);
+    return axios.get(`${PREFIX}/events`);
   };
 
   const create = (data: CreateExam): Promise<AxiosResponse<JSONResponse>> => {

@@ -5,7 +5,6 @@ import {
   AllocationResourceResponse,
 } from '../../../models/http/responses/allocation.response.models';
 import { JSONResponse } from '../../../models/http/responses/common.response.models';
-import axios from '../../../services/api/axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 import {
   AllocationMapInput,
@@ -22,14 +21,14 @@ const useAllocationsService = () => {
     end?: string,
   ): Promise<AxiosResponse<Array<AllocationEventResponse>>> => {
     if (start && end)
-      return axios.get(`${PREFIX}/events`, { params: { start, end } });
-    return axios.get(`${PREFIX}/events`);
+      return privateAxios.get(`${PREFIX}/events`, { params: { start, end } });
+    return privateAxios.get(`${PREFIX}/events`);
   };
 
   const listResources = (): Promise<
     AxiosResponse<Array<AllocationResourceResponse>>
   > => {
-    return axios.get(`${PREFIX}/resources`);
+    return privateAxios.get(`${PREFIX}/resources`);
   };
 
   const update = (event: EventUpdate): Promise<AxiosResponse<JSONResponse>> => {

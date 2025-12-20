@@ -8,6 +8,29 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 Aqui estão todas as principais mudanças realizadas no USPolis em 2025.
 
+### Client ip e deploy - 20/12/2025
+
+<span style="color: orange">BUGFIX</span>
+
+PR's: [#136](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/136) e [#147](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/147)
+
+**Descrição:**
+
+- Correção do nginx + uvicorn para coletar o client ip corretamente nos logs
+- Criação de um arquivo asgi.py para deploy ao invés de wsgi.py
+
+
+### Rotas Health e Logs Loki - 20/12/2025
+
+<span style="color: green">FEATURE</span>
+
+PR's: [#136](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/136) e [#147](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/147)
+
+**Descrição:**
+
+- Adição de rotas health para o sistema e conexão com o banco de dados
+- Adição de tracking das rotas públicas caso o usuário esteja logado
+
 ### Correção de bug - 12/12/2025
 
 <span style="color: orange">BUGFIX</span>
@@ -16,9 +39,8 @@ PR's: [#135](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/135) e 
 
 **Descrição:**
 
-- Correção na página de conflitos, agora mostra por padrão datas que ainda não passarram
+- Correção na página de conflitos, agora mostra por padrão apenas conflitos com datas que ainda não foram
 - Melhorias no desempenho da rotas de conflito, agora é um prédio por vez
-- Correção 
 
 ### Correção de bug - 11/12/2025
 
