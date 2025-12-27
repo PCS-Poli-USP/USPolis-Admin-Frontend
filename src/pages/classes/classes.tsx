@@ -403,7 +403,7 @@ function Classes() {
         isOpen={isOpenDeleteClass}
         onClose={onCloseDeleteClass}
         onConfirm={handleDeleteClass}
-        title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.code}`}
+        title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.code}?`}
         warningText='ATENÇÃO: TODOS OS DADOS DA TURMA SERÃO PERDIDOS, ASSIM COMO AS INFORMAÇÕES NO APLICATIVO'
       />
       <Dialog
