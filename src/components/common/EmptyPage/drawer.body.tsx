@@ -13,7 +13,7 @@ import {
   FaGithub,
   FaList,
   FaRegCalendarTimes,
-  FaRegUser, 
+  FaRegUser,
   FaBook,
 } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
@@ -26,7 +26,7 @@ import {
   UnlockIcon,
 } from '@chakra-ui/icons';
 import { LiaBuilding } from 'react-icons/lia';
-import { MdAddChart, MdEvent, MdOutlinePendingActions } from 'react-icons/md';
+import { MdAddChart, MdDevices, MdEvent, MdOutlinePendingActions } from 'react-icons/md';
 import { LuCalendarClock } from 'react-icons/lu';
 import { GiBookCover, GiTeacher } from 'react-icons/gi';
 import { PiChair, PiExamLight } from 'react-icons/pi';
@@ -119,6 +119,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                 icon={<FaRegUser />}
                 to='/users'
                 text='Usuários'
+                replace_location={false}
+                onClose={onClose}
+              />
+              <DrawerButton
+                icon={<MdDevices />}
+                to='/sessions'
+                text='Sessões de Usuários'
                 replace_location={false}
                 onClose={onClose}
               />
@@ -333,11 +340,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
         p={'10px'}
         pb={'30px'}
       >
-        <HStack
-          align={'center'}
-          justify={'center'}
-          gap={'5px'}
-        >
+        <HStack align={'center'} justify={'center'} gap={'5px'}>
           <EmailIcon color={colorMode === 'dark' ? 'white' : 'black'} />
           <Link
             fontSize={'15px'}
