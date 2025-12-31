@@ -32,7 +32,7 @@ import {
   DownloadIcon,
   SmallCloseIcon,
 } from '@chakra-ui/icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AllocationReuseModalFirstStep from './Steps/First/allocation.reuse.modal.first.step';
 import { SubjectResponse } from '../../../models/http/responses/subject.response.models';
 import { ClassResponse } from '../../../models/http/responses/class.response.models';
@@ -81,7 +81,9 @@ function AllocationReuseModal({
   const [allocationMap, setAllocationMap] = useState<
     Map<number, ScheduleAllocationData>
   >(new Map());
-  const [selectedBuilding, setSelectedBuilding] = useState<BuildingResponse>();
+  const [selectedBuilding, setSelectedBuilding] = useState<
+    BuildingResponse | undefined
+  >(buildings.length === 1 ? buildings[0] : undefined);
   const [allocationReuseResponse, setAllocationReuseResponse] =
     useState<AllocationReuseResponse>();
   const [mustRefetch, setMustRefetch] = useState(
@@ -249,6 +251,11 @@ function AllocationReuseModal({
       });
     handleClose();
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMustRefetch(true);
+  }, [map]);
 
   return (
     <Modal
