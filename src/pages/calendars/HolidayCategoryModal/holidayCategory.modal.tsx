@@ -106,9 +106,10 @@ function HolidayCategoryModal(props: HolidayCategoryModalProps) {
                 <NumberInput
                   name='year'
                   label='Ano'
-                  placeholder='Ano do calendário'
+                  placeholder='Ano da categoria'
                   min={2025}
                   max={2100}
+                  disabled={props.isUpdate}
                 />
               </VStack>
             </ModalBody>

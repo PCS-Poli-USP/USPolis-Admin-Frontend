@@ -5,7 +5,7 @@ import DataTable from '../../components/common/DataTable/dataTable.component';
 import EditUserModal from './UserEditModal/user.edit.modal';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import PageContent from '../../components/common/PageContent';
-import { UserResponse } from '../../models/http/responses/user.response.models';
+import { UserCoreResponse } from '../../models/http/responses/user.response.models';
 import { getUsersColumns } from './Tables/user.table';
 import useUsers from '../../hooks/users/useUsers';
 import useBuildings from '../../hooks/useBuildings';
@@ -16,7 +16,7 @@ const Users = () => {
   const { users, loading, deleteUser, getUsers } = useUsers();
   const { groups, loading: loadingGroups } = useGroups();
 
-  const [selectedUser, setSelectedUser] = useState<UserResponse>();
+  const [selectedUser, setSelectedUser] = useState<UserCoreResponse>();
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
 
@@ -26,12 +26,12 @@ const Users = () => {
     isLoading: loading || loadingBuildings || loadingGroups,
   });
 
-  function handleEditButton(user: UserResponse) {
+  function handleEditButton(user: UserCoreResponse) {
     setSelectedUser(user);
     setEditModalOpen(true);
   }
 
-  function handleDeleteButton(user: UserResponse) {
+  function handleDeleteButton(user: UserCoreResponse) {
     setSelectedUser(user);
     setDeleteDialogOpen(true);
   }

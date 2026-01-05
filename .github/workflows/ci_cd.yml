@@ -22,14 +22,33 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Build project docs
+        run: yarn docs:build
+
+      - name: Move docs build to public folder
+        run: |
+          rm -rf public/docs
+          mv docs/.vitepress/dist public/docs
+
       - name: Build project
         run: yarn build
         env:
           VITE_USPOLIS_API_ENDPOINT: ${{ secrets.VITE_USPOLIS_API_ENDPOINT }}
           VITE_REDIRECT_URI: ${{ secrets.VITE_REDIRECT_URI }}
           VITE_GOOGLE_AUTH_CLIENT_ID: ${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}
+          VITE_USPOLIS_DOCS_URL: ${{ secrets.VITE_USPOLIS_DOCS_URL }}
           VITE_ENVIROMENT: ${{ secrets.VITE_ENVIROMENT }}
-        
+
+      - name: Clean old docs
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSCODE }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            sudo rm -rf /var/www/html/docs/*
+
       - name: Clean old build
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -49,6 +68,17 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: 'build/*'
           target: '/diskb/home/frontend'
+
+      - name: Deploy docs to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+            host: ${{ secrets.SSH_HOST }}
+            username: ${{ secrets.SSH_USER }}
+            password: ${{ secrets.SSH_PASSCODE }}
+            port: ${{ secrets.SSH_PORT }}
+            script: |
+              sudo cp -r /diskb/home/frontend/build/docs/* /var/www/html/docs/
+              sudo rm -rf /diskb/home/frontend/build/docs
 
       - name: Restart frontend service
         uses: appleboy/ssh-action@v0.1.10

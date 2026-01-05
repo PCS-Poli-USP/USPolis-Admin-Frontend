@@ -1,11 +1,26 @@
-import { Button, VStack, HStack, Text, Icon, Link } from '@chakra-ui/react';
+import {
+  Button,
+  VStack,
+  HStack,
+  Text,
+  Icon,
+  Link,
+  useColorMode,
+} from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useContext } from 'react';
-import { FaList, FaRegCalendarTimes, FaRegUser, FaBook } from 'react-icons/fa';
+import {
+  FaGithub,
+  FaList,
+  FaRegCalendarTimes,
+  FaRegUser, 
+  FaBook,
+} from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 import { appContext } from '../../../context/AppContext';
 import {
   CalendarIcon,
+  EmailIcon,
   LockIcon,
   Search2Icon,
   UnlockIcon,
@@ -19,7 +34,10 @@ import { BsCalendar3, BsEnvelopeCheck } from 'react-icons/bs';
 import { HiUserGroup } from 'react-icons/hi';
 import { IconType } from 'react-icons';
 import { VscFeedback, VscReport } from 'react-icons/vsc';
+import { GrDocumentText } from 'react-icons/gr';
 import moment from 'moment';
+
+const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
 
 interface DrawerBodyProps {
   onClose: () => void;
@@ -53,6 +71,7 @@ function DrawerButton({
       variant={'ghost'}
       w={'full'}
       justifyContent={'flex-start'}
+      backgroundColor={'uspolis.white'}
       fontWeight={'normal'}
       onClick={() => {
         if (isMobile) onClose();
@@ -65,6 +84,7 @@ function DrawerButton({
 
 export default function DrawerBody({ onClose }: DrawerBodyProps) {
   const { loggedUser } = useContext(appContext);
+  const { colorMode } = useColorMode();
 
   return (
     <VStack
@@ -72,13 +92,17 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
       p={'10px'}
       spacing={4}
       h={'full'}
-      background={'uspolis.white'}
+      backgroundColor={'uspolis.white'}
     >
       {loggedUser ? (
         <>
           {loggedUser.is_admin ? (
-            <VStack w={'full'} alignItems={'flex-start'}>
-              <HStack>
+            <VStack
+              w={'full'}
+              alignItems={'flex-start'}
+              background={'uspolis.white'}
+            >
+              <HStack backgroundColor={'uspolis.white'}>
                 <Icon as={LockIcon} color={'uspolis.blue'} />
                 <Text color={'uspolis.blue'} fontWeight={'bold'}>
                   Admin
@@ -131,8 +155,12 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
             <></>
           )}
 
-          <VStack w={'full'} alignItems={'flex-start'}>
-            <HStack>
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            background={'uspolis.white'}
+          >
+            <HStack background={'uspolis.white'}>
               <Icon as={UnlockIcon} color={'uspolis.blue'} />
               <Text color={'uspolis.blue'} fontWeight={'bold'}>
                 Público
@@ -161,8 +189,12 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
             />
           </VStack>
 
-          <VStack w={'full'} alignItems={'flex-start'}>
-            <HStack>
+          <VStack
+            w={'full'}
+            alignItems={'flex-start'}
+            background={'uspolis.white'}
+          >
+            <HStack background={'uspolis.white'}>
               <Icon as={MdOutlinePendingActions} color={'uspolis.blue'} />
               <Text color={'uspolis.blue'} fontWeight={'bold'}>
                 Solicitações e reservas
@@ -199,8 +231,12 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           {loggedUser.is_admin ||
           (loggedUser.buildings && loggedUser.buildings.length > 0) ? (
             <>
-              <VStack w={'full'} alignItems={'flex-start'}>
-                <HStack>
+              <VStack
+                w={'full'}
+                alignItems={'flex-start'}
+                backgroundColor={'uspolis.white'}
+              >
+                <HStack background={'uspolis.white'}>
                   <Icon as={LuCalendarClock} color={'uspolis.blue'} />
                   <Text color={'uspolis.blue'} fontWeight={'bold'}>
                     Datas e Feriados
@@ -215,7 +251,11 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                 />
               </VStack>
 
-              <VStack w={'full'} alignItems={'flex-start'}>
+              <VStack
+                w={'full'}
+                alignItems={'flex-start'}
+                backgroundColor={'uspolis.white'}
+              >
                 <HStack>
                   <Icon as={MdAddChart} color={'uspolis.blue'} />
                   <Text color={'uspolis.blue'} fontWeight={'bold'}>
@@ -262,7 +302,11 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           ) : undefined}
         </>
       ) : (
-        <VStack w={'full'} alignItems={'flex-start'}>
+        <VStack
+          w={'full'}
+          alignItems={'flex-start'}
+          backgroundColor={'uspolis.white'}
+        >
           <HStack>
             <Icon as={UnlockIcon} color={'uspolis.blue'} />
             <Text color={'uspolis.blue'} fontWeight={'bold'}>
@@ -278,19 +322,26 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
           />
         </VStack>
       )}
+
       <VStack
         w={'full'}
+        height={'200px'}
         alignItems={'flex-start'}
         gap={'0px'}
         id='menu-drawer-contact'
         background={'uspolis.white'}
+        p={'10px'}
+        pb={'30px'}
       >
-        <Text fontSize={'15px'}>© {moment().year()} USPolis</Text>
-        <HStack align={'center'} justify={'center'} gap={'5px'}>
-          <Text fontSize={'15px'}>Contato:</Text>
+        <HStack
+          align={'center'}
+          justify={'center'}
+          gap={'5px'}
+        >
+          <EmailIcon color={colorMode === 'dark' ? 'white' : 'black'} />
           <Link
             fontSize={'15px'}
-            color={'uspolis.blue'}
+            textColor={'uspolis.black'}
             href={
               'https://mail.google.com/mail/?view=cm&fs=1&to=uspolis@usp.br'
             }
@@ -300,6 +351,43 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
             uspolis@usp.br
           </Link>
         </HStack>
+        <HStack
+          align={'center'}
+          justify={'center'}
+          gap={'5px'}
+          background={'uspolis.white'}
+        >
+          <FaGithub color={colorMode === 'dark' ? 'white' : 'black'} />
+          <Link
+            fontSize={'15px'}
+            textColor={'uspolis.black'}
+            href={'https://github.com/PCS-Poli-USP/USPolis-Admin'}
+            rel='noopener noreferrer'
+            target='_blank'
+          >
+            Github
+          </Link>
+        </HStack>
+        <HStack
+          align={'center'}
+          justify={'center'}
+          gap={'5px'}
+          background={'uspolis.white'}
+        >
+          <GrDocumentText color={colorMode === 'dark' ? 'white' : 'black'} />
+          <Link
+            fontSize={'15px'}
+            textColor={'uspolis.black'}
+            href={DOCS_URL + '/'}
+            rel='noopener noreferrer'
+            target='_blank'
+          >
+            Documentação
+          </Link>
+        </HStack>
+        <Text fontSize={'15px'} textColor={'uspolis.black'}>
+          © {moment().year()} USPolis
+        </Text>
       </VStack>
     </VStack>
   );

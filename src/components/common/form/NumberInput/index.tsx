@@ -18,6 +18,7 @@ interface NumberInputProps extends FieldProps {
   max?: number | undefined;
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onChange?: (valueAsNumber: number) => void;
 }
 
 export function NumberInput({
@@ -35,6 +36,7 @@ export function NumberInput({
   ml = undefined,
   onFocus = undefined,
   onBlur = undefined,
+  onChange = undefined,
 }: NumberInputProps) {
   const {
     control,
@@ -67,6 +69,7 @@ export function NumberInput({
             max={max}
             onChange={(valueAsNumber) => {
               field.onChange(valueAsNumber);
+              if (onChange) onChange(Number(valueAsNumber));
               setInputValue(valueAsNumber);
             }}
             onFocus={onFocus}

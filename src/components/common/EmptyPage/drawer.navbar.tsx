@@ -28,6 +28,10 @@ import { UsersValidator } from '../../../utils/users/users.validator';
 import UserImage from '../UserImage/user.image';
 import { useColorScheme } from '@mui/material';
 import { LuMessageCircleMore } from 'react-icons/lu';
+import { GrDocumentText } from 'react-icons/gr';
+import { isAdminRoute } from '../../../utils/location';
+
+const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
 
 const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
@@ -78,6 +82,15 @@ export function DrawerNavBar({
       state: { from: location },
     });
   }
+
+  function getDocsLocalPath() {
+    const path = location.pathname;
+    if (isAdminRoute(path)) {
+      return DOCS_URL + '/';
+    }
+    return DOCS_URL + path;
+  }
+
   return (
     <Box
       bg='uspolis.blue'
@@ -117,6 +130,32 @@ export function DrawerNavBar({
           </NavLink>
         </HStack>
         <Flex alignItems={'center'} gap={'10px'}>
+          {isMobile ? (
+            <IconButton
+              id='docs-button'
+              as={'a'}
+              href={getDocsLocalPath()}
+              rel='noopener noreferrer'
+              target='_blank'
+              aria-label='docs'
+              icon={<GrDocumentText />}
+            />
+          ) : (
+            <Button
+              id='docs-button'
+              as={'a'}
+              href={getDocsLocalPath()}
+              rel='noopener noreferrer'
+              target='_blank'
+              variant={'ghost'}
+              textColor={'white'}
+              textAlign={'center'}
+              alignContent={'center'}
+              rightIcon={<GrDocumentText />}
+            >
+              {`Documentação`}
+            </Button>
+          )}
           {isAuthenticated ? (
             <>
               {isMobile ? (
@@ -148,7 +187,7 @@ export function DrawerNavBar({
                 <Button
                   variant={'ghost'}
                   mr={'5px'}
-                  hidden={isMobile}
+                  hidden={true}
                   onClick={() => {
                     setPathBeforeGuide(location.pathname);
                     if (location.pathname !== '/allocation') {

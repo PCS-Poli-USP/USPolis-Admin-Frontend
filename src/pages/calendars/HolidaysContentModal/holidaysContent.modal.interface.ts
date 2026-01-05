@@ -6,5 +6,6 @@ export interface HolidaysContentModalProps extends ModalProps {
   isLoading: boolean;
   loggedUser: UserResponse | null;
   categories: HolidayCategoryResponse[];
+  year: number;
   refetch: () => void;
 }

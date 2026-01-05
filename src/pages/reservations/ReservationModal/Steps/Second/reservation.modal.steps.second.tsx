@@ -383,6 +383,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               Visualizar Disponibilidade
             </Button>
           </Flex>
+
           <HStack mt={8}>
             <Text fontSize={'lg'} fontWeight={'bold'}>
               Horários
@@ -406,12 +407,14 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               {'Selecione as Datas'}
             </Text>
           </HStack>
+
           {!reservation_type && (
             <Alert status='error'>
               <AlertIcon />
               Selecione um tipo de reserva primeiro!
             </Alert>
           )}
+
           {!!reservation_type && (
             <>
               <Flex
@@ -555,6 +558,196 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       onBlur={() => props.focusMobile.onBlur(props.container)}
                     />
                   </HStack>
+
+                  {reservation_type == ReservationType.EXAM && (
+                    <Flex direction={'column'} mt={'20px'}>
+                      <Text fontSize={'lg'} fontWeight={'bold'}>
+                        Nome e horários das provas:
+                      </Text>
+                      {errors['labels'] && (
+                        <Text textColor={'red.500'} fontSize={'sm'}>
+                          {errors['labels'].message as string}
+                        </Text>
+                      )}
+                      {props.selectedDays.length === 0 && (
+                        <Text textColor={'red.500'} fontSize={'sm'}>
+                          Selecione as datas para adicionar nomes e horários
+                        </Text>
+                      )}
+                      <Flex direction={'column'} gap={'0px'}>
+                        {labels &&
+                          props.selectedDays.length !== labels.length && (
+                            <Text textColor={'red.500'} fontSize={'sm'}>
+                              Cada data deve ter um nome de prova
+                            </Text>
+                          )}
+                        {times &&
+                          (props.selectedDays.length !== times.length ||
+                            times.filter((time) => !time[0] || !time[1])
+                              .length > 0) && (
+                            <Text textColor={'red.500'} fontSize={'sm'}>
+                              Cada data deve ter um horário de início e fim
+                            </Text>
+                          )}
+                        {formState.errors['times'] && (
+                          <Text textColor={'red.500'} fontSize={'sm'}>
+                            {formState.errors['times']?.message as string}
+                          </Text>
+                        )}
+                      </Flex>
+
+                      <Flex
+                        direction={'column'}
+                        gap={'20px'}
+                        justifyContent={isMobile ? 'center' : 'flex-start'}
+                        justifyItems={isMobile ? 'center' : 'flex-start'}
+                        align={isMobile ? 'center' : undefined}
+                        h={'auto'}
+                      >
+                        {props.selectedDays.map((date, i) => (
+                          <Flex
+                            key={date}
+                            direction={isMobile ? 'column' : 'row'}
+                            align={'center'}
+                            gap={'10px'}
+                            w={'fit-content'}
+                          >
+                            <Text
+                              fontWeight={'bold'}
+                            >{`Data ${moment(date).format('DD/MM/YYYY')}: `}</Text>
+                            <ChakraInput
+                              placeholder='P1, P2, PSUB, etc'
+                              w={'150px'}
+                              size={'sm'}
+                              value={labelMap.get(date) || ''}
+                              maxLength={15}
+                              borderRadius={'5px'}
+                              onChange={(e) => {
+                                if (e.target.value) {
+                                  const newMap = new Map(labelMap);
+                                  newMap.set(
+                                    date,
+                                    e.target.value.toUpperCase(),
+                                  );
+                                  setLabelMap(newMap);
+                                }
+                                if (!e.target.value) {
+                                  const newMap = new Map(labelMap);
+                                  newMap.delete(date);
+                                  setLabelMap(newMap);
+                                }
+                              }}
+                              onFocus={(event) =>
+                                props.focusMobile.onFocusInput(
+                                  event,
+                                  props.container,
+                                  Math.max(100 * i + 250, 400),
+                                )
+                              }
+                              onBlur={() =>
+                                props.focusMobile.onBlur(props.container)
+                              }
+                            />
+                            <Flex
+                              direction={isMobile ? 'column' : 'row'}
+                              gap={'5px'}
+                            >
+                              <Text>Das</Text>
+                              <ChakraInput
+                                type='time'
+                                w={'150px'}
+                                size={'sm'}
+                                value={
+                                  timeMap.get(date) != undefined
+                                    ? timeMap.get(date)?.[0]
+                                    : ''
+                                }
+                                maxLength={15}
+                                borderRadius={'5px'}
+                                onChange={(e) => {
+                                  if (e.target.value) {
+                                    const newMap = new Map(timeMap);
+                                    const value = newMap.get(date);
+                                    newMap.set(
+                                      date,
+                                      value
+                                        ? [e.target.value, value[1]]
+                                        : [e.target.value, ''],
+                                    );
+                                    setTimeMap(newMap);
+                                  }
+                                  if (!e.target.value) {
+                                    const newMap = new Map(timeMap);
+                                    const newValue = newMap.get(date);
+                                    if (newValue && newValue[1] === '')
+                                      newMap.delete(date);
+                                    if (newValue && newValue[1] !== '')
+                                      newMap.set(date, ['', newValue[1]]);
+                                    setTimeMap(newMap);
+                                  }
+                                }}
+                                onFocus={(event) =>
+                                  props.focusMobile.onFocusInput(
+                                    event,
+                                    props.container,
+                                    Math.max(100 * i + 250, 400),
+                                  )
+                                }
+                                onBlur={() =>
+                                  props.focusMobile.onBlur(props.container)
+                                }
+                              />
+                              <Text>Até</Text>
+                              <ChakraInput
+                                type='time'
+                                w={'150px'}
+                                size={'sm'}
+                                value={
+                                  timeMap.get(date) != undefined
+                                    ? timeMap.get(date)?.[1]
+                                    : ''
+                                }
+                                maxLength={15}
+                                borderRadius={'5px'}
+                                onChange={(e) => {
+                                  if (e.target.value) {
+                                    const newMap = new Map(timeMap);
+                                    const value = newMap.get(date);
+                                    newMap.set(
+                                      date,
+                                      value
+                                        ? [value[0], e.target.value]
+                                        : ['', e.target.value],
+                                    );
+                                    setTimeMap(newMap);
+                                  }
+                                  if (!e.target.value) {
+                                    const newMap = new Map(timeMap);
+                                    const newValue = newMap.get(date);
+                                    if (newValue && newValue[0] === '')
+                                      newMap.delete(date);
+                                    if (newValue && newValue[0] !== '')
+                                      newMap.set(date, [newValue[0], '']);
+                                    setTimeMap(newMap);
+                                  }
+                                }}
+                                onFocus={(event) =>
+                                  props.focusMobile.onFocusInput(
+                                    event,
+                                    props.container,
+                                    Math.max(100 * i + 250, 400),
+                                  )
+                                }
+                                onBlur={() =>
+                                  props.focusMobile.onBlur(props.container)
+                                }
+                              />
+                            </Flex>
+                          </Flex>
+                        ))}
+                      </Flex>
+                    </Flex>
+                  )}
                 </VStack>
 
                 <VStack h={'full'} spacing={0} mt={4} alignItems={'center'}>
@@ -605,192 +798,6 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   />
                 </VStack>
               </Flex>
-
-              {reservation_type == ReservationType.EXAM && (
-                <Flex direction={'column'} mt={isMobile ? undefined : '-200px'}>
-                  <Text fontSize={'lg'} fontWeight={'bold'}>
-                    Nome e horários das provas:
-                  </Text>
-                  {errors['labels'] && (
-                    <Text textColor={'red.500'} fontSize={'sm'}>
-                      {errors['labels'].message as string}
-                    </Text>
-                  )}
-                  {props.selectedDays.length === 0 && (
-                    <Text textColor={'red.500'} fontSize={'sm'}>
-                      Selecione as datas para adicionar nomes e horários
-                    </Text>
-                  )}
-                  <Flex direction={'column'} gap={'0px'}>
-                    {labels && props.selectedDays.length !== labels.length && (
-                      <Text textColor={'red.500'} fontSize={'sm'}>
-                        Cada data deve ter um nome de prova
-                      </Text>
-                    )}
-                    {times &&
-                      (props.selectedDays.length !== times.length ||
-                        times.filter((time) => !time[0] || !time[1]).length >
-                          0) && (
-                        <Text textColor={'red.500'} fontSize={'sm'}>
-                          Cada data deve ter um horário de início e fim
-                        </Text>
-                      )}
-                    {formState.errors['times'] && (
-                      <Text textColor={'red.500'} fontSize={'sm'}>
-                        {formState.errors['times']?.message as string}
-                      </Text>
-                    )}
-                  </Flex>
-
-                  <Flex
-                    direction={'column'}
-                    gap={'20px'}
-                    justifyContent={isMobile ? 'center' : 'flex-start'}
-                    justifyItems={isMobile ? 'center' : 'flex-start'}
-                    align={isMobile ? 'center' : undefined}
-                    h={'auto'}
-                  >
-                    {props.selectedDays.map((date, i) => (
-                      <Flex
-                        key={date}
-                        direction={isMobile ? 'column' : 'row'}
-                        align={'center'}
-                        gap={'10px'}
-                        w={'fit-content'}
-                      >
-                        <Text
-                          fontWeight={'bold'}
-                        >{`Data ${moment(date).format('DD/MM/YYYY')}: `}</Text>
-                        <ChakraInput
-                          placeholder='P1, P2, PSUB, etc'
-                          w={'150px'}
-                          size={'sm'}
-                          value={labelMap.get(date) || ''}
-                          maxLength={15}
-                          borderRadius={'5px'}
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              const newMap = new Map(labelMap);
-                              newMap.set(date, e.target.value.toUpperCase());
-                              setLabelMap(newMap);
-                            }
-                            if (!e.target.value) {
-                              const newMap = new Map(labelMap);
-                              newMap.delete(date);
-                              setLabelMap(newMap);
-                            }
-                          }}
-                          onFocus={(event) =>
-                            props.focusMobile.onFocusInput(
-                              event,
-                              props.container,
-                              Math.max(100 * i + 250, 400),
-                            )
-                          }
-                          onBlur={() =>
-                            props.focusMobile.onBlur(props.container)
-                          }
-                        />
-                        <Flex
-                          direction={isMobile ? 'column' : 'row'}
-                          gap={'5px'}
-                        >
-                          <Text>Das</Text>
-                          <ChakraInput
-                            type='time'
-                            w={'150px'}
-                            size={'sm'}
-                            value={
-                              timeMap.get(date) != undefined
-                                ? timeMap.get(date)?.[0]
-                                : ''
-                            }
-                            maxLength={15}
-                            borderRadius={'5px'}
-                            onChange={(e) => {
-                              if (e.target.value) {
-                                const newMap = new Map(timeMap);
-                                const value = newMap.get(date);
-                                newMap.set(
-                                  date,
-                                  value
-                                    ? [e.target.value, value[1]]
-                                    : [e.target.value, ''],
-                                );
-                                setTimeMap(newMap);
-                              }
-                              if (!e.target.value) {
-                                const newMap = new Map(timeMap);
-                                const newValue = newMap.get(date);
-                                if (newValue && newValue[1] === '')
-                                  newMap.delete(date);
-                                if (newValue && newValue[1] !== '')
-                                  newMap.set(date, ['', newValue[1]]);
-                                setTimeMap(newMap);
-                              }
-                            }}
-                            onFocus={(event) =>
-                              props.focusMobile.onFocusInput(
-                                event,
-                                props.container,
-                                Math.max(100 * i + 250, 400),
-                              )
-                            }
-                            onBlur={() =>
-                              props.focusMobile.onBlur(props.container)
-                            }
-                          />
-                          <Text>Até</Text>
-                          <ChakraInput
-                            type='time'
-                            w={'150px'}
-                            size={'sm'}
-                            value={
-                              timeMap.get(date) != undefined
-                                ? timeMap.get(date)?.[1]
-                                : ''
-                            }
-                            maxLength={15}
-                            borderRadius={'5px'}
-                            onChange={(e) => {
-                              if (e.target.value) {
-                                const newMap = new Map(timeMap);
-                                const value = newMap.get(date);
-                                newMap.set(
-                                  date,
-                                  value
-                                    ? [value[0], e.target.value]
-                                    : ['', e.target.value],
-                                );
-                                setTimeMap(newMap);
-                              }
-                              if (!e.target.value) {
-                                const newMap = new Map(timeMap);
-                                const newValue = newMap.get(date);
-                                if (newValue && newValue[0] === '')
-                                  newMap.delete(date);
-                                if (newValue && newValue[0] !== '')
-                                  newMap.set(date, [newValue[0], '']);
-                                setTimeMap(newMap);
-                              }
-                            }}
-                            onFocus={(event) =>
-                              props.focusMobile.onFocusInput(
-                                event,
-                                props.container,
-                                Math.max(100 * i + 250, 400),
-                              )
-                            }
-                            onBlur={() =>
-                              props.focusMobile.onBlur(props.container)
-                            }
-                          />
-                        </Flex>
-                      </Flex>
-                    ))}
-                  </Flex>
-                </Flex>
-              )}
             </>
           )}
         </form>

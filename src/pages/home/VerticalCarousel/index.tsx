@@ -61,7 +61,6 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [relativeScroll, setRelativeScroll] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -84,7 +83,6 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
       if (index >= 0 && index < items.length && index !== currentImageIndex) {
         setCurrentImageIndex(index);
       }
-      setRelativeScroll(scrollY - componentTop - boxH / 2);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });

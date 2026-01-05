@@ -5,6 +5,8 @@ export function sortHolidaysCategoriesResponse(
   A: HolidayCategoryResponse,
   B: HolidayCategoryResponse,
 ) {
+  if (A.year < B.year) return 1;
+  if (A.year > B.year) return -1;
   if (A.name < B.name) return -1;
   if (A.name > B.name) return 1;
   return 0;

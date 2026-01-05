@@ -13,12 +13,14 @@ export interface OccurrenceConflict {
 export default interface Conflict {
   id: number;
   name: string;
+  total_conflicts: number;
   conflicts: ByClassroomConflict[];
 }
 
 interface ByClassroomConflict {
   id: number;
   name: string;
+  total_classroom_conflicts: number;
   conflicts: { [key: string]: OccurrenceConflict[][] };
 }
 

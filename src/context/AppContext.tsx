@@ -56,7 +56,7 @@ export default function AppContextProvider({
       const self = await selfService.getSelf();
       setLoggedUser({
         ...self.data,
-        buildings: !!self.data.buildings
+        buildings: self.data.buildings
           ? self.data.buildings.sort((a, b) => a.name.localeCompare(b.name))
           : [],
       });

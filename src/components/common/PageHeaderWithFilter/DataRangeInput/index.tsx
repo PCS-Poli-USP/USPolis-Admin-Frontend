@@ -31,6 +31,7 @@ interface DateRangeInputProps {
   setEnd: (end: string) => void;
   onConfirm: (start: string, end: string) => void;
   isMobile: boolean;
+  label?: string;
 }
 
 function DateRangeInput({
@@ -41,6 +42,7 @@ function DateRangeInput({
   setEnd,
   onConfirm,
   isMobile,
+  label = 'Período: Atual',
 }: DateRangeInputProps) {
   const { isOpen, onClose, onToggle } = useDisclosure();
   const [rangeApplied, setRangeApplied] = useState(false);
@@ -131,7 +133,7 @@ function DateRangeInput({
                 align={'center'}
                 onClick={onToggle}
               >
-                <Text fontWeight={'bold'}>Período: Atual</Text>
+                <Text fontWeight={'bold'}>{label}</Text>
               </Flex>
             )}
             {rangeApplied && (

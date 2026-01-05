@@ -31,8 +31,10 @@
     "chakra-react-select": "^5.0.2",
     "formik": "^2.4.5",
     "framer-motion": "^12.23.12",
+    "install": "^0.13.0",
     "moment": "^2.30.1",
     "motion": "^12.6.5",
+    "npm": "^11.6.2",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-dropzone": "^14.3.8",
@@ -41,8 +43,11 @@
     "react-joyride": "^2.9.3",
     "react-router-dom": "6.3.0",
     "react-select": "^5.8.3",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.1",
     "rrule": "^2.8.1",
     "uuid": "^13.0.0",
+    "vite-plugin-eslint": "^1.8.1",
     "web-vitals": "2.1.4",
     "yup": "^1.6.1"
   },
@@ -59,13 +64,14 @@
     "eslint": "^9.26.0",
     "eslint-config-prettier": "^10.1.3",
     "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "globals": "^16.1.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.32.0",
+    "typescript-eslint": "^8.46.4",
     "vite": "^6.3.1",
-    "vite-plugin-eslint": "^1.8.1"
+    "vite-eslint-plugin": "^1.9.2",
+    "vitepress": "^1.6.4"
   },
   "scripts": {
     "start": "vite",
@@ -73,7 +79,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx src/",
-    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css}\""
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css}\"",
+    "docs": "vitepress dev docs --port 3001 --debug",
+    "docs:build": "vitepress build docs",
+    "docs:serve": "vitepress serve docs",
+    "docs:preview": "vitepress preview docs"
   },
   "browserslist": {
     "production": [

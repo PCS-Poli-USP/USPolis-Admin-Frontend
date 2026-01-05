@@ -1,5 +1,5 @@
 import PageContent from '../../components/common/PageContent';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   AlertIcon,
@@ -8,14 +8,13 @@ import {
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
-import { SelectInstance } from 'react-select';
 import useSubjects from '../../hooks/useSubjetcts';
 import useClasses from '../../hooks/classes/useClasses';
 import useExams from '../../hooks/exams/useExams';
 
 import ExamClassAccordion from './ExamClassAccordion';
 import { classNumberFromClassCode } from '../../utils/classes/classes.formatter';
-import TooltipSelect, { Option } from '../../components/common/TooltipSelect';
+import TooltipSelect from '../../components/common/TooltipSelect';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
 import HelpPopover from '../../components/common/HelpPopover';
@@ -28,7 +27,6 @@ type OptionType = {
 
 function FindExams() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
-  const selectRef = useRef<SelectInstance<Option>>(null);
   const { loading: loadingS, subjects, getAllSubjects } = useSubjects(false);
   const { classes, getClassesBySubject, loading } = useClasses(false);
   const { loading: loadingExams, exams, getExams } = useExams();
@@ -36,8 +34,10 @@ function FindExams() {
     (exam) => exam.reservation.status == ReservationStatus.APPROVED,
   );
 
-  const [subjectOption, setSubjectOption] = useState<Option>();
-  const [classOption, setClassOption] = useState<Option>();
+  const subjectWithExams = activeExams.map((exam) => exam.subject_id);
+
+  const [selectedSubjectId, setSelectedSubjectId] = useState<number>();
+  const [selectedClassId, setSelectedClassId] = useState<number>();
 
   const pageHeaderProps = usePageHeaderWithFilter();
 
@@ -46,6 +46,21 @@ function FindExams() {
     getExams();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const subjectOptions = subjects
+    .filter((subject) => subjectWithExams.includes(subject.id))
+    .map<OptionType>((subject) => ({
+      value: subject.id,
+      label: `${subject.code} - ${subject.name}`,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+
+  const classesOptions = classes
+    ? classes.map<OptionType>((c) => ({
+        value: c.id,
+        label: classNumberFromClassCode(c.code),
+      }))
+    : [];
 
   return (
     <PageContent>
@@ -85,85 +100,84 @@ function FindExams() {
           <Box w={isMobile ? '100%' : '400px'}>
             <Text>Disciplina: </Text>
             <TooltipSelect
-              placeholder='Selecione uma disciplina'
-              value={subjectOption}
+              placeholder={
+                subjectOptions.length > 0
+                  ? 'Selecione uma disciplina'
+                  : 'Nenhuma disciplina com prova encontrada'
+              }
+              isDisabled={subjectOptions.length == 0}
               isClearable={true}
+              isMulti={false}
+              value={subjectOptions.filter(
+                (opt) => opt.value == selectedSubjectId,
+              )}
               isLoading={loading || loadingS || loadingExams}
-              options={subjects
-                .map<OptionType>((subject) => ({
-                  value: subject.id,
-                  label: `${subject.code} - ${subject.name}`,
-                }))
-                .sort((a, b) => a.label.localeCompare(b.label))}
+              options={subjectOptions}
               onChange={(option) => {
                 if (option) {
-                  setSubjectOption(option);
+                  setSelectedSubjectId(option.value as number);
                   getClassesBySubject(option.value as number);
-                } else {
-                  setSubjectOption(undefined);
-                  if (selectRef.current) selectRef.current.clearValue();
+                }
+                if (!option) {
+                  setSelectedSubjectId(undefined);
                 }
               }}
             />
           </Box>
 
-          <Box hidden={!subjectOption} w={isMobile ? '100%' : '400px'}>
+          <Box hidden={!selectedSubjectId} w={isMobile ? '100%' : '400px'}>
             <Text>Turma: </Text>
             <TooltipSelect
-              ref={selectRef}
-              value={classOption}
+              value={classesOptions.filter(
+                (opt) => opt.value == selectedClassId,
+              )}
               isClearable={true}
               placeholder={
-                !subjectOption
+                !selectedSubjectId
                   ? 'Selecione uma disciplina primeiro'
                   : classes.length > 0
                     ? 'Selecione uma turma'
                     : 'Nenhuma turma disponível'
               }
-              options={
-                classes
-                  ? classes.map<OptionType>((c) => ({
-                      value: c.id,
-                      label: classNumberFromClassCode(c.code),
-                    }))
-                  : []
-              }
-              isDisabled={!subjectOption || classes.length === 0}
+              options={classesOptions}
+              isDisabled={!selectedSubjectId || classes.length === 0}
               onChange={(option) => {
                 if (option) {
-                  setClassOption(option);
+                  setSelectedClassId(option.value as number);
                 } else {
-                  setClassOption(undefined);
+                  setSelectedClassId(undefined);
                 }
               }}
             />
           </Box>
         </Flex>
-        <Box>
-          {!subjectOption ? (
-            <Alert status='warning' borderRadius={'5px'}>
+        <Box w={isMobile ? '100%' : '820px'}>
+          {!selectedSubjectId ? (
+            <Alert status='warning' borderRadius={'5px'} w={'full'}>
               <AlertIcon />
-              Selecione uma disciplina
+              {subjectOptions.length > 0
+                ? 'Selecione uma disciplina'
+                : 'Nenhuma disciplina com prova encontrada'}
             </Alert>
           ) : (
             <Box>
               <Text fontSize='2xl' mb={'10px'}>
                 Provas:{' '}
               </Text>
-              {subjectOption ? (
+              {selectedSubjectId ? (
                 <>
                   {activeExams.length > 0 && (
                     <ExamClassAccordion
                       exams={activeExams.filter((exam) => {
-                        if (classOption) {
+                        if (selectedClassId) {
                           return (
-                            exam.subject_id == subjectOption.value &&
+                            exam.subject_id == selectedSubjectId &&
                             exam.classes
                               .map((cls) => cls.id)
-                              .includes(classOption.value as number)
+                              .includes(selectedClassId)
                           );
                         }
-                        return exam.subject_id == subjectOption.value;
+                        return exam.subject_id == selectedSubjectId;
                       })}
                       loading={loading}
                     />

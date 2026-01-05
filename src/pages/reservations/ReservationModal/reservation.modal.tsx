@@ -478,10 +478,9 @@ function ReservationModal(props: ReservationModalProps) {
               ? `${focusMobile.paddingBottom}px`
               : undefined
           }
-          overflowY={'auto'}
           transition={'padding-bottom 0.25s'}
         >
-          <VStack w={'full'}>
+          <VStack w={'full'} h={'full'}>
             <Stepper size='lg' index={activeStep} alignItems={'center'}>
               {steps.map((step, index) => (
                 <Step key={index} onClick={() => setActiveStep(index)}>

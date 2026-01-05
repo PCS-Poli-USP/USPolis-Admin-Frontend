@@ -7,8 +7,10 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 
 function DateCalendarPicker(props: DateCalendarPickerProps) {
   const currentYear = moment().year();
-  const minDate = moment({ year: currentYear, month: 0, day: 1 }); // Janeiro 1º do ano atual
-  const maxDate = moment({ year: currentYear + 1, month: 11, day: 31 }); // Dezembro 31 do ano atual
+  const minDate =
+    props.minDate || moment({ year: currentYear, month: 0, day: 1 }); // Janeiro 1º do ano atual
+  const maxDate =
+    props.maxDate || moment({ year: currentYear + 1, month: 11, day: 31 }); // Dezembro 31 do ano atual
   return (
     <Flex direction={'column'} justify={'stretch'} h={'fit-content'}>
       <Flex direction={'row'} justify={'center'} align={'center'} gap={'5px'}>
@@ -32,8 +34,8 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
         <DateCalendar
           disabled={props.disabled}
           readOnly={props.readOnly}
-          minDate={props.minDate ? props.minDate : minDate}
-          maxDate={props.maxDate ? props.maxDate : maxDate}
+          minDate={minDate}
+          maxDate={maxDate}
           views={['day']}
           renderLoading={() => <DayCalendarSkeleton />}
           disableHighlightToday={true}
@@ -51,7 +53,8 @@ function DateCalendarPicker(props: DateCalendarPickerProps) {
             } as any,
           }}
           onChange={(newValue: Moment) => {
-            if (!!props.readOnly) return;
+            if (props.readOnly) return;
+            if (newValue < minDate || newValue > maxDate) return;
             const date = moment(newValue).format('YYYY-MM-DD');
             props.dayClick(date);
           }}

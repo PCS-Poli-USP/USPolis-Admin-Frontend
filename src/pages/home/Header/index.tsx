@@ -18,9 +18,14 @@ import { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserImage from '../../../components/common/UserImage/user.image';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { useColorScheme } from '@mui/material';
+
+const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
 
 function Header() {
   const { colorMode, setColorMode } = useColorMode();
+  const { setMode } = useColorScheme();
+  
   const isDark = colorMode === 'dark';
   const context = useContext(appContext);
   const location = useLocation();
@@ -92,10 +97,15 @@ function Header() {
       >
         Sobre
       </Button>
-      <Flex direction={'row'} justify={'center'} gap={'10px'} align={'center'}>
+      <Flex
+        direction={'row'}
+        justify={'center'}
+        gap={'10px'}
+        align={'center'}
+        ml={'100px'}
+      >
         <Button
           // as={'a'}
-          ml={'100px'}
           variant={'link'}
           color={isDark ? 'white' : 'teal'}
           _hover={{
@@ -167,8 +177,25 @@ function Header() {
           variant={'ghost'}
           ml={'10px'}
           icon={isDark ? <SunIcon /> : <MoonIcon />}
-          onClick={() => setColorMode(isDark ? 'light' : 'dark')}
+          onClick={() => {
+            setColorMode(isDark ? 'light' : 'dark');
+            setMode(isDark ? 'light' : 'dark');
+          }}
         />
+        <Button
+          id='docs-button'
+          as={'a'}
+          href={DOCS_URL + '/'}
+          rel='noopener noreferrer'
+          target='_blank'
+          variant={'ghost'}
+          textColor={'uspolis.text'}
+          textAlign={'center'}
+          alignContent={'center'}
+          // rightIcon={<GrDocumentText />}
+        >
+          {`Documentação`}
+        </Button>
       </Flex>
     </Flex>
   );
