@@ -16,7 +16,6 @@ import {
   useDisclosure,
   useColorMode,
 } from '@chakra-ui/react';
-import Select from 'react-select';
 import PageContent from '../../components/common/PageContent';
 import useCustomToast from '../../hooks/useCustomToast';
 import useClasses from '../../hooks/classes/useClasses';
@@ -224,7 +223,7 @@ const ReportsPage = () => {
         <Flex direction='row' gap={4} mb={4}>
           <Flex direction='column' flex={1}>
             <Text fontSize='md'>Prédio:</Text>
-            <Select
+            <TooltipSelect
               placeholder='Selecione o prédio'
               options={buildings.filter((value) => 
                 loggedUser?.is_admin || userBuildingIds.includes(value.id))
