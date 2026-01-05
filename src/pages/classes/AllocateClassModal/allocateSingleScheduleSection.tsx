@@ -253,7 +253,7 @@ const AllocateSingleScheduleSection = forwardRef<
                 </Text>
               )}
               <Text>
-                Recorrencia:{' '}
+                Recorrência:{' '}
                 <strong>{Recurrence.translate(schedule.recurrence)}</strong>
               </Text>
               {schedule.recurrence !== Recurrence.CUSTOM && (

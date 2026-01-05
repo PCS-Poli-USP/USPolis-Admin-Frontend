@@ -104,8 +104,14 @@ export function AllocateClassModal({
             {inputClass ? (
               <>
                 <ModalHeader>
-                  Alocar Turma: {inputClass.subject_code} -{' '}
-                  {classNumberFromClassCode(inputClass.code)}
+                  Alocar Turma: {classNumberFromClassCode(inputClass.code)} - {' '}
+                  {inputClass.subject_code}{' ('}{inputClass.subject_name}{')'}
+                <Text>
+                  Vagas:{' '}
+                  <strong>
+                    {inputClass?.vacancies}
+                  </strong>
+                </Text>
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
