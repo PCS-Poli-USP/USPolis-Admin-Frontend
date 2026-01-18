@@ -100,7 +100,7 @@ const ReportsPage = () => {
       onOpen: onOpenAllocEdit,
       onClose: onCloseAllocEdit,
     } = useDisclosure();
-  const {classes, getClasses } = useClasses();
+  const {classes, getClasses, loading: classesLoading } = useClasses();
 
   //carrega os buildings (uma vez no início)
   useEffect(() => {
@@ -355,6 +355,8 @@ const ReportsPage = () => {
                                 <Button
                                   mr={2}
                                   colorScheme={'blue'}
+                                  isLoading={classesLoading}
+                                  loadingText="Carregando"
                                   onClick={() => {
                                     if (!c.class_id || classes.length === 0) return;
                                     const foundClasses = c.class_id

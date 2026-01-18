@@ -13,8 +13,8 @@ const useOccupanceReportsService = () => {
     return axios.get(`/buildings/occupance_reports/${buildingId}`,
       {
         params: {
-          ...(startDate ? { start_date: startDate } : {}),
-          ...(endDate ? { end_date: endDate } : {}),
+          ...(startDate ? { start: startDate } : {}),
+          ...(endDate ? { end: endDate } : {}),
         },
       }
     );
