@@ -26,7 +26,12 @@ import {
   UnlockIcon,
 } from '@chakra-ui/icons';
 import { LiaBuilding } from 'react-icons/lia';
-import { MdAddChart, MdDevices, MdEvent, MdOutlinePendingActions } from 'react-icons/md';
+import {
+  MdAddChart,
+  MdDevices,
+  MdEvent,
+  MdOutlinePendingActions,
+} from 'react-icons/md';
 import { LuCalendarClock } from 'react-icons/lu';
 import { GiBookCover, GiTeacher } from 'react-icons/gi';
 import { PiChair, PiExamLight } from 'react-icons/pi';

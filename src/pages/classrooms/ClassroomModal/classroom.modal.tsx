@@ -11,6 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  StackDivider,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -45,6 +46,9 @@ export default function ClassroomModal(props: ClassroomModalProps) {
   const { createClassroom, updateClassroom } = useClassrooms();
 
   const building_id = watch('building_id');
+  const remote = watch('remote');
+  const laboratory = watch('laboratory');
+  const reservable = watch('reservable');
 
   useEffect(() => {
     if (props.selectedClassroom) {
@@ -82,7 +86,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
     <Modal
       isOpen={props.isOpen}
       onClose={handleCloseModal}
-      size={'lg'}
+      size={'3xl'}
       closeOnOverlayClick={false}
     >
       <ModalOverlay />
@@ -132,54 +136,106 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                   placeholder={'Capacidade da sala'}
                 />
               </Flex>
-              <Text fontWeight={'bold'} mt={4} mb={'10px'}>
-                Recursos
-              </Text>
 
-              <VStack w={'full'} alignItems={'start'} gap={'10px'} mb={'10px'}>
-                <CheckBox text={'Ar condicionado'} name={'air_conditioning'} />
-                <CheckBox text={'Acessibilidade'} name={'accessibility'} />
-                <SelectInput
-                  name='audiovisual'
-                  label='Recurso audiovisual'
-                  w={'250px'}
-                  options={AudiovisualType.values().map((type) => ({
-                    label: AudiovisualType.translate(type),
-                    value: type,
-                  }))}
-                />
-              </VStack>
-
-              <HStack
-                w={'full'}
-                align={'center'}
-                justify={'start'}
-                gap={'10px'}
-                mb={'10px'}
-              >
-                <Text fontWeight={'bold'}>Preferências</Text>
-                <HelpPopover title='O que são preferências?'>
-                  <Flex direction={'column'} gap={'5px'} textAlign={'justify'}>
-                    <Text fontSize={'sm'}>
-                      As preferências são configurações que determinam como a
-                      sala pode ser utilizada.
-                    </Text>
-                    <Text fontSize={'sm'}>
-                      Se uma sala é reservável, ela pode ser solicitada pelos
-                      usuários.
-                    </Text>
-                    <Text fontSize={'sm'}>
-                      Se ela é oculta, não vai aparecer no mapa de salas, nos relatórios e será ignorada para verificar CONFLITOS.
-                    </Text>
+              <Flex mt={'20px'} mb={'20px'}>
+                <VStack w={'full'} alignItems={'start'} gap={'10px'}>
+                  <Flex justify={'space-between'} w={'full'}>
+                    <Flex direction={'column'} gap={'10px'} mr={'20px'}>
+                      <Text fontWeight={'bold'}>Recursos</Text>
+                      <CheckBox
+                        text={'Ar condicionado'}
+                        name={'air_conditioning'}
+                      />
+                      <CheckBox
+                        text={'Acessibilidade'}
+                        name={'accessibility'}
+                      />
+                    </Flex>
                   </Flex>
-                </HelpPopover>
-              </HStack>
 
-              <HStack w={'full'} alignItems={'start'} gap={'10px'} mb={'10px'}>
-                <CheckBox text={'Reservável'} name={'reservable'} />
-                <CheckBox text={'Oculta'} name={'remote'} />
-              </HStack>
+                  <SelectInput
+                    name='audiovisual'
+                    label='Recurso audiovisual'
+                    w={'250px'}
+                    options={AudiovisualType.values().map((type) => ({
+                      label: AudiovisualType.translate(type),
+                      value: type,
+                    }))}
+                  />
+                </VStack>
 
+                <Flex direction={'column'} gap={'10px'}>
+                  <HStack
+                    w={'full'}
+                    align={'center'}
+                    justify={'start'}
+                    gap={'10px'}
+                  >
+                    <Text fontWeight={'bold'}>Configurações</Text>
+                    <HelpPopover title='O que são configurações?' placement='right'>
+                      <VStack
+                        direction={'column'}
+                        gap={'5px'}
+                        textAlign={'justify'}
+                        divider={<StackDivider />}
+                      >
+                        <Text fontSize={'sm'}>
+                          As configurações determinam a natureza da sala e como
+                          ela pode ser utilizada.
+                        </Text>
+                        <Text fontSize={'sm'}>
+                          Se ela é <strong>remota</strong>, não vai aparecer no
+                          mapa de salas nem nos relatórios e será ignorada para
+                          verificar CONFLITOS.
+                        </Text>
+                        <Text fontSize={'sm'}>
+                          Se ela é um <strong>laboratório</strong>, vai ter um
+                          indentificador [LAB], não pode ser remota podendo ser
+                          reservável ou não.
+                        </Text>
+                        <Text fontSize={'sm'}>
+                          Se uma sala é <strong>reservável</strong>, ela pode
+                          ser solicitada pelos usuários, não podendo ser remota.
+                        </Text>
+                        <Text fontSize={'sm'}>
+                          Se ela é <strong>restrita</strong>, apenas usuários
+                          permissionados poderão reservá-la ou ver ela no mapa
+                          de salas.
+                        </Text>
+                      </VStack>
+                    </HelpPopover>
+                  </HStack>
+
+                  <CheckBox
+                    text={'Remoto'}
+                    name={'remote'}
+                    disabled={laboratory || reservable}
+                    onChange={(value) => {
+                      if (value) {
+                        form.setValue('laboratory', false);
+                        form.setValue('reservable', false);
+                      }
+                    }}
+                  />
+                  <CheckBox
+                    text={'Laboratório'}
+                    name={'laboratory'}
+                    disabled={remote}
+                    onChange={(value) => {
+                      if (value) form.setValue('remote', false);
+                    }}
+                  />
+                  <CheckBox
+                    text={'Reservável'}
+                    name={'reservable'}
+                    disabled={remote}
+                    onChange={(value) => {
+                      if (value) form.setValue('remote', false);
+                    }}
+                  />
+                  <CheckBox text={'Restrita'} name={'restricted'} />
+                </Flex>
+              </Flex>
               <MultiSelectInput
                 label='Grupos'
                 name='group_ids'
@@ -212,7 +268,11 @@ export default function ClassroomModal(props: ClassroomModalProps) {
               >
                 Selecionar todos
               </Checkbox>
-              <TextareaInput name='observation' label='Observação' mt={'5px'} />
+              <TextareaInput
+                name='observation'
+                label='Observação'
+                mt={'20px'}
+              />
             </form>
           </FormProvider>
         </ModalBody>

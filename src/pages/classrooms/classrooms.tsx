@@ -9,7 +9,7 @@ import {
 
 import DataTable from '../../components/common/DataTable/dataTable.component';
 import Dialog from '../../components/common/Dialog/dialog.component';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ClassroomModal from './ClassroomModal/classroom.modal';
 import useBuildings from '../../hooks/useBuildings';
 import useClassrooms from '../../hooks/classrooms/useClassrooms';
@@ -17,6 +17,15 @@ import { ClassroomResponse } from '../../models/http/responses/classroom.respons
 import { getClassroomColumns } from './Tables/classroom.tables';
 import PageContent from '../../components/common/PageContent';
 import useGroups from '../../hooks/groups/useGroups';
+import { FaUserLock } from 'react-icons/fa';
+import { AddIcon } from '@chakra-ui/icons';
+import ClassroomPermissions from './ClassroomPermission/classroom.permission';
+import useUsers from '../../hooks/users/useUsers';
+import useClassroomPermissions from '../../hooks/classroomPermissions/useClassroomPermissions';
+import {
+  ClassroomPermissionByClassroomResponse,
+  ClassroomPermissionByUserResponse,
+} from '../../models/http/responses/classroomPermission.response.models';
 
 function Classrooms() {
   const {
@@ -29,6 +38,11 @@ function Classrooms() {
     onOpen: onOpenDelete,
     onClose: onCloseDelete,
   } = useDisclosure();
+  const {
+    isOpen: isOpenPermissions,
+    onOpen: onOpenPermissions,
+    onClose: onClosePermissions,
+  } = useDisclosure();
 
   const [selectedClassroom, setSelectedClassroom] =
     useState<ClassroomResponse>();
@@ -37,6 +51,19 @@ function Classrooms() {
   const { loading: loadingGroups, groups } = useGroups();
   const { loading, classrooms, getClassrooms, deleteClassroom } =
     useClassrooms();
+  const {
+    loading: loadingPermissions,
+    getAllClassroomPermissionsByClassroom,
+    getAllClassroomPermissionsByUser,
+  } = useClassroomPermissions(false);
+  const { loading: loadingUsers, users } = useUsers();
+
+  const [permissionsByClassroom, setPermissionsByClassroom] = useState<
+    ClassroomPermissionByClassroomResponse[]
+  >([]);
+  const [permissionsByUser, setPermissionsByUser] = useState<
+    ClassroomPermissionByUserResponse[]
+  >([]);
 
   const columns = getClassroomColumns({
     handleDuplicateClick: handleDuplicateClick,
@@ -74,6 +101,24 @@ function Classrooms() {
     }
     onCloseDelete();
   }
+
+  function refetchClassrooms() {
+    getClassrooms();
+    fetchClassroomPermissions();
+  }
+
+  async function fetchClassroomPermissions() {
+    const byClassrooms = await getAllClassroomPermissionsByClassroom();
+    setPermissionsByClassroom(byClassrooms);
+    const byUsers = await getAllClassroomPermissionsByUser();
+    setPermissionsByUser(byUsers);
+  }
+
+  useEffect(() => {
+    fetchClassroomPermissions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <PageContent>
       <ClassroomModal
@@ -86,8 +131,18 @@ function Classrooms() {
         isUpdate={isUpdate}
         buildings={buildings}
         groups={groups}
-        refetch={getClassrooms}
+        refetch={refetchClassrooms}
         selectedClassroom={selectedClassroom}
+      />
+      <ClassroomPermissions
+        users={users}
+        classrooms={classrooms}
+        isOpen={isOpenPermissions}
+        onClose={onClosePermissions}
+        permissionsByClassrooms={permissionsByClassroom}
+        permissionsByUsers={permissionsByUser}
+        loading={loadingPermissions || loadingUsers}
+        refetch={fetchClassroomPermissions}
       />
       <Dialog
         isOpen={isOpenDelete}
@@ -104,9 +159,22 @@ function Classrooms() {
             Salas de aula
           </Text>
           <Spacer />
-          <Button colorScheme='blue' onClick={handleCreateClick}>
-            Cadastrar
-          </Button>
+          <Flex gap={'5px'}>
+            <Button
+              rightIcon={<FaUserLock />}
+              onClick={() => onOpenPermissions()}
+              isLoading={loadingPermissions}
+            >
+              Permissões
+            </Button>
+            <Button
+              colorScheme='blue'
+              onClick={handleCreateClick}
+              rightIcon={<AddIcon />}
+            >
+              Cadastrar
+            </Button>
+          </Flex>
         </Flex>
         <DataTable
           loading={loading || loadingBuildings || loadingGroups}
