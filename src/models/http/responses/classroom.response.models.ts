@@ -13,11 +13,15 @@ export interface ClassroomResponse {
   observation: string;
   reservable: boolean;
   remote: boolean;
+  laboratory: boolean;
+  restricted: boolean;
   updated_at: string;
   created_by_id: number;
   created_by: string;
   building_id: number;
   building: string;
+  group_ids: number[];
+  groups: string[];
 }
 
 export interface ClassroomFullResponse extends ClassroomResponse {
