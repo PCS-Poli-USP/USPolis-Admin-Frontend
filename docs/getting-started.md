@@ -19,8 +19,8 @@ A primeira coisa que você deve fazer é se **registrar no sistema**, através d
   width: 100%;
 ">
   <img 
-    src="/image.png" 
-    alt="Descrição"
+    src="/images/entrar.gif" 
+    alt="Barra de navegação"
     style="
       border-radius: 8px;
       max-width: 100%;
@@ -40,8 +40,8 @@ Ao clicar no botão você verá a seguinte tela, utilize a sua conta **usp**, ca
   width: 100%;
 ">
   <img 
-    src="/image-1.png" 
-    alt="Descrição"
+    src="/images/login.gif" 
+    alt="Login do Google"
     style="
       border-radius: 8px;
       max-width: 40%;
@@ -61,8 +61,8 @@ Pronto, agora você tem uma conta no USPolis! Agora você será redirecionado pa
   width: 100%;
 ">
   <img 
-    src="/image-2.png" 
-    alt="Descrição"
+    src="/images/menu-lateral.gif" 
+    alt="Menu lateral no Mapa de Salas"
     style="
       border-radius: 8px;
       max-width: 100%;
