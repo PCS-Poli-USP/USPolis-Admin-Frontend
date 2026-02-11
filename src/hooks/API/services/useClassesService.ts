@@ -9,7 +9,6 @@ import {
 } from '../../../models/http/requests/class.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
-
 const useClassesService = () => {
   const PREFIX = '/classes';
   const axiosPrivate = useAxiosPrivate();
@@ -48,7 +47,9 @@ const useClassesService = () => {
       const params = new URLSearchParams();
       params.append('start', start);
       params.append('end', end);
-      return axiosPrivate.get(`${PREFIX}/building/${building_name}`, { params });
+      return axiosPrivate.get(`${PREFIX}/building/${building_name}`, {
+        params,
+      });
     }
     return axiosPrivate.get(`${PREFIX}/building/${building_name}`);
   };
@@ -60,7 +61,7 @@ const useClassesService = () => {
   const getOneFull = (
     id: number,
   ): Promise<AxiosResponse<ClassFullResponse>> => {
-    return axiosPrivate.get(`${PREFIX}/${id}/full/`);
+    return axiosPrivate.get(`${PREFIX}/${id}/full`);
   };
 
   const getById = (id: number): Promise<AxiosResponse<ClassResponse>> => {
@@ -84,10 +85,6 @@ const useClassesService = () => {
     return axiosPrivate.post(PREFIX, data);
   };
 
-  // createMany(data: string[]): Promise<AxiosResponse<any>> {
-  //   return axios.post('many', data);
-  // }
-
   const update = (id: number, data: UpdateClass) => {
     return axiosPrivate.put(`${PREFIX}/${id}`, data);
   };
@@ -100,7 +97,7 @@ const useClassesService = () => {
     const params = new URLSearchParams();
     ids.forEach((id) => params.append('ids', id.toString()));
 
-    return axiosPrivate.delete(`${PREFIX}/many/`, {
+    return axiosPrivate.delete(`${PREFIX}/many`, {
       params: params,
     });
   };
