@@ -29,14 +29,16 @@ export default function ClassOccurrencesModal({
   const [classFull, setClassFull] = useState<ClassFullResponse | undefined>(
     undefined,
   );
-  const { getClassFull } = useClasses(false);
+  const { loading, getClassFull } = useClasses(false);
 
   useEffect(() => {
-    const getOccurrences = async () => {
-      const full = await getClassFull(selectedClass.id);
-      setClassFull(full);
-    };
-    getOccurrences();
+    if (!loading) {
+      const getOccurrences = async () => {
+        const full = await getClassFull(selectedClass.id);
+        setClassFull(full);
+      };
+      getOccurrences();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClass]);
 
