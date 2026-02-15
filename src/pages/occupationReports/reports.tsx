@@ -11,16 +11,24 @@ import {
   Box,
   Divider,
   Grid,
+  Button,
+  VStack,
+  useDisclosure,
   useColorMode,
 } from '@chakra-ui/react';
 import PageContent from '../../components/common/PageContent';
 import useCustomToast from '../../hooks/useCustomToast';
+import useClasses from '../../hooks/classes/useClasses';
 import useBuildingsService from '../../hooks/API/services/useBuildingsService';
 import useOccupanceReportsService from '../../hooks/API/services/useOccupanceReportsService';
 import { BuildingResponse } from '../../models/http/responses/building.response.models';
 import OccupanceReports from '../../models/http/responses/occupanceReports.response.models';
 import { appContext } from '../../context/AppContext';
 import { WeekDay } from '../../utils/enums/weekDays.enum';
+import { AllocateClassModal } from '../classes/AllocateClassModal';
+import { ClassResponse } from '../../models/http/responses/class.response.models';
+import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
+import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 import TooltipSelect from '../../components/common/TooltipSelect';
 
 type filter_options =
@@ -82,6 +90,17 @@ const ReportsPage = () => {
   const [reports, setReports] = useState<OccupanceReports[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [filterMode, setFilterMode] = useState<filter_options>('all');
+  const [selectedClass, setSelectedClass] = useState<ClassResponse | undefined>(undefined,);
+  const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
+  const [, setAllocationQueue] = useState<ClassResponse[]>([]);
+  const [openAccordions, setOpenAccordions] = useState<number[]>([]);
+
+  const {
+      isOpen: isOpenAllocEdit,
+      onOpen: onOpenAllocEdit,
+      onClose: onCloseAllocEdit,
+    } = useDisclosure();
+  const {classes, getClasses, loading: classesLoading } = useClasses();
 
   //carrega os buildings (uma vez no início)
   useEffect(() => {
@@ -96,16 +115,42 @@ const ReportsPage = () => {
   }, []);
 
   //pega as alocações
-  async function fetchReports() {
+  async function fetchReports(startDate?: string, endDate?: string) {
     if (!selectedBuildingId) return;
 
     setLoading(true);
 
-    await occupanceReportsService
-      .listByBuilding(selectedBuildingId)
-      .then((res) => setReports(res.data))
-      .catch(() => showToast('Erro', 'Erro ao carregar as alocações', 'error'))
-      .finally(() => setLoading(false));
+    try{
+      const res = await occupanceReportsService.listByBuilding(selectedBuildingId, startDate, endDate);
+      setReports(res.data)
+    }catch{
+      showToast('Erro', 'Erro ao carregar as alocações', 'error')
+    }finally{
+      setLoading(false)
+    }
+  }
+
+  function handleCloseAllocModal() {
+    setAllocationQueue(prev => {
+      const [, ...rest] = prev;
+
+      if (rest.length > 0) {
+        setSelectedClass(rest[0]);
+        onOpenAllocEdit();
+      } else {
+        onCloseAllocEdit();
+        setSelectedClass(undefined);
+      }
+
+      return rest;
+    });
+  }
+
+  async function refreshAfterAllocationEdit() {
+    await Promise.all([
+      fetchReports(),          // atualiza onde aparece (accordion)
+      getClasses(start, end),  // atualiza dados do modal
+    ]);
   }
 
   // pega as alocações cada vez que o building ou o filtro mudam
@@ -154,24 +199,38 @@ const ReportsPage = () => {
 
   return (
     <PageContent>
+      {selectedClass && (
+        <AllocateClassModal
+          isOpen={isOpenAllocEdit}
+          onClose={handleCloseAllocModal}
+          refresh={refreshAfterAllocationEdit}
+          class_={selectedClass}
+        />
+      )}
       <Flex paddingX={4} direction='column'>
-        <Text fontSize='4xl' mb={4}>
-          Relatório de Taxa de Ocupação
-        </Text>
+        <Flex align={'center'}> 
+          <PageHeaderWithFilter
+            title='Relatório de Taxa de Ocupação'
+            start={start}
+            end={end}
+            setStart={setStart}
+            setEnd={setEnd}
+            onConfirm={(start, end) => {
+            fetchReports(start, end)
+          }}
+          />
+        </Flex>
         <Flex direction='row' gap={4} mb={4}>
           <Flex direction='column' flex={1}>
             <Text fontSize='md'>Prédio:</Text>
             <TooltipSelect
               placeholder='Selecione o prédio'
-              options={buildings
-                .filter(
-                  (value) =>
-                    loggedUser?.is_admin || userBuildingIds.includes(value.id),
-                )
+              options={buildings.filter((value) => 
+                loggedUser?.is_admin || userBuildingIds.includes(value.id))
                 .map((b) => ({
-                  label: b.name,
-                  value: b.id,
-                }))}
+                label: b.name,
+                value: b.id,
+              }))}
               value={
                 selectedBuildingId
                   ? {
@@ -212,7 +271,7 @@ const ReportsPage = () => {
         <Skeleton isLoaded={!loading}>
           {/*exibe um loading enquanto os dados ainda não carregaram*/}
           {filteredReports.length > 0 ? (
-            <Accordion allowMultiple>
+            <Accordion allowMultiple index={openAccordions} onChange={(idx) => setOpenAccordions(idx as number[])}>
               {Object.entries(groupedReports)
                 .sort(([, a], [, b]) => {
                   const maxA = Math.max(...a.map((c) => c.percentage));
@@ -283,14 +342,37 @@ const ReportsPage = () => {
                                 <Text>Turmas: {c.classes.join(', ')}</Text>
                               </Box>
 
-                              <Text
-                                fontWeight='bold'
-                                color={getPercentageColor(c.percentage)}
-                                textAlign='right'
-                                minW='70px'
-                              >
-                                {c.percentage.toFixed(2)}%
-                              </Text>
+                              <VStack align="stretch" spacing={2}>
+                                <Text
+                                  fontWeight="bold"
+                                  color={getPercentageColor(c.percentage)}
+                                  textAlign="right"
+                                  minW="70px"
+                                  >
+                                  {c.percentage.toFixed(2)}%
+                                </Text>
+
+                                <Button
+                                  mr={2}
+                                  colorScheme={'blue'}
+                                  isLoading={classesLoading}
+                                  loadingText="Carregando"
+                                  onClick={() => {
+                                    if (!c.class_id || classes.length === 0) return;
+                                    const foundClasses = c.class_id
+                                      .map(id => classes.find(cl => cl.id === id))
+                                      .filter(Boolean) as ClassResponse[];
+
+                                    if (foundClasses.length === 0) return;
+
+                                    setAllocationQueue(foundClasses);
+                                    setSelectedClass(foundClasses[0]);
+                                    onOpenAllocEdit();
+                                  }}
+                                  >
+                                  Editar alocação
+                                </Button>
+                              </VStack>
                             </Grid>
 
                             {idx < list.length - 1 && <Divider my={2} />}

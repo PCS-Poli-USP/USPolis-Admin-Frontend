@@ -7,4 +7,5 @@ export default interface OccupanceReports {
   end_time: string;
   students: number;
   percentage: number;
+  class_id: number[];
 }
