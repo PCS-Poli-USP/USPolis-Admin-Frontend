@@ -38,6 +38,7 @@ import CrawlerJupiterModal from './CrawlerModal/crawler.jupiter.modal';
 import { AddIcon } from '@chakra-ui/icons';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import AllocationReuseModal from './AllocationReuseModal/allocation.reuse.modal';
+import useBuildings from '../../hooks/useBuildings';
 
 function Classes() {
   const context = useContext(appContext);
@@ -101,6 +102,7 @@ function Classes() {
     CrawlerType.JUPITER,
   );
 
+  const { loading: loadingBuildings, buildings } = useBuildings();
   const { loading: loadingSubjects, subjects, getSubjects } = useSubjects();
   const { calendars, loading: loadingCalendars } = useCalendars();
   const { loading, classes, getClasses, deleteClass, deleteManyClass } =
@@ -302,7 +304,13 @@ function Classes() {
         subjects={subjects}
         // eslint-disable-next-line react-hooks/refs
         classes={originalClasses.current}
-        buildings={context.loggedUser ? context.loggedUser.buildings || [] : []}
+        buildings={
+          context.loggedUser
+            ? context.loggedUser.is_admin
+              ? buildings
+              : context.loggedUser.buildings || []
+            : []
+        }
         refetch={() => getClasses()}
       />
       <Flex align='center'>
@@ -391,7 +399,12 @@ function Classes() {
                 }}
                 leftIcon={<LuDownload />}
                 _hover={{ textColor: 'uspolis.white' }}
-                isLoading={loading || loadingSubjects || context.loading}
+                isLoading={
+                  loading ||
+                  loadingSubjects ||
+                  loadingBuildings ||
+                  context.loading
+                }
               >
                 Reaproveitar
               </MenuItem>
@@ -403,7 +416,7 @@ function Classes() {
         isOpen={isOpenDeleteClass}
         onClose={onCloseDeleteClass}
         onConfirm={handleDeleteClass}
-        title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.code}`}
+        title={`Deseja remover ${selectedClass?.subject_code} - ${selectedClass?.code}?`}
         warningText='ATENÇÃO: TODOS OS DADOS DA TURMA SERÃO PERDIDOS, ASSIM COMO AS INFORMAÇÕES NO APLICATIVO'
       />
       <Dialog

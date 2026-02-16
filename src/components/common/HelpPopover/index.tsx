@@ -9,6 +9,8 @@ import {
   IconButton,
   useDisclosure,
   PlacementWithLogical,
+  Tooltip,
+  Box,
 } from '@chakra-ui/react';
 import { LuBadgeHelp } from 'react-icons/lu';
 
@@ -17,6 +19,8 @@ interface HelpPopoverProps {
   children?: React.ReactNode;
   size?: 'sm' | 'md' | 'lg';
   placement?: PlacementWithLogical;
+  tooltip?: string;
+  tooltipPlacement?: PlacementWithLogical;
 }
 
 function HelpPopover({
@@ -24,6 +28,8 @@ function HelpPopover({
   children,
   size = 'sm',
   placement = undefined,
+  tooltip = undefined,
+  tooltipPlacement = 'top',
 }: HelpPopoverProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
@@ -35,14 +41,23 @@ function HelpPopover({
       placement={placement}
     >
       <PopoverTrigger>
-        <IconButton
-          size={size}
-          aria-label={'help-popover-button'}
-          icon={<LuBadgeHelp />}
-          variant={'ghost'}
-          colorScheme='blue'
-          color={'uspolis.blue'}
-        />
+        <Box>
+          <Tooltip
+            label={tooltip}
+            placement={tooltipPlacement}
+            hasArrow
+            isDisabled={!tooltip || isOpen}
+          >
+            <IconButton
+              size={size}
+              aria-label={'help-popover-button'}
+              icon={<LuBadgeHelp />}
+              variant={'ghost'}
+              colorScheme='blue'
+              color={'uspolis.blue'}
+            />
+          </Tooltip>
+        </Box>
       </PopoverTrigger>
       <PopoverContent p={5}>
         <PopoverArrow />

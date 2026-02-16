@@ -6,11 +6,18 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 ## 2026
 
+### Gerencimento de sessões e correções no login - 15/02/2025
+
+<span style="color: red">FEATURE</span>, <span style="color: orange">BUGFIX</span>
+
+PR's: [#139](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/139), [#157](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/157)
+
+
 ### Hotfix Turmas - 11/02/2025
 
 <span style="color: red">HOTFIX</span>,
 
-PR's: [#138](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/138)
+PR's: [#138](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/138)
 
 **Descrição:**
 
