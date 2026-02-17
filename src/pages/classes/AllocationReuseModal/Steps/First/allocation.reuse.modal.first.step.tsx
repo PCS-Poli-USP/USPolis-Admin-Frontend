@@ -39,6 +39,7 @@ function AllocationReuseModalFirstStep({
         label: `${subject.code} - ${subject.name}`,
         value: subject.id,
       }));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedSubjectsOptions(newSelectedSubjects);
   }, [map, subjects]);
 

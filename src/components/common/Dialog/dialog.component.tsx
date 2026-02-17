@@ -38,7 +38,7 @@ export default function Dialog({
       <AlertDialogOverlay />
 
       <AlertDialogContent>
-        <AlertDialogHeader>{title}?</AlertDialogHeader>
+        <AlertDialogHeader>{title}</AlertDialogHeader>
         <AlertDialogBody color='red'>
           {multipleWarningText.length > 0 ? (
             multipleWarningText.map((value, index) => (

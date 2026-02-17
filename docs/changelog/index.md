@@ -4,6 +4,35 @@ Categorias: <span style="color: green">FEATURE</span>, <span style="color: #4080
 
 O changelog começou a ser registrado a partir do dia 15/11/2025.
 
+## 2026
+
+### Gerencimento de sessões e correções no login - 15/02/2025
+
+<span style="color: red">FEATURE</span>, <span style="color: orange">BUGFIX</span>
+
+PR's: [#139](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/139), [#157](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/157)
+
+
+### Hotfix Turmas - 11/02/2025
+
+<span style="color: red">HOTFIX</span>,
+
+PR's: [#138](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/138)
+
+**Descrição:**
+
+- Correção das chamadas a API para turmas, que faziam um redirecionamento errado
+
+### Modelagem de Cursos - 04/02/2025
+
+<span style="color: green">FEATURE</span>
+
+PR's: [#155](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/155)
+
+**Descrição:**
+
+- Modelagem inicial dos dados para cursos, apenas banco de dados e backend
+
 ## 2025
 
 Aqui estão todas as principais mudanças realizadas no USPolis em 2025.
@@ -18,7 +47,6 @@ PR's: [#136](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/136) e 
 
 - Correção do nginx + uvicorn para coletar o client ip corretamente nos logs
 - Criação de um arquivo asgi.py para deploy ao invés de wsgi.py
-
 
 ### Rotas Health e Logs Loki - 20/12/2025
 

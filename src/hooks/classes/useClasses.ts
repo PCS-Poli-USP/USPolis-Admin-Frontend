@@ -138,7 +138,8 @@ const useClasses = (initialFetch: boolean = true) => {
         });
       return full;
     },
-    [service],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   const createClass = useCallback(

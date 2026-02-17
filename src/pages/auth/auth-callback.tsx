@@ -33,7 +33,6 @@ const AuthCallbackPage = () => {
     }
     if (!loading) {
       try {
-        console.log('Aqui, cahamdno get tokesn./....');
         setLoading(true);
         const response = await authService.getTokens(code);
         const { access_token, refresh_token } = response.data;
@@ -45,6 +44,11 @@ const AuthCallbackPage = () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.log(error);
+        const detail = error.response.data.detail;
+        if (typeof detail === "string") {
+          setError(detail);
+          return;
+        }
         setError(
           'Erro ao utilizar seu código de autenticação, tente logar novamente.',
         );
