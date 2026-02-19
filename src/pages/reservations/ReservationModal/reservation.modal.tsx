@@ -430,7 +430,9 @@ function ReservationModal(props: ReservationModalProps) {
           selectedDates={dates}
           isUpdate={props.isUpdate}
           buildings={props.buildings}
-          classrooms={props.classrooms}
+          classrooms={props.classrooms.filter(
+            (classroom) => classroom.reservable && !classroom.remote,
+          )}
           selectedReservation={props.selectedReservation}
           initialDate={props.initialDate}
           focusMobile={focusMobile}

@@ -197,6 +197,15 @@ const ReportsPage = () => {
     );
   }, [filteredReports]);
 
+  const isPastPeriod = useMemo(() => {
+    if (!end) return false;
+
+    const today = new Date();
+    const endDate = new Date(end);
+
+    return endDate < today;
+  }, [end]);
+
   return (
     <PageContent>
       {selectedClass && (
@@ -352,26 +361,28 @@ const ReportsPage = () => {
                                   {c.percentage.toFixed(2)}%
                                 </Text>
 
-                                <Button
-                                  mr={2}
-                                  colorScheme={'blue'}
-                                  isLoading={classesLoading}
-                                  loadingText="Carregando"
-                                  onClick={() => {
-                                    if (!c.class_id || classes.length === 0) return;
-                                    const foundClasses = c.class_id
-                                      .map(id => classes.find(cl => cl.id === id))
-                                      .filter(Boolean) as ClassResponse[];
+                                {!isPastPeriod && (
+                                  <Button
+                                    mr={2}
+                                    colorScheme={'blue'}
+                                    isLoading={classesLoading}
+                                    loadingText="Carregando"
+                                    onClick={() => {
+                                      if (!c.class_id || classes.length === 0) return;
+                                      const foundClasses = c.class_id
+                                        .map(id => classes.find(cl => cl.id === id))
+                                        .filter(Boolean) as ClassResponse[];
 
-                                    if (foundClasses.length === 0) return;
+                                      if (foundClasses.length === 0) return;
 
-                                    setAllocationQueue(foundClasses);
-                                    setSelectedClass(foundClasses[0]);
-                                    onOpenAllocEdit();
-                                  }}
+                                      setAllocationQueue(foundClasses);
+                                      setSelectedClass(foundClasses[0]);
+                                      onOpenAllocEdit();
+                                    }}
                                   >
-                                  Editar alocação
-                                </Button>
+                                    Editar alocação
+                                  </Button>
+                                )}
                               </VStack>
                             </Grid>
 

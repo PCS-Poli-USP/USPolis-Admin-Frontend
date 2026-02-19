@@ -66,6 +66,7 @@ const useClassrooms = (initialFetch: boolean = true) => {
         })
         .catch((error) => {
           showToast('Erro', parser.parseGetError(error), 'error');
+          console.log(error);
         })
         .finally(() => {
           setLoading(false);
