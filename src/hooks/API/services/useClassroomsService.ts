@@ -10,14 +10,12 @@ import {
   UpdateClassroom,
 } from '../../../models/http/requests/classroom.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import * as service from '../../../services/api/axios';
 
 const useClassroomsService = () => {
-  const axiosCommon = service.default;
   const axios = useAxiosPrivate();
 
   const get = (): Promise<AxiosResponse<Array<ClassroomResponse>>> => {
-    return axiosCommon.get('/classrooms');
+    return axios.get('/classrooms');
   };
 
   const getMine = (): Promise<AxiosResponse<Array<ClassroomResponse>>> => {

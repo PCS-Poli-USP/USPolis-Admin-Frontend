@@ -348,7 +348,7 @@ Ele basicamente faz:
 Para enviar os arquivos da sua máquina para o servidor use [scp](https://www.w3schools.com/bash/bash_scp.php). No caso, isso é necessário apenas para o frontend, você tem que fazer o mesmo processo que é feito no CI/CD do frontend, ou seja:
 
 - Buildar a docs usando `yarn docs:build`
-- Mover os arquivos buildados de `docs/.vitepress/dist` para ```public/docs
+- Mover os arquivos buildados de `docs/.vitepress/dist` para ```public/docs```
 - Buildar o frontend com `yarn build`
 - Enviar os arquivos para o servidor com scp `scp -P <porta> -r ./build/ ubuntu@<ip>:/diskb/home/frontend`
 - Mover os arquivos de `/diskb/home/frontend/build/docs` para `/var/www/html/docs`

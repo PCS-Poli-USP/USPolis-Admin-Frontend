@@ -36,6 +36,7 @@ import FindExams from './pages/findExams';
 import Reports from './pages/reports';
 import Feedbacks from './pages/feedbacks';
 import ReportsPage from './pages/occupationReports/reports';
+import UserSessions from './pages/userSessions/userSessions';
 
 function AppRoutes() {
   return (
@@ -80,6 +81,7 @@ function AppRoutes() {
               {/* Admin routes */}
               <Route path='' element={<AdminRoute />}>
                 <Route path='users' element={<Users />} />
+                <Route path='sessions' element={<UserSessions />} />
                 <Route path='groups' element={<Groups />} />
                 <Route path='buildings' element={<Buildings />} />
                 <Route path='bug-reports' element={<Reports />} />

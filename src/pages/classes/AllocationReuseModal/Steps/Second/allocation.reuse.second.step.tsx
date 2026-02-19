@@ -53,14 +53,14 @@ function AllocationReuseModalSecondStep({
 }: AllocationReuseModalSecondStepProps) {
   const currentYear = new Date().getFullYear();
   const years: number[] = [];
-  for (let i = 2024; i < currentYear; i++) {
+  for (let i = 2024; i <= currentYear; i++) {
     years.push(i);
   }
 
   const validSchedules = Array.from(allocationMap.values()).filter(
     (val) => val.classroom_ids.length > 0,
   );
-  const [allocationYear, setAllocationYear] = useState<number>(currentYear - 1);
+  const [allocationYear, setAllocationYear] = useState<number>(currentYear);
   const [loading, setLoading] = useState<boolean>(false);
 
   async function handleBuildingChange() {
