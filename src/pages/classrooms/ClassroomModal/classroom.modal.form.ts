@@ -94,7 +94,6 @@ export const formFields = {
     validator: yup.boolean().required('Campo obrigatório'),
     defaultValue: true,
   },
-
   restricted: {
     validator: yup.boolean().required('Campo obrigatório'),
     defaultValue: false,
@@ -111,8 +110,8 @@ export const schema = yup.object<ClassroomForm>().shape({
   audiovisual: formFields.audiovisual.validator,
   accessibility: formFields.accessibility.validator,
   observation: formFields.observation.validator,
-  remote: formFields.remote.validator,
-  laboratory: formFields.laboratory.validator,
+  // remote: formFields.remote.validator,
+  // laboratory: formFields.laboratory.validator,
   reservable: formFields.reservable.validator,
   restricted: formFields.restricted.validator,
 });
@@ -127,8 +126,8 @@ export const defaultValues: ClassroomForm = {
   audiovisual: formFields.audiovisual.defaultValue,
   accessibility: formFields.accessibility.defaultValue,
   observation: formFields.observation.defaultValue,
-  remote: formFields.remote.defaultValue,
-  laboratory: formFields.laboratory.defaultValue,
+  // remote: formFields.remote.defaultValue,
+  // laboratory: formFields.laboratory.defaultValue,
   reservable: formFields.reservable.defaultValue,
   restricted: formFields.restricted.defaultValue,
 };
