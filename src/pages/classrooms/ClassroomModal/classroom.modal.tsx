@@ -46,13 +46,17 @@ export default function ClassroomModal(props: ClassroomModalProps) {
   const { createClassroom, updateClassroom } = useClassrooms();
 
   const building_id = watch('building_id');
-  const remote = watch('remote');
-  const laboratory = watch('laboratory');
-  const reservable = watch('reservable');
+  // const remote = watch('remote');
+  // const laboratory = watch('laboratory');
+  // const reservable = watch('reservable');
 
   useEffect(() => {
     if (props.selectedClassroom) {
-      reset({ ...props.selectedClassroom });
+      reset({
+        ...props.selectedClassroom,
+        reservable: props.selectedClassroom.reservable,
+        restricted: props.selectedClassroom.remote,
+      });
     }
     if (props.buildings.length === 1) {
       setValue('building_id', props.buildings[0].id);
@@ -68,9 +72,17 @@ export default function ClassroomModal(props: ClassroomModalProps) {
     const values = getValues();
 
     if (props.isUpdate && props.selectedClassroom) {
-      await updateClassroom(props.selectedClassroom.id, values);
+      await updateClassroom(props.selectedClassroom.id, {
+        ...values,
+        reservable: values.reservable,
+        remote: values.restricted,
+      });
     } else {
-      await createClassroom(values);
+      await createClassroom({
+        ...values,
+        reservable: values.reservable,
+        remote: values.restricted,
+      });
     }
     props.refetch();
     handleCloseModal();
@@ -172,7 +184,10 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                     gap={'10px'}
                   >
                     <Text fontWeight={'bold'}>Configurações</Text>
-                    <HelpPopover title='O que são configurações?' placement='right'>
+                    <HelpPopover
+                      title='O que são configurações?'
+                      placement='right'
+                    >
                       <VStack
                         direction={'column'}
                         gap={'5px'}
@@ -183,30 +198,29 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                           As configurações determinam a natureza da sala e como
                           ela pode ser utilizada.
                         </Text>
-                        <Text fontSize={'sm'}>
+                        {/* <Text fontSize={'sm'}>
                           Se ela é <strong>remota</strong>, não vai aparecer no
                           mapa de salas nem nos relatórios e será ignorada para
                           verificar CONFLITOS.
-                        </Text>
-                        <Text fontSize={'sm'}>
+                        </Text> */}
+                        {/* <Text fontSize={'sm'}>
                           Se ela é um <strong>laboratório</strong>, vai ter um
                           indentificador [LAB], não pode ser remota podendo ser
                           reservável ou não.
-                        </Text>
+                        </Text> */}
                         <Text fontSize={'sm'}>
                           Se uma sala é <strong>reservável</strong>, ela pode
-                          ser solicitada pelos usuários, não podendo ser remota.
+                          ser solicitada pelos usuários.
                         </Text>
                         <Text fontSize={'sm'}>
-                          Se ela é <strong>restrita</strong>, apenas usuários
-                          permissionados poderão reservá-la ou ver ela no mapa
-                          de salas.
+                          Se ela é <strong>restrita</strong>, ela não aparece no
+                          mapa de salas.
                         </Text>
                       </VStack>
                     </HelpPopover>
                   </HStack>
 
-                  <CheckBox
+                  {/* <CheckBox
                     text={'Remoto'}
                     name={'remote'}
                     disabled={laboratory || reservable}
@@ -216,22 +230,19 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                         form.setValue('reservable', false);
                       }
                     }}
-                  />
-                  <CheckBox
+                  /> */}
+                  {/* <CheckBox
                     text={'Laboratório'}
                     name={'laboratory'}
                     disabled={remote}
                     onChange={(value) => {
                       if (value) form.setValue('remote', false);
                     }}
-                  />
+                  /> */}
                   <CheckBox
                     text={'Reservável'}
                     name={'reservable'}
-                    disabled={remote}
-                    onChange={(value) => {
-                      if (value) form.setValue('remote', false);
-                    }}
+                    // disabled={remote}
                   />
                   <CheckBox text={'Restrita'} name={'restricted'} />
                 </Flex>

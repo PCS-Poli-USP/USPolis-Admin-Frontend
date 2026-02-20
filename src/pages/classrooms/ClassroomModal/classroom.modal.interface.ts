@@ -21,8 +21,8 @@ export interface ClassroomForm {
   audiovisual: AudiovisualType;
   accessibility: boolean;
   observation: string;
-  remote: boolean;
-  laboratory: boolean;
+  // remote: boolean;
+  // laboratory: boolean;
   reservable: boolean;
   restricted: boolean; 
   group_ids: number[];
