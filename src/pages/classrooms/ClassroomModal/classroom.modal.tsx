@@ -209,12 +209,12 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                           reservável ou não.
                         </Text> */}
                         <Text fontSize={'sm'}>
-                          Se uma sala é <strong>reservável</strong>, ela pode
-                          ser solicitada pelos usuários.
+                          Se uma sala é <strong>reservável</strong> pode ser
+                          solicitada pelos usuários.
                         </Text>
                         <Text fontSize={'sm'}>
-                          Se ela é <strong>restrita</strong>, ela não aparece no
-                          mapa de salas.
+                          Se ela é <strong>restrita</strong> não aparece no mapa
+                          de salas.
                         </Text>
                       </VStack>
                     </HelpPopover>

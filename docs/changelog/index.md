@@ -1,19 +1,44 @@
 # Changelog
 
-Categorias: <span style="color: green">FEATURE</span>, <span style="color: #408080">IMPROVEMENT</span>, <span style="color: orange">BUGFIX</span>, <span style="color: red">HOTFIX</span>, <span style="color: gray">DOCS</span>
+Categorias: <span style="color: green">FEATURE</span>, <span style="color: #408080">IMPROVEMENT</span>, <span style="color: orange">BUGFIX</span>, <span style="color: red">HOTFIX</span>, <span style="color: #347aeb">DOCS</span>
 
 O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 ## 2026
 
-### Gerencimento de sessões e correções no login - 15/02/2025
+### Adição de cache em rotas - 19/02/2026
+
+<span style="color: #408080">IMPROVEMENT</span>
+
+PR's: [#158](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/158)
+
+**Descrição:**
+
+- Adição de cache na rota de eventos (alocações) e turmas do mobile
+
+### Login USP, gifs na docs e correções na tela de salas - 19/02/2026
+
+<span style="color: #408080">IMPROVEMENT</span>, <span style="color: orange">BUGFIX</span>, <span style="color: #347aeb">DOCS</span>
+
+PR's: [#143](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/143)
+
+**Descrição:**
+
+- Na tela de login, por padrão, apenas mostra e-mails @usp
+- Adição de alguns gifs no lugar de imagens
+- Correção na tela de salas que estava com conteúdo em desenvolvimento
+
+### Gerencimento de sessões e correções no login - 15/02/2026
 
 <span style="color: red">FEATURE</span>, <span style="color: orange">BUGFIX</span>
 
 PR's: [#139](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/139), [#157](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/157)
 
+**Descrição:**
 
-### Hotfix Turmas - 11/02/2025
+- Correção das chamadas a API para turmas, que faziam um redirecionamento errado
+
+### Hotfix Turmas - 11/02/2026
 
 <span style="color: red">HOTFIX</span>,
 
@@ -23,7 +48,7 @@ PR's: [#138](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/138)
 
 - Correção das chamadas a API para turmas, que faziam um redirecionamento errado
 
-### Modelagem de Cursos - 04/02/2025
+### Modelagem de Cursos - 04/02/2026
 
 <span style="color: green">FEATURE</span>
 
