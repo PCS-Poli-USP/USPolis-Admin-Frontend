@@ -6,6 +6,18 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 ## 2026
 
+### Correções no cache, envio de e-mails e melhorias - 19/02/2026
+
+<span style="color: red">HOTFIX</span> <span style="color: #408080">IMPROVEMENT</span>
+
+PR's: [#144](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/144), [#158](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/158)
+
+**Descrição:**
+
+- Correção da falta de envio de e-mails por problemas de autenticação Google
+- Correção na rota de eventos (alocações) não salvando o intervalo todo do cache
+- Ordenação da tabela de reportes corrigida
+
 ### Adição de cache em rotas - 19/02/2026
 
 <span style="color: #408080">IMPROVEMENT</span>
@@ -40,7 +52,7 @@ PR's: [#139](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/139), [
 
 ### Hotfix Turmas - 11/02/2026
 
-<span style="color: red">HOTFIX</span>,
+<span style="color: red">HOTFIX</span>
 
 PR's: [#138](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/138)
 
