@@ -14,15 +14,15 @@ const AuthCallbackPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const query = useQuery();
+  const [code] = useState<string | null>(query.get('code'));
   const { setAccessToken, setIsAuthenticated } = useContext(appContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (error) return;
-    const code = query.get('code');
+    if (error || code == null) return;
     redirect(code);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, error]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code, error]);
 
   async function redirect(code: string | null): Promise<void> {
     if (code == null) {
@@ -44,8 +44,13 @@ const AuthCallbackPage = () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.log(error);
-        const detail = error.response.data.detail;
-        if (typeof detail === "string") {
+        if (error.response == null) {
+          setError('Erro de rede, tente novamente mais tarde.');
+          return;
+        }
+        const detail =
+          error.response.data.detail || error.message || 'Erro desconhecido';
+        if (typeof detail === 'string') {
           setError(detail);
           return;
         }
