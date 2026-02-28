@@ -16,6 +16,7 @@ PR's: [#144](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/144), [
 
 - Correção da falta de envio de e-mails por problemas de autenticação Google
 - Correção na rota de eventos (alocações) não salvando o intervalo todo do cache
+- Correção na atualização de páginas após criar uma reserva/solicitação
 - Ordenação da tabela de reportes corrigida
 
 ### Adição de cache em rotas - 19/02/2026
