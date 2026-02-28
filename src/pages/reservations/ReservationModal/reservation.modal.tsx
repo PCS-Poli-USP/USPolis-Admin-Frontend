@@ -313,7 +313,7 @@ function ReservationModal(props: ReservationModalProps) {
     if (props.isSolicitation) {
       await handleSolicitationSaveClick();
     }
-    if (!props.isSolicitation) props.refetch();
+    props.refetch();
     handleCloseModal();
   }
 

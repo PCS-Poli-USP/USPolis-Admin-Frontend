@@ -580,11 +580,7 @@ function Allocation() {
               classrooms={classrooms}
               buildings={buildings}
               selectedReservation={undefined}
-              refetch={async () => {
-                if (loggedUser.is_admin || loggedUser.buildings) {
-                  await getEvents(currentStartDate, currentEndDate);
-                }
-              }}
+              refetch={() => {}}
               subjects={subjects}
               loading={loadingSubjects || loadingClassrooms}
             />
@@ -611,8 +607,10 @@ function Allocation() {
               isUpdate={false}
               classrooms={classrooms}
               buildings={buildings}
-              refetch={() => {
-                getEvents(currentStartDate, currentEndDate);
+              refetch={async () => {
+                if (loggedUser.is_admin || loggedUser.buildings) {
+                  await getEvents(currentStartDate, currentEndDate);
+                }
               }}
               isOpen={isOpenReservation}
               onClose={onCloseReservation}
