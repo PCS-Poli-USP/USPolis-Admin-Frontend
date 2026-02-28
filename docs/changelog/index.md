@@ -10,7 +10,7 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 <span style="color: red">HOTFIX</span> <span style="color: #408080">IMPROVEMENT</span>
 
-PR's: [#145](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/145), [#158](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/158)
+PR's: [#145](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/145), [#159](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/159)
 
 **Descrição:**
 
