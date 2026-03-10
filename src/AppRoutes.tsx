@@ -37,6 +37,7 @@ import Reports from './pages/reports';
 import Feedbacks from './pages/feedbacks';
 import ReportsPage from './pages/occupationReports/reports';
 import UserSessions from './pages/userSessions/userSessions';
+import CoursesPage from './pages/courses/courses';
 
 function AppRoutes() {
   return (
@@ -60,6 +61,7 @@ function AppRoutes() {
             <Route path='allocation' element={<Allocation />} />
             <Route path='find-classes' element={<FindClasses />} />
             <Route path='find-exams' element={<FindExams />} />
+            <Route path='courses' element={<CoursesPage />} />
 
             {/* Private routes */}
             <Route element={<PrivateRoute />}>

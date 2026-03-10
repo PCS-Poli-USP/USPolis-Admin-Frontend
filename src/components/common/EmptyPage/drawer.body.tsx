@@ -33,7 +33,7 @@ import {
   MdOutlinePendingActions,
 } from 'react-icons/md';
 import { LuCalendarClock } from 'react-icons/lu';
-import { GiBookCover, GiTeacher } from 'react-icons/gi';
+import { GiBookCover, GiTeacher, GiGraduateCap } from 'react-icons/gi';
 import { PiChair, PiExamLight } from 'react-icons/pi';
 import { BsCalendar3, BsEnvelopeCheck } from 'react-icons/bs';
 import { HiUserGroup } from 'react-icons/hi';
@@ -196,6 +196,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
               icon={<BsCalendar3 />}
               to='/allocation'
               text='Mapa de Salas'
+              replace_location={false}
+              onClose={onClose}
+            />
+            <DrawerButton
+              icon={<GiGraduateCap />}
+              to='/courses'
+              text='Cursos'
               replace_location={false}
               onClose={onClose}
             />
