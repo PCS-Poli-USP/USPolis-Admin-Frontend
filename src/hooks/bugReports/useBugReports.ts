@@ -5,8 +5,9 @@ import useBugReportService from '../API/services/useBugReportService';
 import BugReportErrorParser from './bugReportErrorParser';
 import { BugReportResponse } from '../../models/http/responses/bugReport.response.models';
 import { CreateBugReport } from '../../models/http/requests/bugReport.request.models';
-import { BugPriority, BugStatus } from '../../utils/enums/bugReport.enum';
+import { BugStatus } from '../../utils/enums/bugReport.enum';
 import BugReportEvidenceErrorParser from './bugReportEvidenceErrorParser';
+import { sortReportsResponse } from '../../utils/reports/reports.sorter';
 
 const useBugReports = () => {
   const service = useBugReportService();
@@ -22,12 +23,7 @@ const useBugReports = () => {
     await service
       .getAll()
       .then((response) => {
-        setReports(
-          response.data.sort(
-            (a, b) =>
-              BugPriority.toInt(b.priority) - BugPriority.toInt(a.priority),
-          ),
-        );
+        setReports(response.data.sort(sortReportsResponse));
       })
       .catch((error) => {
         showToast('Erro', errorParser.parseGetError(error), 'error');

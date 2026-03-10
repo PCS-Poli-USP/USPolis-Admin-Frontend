@@ -9,7 +9,7 @@ import {
 
 import DataTable from '../../components/common/DataTable/dataTable.component';
 import Dialog from '../../components/common/Dialog/dialog.component';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ClassroomModal from './ClassroomModal/classroom.modal';
 import useBuildings from '../../hooks/useBuildings';
 import useClassrooms from '../../hooks/classrooms/useClassrooms';
@@ -17,15 +17,15 @@ import { ClassroomResponse } from '../../models/http/responses/classroom.respons
 import { getClassroomColumns } from './Tables/classroom.tables';
 import PageContent from '../../components/common/PageContent';
 import useGroups from '../../hooks/groups/useGroups';
-import { FaUserLock } from 'react-icons/fa';
 import { AddIcon } from '@chakra-ui/icons';
-import ClassroomPermissions from './ClassroomPermission/classroom.permission';
-import useUsers from '../../hooks/users/useUsers';
-import useClassroomPermissions from '../../hooks/classroomPermissions/useClassroomPermissions';
-import {
-  ClassroomPermissionByClassroomResponse,
-  ClassroomPermissionByUserResponse,
-} from '../../models/http/responses/classroomPermission.response.models';
+// import { FaUserLock } from 'react-icons/fa';
+// import ClassroomPermissions from './ClassroomPermission/classroom.permission';
+// import useUsers from '../../hooks/users/useUsers';
+// import useClassroomPermissions from '../../hooks/classroomPermissions/useClassroomPermissions';
+// import {
+//   ClassroomPermissionByClassroomResponse,
+//   ClassroomPermissionByUserResponse,
+// } from '../../models/http/responses/classroomPermission.response.models';
 
 function Classrooms() {
   const {
@@ -38,11 +38,11 @@ function Classrooms() {
     onOpen: onOpenDelete,
     onClose: onCloseDelete,
   } = useDisclosure();
-  const {
-    isOpen: isOpenPermissions,
-    onOpen: onOpenPermissions,
-    onClose: onClosePermissions,
-  } = useDisclosure();
+  // const {
+  //   isOpen: isOpenPermissions,
+  //   onOpen: onOpenPermissions,
+  //   onClose: onClosePermissions,
+  // } = useDisclosure();
 
   const [selectedClassroom, setSelectedClassroom] =
     useState<ClassroomResponse>();
@@ -51,19 +51,19 @@ function Classrooms() {
   const { loading: loadingGroups, groups } = useGroups();
   const { loading, classrooms, getClassrooms, deleteClassroom } =
     useClassrooms();
-  const {
-    loading: loadingPermissions,
-    getAllClassroomPermissionsByClassroom,
-    getAllClassroomPermissionsByUser,
-  } = useClassroomPermissions(false);
-  const { loading: loadingUsers, users } = useUsers();
+  // const {
+  //   loading: loadingPermissions,
+  //   getAllClassroomPermissionsByClassroom,
+  //   getAllClassroomPermissionsByUser,
+  // } = useClassroomPermissions(false);
+  // const { loading: loadingUsers, users } = useUsers();
 
-  const [permissionsByClassroom, setPermissionsByClassroom] = useState<
-    ClassroomPermissionByClassroomResponse[]
-  >([]);
-  const [permissionsByUser, setPermissionsByUser] = useState<
-    ClassroomPermissionByUserResponse[]
-  >([]);
+  // const [permissionsByClassroom, setPermissionsByClassroom] = useState<
+  //   ClassroomPermissionByClassroomResponse[]
+  // >([]);
+  // const [permissionsByUser, setPermissionsByUser] = useState<
+  //   ClassroomPermissionByUserResponse[]
+  // >([]);
 
   const columns = getClassroomColumns({
     handleDuplicateClick: handleDuplicateClick,
@@ -104,20 +104,20 @@ function Classrooms() {
 
   function refetchClassrooms() {
     getClassrooms();
-    fetchClassroomPermissions();
+    // fetchClassroomPermissions();
   }
 
-  async function fetchClassroomPermissions() {
-    const byClassrooms = await getAllClassroomPermissionsByClassroom();
-    setPermissionsByClassroom(byClassrooms);
-    const byUsers = await getAllClassroomPermissionsByUser();
-    setPermissionsByUser(byUsers);
-  }
+  // async function fetchClassroomPermissions() {
+  //   const byClassrooms = await getAllClassroomPermissionsByClassroom();
+  //   setPermissionsByClassroom(byClassrooms);
+  //   const byUsers = await getAllClassroomPermissionsByUser();
+  //   setPermissionsByUser(byUsers);
+  // }
 
-  useEffect(() => {
-    fetchClassroomPermissions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   fetchClassroomPermissions();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   return (
     <PageContent>
@@ -134,7 +134,7 @@ function Classrooms() {
         refetch={refetchClassrooms}
         selectedClassroom={selectedClassroom}
       />
-      <ClassroomPermissions
+      {/* <ClassroomPermissions
         users={users}
         classrooms={classrooms}
         isOpen={isOpenPermissions}
@@ -143,7 +143,7 @@ function Classrooms() {
         permissionsByUsers={permissionsByUser}
         loading={loadingPermissions || loadingUsers}
         refetch={fetchClassroomPermissions}
-      />
+      /> */}
       <Dialog
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
@@ -160,13 +160,13 @@ function Classrooms() {
           </Text>
           <Spacer />
           <Flex gap={'5px'}>
-            <Button
+            {/* <Button
               rightIcon={<FaUserLock />}
               onClick={() => onOpenPermissions()}
               isLoading={loadingPermissions}
             >
               Permissões
-            </Button>
+            </Button> */}
             <Button
               colorScheme='blue'
               onClick={handleCreateClick}

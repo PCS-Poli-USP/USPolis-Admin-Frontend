@@ -313,7 +313,7 @@ function ReservationModal(props: ReservationModalProps) {
     if (props.isSolicitation) {
       await handleSolicitationSaveClick();
     }
-    if (!props.isSolicitation) props.refetch();
+    props.refetch();
     handleCloseModal();
   }
 
@@ -431,7 +431,7 @@ function ReservationModal(props: ReservationModalProps) {
           isUpdate={props.isUpdate}
           buildings={props.buildings}
           classrooms={props.classrooms.filter(
-            (classroom) => classroom.reservable && !classroom.remote,
+            (classroom) => classroom.reservable,
           )}
           selectedReservation={props.selectedReservation}
           initialDate={props.initialDate}

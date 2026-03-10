@@ -19,8 +19,8 @@ O mapa de salas é a principal página do USPolis, é nele onde você consegue e
   width: 100%;
 ">
   <img 
-    src="/allocation/image.png" 
-    alt="Descrição"
+    src="/allocation/images/mapa-de-salas.gif" 
+    alt="Mapa de Salas visualização geral"
     style="
       border-radius: 8px;
       max-width: 100%;
@@ -39,7 +39,7 @@ No canto superior você encontra os seguintes botões e seletores:
   width: 100%;
 ">
   <img 
-    src="/allocation/image-1.png" 
+    src="/allocation/images/mapa-salas-header.gif" 
     alt="Descrição"
     style="
       border-radius: 8px;

@@ -139,7 +139,13 @@ export const getBugReportsColumns = (
       },
       cell: ({ row }) => (
         <HStack spacing='0px'>
-          <Tooltip label='Ver evidências'>
+          <Tooltip
+            label={
+              row.original.evidences_ids.length == 0
+                ? 'Sem evidências'
+                : 'Ver evidências'
+            }
+          >
             <IconButton
               colorScheme={props.darkMode ? 'gray' : 'blackAlpha'}
               size='sm'
@@ -158,7 +164,6 @@ export const getBugReportsColumns = (
               aria-label='editar-bug-report'
               icon={<LuPen />}
               onClick={() => props.handleUpdateClick(row.original)}
-              disabled={row.original.evidences_ids.length == 0}
             />
           </Tooltip>
         </HStack>

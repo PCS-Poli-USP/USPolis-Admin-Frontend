@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Logo from '../../assets/uspolis.logo.png';
 
 const REDIRECT_URL = import.meta.env.VITE_REDIRECT_URI;
+const ALLOWED_DOMAIN = 'usp.br';
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const AuthPage = () => {
     redirect_uri: REDIRECT_URL ?? 'http://localhost:3000/auth-callback',
     ux_mode: 'redirect',
     flow: 'auth-code',
+    hosted_domain: ALLOWED_DOMAIN,
   });
 
   return (

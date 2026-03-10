@@ -37,8 +37,6 @@ function EvidenceModal({
   const [errorMap, setErrorMap] = useState<boolean[]>([]);
   const [reloadMap, setReloadMap] = useState<string[]>([]);
 
-  console.log(selectedReport);
-
   useEffect(() => {
     if (selectedReport) {
       selectedReport.evidences_ids.forEach(() => {
