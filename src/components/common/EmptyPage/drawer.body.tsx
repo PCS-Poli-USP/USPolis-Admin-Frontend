@@ -149,6 +149,13 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                 onClose={onClose}
               />
               <DrawerButton
+                  icon={<GiGraduateCap />}
+                  to='/courses'
+                  text='Cursos'
+                  replace_location={false}
+                  onClose={onClose}
+                />
+              <DrawerButton
                 icon={<VscReport />}
                 to='/bug-reports'
                 text='Reportes'
@@ -196,13 +203,6 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
               icon={<BsCalendar3 />}
               to='/allocation'
               text='Mapa de Salas'
-              replace_location={false}
-              onClose={onClose}
-            />
-            <DrawerButton
-              icon={<GiGraduateCap />}
-              to='/courses'
-              text='Cursos'
               replace_location={false}
               onClose={onClose}
             />

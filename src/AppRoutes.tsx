@@ -38,6 +38,8 @@ import Feedbacks from './pages/feedbacks';
 import ReportsPage from './pages/occupationReports/reports';
 import UserSessions from './pages/userSessions/userSessions';
 import CoursesPage from './pages/courses/courses';
+import Curriculums from './pages/curriculums/curriculums';
+import CurriculumSubjects from './pages/curriculumSubjects/curriculumSubjects';
 
 function AppRoutes() {
   return (
@@ -61,7 +63,6 @@ function AppRoutes() {
             <Route path='allocation' element={<Allocation />} />
             <Route path='find-classes' element={<FindClasses />} />
             <Route path='find-exams' element={<FindExams />} />
-            <Route path='courses' element={<CoursesPage />} />
 
             {/* Private routes */}
             <Route element={<PrivateRoute />}>
@@ -78,6 +79,9 @@ function AppRoutes() {
                 <Route path='conflicts' element={<ConflictsPage />} />
                 <Route path='solicitations' element={<Solicitations />} />
                 <Route path='reports' element={<ReportsPage />} />
+                <Route path='courses' element={<CoursesPage />} />
+                <Route path='/courses/:courseId/curriculums' element={<Curriculums />} />
+                <Route path='/curriculums/:curriculumId/subjects' element={<CurriculumSubjects />} />
               </Route>
 
               {/* Admin routes */}
