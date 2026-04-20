@@ -30,13 +30,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { AddIcon } from '@chakra-ui/icons';
 
 import PageContent from '../../components/common/PageContent';
-import DataTable from '../../components/common/DataTable/dataTable.component';
 import Dialog from '../../components/common/Dialog/dialog.component';
 
 import useCurriculumSubjectsService from '../../hooks/API/services/useCurriculumSubjectsService';
 import { CurriculumSubjectResponse } from '../../models/http/responses/curriculumSubject.response.models';
 import CurriculumSubjectModal from './CurriculumSubjectModal/curriculumSubject.modal';
-import { getCurriculumSubjectColumns } from './Tables/curriculumSubjects.table';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { SubjectResponse } from '../../models/http/responses/subject.response.models';
 import useSubjectsService from '../../hooks/API/services/useSubjectsService';
@@ -244,71 +242,77 @@ function CurriculumSubjects() {
                 </Flex>
 
                 <Box w="100%">
-                  <TableContainer border="1px" borderRadius="lg" borderColor="uspolis.blue">
-                    {loading && <Progress size="xs" isIndeterminate />}
+                  {(groupedByPeriod[period] ?? []).length > 0 && (
+                    <TableContainer
+                      border="1px"
+                      borderRadius="lg"
+                      borderColor="uspolis.blue"
+                    >
+                      {loading && <Progress size="xs" isIndeterminate />}
 
-                    <Table>
-                      <Thead>
-                        <Tr>
-                          <Th color="uspolis.blue">Disciplina</Th>
-                          <Th color="uspolis.blue">Tipo</Th>
-                          <Th color="uspolis.blue">Categoria</Th>
-                          <Th color="uspolis.blue" textAlign="right">
-                            Opções
-                          </Th>
-                        </Tr>
-                      </Thead>
+                      <Table>
+                        <Thead>
+                          <Tr>
+                            <Th color="uspolis.blue">Disciplina</Th>
+                            <Th color="uspolis.blue">Tipo</Th>
+                            <Th color="uspolis.blue">Categoria</Th>
+                            <Th color="uspolis.blue" textAlign="right">
+                              Opções
+                            </Th>
+                          </Tr>
+                        </Thead>
 
-                      <Tbody>
-                        {(groupedByPeriod[period] ?? []).map((item) => {
-                          const typeMap: Record<string, string> = {
-                            semestral: "Semestral",
-                            quadrimester: "Quadrimestral",
-                          };
+                        <Tbody>
+                          {(groupedByPeriod[period] ?? []).map((item) => {
+                            const typeMap: Record<string, string> = {
+                              SEMESTRAL: "Semestral",
+                              QUADRIMESTER: "Quadrimestral",
+                            };
 
-                          const categoryMap: Record<string, string> = {
-                            mandatory: "Obrigatória",
-                            free_elective: "Optativa Livre",
-                            track_elective: "Optativa Eletiva",
-                          };
+                            const categoryMap: Record<string, string> = {
+                              mandatory: "Obrigatória",
+                              free_elective: "Optativa Livre",
+                              track_elective: "Optativa Eletiva",
+                            };
 
-                          return (
-                            <Tr key={item.id}>
-                              <Td>{subjectMap[item.subject_id] ?? "-"}</Td>
-                              <Td>{typeMap[item.type] ?? item.type}</Td>
-                              <Td>{categoryMap[item.category] ?? item.category}</Td>
+                            return (
+                              <Tr key={item.id}>
+                                <Td>{subjectMap[item.subject_id] ?? "-"}</Td>
+                                <Td>{typeMap[item.type] ?? item.type}</Td>
+                                <Td>{categoryMap[item.category] ?? item.category}</Td>
 
-                              <Td>
-                                <HStack spacing="0px" justifyContent="flex-end">
-                                  <Tooltip label="Editar">
-                                    <IconButton
-                                      colorScheme="yellow"
-                                      size="xs"
-                                      variant="ghost"
-                                      aria-label="editar"
-                                      icon={<BsFillPenFill />}
-                                      onClick={() => handleEditClick(item)}
-                                    />
-                                  </Tooltip>
+                                <Td>
+                                  <HStack spacing="0px" justifyContent="flex-end">
+                                    <Tooltip label="Editar">
+                                      <IconButton
+                                        colorScheme="yellow"
+                                        size="xs"
+                                        variant="ghost"
+                                        aria-label="editar"
+                                        icon={<BsFillPenFill />}
+                                        onClick={() => handleEditClick(item)}
+                                      />
+                                    </Tooltip>
 
-                                  <Tooltip label="Remover">
-                                    <IconButton
-                                      colorScheme="red"
-                                      size="xs"
-                                      variant="ghost"
-                                      aria-label="remover"
-                                      icon={<BsFillTrashFill />}
-                                      onClick={() => handleDeleteClick(item)}
-                                    />
-                                  </Tooltip>
-                                </HStack>
-                              </Td>
-                            </Tr>
-                          );
-                        })}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
+                                    <Tooltip label="Remover">
+                                      <IconButton
+                                        colorScheme="red"
+                                        size="xs"
+                                        variant="ghost"
+                                        aria-label="remover"
+                                        icon={<BsFillTrashFill />}
+                                        onClick={() => handleDeleteClick(item)}
+                                      />
+                                    </Tooltip>
+                                  </HStack>
+                                </Td>
+                              </Tr>
+                            );
+                          })}
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  )}
                 </Box>
               </AccordionPanel>
             </AccordionItem>
