@@ -5,11 +5,7 @@ import {
   Text,
   Box,
   Heading,
-  ListItem,
-  UnorderedList,
   Highlight,
-  Link,
-  Icon,
 } from '@chakra-ui/react';
 
 import MobileHeader from '../MobileHeader';
@@ -18,10 +14,11 @@ import USPolisPhoneLaptop from '../Images/USPolisPhoneLaptop.png';
 import MobileCarousel from '../MobileCarousel';
 import { items } from '../carousel.items';
 
-import { FaApple, FaGithub, FaMobileAlt } from 'react-icons/fa';
+import { FaApple, FaMobileAlt } from 'react-icons/fa';
 import { MdOutlineAdminPanelSettings } from 'react-icons/md';
 import { IoLogoGooglePlaystore } from 'react-icons/io5';
-import { EmailIcon } from '@chakra-ui/icons';
+import About from '../About';
+import Footer from '../Footer/index ';
 
 function HomeMobileView() {
   function scrollInto(
@@ -130,7 +127,7 @@ function HomeMobileView() {
           Baixe o App
         </Heading>
       </Flex>
-      <Box h={'calc(100vh - 150px)'}>
+      <Box h={'fit-content'}>
         <Flex
           w={'auto'}
           h={'full'}
@@ -139,6 +136,7 @@ function HomeMobileView() {
           justify={'center'}
           p={10}
           gap={10}
+          mt={'0px'}
         >
           <Flex direction={'column'} w={'full'} gap={5}>
             <Heading size={'2xl'}>Aplicativo USPolis</Heading>
@@ -188,72 +186,7 @@ function HomeMobileView() {
         </Heading>
       </Flex>
       <Box id='section5' bg={'uspolis.white'} h={'full'}>
-        <Flex
-          h={'full'}
-          direction={'column'}
-          align={'center'}
-          justify={'center'}
-          gap={10}
-          p={10}
-        >
-          <Flex
-            direction={'column'}
-            h={'100%'}
-            w={'100%'}
-            p={5}
-            gap={5}
-            mr={30}
-          >
-            <Text
-              fontSize={'xl'}
-              textColor={'uspolis.black'}
-              textAlign={'justify'}
-            >
-              O USPolis foi inicialmente desenvolvido como projeto de formatura
-              no PCS, contando com um sistema de alocação automático de salas.
-              Ao longo do tempo outros projetos de formatura continuaram seu
-              desenvolvimento. Atualmente o USPolis possui uma bolsa PUB para
-              financiar o seu desenvolvimento.
-            </Text>
-            <Text
-              fontSize={'xl'}
-              textColor={'uspolis.black'}
-              textAlign={'justify'}
-            >
-              O USPolis é um projeto open-source, caso queira contribuir, tenha
-              dúvidas, sugestões ou comentários entre em contato conosco. Sua
-              ajuda será mais do que bem vinda!
-            </Text>
-          </Flex>
-          <Flex direction={'column'} gap={5} h={'100%'} w={'100%'}>
-            <Heading textColor={'uspolis.black'}>Desenvolvedores</Heading>
-            <UnorderedList textColor={'uspolis.black'}>
-              <ListItem>Daniel Hiroki Yamashita</ListItem>
-              <ListItem>Gabriel Di Vanna Camargo</ListItem>
-              <ListItem>Henrique Fuga Duran</ListItem>
-              <ListItem>Jorge Habib El Khouri</ListItem>
-              <ListItem>José Vitor Martins Makiyama</ListItem>
-              <ListItem>Luiz Roberto AKio Higuti</ListItem>
-              <ListItem>Marcel Makoto Kondo</ListItem>
-              <ListItem>Rodrigo Kenki Aguena</ListItem>
-              <ListItem>Rodrigo Miksian Magaldi</ListItem>
-            </UnorderedList>
-          </Flex>
-          <Flex
-            direction={'column'}
-            gap={5}
-            h={'100%'}
-            w={'100%'}
-            justify={'flex-start'}
-            align={'flex-start'}
-          >
-            <Heading textColor={'uspolis.black'}>Orientação</Heading>
-            <UnorderedList textColor={'uspolis.black'}>
-              <ListItem>Prof. Dr. Fábio Levy Siqueira (PCS|Poli-USP)</ListItem>
-              <ListItem>Renan Ávila (criador original do USPolis)</ListItem>
-            </UnorderedList>
-          </Flex>
-        </Flex>
+        <About />
       </Box>
       <Box
         bg={'uspolis.blue'}
@@ -262,41 +195,7 @@ function HomeMobileView() {
         justifyContent={'center'}
         p={5}
       >
-        <Flex
-          direction={'column'}
-          gap={'20px'}
-          align={'flex-start'}
-          justify={'flex-start'}
-        >
-          <Flex
-            direction={'row'}
-            justify={'center'}
-            align={'center'}
-            gap={'4px'}
-          >
-            <Icon as={EmailIcon} boxSize={'25px'} />
-            <Text textColor={'white'} fontSize={'xl'}>
-              uspolis@usp.br
-            </Text>
-          </Flex>
-          <Flex
-            direction={'row'}
-            justify={'center'}
-            align={'center'}
-            gap={'4px'}
-          >
-            <Icon as={FaGithub} boxSize={'25px'} />
-            <Link
-              as={'a'}
-              textColor={'white'}
-              fontSize={'lg'}
-              isExternal
-              href={'https://github.com/PCS-Poli-USP/USPolis-Admin'}
-            >
-              Github
-            </Link>
-          </Flex>
-        </Flex>
+        <Footer />
       </Box>
     </Flex>
   );

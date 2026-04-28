@@ -70,17 +70,6 @@ function MobileHeader() {
         align={'center'}
         mr={'15px'}
       >
-        <IconButton
-          id='docs-button'
-          as={'a'}
-          href={DOCS_URL + '/'}
-          rel='noopener noreferrer'
-          target='_blank'
-          aria-label='docs'
-          icon={<GrDocumentText />}
-          variant={'ghost'}
-        />
-
         <Button
           // as={'a'}
           variant={'link'}
@@ -97,7 +86,7 @@ function MobileHeader() {
             });
           }}
         >
-          Alocações
+          Salas
         </Button>
         <Text fontSize={'3xl'}>|</Text>
         {context.loggedUser ? (
@@ -124,10 +113,11 @@ function MobileHeader() {
           <Button
             hidden={context.isAuthenticated}
             // as={'a'}
-            maxW={"60px"}
+            maxW={'60px'}
+            h={'30px'}
             variant={'solid'}
             bg={'uspolis.blue'}
-            size={'md'}
+            size={'xs'}
             onClick={() => {
               navigate('/auth', {
                 replace: true,
@@ -147,6 +137,16 @@ function MobileHeader() {
             setColorMode(isDark ? 'light' : 'dark');
             setMode(isDark ? 'light' : 'dark');
           }}
+        />
+        <IconButton
+          id='docs-button'
+          as={'a'}
+          href={DOCS_URL + '/'}
+          rel='noopener noreferrer'
+          target='_blank'
+          aria-label='docs'
+          icon={<GrDocumentText />}
+          variant={'ghost'}
         />
       </Flex>
     </Flex>

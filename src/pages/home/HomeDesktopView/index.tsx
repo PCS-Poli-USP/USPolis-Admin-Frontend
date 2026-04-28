@@ -4,12 +4,8 @@ import {
   Flex,
   Heading,
   Highlight,
-  Icon,
   Image,
-  Link,
-  ListItem,
   Text,
-  UnorderedList,
 } from '@chakra-ui/react';
 import Header from '../Header';
 import USPolisPhone from '../Images/USPolisPhone.png';
@@ -17,10 +13,11 @@ import USPolisPhoneLaptop from '../Images/USPolisPhoneLaptop.png';
 import VerticalCarousel from '../VerticalCarousel';
 import { items, icons } from '../carousel.items';
 
-import { FaApple, FaGithub, FaMobileAlt } from 'react-icons/fa';
+import { FaApple, FaMobileAlt } from 'react-icons/fa';
 import { MdOutlineAdminPanelSettings } from 'react-icons/md';
 import { IoLogoGooglePlaystore } from 'react-icons/io5';
-import { EmailIcon } from '@chakra-ui/icons';
+import About from '../About';
+import Footer from '../Footer/index ';
 
 function HomeDesktopView() {
   return (
@@ -158,72 +155,8 @@ function HomeDesktopView() {
           Sobre
         </Heading>
       </Flex>
-      <Box id='section5' bg={'uspolis.white'} h={'400px'}>
-        <Flex
-          h={'full'}
-          direction={'row'}
-          align={'center'}
-          justify={'center'}
-          gap={10}
-          p={10}
-        >
-          <Flex
-            direction={'column'}
-            h={'100%'}
-            maxW={'700px'}
-            p={5}
-            gap={5}
-            mr={30}
-          >
-            <Text
-              fontSize={'xl'}
-              textColor={'uspolis.black'}
-              textAlign={'justify'}
-            >
-              O USPolis foi inicialmente desenvolvido como projeto de formatura
-              no PCS, contando com um sistema de alocação automático de salas.
-              Ao longo do tempo outros projetos de formatura continuaram seu
-              desenvolvimento. Atualmente o USPolis possui uma bolsa PUB para
-              financiar o seu desenvolvimento.
-            </Text>
-            <Text
-              fontSize={'xl'}
-              textColor={'uspolis.black'}
-              textAlign={'justify'}
-            >
-              O USPolis é um projeto open-source, caso queira contribuir, tenha
-              dúvidas, sugestões ou comentários entre em contato conosco. Sua
-              ajuda será mais do que bem vinda!
-            </Text>
-          </Flex>
-          <Flex direction={'column'} gap={5} h={'100%'}>
-            <Heading textColor={'uspolis.black'}>Desenvolvedores</Heading>
-            <UnorderedList textColor={'uspolis.black'}>
-              <ListItem>Daniel Hiroki Yamashita</ListItem>
-              <ListItem>Gabriel Di Vanna Camargo</ListItem>
-              <ListItem>Henrique Fuga Duran</ListItem>
-              <ListItem>Jorge Habib El Khouri</ListItem>
-              <ListItem>José Vitor Martins Makiyama</ListItem>
-              <ListItem>Luiz Roberto AKio Higuti</ListItem>
-              <ListItem>Marcel Makoto Kondo</ListItem>
-              <ListItem>Rodrigo Kenki Aguena</ListItem>
-              <ListItem>Rodrigo Miksian Magaldi</ListItem>
-            </UnorderedList>
-          </Flex>
-          <Flex
-            direction={'column'}
-            gap={5}
-            h={'100%'}
-            justify={'flex-start'}
-            align={'flex-start'}
-          >
-            <Heading textColor={'uspolis.black'}>Orientação</Heading>
-            <UnorderedList textColor={'uspolis.black'}>
-              <ListItem>Prof. Dr. Fábio Levy Siqueira (PCS|Poli-USP)</ListItem>
-              <ListItem>Renan Ávila (criador original do USPolis)</ListItem>
-            </UnorderedList>
-          </Flex>
-        </Flex>
+      <Box id='section5' bg={'uspolis.white'} h={'auto'} p={10}>
+        <About />
       </Box>
       <Box
         bg={'uspolis.blue'}
@@ -232,36 +165,7 @@ function HomeDesktopView() {
         justifyContent={'center'}
         p={'50px'}
       >
-        <Flex direction={'row'} gap={'25px'}>
-          <Flex
-            direction={'row'}
-            justify={'center'}
-            align={'center'}
-            gap={'4px'}
-          >
-            <Icon as={EmailIcon} boxSize={'25px'} />
-            <Text textColor={'white'} fontSize={'xl'}>
-              uspolis@usp.br
-            </Text>
-          </Flex>
-          <Flex
-            direction={'row'}
-            justify={'center'}
-            align={'center'}
-            gap={'4px'}
-          >
-            <Icon as={FaGithub} boxSize={'25px'} />
-            <Link
-              as={'a'}
-              textColor={'white'}
-              fontSize={'lg'}
-              isExternal
-              href={'https://github.com/PCS-Poli-USP/USPolis-Admin'}
-            >
-              Github
-            </Link>
-          </Flex>
-        </Flex>
+        <Footer />
       </Box>
     </Flex>
   );
