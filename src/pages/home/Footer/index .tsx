@@ -21,7 +21,7 @@ function Footer() {
           </Text>
         </Flex>
         <Flex direction={'row'} justify={'center'} align={'center'} gap={'4px'}>
-          <Icon as={FaGithub} boxSize={'25px'} />
+          <Icon as={FaGithub} boxSize={'25px'} textColor={'white'} />
           <Link
             as={'a'}
             textColor={'white'}
