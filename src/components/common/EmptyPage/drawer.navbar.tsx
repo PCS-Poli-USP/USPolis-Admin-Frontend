@@ -27,7 +27,12 @@ import { FeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { UsersValidator } from '../../../utils/users/users.validator';
 import UserImage from '../UserImage/user.image';
 import { useColorScheme } from '@mui/material';
-import { LuMessageCircleMore } from 'react-icons/lu';
+import {
+  LuCalendarDays,
+  LuCircleUserRound,
+  LuLogOut,
+  LuMessageCircleMore,
+} from 'react-icons/lu';
 import { GrDocumentText } from 'react-icons/gr';
 import { isAdminRoute } from '../../../utils/location';
 
@@ -245,6 +250,7 @@ export function DrawerNavBar({
                       bgColor={'uspolis.white'}
                       textColor={'uspolis.text'}
                       fontWeight={'bold'}
+                      icon={<LuCircleUserRound />}
                       onClick={() => {
                         navigate('/profile', {
                           replace: true,
@@ -255,6 +261,21 @@ export function DrawerNavBar({
                       Acessar perfil
                     </MenuItem>
                     <MenuItem
+                      bgColor={'uspolis.white'}
+                      textColor={'uspolis.text'}
+                      fontWeight={'bold'}
+                      icon={<LuCalendarDays />}
+                      onClick={() => {
+                        navigate('/timetable', {
+                          replace: true,
+                          state: { from: location },
+                        });
+                      }}
+                    >
+                      Grade horária
+                    </MenuItem>
+                    <MenuItem
+                      icon={<LuLogOut />}
                       onClick={handleClickLogout}
                       bgColor={'uspolis.white'}
                       textColor={'uspolis.text'}

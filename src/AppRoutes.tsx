@@ -37,6 +37,7 @@ import Reports from './pages/reports';
 import Feedbacks from './pages/feedbacks';
 import ReportsPage from './pages/occupationReports/reports';
 import UserSessions from './pages/userSessions/userSessions';
+import Timetable from './pages/timetable/timetable';
 
 function AppRoutes() {
   return (
@@ -64,6 +65,7 @@ function AppRoutes() {
             {/* Private routes */}
             <Route element={<PrivateRoute />}>
               <Route path='profile' element={<Profile />} />
+              <Route path='timetable' element={<Timetable />} />
               <Route path='my-solicitations' element={<MySolicitations />} />
 
               {/* Restricted routes */}

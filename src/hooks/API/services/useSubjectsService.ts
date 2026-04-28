@@ -8,6 +8,7 @@ import {
 import {
   SubjectCrawlResponse,
   SubjectResponse,
+  SubjectResponseBase,
 } from '../../../models/http/responses/subject.response.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 
@@ -17,6 +18,10 @@ const useSubjectsService = () => {
 
   const get = (): Promise<AxiosResponse<Array<SubjectResponse>>> => {
     return axios.get(PREFIX);
+  };
+
+  const getCore = (): Promise<AxiosResponse<Array<SubjectResponseBase>>> => {
+    return axios.get(`${PREFIX}/core`);
   };
 
   const getActive = (
@@ -70,6 +75,7 @@ const useSubjectsService = () => {
 
   return {
     get,
+    getCore,
     getActive,
     getMine,
     create,

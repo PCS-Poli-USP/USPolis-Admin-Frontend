@@ -5,6 +5,7 @@ import {
   FormErrorMessage,
   InputGroup,
   InputLeftElement,
+  InputRightElement,
 } from '@chakra-ui/react';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -17,6 +18,7 @@ interface InputProps extends FieldProps {
   max?: string | number | undefined;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
 }
@@ -37,6 +39,7 @@ export function Input({
   ml = undefined,
   onChange = undefined,
   icon = undefined,
+  iconPosition = 'left',
   onFocus = undefined,
   onBlur = undefined,
 }: InputProps) {
@@ -62,8 +65,8 @@ export function Input({
         control={control}
         render={({ field }) => (
           <InputGroup>
-            {icon && (
-              <InputLeftElement pointerEvents='none'>{icon}</InputLeftElement>
+            {icon && iconPosition === 'left' && (
+              <InputLeftElement>{icon}</InputLeftElement>
             )}
             <ChakraInput
               {...field}
@@ -83,6 +86,9 @@ export function Input({
               onFocus={onFocus}
               onBlur={onBlur}
             />
+            {icon && iconPosition === 'right' && (
+              <InputRightElement>{icon}</InputRightElement>
+            )}
           </InputGroup>
         )}
       />

@@ -3,7 +3,10 @@ import {
   CreateSubject,
   UpdateSubject,
 } from '../models/http/requests/subject.request.models';
-import { SubjectResponse } from '../models/http/responses/subject.response.models';
+import {
+  SubjectResponse,
+  SubjectResponseBase,
+} from '../models/http/responses/subject.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import { sortSubjectsResponse } from '../utils/subjects/subjects.sorter';
 import useSubjectsService from './API/services/useSubjectsService';
@@ -12,6 +15,7 @@ const useSubjects = (initialFetch = true) => {
   const service = useSubjectsService();
   const [loading, setLoading] = useState(false);
   const [subjects, setSubjects] = useState<SubjectResponse[]>([]);
+  const [subjectsCore, setSubjectsCore] = useState<SubjectResponseBase[]>([]);
 
   const showToast = useCustomToast();
 
@@ -21,6 +25,21 @@ const useSubjects = (initialFetch = true) => {
       .get()
       .then((response) => {
         setSubjects(response.data.sort(sortSubjectsResponse));
+      })
+      .catch(() => {
+        showToast('Erro', 'Erro ao carregar todas disciplinas', 'error');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [showToast, service]);
+
+  const getAllSubjectsCore = useCallback(async () => {
+    setLoading(true);
+    await service
+      .getCore()
+      .then((response) => {
+        setSubjectsCore(response.data.sort(sortSubjectsResponse));
       })
       .catch(() => {
         showToast('Erro', 'Erro ao carregar todas disciplinas', 'error');
@@ -138,7 +157,9 @@ const useSubjects = (initialFetch = true) => {
   return {
     loading,
     subjects,
+    subjectsCore,
     getAllSubjects,
+    getAllSubjectsCore,
     getAllSubjectsActives,
     getSubjects,
     createSubject,
