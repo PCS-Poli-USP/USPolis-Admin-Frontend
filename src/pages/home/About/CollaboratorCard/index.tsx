@@ -1,24 +1,22 @@
-import { Flex, Heading, Icon, Text } from '@chakra-ui/react';
+import { Flex, Heading, Icon, Image, Link, Text } from '@chakra-ui/react';
 import { PiStudentFill } from 'react-icons/pi';
-import { FcManager } from "react-icons/fc";
-
-interface CollaboratorCardProps {
-  name: string;
-  description: string;
-  iconType: 'student' | 'professor' | 'other' | 'none';
-}
+import { Colaborator } from '..';
+import { FaGithub, FaLinkedin, FaUserTie } from 'react-icons/fa';
 
 function CollaboratorCard({
   name,
   description,
   iconType,
-}: CollaboratorCardProps) {
+  linkedin,
+  github,
+  image,
+}: Colaborator) {
   function getIcon() {
     switch (iconType) {
       case 'student':
         return PiStudentFill;
       case 'professor':
-        return FcManager;
+        return FaUserTie;
       case 'none':
         return null;
       default:
@@ -36,12 +34,52 @@ function CollaboratorCard({
       gap={'10px'}
       justify={'center'}
       align={'center'}
-      p={'10px'}
+      p={'1rem'}
+      // w={'fit-content'}
     >
-      {icon && <Icon as={icon} boxSize={'48px'} />}
-      <Flex direction={'column'} justify={'center'} align={'center'} gap={'5px'}>
+      {!image && icon && <Icon as={icon} boxSize={'48px'} />}
+      {image && (
+        <Image
+          src={image}
+          alt={name}
+          boxSize='64px'
+          borderRadius='full'
+          // border={'2px solid'}
+          boxShadow={'5px 5px 10px #888888'}
+        />
+      )}
+      <Flex
+        direction={'column'}
+        justify={'center'}
+        align={'center'}
+        gap={'5px'}
+      >
         <Heading size={'sm'}>{name}</Heading>
         <Text>{description}</Text>
+      </Flex>
+      <Flex direction={'row'} gap={'5px'}>
+        {linkedin && (
+          <Link
+            as={'a'}
+            textColor={'uspolis.blue'}
+            fontSize={'lg'}
+            isExternal
+            href={linkedin}
+          >
+            <FaLinkedin />
+          </Link>
+        )}
+        {github && (
+          <Link
+            as={'a'}
+            textColor={'uspolis.blue'}
+            fontSize={'lg'}
+            isExternal
+            href={github}
+          >
+            <FaGithub />
+          </Link>
+        )}
       </Flex>
     </Flex>
   );

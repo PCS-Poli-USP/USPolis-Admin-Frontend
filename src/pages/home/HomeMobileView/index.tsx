@@ -139,13 +139,15 @@ function HomeMobileView() {
           mt={'0px'}
         >
           <Flex direction={'column'} w={'full'} gap={5}>
-            <Heading size={'2xl'}>Aplicativo USPolis</Heading>
-            <Text fontSize={'xl'}>
+            <Heading size={'2xl'} textAlign={'center'}>
+              Aplicativo USPolis
+            </Heading>
+            <Text fontSize={'xl'} textAlign={'justify'}>
               Utilize o nosso aplicativo para ter acesso a todas as informações
               do nosso sistema. Monte sua grade, veja as salas disponíveis e
               muito mais.
             </Text>
-            <Flex direction={'row'} gap={5}>
+            <Flex direction={'row'} gap={5} justify={'center'}>
               <Button
                 as={'a'}
                 href='https://play.google.com/store/apps/details?id=uspolis.lunadros'

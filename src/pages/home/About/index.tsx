@@ -1,21 +1,59 @@
 import { Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react';
 import CollaboratorCard from './CollaboratorCard';
+import gabrielImg from './Images/gabriel.jpeg';
+import juliaImg from './Images/julia.jpeg';
+import levyImg from './Images/levy.jpeg';
+import renanImg from './Images/renan.jpeg';
 
-interface Colaborator {
+export interface Colaborator {
   name: string;
   description: string;
   image?: string;
+  iconType?: 'student' | 'professor' | 'other' | 'none';
+  linkedin?: string;
+  github?: string;
 }
 
 function About() {
   const collaborators: Colaborator[] = [
     {
-      name: 'Daniel Hiroki Yamashita',
-      description: 'Ex-aluno de graduação',
-    },
-    {
       name: 'Gabriel Di Vanna Camargo',
       description: 'Aluno de graduação',
+      linkedin:
+        'https://www.linkedin.com/in/gabriel-di-vanna-camargo-167403243',
+      github: 'https://github.com/gdvcamargo',
+      image: gabrielImg,
+    },
+    {
+      name: 'Julia Machado Boschetti',
+      description: 'Aluna de graduação',
+      linkedin: 'https://www.linkedin.com/in/juliamboschetti/',
+      github: 'https://github.com/bisnagua',
+      image: juliaImg,
+    },
+  ];
+
+  const orientation: Colaborator[] = [
+    {
+      name: 'Prof. Dr. Fábio Levy Siqueira',
+      description: 'PCS | Poli-USP',
+      linkedin: 'https://www.linkedin.com/in/levysiqueira/',
+      github: 'https://github.com/levysiqueira',
+      image: levyImg,
+    },
+    {
+      name: 'Renan de Luca Avila',
+      description: 'Criador original do USPolis',
+      linkedin: 'https://www.linkedin.com/in/delucarenan/',
+      github: 'https://github.com/avilarenan',
+      image: renanImg,
+    },
+  ];
+
+  const emeritus: Colaborator[] = [
+    {
+      name: 'Daniel Hiroki Yamashita',
+      description: 'Ex-aluno de graduação',
     },
     {
       name: 'Henrique Fuga Duran',
@@ -34,10 +72,6 @@ function About() {
       description: 'Ex-aluno de graduação',
     },
     {
-      name: 'Julia Machado Boschetti',
-      description: 'Aluna de graduação',
-    },
-    {
       name: 'Marcel Makoto Kondo',
       description: 'Ex-aluno de graduação',
     },
@@ -48,17 +82,6 @@ function About() {
     {
       name: 'Rodrigo Miksian Magaldi',
       description: 'Ex-aluno de graduação',
-    },
-  ];
-
-  const orientation: Colaborator[] = [
-    {
-      name: 'Prof. Dr. Fábio Levy Siqueira',
-      description: 'PCS | Poli-USP',
-    },
-    {
-      name: 'Renan Ávila',
-      description: 'Criador original do USPolis',
     },
   ];
 
@@ -85,22 +108,24 @@ function About() {
           será mais do que bem vinda!
         </Text>
       </Flex>
-      <Flex direction={'column'} gap={6} w={'full'} maxW={'1100px'}>
+      <Flex direction={'column'} gap={6} w={'full'} maxW={'800px'}>
         <Heading textColor={'uspolis.black'} textAlign={'center'}>
           Desenvolvedores
         </Heading>
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={5}>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 2 }} spacing={5}>
           {collaborators.map((collaborator) => (
             <CollaboratorCard
               key={collaborator.name}
               name={collaborator.name}
               description={collaborator.description}
-              iconType='student'
+              linkedin={collaborator.linkedin}
+              github={collaborator.github}
+              image={collaborator.image}
             />
           ))}
         </SimpleGrid>
       </Flex>
-      <Flex direction={'column'} gap={6} w={'full'} maxW={'1100px'}>
+      <Flex direction={'column'} gap={6} w={'full'} maxW={'800px'}>
         <Heading textColor={'uspolis.black'} textAlign={'center'}>
           Orientação
         </Heading>
@@ -110,8 +135,30 @@ function About() {
               key={collaborator.name}
               name={collaborator.name}
               description={collaborator.description}
-              iconType='professor'
+              linkedin={collaborator.linkedin}
+              github={collaborator.github}
+              image={collaborator.image}
             />
+          ))}
+        </SimpleGrid>
+      </Flex>
+      <Flex
+        direction={'column'}
+        gap={6}
+        w={'full'}
+        maxW={'800px'}
+        justifyContent={'center'}
+        alignContent={'center'}
+      >
+        <Heading textColor={'uspolis.black'} textAlign={'center'}>
+          Desenvolvedores Eméritos
+        </Heading>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={5}>
+          {emeritus.map((collaborator) => (
+            <Flex direction={'column'} justify={'center'} align={'center'}>
+              <Text fontWeight={'bold'}>{collaborator.name}</Text>
+              <Text>{collaborator.description}</Text>
+            </Flex>
           ))}
         </SimpleGrid>
       </Flex>

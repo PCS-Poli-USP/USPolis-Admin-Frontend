@@ -15,7 +15,7 @@ function Footer() {
         justify={'center'}
       >
         <Flex direction={'row'} justify={'center'} align={'center'} gap={'4px'}>
-          <Icon as={EmailIcon} boxSize={'25px'} />
+          <Icon as={EmailIcon} boxSize={'25px'} textColor={'white'} />
           <Text textColor={'white'} fontSize={'xl'}>
             uspolis@usp.br
           </Text>
