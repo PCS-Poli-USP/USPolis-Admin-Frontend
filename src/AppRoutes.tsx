@@ -37,6 +37,9 @@ import Reports from './pages/reports';
 import Feedbacks from './pages/feedbacks';
 import ReportsPage from './pages/occupationReports/reports';
 import UserSessions from './pages/userSessions/userSessions';
+import CoursesPage from './pages/courses/courses';
+import Curriculums from './pages/curriculums/curriculums';
+import CurriculumSubjects from './pages/curriculumSubjects/curriculumSubjects';
 import Timetable from './pages/timetable/timetable';
 
 function AppRoutes() {
@@ -78,6 +81,9 @@ function AppRoutes() {
                 <Route path='conflicts' element={<ConflictsPage />} />
                 <Route path='solicitations' element={<Solicitations />} />
                 <Route path='reports' element={<ReportsPage />} />
+                <Route path='courses' element={<CoursesPage />} />
+                <Route path='/courses/:courseId/curriculums' element={<Curriculums />} />
+                <Route path='/curriculums/:curriculumId/subjects' element={<CurriculumSubjects />} />
               </Route>
 
               {/* Admin routes */}
