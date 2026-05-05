@@ -66,6 +66,7 @@ export function EditCurriculumModal({
       toast({
         title: "Currículo atualizado",
         status: "success",
+        position: "top-left",
       });
 
       refresh();
@@ -75,6 +76,7 @@ export function EditCurriculumModal({
       toast({
         title: "Erro ao atualizar currículo",
         status: "error",
+         position: "top-left",
       });
     }
   }

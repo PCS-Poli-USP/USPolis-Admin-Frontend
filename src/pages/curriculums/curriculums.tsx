@@ -8,6 +8,12 @@ import {
   Button,
   Spacer,
   useDisclosure,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuGroup,
+  MenuDivider,
+  MenuItem,
 } from '@chakra-ui/react';
 
 import { AddIcon } from '@chakra-ui/icons';
@@ -27,6 +33,10 @@ import { CourseResponse } from '../../models/http/responses/course.response.mode
 import { getCurriculumColumns } from './Tables/curriculum.table';
 import { CreateCurriculumModal } from './CreateCurriculumModal/CreateCurriculumModal';
 import { EditCurriculumModal } from './EditCurriculumModal/EditCurriculumModal';
+
+import { LuHand, LuTimer } from 'react-icons/lu';
+
+import CrawlerJupiterCurriculumModal from './CrawlerModal/crawler.jupiter.curriculum.modal';
 
 export default function Curriculums() {
   const { courseId } = useParams();
@@ -66,6 +76,12 @@ export default function Curriculums() {
     onClose: onCloseDelete,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenCrawlerJupiterModal,
+    onOpen: onOpenCrawlerJupiterModal,
+    onClose: onCloseCrawlerJupiterModal,
+  } = useDisclosure();
+
   async function fetchData() {
     setLoading(true);
     try {
@@ -75,14 +91,14 @@ export default function Curriculums() {
       ]);
 
       const filtered = currRes.data.filter(
-        c => c.course_id === Number(courseId)
+        (c) => c.course_id === Number(courseId)
       );
 
       setCurriculums(filtered);
 
       if (!course) {
         const found = courseRes.data.find(
-          c => c.id === Number(courseId)
+          (c) => c.id === Number(courseId)
         );
         setCourse(found);
       }
@@ -97,6 +113,10 @@ export default function Curriculums() {
 
   function refetch() {
     fetchData();
+  }
+
+  function handleRegisterClick() {
+    onOpenCreate();
   }
 
   function handleEditClick(curriculum: CurriculumResponse) {
@@ -123,6 +143,11 @@ export default function Curriculums() {
       await deleteById(selectedCurriculum.id);
     }
     onCloseDelete();
+    refetch();
+  }
+
+  async function handleCrawlerSaved() {
+    onCloseCrawlerJupiterModal();
     refetch();
   }
 
@@ -162,6 +187,13 @@ export default function Curriculums() {
         refresh={refetch}
       />
 
+      <CrawlerJupiterCurriculumModal
+        isOpen={isOpenCrawlerJupiterModal}
+        onClose={onCloseCrawlerJupiterModal}
+        courseId={Number(courseId)}
+        onSaved={handleCrawlerSaved}
+      />
+
       <Dialog
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
@@ -178,13 +210,46 @@ export default function Curriculums() {
 
           <Spacer />
 
-          <Button
-            colorScheme="blue"
-            rightIcon={<AddIcon />}
-            onClick={onOpenCreate}
-          >
-            Cadastrar
-          </Button>
+          <Menu>
+            <MenuButton
+              as={Button}
+              colorScheme="blue"
+              leftIcon={<AddIcon />}
+              borderRadius={'20px'}
+            >
+              Opções
+            </MenuButton>
+
+            <MenuList w={'300px'} border={'1px'} bgColor={'uspolis.white'}>
+              <MenuGroup title="Adição" fontSize={'lg'} gap={'5px'}>
+                <MenuDivider />
+
+                <MenuItem
+                  as={Button}
+                  bgColor={'uspolis.white'}
+                  justifyContent={'flex-start'}
+                  onClick={handleRegisterClick}
+                  leftIcon={<LuHand />}
+                  _hover={{ textColor: 'uspolis.white' }}
+                >
+                  Manual
+                </MenuItem>
+
+                <MenuDivider />
+
+                <MenuItem
+                  as={Button}
+                  bgColor={'uspolis.white'}
+                  justifyContent={'flex-start'}
+                  leftIcon={<LuTimer />}
+                  onClick={onOpenCrawlerJupiterModal}
+                  _hover={{ textColor: 'uspolis.white' }}
+                >
+                  Júpiter
+                </MenuItem>
+              </MenuGroup>
+            </MenuList>
+          </Menu>
         </Flex>
 
         <DataTable

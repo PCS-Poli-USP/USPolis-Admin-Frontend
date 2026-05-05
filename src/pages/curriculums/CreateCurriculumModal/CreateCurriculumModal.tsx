@@ -57,6 +57,7 @@ export function CreateCurriculumModal({
       toast({
         title: "Currículo criado",
         status: "success",
+         position: "top-left",
       });
 
       refresh();
@@ -70,6 +71,7 @@ export function CreateCurriculumModal({
       toast({
         title: "Erro ao criar currículo",
         status: "error",
+         position: "top-left",
       });
     }
   }

@@ -121,6 +121,7 @@ export default function CurriculumSubjectModal(
           status: "success",
           duration: 4000,
           isClosable: true,
+          position: "top-left",
         });
         console.log("VALUES", values);
         props.refetch();
@@ -135,6 +136,7 @@ export default function CurriculumSubjectModal(
           status: "warning",
           duration: 6000,
           isClosable: true,
+          position: "top-left",
         });
       }
 
@@ -171,6 +173,7 @@ export default function CurriculumSubjectModal(
         status: "success",
         duration: 4000,
         isClosable: true,
+        position: "top-left",
       });
     }
 
@@ -181,6 +184,7 @@ export default function CurriculumSubjectModal(
         status: "warning",
         duration: 6000,
         isClosable: true,
+        position: "top-left",
       });
     }
 
