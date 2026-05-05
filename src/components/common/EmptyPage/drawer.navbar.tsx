@@ -9,14 +9,8 @@ import {
   IconButton,
   Image,
   Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  StackDivider,
   useColorMode,
   useMediaQuery,
-  VStack,
 } from '@chakra-ui/react';
 import { ReactNode, useContext } from 'react';
 import Logo from '../../..//assets/uspolis.logo.png';
@@ -25,16 +19,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { PiHandPointingFill } from 'react-icons/pi';
 import { FeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { UsersValidator } from '../../../utils/users/users.validator';
-import UserImage from '../UserImage/user.image';
 import { useColorScheme } from '@mui/material';
-import {
-  LuCalendarDays,
-  LuCircleUserRound,
-  LuLogOut,
-  LuMessageCircleMore,
-} from 'react-icons/lu';
+import { LuMessageCircleMore } from 'react-icons/lu';
 import { GrDocumentText } from 'react-icons/gr';
 import { isAdminRoute } from '../../../utils/location';
+import ProfileButton from '../ProfileButton';
 
 const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
 
@@ -71,7 +60,7 @@ export function DrawerNavBar({
   onOpenContactModal,
 }: DrawerNavBarProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
-  const { isAuthenticated, loggedUser, logout } = useContext(appContext);
+  const { isAuthenticated, loggedUser } = useContext(appContext);
   const { state, setState, setPathBeforeGuide } =
     useContext(FeatureGuideContext);
   const location = useLocation();
@@ -79,14 +68,6 @@ export function DrawerNavBar({
   const validator = new UsersValidator(loggedUser);
   const { colorMode, toggleColorMode } = useColorMode();
   const { setMode } = useColorScheme();
-
-  async function handleClickLogout() {
-    await logout();
-    navigate('/', {
-      replace: true,
-      state: { from: location },
-    });
-  }
 
   function getDocsLocalPath() {
     const path = location.pathname;
@@ -225,66 +206,7 @@ export function DrawerNavBar({
                   Tutorial
                 </Button>
               )}
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rounded={'full'}
-                  variant={'link'}
-                  cursor={'pointer'}
-                >
-                  <Flex
-                    id='navbar-user-menu-button'
-                    align={'center'}
-                    justify={'center'}
-                    gap='10px'
-                  >
-                    <UserImage />
-                  </Flex>
-                </MenuButton>
-                <MenuList bgColor={'uspolis.white'}>
-                  <VStack
-                    divider={<StackDivider borderColor={'black.500'} />}
-                    bgColor={'uspolis.white'}
-                  >
-                    <MenuItem
-                      bgColor={'uspolis.white'}
-                      textColor={'uspolis.text'}
-                      fontWeight={'bold'}
-                      icon={<LuCircleUserRound />}
-                      onClick={() => {
-                        navigate('/profile', {
-                          replace: true,
-                          state: { from: location },
-                        });
-                      }}
-                    >
-                      Acessar perfil
-                    </MenuItem>
-                    <MenuItem
-                      bgColor={'uspolis.white'}
-                      textColor={'uspolis.text'}
-                      fontWeight={'bold'}
-                      icon={<LuCalendarDays />}
-                      onClick={() => {
-                        navigate('/timetable', {
-                          replace: true,
-                          state: { from: location },
-                        });
-                      }}
-                    >
-                      Grade horária
-                    </MenuItem>
-                    <MenuItem
-                      icon={<LuLogOut />}
-                      onClick={handleClickLogout}
-                      bgColor={'uspolis.white'}
-                      textColor={'uspolis.text'}
-                    >
-                      Sair
-                    </MenuItem>
-                  </VStack>
-                </MenuList>
-              </Menu>
+              <ProfileButton />
             </>
           ) : (
             <HStack>

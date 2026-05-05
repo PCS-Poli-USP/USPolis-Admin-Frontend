@@ -5,10 +5,6 @@ import {
   Image,
   Text,
   Link,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
   useColorMode,
   IconButton,
 } from '@chakra-ui/react';
@@ -16,16 +12,16 @@ import Logo from '../../../assets/uspolis.logo.png';
 import { appContext } from '../../../context/AppContext';
 import { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import UserImage from '../../../components/common/UserImage/user.image';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { useColorScheme } from '@mui/material';
+import ProfileButton from '../../../components/common/ProfileButton';
 
 const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
 
 function Header() {
   const { colorMode, setColorMode } = useColorMode();
   const { setMode } = useColorScheme();
-  
+
   const isDark = colorMode === 'dark';
   const context = useContext(appContext);
   const location = useLocation();
@@ -124,37 +120,7 @@ function Header() {
         </Button>
         <Text fontSize={'3xl'}>|</Text>
         {context.loggedUser ? (
-          <Menu>
-            <MenuButton
-              as={Button}
-              rounded={'full'}
-              variant={'link'}
-              cursor={'pointer'}
-              minW={0}
-              colorScheme='dark'
-            >
-              <Flex alignItems={'center'} gap='1'>
-                <UserImage />
-              </Flex>
-            </MenuButton>
-            <MenuList>
-              <MenuItem
-                color='black'
-                fontWeight={'bold'}
-                onClick={() => {
-                  navigate('/profile', {
-                    replace: true,
-                    state: { from: location },
-                  });
-                }}
-              >
-                Acessar perfil
-              </MenuItem>
-              <MenuItem onClick={() => context.logout()} color='black'>
-                Sair
-              </MenuItem>
-            </MenuList>
-          </Menu>
+          <ProfileButton />
         ) : (
           <Button
             hidden={context.isAuthenticated}
