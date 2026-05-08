@@ -6,6 +6,7 @@ import {
   GridItem,
   IconButton,
   Text,
+  Tooltip,
   useDisclosure,
   useMediaQuery,
 } from '@chakra-ui/react';
@@ -102,6 +103,11 @@ function Allocation() {
   const [showEventTypeMap, setShowEventTypeMap] = useState<
     Map<AllocationEventType, boolean>
   >(new Map(AllocationEventType.getValues().map((type) => [type, true])));
+  const [activeDrawerTooltip, setActiveDrawerTooltip] = useState<string | null>(
+    null,
+  );
+  const [showEmptyLines, setShowEmptyLines] = useState(true);
+  const [calendarKey, setCalendarKey] = useState(0);
 
   const {
     loading: loadingAllocation,
@@ -259,6 +265,45 @@ function Allocation() {
     arg.revert();
   }
 
+  function getResources() {
+    const baseResources =
+      buildingSearchValue || classroomSearchValue
+        ? filteredResources
+        : resources;
+
+    if (showEmptyLines) {
+      return baseResources;
+    }
+
+    const eventResourceIds = new Set(
+      events.map((event) => event.resourceId).filter(Boolean),
+    );
+    const isEventResource = (resource: Resource) => {
+      if (eventResourceIds.has(resource.id)) {
+        return true;
+      }
+      if (resource.parentId) {
+        const compositeId = `${resource.parentId}-${resource.title}`;
+        return eventResourceIds.has(compositeId);
+      }
+      return false;
+    };
+    const parentIdsWithEvents = new Set<string>();
+
+    baseResources.forEach((resource) => {
+      if (resource.parentId && isEventResource(resource)) {
+        parentIdsWithEvents.add(resource.parentId);
+      }
+    });
+
+    return baseResources.filter((resource) => {
+      if (!resource.parentId) {
+        return parentIdsWithEvents.has(resource.id);
+      }
+      return isEventResource(resource);
+    });
+  }
+
   useEffect(() => {
     let filtered = [...resources];
     if (buildingSearchValue) {
@@ -355,6 +400,10 @@ function Allocation() {
     }
   }, [setupInitialFilters, resources, loggedUser]);
 
+  useEffect(() => {
+    setCalendarKey((prev) => prev + 1);
+  }, [showEmptyLines, currentView, events, resources, filteredResources]);
+
   return (
     <PageContent>
       <Loading
@@ -375,7 +424,7 @@ function Allocation() {
           isMobile ? '1fr' : `${isOpenDrawer ? 250 : 65}px 1fr`
         }
         w={'calc(100% - 0rem)'}
-        h={'100vh'}
+        h={'calc(90vh - 60px)'}
         id='allocation-grid'
         gap={'5px'}
       >
@@ -416,65 +465,151 @@ function Allocation() {
 
         <GridItem area={'drawer'} hidden={isMobile} paddingRight={'10px'}>
           <Flex justify={'flex-end'}>
-            <IconButton
-              aria-label='Expandir menu'
-              mt={'10px'}
-              variant={'outline'}
-              colorScheme='blue'
-              color={'uspolis.blue'}
-              onClick={() => {
-                onToggleDrawer();
-              }}
-              disabled={isOpenMenu}
-              icon={isOpenDrawer ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            />
+            <Tooltip
+              placement='right'
+              label={
+                isOpenDrawer ? 'Fechar configurações' : 'Abrir configurações'
+              }
+            >
+              <IconButton
+                aria-label='Expandir menu'
+                mt={'10px'}
+                variant={'outline'}
+                colorScheme='blue'
+                color={'uspolis.blue'}
+                onClick={() => {
+                  onToggleDrawer();
+                }}
+                disabled={isOpenMenu}
+                icon={isOpenDrawer ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+              />
+            </Tooltip>
           </Flex>
           {!isOpenDrawer && (
             <Flex direction={'column'} mt={'350px'} gap={'10px'}>
-              <Checkbox
-                fontWeight={'bold'}
-                isChecked={showEventTypeMap.get(AllocationEventType.SUBJECT)}
-                onChange={(e) => {
-                  const newMap = new Map(showEventTypeMap);
-                  newMap.set(AllocationEventType.SUBJECT, e.target.checked);
-                  setShowEventTypeMap(newMap);
-                }}
+              <Tooltip
+                marginLeft={'40px'}
+                placement='right'
+                label={' Exibir linhas vazias'}
+                isOpen={activeDrawerTooltip === 'empty-lines'}
               >
-                📚
-              </Checkbox>
-              <Checkbox
-                fontWeight={'bold'}
-                isChecked={showEventTypeMap.get(AllocationEventType.EXAM)}
-                onChange={(e) => {
-                  const newMap = new Map(showEventTypeMap);
-                  newMap.set(AllocationEventType.EXAM, e.target.checked);
-                  setShowEventTypeMap(newMap);
-                }}
+                <Checkbox
+                  fontWeight={'bold'}
+                  isChecked={showEmptyLines}
+                  onMouseEnter={() => setActiveDrawerTooltip('empty-lines')}
+                  onMouseLeave={() => setActiveDrawerTooltip(null)}
+                  onBlur={() => setActiveDrawerTooltip(null)}
+                  onChange={() => {
+                    setShowEmptyLines((prev) => !prev);
+                  }}
+                >
+                  {showEmptyLines ? '👁️' : '👁️⃠'}
+                </Checkbox>
+              </Tooltip>
+
+              <Tooltip
+                placement='right'
+                label={
+                  showEventTypeMap.get(AllocationEventType.SUBJECT)
+                    ? 'Ocultar disciplinas'
+                    : 'Exibir disciplinas'
+                }
+                marginLeft={'40px'}
+                isOpen={activeDrawerTooltip === 'subject'}
               >
-                📝
-              </Checkbox>
-              <Checkbox
-                fontWeight={'bold'}
-                isChecked={showEventTypeMap.get(AllocationEventType.EVENT)}
-                onChange={(e) => {
-                  const newMap = new Map(showEventTypeMap);
-                  newMap.set(AllocationEventType.EVENT, e.target.checked);
-                  setShowEventTypeMap(newMap);
-                }}
+                <Checkbox
+                  fontWeight={'bold'}
+                  isChecked={showEventTypeMap.get(AllocationEventType.SUBJECT)}
+                  onMouseEnter={() => setActiveDrawerTooltip('subject')}
+                  onMouseLeave={() => setActiveDrawerTooltip(null)}
+                  onBlur={() => setActiveDrawerTooltip(null)}
+                  onChange={(e) => {
+                    const newMap = new Map(showEventTypeMap);
+                    newMap.set(AllocationEventType.SUBJECT, e.target.checked);
+                    setShowEventTypeMap(newMap);
+                  }}
+                >
+                  📚
+                </Checkbox>
+              </Tooltip>
+
+              <Tooltip
+                placement='right'
+                label={
+                  showEventTypeMap.get(AllocationEventType.EXAM)
+                    ? 'Ocultar provas'
+                    : 'Exibir provas'
+                }
+                marginLeft={'40px'}
+                isOpen={activeDrawerTooltip === 'exam'}
               >
-                📅
-              </Checkbox>
-              <Checkbox
-                fontWeight={'bold'}
-                isChecked={showEventTypeMap.get(AllocationEventType.MEETING)}
-                onChange={(e) => {
-                  const newMap = new Map(showEventTypeMap);
-                  newMap.set(AllocationEventType.MEETING, e.target.checked);
-                  setShowEventTypeMap(newMap);
-                }}
+                <Checkbox
+                  fontWeight={'bold'}
+                  isChecked={showEventTypeMap.get(AllocationEventType.EXAM)}
+                  onMouseEnter={() => setActiveDrawerTooltip('exam')}
+                  onMouseLeave={() => setActiveDrawerTooltip(null)}
+                  onBlur={() => setActiveDrawerTooltip(null)}
+                  onChange={(e) => {
+                    const newMap = new Map(showEventTypeMap);
+                    newMap.set(AllocationEventType.EXAM, e.target.checked);
+                    setShowEventTypeMap(newMap);
+                  }}
+                >
+                  📝
+                </Checkbox>
+              </Tooltip>
+
+              <Tooltip
+                placement='right'
+                label={
+                  showEventTypeMap.get(AllocationEventType.EVENT)
+                    ? 'Ocultar eventos'
+                    : 'Exibir eventos'
+                }
+                marginLeft={'40px'}
+                isOpen={activeDrawerTooltip === 'event'}
               >
-                👥
-              </Checkbox>
+                <Checkbox
+                  fontWeight={'bold'}
+                  isChecked={showEventTypeMap.get(AllocationEventType.EVENT)}
+                  onMouseEnter={() => setActiveDrawerTooltip('event')}
+                  onMouseLeave={() => setActiveDrawerTooltip(null)}
+                  onBlur={() => setActiveDrawerTooltip(null)}
+                  onChange={(e) => {
+                    const newMap = new Map(showEventTypeMap);
+                    newMap.set(AllocationEventType.EVENT, e.target.checked);
+                    setShowEventTypeMap(newMap);
+                  }}
+                >
+                  📅
+                </Checkbox>
+              </Tooltip>
+
+              <Tooltip
+                placement='right'
+                label={
+                  showEventTypeMap.get(AllocationEventType.MEETING)
+                    ? 'Ocultar reuniões'
+                    : 'Exibir reuniões'
+                }
+                marginLeft={'40px'}
+                isOpen={activeDrawerTooltip === 'meeting'}
+              >
+                <Checkbox
+                  fontWeight={'bold'}
+                  isChecked={showEventTypeMap.get(AllocationEventType.MEETING)}
+                  onMouseEnter={() => setActiveDrawerTooltip('meeting')}
+                  onMouseLeave={() => setActiveDrawerTooltip(null)}
+                  onBlur={() => setActiveDrawerTooltip(null)}
+                  onChange={(e) => {
+                    const newMap = new Map(showEventTypeMap);
+                    newMap.set(AllocationEventType.MEETING, e.target.checked);
+                    setShowEventTypeMap(newMap);
+                  }}
+                >
+                  👥
+                </Checkbox>
+              </Tooltip>
             </Flex>
           )}
           <Collapse in={isOpenDrawer} animateOpacity>
@@ -507,7 +642,19 @@ function Allocation() {
               />
               <Flex direction={'column'} pl={'10px'} w={'100%'} gap={'10px'}>
                 <Text fontWeight={'bold'} mb={'10px'} fontSize={'lg'}>
-                  Exibir categorias:
+                  Configurações Gerais:
+                </Text>
+                <Checkbox
+                  fontWeight={'bold'}
+                  isChecked={showEmptyLines}
+                  onChange={() => {
+                    setShowEmptyLines((prev) => !prev);
+                  }}
+                >
+                  Exibir linhas vazias
+                </Checkbox>
+                <Text fontWeight={'bold'} mb={'10px'} fontSize={'lg'}>
+                  Exibir Categorias:
                 </Text>
                 <Checkbox
                   fontWeight={'bold'}
@@ -623,6 +770,7 @@ function Allocation() {
           )}
 
           <CustomCalendar
+            key={calendarKey}
             calendarRef={calendarRef}
             events={
               !!buildingSearchValue ||
@@ -634,11 +782,7 @@ function Allocation() {
                   )
                 : events.filter((event) => showEventTypeMap.get(event.type))
             }
-            resources={
-              !!buildingSearchValue || !!classroomSearchValue
-                ? filteredResources
-                : resources
-            }
+            resources={getResources()}
             handleDateClick={handleDateClick}
             handleEventDrop={handleEventDrop}
             handleEventResize={handleEventResize}

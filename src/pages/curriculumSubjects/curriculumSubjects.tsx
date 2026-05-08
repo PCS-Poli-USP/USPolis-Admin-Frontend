@@ -4,15 +4,14 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  Badge,
   Box,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   Button,
   Flex,
   HStack,
   IconButton,
   Progress,
+  Skeleton,
   Spacer,
   Table,
   TableContainer,
@@ -35,12 +34,15 @@ import Dialog from '../../components/common/Dialog/dialog.component';
 import useCurriculumSubjectsService from '../../hooks/API/services/useCurriculumSubjectsService';
 import { CurriculumSubjectResponse } from '../../models/http/responses/curriculumSubject.response.models';
 import CurriculumSubjectModal from './CurriculumSubjectModal/curriculumSubject.modal';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { SubjectResponse } from '../../models/http/responses/subject.response.models';
+import { useLocation, useParams } from 'react-router-dom';
+import { SubjectResponseBase } from '../../models/http/responses/subject.response.models';
 import useSubjectsService from '../../hooks/API/services/useSubjectsService';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function CurriculumSubjects() {
+  const showToast = useCustomToast();
+
   const {
     isOpen: isOpenModal,
     onOpen: onOpenModal,
@@ -57,18 +59,16 @@ function CurriculumSubjects() {
 
   const location = useLocation() as {
     state?: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       curriculum?: any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       course?: any;
     };
   };
 
-  const navigate = useNavigate();
-
-  const curriculum = location.state?.curriculum;
   const course = location.state?.course;
 
-  const [selectedItem, setSelectedItem] =
-    useState<CurriculumSubjectResponse>();
+  const [selectedItem, setSelectedItem] = useState<CurriculumSubjectResponse>();
 
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -77,8 +77,9 @@ function CurriculumSubjects() {
   const [data, setData] = useState<CurriculumSubjectResponse[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const [subjects, setSubjects] = useState<SubjectResponse[]>([]);
-  const { get: getAllSubjects } = useSubjectsService();
+  const [subjects, setSubjects] = useState<SubjectResponseBase[]>([]);
+  const [loadingSubjects, setLoadingSubjects] = useState(false);
+  const { getCore: getAllSubjects } = useSubjectsService();
 
   const [selectedPeriod, setSelectedPeriod] = useState<number | undefined>();
 
@@ -88,12 +89,26 @@ function CurriculumSubjects() {
       setSubjects(res.data);
     }
 
-    fetchSubjects();
+    try {
+      setLoadingSubjects(true);
+      fetchSubjects();
+    } catch (error) {
+      console.error('Erro ao carregar disciplinas: ', error);
+      showToast(
+        'Erro',
+        'Não foi possível carregar as disciplinas.',
+        'error',
+      );
+      setSubjects([]);
+    } finally {
+      setLoadingSubjects(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const subjectMap = useMemo(() => {
     return Object.fromEntries(
-      subjects.map((s) => [s.id, `${s.code} - ${s.name}`])
+      subjects.map((s) => [s.id, `${s.code} - ${s.name}`]),
     );
   }, [subjects]);
 
@@ -102,8 +117,13 @@ function CurriculumSubjects() {
     try {
       const res = await getByCurriculumId(Number(curriculumId));
       setData(res.data);
-    } catch {
-      console.error('Erro ao carregar disciplinas do currículo');
+    } catch (error) {
+      console.error('Erro ao carregar disciplinas do currículo: ', error);
+      showToast(
+        'Erro',
+        'Não foi possível carregar as disciplinas do currículo.',
+        'error',
+      );
     } finally {
       setLoading(false);
     }
@@ -111,6 +131,7 @@ function CurriculumSubjects() {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function refetch() {
@@ -138,20 +159,24 @@ function CurriculumSubjects() {
 
   async function handleDelete() {
     if (selectedItem) {
-      await deleteById(selectedItem.id);
+      try {
+        await deleteById(selectedItem.id);
+      } catch (error) {
+        console.error('Erro ao deletar disciplina do currículo: ', error);
+        showToast(
+          'Erro',
+          'Não foi possível deletar a disciplina do currículo.',
+          'error',
+        );
+        return;
+      }
     }
     onCloseDelete();
     refetch();
   }
 
-  const periods = useMemo(() => {
-    if (!course?.ideal_duration) return [];
-    return Array.from({ length: course.ideal_duration }, (_, i) => i + 1);
-  }, [course]);
-
   const groupedByPeriod = useMemo(() => {
     const grouped: Record<number, CurriculumSubjectResponse[]> = {};
-
     for (const item of data) {
       if (!grouped[item.period]) grouped[item.period] = [];
       grouped[item.period].push(item);
@@ -160,34 +185,28 @@ function CurriculumSubjects() {
     return grouped;
   }, [data]);
 
+  const periods = useMemo(() => {
+    const keys = Object.keys(groupedByPeriod);
+    if (!keys) return [];
+
+    return Array.from(keys.map((k) => Number(k))).sort((a, b) => a - b);
+  }, [groupedByPeriod]);
+
+  const getCategoryBadgeColor = (category: string) => {
+    switch (category) {
+      case 'mandatory':
+        return 'green';
+      case 'free_elective':
+        return 'green';
+      case 'track_elective':
+        return 'blue';
+      default:
+        return 'gray';
+    }
+  };
+
   return (
     <PageContent>
-      <Breadcrumb mb={4}>
-        <BreadcrumbItem>
-          <BreadcrumbLink onClick={() => navigate('/courses')}>
-            Cursos
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-
-        <BreadcrumbItem>
-          <BreadcrumbLink
-            onClick={() =>
-              navigate(`/courses/${course?.id}/curriculums`, {
-                state: { course },
-              })
-            }
-          >
-            {course?.name}
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-
-        <BreadcrumbItem isCurrentPage>
-          <BreadcrumbLink>
-            {curriculum?.description} - Disciplinas
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-      </Breadcrumb>
-
       <CurriculumSubjectModal
         isOpen={isOpenModal}
         onClose={() => {
@@ -208,116 +227,137 @@ function CurriculumSubjects() {
         onClose={onCloseDelete}
         onConfirm={handleDelete}
         title={`Deseja remover este item?`}
-        warningText="Essa ação é irreversível."
+        warningText='Essa ação é irreversível.'
       />
 
-      <Box w="100%">
-        <Text fontSize="4xl" mb={4}>
-          Disciplinas
+      <Box w='100%' p={'0rem 15rem'}>
+        <Text fontSize='4xl'>{course?.name} - Disciplinas</Text>
+        <Text mb={4}>
+          Gerencie as disciplinas do currículo, organizadas por períodos. Você
+          pode adicionar, editar ou remover disciplinas.
         </Text>
 
-        <Accordion allowMultiple>
-          {periods.map((period) => (
-            <AccordionItem key={period}>
-              <AccordionButton>
-                <Box flex="1" textAlign="left" fontWeight="bold">
-                  {period}° período
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
+        <Skeleton isLoaded={!loading || !loadingSubjects}>
+          <Accordion allowMultiple defaultIndex={[0]}>
+            {periods.map((period) => (
+              <AccordionItem key={period}>
+                <AccordionButton>
+                  <Box flex='1' textAlign='left' fontWeight='bold'>
+                    {period}° período
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
 
-              <AccordionPanel>
-                <Flex mb={3} align="center">
+                <AccordionPanel>
+                  <Flex mb={3} align='center'>
+                    <Spacer />
 
-                  <Spacer />
-
-                  <Button
-                    colorScheme="blue"
-                    size="sm"
-                    rightIcon={<AddIcon />}
-                    onClick={() => handleCreateClick(period)}
-                  >
-                    Cadastrar disciplina
-                  </Button>
-                </Flex>
-
-                <Box w="100%">
-                  {(groupedByPeriod[period] ?? []).length > 0 && (
-                    <TableContainer
-                      border="1px"
-                      borderRadius="lg"
-                      borderColor="uspolis.blue"
+                    <Button
+                      colorScheme='blue'
+                      size='sm'
+                      rightIcon={<AddIcon />}
+                      onClick={() => handleCreateClick(period)}
                     >
-                      {loading && <Progress size="xs" isIndeterminate />}
+                      Cadastrar disciplina
+                    </Button>
+                  </Flex>
 
-                      <Table>
-                        <Thead>
-                          <Tr>
-                            <Th color="uspolis.blue">Disciplina</Th>
-                            <Th color="uspolis.blue">Tipo</Th>
-                            <Th color="uspolis.blue">Categoria</Th>
-                            <Th color="uspolis.blue" textAlign="right">
-                              Opções
-                            </Th>
-                          </Tr>
-                        </Thead>
+                  <Box w='100%'>
+                    {(groupedByPeriod[period] ?? []).length > 0 && (
+                      <TableContainer
+                        border='1px'
+                        borderRadius='lg'
+                        borderColor='uspolis.blue'
+                      >
+                        {loading && <Progress size='xs' isIndeterminate />}
 
-                        <Tbody>
-                          {(groupedByPeriod[period] ?? []).map((item) => {
-                            const typeMap: Record<string, string> = {
-                              SEMESTRAL: "Semestral",
-                              QUADRIMESTER: "Quadrimestral",
-                            };
+                        <Table>
+                          <Thead>
+                            <Tr>
+                              <Th color='uspolis.blue'>Disciplina</Th>
+                              <Th color='uspolis.blue'>Tipo</Th>
+                              <Th color='uspolis.blue'>Categoria</Th>
+                              <Th color='uspolis.blue' textAlign='right'>
+                                Opções
+                              </Th>
+                            </Tr>
+                          </Thead>
 
-                            const categoryMap: Record<string, string> = {
-                              mandatory: "Obrigatória",
-                              free_elective: "Optativa Livre",
-                              track_elective: "Optativa Eletiva",
-                            };
+                          <Tbody>
+                            {(groupedByPeriod[period] ?? []).map((item) => {
+                              const typeMap: Record<string, string> = {
+                                SEMESTRAL: 'Semestral',
+                                QUADRIMESTER: 'Quadrimestral',
+                              };
 
-                            return (
-                              <Tr key={item.id}>
-                                <Td>{subjectMap[item.subject_id] ?? "-"}</Td>
-                                <Td>{typeMap[item.type] ?? item.type}</Td>
-                                <Td>{categoryMap[item.category] ?? item.category}</Td>
+                              const categoryMap: Record<string, string> = {
+                                mandatory: 'Obrigatória',
+                                free_elective: 'Optativa Livre',
+                                track_elective: 'Optativa Eletiva',
+                              };
 
-                                <Td>
-                                  <HStack spacing="0px" justifyContent="flex-end">
-                                    <Tooltip label="Editar">
-                                      <IconButton
-                                        colorScheme="yellow"
-                                        size="xs"
-                                        variant="ghost"
-                                        aria-label="editar"
-                                        icon={<BsFillPenFill />}
-                                        onClick={() => handleEditClick(item)}
-                                      />
-                                    </Tooltip>
+                              return (
+                                <Tr key={item.id}>
+                                  <Td>{subjectMap[item.subject_id] ?? '-'}</Td>
+                                  <Td>
+                                    <Badge>
+                                      {typeMap[item.type] ?? item.type}
+                                    </Badge>
+                                  </Td>
+                                  <Td>
+                                    <Badge
+                                      colorScheme={getCategoryBadgeColor(
+                                        item.category,
+                                      )}
+                                    >
+                                      {categoryMap[item.category] ??
+                                        item.category}
+                                    </Badge>
+                                  </Td>
 
-                                    <Tooltip label="Remover">
-                                      <IconButton
-                                        colorScheme="red"
-                                        size="xs"
-                                        variant="ghost"
-                                        aria-label="remover"
-                                        icon={<BsFillTrashFill />}
-                                        onClick={() => handleDeleteClick(item)}
-                                      />
-                                    </Tooltip>
-                                  </HStack>
-                                </Td>
-                              </Tr>
-                            );
-                          })}
-                        </Tbody>
-                      </Table>
-                    </TableContainer>
-                  )}
-                </Box>
-              </AccordionPanel>
-            </AccordionItem>
-          ))}
-        </Accordion>
+                                  <Td>
+                                    <HStack
+                                      spacing='0px'
+                                      justifyContent='flex-end'
+                                    >
+                                      <Tooltip label='Editar'>
+                                        <IconButton
+                                          colorScheme='yellow'
+                                          size='xs'
+                                          variant='ghost'
+                                          aria-label='editar'
+                                          icon={<BsFillPenFill />}
+                                          onClick={() => handleEditClick(item)}
+                                        />
+                                      </Tooltip>
+
+                                      <Tooltip label='Remover'>
+                                        <IconButton
+                                          colorScheme='red'
+                                          size='xs'
+                                          variant='ghost'
+                                          aria-label='remover'
+                                          icon={<BsFillTrashFill />}
+                                          onClick={() =>
+                                            handleDeleteClick(item)
+                                          }
+                                        />
+                                      </Tooltip>
+                                    </HStack>
+                                  </Td>
+                                </Tr>
+                              );
+                            })}
+                          </Tbody>
+                        </Table>
+                      </TableContainer>
+                    )}
+                  </Box>
+                </AccordionPanel>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </Skeleton>
       </Box>
     </PageContent>
   );

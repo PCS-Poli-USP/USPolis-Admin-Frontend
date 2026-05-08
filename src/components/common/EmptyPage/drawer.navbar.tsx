@@ -24,6 +24,7 @@ import { LuMessageCircleMore } from 'react-icons/lu';
 import { GrDocumentText } from 'react-icons/gr';
 import { isAdminRoute } from '../../../utils/location';
 import ProfileButton from '../ProfileButton';
+import PageBreadcrumb from '../PageBreadcrumb';
 
 const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
 
@@ -39,6 +40,7 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
       bg: 'uspolis.grey',
     }}
     href={to}
+    fontWeight={'bold'}
   >
     {children}
   </Link>
@@ -90,7 +92,7 @@ export function DrawerNavBar({
         justifyContent={'space-between'}
         w={'100%'}
       >
-        <HStack spacing={3} alignItems={'center'}>
+        <HStack spacing={0} alignItems={'center'}>
           {isAuthenticated && (
             <IconButton
               id='navbar-menu-button'
@@ -110,10 +112,11 @@ export function DrawerNavBar({
               alt='USPolis'
               objectFit='contain'
               boxSize='40px'
-              mr={2}
             />
-            USPolis
+            {isMobile && 'USPolis'}
           </NavLink>
+
+          {!isMobile && <PageBreadcrumb pathname={location.pathname} />}
         </HStack>
         <Flex alignItems={'center'} gap={'10px'}>
           {isMobile ? (

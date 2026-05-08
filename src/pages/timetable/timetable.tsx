@@ -222,7 +222,7 @@ function Timetable() {
     const data: CreateUserSchedule = {
       schedule_ids: Array.from(eventsSet).map((id) => Number(id)),
     };
-    if (!userSchedule || userSchedule.id === undefined) {
+    if (!userSchedule || !userSchedule.id) {
       await createUserSchedule(data);
       return;
     }
@@ -234,7 +234,7 @@ function Timetable() {
   }
 
   function getSaveChangesButtonText() {
-    if (!userSchedule || userSchedule.id === undefined) {
+    if (!userSchedule || !userSchedule.id) {
       return 'Criar grade horária';
     }
     if (eventsSet.size === 0) {

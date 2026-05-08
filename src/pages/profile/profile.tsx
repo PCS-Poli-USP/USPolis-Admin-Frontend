@@ -5,6 +5,7 @@ import {
   AccordionPanel,
   Alert,
   AlertIcon,
+  Badge,
   Box,
   Center,
   Flex,
@@ -22,18 +23,20 @@ import { appContext } from '../../context/AppContext';
 import { useContext, useEffect } from 'react';
 import {
   getUserBuildings,
+  getUserBuildingsBadgeColor,
   getUserRole,
+  getUserRoleBadgeColor,
 } from '../../utils/users/users.formatter';
 import { AddIcon, EmailIcon, MinusIcon } from '@chakra-ui/icons';
 import { LiaBuilding } from 'react-icons/lia';
 import moment from 'moment';
 import { HiUserGroup } from 'react-icons/hi';
 import UserImage from '../../components/common/UserImage/user.image';
-import { PiChair } from 'react-icons/pi';
+import { PiChair, PiStudentFill } from 'react-icons/pi';
 import LoadingPage from '../../components/common/LoadingPage';
 import Page401 from '../page401';
 import GroupFormatter from '../../utils/groups/group.formatter';
-import { LuMail, LuMailX } from 'react-icons/lu';
+import { LuCalendarDays, LuMail, LuMailX } from 'react-icons/lu';
 import useUsers from '../../hooks/users/useUsers';
 import HelpPopover from '../../components/common/HelpPopover';
 
@@ -66,7 +69,7 @@ function Profile() {
             >
               <GridItem
                 colSpan={1}
-                h={'300px'}
+                h={'330px'}
                 mb={'30px'}
                 id='profile-info-grid'
               >
@@ -91,7 +94,9 @@ function Profile() {
                       {userInfo ? userInfo.name : 'Usuário não encontrado'}
                     </Text>
                     <Text fontSize={'xl'} fontWeight={'bold'}>
-                      {getUserRole(loggedUser)}
+                      <Badge colorScheme={getUserRoleBadgeColor(loggedUser)} fontSize={'lg'}>
+                        {getUserRole(loggedUser)}
+                      </Badge>
                     </Text>
                   </Flex>
                   <Flex
@@ -104,6 +109,23 @@ function Profile() {
                       <EmailIcon />{' '}
                       {userInfo ? userInfo.email : 'Email não encontrado'}
                     </Box>
+                    <Flex
+                      justify={'center'}
+                      align={'center'}
+                      gap={'10px'}
+                      fontSize={'lg'}
+                    >
+                      <PiStudentFill />
+                      <Text>
+                        {loggedUser.curriculum ? (
+                          <Badge colorScheme='green'>
+                            {loggedUser.curriculum.description}
+                          </Badge>
+                        ) : (
+                          <Badge colorScheme='gray'>Curso não registrado</Badge>
+                        )}
+                      </Text>
+                    </Flex>
                     <Box>
                       {`Último acesso em ${moment(
                         loggedUser.last_visited,
@@ -123,8 +145,17 @@ function Profile() {
                   !loggedUser.is_admin
                 }
               >
-                <Flex dir='row' justify={'start'} align={'center'} gap={'10px'}>
-                  <FormControl display='flex' alignItems='center'>
+                <Flex
+                  direction='row'
+                  justify={'flex-start'}
+                  align={'flex-start'}
+                  gap={'40px'}
+                >
+                  <FormControl
+                    display='flex'
+                    alignItems='center'
+                    w={'fit-content'}
+                  >
                     {loggedUser.receive_emails ? (
                       <LuMail size={'25px'} />
                     ) : (
@@ -160,6 +191,22 @@ function Profile() {
                       </Flex>
                     </HelpPopover>
                   </FormControl>
+                  <Flex justify={'center'} align={'center'} gap={'10px'}>
+                    <LuCalendarDays size={'25px'} />
+                    <Text fontWeight={'bold'} fontSize={'xl'}>
+                      Grade Horária:{' '}
+                    </Text>
+
+                    {loggedUser.current_schedule_id ? (
+                      <Badge colorScheme='green' mt={'5px'}>
+                        Cadastrada
+                      </Badge>
+                    ) : (
+                      <Badge colorScheme='red' mt={'5px'}>
+                        Não registrada
+                      </Badge>
+                    )}
+                  </Flex>
                 </Flex>
               </GridItem>
 
@@ -175,7 +222,9 @@ function Profile() {
                     alignSelf={'center'}
                     justifySelf={'center'}
                   >
-                    {getUserBuildings(loggedUser)}
+                    <Badge colorScheme={getUserBuildingsBadgeColor(loggedUser)}>
+                      {getUserBuildings(loggedUser)}
+                    </Badge>
                   </Text>
                 </Flex>
               </GridItem>
@@ -203,7 +252,8 @@ function Profile() {
                   >
                     <AlertIcon />
                     Não pertence a nenhum grupo nem possui salas, se você for um
-                    responsável por prédio entre em contato por uspolis@usp.br.
+                    responsável por prédio entre em contato por{' '}
+                    <strong>uspolis@usp.br</strong>.
                   </Alert>
                 ) : (
                   <Accordion

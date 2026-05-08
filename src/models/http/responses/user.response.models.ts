@@ -1,4 +1,5 @@
 import { BuildingResponse } from './building.response.models';
+import { CurriculumResponse } from './curriculum.response.models';
 import { SolicitationResponse } from './solicitation.response.models';
 
 export interface UserInfoResponse {
@@ -23,7 +24,7 @@ export interface UserCoreResponse {
 
   building_ids: number[];
   building_names: string[];
-  
+
   group_ids: number[];
   group_names: string[];
 }
@@ -32,6 +33,8 @@ export interface UserResponse extends UserCoreResponse {
   buildings?: BuildingResponse[];
   solicitations: Array<SolicitationResponse>;
   groups: Array<UserGroupResponse>;
+  curriculum?: CurriculumResponse;
+  current_schedule_id?: number;
 }
 
 export interface UserGroupResponse {

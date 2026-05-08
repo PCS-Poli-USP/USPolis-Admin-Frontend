@@ -10,19 +10,20 @@ import {
 } from '@chakra-ui/react';
 import UserImage from '../UserImage/user.image';
 import { LuCalendarDays, LuCircleUserRound, LuLogOut } from 'react-icons/lu';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { appContext } from '../../../context/AppContext';
 
 function ProfileButton() {
-  const { isAuthenticated, loggedUser, logout } = useContext(appContext);
+  const { logout } = useContext(appContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   async function handleClickLogout() {
     await logout();
     navigate('/', {
       replace: true,
-      state: { from: location },
+      state: { from: location.pathname },
     });
   }
 
@@ -56,7 +57,7 @@ function ProfileButton() {
             onClick={() => {
               navigate('/profile', {
                 replace: true,
-                state: { from: location },
+                state: { from: location.pathname },
               });
             }}
           >
@@ -70,7 +71,7 @@ function ProfileButton() {
             onClick={() => {
               navigate('/timetable', {
                 replace: true,
-                state: { from: location },
+                state: { from: location.pathname },
               });
             }}
           >

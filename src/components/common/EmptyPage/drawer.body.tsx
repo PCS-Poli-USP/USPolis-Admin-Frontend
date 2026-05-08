@@ -6,15 +6,18 @@ import {
   Icon,
   Link,
   useColorMode,
+  ScaleFade,
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import {
   FaGithub,
   FaList,
   FaRegCalendarTimes,
   FaRegUser,
   FaBook,
+  FaChevronDown,
+  FaChevronUp,
 } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 import { appContext } from '../../../context/AppContext';
@@ -56,6 +59,11 @@ interface DrawerButtonProps {
   onClose: () => void;
 }
 
+interface DrawerSectionButtonProps extends DrawerButtonProps {
+  onClick: () => void;
+  rightIcon?: React.ReactElement<IconType>;
+}
+
 function DrawerButton({
   text,
   to,
@@ -87,9 +95,50 @@ function DrawerButton({
   );
 }
 
+function DrawerSectionButton({
+  text,
+  to,
+  icon,
+  replace_location,
+  onClose,
+  onClick,
+  rightIcon,
+}: DrawerSectionButtonProps) {
+  const { isMobile } = useContext(appContext);
+  const location = useLocation();
+
+  return (
+    <Button
+      as={RouterLink}
+      to={to}
+      replace={replace_location}
+      state={replace_location ? { from: location } : undefined}
+      variant={'ghost'}
+      w={'full'}
+      display={'flex'}
+      justifyContent={'flex-start'}
+      alignItems={'center'}
+      gap={2}
+      marginLeft={'-15px'}
+      backgroundColor={'uspolis.white'}
+      color={'uspolis.blue'}
+      fontWeight={'bold'}
+      onClick={() => {
+        if (onClick) onClick();
+        if (isMobile) onClose();
+      }}
+    >
+      {icon}
+      <span style={{ flex: 1 }}>{text}</span>
+      {rightIcon && <div style={{ marginLeft: 'auto' }}>{rightIcon}</div>}
+    </Button>
+  );
+}
+
 export default function DrawerBody({ onClose }: DrawerBodyProps) {
   const { loggedUser } = useContext(appContext);
   const { colorMode } = useColorMode();
+  const [isOpenAdminSection, setIsOpenAdminSection] = useState(false);
 
   return (
     <VStack
@@ -107,68 +156,79 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
               alignItems={'flex-start'}
               background={'uspolis.white'}
             >
-              <HStack backgroundColor={'uspolis.white'}>
-                <Icon as={LockIcon} color={'uspolis.blue'} />
-                <Text color={'uspolis.blue'} fontWeight={'bold'}>
-                  Admin
-                </Text>
-              </HStack>
-              <DrawerButton
-                icon={<LiaBuilding />}
-                to='/buildings'
-                text='Prédios'
+              <DrawerSectionButton
+                icon={<LockIcon />}
+                to='/admin'
+                text='Admin'
                 replace_location={false}
                 onClose={onClose}
+                onClick={() => setIsOpenAdminSection((prev) => !prev)}
+                rightIcon={
+                  isOpenAdminSection ? <FaChevronUp /> : <FaChevronDown />
+                }
               />
-              <DrawerButton
-                icon={<FaRegUser />}
-                to='/users'
-                text='Usuários'
-                replace_location={false}
-                onClose={onClose}
-              />
-              <DrawerButton
-                icon={<MdDevices />}
-                to='/sessions'
-                text='Sessões de Usuários'
-                replace_location={false}
-                onClose={onClose}
-              />
-              <DrawerButton
-                icon={<HiUserGroup />}
-                to='/groups'
-                text='Grupos'
-                replace_location={false}
-                onClose={onClose}
-              />
-              <DrawerButton
-                icon={<MdEvent />}
-                to='/institutional-events'
-                text='Eventos'
-                replace_location={false}
-                onClose={onClose}
-              />
-              <DrawerButton
+              <ScaleFade
+                initialScale={0.9}
+                in={isOpenAdminSection}
+                hidden={!isOpenAdminSection}
+              >
+                <DrawerButton
+                  icon={<LiaBuilding />}
+                  to='/admin/buildings'
+                  text='Prédios'
+                  replace_location={false}
+                  onClose={onClose}
+                />
+                <DrawerButton
+                  icon={<FaRegUser />}
+                  to='/admin/users'
+                  text='Usuários'
+                  replace_location={false}
+                  onClose={onClose}
+                />
+                <DrawerButton
+                  icon={<MdDevices />}
+                  to='/admin/sessions'
+                  text='Sessões de Usuários'
+                  replace_location={false}
+                  onClose={onClose}
+                />
+                <DrawerButton
+                  icon={<HiUserGroup />}
+                  to='/admin/groups'
+                  text='Grupos'
+                  replace_location={false}
+                  onClose={onClose}
+                />
+                <DrawerButton
+                  icon={<MdEvent />}
+                  to='/admin/institutional-events'
+                  text='Eventos'
+                  replace_location={false}
+                  onClose={onClose}
+                />
+                <DrawerButton
                   icon={<GiGraduateCap />}
-                  to='/courses'
+                  to='/admin/courses'
                   text='Cursos'
                   replace_location={false}
                   onClose={onClose}
                 />
-              <DrawerButton
-                icon={<VscReport />}
-                to='/bug-reports'
-                text='Reportes'
-                replace_location={false}
-                onClose={onClose}
-              />
-              <DrawerButton
-                icon={<VscFeedback />}
-                to='/feedbacks'
-                text='Feedbacks'
-                replace_location={false}
-                onClose={onClose}
-              />
+                <DrawerButton
+                  icon={<VscReport />}
+                  to='/admin/bug-reports'
+                  text='Reportes'
+                  replace_location={false}
+                  onClose={onClose}
+                />
+                <DrawerButton
+                  icon={<VscFeedback />}
+                  to='/admin/feedbacks'
+                  text='Feedbacks'
+                  replace_location={false}
+                  onClose={onClose}
+                />
+              </ScaleFade>
             </VStack>
           ) : (
             <></>

@@ -58,12 +58,13 @@ function Courses() {
 
   useEffect(() => {
     fetchCourses();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const navigate = useNavigate();
 
     function handleViewCurriculums(course: CourseResponse) {
-    navigate(`/courses/${course.id}/curriculums`, {
+    navigate(`/admin/courses/${course.id}/curriculums`, {
         state: { course },
     });
     }

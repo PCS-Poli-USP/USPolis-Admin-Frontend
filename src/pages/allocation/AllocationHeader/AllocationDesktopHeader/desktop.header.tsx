@@ -9,7 +9,6 @@ import {
   MenuItem,
   MenuList,
   Spacer,
-  Text,
   Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -75,7 +74,6 @@ function AllocationDesktopHeader({
 
   return (
     <Flex direction={'column'} alignItems={'flex-start'} gap={2} w={'100%'}>
-      <Text fontSize={'4xl'}>Mapa de Salas</Text>
       <Flex
         mb={4}
         justifyContent='flex-end'

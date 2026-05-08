@@ -166,6 +166,39 @@ function CustomCalendar({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
+  useEffect(() => {
+    const calendarEl = calendarRef.current?.getApi().el as HTMLElement | null;
+    if (!calendarEl) {
+      return;
+    }
+
+    const scrollers = Array.from(
+      calendarEl.querySelectorAll<HTMLElement>('.fc-scroller'),
+    );
+
+    const updateStickyState = () => {
+      const isWindowScrolled = window.scrollY > 0;
+      const isCalendarScrolled = scrollers.some((el) => el.scrollTop > 0);
+      calendarEl.classList.toggle(
+        'fc-scrolled',
+        isWindowScrolled || isCalendarScrolled,
+      );
+    };
+
+    updateStickyState();
+    window.addEventListener('scroll', updateStickyState, { passive: true });
+    scrollers.forEach((el) =>
+      el.addEventListener('scroll', updateStickyState, { passive: true }),
+    );
+
+    return () => {
+      window.removeEventListener('scroll', updateStickyState);
+      scrollers.forEach((el) =>
+        el.removeEventListener('scroll', updateStickyState),
+      );
+    };
+  }, [calendarRef, view.value, isMobile]);
+
   return (
     <Box paddingBottom={4} zIndex={-1} w={'100%'}>
       <DatePickerModal

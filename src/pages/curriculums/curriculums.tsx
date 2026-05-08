@@ -2,9 +2,6 @@ import {
   Box,
   Flex,
   Text,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   Button,
   Spacer,
   useDisclosure,
@@ -49,7 +46,7 @@ export default function Curriculums() {
   const { getAll: getAllCourses } = useCoursesService();
 
   const [course, setCourse] = useState<CourseResponse | undefined>(
-    location.state?.course
+    location.state?.course,
   );
 
   const [curriculums, setCurriculums] = useState<CurriculumResponse[]>([]);
@@ -91,15 +88,13 @@ export default function Curriculums() {
       ]);
 
       const filtered = currRes.data.filter(
-        (c) => c.course_id === Number(courseId)
+        (c) => c.course_id === Number(courseId),
       );
 
       setCurriculums(filtered);
 
       if (!course) {
-        const found = courseRes.data.find(
-          (c) => c.id === Number(courseId)
-        );
+        const found = courseRes.data.find((c) => c.id === Number(courseId));
         setCourse(found);
       }
     } finally {
@@ -109,6 +104,7 @@ export default function Curriculums() {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId]);
 
   function refetch() {
@@ -130,12 +126,15 @@ export default function Curriculums() {
   }
 
   function handleViewSubjects(curriculum: CurriculumResponse) {
-    navigate(`/curriculums/${curriculum.id}/subjects`, {
-      state: {
-        curriculum,
-        course,
+    navigate(
+      `/admin/courses/${courseId}/curriculums/${curriculum.id}/subjects`,
+      {
+        state: {
+          curriculum,
+          course,
+        },
       },
-    });
+    );
   }
 
   async function handleDelete() {
@@ -159,20 +158,6 @@ export default function Curriculums() {
 
   return (
     <PageContent>
-      <Breadcrumb mb={4}>
-        <BreadcrumbItem>
-          <BreadcrumbLink onClick={() => navigate('/courses')}>
-            Cursos
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-
-        <BreadcrumbItem isCurrentPage>
-          <BreadcrumbLink>
-            {course?.name}
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-      </Breadcrumb>
-
       <CreateCurriculumModal
         isOpen={isOpenCreate}
         onClose={onCloseCreate}
@@ -199,21 +184,19 @@ export default function Curriculums() {
         onClose={onCloseDelete}
         onConfirm={handleDelete}
         title={`Remover currículo?`}
-        warningText="Essa ação é irreversível."
+        warningText='Essa ação é irreversível.'
       />
 
       <Box>
-        <Flex align="center" mb={4}>
-          <Text fontSize="3xl">
-            {course?.name}
-          </Text>
+        <Flex align='center' mb={4}>
+          <Text fontSize='3xl'>Curso - {course?.name}</Text>
 
           <Spacer />
 
           <Menu>
             <MenuButton
               as={Button}
-              colorScheme="blue"
+              colorScheme='blue'
               leftIcon={<AddIcon />}
               borderRadius={'20px'}
             >
@@ -221,7 +204,7 @@ export default function Curriculums() {
             </MenuButton>
 
             <MenuList w={'300px'} border={'1px'} bgColor={'uspolis.white'}>
-              <MenuGroup title="Adição" fontSize={'lg'} gap={'5px'}>
+              <MenuGroup title='Adição' fontSize={'lg'} gap={'5px'}>
                 <MenuDivider />
 
                 <MenuItem

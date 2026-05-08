@@ -41,6 +41,7 @@ import CoursesPage from './pages/courses/courses';
 import Curriculums from './pages/curriculums/curriculums';
 import CurriculumSubjects from './pages/curriculumSubjects/curriculumSubjects';
 import Timetable from './pages/timetable/timetable';
+import AdminHub from './pages/adminHub';
 
 function AppRoutes() {
   return (
@@ -81,13 +82,11 @@ function AppRoutes() {
                 <Route path='conflicts' element={<ConflictsPage />} />
                 <Route path='solicitations' element={<Solicitations />} />
                 <Route path='reports' element={<ReportsPage />} />
-                <Route path='courses' element={<CoursesPage />} />
-                <Route path='/courses/:courseId/curriculums' element={<Curriculums />} />
-                <Route path='/curriculums/:curriculumId/subjects' element={<CurriculumSubjects />} />
               </Route>
 
               {/* Admin routes */}
-              <Route path='' element={<AdminRoute />}>
+              <Route path='admin' element={<AdminRoute />}>
+                <Route path='' element={<AdminHub />} />
                 <Route path='users' element={<Users />} />
                 <Route path='sessions' element={<UserSessions />} />
                 <Route path='groups' element={<Groups />} />
@@ -97,6 +96,15 @@ function AppRoutes() {
                 <Route
                   path='institutional-events'
                   element={<InstitutionalEvents />}
+                />
+                <Route path='courses' element={<CoursesPage />} />
+                <Route
+                  path='courses/:courseId/curriculums'
+                  element={<Curriculums />}
+                />
+                <Route
+                  path='courses/:courseId/curriculums/:curriculumId/subjects'
+                  element={<CurriculumSubjects />}
                 />
               </Route>
             </Route>
