@@ -147,7 +147,7 @@ export default {
         {
           text: 'Minha Conta',
           collapsed: true,
-          items: [{ text: 'Introdução', link: '/profile' }],
+          items: [{ text: 'Introdução', link: '/profile' },  { text: 'Grade Horária', link: '/timetable/' },],
         },
         {
           text: 'Reservas',

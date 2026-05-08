@@ -6,6 +6,41 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 ## 2026
 
+### Adição de cursos e grade horária - XX/XX/2026 
+
+<span style="color: green">FEATURE</span>
+
+PR's: [#145](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/145), [#159](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/159)
+
+**Descrição:**
+
+- Funcionalidade de cursos e grade curriculares
+- Funcionalidade de grade horária para o usuário
+
+### Correção do Janus Crawler - XX/XX/2026 
+
+<span style="color: orange">BUGFIX</span>
+
+PR's: [#145](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/145), [#159](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/159)
+
+**Descrição:**
+
+- Agora o Janus Crawler coleta o código das turmas no formato correto de ano + semestre + turma
+- Correção de erros de conflitos por código de turma
+
+### Melhorias na página inicial - XX/XX/2026 
+
+<span style="color: #408080">IMPROVEMENT</span>
+
+PR's: [#145](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/145), [#159](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/159)
+
+**Descrição:**
+
+- Correção da home page para dispositivos mobile
+- Reformulação visual da página "Sobre"
+- Adição da Júlia como um dos desenvolvedores!
+
+
 ### Correções no cache, envio de e-mails e melhorias - 28/02/2026 
 
 <span style="color: red">HOTFIX</span>, <span style="color: #408080">IMPROVEMENT</span>
@@ -43,7 +78,7 @@ PR's: [#143](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/143)
 
 ### Gerencimento de sessões e correções no login - 15/02/2026
 
-<span style="color: red">FEATURE</span>, <span style="color: orange">BUGFIX</span>
+<span style="color: green">FEATURE</span>, <span style="color: orange">BUGFIX</span>
 
 PR's: [#139](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/139), [#157](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/157)
 
