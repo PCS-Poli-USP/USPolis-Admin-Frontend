@@ -14,9 +14,15 @@ interface PageBreadcrumbProps {
 }
 
 const mainMap: Record<string, Crumb[]> = {
-  '/allocation': [{ label: 'Mapa de Salas', href: '/allocations', current: false }],
+  '/allocation': [
+    { label: 'Mapa de Salas', href: '/allocations', current: false },
+  ],
   '/admin': [{ label: 'Admin', href: '/admin', current: false }],
-  '/restricted': [{ label: 'Restrito', href: '/restricted', current: false }],
+  '/profile': [{ label: 'Perfil', href: '/profile', current: false }],
+  '/oferings': [{ label: 'Oferecimentos', href: '/oferings', current: false }],
+  '/scheduling': [
+    { label: 'Agendamento', href: '/scheduling', current: false },
+  ],
   '/public': [{ label: 'Público', href: '/public', current: false }],
 };
 
@@ -62,7 +68,70 @@ const map: Record<string, Crumb[]> = {
     ...mainMap['/admin'],
     { label: 'Feedbacks', href: '/admin/feedbacks', current: false },
   ],
+
+  // Profile subpages
+  '/profile/timetable': [
+    ...mainMap['/profile'],
+    { label: 'Grade Horária', href: '/profile/timetable', current: false },
+  ],
+  '/profile/solicitations': [
+    ...mainMap['/profile'],
+    {
+      label: 'Minhas Solicitações',
+      href: '/profile/solicitations',
+      current: false,
+    },
+  ],
+
+  // Solicitations and Reservations
+  '/scheduling/solicitations': [
+    ...mainMap['/scheduling'],
+    {
+      label: 'Solicitações',
+      href: '/scheduling/solicitations',
+      current: false,
+    },
+  ],
+  '/scheduling/reservations': [
+    ...mainMap['/scheduling'],
+    { label: 'Reservas', href: '/scheduling/reservation  s', current: false },
+  ],
+
+  // Oferings subpages
+  '/oferings/classrooms': [
+    ...mainMap['/oferings'],
+    { label: 'Salas', href: '/oferings/classrooms', current: false },
+  ],
+  '/oferings/subjects': [
+    ...mainMap['/oferings'],
+    { label: 'Disciplinas', href: '/oferings/subjects', current: false },
+  ],
+  '/oferings/classes': [
+    ...mainMap['/oferings'],
+    { label: 'Turmas', href: '/oferings/classes', current: false },
+  ],
+  '/oferings/calendars': [
+    ...mainMap['/oferings'],
+    { label: 'Calendários', href: '/oferings/calendars', current: false },
+  ],
+  '/oferings/conflicts': [
+    ...mainMap['/oferings'],
+    { label: 'Conflitos', href: '/oferings/conflicts', current: false },
+  ],
+  '/oferings/reports': [
+    ...mainMap['/oferings'],
+    { label: 'Relatórios', href: '/oferings/reports', current: false },
+  ],
+
   // Public subpages
+  '/public/allocations': [
+    ...mainMap['/public'],
+    {
+      label: 'Mapa de Salas',
+      href: '/public/allocations',
+      current: false,
+    },
+  ],
   '/public/find-exams': [
     ...mainMap['/public'],
     {
@@ -71,16 +140,14 @@ const map: Record<string, Crumb[]> = {
       current: false,
     },
   ],
-  // Solicitations and Reservations
-  '/restricted/solicitations': [
-    ...mainMap['/restricted'],
+  '/public/find-classes': [
+    ...mainMap['/public'],
     {
-      label: 'Solicitações',
-      href: '/restricted/solicitations',
+      label: 'Encontre suas aulas',
+      href: '/public/find-classes',
       current: false,
     },
   ],
-  '/reservas': [{ label: 'Reservas', href: '/reservas', current: false }],
 };
 
 const dynamicRoutes: Array<{

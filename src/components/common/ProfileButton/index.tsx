@@ -9,10 +9,11 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import UserImage from '../UserImage/user.image';
-import { LuCalendarDays, LuCircleUserRound, LuLogOut } from 'react-icons/lu';
+import { LuCalendarDays, LuLogOut } from 'react-icons/lu';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { appContext } from '../../../context/AppContext';
+import { FaUserCircle } from 'react-icons/fa';
 
 function ProfileButton() {
   const { logout } = useContext(appContext);
@@ -53,7 +54,7 @@ function ProfileButton() {
             bgColor={'uspolis.white'}
             textColor={'uspolis.text'}
             fontWeight={'bold'}
-            icon={<LuCircleUserRound />}
+            icon={<FaUserCircle />}
             onClick={() => {
               navigate('/profile', {
                 replace: true,

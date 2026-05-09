@@ -235,6 +235,8 @@ export default function EmptyPage() {
             width: isMobile ? '100vw' : drawerWidth,
             boxSizing: 'border-box',
             backgroundColor: colorMode === 'dark' ? '#262626' : '#FFFFFF',
+            boxShadow: '5px 5px 10px rgba(0,0,0,0.3);',
+            scrollbarWidth: 'thin',
           },
         }}
         variant='persistent'

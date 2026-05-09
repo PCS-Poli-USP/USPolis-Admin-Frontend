@@ -42,6 +42,10 @@ import Curriculums from './pages/curriculums/curriculums';
 import CurriculumSubjects from './pages/curriculumSubjects/curriculumSubjects';
 import Timetable from './pages/timetable/timetable';
 import AdminHub from './pages/adminHub';
+import OferingsHub from './pages/oferingsHub';
+import PublicHub from './pages/publicHub';
+import DateHub from './pages/dateHub';
+import SchedulingHub from './pages/schedulingHub';
 
 function AppRoutes() {
   return (
@@ -62,26 +66,44 @@ function AppRoutes() {
             <Route path='*' element={<Page404 />} />
 
             {/* Public routes */}
-            <Route path='allocation' element={<Allocation />} />
-            <Route path='find-classes' element={<FindClasses />} />
-            <Route path='find-exams' element={<FindExams />} />
+            <Route path='public'>
+              <Route path='' element={<PublicHub />} />
+              <Route path='allocations' element={<Allocation />} />
+              <Route path='find-classes' element={<FindClasses />} />
+              <Route path='find-exams' element={<FindExams />} />
+            </Route>
 
             {/* Private routes */}
             <Route element={<PrivateRoute />}>
               <Route path='profile' element={<Profile />} />
-              <Route path='timetable' element={<Timetable />} />
-              <Route path='my-solicitations' element={<MySolicitations />} />
+              <Route path='profile/timetable' element={<Timetable />} />
+              <Route
+                path='profile/solicitations'
+                element={<MySolicitations />}
+              />
 
               {/* Restricted routes */}
               <Route element={<RestrictedRoute />}>
-                <Route path='subjects' element={<Subjects />} />
-                <Route path='calendars' element={<Calendars />} />
-                <Route path='classrooms' element={<Classrooms />} />
-                <Route path='classes' element={<Classes />} />
-                <Route path='reservations' element={<Reservations />} />
-                <Route path='conflicts' element={<ConflictsPage />} />
-                <Route path='solicitations' element={<Solicitations />} />
-                <Route path='reports' element={<ReportsPage />} />
+                // Oferings subpages
+                <Route path='oferings'>
+                  <Route path='' element={<OferingsHub />} />
+                  <Route path='classrooms' element={<Classrooms />} />
+                  <Route path='subjects' element={<Subjects />} />
+                  <Route path='classes' element={<Classes />} />
+                  <Route path='calendars' element={<Calendars />} />
+                  <Route path='conflicts' element={<ConflictsPage />} />
+                  <Route path='reports' element={<ReportsPage />} />
+                </Route>
+                // Date subpages
+                <Route path='dates'>
+                  <Route path='' element={<DateHub />} />
+                </Route>
+                // Scheduling subpages
+                <Route path='scheduling'>
+                  <Route path='' element={<SchedulingHub />} />
+                  <Route path='reservations' element={<Reservations />} />
+                  <Route path='solicitations' element={<Solicitations />} />
+                </Route>
               </Route>
 
               {/* Admin routes */}

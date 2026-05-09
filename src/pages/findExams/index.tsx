@@ -65,138 +65,144 @@ function FindExams() {
   return (
     <PageContent>
       <Flex
-        direction={'row'}
-        justify={'flex-start'}
-        align={'center'}
-        gap={'10px'}
+        direction={'column'}
+        alignItems={'center'}
+        margin={isMobile ? undefined : '0 auto 0 auto'}
       >
-        <PageHeaderWithFilter
-          {...pageHeaderProps}
-          title={isMobile ? 'Provas' : 'Encontre suas provas'}
-          tooltip='Buscar provas em outro período'
-          onConfirm={(start, end) => {
-            getExams(start, end);
-          }}
-        />
-        <Box h={'full'} mb={'10px'}>
-          <HelpPopover title='Não encontrou sua prova?' size='md'>
-            <Flex direction={'column'} gap={'5px'} textAlign={'justify'}>
-              <Text>
-                A página mostra apenas provas que ainda <b>não</b> passaram.
-              </Text>
-              <Text>
-                Se quiser encontrar uma prova que já aconteceu, utilize o filtro
-                ao lado.
-              </Text>
-              <Text>
-                Escolha um período <b>grande</b> o suficiente.
-              </Text>
-            </Flex>
-          </HelpPopover>
-        </Box>
-      </Flex>
-      <Flex direction={'column'} gap={'20px'}>
-        <Flex direction={isMobile ? 'column' : 'row'} gap={'20px'}>
-          <Box w={isMobile ? '100%' : '400px'}>
-            <Text>Disciplina: </Text>
-            <TooltipSelect
-              placeholder={
-                subjectOptions.length > 0
-                  ? 'Selecione uma disciplina'
-                  : 'Nenhuma disciplina com prova encontrada'
-              }
-              isDisabled={subjectOptions.length == 0}
-              isClearable={true}
-              isMulti={false}
-              value={subjectOptions.filter(
-                (opt) => opt.value == selectedSubjectId,
-              )}
-              isLoading={loading || loadingS || loadingExams}
-              options={subjectOptions}
-              onChange={(option) => {
-                if (option) {
-                  setSelectedSubjectId(option.value as number);
-                  getClassesBySubject(option.value as number);
-                }
-                if (!option) {
-                  setSelectedSubjectId(undefined);
-                }
-              }}
-            />
-          </Box>
-
-          <Box hidden={!selectedSubjectId} w={isMobile ? '100%' : '400px'}>
-            <Text>Turma: </Text>
-            <TooltipSelect
-              value={classesOptions.filter(
-                (opt) => opt.value == selectedClassId,
-              )}
-              isClearable={true}
-              placeholder={
-                !selectedSubjectId
-                  ? 'Selecione uma disciplina primeiro'
-                  : classes.length > 0
-                    ? 'Selecione uma turma'
-                    : 'Nenhuma turma disponível'
-              }
-              options={classesOptions}
-              isDisabled={!selectedSubjectId || classes.length === 0}
-              onChange={(option) => {
-                if (option) {
-                  setSelectedClassId(option.value as number);
-                } else {
-                  setSelectedClassId(undefined);
-                }
-              }}
-            />
+        <Flex
+          direction={'row'}
+          justify={'flex-start'}
+          align={'center'}
+          gap={'10px'}
+        >
+          <PageHeaderWithFilter
+            {...pageHeaderProps}
+            title={isMobile ? 'Provas' : 'Encontre suas provas'}
+            tooltip='Buscar provas em outro período'
+            onConfirm={(start, end) => {
+              getExams(start, end);
+            }}
+          />
+          <Box h={'full'} mb={'10px'}>
+            <HelpPopover title='Não encontrou sua prova?' size='md'>
+              <Flex direction={'column'} gap={'5px'} textAlign={'justify'}>
+                <Text>
+                  A página mostra apenas provas que ainda <b>não</b> passaram.
+                </Text>
+                <Text>
+                  Se quiser encontrar uma prova que já aconteceu, utilize o
+                  filtro ao lado.
+                </Text>
+                <Text>
+                  Escolha um período <b>grande</b> o suficiente.
+                </Text>
+              </Flex>
+            </HelpPopover>
           </Box>
         </Flex>
-        <Box w={isMobile ? '100%' : '820px'}>
-          {!selectedSubjectId ? (
-            <Alert status='warning' borderRadius={'5px'} w={'full'}>
-              <AlertIcon />
-              {subjectOptions.length > 0
-                ? 'Selecione uma disciplina'
-                : 'Nenhuma disciplina com prova encontrada'}
-            </Alert>
-          ) : (
-            <Box>
-              <Text fontSize='2xl' mb={'10px'}>
-                Provas:{' '}
-              </Text>
-              {selectedSubjectId ? (
-                <>
-                  {activeExams.length > 0 && (
-                    <ExamClassAccordion
-                      exams={activeExams.filter((exam) => {
-                        if (selectedClassId) {
-                          return (
-                            exam.subject_id == selectedSubjectId &&
-                            exam.classes
-                              .map((cls) => cls.id)
-                              .includes(selectedClassId)
-                          );
-                        }
-                        return exam.subject_id == selectedSubjectId;
-                      })}
-                      loading={loading}
-                    />
-                  )}
-                  {activeExams.length == 0 && (
-                    <Alert
-                      status='warning'
-                      borderRadius={'10px'}
-                      w={'fit-content'}
-                    >
-                      <AlertIcon />
-                      Nenhuma prova encontrada para essa disciplina
-                    </Alert>
-                  )}
-                </>
-              ) : undefined}
+        <Flex direction={'column'} gap={'20px'}>
+          <Flex direction={isMobile ? 'column' : 'row'} gap={'20px'}>
+            <Box w={isMobile ? '100%' : '400px'}>
+              <Text>Disciplina: </Text>
+              <TooltipSelect
+                placeholder={
+                  subjectOptions.length > 0
+                    ? 'Selecione uma disciplina'
+                    : 'Nenhuma disciplina com prova encontrada'
+                }
+                isDisabled={subjectOptions.length == 0}
+                isClearable={true}
+                isMulti={false}
+                value={subjectOptions.filter(
+                  (opt) => opt.value == selectedSubjectId,
+                )}
+                isLoading={loading || loadingS || loadingExams}
+                options={subjectOptions}
+                onChange={(option) => {
+                  if (option) {
+                    setSelectedSubjectId(option.value as number);
+                    getClassesBySubject(option.value as number);
+                  }
+                  if (!option) {
+                    setSelectedSubjectId(undefined);
+                  }
+                }}
+              />
             </Box>
-          )}
-        </Box>
+
+            <Box hidden={!selectedSubjectId} w={isMobile ? '100%' : '400px'}>
+              <Text>Turma: </Text>
+              <TooltipSelect
+                value={classesOptions.filter(
+                  (opt) => opt.value == selectedClassId,
+                )}
+                isClearable={true}
+                placeholder={
+                  !selectedSubjectId
+                    ? 'Selecione uma disciplina primeiro'
+                    : classes.length > 0
+                      ? 'Selecione uma turma'
+                      : 'Nenhuma turma disponível'
+                }
+                options={classesOptions}
+                isDisabled={!selectedSubjectId || classes.length === 0}
+                onChange={(option) => {
+                  if (option) {
+                    setSelectedClassId(option.value as number);
+                  } else {
+                    setSelectedClassId(undefined);
+                  }
+                }}
+              />
+            </Box>
+          </Flex>
+          <Box w={isMobile ? '100%' : '820px'}>
+            {!selectedSubjectId ? (
+              <Alert status='warning' borderRadius={'5px'} w={'full'}>
+                <AlertIcon />
+                {subjectOptions.length > 0
+                  ? 'Selecione uma disciplina'
+                  : 'Nenhuma disciplina com prova encontrada'}
+              </Alert>
+            ) : (
+              <Box>
+                <Text fontSize='2xl' mb={'10px'}>
+                  Provas:{' '}
+                </Text>
+                {selectedSubjectId ? (
+                  <>
+                    {activeExams.length > 0 && (
+                      <ExamClassAccordion
+                        exams={activeExams.filter((exam) => {
+                          if (selectedClassId) {
+                            return (
+                              exam.subject_id == selectedSubjectId &&
+                              exam.classes
+                                .map((cls) => cls.id)
+                                .includes(selectedClassId)
+                            );
+                          }
+                          return exam.subject_id == selectedSubjectId;
+                        })}
+                        loading={loading}
+                      />
+                    )}
+                    {activeExams.length == 0 && (
+                      <Alert
+                        status='warning'
+                        borderRadius={'10px'}
+                        w={'fit-content'}
+                      >
+                        <AlertIcon />
+                        Nenhuma prova encontrada para essa disciplina
+                      </Alert>
+                    )}
+                  </>
+                ) : undefined}
+              </Box>
+            )}
+          </Box>
+        </Flex>
       </Flex>
     </PageContent>
   );

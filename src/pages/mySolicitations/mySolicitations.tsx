@@ -91,7 +91,7 @@ const MySolicitations = () => {
             justifyContent={'space-between'}
             w={'full'}
           >
-            <Text fontSize='4xl'>Minhas solicitações</Text>
+            <Text fontSize={isMobile ? '2xl' : '4xl'}>Minhas solicitações</Text>
             <Button
               borderRadius={'10px'}
               colorScheme='blue'
