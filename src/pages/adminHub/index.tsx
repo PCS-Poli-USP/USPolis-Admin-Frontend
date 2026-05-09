@@ -84,7 +84,7 @@ function AdminHub() {
     <PageContent>
       <Flex direction={'column'} alignItems='center'>
         <Heading>Portal Admin</Heading>
-        <Text size='lg' mb={'20px'}>
+        <Text size='lg' mb={'20px'} textAlign={'center'}>
           Selecione uma das opções para começar a administrar o USPolis
         </Text>
         <HubPageGrid items={items} />

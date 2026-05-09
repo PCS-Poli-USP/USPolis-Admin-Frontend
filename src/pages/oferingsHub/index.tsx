@@ -1,4 +1,4 @@
-import { Flex, Heading, Text } from '@chakra-ui/react';
+import { Flex, Heading, Text, useMediaQuery } from '@chakra-ui/react';
 import PageContent from '../../components/common/PageContent';
 import HubPageGrid, {
   HubPageGridItem,
@@ -10,6 +10,7 @@ import { PiChair } from 'react-icons/pi';
 import { CalendarIcon } from '@chakra-ui/icons';
 
 function OferingsHub() {
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
   const navigate = useNavigate();
 
   const items: HubPageGridItem[] = [
@@ -65,9 +66,13 @@ function OferingsHub() {
   ];
   return (
     <PageContent>
-      <Flex direction={'column'} alignItems='center' padding={'0rem 10rem'}>
+      <Flex
+        direction={'column'}
+        alignItems='center'
+        padding={isMobile ? '0rem' : '0rem 10rem'}
+      >
         <Heading>Portal de Oferecimentos</Heading>
-        <Text size='lg' mb={'20px'}>
+        <Text size='lg' mb={'20px'} textAlign={'center'}>
           Selecione uma das opções para começar a gerenciar os oferecimentos
           disponíveis no USPolis
         </Text>

@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Button,
   HStack,
@@ -69,9 +70,9 @@ export const getBugReportsColumns = (
       },
       cell: ({ row }) => (
         <Box>
-          <Text textColor={BugPriority.getColor(row.original.priority)}>
+          <Badge colorScheme={BugPriority.getColor(row.original.priority)}>
             {BugPriority.translate(row.original.priority)}
-          </Text>
+          </Badge>
         </Box>
       ),
     },
@@ -79,6 +80,7 @@ export const getBugReportsColumns = (
       accessorKey: 'type',
       header: 'Tipo',
       maxSize: 120,
+      accessorFn: (row) => BugType.translate(row.type),
       meta: {
         isSelectable: true,
       },

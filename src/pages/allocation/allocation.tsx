@@ -94,7 +94,7 @@ function Allocation() {
     moment().endOf('isoWeek').format('YYYY-MM-DD'),
   );
 
-  const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[1]);
+  const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[0]);
 
   const [clickedDate, setClickedDate] = useState<string>();
   const [dragEvent, setDragEvent] = useState<EventDropArg>();

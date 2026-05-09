@@ -293,6 +293,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   text='Grupos'
                   replace_location={false}
                   onClose={onClose}
+                  highlighted={currentPath === '/admin/groups'}
                 />
                 <DrawerButton
                   icon={<MdEvent />}
@@ -300,6 +301,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   text='Eventos'
                   replace_location={false}
                   onClose={onClose}
+                  highlighted={currentPath === '/admin/institutional-events'}
                 />
                 <DrawerButton
                   icon={<GiGraduateCap />}
@@ -307,6 +309,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   text='Cursos'
                   replace_location={false}
                   onClose={onClose}
+                  highlighted={currentPath === '/admin/courses'}
                 />
                 <DrawerButton
                   icon={<VscReport />}
@@ -314,6 +317,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   text='Reportes'
                   replace_location={false}
                   onClose={onClose}
+                  highlighted={currentPath === '/admin/bug-reports'}
                 />
                 <DrawerButton
                   icon={<VscFeedback />}
@@ -321,6 +325,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   text='Feedbacks'
                   replace_location={false}
                   onClose={onClose}
+                  highlighted={currentPath === '/admin/feedbacks'}
                 />
               </ScaleFade>
             </VStack>

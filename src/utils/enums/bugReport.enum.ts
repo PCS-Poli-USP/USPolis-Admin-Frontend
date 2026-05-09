@@ -15,10 +15,10 @@ export namespace BugPriority {
   };
 
   const colorsMap: { [key in BugPriority]: string } = {
-    [BugPriority.LOW]: 'uspolis.gray',
-    [BugPriority.AVERAGE]: 'uspolis.blue',
-    [BugPriority.HIGH]: 'uspolis.yellow',
-    [BugPriority.URGENT]: 'uspolis.red',
+    [BugPriority.LOW]: 'gray',
+    [BugPriority.AVERAGE]: 'blue',
+    [BugPriority.HIGH]: 'yellow',
+    [BugPriority.URGENT]: 'red',
   };
 
   const intMap: { [key in BugPriority]: number } = {

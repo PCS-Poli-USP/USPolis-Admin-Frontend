@@ -41,6 +41,7 @@ function HeaderFilter({
   buildingResources,
   classroomResources,
 }: AllocationHeaderProps) {
+  console.log('Aqui');
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const classroomSelectRef = useRef<SelectInstance<Option>>(null);
   const subjectSelectRef = useRef<SelectInstance<Option>>(null);
@@ -154,7 +155,7 @@ function HeaderFilter({
                 styles={customStyles}
                 menuPortalTarget={document.body} // Renderiza o menu no body para ficar acima do fullcalendar
                 placeholder='Prédio'
-                isClearable={true}
+                isClearable={false}
                 options={buildingOptions}
                 value={
                   buildingSearchValue
@@ -271,7 +272,7 @@ function HeaderFilter({
             <TooltipSelect
               styles={customStyles}
               placeholder='Prédio'
-              isClearable={true}
+              isClearable={false}
               options={buildingOptions}
               value={
                 buildingSearchValue
@@ -279,6 +280,8 @@ function HeaderFilter({
                   : undefined
               }
               onChange={(option) => {
+                console.log('Selected building:', option);
+                console.log('Classroom ref: ', classroomSelectRef.current);
                 if (option) {
                   setBuildingSearchValue(option.value as string);
                 } else {

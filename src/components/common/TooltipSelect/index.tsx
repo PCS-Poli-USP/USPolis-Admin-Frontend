@@ -218,6 +218,7 @@ function TooltipSelect<IsMulti extends boolean = false>(
         Option: CustomOption,
       }}
       styles={mergedStyles(props.hasError)}
+      // ref={props.ref}
     />
   );
 }

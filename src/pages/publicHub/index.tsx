@@ -41,7 +41,7 @@ function PublicHub() {
     <PageContent>
       <Flex direction={'column'} alignItems='center'>
         <Heading>Portal de Público</Heading>
-        <Text size='lg' mb={'20px'}>
+        <Text size='lg' mb={'20px'} textAlign={'center'}>
           Selecione um dos módulos abaixo para acessar as funcionalidades
           disponíveis para o público geral.
         </Text>
