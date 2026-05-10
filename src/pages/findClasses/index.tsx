@@ -14,6 +14,8 @@ import ClassAccordion from './ClassAccordion';
 import useClasses from '../../hooks/classes/useClasses';
 import { classNumberFromClassCode } from '../../utils/classes/classes.formatter';
 import TooltipSelect, { Option } from '../../components/common/TooltipSelect';
+import ClassCard from './ClassCard';
+import ClassGrid from './ClassGrid';
 
 function FindClasses() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
@@ -34,10 +36,12 @@ function FindClasses() {
 
   return (
     <PageContent>
-      <Text fontSize='4xl' mb={4}>
-        Encontre suas aulas
-      </Text>
-      <Flex direction={'column'} gap={'20px'}>
+      <Flex
+        direction={'column'}
+        gap={'20px'}
+        margin={'0 auto'}
+        alignItems={'center'}
+      >
         <Flex direction={isMobile ? 'column' : 'row'} gap={'20px'}>
           <Box w={isMobile ? '100%' : '400px'}>
             <Text fontWeight={'bold'}>Disciplina: </Text>
@@ -45,7 +49,7 @@ function FindClasses() {
               placeholder={
                 subjects.length > 0
                   ? 'Selecione uma disciplina'
-                  : 'Nenhuma disciplina ativa encontrda'
+                  : 'Nenhuma disciplina ativa encontrada'
               }
               value={subjectOption}
               isClearable={true}
@@ -68,7 +72,7 @@ function FindClasses() {
             />
           </Box>
 
-          <Box hidden={!subjectOption} w={isMobile ? '100%' : '400px'}>
+          <Box w={isMobile ? '100%' : '400px'}>
             <Text fontWeight={'bold'}>Turma: </Text>
             <TooltipSelect
               ref={selectRef}
@@ -102,47 +106,26 @@ function FindClasses() {
         </Flex>
         <Box>
           {subjects.length == 0 && (
-            <Alert status='warning' w={isMobile ? '100%' : '400px'}>
+            <Alert status='warning' w={isMobile ? '100%' : '820px'}>
               <AlertIcon />
               Nenhuma disciplina com turmas foi encontrada
             </Alert>
           )}
 
           {subjects.length > 0 && !subjectOption && (
-            <Alert status='warning' w={isMobile ? '100%' : '400px'}>
+            <Alert status='warning' w={isMobile ? '100%' : '820px'}>
               <AlertIcon />
               Selecione uma disciplina
             </Alert>
           )}
 
           {subjectOption && (
-            <Box w={isMobile ? '100%' : '820px'}>
-              <Text fontSize='2xl'>Turmas: </Text>
+            <Box w={isMobile ? '100%' : '70vw'}>
+              <Text fontSize='2xl' mb={'20px'}>
+                Turmas:{' '}
+              </Text>
               {subjectOption ? (
-                <>
-                  {classes.length > 0 && (
-                    <ClassAccordion
-                      classes={
-                        classOption
-                          ? classes.filter(
-                              (cls) => cls.id === classOption.value,
-                            )
-                          : classes
-                      }
-                      loading={loading}
-                    />
-                  )}
-                  {classes.length == 0 && (
-                    <Alert
-                      status='warning'
-                      borderRadius={'10px'}
-                      w={'fit-content'}
-                    >
-                      <AlertIcon />
-                      Nenhum oferecimento encontrado para essa disciplina
-                    </Alert>
-                  )}
-                </>
+                <ClassGrid classes={classes} columns={isMobile ? 1 : 3} />
               ) : undefined}
             </Box>
           )}

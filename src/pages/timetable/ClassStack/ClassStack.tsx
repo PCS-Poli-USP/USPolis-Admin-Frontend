@@ -210,9 +210,7 @@ function ClassStack({
                                   ml={'5px'}
                                   // textColor={s.classroom ? '' : 'uspolis.red'}
                                 >
-                                  {`Sala: ${
-                                    s.classroom ? s.classroom : 'Não alocada'
-                                  }`}
+                                  {`${s.building ? s.building : 'Não alocado'} - Sala ${s.classroom ? s.classroom : 'Não alocada'}`}
                                 </Text>
                               </Flex>
                             </Flex>
