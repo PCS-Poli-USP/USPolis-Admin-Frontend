@@ -5,12 +5,12 @@ prev:
 
 next:
   text: 'Visualizações'
-  link: './views'
+  link: '/allocations/views'
 ---
 
 # Mapa de Salas
 
-O mapa de salas é a principal página do USPolis, é nele onde você consegue encontrar todas as disciplinas e reservas disponíveis. É através dessa página que você pode fazer solicitações de sala (veja detalhes em [Solicitar uma sala](../solicitate-a-classroom/)).
+O mapa de salas é a principal página do USPolis, é nele onde você consegue encontrar todas as disciplinas e reservas disponíveis. É através dessa página que você pode fazer solicitações de sala (veja detalhes em [Solicitar uma sala](/allocations/solicitate-a-classroom/)).
 
 <div style="
   display: flex;
@@ -19,7 +19,7 @@ O mapa de salas é a principal página do USPolis, é nele onde você consegue e
   width: 100%;
 ">
   <img 
-    src="/allocation/images/mapa-de-salas.gif" 
+    src="/allocations/images/mapa-de-salas.gif" 
     alt="Mapa de Salas visualização geral"
     style="
       border-radius: 8px;
@@ -39,7 +39,7 @@ No canto superior você encontra os seguintes botões e seletores:
   width: 100%;
 ">
   <img 
-    src="/allocation/images/mapa-salas-header.gif" 
+    src="/allocations/images/mapa-salas-header.gif" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -63,7 +63,7 @@ No canto esquerdo é possível encontrar o seguinte menu (essas opções são pa
   width: 100%;
 ">
   <img 
-    src="/allocation/image-2.png" 
+    src="/allocations/image-2.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -74,11 +74,9 @@ No canto esquerdo é possível encontrar o seguinte menu (essas opções são pa
   />
 </div>
 
-
 Nele é possível filtrar os eventos do calendário com base em categorias, além disso, você pode rapidamente ir para uma data específica utilizando o calendário e clickando na data que desejar. Você pode minimizar o menu utilizando o botão com a seta na parte superior.
 
 Uma outra forma de **avançar** ou **voltar** nas datas é utilizando os **botões** que estão no lado direito do cabeçalho do calendário, as duas setas (< >), conforme a imagem a seguir:
-
 
 <div style="
   display: flex;
@@ -87,7 +85,7 @@ Uma outra forma de **avançar** ou **voltar** nas datas é utilizando os **botõ
   width: 100%;
 ">
   <img 
-    src="/allocation/image-3.png" 
+    src="/allocations/image-3.png" 
     alt="Descrição"
     style="
       border-radius: 8px;

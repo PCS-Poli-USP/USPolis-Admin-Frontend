@@ -5,7 +5,7 @@ prev:
 
 next:
   text: 'Minhas solicitações'
-  link: '/my-solicitations'
+  link: '/profile/solicitations'
 ---
 
 # Encontre suas aulas

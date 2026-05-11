@@ -1,11 +1,11 @@
 ---
 next:
   text: 'Gerenciar a alocação pelo Mapa de Salas'
-  link: './management'
+  link: '/allocations/management'
 
 prev:
   text: 'Visualizações'
-  link: './views'
+  link: '/allocations/views'
 ---
 
 # Relatórios em PDF
@@ -19,7 +19,7 @@ prev:
   width: 100%;
 ">
   <img 
-    src="/allocation/image-4.png" 
+    src="/allocations/image-4.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -39,7 +39,7 @@ Um menu irá abrir com todas as opções disponíveis, vamos entrar em detalhes 
   width: 100%;
 ">
   <img 
-    src="/allocation/image-5.png" 
+    src="/allocations/image-5.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -65,7 +65,7 @@ Esse relatório mostra todas as alocações de determinado prédio no formato de
   width: 100%;
 ">
   <img 
-    src="/allocation/image-6.png" 
+    src="/allocations/image-6.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -85,7 +85,7 @@ Basta escolher o prédio que o botão para baixar o pdf irá ser desbloqueado, a
   width: 100%;
 ">
   <img 
-    src="/allocation/image-7.png" 
+    src="/allocations/image-7.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -109,7 +109,7 @@ O formulário é igual ao da alocação das disciplinas, você escolhe um prédi
   width: 100%;
 ">
   <img 
-    src="/allocation/image-14.png" 
+    src="/allocations/image-14.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -129,7 +129,7 @@ Aqui basta clicar em salvar que irá baixar o PDF com a aparência correta, mesm
   width: 100%;
 ">
   <img 
-    src="/allocation/image-15.png" 
+    src="/allocations/image-15.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -149,7 +149,7 @@ Aqui um exemplo de cada página do relatório.
   width: 100%;
 ">
   <img 
-    src="/allocation/image-16.png" 
+    src="/allocations/image-16.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -171,7 +171,7 @@ Esse relatório é igual ao [Alocação das Disciplinas](#alocação-das-discipl
   width: 100%;
 ">
   <img 
-    src="/allocation/image-17.png" 
+    src="/allocations/image-17.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -195,7 +195,7 @@ Esse relatório funciona igual ao relatório [Mapa de Salas](#mapa-de-salas-pdf)
   width: 100%;
 ">
   <img 
-    src="/allocation/image-19.png" 
+    src="/allocations/image-19.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -215,7 +215,7 @@ Após salvar você obtem o seguinte formato de relatório:
   width: 100%;
 ">
   <img 
-    src="/allocation/image-20.png" 
+    src="/allocations/image-20.png" 
     alt="Descrição"
     style="
       border-radius: 8px;

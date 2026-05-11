@@ -1,7 +1,7 @@
 ---
 prev:
   text: 'Relatórios em PDF'
-  link: '/allocation/pdfs'
+  link: '/allocations/pdfs'
 
 next:
   text: 'Encontre suas provas'
@@ -13,7 +13,7 @@ next:
 <!-- > [!WARNING]
 > Documentação em construção... -->
 
-É possível solicitar uma reserva de sala através do USPolis, para isso basta acessar o [Mapa de Salas](../allocation/), e clicar no botão "Solicitar Sala", é **necessário que você esteja logado**:
+É possível solicitar uma reserva de sala através do USPolis, para isso basta acessar o [Mapa de Salas](/allocations/), e clicar no botão "Solicitar Sala", é **necessário que você esteja logado**:
 
 <div style="
   display: flex;
@@ -22,7 +22,7 @@ next:
   width: 100%;
 ">
   <img 
-    src="/solicitate-a-classroom/image.png"
+    src="/allocations/solicitate-a-classroom/image.png"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -42,7 +42,7 @@ Ao clicar no botão o formulário o seguinte formulário é aberto:
   width: 100%;
 ">
   <img 
-    src="/solicitate-a-classroom/image-1.png"
+    src="/allocations/solicitate-a-classroom/image-1.png"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -54,6 +54,7 @@ Ao clicar no botão o formulário o seguinte formulário é aberto:
 </div>
 
 Nele você coloca o **título**, o **tipo** de reserva, a **capacidade** e um **motivo**. Existem três tipos de reservas, cada um com uma particularidade:
+
 - [Provas](#provas)
 - [Eventos](#eventos)
 - [Reuniões](#reuniões)
@@ -67,7 +68,7 @@ Para qualquer tipo de reserva você tem a opção de **não escolher uma sala** 
   width: 100%;
 ">
   <img 
-    src="/solicitate-a-classroom/image-5.png"
+    src="/allocations/solicitate-a-classroom/image-5.png"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -87,7 +88,7 @@ O botão "Visualizar" serve para você ver como ficará a sua reserva, ao clicar
   width: 100%;
 ">
   <img 
-    src="/solicitate-a-classroom/image-6.png"
+    src="/allocations/solicitate-a-classroom/image-6.png"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -111,7 +112,7 @@ Ao selecionar o tipo "Prova" dois campos irão aparecer, um para selecionar a di
   width: 100%;
 ">
   <img 
-    src="/solicitate-a-classroom/image-2.png"
+    src="/allocations/solicitate-a-classroom/image-2.png"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -131,7 +132,7 @@ Depois de selecionar a disciplina e as turmas podemos ir para o segundo passo, o
   width: 100%;
 ">
   <img 
-    src="/solicitate-a-classroom/image-3.png"
+    src="/allocations/solicitate-a-classroom/image-3.png"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -142,7 +143,7 @@ Depois de selecionar a disciplina e as turmas podemos ir para o segundo passo, o
   />
 </div>
 
-Em reservas do tipo Prova **NÃO TEM RECORRÊNCIA**, você escolhe as datas pelo calendário, clicar em um dia adiciona esse dia e clicar novamente no dia remove ele. 
+Em reservas do tipo Prova **NÃO TEM RECORRÊNCIA**, você escolhe as datas pelo calendário, clicar em um dia adiciona esse dia e clicar novamente no dia remove ele.
 
 <div style="
   display: flex;
@@ -151,7 +152,7 @@ Em reservas do tipo Prova **NÃO TEM RECORRÊNCIA**, você escolhe as datas pelo
   width: 100%;
 ">
   <img 
-    src="/solicitate-a-classroom/image-4.png"
+    src="/allocations/solicitate-a-classroom/image-4.png"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -175,7 +176,7 @@ Ao selecionar o tipo "Evento" dois campos irão aparecer, um para selecionar o t
   width: 100%;
 ">
   <img 
-    src="/solicitate-a-classroom/image-7.png"
+    src="/allocations/solicitate-a-classroom/image-7.png"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -195,7 +196,7 @@ Ao preencher com os demais dados (título, quantidade de pessoas, motivo) e avan
   width: 100%;
 ">
   <img 
-    src="/solicitate-a-classroom/image-8.png"
+    src="/allocations/solicitate-a-classroom/image-8.png"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -219,7 +220,7 @@ Por fim, a última opção é a de reservas do tipo "Reuniões", ela é idêntic
   width: 100%;
 ">
   <img 
-    src="/solicitate-a-classroom/image-9.png"
+    src="/allocations/solicitate-a-classroom/image-9.png"
     alt="Descrição"
     style="
       border-radius: 8px;

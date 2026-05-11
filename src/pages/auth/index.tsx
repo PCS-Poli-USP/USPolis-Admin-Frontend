@@ -44,7 +44,7 @@ const AuthPage = () => {
                 alt='USPolis Logo'
                 objectFit='cover'
                 src={Logo}
-                onClick={() => navigate('/allocation')}
+                onClick={() => navigate('/public/allocations')}
               />
             </HStack>
             <Heading size={'xl'} textColor={'teal'}>

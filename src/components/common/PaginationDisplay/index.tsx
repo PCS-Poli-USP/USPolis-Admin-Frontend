@@ -3,7 +3,6 @@ import {
   AlertIcon,
   Box,
   Flex,
-  Heading,
   IconButton,
   Skeleton,
   Text,
@@ -20,6 +19,8 @@ interface PaginationDisplayProps<T> {
   renderPageItem: (item: T) => React.ReactNode;
   setPageSize: (pageSize: PageSize) => void;
   setCurrentPage: (currentPage: number) => void;
+  gap?: string;
+  titleSize?: string;
 }
 
 function PaginationDisplay<T>({
@@ -29,6 +30,8 @@ function PaginationDisplay<T>({
   renderPageItem,
   setPageSize,
   setCurrentPage,
+  gap = '20px',
+  titleSize = 'lg',
 }: PaginationDisplayProps<T>) {
   return (
     <Flex
@@ -60,7 +63,9 @@ function PaginationDisplay<T>({
             setCurrentPage(pageResponse.page - 1);
           }}
         />
-        <Heading>{title}</Heading>
+        <Text fontSize={titleSize} fontWeight={'bold'}>
+          {title}
+        </Text>
         <IconButton
           aria-label='left-arrow'
           icon={<FaChevronRight />}
@@ -93,7 +98,7 @@ function PaginationDisplay<T>({
           direction={'column'}
           justify={'center'}
           align={'center'}
-          gap={'10px'}
+          gap={gap}
         >
           {pageResponse.data.map((val) => renderPageItem(val))}
           {pageResponse.data.length == 0 && (

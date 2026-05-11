@@ -1,16 +1,16 @@
 ---
 prev:
   text: 'Introdução'
-  link: './'
+  link: '/allocations'
 
 next:
   text: 'Relatórios em PDF'
-  link: './pdfs'
+  link: '/allocations/pdfs'
 ---
 
 # Visualizações
 
-Ao todo temos quatro tipos de visualizações do Mapa de Salas, sendo dois deles orientados no ponto de vista prédios e salas, já os outros dois são orientados no ponto de vista de tempo e dias da semana. 
+Ao todo temos quatro tipos de visualizações do Mapa de Salas, sendo dois deles orientados no ponto de vista prédios e salas, já os outros dois são orientados no ponto de vista de tempo e dias da semana.
 
 A visualização padrão é a [Sala / Semana](#sala-semana), sendo que você pode mudar clicando nos botões no cabeçalho do calendário, conforme a imagem a seguir:
 
@@ -21,7 +21,7 @@ A visualização padrão é a [Sala / Semana](#sala-semana), sendo que você pod
   width: 100%;
 ">
   <img 
-    src="/allocation/image-8.png" 
+    src="/allocations/image-8.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -41,7 +41,7 @@ Já para **dispositivos moveis**, a visualização padrão é a [Geral](#geral),
   width: 100%;
 ">
   <img 
-    src="/allocation/image-9.png" 
+    src="/allocations/image-9.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -65,7 +65,7 @@ A seguir, a visualização de salas por dia da semana:
   width: 100%;
 ">
   <img 
-    src="/allocation/image-10.png" 
+    src="/allocations/image-10.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -89,7 +89,7 @@ A seguir, a visualização de salas por semana:
   width: 100%;
 ">
   <img 
-    src="/allocation/image-11.png" 
+    src="/allocations/image-11.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -113,7 +113,7 @@ A seguir, a visualização de salas por dia:
   width: 100%;
 ">
   <img 
-    src="/allocation/image-12.png" 
+    src="/allocations/image-12.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -137,7 +137,7 @@ A seguir, a visualização geral:
   width: 100%;
 ">
   <img 
-    src="/allocation/image-13.png" 
+    src="/allocations/image-13.png" 
     alt="Descrição"
     style="
       border-radius: 8px;

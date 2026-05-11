@@ -1,19 +1,20 @@
 ---
 prev:
   text: 'Relatórios em PDF'
-  link: './pdfs'
+  link: '/allocations/pdfs'
 
 next:
   text: 'Solicitar uma Sala'
-  link: '/solicitate-a-classroom'
+  link: '/allocations/solicitate-a-classroom'
 ---
 
 # Gerenciar a alocação pelo Mapa de Salas
 
->[!WARNING]
+> [!WARNING]
 > Essa seção é destinada para **responsáveis por prédios**.
 
-É possível gerenciar as alocações diretamente pelo mapa de salas, é uma forma bastante visual de definir as alocações, usando as visualizações [Sala / Dia](/allocation/views#sala-dia) ou [Sala / Semana](/allocation/views#sala-semana) é possível:
+É possível gerenciar as alocações diretamente pelo mapa de salas, é uma forma bastante visual de definir as alocações, usando as visualizações [Sala / Dia](/allocations/views#sala-dia) ou [Sala / Semana](/allocations/views#sala-semana) é possível:
+
 - Criar **reservas** clicando diretamente pelo Mapa de Salas
 - Mudar o local e/ou horário de reservas e turmas
 - Remover uma alocação ou ocorrência de turmas ou reservas
@@ -29,7 +30,7 @@ Basta selecionar um quadrado fazio e clicar nele, como mostra a imagem abaixo:
   width: 100%;
 ">
   <img 
-    src="/allocation/image-21.png" 
+    src="/allocations/image-21.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -49,7 +50,7 @@ Após isso, será aberto o formulário de criação de reservas:
   width: 100%;
 ">
   <img 
-    src="/allocation/image-22.png" 
+    src="/allocations/image-22.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -65,6 +66,7 @@ Basta então preencher o formulário, sendo que a sala e prédio já vem preench
 ## Mudar a alocação pelo Mapa de Salas
 
 É possível mudar uma alocação arrastando os retângulos para um novo horário e/ou a uma nova sala. Por exemplo, olhe o calendário ANTES de arrastar, na sala **A1-02** no horário de **13h10 até 16h40** está a turma **2000101 T7**:
+
 <div style="
   display: flex;
   justify-content: center;
@@ -72,7 +74,7 @@ Basta então preencher o formulário, sendo que a sala e prédio já vem preench
   width: 100%;
 ">
   <img 
-    src="/allocation/image-23.png" 
+    src="/allocations/image-23.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -92,7 +94,7 @@ Ao arrastar para segunda feira das **19h10 até 22h40**, conforme a imagem abaix
   width: 100%;
 ">
   <img 
-    src="/allocation/image-24.png" 
+    src="/allocations/image-24.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -112,7 +114,7 @@ Ao soltar, um formulário aparece:
   width: 100%;
 ">
   <img 
-    src="/allocation/image-25.png" 
+    src="/allocations/image-25.png" 
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -127,5 +129,5 @@ Assim, é possível mudar **TODAS** ou apenas **AQUELA** ocorrência dessa turma
 
 ## Remover a alocação pelo Mapa de Salas
 
->[!WARNING]
+> [!WARNING]
 > Funcionalidade ainda em desenvolvimento.

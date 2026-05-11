@@ -5,7 +5,7 @@ prev:
 
 next:
   text: 'Reservas'
-  link: '/reservations'
+  link: '/scheduling/reservations'
 ---
 
 # Grade Horária
@@ -24,7 +24,7 @@ Para acessar essa página você deve fazer o seguinte:
   width: 100%;
 ">
   <img 
-    src="/timetable/image-1.gif"
+    src="/profile/timetable/image-1.gif"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -44,7 +44,7 @@ Em seguida, se for a **primeira** vez acessando essa página você vai ver a seg
   width: 100%;
 ">
   <img 
-    src="/timetable/image-2.png"
+    src="/profile/timetable/image-2.png"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -68,7 +68,7 @@ Ao clicar na criação manual você vai ir para a tela principal da grade horár
   width: 100%;
 ">
   <img 
-    src="/timetable/image.png"
+    src="/profile/timetable/image.png"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -88,7 +88,7 @@ Uma vez nela você verá um menu lateral com todas as disciplinas e turmas cadas
   width: 100%;
 ">
   <img 
-    src="/timetable/image-3.gif"
+    src="/profile/timetable/image-3.gif"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -108,7 +108,7 @@ Uma vez que você selecionou todas suas turmas, você pode criar sua grade. Uma 
   width: 100%;
 ">
   <img 
-    src="/timetable/image-4.gif"
+    src="/profile/timetable/image-4.gif"
     alt="Descrição"
     style="
       border-radius: 8px;
@@ -119,8 +119,14 @@ Uma vez que você selecionou todas suas turmas, você pode criar sua grade. Uma 
   />
 </div>
 
-
 ## Importar grade do JúpiterWeb
 
-> [!WARNING]
-> Documentação em construção...
+Se preferir, voce pode importar automaticamente sua grade do JupterWeb.
+
+### Passos basicos
+
+1. Clique em "Importar do JupterWeb" na tela inicial da grade.
+2. Informe o periodo desejado.
+3. Confirme a importacao e revise as disciplinas carregadas.
+
+Caso alguma turma nao apareca, voce pode ajustar manualmente na tela principal.
