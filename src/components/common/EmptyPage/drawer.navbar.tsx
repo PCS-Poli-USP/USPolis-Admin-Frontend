@@ -76,7 +76,7 @@ export function DrawerNavBar({
     if (isAdminRoute(path)) {
       return DOCS_URL + '/';
     }
-    return DOCS_URL + path;
+    return DOCS_URL + path.replace('/public', '');
   }
 
   return (

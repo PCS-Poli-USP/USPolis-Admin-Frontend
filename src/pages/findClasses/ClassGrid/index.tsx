@@ -1,9 +1,9 @@
 import { Alert, AlertIcon, SimpleGrid } from '@chakra-ui/react';
-import { ClassResponse } from '../../../models/http/responses/class.response.models';
+import { ClassSchedulingResponse } from '../../../models/http/responses/class.response.models';
 import ClassCard from '../ClassCard';
 
 interface ClassGridProps {
-  classes: ClassResponse[];
+  classes: ClassSchedulingResponse[];
   columns?: number;
 }
 

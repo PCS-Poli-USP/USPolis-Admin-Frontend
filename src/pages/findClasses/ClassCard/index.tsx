@@ -1,14 +1,15 @@
 import { Badge, Flex, Text } from '@chakra-ui/react';
-import { ClassResponse } from '../../../models/http/responses/class.response.models';
+import { ClassSchedulingResponse } from '../../../models/http/responses/class.response.models';
 import moment, { Moment } from 'moment';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
 import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
 import { PiStudent } from 'react-icons/pi';
 import { MdOutlineRoom } from 'react-icons/md';
 import { getScheduleWithTimeString } from '../../../utils/schedules/schedule.formatter';
+import { LuCalendarDays } from 'react-icons/lu';
 
 interface ClassCardProps {
-  cls: ClassResponse;
+  cls: ClassSchedulingResponse;
 }
 
 function getClassStatusBadgeColor(starts: Moment[]) {
@@ -59,10 +60,14 @@ function ClassCard({ cls }: ClassCardProps) {
   const starts = cls.schedules
     .filter((s) => s.week_day != undefined)
     .map((schedule) =>
-      moment(schedule.start_time).weekday(
-        ((schedule.week_day as WeekDay) + 1) % 7,
-      ),
+      moment()
+        .set({
+          hour: Number(schedule.start_time.split(':')[0]),
+          minute: Number(schedule.start_time.split(':')[1]),
+        })
+        .weekday(((schedule.week_day as WeekDay) + 1) % 7),
     );
+  console.log(starts);
 
   return (
     <Flex
@@ -95,9 +100,12 @@ function ClassCard({ cls }: ClassCardProps) {
       </Flex>
       {cls.schedules.map((s, index) => (
         <Flex direction={'column'}>
-          <Text key={`C${cls.id}-S${index}`} fontSize={'sm'}>
-            {getScheduleWithTimeString(s)}
-          </Text>
+          <Flex align={'center'}>
+            <LuCalendarDays />
+            <Text key={`C${cls.id}-S${index}`} fontSize={'sm'}>
+              {getScheduleWithTimeString(s)}
+            </Text>
+          </Flex>
           <Flex align={'center'}>
             <MdOutlineRoom />
             <Text fontSize={'sm'} ml={'5px'}>

@@ -2,6 +2,7 @@ import { AxiosResponse } from 'axios';
 import {
   ClassResponse,
   ClassFullResponse,
+  ClassSchedulingResponse,
 } from '../../../models/http/responses/class.response.models';
 import {
   CreateClass,
@@ -81,6 +82,16 @@ const useClassesService = () => {
     return axiosPrivate.get(`/users/my-classes`);
   };
 
+  const getComming = (
+    limit?: number,
+  ): Promise<AxiosResponse<Array<ClassSchedulingResponse>>> => {
+    const params = new URLSearchParams();
+    if (limit !== undefined) {
+      params.append('limit', limit.toString());
+    }
+    return axiosPrivate.get(`${PREFIX}/comming`, { params });
+  };
+
   const create = (data: CreateClass): Promise<AxiosResponse<ClassResponse>> => {
     return axiosPrivate.post(PREFIX, data);
   };
@@ -111,6 +122,7 @@ const useClassesService = () => {
     getOneFull,
     getById,
     getMine,
+    getComming,
     create,
     update,
     deleteById,

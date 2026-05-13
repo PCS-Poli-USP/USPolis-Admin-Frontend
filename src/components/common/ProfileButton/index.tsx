@@ -70,7 +70,7 @@ function ProfileButton() {
             fontWeight={'bold'}
             icon={<LuCalendarDays />}
             onClick={() => {
-              navigate('/timetable', {
+              navigate('/profile/timetable', {
                 replace: true,
                 state: { from: location.pathname },
               });

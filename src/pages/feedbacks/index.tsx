@@ -45,7 +45,7 @@ function Feedbacks() {
       <Flex
         direction={'column'}
         w={'700px'}
-        maxW={isMobile ? '100%' : '800px'}
+        maxW={isMobile ? '80vw' : '800px'}
         align={'flex-start'}
         border={'1px solid'}
         shadow={'md'}

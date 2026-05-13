@@ -7,6 +7,7 @@ import {
 import {
   ClassFullResponse,
   ClassResponse,
+  ClassSchedulingResponse,
 } from '../../models/http/responses/class.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import { sortClassResponse } from '../../utils/classes/classes.sorter';
@@ -137,6 +138,27 @@ const useClasses = (initialFetch: boolean = true) => {
           setLoading(false);
         });
       return full;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const getCommingClasses = useCallback(
+    async (limit?: number): Promise<ClassSchedulingResponse[] | undefined> => {
+      setLoading(true);
+      let comming: ClassSchedulingResponse[] | undefined = undefined;
+      await service
+        .getComming(limit)
+        .then((response) => {
+          comming = response.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+      return comming;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -273,6 +295,7 @@ const useClasses = (initialFetch: boolean = true) => {
     updateClass,
     deleteClass,
     deleteManyClass,
+    getCommingClasses,
   };
 };
 

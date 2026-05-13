@@ -10,12 +10,11 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import useSubjects from '../../hooks/useSubjetcts';
 import { SelectInstance } from 'react-select';
-import ClassAccordion from './ClassAccordion';
 import useClasses from '../../hooks/classes/useClasses';
 import { classNumberFromClassCode } from '../../utils/classes/classes.formatter';
 import TooltipSelect, { Option } from '../../components/common/TooltipSelect';
-import ClassCard from './ClassCard';
 import ClassGrid from './ClassGrid';
+import { ClassSchedulingResponse } from '../../models/http/responses/class.response.models';
 
 function FindClasses() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
@@ -25,12 +24,29 @@ function FindClasses() {
     subjects,
     getAllSubjectsActives,
   } = useSubjects(false);
-  const { classes, getClassesBySubject, loading } = useClasses(false);
+  const { classes, getClassesBySubject, loading, getCommingClasses } =
+    useClasses(false);
   const [subjectOption, setSubjectOption] = useState<Option>();
   const [classOption, setClassOption] = useState<Option>();
+  const [commingClasses, setCommingClasses] = useState<
+    Array<ClassSchedulingResponse>
+  >([]);
+
+  async function fetchData() {
+    Promise.all([getAllSubjectsActives(), getCommingClasses()])
+      .then(([, comming]) => {
+        // Handle the fetched data if needed
+        if (comming !== undefined) {
+          setCommingClasses(comming);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }
 
   useEffect(() => {
-    getAllSubjectsActives();
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -106,18 +122,32 @@ function FindClasses() {
         </Flex>
         <Box>
           {subjects.length == 0 && (
-            <Alert status='warning' w={isMobile ? '100%' : '820px'}>
+            <Alert status='warning' w={isMobile ? '100%' : 'full'}>
               <AlertIcon />
               Nenhuma disciplina com turmas foi encontrada
             </Alert>
           )}
 
-          {subjects.length > 0 && !subjectOption && (
-            <Alert status='warning' w={isMobile ? '100%' : '820px'}>
+          {commingClasses.length === 0 && !subjectOption && (
+            <Alert status='warning' w={isMobile ? '100%' : 'full'}>
               <AlertIcon />
               Selecione uma disciplina
             </Alert>
           )}
+
+          {subjects.length > 0 &&
+            !subjectOption &&
+            commingClasses.length > 0 && (
+              <Flex direction={'column'} mt={'10px'} gap={'10px'}>
+                <Text fontWeight={'bold'} fontSize={'xl'}>
+                  Próximas disciplinas:{' '}
+                </Text>
+                <ClassGrid
+                  classes={commingClasses}
+                  columns={isMobile ? 1 : 3}
+                />
+              </Flex>
+            )}
 
           {subjectOption && (
             <Box w={isMobile ? '100%' : '70vw'}>
