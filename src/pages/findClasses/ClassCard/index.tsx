@@ -79,6 +79,13 @@ function ClassCard({ cls }: ClassCardProps) {
       w={'full'}
       maxW={'400px'}
       gap={'10px'}
+      _hover={{
+        boxShadow: 'lg',
+        border: '2px solid',
+        transform: 'translateY(-2px)',
+        transition: 'all 0.2s ease-in-out',
+      }}
+      _peerHover={{}}
     >
       <Flex direction={'row'} justify={'space-between'} w={'full'}>
         <Text fontWeight={'bold'}>
