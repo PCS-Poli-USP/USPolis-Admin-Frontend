@@ -122,14 +122,14 @@ function FindClasses() {
         </Flex>
         <Box>
           {subjects.length == 0 && (
-            <Alert status='warning' w={isMobile ? '100%' : 'full'}>
+            <Alert status='warning' w={'100%'}>
               <AlertIcon />
               Nenhuma disciplina com turmas foi encontrada
             </Alert>
           )}
 
           {commingClasses.length === 0 && !subjectOption && (
-            <Alert status='warning' w={isMobile ? '100%' : 'full'}>
+            <Alert status='warning' w={'100%'}>
               <AlertIcon />
               Selecione uma disciplina
             </Alert>

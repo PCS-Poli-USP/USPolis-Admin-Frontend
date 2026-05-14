@@ -112,6 +112,7 @@ export function DrawerNavBar({
               alt='USPolis'
               objectFit='contain'
               boxSize='40px'
+              hidden={open && !isMobile}
             />
             {isMobile && 'USPolis'}
           </NavLink>

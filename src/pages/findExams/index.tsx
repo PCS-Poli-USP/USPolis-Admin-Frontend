@@ -5,6 +5,7 @@ import {
   AlertIcon,
   Box,
   Flex,
+  Skeleton,
   Text,
   useMediaQuery,
 } from '@chakra-ui/react';
@@ -12,13 +13,13 @@ import useSubjects from '../../hooks/useSubjetcts';
 import useClasses from '../../hooks/classes/useClasses';
 import useExams from '../../hooks/exams/useExams';
 
-import ExamClassAccordion from './ExamClassAccordion';
 import { classNumberFromClassCode } from '../../utils/classes/classes.formatter';
 import TooltipSelect from '../../components/common/TooltipSelect';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
 import HelpPopover from '../../components/common/HelpPopover';
 import { ReservationStatus } from '../../utils/enums/reservations.enum';
+import ExamStack from './ExamStack';
 
 type OptionType = {
   value: number;
@@ -130,7 +131,7 @@ function FindExams() {
               />
             </Box>
 
-            <Box hidden={!selectedSubjectId} w={isMobile ? '100%' : '400px'}>
+            <Box w={isMobile ? '100%' : '400px'}>
               <Text>Turma: </Text>
               <TooltipSelect
                 value={classesOptions.filter(
@@ -156,52 +157,53 @@ function FindExams() {
               />
             </Box>
           </Flex>
-          <Box w={isMobile ? '100%' : '820px'}>
-            {!selectedSubjectId ? (
-              <Alert status='warning' borderRadius={'5px'} w={'full'}>
-                <AlertIcon />
-                {subjectOptions.length > 0
-                  ? 'Selecione uma disciplina'
-                  : 'Nenhuma disciplina com prova encontrada'}
-              </Alert>
-            ) : (
-              <Box>
-                <Text fontSize='2xl' mb={'10px'}>
-                  Provas:{' '}
-                </Text>
-                {selectedSubjectId ? (
-                  <>
-                    {activeExams.length > 0 && (
-                      <ExamClassAccordion
-                        exams={activeExams.filter((exam) => {
-                          if (selectedClassId) {
-                            return (
-                              exam.subject_id == selectedSubjectId &&
-                              exam.classes
-                                .map((cls) => cls.id)
-                                .includes(selectedClassId)
-                            );
-                          }
-                          return exam.subject_id == selectedSubjectId;
-                        })}
-                        loading={loading}
-                      />
-                    )}
-                    {activeExams.length == 0 && (
-                      <Alert
-                        status='warning'
-                        borderRadius={'10px'}
-                        w={'fit-content'}
-                      >
-                        <AlertIcon />
-                        Nenhuma prova encontrada para essa disciplina
-                      </Alert>
-                    )}
-                  </>
-                ) : undefined}
-              </Box>
-            )}
-          </Box>
+          <Skeleton isLoaded={!loadingExams} w={'100%'}> 
+            <Box w={isMobile ? '100%' : '820px'}>
+              {!selectedSubjectId ? (
+                <Alert status='warning' borderRadius={'5px'} w={'full'}>
+                  <AlertIcon />
+                  {subjectOptions.length > 0
+                    ? 'Selecione uma disciplina'
+                    : 'Nenhuma disciplina com prova encontrada'}
+                </Alert>
+              ) : (
+                <Box>
+                  <Text fontSize='2xl' mb={'10px'}>
+                    Provas:{' '}
+                  </Text>
+                  {selectedSubjectId ? (
+                    <>
+                      {activeExams.length > 0 && (
+                        <ExamStack
+                          exams={activeExams.filter((exam) => {
+                            if (selectedClassId) {
+                              return (
+                                exam.subject_id == selectedSubjectId &&
+                                exam.classes
+                                  .map((cls) => cls.id)
+                                  .includes(selectedClassId)
+                              );
+                            }
+                            return exam.subject_id == selectedSubjectId;
+                          })}
+                        />
+                      )}
+                      {activeExams.length == 0 && (
+                        <Alert
+                          status='warning'
+                          borderRadius={'10px'}
+                          w={'fit-content'}
+                        >
+                          <AlertIcon />
+                          Nenhuma prova encontrada para essa disciplina
+                        </Alert>
+                      )}
+                    </>
+                  ) : undefined}
+                </Box>
+              )}
+            </Box>
+          </Skeleton>
         </Flex>
       </Flex>
     </PageContent>
