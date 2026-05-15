@@ -15,6 +15,10 @@ import {
   VStack,
   useDisclosure,
   useColorMode,
+  Heading,
+  AlertIcon,
+  Alert,
+  Badge,
 } from '@chakra-ui/react';
 import PageContent from '../../components/common/PageContent';
 import useCustomToast from '../../hooks/useCustomToast';
@@ -90,17 +94,19 @@ const ReportsPage = () => {
   const [reports, setReports] = useState<OccupanceReports[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [filterMode, setFilterMode] = useState<filter_options>('all');
-  const [selectedClass, setSelectedClass] = useState<ClassResponse | undefined>(undefined,);
+  const [selectedClass, setSelectedClass] = useState<ClassResponse | undefined>(
+    undefined,
+  );
   const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
   const [, setAllocationQueue] = useState<ClassResponse[]>([]);
   const [openAccordions, setOpenAccordions] = useState<number[]>([]);
 
   const {
-      isOpen: isOpenAllocEdit,
-      onOpen: onOpenAllocEdit,
-      onClose: onCloseAllocEdit,
-    } = useDisclosure();
-  const {classes, getClasses, loading: classesLoading } = useClasses();
+    isOpen: isOpenAllocEdit,
+    onOpen: onOpenAllocEdit,
+    onClose: onCloseAllocEdit,
+  } = useDisclosure();
+  const { classes, getClasses, loading: classesLoading } = useClasses();
 
   //carrega os buildings (uma vez no início)
   useEffect(() => {
@@ -120,18 +126,22 @@ const ReportsPage = () => {
 
     setLoading(true);
 
-    try{
-      const res = await occupanceReportsService.listByBuilding(selectedBuildingId, startDate, endDate);
-      setReports(res.data)
-    }catch{
-      showToast('Erro', 'Erro ao carregar as alocações', 'error')
-    }finally{
-      setLoading(false)
+    try {
+      const res = await occupanceReportsService.listByBuilding(
+        selectedBuildingId,
+        startDate,
+        endDate,
+      );
+      setReports(res.data);
+    } catch {
+      showToast('Erro', 'Erro ao carregar as alocações', 'error');
+    } finally {
+      setLoading(false);
     }
   }
 
   function handleCloseAllocModal() {
-    setAllocationQueue(prev => {
+    setAllocationQueue((prev) => {
       const [, ...rest] = prev;
 
       if (rest.length > 0) {
@@ -148,8 +158,8 @@ const ReportsPage = () => {
 
   async function refreshAfterAllocationEdit() {
     await Promise.all([
-      fetchReports(),          // atualiza onde aparece (accordion)
-      getClasses(start, end),  // atualiza dados do modal
+      fetchReports(start, end), // atualiza onde aparece (accordion)
+      getClasses(start, end), // atualiza dados do modal
     ]);
   }
 
@@ -207,7 +217,7 @@ const ReportsPage = () => {
   }, [end]);
 
   return (
-    <PageContent>
+    <PageContent center>
       {selectedClass && (
         <AllocateClassModal
           isOpen={isOpenAllocEdit}
@@ -216,30 +226,51 @@ const ReportsPage = () => {
           class_={selectedClass}
         />
       )}
-      <Flex paddingX={4} direction='column'>
-        <Flex align={'center'}> 
+      <Flex
+        paddingX={4}
+        direction='column'
+        w={'fit-content'}
+        justify={'center'}
+        minW={'50%'}
+        gap={'20px'}
+        mb={'2rem'}
+      >
+        <Flex align={'center'} direction={'column'} mt={'10px'} gap={'10px'}>
+          <Heading size={'lg'}>Relatório de Taxa de Ocupação</Heading>
+          <Text wordBreak={'break-word'} maxW={'800px'}>
+            Para cada sala de aula veja o quanto elas estão ocupadas. Verifique
+            se há salas hiper ocupadas com mais alunos do que capacidade ou
+            salas sub ocupadas, com poucos alunos para muita capacidade.
+          </Text>
+        </Flex>
+        <Flex direction='row' gap={4} mb={4} justify={'center'}>
           <PageHeaderWithFilter
-            title='Relatório de Taxa de Ocupação'
+            title=''
             start={start}
             end={end}
             setStart={setStart}
             setEnd={setEnd}
             onConfirm={(start, end) => {
-            fetchReports(start, end)
-          }}
+              fetchReports(start, end);
+              getClasses(start, end);
+            }}
+            align='flex-end'
+            size='compact'
+            mt='10px'
           />
-        </Flex>
-        <Flex direction='row' gap={4} mb={4}>
           <Flex direction='column' flex={1}>
             <Text fontSize='md'>Prédio:</Text>
             <TooltipSelect
               placeholder='Selecione o prédio'
-              options={buildings.filter((value) => 
-                loggedUser?.is_admin || userBuildingIds.includes(value.id))
+              options={buildings
+                .filter(
+                  (value) =>
+                    loggedUser?.is_admin || userBuildingIds.includes(value.id),
+                )
                 .map((b) => ({
-                label: b.name,
-                value: b.id,
-              }))}
+                  label: b.name,
+                  value: b.id,
+                }))}
               value={
                 selectedBuildingId
                   ? {
@@ -279,8 +310,12 @@ const ReportsPage = () => {
 
         <Skeleton isLoaded={!loading}>
           {/*exibe um loading enquanto os dados ainda não carregaram*/}
-          {filteredReports.length > 0 ? (
-            <Accordion allowMultiple index={openAccordions} onChange={(idx) => setOpenAccordions(idx as number[])}>
+          {filteredReports.length > 0 && (
+            <Accordion
+              allowMultiple
+              index={openAccordions}
+              onChange={(idx) => setOpenAccordions(idx as number[])}
+            >
               {Object.entries(groupedReports)
                 .sort(([, a], [, b]) => {
                   const maxA = Math.max(...a.map((c) => c.percentage));
@@ -320,13 +355,13 @@ const ReportsPage = () => {
                               {list.length > 1 ? 'ões' : 'ão'})
                             </Box>
 
-                            <Text
+                            <Badge
                               fontWeight='semibold'
                               mr={3}
                               color={getPercentageColor(maxPercentage)}
                             >
-                              {maxPercentage.toFixed(2)}%
-                            </Text>
+                              Máximo {maxPercentage.toFixed(2)}%
+                            </Badge>
 
                             <AccordionIcon />
                           </Flex>
@@ -344,20 +379,21 @@ const ReportsPage = () => {
                               <Box>
                                 <Text fontWeight='semibold'>
                                   {WeekDay.translate(c.week_day)} |{' '}
-                                  {c.start_time} - {c.end_time}
+                                  {c.start_time.slice(0, 5)} -{' '}
+                                  {c.end_time.slice(0, 5)}
                                 </Text>
                                 <Text>Capacidade: {c.capacity}</Text>
                                 <Text>Alunos alocados: {c.students}</Text>
                                 <Text>Turmas: {c.classes.join(', ')}</Text>
                               </Box>
 
-                              <VStack align="stretch" spacing={2}>
+                              <VStack align='stretch' spacing={2}>
                                 <Text
-                                  fontWeight="bold"
+                                  fontWeight='bold'
                                   color={getPercentageColor(c.percentage)}
-                                  textAlign="right"
-                                  minW="70px"
-                                  >
+                                  textAlign='right'
+                                  minW='70px'
+                                >
                                   {c.percentage.toFixed(2)}%
                                 </Text>
 
@@ -366,11 +402,15 @@ const ReportsPage = () => {
                                     mr={2}
                                     colorScheme={'blue'}
                                     isLoading={classesLoading}
-                                    loadingText="Carregando"
+                                    loadingText='Carregando'
+                                    size={'sm'}
                                     onClick={() => {
-                                      if (!c.class_id || classes.length === 0) return;
+                                      if (!c.class_id || classes.length === 0)
+                                        return;
                                       const foundClasses = c.class_id
-                                        .map(id => classes.find(cl => cl.id === id))
+                                        .map((id) =>
+                                          classes.find((cl) => cl.id === id),
+                                        )
                                         .filter(Boolean) as ClassResponse[];
 
                                       if (foundClasses.length === 0) return;
@@ -394,10 +434,18 @@ const ReportsPage = () => {
                   );
                 })}
             </Accordion>
-          ) : (
-            !loading && (
-              <Text color='gray.500'>Nenhuma alocação encontrada.</Text>
-            )
+          )}
+          {!loading && selectedBuildingId && filteredReports.length == 0 && (
+            <Alert status='warning'>
+              <AlertIcon />
+              Nenhuma alocação encontrada para esse prédio.
+            </Alert>
+          )}
+          {!loading && !selectedBuildingId && (
+            <Alert status='info'>
+              <AlertIcon />
+              Selecione um prédio para continuar.
+            </Alert>
           )}
         </Skeleton>
       </Flex>

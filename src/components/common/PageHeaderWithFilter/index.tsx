@@ -15,6 +15,9 @@ interface PageHeaderWithFilterProps {
   onConfirm: (start: string, end: string) => void;
   type?: 'year' | 'dateRange';
   onConfirmYear?: (year: string) => void;
+  size?: 'default' | 'compact';
+  align?: string;
+  mt?: string;
 }
 
 function PageHeaderWithFilter({
@@ -30,6 +33,9 @@ function PageHeaderWithFilter({
   label = 'Período: Atual',
   type = 'dateRange',
   onConfirmYear = undefined,
+  size = 'default',
+  align = 'center',
+  mt = undefined,
 }: PageHeaderWithFilterProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
 
@@ -37,13 +43,14 @@ function PageHeaderWithFilter({
     <Flex
       direction={'row'}
       gap={'20px'}
-      align={'center'}
-      h={'60px'}
+      align={align}
+      h={size === 'default' ? '60px' : '50px'}
       alignSelf={'center'}
       justifySelf={'center'}
-      mb={'10px'}
+      mb={size === 'default' ? '10px' : '0px'}
+      mt={mt}
     >
-      <Text fontSize='4xl'>{title}</Text>
+      {title && <Text fontSize='4xl'>{title}</Text>}
       <Flex gap={'5px'} align={'center'}>
         {type === 'dateRange' && (
           <DateRangeInput
@@ -57,6 +64,7 @@ function PageHeaderWithFilter({
               onConfirm(start, end);
             }}
             isMobile={isMobile}
+            compact={size === 'compact'}
           />
         )}
         {type === 'year' && onConfirmYear && (
