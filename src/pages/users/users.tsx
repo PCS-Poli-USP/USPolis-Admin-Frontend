@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import * as C from '@chakra-ui/react';
 
 import DataTable from '../../components/common/DataTable/dataTable.component';
 import EditUserModal from './UserEditModal/user.edit.modal';
@@ -38,11 +37,6 @@ const Users = () => {
 
   return (
     <PageContent>
-      <C.Flex justifyContent={'space-between'} alignItems={'center'}>
-        <C.Text fontSize='4xl' mb={4}>
-          Usuários
-        </C.Text>
-      </C.Flex>
       <DataTable loading={loading} columns={columns} data={users} />
       <EditUserModal
         groups={groups}

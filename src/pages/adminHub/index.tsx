@@ -10,6 +10,7 @@ import { HiUserGroup } from 'react-icons/hi';
 import { GiGraduateCap } from 'react-icons/gi';
 import { VscFeedback, VscReport } from 'react-icons/vsc';
 import { useNavigate } from 'react-router-dom';
+import { FaUsersGear } from 'react-icons/fa6';
 
 function AdminHub() {
   const navigate = useNavigate();
@@ -37,6 +38,14 @@ function AdminHub() {
       description: 'Gerencie as sessões de usuários do USPolis',
       onClick: () => {
         navigate('/admin/sessions');
+      },
+    },
+    {
+      icon: <FaUsersGear size={'64px'} />,
+      title: 'Cargos',
+      description: 'Gerencie os cargos do usuários do USPolis',
+      onClick: () => {
+        navigate('/admin/roles');
       },
     },
     {

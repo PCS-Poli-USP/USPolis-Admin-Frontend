@@ -40,6 +40,10 @@ const map: Record<string, Crumb[]> = {
     ...mainMap['/admin'],
     { label: 'Sessões de Usuários', href: '/admin/sessions', current: false },
   ],
+  '/admin/roles': [
+    ...mainMap['/admin'],
+    { label: 'Cargos', href: '/admin/roles', current: false },
+  ],
   '/admin/groups': [
     ...mainMap['/admin'],
     { label: 'Grupos', href: '/admin/groups', current: false },

@@ -46,6 +46,7 @@ import { HiUserGroup } from 'react-icons/hi';
 import { IconType } from 'react-icons';
 import { VscFeedback, VscReport } from 'react-icons/vsc';
 import { GrDocumentText } from 'react-icons/gr';
+import { FaUsersGear } from 'react-icons/fa6';
 import moment from 'moment';
 
 const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
@@ -286,6 +287,14 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   replace_location={false}
                   onClose={onClose}
                   highlighted={currentPath === '/admin/sessions'}
+                />
+                <DrawerButton
+                  icon={<FaUsersGear />}
+                  to='/admin/roles'
+                  text='Cargos'
+                  replace_location={false}
+                  onClose={onClose}
+                  highlighted={currentPath === '/admin/roles'}
                 />
                 <DrawerButton
                   icon={<HiUserGroup />}

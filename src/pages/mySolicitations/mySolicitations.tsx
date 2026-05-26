@@ -7,7 +7,6 @@ import {
   HStack,
   IconButton,
   Skeleton,
-  Text,
   useDisclosure,
   useMediaQuery,
   VStack,
@@ -91,7 +90,19 @@ const MySolicitations = () => {
             justifyContent={'space-between'}
             w={'full'}
           >
-            <Text fontSize={isMobile ? '2xl' : '4xl'}>Minhas solicitações</Text>
+            <HStack>
+              <Alert status='info' hidden={hiddenAlert}>
+                <AlertIcon color={'blue'} />O resultado das solicitações e suas
+                justificativas chegam por email, verifique sua caixa de spam.
+                <IconButton
+                  icon={<CloseIcon />}
+                  aria-label='close-alert'
+                  size={'sm'}
+                  variant={'ghost'}
+                  onClick={() => setHiddenAlert(true)}
+                />
+              </Alert>
+            </HStack>
             <Button
               borderRadius={'10px'}
               colorScheme='blue'
@@ -103,19 +114,6 @@ const MySolicitations = () => {
               Nova Solicitação
             </Button>
           </Flex>
-          <HStack>
-            <Alert status='info' hidden={hiddenAlert}>
-              <AlertIcon color={'blue'} />O resultado das solicitações e suas
-              justificativas chegam por email, verifique sua caixa de spam.
-              <IconButton
-                icon={<CloseIcon />}
-                aria-label='close-alert'
-                size={'sm'}
-                variant={'ghost'}
-                onClick={() => setHiddenAlert(true)}
-              />
-            </Alert>
-          </HStack>
         </VStack>
       </Flex>
       <Dialog
