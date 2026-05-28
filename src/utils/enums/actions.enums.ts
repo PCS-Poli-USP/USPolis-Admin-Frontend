@@ -1,14 +1,14 @@
 import { Resource } from './resources.enums';
 
 /* eslint-disable @typescript-eslint/no-namespace */
-const BaseAction = {
+export const BaseAction = {
   CREATE: 'create',
   READ: 'read',
   UPDATE: 'update',
   DELETE: 'delete',
 } as const;
 
-type BaseAction = (typeof BaseAction)[keyof typeof BaseAction];
+export type BaseAction = (typeof BaseAction)[keyof typeof BaseAction];
 
 export const ClassroomAction = {
   ...BaseAction,
@@ -48,7 +48,7 @@ export namespace PermissionAction {
       case BaseAction.UPDATE:
         return 'Atualizar';
       case BaseAction.DELETE:
-        return 'Deletar';
+        return 'Remover';
       default:
         return 'Desconecido';
     }
@@ -90,7 +90,9 @@ export namespace PermissionAction {
     switch (resource) {
       case Resource.CLASSROOM:
         return (
-          action === ClassroomAction.CREATE || action === ClassroomAction.READ
+          action === ClassroomAction.CREATE ||
+          action === ClassroomAction.READ ||
+          action === ClassroomAction.RESERVE
         );
       case Resource.COURSE:
         return true; // Todas as ações de curso podem ser aplicadas a todos os cursos

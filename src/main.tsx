@@ -12,7 +12,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // Providers, Contexts
 import FeatureGuideProvider from './context/FeatureGuideContext';
-import MenuContextProvider from './context/MenuContext';
+import UIContextProvider from './context/UIContext';
 
 import AppRoutes from './AppRoutes';
 import { BrowserRouter } from 'react-router-dom';
@@ -25,7 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <ColorModeScript initialColorMode={chakraTheme.config.initialColorMode} />
       <GoogleOAuthProvider clientId={clientId!}>
         <AppContextProvider>
-          <MenuContextProvider>
+          <UIContextProvider>
             <LocalizationProvider
               dateAdapter={AdapterMoment}
               adapterLocale='pt-br'
@@ -36,7 +36,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 </BrowserRouter>
               </FeatureGuideProvider>
             </LocalizationProvider>
-          </MenuContextProvider>
+          </UIContextProvider>
         </AppContextProvider>
       </GoogleOAuthProvider>
     </ChakraProvider>

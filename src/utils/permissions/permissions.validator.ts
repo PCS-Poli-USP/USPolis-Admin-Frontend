@@ -1,5 +1,5 @@
 import CommonValidator from '../common/common.validator';
-import { PermissionAction } from '../enums/actions.enums';
+import { BaseAction, PermissionAction } from '../enums/actions.enums';
 import { Resource } from '../enums/resources.enums';
 
 export default class PermissionsValidator extends CommonValidator {
@@ -30,5 +30,9 @@ export default class PermissionsValidator extends CommonValidator {
     return actions.every((action) =>
       PermissionAction.canHaveAllResources(action, resource),
     );
+  }
+
+  static actionMustHaveAllResources(action: PermissionAction): boolean {
+    return action === BaseAction.CREATE;
   }
 }

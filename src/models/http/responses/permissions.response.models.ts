@@ -4,10 +4,16 @@ import { Resource } from '../../../utils/enums/resources.enums';
 export interface PermissionResponse {
   id: number;
   resource: Resource;
-  action: PermissionAction;
+  actions: PermissionAction[];
   resource_id?: number;
+  resource_name?: string;
+
   user_id?: number;
+  user_name?: string;
+  user_email?: string;
+
   role_id?: number;
+  role_name?: string;
 
   granted_by_id: number;
   granted_by: string;

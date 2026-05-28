@@ -1,8 +1,8 @@
 import { AddIcon } from '@chakra-ui/icons';
 import { Button, Flex, SimpleGrid, Text } from '@chakra-ui/react';
 import { RoleResponse } from '../../../models/http/responses/role.response.models';
-import RoleCard from './RoleCard/RoleCard';
 import { FaUsersGear } from 'react-icons/fa6';
+import RoleCard from '../RoleCard/RoleCard';
 
 interface RolesTabProps {
   roles: RoleResponse[];
@@ -10,6 +10,12 @@ interface RolesTabProps {
 }
 
 function RolesTab({ roles, handleOpenRoleModal }: RolesTabProps) {
+  function handleEditRole(role: RoleResponse) {
+    handleOpenRoleModal(role);
+  }
+
+  function handleRemoveRole(role: RoleResponse) {}
+
   return (
     <Flex w={'100%'} direction={'column'} justify={'center'} align={'center'}>
       <Flex w={'full'} justify={'flex-end'}>
@@ -23,7 +29,13 @@ function RolesTab({ roles, handleOpenRoleModal }: RolesTabProps) {
       </Flex>
       <SimpleGrid mt={4} columns={{ base: 1, md: 2, lg: 3 }} spacing={'20px'}>
         {roles.map((role) => (
-          <RoleCard key={role.id} role={role} />
+          <RoleCard
+            key={role.id}
+            role={role}
+            onEdit={handleEditRole}
+            onRemove={handleRemoveRole}
+            maxW='100%'
+          />
         ))}
       </SimpleGrid>
       {roles.length === 0 && (

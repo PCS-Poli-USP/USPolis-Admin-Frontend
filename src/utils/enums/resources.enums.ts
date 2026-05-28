@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 export enum Resource {
-  CLASSROOM = 'CLASSROOM',
-  COURSE = 'COURSE',
+  CLASSROOM = 'classroom',
+  COURSE = 'course',
 }
 
 export namespace Resource {

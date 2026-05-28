@@ -9,3 +9,6 @@ export interface CreateRole {
   permission_ids?: [number, Resource][];
   permissions: CreatePermission[];
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface UpdateRole extends CreateRole {}

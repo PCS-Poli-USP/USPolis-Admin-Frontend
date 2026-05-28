@@ -8,3 +8,10 @@ export interface CreatePermission {
   user_id?: number;
   role_id?: number;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface UpdatePermission extends CreatePermission {}
+
+export interface CreateBatchPermission {
+  permissions: CreatePermission[];
+}
