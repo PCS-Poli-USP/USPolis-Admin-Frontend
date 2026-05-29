@@ -11,12 +11,16 @@ import {
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { useMemo, useRef, useState } from 'react';
-import PermissionCard from '../PermissionCard/PermissionCard';
 import PermissionForm, {
   PermisionFormRef,
 } from '../PermissionForm/PermissionForm';
@@ -29,6 +33,7 @@ import { RoleResponse } from '../../../models/http/responses/role.response.model
 import { UserCoreResponse } from '../../../models/http/responses/user.response.models';
 import { PermissionResponse } from '../../../models/http/responses/permissions.response.models';
 import { IoFileTrayFull } from 'react-icons/io5';
+import ResourceTab from '../ResourceTab/ResourceTab';
 
 interface PermissionTabProps {
   roles: RoleResponse[];
@@ -56,6 +61,7 @@ function PermissionTab({
   const [resourceFilter, setResourceFilter] = useState<Resource | ''>('');
   const [actionFilter, setActionFilter] = useState<PermissionAction | ''>('');
   const [search, setSearch] = useState('');
+  const [resourceTabIndex, setResourceTabIndex] = useState(0);
 
   const filteredPermissions = useMemo(() => {
     const searchValue = search.trim().toLowerCase();
@@ -85,6 +91,19 @@ function PermissionTab({
       return searchable.includes(searchValue);
     });
   }, [permissions, resourceFilter, actionFilter, search]);
+
+  const permissionMap = useMemo(() => {
+    const map = new Map<Resource, PermissionResponse[]>();
+
+    filteredPermissions.forEach((permission) => {
+      if (!map.has(permission.resource)) {
+        map.set(permission.resource, []);
+      }
+      map.get(permission.resource)?.push(permission);
+    });
+
+    return map;
+  }, [filteredPermissions]);
 
   function handleCloseModal() {
     permissionFormRef.current?.reset();
@@ -177,22 +196,48 @@ function PermissionTab({
         setActionFilter={setActionFilter}
       />
 
-      <SimpleGrid w={'full'} gap={'10px'} minChildWidth={'400px'}>
-        {filteredPermissions.map((permission) => (
-          <PermissionCard
-            key={permission.id}
-            permission={permission}
-            create={false}
-            maxW='400px'
-          />
-        ))}
+      <Flex>
+        {permissionMap.size > 0 && (
+          <Tabs
+            w={'full'}
+            h={'700px'}
+            index={resourceTabIndex}
+            onChange={(tabIndex) => setResourceTabIndex(tabIndex)}
+          >
+            <TabList>
+              {Array.from(permissionMap.keys()).map((resource) => (
+                <Tab
+                  key={resource}
+                  // onClick={() => {
+                  //   setResourceTabIndex(index);
+                  // }}
+                >
+                  {Resource.translate(resource)} (
+                  {permissionMap.get(resource)?.length || 0})
+                </Tab>
+              ))}
+            </TabList>
+            <TabPanels h={'full'}>
+              {Array.from(permissionMap.entries()).map(
+                ([resource, permissions]) => (
+                  <TabPanel key={resource} h={'full'}>
+                    <ResourceTab
+                      resource={resource}
+                      permissions={permissions}
+                    />
+                  </TabPanel>
+                ),
+              )}
+            </TabPanels>
+          </Tabs>
+        )}
         {filteredPermissions.length === 0 && !loading && (
           <Alert status='info' borderRadius={'10px'}>
             <AlertIcon />
             Nenhuma permissão encontrada.
           </Alert>
         )}
-      </SimpleGrid>
+      </Flex>
 
       <Modal isOpen={isOpen} onClose={handleCloseModal} size={'2xl'}>
         <ModalOverlay />

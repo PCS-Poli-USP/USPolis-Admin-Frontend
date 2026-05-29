@@ -9,6 +9,7 @@ import { IPermissionForm } from '../PermissionForm/permission.form.interface';
 interface PermissionCardProps {
   permission: PermissionResponse | IPermissionForm;
   create: boolean;
+  update?: boolean;
   selectable?: boolean;
   isSelected?: boolean;
   onEdit?: (permission: PermissionResponse | IPermissionForm) => void;
@@ -20,6 +21,7 @@ interface PermissionCardProps {
 function PermissionCard({
   permission,
   create,
+  update = false,
   selectable = false,
   isSelected = false,
   onEdit,
@@ -91,7 +93,7 @@ function PermissionCard({
             onChange={(event) => onSelectChange?.(event.target.checked)}
           />
         )}
-        {!selectable && create && (
+        {!selectable && (update || create) && (
           <IconButton
             aria-label='edit'
             variant={'outline'}

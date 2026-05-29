@@ -24,7 +24,7 @@ function RolesTab({ roles, handleOpenRoleModal }: RolesTabProps) {
           hidden={roles.length === 0}
           onClick={() => handleOpenRoleModal()}
         >
-          Novo Cargo
+          Novo Papel
         </Button>
       </Flex>
       <SimpleGrid mt={4} columns={{ base: 1, md: 2, lg: 3 }} spacing={'20px'}>
@@ -51,10 +51,10 @@ function RolesTab({ roles, handleOpenRoleModal }: RolesTabProps) {
         >
           <FaUsersGear size={'128px'} />
           <Text fontSize={'2xl'} fontWeight={'bold'}>
-            Nenhum cargo cadastrado
+            Nenhum papel cadastrado
           </Text>
           <Text textAlign={'center'}>
-            Parece que não há cargos cadastrados. Cadastre algum cargo para
+            Parece que não há papeis cadastrados. Cadastre algum papel para
             permissionar usuários e liberar acesso a recursos privados.
           </Text>
           <Button
@@ -62,7 +62,7 @@ function RolesTab({ roles, handleOpenRoleModal }: RolesTabProps) {
             mt={'20px'}
             onClick={() => handleOpenRoleModal()}
           >
-            Novo Cargo
+            Novo Papel
           </Button>
         </Flex>
       )}

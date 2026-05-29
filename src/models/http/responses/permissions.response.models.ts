@@ -8,6 +8,10 @@ export interface PermissionResponse {
   resource_id?: number;
   resource_name?: string;
 
+  parent_id?: number;
+  parent_name?: string;
+  parent_resource?: Resource;
+
   user_id?: number;
   user_name?: string;
   user_email?: string;

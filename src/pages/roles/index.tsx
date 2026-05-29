@@ -48,7 +48,7 @@ function Roles() {
       />
       <Tabs size={'md'}>
         <TabList>
-          <Tab>Gerenciar Cargos</Tab>
+          <Tab>Gerenciar Papeis</Tab>
           <Tab>Gerenciar Permissões</Tab>
           <Tab>Gerenciar Usuários</Tab>
         </TabList>
