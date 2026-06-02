@@ -1,164 +1,393 @@
 import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  useToast,
+  Spinner,
+  HStack,
+  VStack,
+  Box,
+  Text as ChakraText,
+  Divider,
   Alert,
   AlertIcon,
-  Button,
-  Flex,
-  HStack,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Spacer,
-  Text,
-  VStack,
-  Divider,
-  Box,
-} from '@chakra-ui/react';
-import { useMemo, useState } from 'react';
-import { ModalProps } from '../../../models/interfaces';
+  Accordion,
+  AccordionIcon,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+} from "@chakra-ui/react";
+
+import { useEffect, useMemo, useState } from "react";
+
 import useCurriculumsService, {
   JupiterCurriculumPreviewResponse,
-} from '../../../hooks/API/services/useCurriculumsService';
+  MissingSubjectResponse,
+} from "../../../hooks/API/services/useCurriculumsService";
 
-interface CrawlerJupiterCurriculumModalProps extends ModalProps {
+import useJupiterService, {
+  CourseOptionResponse,
+} from "../../../hooks/API/services/useJupiterService";
+
+import TooltipSelect, {
+  Option,
+} from "../../../components/common/TooltipSelect";
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
   courseId: number;
-  onSaved: () => void;
+  refetch: () => void;
+
+  setMissingSubjects: (
+    subjects: MissingSubjectResponse[],
+  ) => void;
+
+  setShowMissingWindow: (
+    value: boolean,
+  ) => void;
 }
 
-export default function CrawlerJupiterCurriculumModal({
+type PreviewSubject = {
+  subject_code: string;
+  subject_name: string;
+  period: number;
+  category:
+    | "Obrigatória"
+    | "Optativa Livre"
+    | "Optativa Eletiva";
+};
+
+export default function CreateCurriculumByJupiterModal({
   isOpen,
   onClose,
   courseId,
-  onSaved,
-}: CrawlerJupiterCurriculumModalProps) {
-  const { previewByJupiter, createByJupiter } = useCurriculumsService();
+  refetch,
+  setMissingSubjects,
+  setShowMissingWindow,
+}: Props) {
+  const toast = useToast();
 
-  const [codcur, setCodcur] = useState('');
-  const [codhab, setCodhab] = useState('');
-  const [description, setDescription] = useState('');
-  const [showValidationError, setShowValidationError] = useState(false);
-  const [loadingPreview, setLoadingPreview] = useState(false);
-  const [loadingSave, setLoadingSave] = useState(false);
+  const curriculumsService = useCurriculumsService();
+  const jupiterService = useJupiterService();
+
+  const [description, setDescription] = useState("");
+
+  const [courses, setCourses] = useState<
+    CourseOptionResponse[]
+  >([]);
+
+  const [courseOptions, setCourseOptions] = useState<
+    Option[]
+  >([]);
+
+  const [selectedCourses, setSelectedCourses] =
+    useState<Option[]>([]);
+
+  const [loadingCourses, setLoadingCourses] =
+    useState(false);
+
+  const [loadingSync, setLoadingSync] =
+    useState(false);
+
+  const [loadingPreview, setLoadingPreview] =
+    useState(false);
+
+  const [loadingSubmit, setLoadingSubmit] =
+    useState(false);
+
   const [previewData, setPreviewData] =
     useState<JupiterCurriculumPreviewResponse>();
-  const [isOpenPreviewModal, setIsOpenPreviewModal] = useState(false);
 
-  function onOpenPreviewModal() {
-    setIsOpenPreviewModal(true);
+  const [isOpenPreviewModal, setIsOpenPreviewModal] =
+    useState(false);
+
+  async function loadCachedCourses() {
+    try {
+      setLoadingCourses(true);
+
+      const response =
+        await jupiterService.getCachedCourseOptions();
+
+      setCourses(response.data);
+
+      setCourseOptions(
+        response.data.map((c) => ({
+          label: `${c.codcur} ${c.codhab} - ${c.name}`,
+          value: `${c.codcur}-${c.codhab}`,
+        })),
+      );
+    } catch (err) {
+      toast({
+        title: "Erro ao carregar cursos",
+        description:
+          "Não foi possível carregar os cursos salvos no banco.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top-left",
+      });
+    } finally {
+      setLoadingCourses(false);
+    }
   }
 
-  function onClosePreviewModal() {
-    setIsOpenPreviewModal(false);
+  async function syncCourses() {
+    try {
+      setLoadingSync(true);
+
+      const response =
+        await jupiterService.syncCourseOptions(3);
+
+      setCourses(response.data);
+
+      setCourseOptions(
+        response.data.map((c) => ({
+          label: `${c.codcur} ${c.codhab} - ${c.name}`,
+          value: `${c.codcur}-${c.codhab}`,
+        })),
+      );
+
+      toast({
+        title: "Cursos sincronizados",
+        description:
+          "A lista de cursos foi atualizada com sucesso.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top-left",
+      });
+    } catch (err) {
+      toast({
+        title: "Erro ao sincronizar cursos",
+        description:
+          "Não foi possível sincronizar com o Júpiter.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top-left",
+      });
+    } finally {
+      setLoadingSync(false);
+    }
   }
 
   function reset() {
-    setCodcur('');
-    setCodhab('');
-    setDescription('');
+    setDescription("");
+    setSelectedCourses([]);
     setPreviewData(undefined);
-    setShowValidationError(false);
+    setIsOpenPreviewModal(false);
   }
 
-  function handleClose() {
+  function handleCloseAll() {
     reset();
     onClose();
   }
 
-  const isValid =
-    codcur.length > 0 &&
-    codhab.length > 0 &&
-    description.trim().length > 0 &&
-    !isNaN(Number(codcur)) &&
-    !isNaN(Number(codhab));
+  useEffect(() => {
+    if (!isOpen) return;
 
-  async function handleConfirmClick() {
-    setShowValidationError(true);
+    reset();
+    loadCachedCourses();
 
-    if (!isValid) return;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
-    setLoadingPreview(true);
+  function getSelectedCourse() {
+    const selected = selectedCourses[0];
 
-    try {
-      const res = await previewByJupiter({
-        course_id: courseId,
-        description: description.trim(),
-        codcur: Number(codcur),
-        codhab: Number(codhab),
+    if (!selected) return null;
+
+    const course = courses.find(
+      (c) =>
+        `${c.codcur}-${c.codhab}` === selected.value,
+    );
+
+    return course ?? null;
+  }
+
+  async function handlePreview() {
+    if (!description.trim()) {
+      toast({
+        title: "Descrição obrigatória",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "top-left",
       });
 
+      return;
+    }
+
+    if (selectedCourses.length === 0) {
+      toast({
+        title: "Selecione um curso",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "top-left",
+      });
+
+      return;
+    }
+
+    const course = getSelectedCourse();
+
+    if (!course) {
+      toast({
+        title: "Curso inválido",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top-left",
+      });
+
+      return;
+    }
+
+    try {
+      setLoadingPreview(true);
+
+      const res =
+        await curriculumsService.previewByJupiter({
+          course_id: courseId,
+          description,
+          codcur: course.codcur,
+          codhab: course.codhab,
+        });
+
       setPreviewData(res.data);
-      onOpenPreviewModal();
-    } catch (err) {
-      console.error("ERRO PREVIEW:", err);
+      setIsOpenPreviewModal(true);
+    } catch (err: unknown) {
+      const error = err as any;
+
+      toast({
+        title: "Erro ao gerar resumo",
+        description:
+          error?.response?.data?.detail ??
+          error?.message ??
+          "Erro desconhecido",
+
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top-left",
+      });
     } finally {
       setLoadingPreview(false);
     }
   }
 
-  async function handleSaveClick() {
+  async function handleSubmit() {
     if (!previewData) return;
+    const course = getSelectedCourse();
 
-    setLoadingSave(true);
+    if (!course) return;
 
     try {
-      const codcurNum = Number(codcur);
-      const codhabNum = Number(codhab);
+      setLoadingSubmit(true);
 
-      await createByJupiter({
-        course_id: courseId,
-        description: previewData.description,
-        codcur: codcurNum,
-        codhab: codhabNum,
+      const res =
+        await curriculumsService.createByJupiter({
+          course_id: courseId,
+          codcur: course.codcur,
+          codhab: course.codhab,
+          description: previewData.description,
+          AAC: previewData.AAC,
+          AEX: previewData.AEX,
+          mandatory: previewData.mandatory,
+          free: previewData.free,
+          elective: previewData.elective,
+        });
+
+      toast({
+        title: "Currículo criado com sucesso",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top-left",
       });
 
-      onClosePreviewModal();
-      handleClose();
+      const missing = Array.isArray(
+        res.data?.missing_subjects,
+      )
+        ? res.data.missing_subjects
+        : [];
 
-      onSaved();
-    } catch (err) {
-      console.error('ERRO SAVE:', err);
+      if (missing.length > 0) {
+        setMissingSubjects(missing);
+
+        setShowMissingWindow(true);
+      }
+
+      refetch();
+
+      handleCloseAll();
+    } catch (err: unknown) {
+      const error = err as any;
+
+      toast({
+        title: "Erro ao criar currículo",
+        description:
+          error?.response?.data?.detail ??
+          error?.message ??
+          "Erro desconhecido",
+
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top-left",
+      });
     } finally {
-      setLoadingSave(false);
+      setLoadingSubmit(false);
     }
   }
-
-  type PreviewSubject = {
-    subject_code: string;
-    subject_name: string;
-    period: number;
-    category: 'Obrigatória' | 'Optativa Livre' | 'Optativa Eletiva';
-  };
 
   function buildAllSubjects(): PreviewSubject[] {
     if (!previewData) return [];
 
-    const mandatory = previewData.mandatory.map((s) => ({
-      ...s,
-      category: 'Obrigatória' as const,
-    }));
+    const mandatory = previewData.mandatory.map(
+      (s) => ({
+        ...s,
+        category: "Obrigatória" as const,
+      }),
+    );
 
     const free = previewData.free.map((s) => ({
       ...s,
-      category: 'Optativa Livre' as const,
+      category: "Optativa Livre" as const,
     }));
 
-    const elective = previewData.elective.map((s) => ({
-      ...s,
-      category: 'Optativa Eletiva' as const,
-    }));
+    const elective = previewData.elective.map(
+      (s) => ({
+        ...s,
+        category: "Optativa Eletiva" as const,
+      }),
+    );
 
     return [...mandatory, ...free, ...elective];
   }
 
-  function groupAllByPeriod(subjects: PreviewSubject[]) {
-    const grouped: Record<number, PreviewSubject[]> = {};
+  function groupAllByPeriod(
+    subjects: PreviewSubject[],
+  ) {
+    const grouped: Record<
+      number,
+      PreviewSubject[]
+    > = {};
 
     subjects.forEach((s) => {
-      if (!grouped[s.period]) grouped[s.period] = [];
+      if (!grouped[s.period]) {
+        grouped[s.period] = [];
+      }
+
       grouped[s.period].push(s);
     });
 
@@ -169,10 +398,15 @@ export default function CrawlerJupiterCurriculumModal({
     if (!previewData) return {};
 
     const all = buildAllSubjects();
+
     const grouped = groupAllByPeriod(all);
 
     Object.values(grouped).forEach((list) => {
-      list.sort((a, b) => a.subject_code.localeCompare(b.subject_code));
+      list.sort((a, b) =>
+        a.subject_code.localeCompare(
+          b.subject_code,
+        ),
+      );
     });
 
     return grouped;
@@ -180,157 +414,235 @@ export default function CrawlerJupiterCurriculumModal({
 
   return (
     <>
-      {/* MODAL 1 - INPUT */}
       <Modal
         isOpen={isOpen}
-        onClose={handleClose}
-        size={'xl'}
-        closeOnOverlayClick={false}
-        motionPreset="slideInBottom"
+        onClose={handleCloseAll}
+        size="lg"
       >
         <ModalOverlay />
+
         <ModalContent>
-          <ModalHeader>Adicionar Currículo via Júpiter</ModalHeader>
-          <ModalCloseButton />
+          <ModalHeader>
+            Criar Currículo pelo Júpiter
+          </ModalHeader>
 
           <ModalBody>
-            <Flex direction={'column'} gap={'15px'}>
-              <Text>
-                Informe o <b>codcur</b> e o <b>codhab</b> do currículo no Júpiter.
-              </Text>
+            <FormControl mb={4}>
+              <FormLabel>Descrição</FormLabel>
 
-              <VStack alignItems={'flex-start'} w={'100%'} gap={'10px'}>
-                <Flex direction={'column'} w={'100%'} gap={'5px'}>
-                  <Text fontWeight={'bold'}>Descrição do Currículo</Text>
-                  <Input
-                    placeholder="Ex: 2026 - Turma Piloto"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
-                </Flex>
+              <Input
+                value={description}
+                onChange={(e) =>
+                  setDescription(e.target.value)
+                }
+                placeholder="Ex: 2026 - Piloto"
+              />
+            </FormControl>
 
-                <Flex direction={'column'} w={'100%'} gap={'5px'}>
-                  <Text fontWeight={'bold'}>codcur</Text>
-                  <Input
-                    placeholder="0"
-                    value={codcur}
-                    onChange={(e) =>
-                      setCodcur(e.target.value.replaceAll(' ', ''))
+            <FormControl mb={4}>
+              <HStack
+                justify="space-between"
+                mb={2}
+              >
+                <FormLabel m={0}>
+                  Curso
+                </FormLabel>
+
+                <Button
+                  size="sm"
+                  variant="solid"
+                  colorScheme="green"
+                  onClick={syncCourses}
+                  isLoading={loadingSync}
+                >
+                  Sincronizar
+                </Button>
+              </HStack>
+
+              {loadingCourses ? (
+                <Spinner />
+              ) : (
+                <TooltipSelect
+                  placeholder="Selecione um curso"
+                  isMulti={false}
+                  isLoading={
+                    loadingCourses || loadingSync
+                  }
+                  closeMenuOnSelect={true}
+                  value={selectedCourses}
+                  options={courseOptions}
+                  onChange={(selected) => {
+                    if (!selected) {
+                      setSelectedCourses([]);
+
+                      return;
                     }
-                  />
-                </Flex>
 
-                <Flex direction={'column'} w={'100%'} gap={'5px'}>
-                  <Text fontWeight={'bold'}>codhab</Text>
-                  <Input
-                    placeholder="0"
-                    value={codhab}
-                    onChange={(e) =>
-                      setCodhab(e.target.value.replaceAll(' ', ''))
-                    }
-                  />
-                </Flex>
-              </VStack>
+                    const single =
+                      selected as Option;
 
-              {showValidationError && !isValid && (
-                <Alert status="error" fontSize={'sm'}>
-                  <AlertIcon />
-                  Preencha descrição, codcur e codhab corretamente.
-                </Alert>
+                    setSelectedCourses([single]);
+                  }}
+                />
               )}
-            </Flex>
+            </FormControl>
           </ModalBody>
 
           <ModalFooter>
-            <HStack w={'100%'}>
-              <Button variant="outline" onClick={handleClose}>
-                Cancelar
-              </Button>
+            <Button
+              mr={3}
+              onClick={handleCloseAll}
+            >
+              Cancelar
+            </Button>
 
-              <Spacer />
-
-              <Button
-                colorScheme="blue"
-                onClick={handleConfirmClick}
-                disabled={!isValid}
-                isLoading={loadingPreview}
-              >
-                Confirmar
-              </Button>
-            </HStack>
+            <Button
+              colorScheme="blue"
+              onClick={handlePreview}
+              isLoading={loadingPreview}
+              isDisabled={
+                loadingCourses || loadingSync
+              }
+            >
+              Gerar resumo
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
 
-      {/* MODAL 2 - PREVIEW */}
       <Modal
         isOpen={isOpenPreviewModal}
-        onClose={onClosePreviewModal}
-        size={'4xl'}
-        closeOnOverlayClick={false}
-        motionPreset="slideInBottom"
+        onClose={() =>
+          setIsOpenPreviewModal(false)
+        }
+        size="4xl"
         scrollBehavior="inside"
+        closeOnOverlayClick={false}
       >
         <ModalOverlay />
+
         <ModalContent>
-          <ModalHeader>Resumo do Currículo (Júpiter)</ModalHeader>
-          <ModalCloseButton />
+          <ModalHeader>
+            Resumo do Currículo (Júpiter)
+          </ModalHeader>
 
           <ModalBody>
             {previewData ? (
-              <Flex direction={'column'} gap={'15px'}>
-                <Box>
-                  <Text fontSize="lg" fontWeight="bold">
-                    {previewData.description}
-                  </Text>
-                  <Text fontSize="sm" color="gray.600">
-                    Dados extraídos do Júpiter
-                  </Text>
-                </Box>
+              <Box>
+                <ChakraText
+                  fontSize="lg"
+                  fontWeight="bold"
+                >
+                  {previewData.description}
+                </ChakraText>
 
-                <Divider />
+                <Divider my={4} />
 
-                <VStack align="start" spacing={1}>
-                  <Text>
-                    <b>AAC:</b> {previewData.AAC}
-                  </Text>
+                <VStack
+                  align="start"
+                  spacing={1}
+                  mb={4}
+                >
+                  <ChakraText>
+                    <b>AAC:</b>{" "}
+                    {previewData.AAC}
+                  </ChakraText>
 
-                  <Text>
-                    <b>AEX:</b> {previewData.AEX}
-                  </Text>
+                  <ChakraText>
+                    <b>AEX:</b>{" "}
+                    {previewData.AEX}
+                  </ChakraText>
                 </VStack>
 
-                <Divider />
+                <Divider my={4} />
 
-                <Box>
-                  <Text fontWeight="bold" fontSize="lg" mb={2}>
-                    Disciplinas que serão salvas:
-                  </Text>
+                <ChakraText
+                  fontWeight="bold"
+                  fontSize="lg"
+                  mb={2}
+                >
+                  Disciplinas que serão salvas:
+                </ChakraText>
 
-                  {Object.keys(allGrouped).length === 0 ? (
-                    <Text>Nenhuma disciplina encontrada.</Text>
-                  ) : (
-                    Object.entries(allGrouped)
-                      .sort((a, b) => Number(a[0]) - Number(b[0]))
-                      .map(([period, list]) => (
-                        <Box key={period} mb={6}>
-                          <Text fontWeight="bold" mb={2}>
-                            {period}° Período  ({list.length} Disciplinas)
-                          </Text>
+                {Object.keys(allGrouped)
+                  .length === 0 ? (
+                  <ChakraText>
+                    Nenhuma disciplina encontrada.
+                  </ChakraText>
+                ) : (
+                  <Accordion
+                    allowMultiple
+                    defaultIndex={[]}
+                    w="100%"
+                  >
+                    {Object.entries(allGrouped)
+                      .sort(
+                        (a, b) =>
+                          Number(a[0]) -
+                          Number(b[0]),
+                      )
+                      .map(
+                        ([period, list]) => (
+                          <AccordionItem
+                            key={period}
+                            border="1px solid"
+                            borderColor="gray.200"
+                            borderRadius="md"
+                            mb={3}
+                          >
+                            <h2>
+                              <AccordionButton>
+                                <Box
+                                  flex="1"
+                                  textAlign="left"
+                                  fontWeight="bold"
+                                >
+                                  {period}°
+                                  Período (
+                                  {
+                                    list.length
+                                  }{" "}
+                                  disciplinas)
+                                </Box>
 
-                          <VStack align="start" spacing={1}>
-                            {list.map((s) => (
-                              <Text key={`${s.subject_code}-${s.category}`}>
-                                <b>{s.subject_code}</b> - {s.subject_name} (
-                                {s.category})
-                              </Text>
-                            ))}
-                          </VStack>
-                        </Box>
-                      ))
-                  )}
-                </Box>
-              </Flex>
+                                <AccordionIcon />
+                              </AccordionButton>
+                            </h2>
+
+                            <AccordionPanel pb={4}>
+                              <VStack
+                                align="start"
+                                spacing={1}
+                              >
+                                {list.map((s) => (
+                                  <ChakraText
+                                    key={`${s.subject_code}-${s.category}`}
+                                    fontSize="sm"
+                                  >
+                                    <b>
+                                      {
+                                        s.subject_code
+                                      }
+                                    </b>{" "}
+                                    -{" "}
+                                    {
+                                      s.subject_name
+                                    }{" "}
+                                    (
+                                    {
+                                      s.category
+                                    }
+                                    )
+                                  </ChakraText>
+                                ))}
+                              </VStack>
+                            </AccordionPanel>
+                          </AccordionItem>
+                        ),
+                      )}
+                  </Accordion>
+                )}
+              </Box>
             ) : (
               <Alert status="error">
                 <AlertIcon />
@@ -340,22 +652,25 @@ export default function CrawlerJupiterCurriculumModal({
           </ModalBody>
 
           <ModalFooter>
-            <HStack w={'100%'}>
-              <Button variant="outline" onClick={onClosePreviewModal}>
-                Voltar
-              </Button>
+            <Button
+              mr={3}
+              onClick={() =>
+                setIsOpenPreviewModal(false)
+              }
+            >
+              Voltar
+            </Button>
 
-              <Spacer />
-
-              <Button
-                colorScheme="blue"
-                onClick={handleSaveClick}
-                isLoading={loadingSave}
-                disabled={!previewData}
-              >
-                Salvar Currículo
-              </Button>
-            </HStack>
+            <Button
+              colorScheme="blue"
+              onClick={handleSubmit}
+              isLoading={loadingSubmit}
+              isDisabled={
+                !previewData || loadingPreview
+              }
+            >
+              Salvar currículo
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

@@ -1,6 +1,8 @@
 export interface CurriculumResponse {
     id: number,
     course_id: number,
+    codcur: number,
+    codhab: number,
     AAC: number,
     AEX: number,
     created_at: string,

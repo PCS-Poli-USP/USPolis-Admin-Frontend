@@ -20,6 +20,7 @@ import { CourseResponse } from '../../models/http/responses/course.response.mode
 import { getCourseColumns } from './Tables/course.table';
 import CourseModal from './CourseModal/course.modal';
 import { useNavigate } from 'react-router-dom';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function Courses() {
   const {
@@ -46,11 +47,21 @@ function Courses() {
 
   async function fetchCourses() {
     setLoading(true);
+
     try {
       const res = await getAll();
       setCourses(res.data);
-    } catch {
-      console.error('Erro ao carregar cursos');
+    } catch (error) {
+      console.error(
+        'Erro ao carregar cursos:',
+        error,
+      );
+
+      showToast(
+        'Erro',
+        'Não foi possível carregar os cursos.',
+        'error',
+      );
     } finally {
       setLoading(false);
     }
@@ -62,6 +73,7 @@ function Courses() {
   }, []);
 
   const navigate = useNavigate();
+  const showToast = useCustomToast();
 
     function handleViewCurriculums(course: CourseResponse) {
     navigate(`/admin/courses/${course.id}/curriculums`, {
@@ -91,11 +103,32 @@ function Courses() {
   }
 
   async function handleDelete() {
-    if (selectedCourse) {
+    if (!selectedCourse) return;
+
+    try {
       await deleteById(selectedCourse.id);
+
+      showToast(
+        'Sucesso',
+        'Curso removido com sucesso.',
+        'success',
+      );
+
+      onCloseDelete();
+
+      refetchCourses();
+    } catch (error) {
+      console.error(
+        'Erro ao remover curso:',
+        error,
+      );
+
+      showToast(
+        'Erro',
+        'Não foi possível remover o curso.',
+        'error',
+      );
     }
-    onCloseDelete();
-    refetchCourses();
   }
 
     const columns = getCourseColumns({

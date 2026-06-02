@@ -6,7 +6,25 @@ import {
 } from '../../../models/http/requests/curriculum.request.models';
 import { CurriculumResponse } from '../../../models/http/responses/curriculum.response.models';
 
+export interface CurriculumSubjectInfo {
+  subject_code: string;
+  subject_name: string;
+  period: number;
+}
+
 export interface CreateCurriculumByJupiterRequest {
+  course_id: number;
+  codcur: number;
+  codhab: number;
+  description: string;
+  AAC: number;
+  AEX: number;
+  mandatory: CurriculumSubjectInfo[];
+  free: CurriculumSubjectInfo[];
+  elective: CurriculumSubjectInfo[];
+}
+
+export interface PreviewCurriculumByJupiterRequest {
   course_id: number;
   description: string;
   codcur: number;
@@ -23,11 +41,22 @@ export interface JupiterCurriculumPreviewResponse {
   elective: { subject_code: string; subject_name: string; period: number }[];
 }
 
+export interface MissingSubjectResponse {
+  subject_code: string;
+  subject_name: string;
+  period: number;
+}
+
+export interface CreateCurriculumByJupiterResponse {
+  message: string;
+  missing_subjects: MissingSubjectResponse[];
+}
+
 const useCurriculumsService = () => {
   const axios = useAxiosPrivate();
 
   const previewByJupiter = (
-    data: CreateCurriculumByJupiterRequest,
+    data: PreviewCurriculumByJupiterRequest,
   ): Promise<AxiosResponse<JupiterCurriculumPreviewResponse>> => {
     return axios.post('/admin/curriculums/jupiter/preview', data);
   };
@@ -40,7 +69,7 @@ const useCurriculumsService = () => {
 
   const createByJupiter = (
     data: CreateCurriculumByJupiterRequest,
-  ): Promise<AxiosResponse<{ message: string }>> => {
+  ): Promise<AxiosResponse<CreateCurriculumByJupiterResponse>> => {
     return axios.post('/admin/curriculums/jupiter', data);
   };
 

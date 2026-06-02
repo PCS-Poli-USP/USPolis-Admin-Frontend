@@ -9,16 +9,16 @@ import {
   FormControl,
   FormLabel,
   Input,
-  useToast,
 } from "@chakra-ui/react";
 
 import { useState } from "react";
 import useCurriculumsService from "../../../hooks/API/services/useCurriculumsService";
+import useCustomToast from "../../../hooks/useCustomToast";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  courseId: number; // ✅ agora vem pronto
+  courseId: number;
   refresh: () => void;
 }
 
@@ -31,17 +31,21 @@ export function CreateCurriculumModal({
 }: Props) {
 
   const curriculumsService = useCurriculumsService();
-  const toast = useToast();
+  const showToast = useCustomToast();
 
   const [description, setDescription] = useState("");
   const [AAC, setAAC] = useState<number | undefined>(undefined);
   const [AEX, setAEX] = useState<number | undefined>(undefined);
+  const [codcur, setCodcur] = useState<number | undefined>(undefined);
+  const [codhab, setCodhab] = useState<number | undefined>(undefined);
 
   
   function handleClose() {
     setDescription('');
     setAAC(undefined);
     setAEX(undefined);
+    setCodcur(undefined);
+    setCodhab(undefined);
     onClose();
   }
 
@@ -49,16 +53,18 @@ export function CreateCurriculumModal({
     try {
       await curriculumsService.create({
         course_id: courseId,
-        description,
+        codcur: codcur ?? 0,
+        codhab: codhab ?? 0,
+        description: description.trim(),
         AAC: AAC ?? 0,
         AEX: AEX ?? 0,
       });
 
-      toast({
-        title: "Currículo criado",
-        status: "success",
-         position: "top-left",
-      });
+      showToast(
+        'Sucesso',
+        'Currículo criado com sucesso.',
+        'success',
+      );
 
       refresh();
       onClose();
@@ -67,12 +73,15 @@ export function CreateCurriculumModal({
       setAAC(undefined);
       setAEX(undefined);
 
-    } catch {
-      toast({
-        title: "Erro ao criar currículo",
-        status: "error",
-         position: "top-left",
-      });
+    } catch (err: unknown) {
+      const error = err as any;
+
+      showToast(
+        'Erro',
+        error?.response?.data?.detail ??
+          'Não foi possível criar o currículo.',
+        'error',
+      );
     }
   }
 
@@ -89,11 +98,13 @@ export function CreateCurriculumModal({
             <FormLabel>Descrição</FormLabel>
             <Input
               value={description}
+              placeholder="Ex: 2026 - Piloto"
               onChange={(e) => setDescription(e.target.value)}
             />
           </FormControl>
 
-          <FormControl mb={3}>
+
+         <FormControl mb={3}>   
         <FormLabel>AAC</FormLabel>
         <Input
           type="number"
@@ -117,6 +128,39 @@ export function CreateCurriculumModal({
         />
       </FormControl>
 
+          <FormControl mb={3}>
+            <FormLabel>CODCUR</FormLabel>
+
+            <Input
+              type="number"
+              placeholder="0"
+              value={codcur ?? ''}
+              onChange={(e) =>
+                setCodcur(
+                  e.target.value
+                    ? Number(e.target.value)
+                    : undefined
+                )
+              }
+            />
+          </FormControl>
+
+          <FormControl mb={3}>
+            <FormLabel>CODHAB</FormLabel>
+
+            <Input
+              type="number"
+              placeholder="0"
+              value={codhab ?? ''}
+              onChange={(e) =>
+                setCodhab(
+                  e.target.value
+                    ? Number(e.target.value)
+                    : undefined
+                )
+              }
+            />
+            </FormControl>
         </ModalBody>
 
         <ModalFooter>
