@@ -1,7 +1,6 @@
 import { Skeleton, useDisclosure } from '@chakra-ui/react';
 import DataTable from '../../components/common/DataTable/dataTable.component';
 import PageContent from '../../components/common/PageContent';
-import PageHeader from '../../components/common/PageHeader';
 import useUsersSessions from '../../hooks/usersSessions/useUsersSessions';
 import { getUserSessionsColumns } from './Tables/userSession.table';
 import Dialog from '../../components/common/Dialog/dialog.component';
@@ -37,7 +36,7 @@ function UserSessions() {
           }
         }}
       />
-      <PageHeader title='Sessões de Usuários' />
+      {/* <PageHeader title='Sessões de Usuários' /> */}
       <Skeleton isLoaded={!loading} w='100%'>
         <DataTable data={sessions} columns={columns} />
       </Skeleton>

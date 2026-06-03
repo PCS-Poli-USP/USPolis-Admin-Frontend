@@ -1,6 +1,9 @@
-import { SubjectResponse } from '../../models/http/responses/subject.response.models';
+import { SubjectResponseBase } from '../../models/http/responses/subject.response.models';
 
-export function sortSubjectsResponse(A: SubjectResponse, B: SubjectResponse) {
+export function sortSubjectsResponse(
+  A: SubjectResponseBase,
+  B: SubjectResponseBase,
+) {
   if (A.code < B.code) return -1;
   if (A.code > B.code) return 1;
   return 0;

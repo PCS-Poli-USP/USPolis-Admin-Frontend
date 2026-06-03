@@ -114,7 +114,7 @@ export const formFields = {
         function (value) {
           const { start_date } = this.parent;
           if (!value) return true;
-          if (!!start_date) return true;
+          if (start_date) return true;
 
           return !ScheduleValidator.isInvalidDateOferring(start_date, value);
         },

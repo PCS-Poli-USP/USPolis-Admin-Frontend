@@ -22,7 +22,14 @@
   position: sticky;
   top: 60px;
   z-index: 50;
-  /* background: var(--chakra-colors-uspolis-white); */
+}
+
+.fc.fc-scrolled .fc-header-toolbar {
+  top: calc(60px + 12px);
+  background: var(--chakra-colors-uspolis-white);
+  border: 1px solid var(--chakra-colors-gray-200);
+  border-radius: 8px;
+  padding: 6px 8px;
 }
 
 .fc .fc-scrollgrid-section-header {
@@ -32,6 +39,10 @@
   /* background: var(--chakra-colors-uspolis-white); */
 }
 
+.fc.fc-scrolled .fc-scrollgrid-section-header {
+  top: calc(60px + 12px + 3rem); /* navbar + gap + toolbar */
+}
+
 .fc .fc-datagrid-header {
   position: sticky;
   top: calc(60px + 3rem);
@@ -39,10 +50,15 @@
   /* background: var(--chakra-colors-uspolis-white); */
 }
 
+.fc.fc-scrolled .fc-datagrid-header {
+  top: calc(60px + 12px + 3rem);
+}
+
 /*
 .fc .fc-timeline-header {
-  /* background: var(--chakra-colors-uspolis-white); */
-/*}
+  background: var(--chakra-colors-uspolis-white);
+}
+*/
 
 /* corpo do popover */
 .fc-popover-body,

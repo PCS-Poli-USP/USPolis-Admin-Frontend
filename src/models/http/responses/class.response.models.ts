@@ -3,6 +3,7 @@ import { ClassType } from '../../../utils/enums/classes.enum';
 import {
   ScheduleFullResponse,
   ScheduleResponse,
+  ScheduleResponseBase,
 } from './schedule.response.models';
 
 export interface ClassUnfetchResponseBase {
@@ -21,7 +22,14 @@ export interface ClassUnfetchResponseBase {
   updated_at: string;
 
   subject_id: number;
+  subject_name: string;
+  subject_code: string;
 }
+
+export interface ClassSchedulingResponse extends ClassUnfetchResponseBase {
+  schedules: ScheduleResponseBase[];
+}
+
 export interface ClassResponseBase extends ClassUnfetchResponseBase {
   subject_building_ids: number[];
   subject_name: string;

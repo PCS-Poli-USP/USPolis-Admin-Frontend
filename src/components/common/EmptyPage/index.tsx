@@ -4,7 +4,13 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { CloseIcon } from '@chakra-ui/icons';
-import { IconButton, useColorMode, useDisclosure } from '@chakra-ui/react';
+import {
+  Flex,
+  IconButton,
+  Image,
+  useColorMode,
+  useDisclosure,
+} from '@chakra-ui/react';
 import DrawerBody from './drawer.body';
 import { DrawerNavBar } from './drawer.navbar';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -16,6 +22,7 @@ import { menuContext } from '../../../context/MenuContext';
 import ContactUsModal from '../ContactUsModal';
 import { appContext } from '../../../context/AppContext';
 import DocsNews from '../NewsJoyride/DocsNews';
+import Logo from '../../../assets/uspolis.logo.png';
 
 const drawerWidth = 300;
 
@@ -228,6 +235,8 @@ export default function EmptyPage() {
             width: isMobile ? '100vw' : drawerWidth,
             boxSizing: 'border-box',
             backgroundColor: colorMode === 'dark' ? '#262626' : '#FFFFFF',
+            boxShadow: '5px 5px 10px rgba(0,0,0,0.3);',
+            scrollbarWidth: 'thin',
           },
         }}
         variant='persistent'
@@ -235,11 +244,29 @@ export default function EmptyPage() {
         open={isOpen}
       >
         <DrawerHeader colorMode={colorMode}>
+          <Flex
+            w={'full'}
+            textColor={'white'}
+            justify={'flex-start'}
+            align={'center'}
+            ml={'5px'}
+            fontSize={'xl'}
+            fontWeight={'bold'}
+          >
+            <Image
+              src={Logo}
+              alt='USPolis'
+              objectFit='contain'
+              boxSize='40px'
+              mr={2}
+            />
+            USPolis
+          </Flex>
           <IconButton
             size={'md'}
             icon={<CloseIcon />}
             variant={'ghost'}
-            textColor={'uspolis.black'}
+            textColor={'white'}
             aria-label={'open-menu'}
             onClick={() => handleDrawerClose()}
           />

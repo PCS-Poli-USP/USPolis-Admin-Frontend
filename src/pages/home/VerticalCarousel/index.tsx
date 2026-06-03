@@ -54,44 +54,66 @@ function CarouselIcon({ id, text, icon }: CarouselIconProps) {
 
 function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
   const boxH = 200;
-  const imageH = 401;
+  const imageH = 400;
   const imageW = 800;
-  const textH = 500;
-  const textGap = 100;
+  const textH = 400;
+  const textGap = 250; // Espaço entre itens para permanecer mais tempo na mesma imagem
+  const transitionDelay = 500; // Delay mínimo entre mudanças de imagem em ms
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const itemsRefsMap = useRef(new Map<number, HTMLDivElement>());
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const lastIndexRef = useRef<number>(0);
+  const lastTransitionTimeRef = useRef<number>(0);
 
+  // Configurar Intersection Observers para cada item
   useEffect(() => {
-    const handleScroll = () => {
-      if (!containerRef.current) {
-        return;
-      }
-      const scrollY = window.scrollY;
-      const { top } = containerRef.current.getBoundingClientRect();
-      const componentTop = top + scrollY;
-      if (
-        scrollY - componentTop - boxH + 60 >=
-        (items.length - 1) * (textH + textGap)
-      ) {
-        return;
-      }
-      const index = Math.floor(
-        (scrollY - componentTop - boxH + 60 + textGap / 2) /
-          (textH + textGap / 2),
-      );
-      if (index >= 0 && index < items.length && index !== currentImageIndex) {
-        setCurrentImageIndex(index);
-      }
-    };
+    const observers: IntersectionObserver[] = [];
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    items.forEach((_, index) => {
+      const itemRef = itemsRefsMap.current?.get(index);
+      if (!itemRef) return;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const [entry] = entries;
+          const now = Date.now();
+
+          // Só muda se está intersectando, é diferente do último e passou o tempo mínimo
+          if (
+            entry.isIntersecting &&
+            lastIndexRef.current !== index &&
+            now - lastTransitionTimeRef.current > transitionDelay
+          ) {
+            lastIndexRef.current = index;
+            lastTransitionTimeRef.current = now;
+            setIsAnimating(true);
+            setCurrentImageIndex(index);
+
+            // Reseta animação após conclusão
+            const animationTimer = setTimeout(() => {
+              setIsAnimating(false);
+            }, 300);
+
+            return () => clearTimeout(animationTimer);
+          }
+        },
+        {
+          root: null,
+          rootMargin: '-50% 0px -50% 0px', // Aumentado para -50% para criar maior espaço entre mudanças
+          threshold: 0,
+        },
+      );
+
+      observer.observe(itemRef);
+      observers.push(observer);
+    });
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      observers.forEach((observer) => observer.disconnect());
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentImageIndex]);
+  }, [items, transitionDelay]);
 
   return (
     <Box ref={containerRef} h={'full'}>
@@ -118,6 +140,9 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
         >
           {items.map((item, index) => (
             <Flex
+              ref={(el) => {
+                if (el) itemsRefsMap.current?.set(index, el);
+              }}
               id={item.icon.id}
               key={index}
               h={`${textH}px`}
@@ -125,7 +150,17 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
               w={'full'}
               direction={'column'}
               align={'center'}
+              border={
+                currentImageIndex === index
+                  ? '2px solid'
+                  : '2px solid transparent'
+              }
+              borderRadius={'2rem'}
               justify={'center'}
+              transition={'all 0.3s ease-in-out'}
+              _hover={{
+                borderColor: 'uspolis.black',
+              }}
             >
               <HStack w={'strech'} spacing={2}>
                 <Icon as={item.icon.icon} boxSize={'40px'} />
@@ -140,25 +175,22 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
                   {item.title}
                 </Heading>
               </HStack>
-              <Text maxW={'400px'} fontSize={'xl'} textAlign={'justify'}>
+              <Text maxW={'400px'} fontSize={'xl'} textAlign={'left'}>
                 {item.description}
               </Text>
             </Flex>
           ))}
-          <Box h={`${textGap}px`}></Box>
+          <Box h={`${0}px`}></Box>
         </VStack>
         <Box
-          // borderRadius={'lg'}
-          // overflow={'hidden'}
           h={`${textH + textGap - 60}px`}
           position={'sticky'}
           top={'100px'}
           alignSelf='flex-start'
           w={'auto'}
-          // mt={relativeScroll > 0 ? `${relativeScroll}px` : '0px'}
           transition='transform 0.3s, opacity 0.3s'
           _hover={{
-            transform: 'scale(1.1)',
+            transform: 'scale(1.05)',
             opacity: 1.0,
           }}
         >
@@ -168,17 +200,32 @@ function VerticalCarousel({ items, icons }: VerticalCarouselProps) {
             w={'100%'}
           >
             <Image
-              transition='transform 0.3s, opacity 0.3s'
+              key={currentImageIndex}
               src={items[currentImageIndex].image}
               alt={items[currentImageIndex].alt}
               objectFit={'fill'}
               maxH={`${imageH}px`}
               maxW={`${imageW}px`}
-              w='100%' // Para garantir que a imagem preencha o Box
+              w='100%'
               h={'100%'}
               borderRadius={'lg'}
               border={'2px solid'}
               borderColor={'uspolis.black'}
+              sx={{
+                animation: 'scaleIn 0.4s ease-out',
+                '@keyframes scaleIn': {
+                  from: {
+                    opacity: 0,
+                    transform: 'scale(0.95)',
+                  },
+                  to: {
+                    opacity: 1,
+                    transform: 'scale(1)',
+                  },
+                },
+              }}
+              transition='opacity 0.3s ease-in-out'
+              opacity={isAnimating ? 0.8 : 1}
             />
           </Tooltip>
         </Box>

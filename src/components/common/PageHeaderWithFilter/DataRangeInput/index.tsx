@@ -32,6 +32,7 @@ interface DateRangeInputProps {
   onConfirm: (start: string, end: string) => void;
   isMobile: boolean;
   label?: string;
+  compact?: boolean;
 }
 
 function DateRangeInput({
@@ -43,6 +44,7 @@ function DateRangeInput({
   onConfirm,
   isMobile,
   label = 'Período: Atual',
+  compact = false,
 }: DateRangeInputProps) {
   const { isOpen, onClose, onToggle } = useDisclosure();
   const [rangeApplied, setRangeApplied] = useState(false);
@@ -112,6 +114,15 @@ function DateRangeInput({
     return `${values[2]}/${values[1]}/${values[0]}`;
   }
 
+  function getRangedText() {
+    if (isMobile) {
+      if (compact) return `${formatDate(start)} - ${formatDate(end)}`;
+      return `${formatDate(start)} até ${formatDate(end)}`;
+    }
+    if (compact) return `${formatDate(start)} até ${formatDate(end)}`;
+    return `Período: ${formatDate(start)} até ${formatDate(end)}`;
+  }
+
   return (
     <Popover isOpen={isOpen} onClose={onClose} placement='right'>
       <PopoverTrigger>
@@ -133,7 +144,9 @@ function DateRangeInput({
                 align={'center'}
                 onClick={onToggle}
               >
-                <Text fontWeight={'bold'}>{label}</Text>
+                <Text fontWeight={'bold'}>
+                  {compact ? label.replace('Período: ', '') : label}
+                </Text>
               </Flex>
             )}
             {rangeApplied && (
@@ -146,9 +159,7 @@ function DateRangeInput({
                 align={'center'}
               >
                 <Text fontWeight={'bold'} onClick={onToggle}>
-                  {isMobile
-                    ? `${formatDate(start)} até ${formatDate(end)}`
-                    : `Período: ${formatDate(start)} até ${formatDate(end)}`}
+                  {getRangedText()}
                 </Text>
                 <IconButton
                   aria-label='Remover período'

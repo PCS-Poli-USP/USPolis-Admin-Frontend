@@ -78,7 +78,7 @@ export default {
 
     nav: [
       { text: 'Guias', link: '/' },
-      { text: 'Referencia', link: '/dev' },
+      { text: 'Referência', link: '/dev' },
       {
         text: 'Changelog',
         link: '/changelog',
@@ -107,89 +107,62 @@ export default {
           ],
         },
         {
-          text: 'Mapa de Salas',
-          collapsed: true,
-          items: [
-            { text: 'Introdução', link: '/allocation' },
-            { text: 'Visualizações', link: '/allocation/views' },
-            { text: 'Relatórios em PDF', link: '/allocation/pdfs' },
-            {
-              text: 'Gerenciar a alocação pelo Mapa de Salas',
-              link: '/allocation/management',
-            },
-          ],
-        },
-        {
-          text: 'Solicitar uma Sala',
-          collapsed: true,
+          text: 'Público',
+          collapsed: false,
           items: [
             {
-              text: 'Como solicitar uma sala?',
-              link: '/solicitate-a-classroom',
+              text: 'Mapa de Salas',
+              link: '/allocations',
+              items: [
+                { text: 'Visualizações', link: '/allocations/views' },
+                { text: 'Relatórios em PDF', link: '/allocations/pdfs' },
+                {
+                  text: 'Gerenciar a alocação pelo Mapa de Salas',
+                  link: '/allocations/management',
+                },
+                {
+                  text: 'Solicitar uma Sala',
+                  link: '/allocations/solicitate-a-classroom',
+                },
+              ],
             },
+            { text: 'Encontre suas provas', link: '/find-exams' },
+            { text: 'Encontre suas aulas', link: '/find-classes' },
           ],
         },
         {
-          text: 'Encontre suas provas',
-          collapsed: true,
-          items: [{ text: 'Como achar uma prova?', link: '/find-exams' }],
-        },
-        {
-          text: 'Encontre suas aulas',
-          collapsed: true,
-          items: [{ text: 'Como achar suas aulas?', link: '/find-classes' }],
-        },
-        {
-          text: 'Minhas Solicitações',
-          collapsed: true,
-          items: [{ text: 'Introdução', link: '/my-solicitations' }],
-        },
-        {
-          text: 'Minha Conta',
-          collapsed: true,
-          items: [{ text: 'Introdução', link: '/profile' }],
-        },
-        {
-          text: 'Reservas',
-          collapsed: true,
-          items: [{ text: 'Introdução', link: '/introduction' }],
-        },
-        {
-          text: 'Solicitações',
+          text: 'Agendamento',
           collapsed: true,
           items: [
-            { text: 'Como aprovar uma solicitação?', link: '/solicitations' },
+            { text: 'Reservas', link: '/scheduling/reservations' },
+            { text: 'Solicitações', link: '/scheduling/solicitations' },
           ],
         },
         {
-          text: 'Calendários',
+          text: 'Oferecimentos',
           collapsed: true,
-          items: [{ text: 'Como criar um calendário?', link: '/calendars' }],
+          items: [
+            { text: 'Salas', link: '/oferings/classrooms' },
+            { text: 'Disciplinas', link: '/oferings/subjects' },
+            { text: 'Turmas', link: '/oferings/classes' },
+            { text: 'Calendários', link: '/oferings/calendars' },
+            { text: 'Conflitos', link: '/oferings/conflicts' },
+            { text: 'Relatórios e Métricas', link: '/oferings/reports' },
+          ],
         },
         {
-          text: 'Salas',
+          text: 'Conta',
           collapsed: true,
-          items: [{ text: 'Introdução', link: '/classrooms' }],
+          items: [
+            { text: 'Minha Conta', link: '/profile' },
+            { text: 'Minhas Solicitações', link: '/profile/solicitations' },
+            { text: 'Grade Horária', link: '/profile/timetable' },
+          ],
         },
         {
-          text: 'Disciplinas',
+          text: 'Administração',
           collapsed: true,
-          items: [{ text: 'Introdução', link: '/subjects' }],
-        },
-        {
-          text: 'Turmas',
-          collapsed: true,
-          items: [{ text: 'Introduction', link: '/classes' }],
-        },
-        {
-          text: 'Conflitos',
-          collapsed: true,
-          items: [{ text: 'Introduction', link: '/conflicts' }],
-        },
-        {
-          text: 'Relatórios e Métricas',
-          collapsed: true,
-          items: [{ text: 'Introduction', link: '/reports' }],
+          items: [{ text: 'Visão Geral', link: '/admin' }],
         },
       ],
 

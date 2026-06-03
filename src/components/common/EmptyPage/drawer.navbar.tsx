@@ -9,14 +9,8 @@ import {
   IconButton,
   Image,
   Link,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  StackDivider,
   useColorMode,
   useMediaQuery,
-  VStack,
 } from '@chakra-ui/react';
 import { ReactNode, useContext } from 'react';
 import Logo from '../../..//assets/uspolis.logo.png';
@@ -25,11 +19,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { PiHandPointingFill } from 'react-icons/pi';
 import { FeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { UsersValidator } from '../../../utils/users/users.validator';
-import UserImage from '../UserImage/user.image';
 import { useColorScheme } from '@mui/material';
 import { LuMessageCircleMore } from 'react-icons/lu';
 import { GrDocumentText } from 'react-icons/gr';
 import { isAdminRoute } from '../../../utils/location';
+import ProfileButton from '../ProfileButton';
+import PageBreadcrumb from '../PageBreadcrumb';
 
 const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
 
@@ -45,6 +40,7 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
       bg: 'uspolis.grey',
     }}
     href={to}
+    fontWeight={'bold'}
   >
     {children}
   </Link>
@@ -66,7 +62,7 @@ export function DrawerNavBar({
   onOpenContactModal,
 }: DrawerNavBarProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
-  const { isAuthenticated, loggedUser, logout } = useContext(appContext);
+  const { isAuthenticated, loggedUser } = useContext(appContext);
   const { state, setState, setPathBeforeGuide } =
     useContext(FeatureGuideContext);
   const location = useLocation();
@@ -75,20 +71,12 @@ export function DrawerNavBar({
   const { colorMode, toggleColorMode } = useColorMode();
   const { setMode } = useColorScheme();
 
-  async function handleClickLogout() {
-    await logout();
-    navigate('/', {
-      replace: true,
-      state: { from: location },
-    });
-  }
-
   function getDocsLocalPath() {
     const path = location.pathname;
     if (isAdminRoute(path)) {
       return DOCS_URL + '/';
     }
-    return DOCS_URL + path;
+    return DOCS_URL + path.replace('/public', '');
   }
 
   return (
@@ -104,7 +92,7 @@ export function DrawerNavBar({
         justifyContent={'space-between'}
         w={'100%'}
       >
-        <HStack spacing={3} alignItems={'center'}>
+        <HStack spacing={0} alignItems={'center'}>
           {isAuthenticated && (
             <IconButton
               id='navbar-menu-button'
@@ -124,10 +112,12 @@ export function DrawerNavBar({
               alt='USPolis'
               objectFit='contain'
               boxSize='40px'
-              mr={2}
+              hidden={open && !isMobile}
             />
-            USPolis
+            {isMobile && 'USPolis'}
           </NavLink>
+
+          {!isMobile && <PageBreadcrumb pathname={location.pathname} />}
         </HStack>
         <Flex alignItems={'center'} gap={'10px'}>
           {isMobile ? (
@@ -220,50 +210,7 @@ export function DrawerNavBar({
                   Tutorial
                 </Button>
               )}
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rounded={'full'}
-                  variant={'link'}
-                  cursor={'pointer'}
-                >
-                  <Flex
-                    id='navbar-user-menu-button'
-                    align={'center'}
-                    justify={'center'}
-                    gap='10px'
-                  >
-                    <UserImage />
-                  </Flex>
-                </MenuButton>
-                <MenuList bgColor={'uspolis.white'}>
-                  <VStack
-                    divider={<StackDivider borderColor={'black.500'} />}
-                    bgColor={'uspolis.white'}
-                  >
-                    <MenuItem
-                      bgColor={'uspolis.white'}
-                      textColor={'uspolis.text'}
-                      fontWeight={'bold'}
-                      onClick={() => {
-                        navigate('/profile', {
-                          replace: true,
-                          state: { from: location },
-                        });
-                      }}
-                    >
-                      Acessar perfil
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleClickLogout}
-                      bgColor={'uspolis.white'}
-                      textColor={'uspolis.text'}
-                    >
-                      Sair
-                    </MenuItem>
-                  </VStack>
-                </MenuList>
-              </Menu>
+              <ProfileButton />
             </>
           ) : (
             <HStack>

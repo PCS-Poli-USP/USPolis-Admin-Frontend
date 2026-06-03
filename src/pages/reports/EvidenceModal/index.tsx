@@ -88,7 +88,7 @@ function EvidenceModal({
                       <Image
                         key={`IMG-REPORT_${selectedReport.id}-EVIDENCE_${id}`}
                         alt={`Evidencia ${id}`}
-                        src={`${USPOLIS_SERVER_URL}/images/admin/reports/evidences/${id}`}
+                        src={`${USPOLIS_SERVER_URL}/admin/reports/evidences/${id}`}
                         _hover={{
                           cursor: zoomMap[idx] ? 'zoom-out' : 'zoom-in',
                         }}

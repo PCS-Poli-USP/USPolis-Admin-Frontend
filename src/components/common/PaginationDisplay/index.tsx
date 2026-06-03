@@ -3,10 +3,10 @@ import {
   AlertIcon,
   Box,
   Flex,
-  Heading,
   IconButton,
   Skeleton,
   Text,
+  useMediaQuery,
 } from '@chakra-ui/react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { PaginatedResponse } from '../../../models/http/responses/paginated.response.models';
@@ -20,6 +20,8 @@ interface PaginationDisplayProps<T> {
   renderPageItem: (item: T) => React.ReactNode;
   setPageSize: (pageSize: PageSize) => void;
   setCurrentPage: (currentPage: number) => void;
+  gap?: string;
+  titleSize?: string;
 }
 
 function PaginationDisplay<T>({
@@ -29,7 +31,11 @@ function PaginationDisplay<T>({
   renderPageItem,
   setPageSize,
   setCurrentPage,
+  gap = '20px',
+  titleSize = 'lg',
 }: PaginationDisplayProps<T>) {
+  const [isMobile] = useMediaQuery('(max-width: 768px)');
+
   return (
     <Flex
       direction={'column'}
@@ -39,38 +45,46 @@ function PaginationDisplay<T>({
       padding={'1rem'}
       gap={'20px'}
       w={'fit-content'}
-      minW={'800px'}
+      minW={isMobile ? '90vw' : '800px'}
     >
       <Flex
+        direction={isMobile ? 'column' : 'row'}
         position={'relative'}
         justify={'center'}
-        align={'center'}
+        align={isMobile ? 'flex-start' : 'center'}
         w={'100%'}
         gap={'20px'}
       >
-        <Box position={'absolute'} left={'0rem'}>
+        <Box position={'absolute'} left={'0rem'} hidden={isMobile}>
           <Text>{`Página ${pageResponse.page}/${pageResponse.total_pages} - ${pageResponse.total_items} items`}</Text>
         </Box>
-        <IconButton
-          aria-label='left-arrow'
-          icon={<FaChevronLeft />}
-          variant={'outline'}
-          disabled={pageResponse.page == 1}
-          onClick={() => {
-            setCurrentPage(pageResponse.page - 1);
-          }}
-        />
-        <Heading>{title}</Heading>
-        <IconButton
-          aria-label='left-arrow'
-          icon={<FaChevronRight />}
-          variant={'outline'}
-          disabled={pageResponse.page == pageResponse.total_pages}
-          onClick={() => {
-            setCurrentPage(pageResponse.page + 1);
-          }}
-        />
-        <Box position={'absolute'} right={'0rem'}>
+        <Flex justify={'center'} align={'center'} gap={'10px'}>
+          <IconButton
+            aria-label='left-arrow'
+            icon={<FaChevronLeft />}
+            variant={'outline'}
+            disabled={pageResponse.page == 1}
+            onClick={() => {
+              setCurrentPage(pageResponse.page - 1);
+            }}
+          />
+          <Text fontSize={titleSize} fontWeight={'bold'}>
+            {title}
+          </Text>
+          <IconButton
+            aria-label='left-arrow'
+            icon={<FaChevronRight />}
+            variant={'outline'}
+            disabled={pageResponse.page == pageResponse.total_pages}
+            onClick={() => {
+              setCurrentPage(pageResponse.page + 1);
+            }}
+          />
+        </Flex>
+        <Box
+          position={isMobile ? 'relative' : 'absolute'}
+          right={isMobile ? undefined : '0rem'}
+        >
           <Select
             options={PageSize.values().map((val) => ({
               label: `${val} por página`,
@@ -93,7 +107,7 @@ function PaginationDisplay<T>({
           direction={'column'}
           justify={'center'}
           align={'center'}
-          gap={'10px'}
+          gap={gap}
         >
           {pageResponse.data.map((val) => renderPageItem(val))}
           {pageResponse.data.length == 0 && (

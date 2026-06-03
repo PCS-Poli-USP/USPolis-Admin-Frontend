@@ -40,7 +40,7 @@ const AuthCallbackPage = () => {
         setIsAuthenticated(true);
         localStorage.setItem('refresh_token', refresh_token);
         // await getSelfFromBackend(); // Not use like this, let useEffect in appContext fetch the user (axios interceptor isn`t fast enough to get the token)
-        navigate('/allocation');
+        navigate('/public/allocations');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.log(error);

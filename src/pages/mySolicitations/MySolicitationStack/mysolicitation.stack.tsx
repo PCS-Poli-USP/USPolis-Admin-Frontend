@@ -1,4 +1,4 @@
-import { Box, Checkbox, HStack, StackDivider, VStack } from '@chakra-ui/react';
+import { Box, Checkbox, HStack, StackDivider, useMediaQuery, VStack } from '@chakra-ui/react';
 import { SelectInstance } from 'react-select';
 import { SolicitationResponse } from '../../../models/http/responses/solicitation.response.models';
 import { useEffect, useRef, useState } from 'react';
@@ -19,6 +19,8 @@ function SolicitationStack({
   handleOnClick,
   reset,
 }: SolicitationStackProps) {
+  const [isMobile] = useMediaQuery('(max-width: 800px)');
+
   const [hidden, setHidden] = useState(true);
   const [current, setCurrent] = useState<SolicitationResponse[]>([]);
   const [filtered, setFiltered] = useState<SolicitationResponse[]>([]);
@@ -52,6 +54,7 @@ function SolicitationStack({
           (solicitation) => solicitation.status === ReservationStatus.PENDING,
         ),
       ];
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrent(initial);
       setFiltered((prev) =>
         prev.filter((val) => val.status === ReservationStatus.PENDING),
@@ -91,6 +94,7 @@ function SolicitationStack({
           self.findIndex((v) => v.value === value.value) === index,
       )
       .sort((a, b) => a.value.localeCompare(b.value));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setClassroomOptions(options);
   }, [buildingSearch, solicitations]);
 
@@ -106,7 +110,7 @@ function SolicitationStack({
       <HStack w={'full'}>
         <Box w={'50%'}>
           <TooltipSelect
-            placeholder='Filtrar por Prédio'
+            placeholder={isMobile ? 'Prédio...' : 'Filtrar por Prédio'}
             value={
               buildingSearch
                 ? { label: buildingSearch, value: buildingSearch }
@@ -132,7 +136,7 @@ function SolicitationStack({
         <Box w={'50%'}>
           <TooltipSelect
             ref={selectRef}
-            placeholder='Filtrar por Sala'
+            placeholder={isMobile ? 'Sala...' : 'Filtrar por Sala'}
             value={
               classroomSearch
                 ? { label: classroomSearch, value: classroomSearch }

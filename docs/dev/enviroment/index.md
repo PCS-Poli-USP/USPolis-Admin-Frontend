@@ -196,6 +196,6 @@ yarn docs:preview
 
 Isso irá servir os arquivos de build na mesma porta que ele usa para executar o ambiente da docs em desenvolvimento.
 
-Após buildar a docs você tem que garantir que os arquivos de `/docs/.vitepress/dist` estejam em `/public/docs`, sem isso, na hora de fazer o preview a docs provavelmente não irá funcionar.
+Após buildar a docs você tem que garantir que os arquivos de `/docs/.vitepress/dist` estejam em `/docs`, sem isso, na hora de fazer o preview a docs provavelmente não irá funcionar.
 
 Nosso script de CI/CD atualmente já gerencia esses detalhes, essa parte de mover arquivos buildados (que em produção vão para outro lugar) é necessário apenas para ver o preview final do frontend.

@@ -1,7 +1,7 @@
 ---
 prev:
   text: 'Solicitar uma Sala'
-  link: '/solicitate-a-classroom'
+  link: '/allocations/solicitate-a-classroom'
 
 next:
   text: 'Encontre suas aulas'
