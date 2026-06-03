@@ -4,7 +4,11 @@ import {
   UpdateUser,
 } from '../../../models/http/requests/user.request.models';
 import { AxiosResponse } from 'axios';
-import { UserCoreResponse, UserResponse } from '../../../models/http/responses/user.response.models';
+import {
+  UserCoreResponse,
+  UserPermissionResponse,
+  UserResponse,
+} from '../../../models/http/responses/user.response.models';
 import { JSONResponse } from '../../../models/http/responses/common.response.models';
 
 const useUsersService = () => {
@@ -17,6 +21,12 @@ const useUsersService = () => {
 
   const list = (): Promise<AxiosResponse<Array<UserCoreResponse>>> => {
     return axios.get(PREFIX);
+  };
+
+  const listWithPermissions = (): Promise<
+    AxiosResponse<Array<UserPermissionResponse>>
+  > => {
+    return axios.get(`${PREFIX}/permissions`);
   };
 
   const update = (
@@ -40,7 +50,14 @@ const useUsersService = () => {
     });
   };
 
-  return { create, list, update, deleteById, updateEmailNotifications };
+  return {
+    create,
+    list,
+    listWithPermissions,
+    update,
+    deleteById,
+    updateEmailNotifications,
+  };
 };
 
 export default useUsersService;

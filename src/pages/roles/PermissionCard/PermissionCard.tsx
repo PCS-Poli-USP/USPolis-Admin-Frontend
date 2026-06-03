@@ -32,6 +32,7 @@ function PermissionCard({
   const userName = (permission as any).user_name as string | undefined;
   const userEmail = (permission as any).user_email as string | undefined;
   const roleName = (permission as any).role_name as string | undefined;
+  const parentName = (permission as any).parent_name as string | undefined;
   return (
     <Flex
       border={'1px solid'}
@@ -65,6 +66,9 @@ function PermissionCard({
         </Flex>
         <Text>
           <b>Recurso: </b> {`${permission.resource_name || 'Desconhecido'}`}
+        </Text>
+        <Text>
+          <b>Relacionado: </b> {`${parentName || 'Desconhecido'}`}
         </Text>
         {userName ? (
           <Text

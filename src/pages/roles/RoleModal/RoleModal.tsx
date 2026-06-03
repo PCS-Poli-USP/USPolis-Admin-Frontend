@@ -34,6 +34,7 @@ import { PermissionAction } from '../../../utils/enums/actions.enums';
 import { Resource } from '../../../utils/enums/resources.enums';
 import useRoles from '../../../hooks/roles/useRoles';
 import { CreateRole } from '../../../models/http/requests/role.request.models';
+import { normalizeString } from '../../../utils/formatters';
 
 function RoleModal({
   isOpen,
@@ -57,10 +58,14 @@ function RoleModal({
   const [tabIndex, setTabIndex] = useState(0);
   const [resourceFilter, setResourceFilter] = useState<Resource | ''>('');
   const [actionFilter, setActionFilter] = useState<PermissionAction | ''>('');
+  const [resourceNameFilter, setResourceNameFilter] = useState('');
+  const [parentNameFilter, setParentNameFilter] = useState('');
   const [search, setSearch] = useState('');
 
   const filteredPermissions = useMemo(() => {
-    const searchValue = search.trim().toLowerCase();
+    const searchValue = normalizeString(search);
+    const resourceNameValue = normalizeString(resourceNameFilter);
+    const parentNameValue = normalizeString(parentNameFilter);
 
     return permissions.filter((permission) => {
       if (resourceFilter && permission.resource !== resourceFilter) {
@@ -69,6 +74,26 @@ function RoleModal({
 
       if (actionFilter && !permission.actions.includes(actionFilter)) {
         return false;
+      }
+
+      if (resourceNameFilter && permission.resource_name) {
+        if (
+          !normalizeString(permission.resource_name || '').includes(
+            resourceNameValue,
+          )
+        ) {
+          return false;
+        }
+      }
+
+      if (parentNameFilter && permission.parent_name) {
+        if (
+          !normalizeString(permission.parent_name || '').includes(
+            parentNameValue,
+          )
+        ) {
+          return false;
+        }
       }
 
       if (!searchValue) return true;
@@ -88,10 +113,19 @@ function RoleModal({
 
       return searchable.includes(searchValue);
     });
-  }, [permissions, resourceFilter, actionFilter, search]);
+  }, [
+    permissions,
+    resourceFilter,
+    actionFilter,
+    search,
+    resourceNameFilter,
+    parentNameFilter,
+  ]);
 
   function handleClose() {
-    reset();
+    reset({ ...defaultValues });
+    setPermissionsData([]);
+    setPermissionsIds(new Set());
     clearErrors();
     onClose();
   }
@@ -115,8 +149,8 @@ function RoleModal({
     });
 
     const payload: CreateRole = {
-      name: values.name,
-      description: values.description,
+      name: values.name.trim(),
+      description: values.description.trim(),
       resources: Array.from(resourcesSet) as Resource[],
       permissions: [
         ...permissionsData.map((permission) => ({
@@ -246,13 +280,14 @@ function RoleModal({
       onClose={onClose}
       size={'3xl'}
       scrollBehavior='inside'
+      closeOnOverlayClick={false}
     >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
           {isUpdate ? 'Editar Cargo' : 'Cadastrar Cargo'}
         </ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton onClick={handleClose} />
         <ModalBody>
           <FormProvider {...form}>
             <Input name='name' label='Nome' mb={'10px'} />
@@ -338,6 +373,10 @@ function RoleModal({
                         setResourceFilter={setResourceFilter}
                         actionFilter={actionFilter}
                         setActionFilter={setActionFilter}
+                        resourceNameFilter={resourceNameFilter}
+                        setResourceNameFilter={setResourceNameFilter}
+                        parentNameFilter={parentNameFilter}
+                        setParentNameFilter={setParentNameFilter}
                       />
                     </div>
                     {filteredPermissions.map((permission) => (

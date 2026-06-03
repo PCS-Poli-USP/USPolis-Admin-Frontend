@@ -2,31 +2,31 @@ import { Flex, Input, Select } from '@chakra-ui/react';
 import { PermissionAction } from '../../../utils/enums/actions.enums';
 import { Resource } from '../../../utils/enums/resources.enums';
 
-interface PermissionFiltersProps {
-  search: string;
-  setSearch: (value: string) => void;
+interface UsersFiltersProps {
+  roleName: string;
+  setRoleName: (value: string) => void;
+  userData: string;
+  setUserDataFilter: (value: string) => void;
   resourceNameFilter: string;
   setResourceNameFilter: (value: string) => void;
-  parentNameFilter: string;
-  setParentNameFilter: (value: string) => void;
   resourceFilter: Resource | '';
   setResourceFilter: (value: Resource | '') => void;
   actionFilter: PermissionAction | '';
   setActionFilter: (value: PermissionAction | '') => void;
 }
 
-function PermissionFilters({
-  search,
-  setSearch,
+function UsersFilters({
+  roleName,
+  setRoleName,
+  userData,
+  setUserDataFilter,
   resourceNameFilter,
   setResourceNameFilter,
-  parentNameFilter,
-  setParentNameFilter,
   resourceFilter,
   setResourceFilter,
   actionFilter,
   setActionFilter,
-}: PermissionFiltersProps) {
+}: UsersFiltersProps) {
   const actionOptions = resourceFilter
     ? PermissionAction.getValues(resourceFilter)
     : [];
@@ -34,21 +34,21 @@ function PermissionFilters({
   return (
     <Flex gap={'10px'} w={'full'} wrap={'wrap'}>
       <Input
-        placeholder='Buscar por recurso ou ação'
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
+        placeholder='Nome do usuário ou email'
+        value={userData}
+        onChange={(event) => setUserDataFilter(event.target.value)}
+        maxW={{ base: 'full', md: '220px' }}
+      />
+      <Input
+        placeholder='Buscar por papel'
+        value={roleName}
+        onChange={(event) => setRoleName(event.target.value)}
         maxW={{ base: 'full', md: '220px' }}
       />
       <Input
         placeholder='Nome do recurso'
         value={resourceNameFilter}
         onChange={(event) => setResourceNameFilter(event.target.value)}
-        maxW={{ base: 'full', md: '220px' }}
-      />
-      <Input
-        placeholder='Recurso Relacionado'
-        value={parentNameFilter}
-        onChange={(event) => setParentNameFilter(event.target.value)}
         maxW={{ base: 'full', md: '220px' }}
       />
       <Select
@@ -86,4 +86,4 @@ function PermissionFilters({
   );
 }
 
-export default PermissionFilters;
+export default UsersFilters;

@@ -1,5 +1,8 @@
+import { Resource } from '../../../utils/enums/resources.enums';
 import { BuildingResponse } from './building.response.models';
 import { CurriculumResponse } from './curriculum.response.models';
+import { PermissionResponse } from './permissions.response.models';
+import { RoleResponse } from './role.response.models';
 import { SolicitationResponse } from './solicitation.response.models';
 
 export interface UserInfoResponse {
@@ -9,6 +12,15 @@ export interface UserInfoResponse {
   picture: string;
   email: string;
   email_verified: boolean;
+}
+
+export interface UserPermissionResponse {
+  id: number;
+  name: string;
+  email: string;
+  resources: Resource[];
+  permissions: PermissionResponse[];
+  roles: RoleResponse[];
 }
 
 export interface UserCoreResponse {

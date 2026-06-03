@@ -1,5 +1,4 @@
 import { Badge, Button, Flex, IconButton, Text } from '@chakra-ui/react';
-import { PermissionAction } from '../../../utils/enums/actions.enums';
 import { LuPen, LuTrash } from 'react-icons/lu';
 import { RoleResponse } from '../../../models/http/responses/role.response.models';
 import { Resource } from '../../../utils/enums/resources.enums';
@@ -9,6 +8,7 @@ interface RoleCardProps {
   role: RoleResponse;
   onEdit: (role: RoleResponse) => void;
   onRemove: (role: RoleResponse) => void;
+  setPermissionsViewOnly: (viewOnly: boolean, label?: string) => void;
   maxW?: string;
   maxH?: string;
 }
@@ -17,6 +17,7 @@ function RoleCard({
   role,
   onEdit,
   onRemove,
+  setPermissionsViewOnly,
   maxW = '400px',
   maxH = '250px',
 }: RoleCardProps) {
@@ -42,7 +43,12 @@ function RoleCard({
         }
       }
     >
-      <Flex justify={'space-between'} alignSelf={'center'} gap={'20px'}>
+      <Flex
+        justify={'space-between'}
+        alignSelf={'center'}
+        gap={'20px'}
+        w={'full'}
+      >
         <Flex direction={'column'} gap={'5px'}>
           <Text fontWeight={'bold'}>{role.name}</Text>
           <Text fontSize={'sm'}>
@@ -71,18 +77,20 @@ function RoleCard({
       <Flex direction={'column'} gap={'20px'} justify={'space-between'}>
         <Flex direction={'column'} gap={'5px'}>
           <Text fontWeight={'bold'}>Recursos:</Text>
-          {role.resources.map((resource, index) => (
-            <Badge
-              key={index}
-              fontSize={'x-small'}
-              color={'green.500'}
-              w={'fit-content'}
-              p={'0.3rem'}
-              borderRadius={'0.5rem'}
-            >
-              {Resource.translate(resource)}
-            </Badge>
-          ))}
+          <Flex gap={'5px'} wrap={'wrap'}>
+            {role.resources.map((resource, index) => (
+              <Badge
+                key={index}
+                fontSize={'x-small'}
+                color={'green.500'}
+                w={'fit-content'}
+                p={'0.3rem'}
+                borderRadius={'0.5rem'}
+              >
+                {Resource.translate(resource)}
+              </Badge>
+            ))}
+          </Flex>
           {role.resources.length === 0 && (
             <Text fontSize={'sm'}>Nenhum recurso associado</Text>
           )}
@@ -99,11 +107,22 @@ function RoleCard({
             p={'0.3rem'}
             borderRadius={'0.5rem'}
             fontSize={'xs'}
+            hidden={role.permissions.length === 0}
+            onClick={() => setPermissionsViewOnly(true, role.name)}
           >
             Ver Permissões ({role.permissions.length})
           </Button>
           {role.permissions.length === 0 && (
-            <Text fontSize={'sm'}>Nenhuma permissão associada</Text>
+            <Badge
+              fontSize={'sm'}
+              colorScheme='orange'
+              borderRadius={'0.5rem'}
+              p={'0.3rem'}
+              h={'40px'}
+              alignContent={'center'}
+            >
+              Nenhuma permissão associada
+            </Badge>
           )}
           <Text fontSize={'sm'}>
             {`Atualizado em: ${moment(role.updated_at).format('DD/MM/YYYY [às] HH:mm')}`}

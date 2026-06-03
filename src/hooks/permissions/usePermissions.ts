@@ -117,10 +117,10 @@ const usePermissions = (
   );
 
   const deletePermission = useCallback(
-    async (permission_id: number) => {
+    async (permission_id: number, resource: Resource) => {
       setLoading(true);
       await service
-        .deleteById(permission_id)
+        .deleteById(permission_id, resource)
         .then(() => {
           showToast('Sucesso', `Permissão removida com sucesso!`, 'success');
         })

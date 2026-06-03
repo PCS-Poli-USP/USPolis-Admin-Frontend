@@ -25,7 +25,14 @@ export const CourseAction = {
 
 export type CourseAction = (typeof CourseAction)[keyof typeof CourseAction];
 
-export type PermissionAction = ClassroomAction | CourseAction;
+export const BuildingAction = {
+  ...BaseAction,
+} as const;
+
+export type BuildingAction =
+  (typeof BuildingAction)[keyof typeof BuildingAction];
+
+export type PermissionAction = ClassroomAction | CourseAction | BuildingAction;
 
 export namespace PermissionAction {
   export function getValues(resource: Resource): PermissionAction[] {
@@ -34,6 +41,8 @@ export namespace PermissionAction {
         return Object.values(ClassroomAction) as PermissionAction[];
       case Resource.COURSE:
         return Object.values(CourseAction) as PermissionAction[];
+      case Resource.BUILDING:
+        return Object.values(BuildingAction) as PermissionAction[];
       default:
         return [];
     }
@@ -69,6 +78,10 @@ export namespace PermissionAction {
     return translateBaseAction(action as BaseAction);
   }
 
+  export function translateBuildingAction(action: BuildingAction): string {
+    return translateBaseAction(action as BaseAction);
+  }
+
   export function translate(
     action: PermissionAction,
     resource: Resource,
@@ -78,6 +91,8 @@ export namespace PermissionAction {
         return translateClassroomAction(action as ClassroomAction);
       case Resource.COURSE:
         return translateCourseAction(action as CourseAction);
+      case Resource.BUILDING:
+        return translateBuildingAction(action as BuildingAction);
       default:
         return 'Desconhecido';
     }
@@ -96,6 +111,11 @@ export namespace PermissionAction {
         );
       case Resource.COURSE:
         return true; // Todas as ações de curso podem ser aplicadas a todos os cursos
+      case Resource.BUILDING:
+        // Todas as ações de prédio, exceto DELETE e CREATE, podem ser aplicadas a todos os prédios
+        return (
+          action !== BuildingAction.DELETE && action !== BuildingAction.CREATE
+        );
       default:
         return false;
     }

@@ -13,17 +13,19 @@ import {
 import { Resource } from '../../../utils/enums/resources.enums';
 import {
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useRef,
-  useState,
+  useMemo,
 } from 'react';
 import { Flex } from '@chakra-ui/react';
 import { PermissionAction } from '../../../utils/enums/actions.enums';
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import useCourses from '../../../hooks/courses/useCourses';
-import { UserCoreResponse } from '../../../models/http/responses/user.response.models';
+import { UserPermissionResponse } from '../../../models/http/responses/user.response.models';
 import { RoleResponse } from '../../../models/http/responses/role.response.models';
+import useBuildings from '../../../hooks/useBuildings';
 
 export const ALL_RESOURCES_VALUE = -1;
 export interface ResourceItemOption {
@@ -40,15 +42,22 @@ export interface PermisionFormRef {
 }
 
 interface PermissionFormProps {
-  users?: UserCoreResponse[];
+  users?: UserPermissionResponse[];
   roles?: RoleResponse[];
   showUserRoleSelects?: boolean;
   batchMode?: boolean;
+  initialValues?: IPermissionForm | null;
 }
 
 const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
   (
-    { users = [], roles = [], showUserRoleSelects = false, batchMode = false },
+    {
+      users = [],
+      roles = [],
+      showUserRoleSelects = false,
+      batchMode = false,
+      initialValues = null,
+    },
     ref,
   ) => {
     const formRef = useRef<HTMLDivElement | null>(null);
@@ -60,33 +69,45 @@ const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
 
     const { trigger, reset, getValues, clearErrors, control } = form;
 
-    const [resourceOptions, setResourceOptions] = useState<
-      ResourceItemOption[]
-    >([]);
     const {
       classrooms,
       getAllClassrooms,
       loading: loadingClassrooms,
     } = useClassrooms(false);
     const { courses, getCourses, loading: loadingCourses } = useCourses(false);
+    const {
+      buildings,
+      getBuildings,
+      loading: loadingBuildings,
+    } = useBuildings(false);
 
-    const loading = loadingClassrooms || loadingCourses;
+    const loading = loadingClassrooms || loadingCourses || loadingBuildings;
 
     const selectedResource = useWatch({ control, name: 'resource' });
     const allResources = useWatch({ control, name: 'all_resources' });
 
-    async function handleResourceChange(resource?: Resource) {
-      if (!resource) return;
+    const handleResourceChange = useCallback(
+      async (resource?: Resource) => {
+        if (!resource) return;
 
-      if (resource === Resource.CLASSROOM) {
-        await getAllClassrooms();
-        return;
-      }
+        if (resource === Resource.CLASSROOM && !classrooms.length) {
+          await getAllClassrooms();
+          return;
+        }
 
-      if (resource === Resource.COURSE) {
-        await getCourses();
-      }
-    }
+        if (resource === Resource.COURSE && !courses.length) {
+          await getCourses();
+          return;
+        }
+
+        if (resource === Resource.BUILDING && !buildings.length) {
+          await getBuildings();
+          return;
+        }
+      },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      [],
+    );
 
     useImperativeHandle(ref, () => ({
       async validate() {
@@ -105,7 +126,10 @@ const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
         }
         if (batchMode) {
           const values = getValues();
-          if (!Array.isArray(values.resource_ids) || values.resource_ids.length === 0) {
+          if (
+            !Array.isArray(values.resource_ids) ||
+            values.resource_ids.length === 0
+          ) {
             form.setError('resource_ids', {
               message: 'Selecione pelo menos um recurso',
             });
@@ -123,31 +147,48 @@ const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
         return getValues();
       },
       async setValues(values: IPermissionForm) {
-        reset({ ...defaultValues, ...values, resource_ids: values.resource_ids ?? [] });
+        reset({
+          ...defaultValues,
+          ...values,
+          resource_ids: values.resource_ids ?? [],
+        });
         clearErrors();
         await handleResourceChange(values.resource as Resource);
       },
     }));
 
-    useEffect(() => {
+    const resourceOptions = useMemo<ResourceItemOption[]>(() => {
       if (selectedResource === Resource.CLASSROOM) {
-        const options = classrooms.map((classroom) => ({
+        return classrooms.map((classroom) => ({
           label: `[${classroom.building}]: ${classroom.name}`,
           value: classroom.id,
         }));
+      }
 
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setResourceOptions(options);
-      } else if (selectedResource === Resource.COURSE) {
-        const options = courses.map((course) => ({
+      if (selectedResource === Resource.COURSE) {
+        return courses.map((course) => ({
           label: `Curso: ${course.name}`,
           value: course.id,
         }));
-        setResourceOptions(options);
-      } else {
-        setResourceOptions([]);
       }
-    }, [selectedResource, allResources, classrooms, courses]);
+
+      if (selectedResource === Resource.BUILDING) {
+        return buildings.map((building) => ({
+          label: `Prédio: ${building.name}`,
+          value: building.id,
+        }));
+      }
+
+      return [];
+    }, [selectedResource, classrooms, courses, buildings]);
+
+    useEffect(() => {
+      if (batchMode || !initialValues) return;
+
+      reset({ ...defaultValues, ...initialValues, resource_ids: [] });
+      clearErrors();
+      void handleResourceChange(initialValues.resource);
+    }, [batchMode, clearErrors, handleResourceChange, initialValues, reset]);
 
     const resourceSelectOptions = resourceOptions.map((option) => ({
       ...option,
@@ -193,7 +234,10 @@ const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
                 disabled={!selectedResource || allResources}
                 onChange={(values) => {
                   const firstValue = values[0];
-                  form.setValue('resource_id', firstValue?.value ? Number(firstValue.value) : 0);
+                  form.setValue(
+                    'resource_id',
+                    firstValue?.value ? Number(firstValue.value) : 0,
+                  );
                   form.setValue('resource_name', firstValue?.label ?? '');
                 }}
               />

@@ -42,8 +42,8 @@ function AdminHub() {
     },
     {
       icon: <FaUsersGear size={'64px'} />,
-      title: 'Cargos',
-      description: 'Gerencie os cargos do usuários do USPolis',
+      title: 'Papéis',
+      description: 'Gerencie os papéis dos usuários do USPolis',
       onClick: () => {
         navigate('/admin/roles');
       },

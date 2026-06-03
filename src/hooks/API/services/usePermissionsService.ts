@@ -52,8 +52,12 @@ const usePermissionsService = () => {
     return axios.patch(`${PREFIX}/${id}`, data);
   };
 
-  const deleteById = (id: number): Promise<AxiosResponse<JSONResponse>> => {
-    return axios.delete(`${PREFIX}/${id}`);
+  const deleteById = (
+    id: number,
+    resource: Resource,
+  ): Promise<AxiosResponse<JSONResponse>> => {
+    const urlParams = new URLSearchParams({ resource });
+    return axios.delete(`${PREFIX}/${id}`, { params: urlParams });
   };
 
   return {

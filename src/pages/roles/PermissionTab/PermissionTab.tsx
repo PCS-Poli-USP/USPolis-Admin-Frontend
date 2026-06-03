@@ -1,45 +1,49 @@
 import {
-  Alert,
-  AlertIcon,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Button,
   Flex,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  SimpleGrid,
+  IconButton,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
   Text,
+  Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, CloseIcon } from '@chakra-ui/icons';
 import { useMemo, useRef, useState } from 'react';
-import PermissionForm, {
-  PermisionFormRef,
-} from '../PermissionForm/PermissionForm';
+import { PermisionFormRef } from '../PermissionForm/PermissionForm';
 import PermissionFilters from '../PermissionFilters/PermissionFilters';
 import usePermissions from '../../../hooks/permissions/usePermissions';
 import { Resource } from '../../../utils/enums/resources.enums';
 import { PermissionAction } from '../../../utils/enums/actions.enums';
 import { CreatePermission } from '../../../models/http/requests/permission.request.models';
 import { RoleResponse } from '../../../models/http/responses/role.response.models';
-import { UserCoreResponse } from '../../../models/http/responses/user.response.models';
+import { UserPermissionResponse } from '../../../models/http/responses/user.response.models';
 import { PermissionResponse } from '../../../models/http/responses/permissions.response.models';
 import { IoFileTrayFull } from 'react-icons/io5';
 import ResourceTab from '../ResourceTab/ResourceTab';
+import { normalizeString } from '../../../utils/formatters';
+import PermissionModal from '../PermissionModal/PermissionModal';
+import { UpdatePermission } from '../../../models/http/requests/permission.request.models';
+import { FaSearch } from 'react-icons/fa';
 
 interface PermissionTabProps {
   roles: RoleResponse[];
-  users: UserCoreResponse[];
+  users: UserPermissionResponse[];
   permissions: PermissionResponse[];
   resetPermissions: () => Promise<void>;
+  viewOnly: boolean;
+  setViewOnly: (viewOnly: boolean) => void;
+  viewOnlyLabel: string;
+  viewOnlyPermissions?: PermissionResponse[];
 }
 
 function PermissionTab({
@@ -47,6 +51,10 @@ function PermissionTab({
   users,
   permissions,
   resetPermissions,
+  setViewOnly,
+  viewOnly = false,
+  viewOnlyLabel = 'Permissões',
+  viewOnlyPermissions = [],
 }: PermissionTabProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -54,22 +62,55 @@ function PermissionTab({
     onOpen: onOpenBatch,
     onClose: onCloseBatch,
   } = useDisclosure();
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
   const permissionFormRef = useRef<PermisionFormRef>(null);
-  const { createPermission, createBatchPermission, loading } =
-    usePermissions(false);
+  const deleteCancelRef = useRef<HTMLButtonElement | null>(null);
+  const {
+    createPermission,
+    createBatchPermission,
+    updatePermission,
+    deletePermission,
+  } = usePermissions(false);
 
   const [resourceFilter, setResourceFilter] = useState<Resource | ''>('');
   const [actionFilter, setActionFilter] = useState<PermissionAction | ''>('');
   const [search, setSearch] = useState('');
+  const [resourceNameFilter, setResourceNameFilter] = useState('');
+  const [parentNameFilter, setParentNameFilter] = useState('');
   const [resourceTabIndex, setResourceTabIndex] = useState(0);
+  const [editingPermission, setEditingPermission] =
+    useState<PermissionResponse | null>(null);
+  const [permissionToDelete, setPermissionToDelete] =
+    useState<PermissionResponse | null>(null);
 
   const filteredPermissions = useMemo(() => {
-    const searchValue = search.trim().toLowerCase();
+    const searchValue = normalizeString(search);
+    const resourceNameValue = normalizeString(resourceNameFilter);
+    const parentNameValue = normalizeString(parentNameFilter);
 
-    return permissions.filter((permission) => {
+    const currentPermissions = viewOnly ? viewOnlyPermissions : permissions;
+    return currentPermissions.filter((permission) => {
       if (resourceFilter && permission.resource !== resourceFilter)
         return false;
       if (actionFilter && !permission.actions.includes(actionFilter)) {
+        return false;
+      }
+      if (
+        resourceNameValue &&
+        !normalizeString(permission.resource_name || '').includes(
+          resourceNameValue,
+        )
+      ) {
+        return false;
+      }
+      if (
+        parentNameValue &&
+        !normalizeString(permission.parent_name || '').includes(parentNameValue)
+      ) {
         return false;
       }
 
@@ -78,19 +119,27 @@ function PermissionTab({
       const searchable = [
         Resource.translate(permission.resource),
         permission.resource_name || '',
+        permission.parent_name || '',
         permission.resource_id ? String(permission.resource_id) : '',
         permission.actions
           .map((action) =>
             PermissionAction.translate(action, permission.resource),
           )
           .join(' '),
-      ]
-        .join(' ')
-        .toLowerCase();
+      ].join(' ');
 
-      return searchable.includes(searchValue);
+      return normalizeString(searchable).includes(searchValue);
     });
-  }, [permissions, resourceFilter, actionFilter, search]);
+  }, [
+    permissions,
+    resourceFilter,
+    actionFilter,
+    search,
+    resourceNameFilter,
+    parentNameFilter,
+    viewOnly,
+    viewOnlyPermissions,
+  ]);
 
   const permissionMap = useMemo(() => {
     const map = new Map<Resource, PermissionResponse[]>();
@@ -106,8 +155,39 @@ function PermissionTab({
   }, [filteredPermissions]);
 
   function handleCloseModal() {
+    setEditingPermission(null);
     permissionFormRef.current?.reset();
     onClose();
+  }
+
+  function handleCloseBatchModal() {
+    permissionFormRef.current?.reset();
+    onCloseBatch();
+  }
+
+  function handleOpenCreatePermission() {
+    setEditingPermission(null);
+    permissionFormRef.current?.reset();
+    onOpen();
+  }
+
+  function handleEditPermission(permission: PermissionResponse) {
+    setEditingPermission(permission);
+    onOpen();
+  }
+
+  function handleAskDeletePermission(permission: PermissionResponse) {
+    setPermissionToDelete(permission);
+    onOpenDelete();
+  }
+
+  async function handleConfirmDeletePermission() {
+    if (!permissionToDelete) return;
+
+    await deletePermission(permissionToDelete.id, permissionToDelete.resource);
+    await resetPermissions();
+    setPermissionToDelete(null);
+    onCloseDelete();
   }
 
   async function handleCreatePermission() {
@@ -129,9 +209,15 @@ function PermissionTab({
       role_id: permissionData.role_id,
     };
 
-    await createPermission(payload);
+    if (editingPermission) {
+      const updatePayload: UpdatePermission = payload;
+      await updatePermission(editingPermission.id, updatePayload);
+    } else {
+      await createPermission(payload);
+    }
     await resetPermissions();
     permissionFormRef.current.reset();
+    setEditingPermission(null);
     onClose();
   }
 
@@ -142,13 +228,15 @@ function PermissionTab({
     if (!permissionData) return;
 
     const resourceIds = permissionData.resource_ids ?? [];
-    const payloads: CreatePermission[] = resourceIds.map((resourceId) => ({
-      resource: permissionData.resource,
-      actions: permissionData.actions,
-      resource_id: resourceId,
-      user_id: permissionData.user_id,
-      role_id: permissionData.role_id,
-    }));
+    const payloads: CreatePermission[] = resourceIds.map(
+      (resourceId: number) => ({
+        resource: permissionData.resource,
+        actions: permissionData.actions,
+        resource_id: resourceId,
+        user_id: permissionData.user_id,
+        role_id: permissionData.role_id,
+      }),
+    );
 
     if (payloads.length === 0) return;
 
@@ -158,6 +246,7 @@ function PermissionTab({
     onCloseBatch();
   }
 
+  console.log('Permission label', viewOnlyLabel);
   return (
     <Flex direction={'column'} gap={'16px'} w={'full'}>
       <Flex
@@ -168,19 +257,40 @@ function PermissionTab({
         wrap={'wrap'}
       >
         <Flex direction={'column'}>
-          <Text fontSize={'xl'} fontWeight={'bold'}>
-            Permissões
-          </Text>
+          <Flex gap={'10px'}>
+            <Text fontSize={'xl'} fontWeight={'bold'}>
+              {`${viewOnly ? `Visualizando ${viewOnlyLabel}` : 'Permissões'}`}
+            </Text>
+            {viewOnly && (
+              <Tooltip
+                label='Fechar visualização apenas leitura'
+                aria-label='A tooltip'
+              >
+                <IconButton
+                  aria-label='close-view-only'
+                  icon={<CloseIcon />}
+                  variant={'outline'}
+                  size={'sm'}
+                  onClick={() => setViewOnly(false)}
+                />
+              </Tooltip>
+            )}
+          </Flex>
           <Text color={'gray.500'}>Gerencie e filtre permissões</Text>
         </Flex>
         <Flex gap={'10px'} wrap={'wrap'}>
-          <Button leftIcon={<AddIcon />} onClick={onOpen}>
+          <Button
+            leftIcon={<AddIcon />}
+            onClick={handleOpenCreatePermission}
+            disabled={viewOnly}
+          >
             Adicionar Permissão
           </Button>
           <Button
             leftIcon={<IoFileTrayFull />}
             variant={'outline'}
             onClick={onOpenBatch}
+            disabled={viewOnly}
           >
             Adicionar em lote
           </Button>
@@ -190,6 +300,10 @@ function PermissionTab({
       <PermissionFilters
         search={search}
         setSearch={setSearch}
+        resourceNameFilter={resourceNameFilter}
+        setResourceNameFilter={setResourceNameFilter}
+        parentNameFilter={parentNameFilter}
+        setParentNameFilter={setParentNameFilter}
         resourceFilter={resourceFilter}
         setResourceFilter={setResourceFilter}
         actionFilter={actionFilter}
@@ -200,7 +314,7 @@ function PermissionTab({
         {permissionMap.size > 0 && (
           <Tabs
             w={'full'}
-            h={'700px'}
+            minH={'700px'}
             index={resourceTabIndex}
             onChange={(tabIndex) => setResourceTabIndex(tabIndex)}
           >
@@ -217,13 +331,15 @@ function PermissionTab({
                 </Tab>
               ))}
             </TabList>
-            <TabPanels h={'full'}>
+            <TabPanels>
               {Array.from(permissionMap.entries()).map(
                 ([resource, permissions]) => (
-                  <TabPanel key={resource} h={'full'}>
+                  <TabPanel key={resource}>
                     <ResourceTab
                       resource={resource}
                       permissions={permissions}
+                      onEdit={handleEditPermission}
+                      onRemove={handleAskDeletePermission}
                     />
                   </TabPanel>
                 ),
@@ -231,82 +347,91 @@ function PermissionTab({
             </TabPanels>
           </Tabs>
         )}
-        {filteredPermissions.length === 0 && !loading && (
-          <Alert status='info' borderRadius={'10px'}>
-            <AlertIcon />
-            Nenhuma permissão encontrada.
-          </Alert>
+
+        {filteredPermissions.length === 0 && (
+          <Flex
+            direction={'column'}
+            align={'center'}
+            justify={'center'}
+            w={'full'}
+            h={'full'}
+            p={4}
+            gap={'10px'}
+          >
+            <FaSearch size={'128px'} />
+            <Text fontWeight={'bold'} fontSize={'xl'}>
+              Nenhuma permissão encontrada
+            </Text>
+            <Text maxW={'800px'}>
+              Nenhuma permissão corresponde aos filtros aplicados. Tente ajustar
+              os filtros para encontrar as permissões desejadas.
+            </Text>
+            <Button
+              colorScheme='blue'
+              onClick={() => {
+                setParentNameFilter('');
+                setResourceNameFilter('');
+                setResourceFilter('');
+                setActionFilter('');
+                setSearch('');
+              }}
+            >
+              Limpar Filtros
+            </Button>
+          </Flex>
         )}
       </Flex>
 
-      <Modal isOpen={isOpen} onClose={handleCloseModal} size={'2xl'}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Adicionar Permissão</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <PermissionForm
-              ref={permissionFormRef}
-              showUserRoleSelects={true}
-              roles={roles}
-              users={users}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              mr={3}
-              colorScheme='red'
-              variant={'outline'}
-              onClick={handleCloseModal}
-            >
-              Cancelar
-            </Button>
-            <Button colorScheme='blue' onClick={handleCreatePermission}>
-              Salvar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <PermissionModal
+        isOpen={isOpen}
+        isUpdate={!!editingPermission}
+        isBatchOpen={isBatchOpen}
+        editingPermission={editingPermission}
+        permissionFormRef={permissionFormRef}
+        roles={roles}
+        users={users}
+        onClose={handleCloseModal}
+        onCloseBatch={handleCloseBatchModal}
+        onSubmitPermission={handleCreatePermission}
+        onSubmitBatch={handleCreateBatchPermission}
+      />
 
-      <Modal
-        isOpen={isBatchOpen}
+      <AlertDialog
+        isOpen={isDeleteOpen}
+        leastDestructiveRef={deleteCancelRef}
         onClose={() => {
-          permissionFormRef.current?.reset();
-          onCloseBatch();
+          setPermissionToDelete(null);
+          onCloseDelete();
         }}
-        size={'2xl'}
       >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Adicionar Permissões em lote</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <PermissionForm
-              ref={permissionFormRef}
-              batchMode={true}
-              showUserRoleSelects={true}
-              roles={roles}
-              users={users}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              mr={3}
-              colorScheme='red'
-              variant={'outline'}
-              onClick={() => {
-                permissionFormRef.current?.reset();
-                onCloseBatch();
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button colorScheme='blue' onClick={handleCreateBatchPermission}>
-              Salvar lote
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+              Remover permissão
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Tem certeza que deseja remover esta permissão? Esta ação não pode
+              ser desfeita.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button
+                ref={deleteCancelRef}
+                onClick={() => {
+                  setPermissionToDelete(null);
+                  onCloseDelete();
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button bg={'red'} onClick={handleConfirmDeletePermission} ml={3}>
+                Remover
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Flex>
   );
 }

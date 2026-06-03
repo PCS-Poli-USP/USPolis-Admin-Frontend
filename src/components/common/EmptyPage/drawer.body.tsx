@@ -291,7 +291,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                 <DrawerButton
                   icon={<FaUsersGear />}
                   to='/admin/roles'
-                  text='Cargos'
+                  text='Papéis'
                   replace_location={false}
                   onClose={onClose}
                   highlighted={currentPath === '/admin/roles'}

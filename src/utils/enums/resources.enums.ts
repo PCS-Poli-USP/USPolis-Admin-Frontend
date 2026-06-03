@@ -11,7 +11,7 @@ export namespace Resource {
   }
 
   const translations: Record<Resource, string> = {
-    [Resource.CLASSROOM]: 'Salas de Aula',
+    [Resource.CLASSROOM]: 'Salas de Aulas',
     [Resource.COURSE]: 'Cursos',
     [Resource.BUILDING]: 'Prédios',
   };

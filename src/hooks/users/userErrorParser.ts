@@ -15,4 +15,9 @@ export class UserErrorParser extends ErrorParser {
     const detail = this.getDetailFromError(error);
     return `Erro ao atualizar notificações por e-mail: ${detail}`;
   }
+
+  parseListWithPermissionsError(error: any) {
+    const detail = this.getDetailFromError(error);
+    return `Erro ao carregar usuários com permissões: ${detail}`;
+  }
 }

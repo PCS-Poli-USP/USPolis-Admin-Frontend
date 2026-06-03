@@ -2,9 +2,9 @@ import { Flex, Input, Select } from '@chakra-ui/react';
 import { PermissionAction } from '../../../utils/enums/actions.enums';
 import { Resource } from '../../../utils/enums/resources.enums';
 
-interface PermissionFiltersProps {
-  search: string;
-  setSearch: (value: string) => void;
+interface RoleFiltersProps {
+  roleName: string;
+  setRoleName: (value: string) => void;
   resourceNameFilter: string;
   setResourceNameFilter: (value: string) => void;
   parentNameFilter: string;
@@ -15,9 +15,9 @@ interface PermissionFiltersProps {
   setActionFilter: (value: PermissionAction | '') => void;
 }
 
-function PermissionFilters({
-  search,
-  setSearch,
+function RoleFilters({
+  roleName,
+  setRoleName,
   resourceNameFilter,
   setResourceNameFilter,
   parentNameFilter,
@@ -26,7 +26,7 @@ function PermissionFilters({
   setResourceFilter,
   actionFilter,
   setActionFilter,
-}: PermissionFiltersProps) {
+}: RoleFiltersProps) {
   const actionOptions = resourceFilter
     ? PermissionAction.getValues(resourceFilter)
     : [];
@@ -34,9 +34,9 @@ function PermissionFilters({
   return (
     <Flex gap={'10px'} w={'full'} wrap={'wrap'}>
       <Input
-        placeholder='Buscar por recurso ou ação'
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
+        placeholder='Buscar por nome do papel'
+        value={roleName}
+        onChange={(event) => setRoleName(event.target.value)}
         maxW={{ base: 'full', md: '220px' }}
       />
       <Input
@@ -86,4 +86,4 @@ function PermissionFilters({
   );
 }
 
-export default PermissionFilters;
+export default RoleFilters;
