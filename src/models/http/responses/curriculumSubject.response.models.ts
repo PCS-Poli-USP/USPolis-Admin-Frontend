@@ -8,4 +8,9 @@ export interface CurriculumSubjectResponse {
   type: CurriculumSubjectType;
   category: CurriculumSubjectCategory;
   period: number;
+  subject: {
+    id: number;
+    code: string;
+    name: string;
+  };
 }

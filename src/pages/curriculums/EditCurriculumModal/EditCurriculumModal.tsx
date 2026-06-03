@@ -9,12 +9,12 @@ import {
   FormControl,
   FormLabel,
   Input,
-  useToast,
 } from "@chakra-ui/react";
 
 import { useState, useEffect } from "react";
 import useCurriculumsService from "../../../hooks/API/services/useCurriculumsService";
 import { CurriculumResponse } from "../../../models/http/responses/curriculum.response.models";
+import useCustomToast from "../../../hooks/useCustomToast";
 
 interface Props {
   isOpen: boolean;
@@ -31,17 +31,21 @@ export function EditCurriculumModal({
 }: Props) {
 
   const curriculumsService = useCurriculumsService();
-  const toast = useToast();
+  const showToast = useCustomToast();
 
   const [description, setDescription] = useState("");
   const [AAC, setAAC] = useState<number | undefined>(undefined);
   const [AEX, setAEX] = useState<number | undefined>(undefined);
+  const [codcur, setCodcur] = useState<number | undefined>(undefined);
+  const [codhab, setCodhab] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     if (isOpen && curriculum) {
       setDescription(curriculum.description);
       setAAC(curriculum.AAC ?? undefined);
       setAEX(curriculum.AEX ?? undefined);
+      setCodcur(curriculum.codcur);
+      setCodhab(curriculum.codhab);
     }
   }, [isOpen, curriculum]);
 
@@ -49,6 +53,8 @@ export function EditCurriculumModal({
     setDescription('');
     setAAC(undefined);
     setAEX(undefined);
+    setCodcur(undefined);
+    setCodhab(undefined);
     onClose();
   }
 
@@ -58,26 +64,31 @@ export function EditCurriculumModal({
     try {
       await curriculumsService.update(curriculum.id, {
         course_id: curriculum.course_id,
-        description,
+        codcur: codcur ?? 0,
+        codhab: codhab ?? 0,
+        description: description.trim(),  
         AAC: AAC ?? 0,
         AEX: AEX ?? 0,
       });
 
-      toast({
-        title: "Currículo atualizado",
-        status: "success",
-        position: "top-left",
-      });
+      showToast(
+        'Sucesso',
+        'Currículo atualizado com sucesso.',
+        'success',
+      );
 
       refresh();
       onClose();
 
-    } catch {
-      toast({
-        title: "Erro ao atualizar currículo",
-        status: "error",
-         position: "top-left",
-      });
+    } catch (err: unknown) {
+      const error = err as any;
+
+      showToast(
+        'Erro',
+        error?.response?.data?.detail ??
+          'Não foi possível atualizar o currículo.',
+        'error',
+      );
     }
   }
 
@@ -94,6 +105,7 @@ export function EditCurriculumModal({
             <FormLabel>Descrição</FormLabel>
             <Input
               value={description}
+              placeholder="Ex: 2026 - Piloto"
               onChange={(e) => setDescription(e.target.value)}
             />
           </FormControl>
@@ -121,6 +133,37 @@ export function EditCurriculumModal({
             }
           />
         </FormControl>
+            <FormControl mb={3}>
+            <FormLabel>CODCUR</FormLabel>
+
+            <Input
+              type="number"
+              value={codcur ?? ''}
+              onChange={(e) =>
+                setCodcur(
+                  e.target.value
+                    ? Number(e.target.value)
+                    : undefined
+                )
+              }
+            />
+            </FormControl>
+
+          <FormControl mb={3}>
+            <FormLabel>CODHAB</FormLabel>
+
+            <Input
+              type="number"
+              value={codhab ?? ''}
+              onChange={(e) =>
+                setCodhab(
+                  e.target.value
+                    ? Number(e.target.value)
+                    : undefined
+                )
+              }
+            />
+          </FormControl>
 
         </ModalBody>
 
