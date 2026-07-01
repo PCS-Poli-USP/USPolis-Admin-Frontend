@@ -14,9 +14,6 @@ interface PageBreadcrumbProps {
 }
 
 const mainMap: Record<string, Crumb[]> = {
-  '/allocation': [
-    { label: 'Mapa de Salas', href: '/allocations', current: false },
-  ],
   '/admin': [{ label: 'Admin', href: '/admin', current: false }],
   '/profile': [{ label: 'Perfil', href: '/profile', current: false }],
   '/oferings': [{ label: 'Oferecimentos', href: '/oferings', current: false }],

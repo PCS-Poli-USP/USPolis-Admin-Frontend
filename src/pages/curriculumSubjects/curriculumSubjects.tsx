@@ -39,6 +39,7 @@ import { SubjectResponseBase } from '../../models/http/responses/subject.respons
 import useSubjectsService from '../../hooks/API/services/useSubjectsService';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import useCustomToast from '../../hooks/useCustomToast';
+import MissingSubjectsFloatingWindow from '../../components/common/FloatingWindow/floatingWindow.component';
 
 function CurriculumSubjects() {
   const showToast = useCustomToast();
@@ -59,14 +60,27 @@ function CurriculumSubjects() {
 
   const location = useLocation() as {
     state?: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       curriculum?: any;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       course?: any;
+      missingSubjects?: {
+        subject_code: string;
+        subject_name: string;
+        period: number;
+      }[];
+      showMissingWindow?: boolean;
     };
   };
 
   const course = location.state?.course;
+
+  const [showMissingWindow, setShowMissingWindow] =
+    useState(
+      location.state?.showMissingWindow ?? false,
+    );
+
+  const [missingSubjects] = useState(
+    location.state?.missingSubjects ?? [],
+  );
 
   const [selectedItem, setSelectedItem] = useState<CurriculumSubjectResponse>();
 
@@ -138,6 +152,30 @@ function CurriculumSubjects() {
     fetchData();
   }
 
+  function handleModalClose() {
+    onCloseModal();
+
+    setSelectedItem(undefined);
+
+    setIsUpdate(false);
+
+    setSelectedPeriod(undefined);
+  }
+
+  async function handleSuccess(
+    action: 'create' | 'update',
+    ) {
+      await fetchData();
+
+      showToast(
+        'Sucesso',
+        action === 'create'
+          ? 'Disciplina adicionada ao currículo.'
+          : 'Disciplina editada com sucesso.',
+        'success',
+      );
+    }
+
   function handleCreateClick(period: number) {
     setSelectedItem(undefined);
     setIsUpdate(false);
@@ -158,21 +196,34 @@ function CurriculumSubjects() {
   }
 
   async function handleDelete() {
-    if (selectedItem) {
-      try {
-        await deleteById(selectedItem.id);
-      } catch (error) {
-        console.error('Erro ao deletar disciplina do currículo: ', error);
-        showToast(
-          'Erro',
-          'Não foi possível deletar a disciplina do currículo.',
-          'error',
-        );
-        return;
-      }
+    if (!selectedItem) return;
+
+    try {
+      await deleteById(
+        selectedItem.id,
+      );
+
+      showToast(
+        'Sucesso',
+        'Disciplina removida do currículo.',
+        'success',
+      );
+
+      onCloseDelete();
+
+      refetch();
+    } catch (error) {
+      console.error(
+        'Erro ao deletar disciplina do currículo: ',
+        error,
+      );
+
+      showToast(
+        'Erro',
+        'Não foi possível deletar a disciplina do currículo.',
+        'error',
+      );
     }
-    onCloseDelete();
-    refetch();
   }
 
   const groupedByPeriod = useMemo(() => {
@@ -186,11 +237,9 @@ function CurriculumSubjects() {
   }, [data]);
 
   const periods = useMemo(() => {
-    const keys = Object.keys(groupedByPeriod);
-    if (!keys) return [];
-
-    return Array.from(keys.map((k) => Number(k))).sort((a, b) => a - b);
-  }, [groupedByPeriod]);
+    if (!course?.ideal_duration) return [];
+    return Array.from({ length: course.ideal_duration }, (_, i) => i + 1);
+  }, [course]);
 
   const getCategoryBadgeColor = (category: string) => {
     switch (category) {
@@ -209,15 +258,16 @@ function CurriculumSubjects() {
     <PageContent>
       <CurriculumSubjectModal
         isOpen={isOpenModal}
-        onClose={() => {
-          onCloseModal();
-          setSelectedItem(undefined);
-          setIsUpdate(false);
-          setSelectedPeriod(undefined);
-        }}
+        onClose={handleModalClose}
         isUpdate={isUpdate}
         selectedItem={selectedItem}
-        refetch={refetch}
+        refetch={async () => {
+          await handleSuccess(
+            isUpdate
+              ? 'update'
+              : 'create',
+          );
+        }}
         course={course}
         defaultPeriod={selectedPeriod}
       />
@@ -230,7 +280,16 @@ function CurriculumSubjects() {
         warningText='Essa ação é irreversível.'
       />
 
-      <Box w='100%' p={'0rem 15rem'}>
+      <Box
+        w='100%'
+        maxW='1600px'
+        mx='auto'
+        px={{
+          base: 2,
+          md: 6,
+          lg: 10,
+        }}
+      >
         <Text fontSize='4xl'>{course?.name} - Disciplinas</Text>
         <Text mb={4}>
           Gerencie as disciplinas do currículo, organizadas por períodos. Você
@@ -238,7 +297,7 @@ function CurriculumSubjects() {
         </Text>
 
         <Skeleton isLoaded={!loading || !loadingSubjects}>
-          <Accordion allowMultiple defaultIndex={[0]}>
+          <Accordion allowToggle defaultIndex={[0]}>
             {periods.map((period) => (
               <AccordionItem key={period}>
                 <AccordionButton>
@@ -264,14 +323,21 @@ function CurriculumSubjects() {
 
                   <Box w='100%'>
                     {(groupedByPeriod[period] ?? []).length > 0 && (
-                      <TableContainer
+                      <Box
                         border='1px'
                         borderRadius='lg'
                         borderColor='uspolis.blue'
+                        overflowX='auto'
+                        w='100%'
                       >
                         {loading && <Progress size='xs' isIndeterminate />}
 
-                        <Table>
+                        <Table 
+                          variant='simple'
+                          w='100%'
+                          sx={{
+                            tableLayout: 'fixed',
+                          }}>
                           <Thead>
                             <Tr>
                               <Th color='uspolis.blue'>Disciplina</Th>
@@ -298,7 +364,12 @@ function CurriculumSubjects() {
 
                               return (
                                 <Tr key={item.id}>
-                                  <Td>{subjectMap[item.subject_id] ?? '-'}</Td>
+                                  <Td
+                                    maxW='0'
+                                    overflow='hidden'
+                                    whiteSpace='normal'
+                                    wordBreak='break-word'
+                                  >{subjectMap[item.subject_id] ?? '-'}</Td>
                                   <Td>
                                     <Badge>
                                       {typeMap[item.type] ?? item.type}
@@ -350,7 +421,7 @@ function CurriculumSubjects() {
                             })}
                           </Tbody>
                         </Table>
-                      </TableContainer>
+                      </Box>
                     )}
                   </Box>
                 </AccordionPanel>
@@ -359,6 +430,15 @@ function CurriculumSubjects() {
           </Accordion>
         </Skeleton>
       </Box>
+      {showMissingWindow &&
+        missingSubjects.length > 0 && (
+          <MissingSubjectsFloatingWindow
+            subjects={missingSubjects}
+            onClose={() =>
+              setShowMissingWindow(false)
+            }
+          />
+      )}
     </PageContent>
   );
 }

@@ -28,6 +28,14 @@ export function getCurriculumColumns({
       header: 'AEX',
     },
     {
+      accessorKey: 'codcur',
+      header: 'CODCUR',
+    },
+    {
+      accessorKey: 'codhab',
+      header: 'CODHAB',
+    },
+    {
       id: 'options',
       header: 'Opções',
       cell: ({ row }) => {

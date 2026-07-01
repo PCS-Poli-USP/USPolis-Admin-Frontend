@@ -180,8 +180,8 @@ export function DrawerNavBar({
                   hidden={true}
                   onClick={() => {
                     setPathBeforeGuide(location.pathname);
-                    if (location.pathname !== '/allocation') {
-                      navigate('/allocation', {
+                    if (location.pathname !== '/public/allocations') {
+                      navigate('/public/allocations', {
                         replace: true,
                         state: { from: location },
                       });

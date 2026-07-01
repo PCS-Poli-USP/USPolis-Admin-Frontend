@@ -28,7 +28,7 @@ export const FeatureGuideContext = createContext<FeatureGuideContextType>({
   setState: () => {},
   registerControlFn: () => {},
   triggerControl: () => {},
-  pathBeforeGuide: '/allocation',
+  pathBeforeGuide: '/public/allocations',
   setPathBeforeGuide: () => {},
 });
 
@@ -39,7 +39,7 @@ export default function FeatureGuideProvider({
   const [controlFn, setControlFn] = useState<null | ((value: any) => void)>(
     null,
   );
-  const [pathBeforeGuide, setPathBeforeGuide] = useState<string>('/allocation');
+  const [pathBeforeGuide, setPathBeforeGuide] = useState<string>('/public/allocations');
 
   const registerControlFn = (fn: (value: any) => void) => {
     setControlFn(() => fn);
