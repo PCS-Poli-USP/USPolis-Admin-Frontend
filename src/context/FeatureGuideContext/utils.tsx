@@ -21,7 +21,7 @@ function createUserProfileStep() {
     description: 'Aqui você pode ver suas informações.',
     placement: 'right',
     data: {
-      previous: '/allocation',
+      previous: '/public/allocations',
     },
   });
 }
@@ -68,7 +68,7 @@ function createContactStep() {
     description: 'Nos mande um email.',
     placement: 'top',
     data: {
-      next: '/allocation',
+      next: '/public/allocations',
     },
   });
 }
@@ -148,7 +148,7 @@ function createAutomaticClassCreationStep() {
       'Escolha Júpiter ou Janus, insira os códigos das disciplinas e pronto!',
     placement: 'bottom',
     data: {
-      previous: '/allocation',
+      previous: '/public/allocations',
     },
     isFixed: true,
     width: '600px',
