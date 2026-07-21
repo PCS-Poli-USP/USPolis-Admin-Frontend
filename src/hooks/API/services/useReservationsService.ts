@@ -68,6 +68,12 @@ const useReservationsService = () => {
     return axiosPrivate.put(`${PREFIX}/${id}`, data);
   };
 
+  const getById = (
+    id: number,
+  ): Promise<AxiosResponse<ReservationResponse>> => {
+    return axiosPrivate.get(`${PREFIX}/${id}`);
+  };
+
   return {
     getMine,
     get,
@@ -76,6 +82,7 @@ const useReservationsService = () => {
     create,
     deleteById,
     update,
+    getById,
   };
 };
 

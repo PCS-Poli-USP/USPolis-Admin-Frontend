@@ -56,6 +56,27 @@ const useReservations = (initialFetch = true) => {
     [showToast, service],
   );
 
+  const getReservation = useCallback(
+    async (id: number): Promise<ReservationResponse | undefined> => {
+      setLoading(true);
+
+      try {
+        const response = await service.getById(id);
+        return response.data;
+      } catch (error) {
+        showToast(
+          'Erro',
+          'Erro ao carregar reserva',
+          'error',
+        );
+        return undefined;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [service, showToast],
+  );
+
   const getReservationsByBuildingName = useCallback(
     async (building_name: string, start?: string, end?: string) => {
       setLoading(true);
@@ -156,6 +177,7 @@ const useReservations = (initialFetch = true) => {
     reservations,
     getAllReservations,
     getReservations,
+    getReservation,
     getReservationsByBuildingName,
     createReservation,
     updateReservation,

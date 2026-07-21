@@ -4,6 +4,7 @@ import {
   ApproveSolicitation,
   DenySolicitation,
   CreateSolicitation,
+  UpdateSolicitation,
 } from '../../models/http/requests/solicitation.request.models';
 import { SolicitationResponse } from '../../models/http/responses/solicitation.response.models';
 import { useCallback, useEffect, useState } from 'react';
@@ -103,6 +104,39 @@ const useSolicitations = (initialFetch = true) => {
     },
     [getSolicitations, showToast, service],
   );
+  
+  const updateSolicitation = useCallback(
+    async (id: number, data: UpdateSolicitation) => {
+      setLoading(true);
+      console.log('Solicitation ID:', id);
+      console.log(data);
+
+      await service
+        .update(id, data)
+        .then(() => {
+          showToast(
+            'Sucesso',
+            'Solicitação atualizada com sucesso!',
+            'success',
+          );
+
+          getSolicitations();
+        })
+        .catch((error) => {
+          console.log(error);
+
+          showToast(
+            'Erro',
+            parser.parseCreateError(error),
+            'error',
+          );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [getSolicitations, showToast, service],
+  );
 
   const approveSolicitation = useCallback(
     async (id: number, data: ApproveSolicitation) => {
@@ -177,6 +211,7 @@ const useSolicitations = (initialFetch = true) => {
     getPendingBuildingSolicitations,
     getAllBuildingSolicitations,
     createSolicitation,
+    updateSolicitation,
     approveSolicitation,
     denySolicitation,
     cancelSolicitation,

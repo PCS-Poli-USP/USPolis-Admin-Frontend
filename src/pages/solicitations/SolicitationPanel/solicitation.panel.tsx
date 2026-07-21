@@ -43,6 +43,9 @@ import { ReservationStatus } from '../../../utils/enums/reservations.enum';
 import TooltipSelect from '../../../components/common/TooltipSelect';
 import { ScheduleResponse } from '../../../models/http/responses/schedule.response.models';
 import { generateRecurrenceDates } from '../../../utils/common/common.generator';
+import useBuildings from '../../../hooks/useBuildings';
+import useSubjects from '../../../hooks/useSubjetcts';
+import ReservationModal from '../../reservations/ReservationModal/reservation.modal';
 
 interface SolicitationPanelProps {
   solicitation?: SolicitationResponse;
@@ -50,6 +53,7 @@ interface SolicitationPanelProps {
   approve: (id: number, data: ApproveSolicitation) => Promise<void>;
   deny: (id: number, data: DenySolicitation) => Promise<void>;
   handleClose: () => void;
+  refetch: () => Promise<void>;
 }
 
 function SolicitationPanel({
@@ -58,13 +62,23 @@ function SolicitationPanel({
   approve,
   deny,
   handleClose,
+  refetch,
 }: SolicitationPanelProps) {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: isOpenReservationModal,
+    onClose: onCloseReservationModal,
+    onOpen: onOpenReservationModal,
+  } = useDisclosure();
   const {
     loading: loadingClassrooms,
     getClassroomsWithConflict,
     listOneFull,
   } = useClassrooms(false);
+  const { loading: loadingAllClassrooms, classrooms: allClassrooms } =
+    useClassrooms();
+  const { buildings } = useBuildings();
+  const { subjects, loading: loadingSubjects } = useSubjects();
 
   const [openPopover, setOpenPopover] = useState<number | undefined>(undefined);
   const [justification, setJustification] = useState('');
@@ -90,6 +104,11 @@ function SolicitationPanel({
     } else {
       setOpenPopover(id);
     }
+  }
+
+  function handleEditClick() {
+    if (!solicitation) return;
+    onOpenReservationModal();
   }
 
   function validateTime(start: string, end: string) {
@@ -252,7 +271,22 @@ function SolicitationPanel({
   }
 
   return (
-    <Card
+    <>
+      <ReservationModal
+        onClose={() => {
+          onCloseReservationModal();
+        }}
+        isOpen={isOpenReservationModal}
+        isUpdate={true}
+        isSolicitation={false}
+        classrooms={allClassrooms}
+        buildings={buildings}
+        selectedReservation={solicitation?.reservation}
+        refetch={refetch}
+        subjects={subjects}
+        loading={loadingSubjects || loadingAllClassrooms}
+      />
+      <Card
       w={'100%'}
       h={'auto'}
       minH={'100%'}
@@ -531,6 +565,18 @@ function SolicitationPanel({
 
           <CardFooter>
             <HStack>
+              <Button
+                colorScheme='yellow'
+                isDisabled={
+                  solicitation.status !== ReservationStatus.PENDING ||
+                  loading ||
+                  loadingSubjects ||
+                  loadingAllClassrooms
+                }
+                onClick={handleEditClick}
+              >
+                Editar
+              </Button>
               <Popover placement={'top'} isOpen={openPopover === 2}>
                 <PopoverTrigger>
                   <Button
@@ -671,7 +717,8 @@ function SolicitationPanel({
           </Text>
         </Flex>
       )}
-    </Card>
+      </Card>
+    </>
   );
 }
 

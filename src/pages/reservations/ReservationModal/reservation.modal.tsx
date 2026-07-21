@@ -103,7 +103,7 @@ function ReservationModal(props: ReservationModalProps) {
   const [invalidCombination, setInvalidCombination] = useState(false);
 
   const { loading } = useReservations(false);
-  const { loading: loadingSolicitations, createSolicitation } =
+  const { loading: loadingSolicitations, createSolicitation, updateSolicitation } =
     useSolicitations(false);
   const { createExam, updateExam } = useExams();
   const { createEvent, updateEvent } = useEvents();
@@ -118,6 +118,19 @@ function ReservationModal(props: ReservationModalProps) {
   function getReservationData(): ReservationCreateData | ReservationUpdateData {
     const firstData = firstForm.getValues();
     const secondData = secondForm.getValues();
+    const recurrence = secondData.recurrence;
+    const week_day =
+      recurrence === Recurrence.WEEKLY ||
+      recurrence === Recurrence.BIWEEKLY ||
+      recurrence === Recurrence.MONTHLY
+        ? secondData.week_day || secondData.week_day === 0
+          ? Number(secondData.week_day)
+          : undefined
+        : undefined;
+    const month_week =
+      recurrence === Recurrence.MONTHLY && secondData.month_week
+        ? Number(secondData.month_week)
+        : undefined;
     let data: ReservationCreateData | ReservationUpdateData = {
       title: firstData.title,
       type: firstData.type,
@@ -132,15 +145,10 @@ function ReservationModal(props: ReservationModalProps) {
         end_date: secondData.end_date,
         start_time: secondData.start_time,
         end_time: secondData.end_time,
-        recurrence: secondData.recurrence,
-        week_day:
-          secondData.week_day || secondData.week_day === 0 // WeekDay can be zero
-            ? Number(secondData.week_day)
-            : undefined,
-        month_week: secondData.month_week
-          ? Number(secondData.month_week)
-          : undefined,
-        dates: dates.length > 0 ? dates : undefined,
+        recurrence,
+        week_day,
+        month_week,
+        dates: recurrence === Recurrence.CUSTOM && dates.length > 0 ? dates : undefined,
         all_day: false,
       },
     };
@@ -180,7 +188,7 @@ function ReservationModal(props: ReservationModalProps) {
     return data as CreateReservation;
   }
 
-  function getSolicitationData(): CreateSolicitation {
+  function getSolicitationData(): CreateSolicitation | UpdateSolicitation {
     const firstData = firstForm.getValues();
     const secondData = secondForm.getValues();
     const data: CreateSolicitation | UpdateSolicitation = {
@@ -190,7 +198,7 @@ function ReservationModal(props: ReservationModalProps) {
       capacity: firstData.capacity as number,
       reservation_data: getReservationData(),
     };
-    return data as CreateSolicitation;
+    return data;
   }
 
   function handleCloseModal() {
@@ -204,7 +212,11 @@ function ReservationModal(props: ReservationModalProps) {
 
   async function handleFirstNextClick() {
     const { trigger } = firstForm;
+    console.log(firstForm.getValues());
+    console.log(firstForm.formState.errors);
     const isValid = await trigger();
+    console.log(firstForm.getValues());
+    console.log(firstForm.formState.errors);
     setStepsIsValid([isValid, stepsIsValid[1]]);
     if (!isValid) return;
     setActiveStep(activeStep + 1);
@@ -214,6 +226,8 @@ function ReservationModal(props: ReservationModalProps) {
     const isValidFirst = await firstForm.trigger();
     const { trigger, getValues } = secondForm;
     const isValidSecond = await trigger();
+    console.log("VALID?", isValidSecond);
+    console.log(secondForm.formState.errors);
     setStepsIsValid(() => [isValidFirst, isValidSecond]);
     if (!isValidFirst) return;
     if (!isValidSecond) return;
@@ -227,6 +241,7 @@ function ReservationModal(props: ReservationModalProps) {
       if (!labels) return;
       if (labels.length !== dates.length) return;
     }
+    setInvalidCombination(false);
     if (recurrence !== Recurrence.CUSTOM) {
       const start = getValues('start_date');
       const end = getValues('end_date');
@@ -239,7 +254,7 @@ function ReservationModal(props: ReservationModalProps) {
         week_day as WeekDay | undefined,
         month_week as MonthWeek | undefined,
       );
-      if (generated.length == 0) {
+      if (generated.length === 0) {
         setInvalidCombination(true);
         return;
       }
@@ -301,9 +316,17 @@ function ReservationModal(props: ReservationModalProps) {
 
   async function handleSolicitationSaveClick() {
     const data = getSolicitationData();
-    if (!props.isUpdate) {
-      await createSolicitation(data);
+
+    if (props.isUpdate && props.selectedSolicitation) {
+      await updateSolicitation(
+        props.selectedSolicitation.id,
+        data as UpdateSolicitation,
+      );
+      return;
     }
+    await createSolicitation(
+      data as CreateSolicitation,
+    );
   }
 
   async function handleSaveClick() {
@@ -316,6 +339,16 @@ function ReservationModal(props: ReservationModalProps) {
     props.refetch();
     handleCloseModal();
   }
+
+  useEffect(() => {
+    setInvalidCombination(false);
+  }, [
+    secondForm.watch('start_date'),
+    secondForm.watch('end_date'),
+    secondForm.watch('recurrence'),
+    secondForm.watch('week_day'),
+    secondForm.watch('month_week'),
+  ]);
 
   useEffect(() => {
     firstForm.setValue('is_solicitation', props.isSolicitation);
@@ -336,6 +369,7 @@ function ReservationModal(props: ReservationModalProps) {
         title: props.selectedReservation.title,
         type: props.selectedReservation.type,
         reason: props.selectedReservation.reason,
+        capacity: props.selectedSolicitation?.capacity,
         link:
           eventData || meetingData
             ? eventData?.link || meetingData?.link
@@ -346,17 +380,32 @@ function ReservationModal(props: ReservationModalProps) {
       });
       secondForm.reset({
         is_solicitation: props.isSolicitation,
+
         building_id: props.selectedReservation.building_id,
         classroom_id: props.selectedReservation.classroom_id,
+
+        required_classroom: props.isSolicitation
+          ? props.selectedSolicitation?.required_classroom ?? false
+          : undefined,
+
+        optional_classroom: props.isSolicitation
+          ? !(props.selectedSolicitation?.required_classroom ?? false)
+          : undefined,
+
         start_time: props.selectedReservation.schedule.start_time,
         end_time: props.selectedReservation.schedule.end_time,
+
         start_date: props.selectedReservation.schedule.start_date,
         end_date: props.selectedReservation.schedule.end_date,
+
         recurrence: props.selectedReservation.schedule.recurrence,
         week_day: props.selectedReservation.schedule.week_day,
         month_week: props.selectedReservation.schedule.month_week,
+
         type: props.selectedReservation.type,
-        labels: examData ? examData.labels : undefined,
+
+        labels: examData?.labels,
+
         times:
           examData && props.selectedReservation.schedule.occurrences
             ? props.selectedReservation.schedule.occurrences.map((occur) => [
@@ -414,6 +463,7 @@ function ReservationModal(props: ReservationModalProps) {
           subjects={props.subjects}
           loading={props.loading}
           isSolicitation={props.isSolicitation}
+          openedFromReservations={props.openedFromReservations}
           focusMobile={focusMobile}
           container={modalBodyRef.current}
         />

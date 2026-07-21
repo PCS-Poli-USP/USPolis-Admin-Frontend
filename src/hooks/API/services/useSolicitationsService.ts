@@ -4,6 +4,7 @@ import {
   ApproveSolicitation,
   DenySolicitation,
   CreateSolicitation,
+  UpdateSolicitation,
 } from '../../../models/http/requests/solicitation.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 import { PageSize } from '../../../utils/enums/pageSize.enum';
@@ -57,6 +58,13 @@ const useSolicitationsService = () => {
     return axios.post(PREFIX, data);
   };
 
+  const update = (
+    id: number,
+    data: UpdateSolicitation,
+  ): Promise<AxiosResponse<SolicitationResponse>> => {
+    return axios.put(`${PREFIX}/${id}`, data);
+  };
+
   const approve = (
     id: number,
     data: ApproveSolicitation,
@@ -85,6 +93,7 @@ const useSolicitationsService = () => {
     getPending,
     getMySolicitations,
     create,
+    update,
     approve,
     deny,
     deleteById,

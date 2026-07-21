@@ -75,6 +75,7 @@ export interface ClassExtendedData extends BaseExtendedData {
 }
 
 export interface ReservationExtendedData extends BaseExtendedData {
+  reservation_id: number;
   title: string;
   type: ReservationType;
   reason?: string;

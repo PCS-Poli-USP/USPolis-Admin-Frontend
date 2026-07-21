@@ -104,6 +104,9 @@ function Solicitations() {
               await denySolicitation(id, data);
               setSelectedSolicitation(undefined);
             }}
+            refetch={async () => {
+              await fetchData();
+            }}
             loading={loading}
           />
         </GridItem>

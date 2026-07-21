@@ -14,7 +14,7 @@ import { FormProvider } from 'react-hook-form';
 import { CheckBox, Input, SelectInput } from '../../../../../components/common';
 import { ReservationModalSecondStepProps } from './reservation.modal.steps.second.interface';
 
-import DateCalendarPicker from '../../../../../components/common/DateCalendarPicker';
+import DateCalendarPicker, { useDateCalendarPicker } from '../../../../../components/common/DateCalendarPicker';
 import { useEffect, useState } from 'react';
 import { BuildingResponse } from '../../../../../models/http/responses/building.response.models';
 import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
@@ -61,7 +61,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     new Map(),
   );
 
-  const { resetField, setValue, watch, formState } = props.form;
+  const { setValue, watch, formState } = props.form;
   const { errors } = formState;
 
   const start = watch('start_time');
@@ -79,6 +79,28 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   const optional_classroom = watch('optional_classroom');
   const required_classroom = watch('required_classroom');
   const classroom_id = watch('classroom_id');
+
+  const isExam = reservation_type === ReservationType.EXAM;
+  const showWeekDay =
+  recurrence === Recurrence.WEEKLY ||
+  recurrence === Recurrence.BIWEEKLY ||
+  recurrence === Recurrence.MONTHLY;
+
+  const showMonthWeek =
+    recurrence === Recurrence.MONTHLY;
+
+  const showAgendaDates =
+    recurrence === Recurrence.WEEKLY ||
+    recurrence === Recurrence.BIWEEKLY ||
+    recurrence === Recurrence.MONTHLY ||
+    recurrence === Recurrence.DAILY;
+
+  const showTimeFields =
+    recurrence === Recurrence.CUSTOM ||
+    recurrence === Recurrence.WEEKLY ||
+    recurrence === Recurrence.BIWEEKLY ||
+    recurrence === Recurrence.MONTHLY ||
+    recurrence === Recurrence.DAILY;
 
   useEffect(() => {
     const { getValues } = props.form;
@@ -193,23 +215,29 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   }, [labelMap, timeMap]);
 
   function handleChangeRecurrence(value: string) {
-    if (value === Recurrence.CUSTOM) {
-      resetField('month_week', { defaultValue: undefined });
-      resetField('week_day', { defaultValue: '' });
-      resetField('start_date', { defaultValue: '' });
-      resetField('end_date', { defaultValue: '' });
-    } else if (value === Recurrence.DAILY) {
-      setIsSelecting(false);
-      resetField('month_week', { defaultValue: '' });
-      resetField('week_day', { defaultValue: '' });
-    } else {
-      resetField('month_week', { defaultValue: '' });
+    const nextRecurrence = value as Recurrence;
+
+    setValue('recurrence', nextRecurrence);
+
+    if (nextRecurrence !== Recurrence.MONTHLY) {
+      setValue('month_week', undefined);
     }
-    if (value !== Recurrence.CUSTOM) {
-      props.setSelectedDays([]);
-      props.setDates([]);
-      setIsSelecting(false);
+
+    if (
+      nextRecurrence === Recurrence.CUSTOM ||
+      nextRecurrence === Recurrence.DAILY
+    ) {
+      setValue('week_day', undefined);
     }
+
+    setValue('start_date', '');
+    setValue('end_date', '');
+    setValue('start_time', '');
+    setValue('end_time', '');
+
+    props.setSelectedDays([]);
+    props.setDates([]);
+    setIsSelecting(false);
   }
 
   async function handleSelectClassroom(id: number) {
@@ -310,7 +338,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   disabled={!!required_classroom}
                   onChange={(val) => {
                     if (val) {
-                      setValue('optional_classroom', false);
+                      setValue('optional_classroom', val);
                       setValue('classroom_id', undefined);
                     }
                   }}
@@ -322,7 +350,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               <SelectInput
                 label={'Sala de Aula'}
                 w={isMobile ? '360px' : '390px'}
-                disabled={!selectedBuilding || !!optional_classroom}
+                disabled={!selectedBuilding || !!optional_classroom} 
                 placeholder={
                   !selectedBuilding
                     ? 'Selecione um prédio primeiro'
@@ -384,7 +412,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             </Button>
           </Flex>
 
-          <HStack mt={8}>
+          <HStack mt={8} hidden={reservation_type === ReservationType.EXAM}>
             <Text fontSize={'lg'} fontWeight={'bold'}>
               Horários
             </Text>
@@ -434,6 +462,21 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   justify={'flex-start'}
                   hidden={isMobile && reservation_type === ReservationType.EXAM}
                 >
+                  {!isExam &&
+                    recurrence === Recurrence.CUSTOM &&
+                    props.selectedDays.length === 0 && (
+                      <Text
+                        display="block"
+                        w="100%"
+                        mt={1}
+                        color="red.500"
+                        fontSize="sm"
+                        fontWeight="bold"
+                      >
+                        Selecione um ou mais dias no calendário ao lado
+                      </Text>
+                  )}
+                  
                   <Flex
                     direction={isMobile ? 'column' : 'row'}
                     gap={'5px'}
@@ -441,10 +484,9 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     w={'full'}
                     mt={4}
                   >
+                    
                     <SelectInput
-                      hidden={
-                        isMobile && reservation_type === ReservationType.EXAM
-                      }
+                      hidden={isExam}
                       label={'Recorrência'}
                       name={'recurrence'}
                       placeholder={'Escolha uma recorrência'}
@@ -462,9 +504,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       onBlur={() => props.focusMobile.onBlur(props.container)}
                     />
                     <SelectInput
-                      hidden={
-                        isMobile && reservation_type === ReservationType.EXAM
-                      }
+                      hidden={isExam || !showWeekDay}
                       label={'Dia da semana'}
                       name={'week_day'}
                       placeholder='Escolha o dia da semana'
@@ -482,9 +522,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     />
 
                     <SelectInput
-                      hidden={
-                        isMobile && reservation_type === ReservationType.EXAM
-                      }
+                      hidden={isExam || !showMonthWeek}
                       label={'Semana do mês'}
                       name={'month_week'}
                       placeholder='Escolha a semana do mês'
@@ -507,9 +545,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     mt={4}
                   >
                     <Input
-                      hidden={
-                        isMobile && reservation_type === ReservationType.EXAM
-                      }
+                      hidden={isExam || !showAgendaDates}
                       label={'Início da agenda'}
                       name={'start_date'}
                       placeholder='Data de inicio'
@@ -520,9 +556,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                       onBlur={() => props.focusMobile.onBlur(props.container)}
                     />
                     <Input
-                      hidden={
-                        isMobile && reservation_type === ReservationType.EXAM
-                      }
+                      hidden={isExam || !showAgendaDates}
                       label={'Fim da agenda'}
                       name={'end_date'}
                       placeholder='Data de fim'
@@ -537,7 +571,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   <HStack
                     w={'full'}
                     mt={4}
-                    hidden={reservation_type === ReservationType.EXAM}
+                    hidden={isExam || !showTimeFields}
                   >
                     <Input
                       label={'Horário de início'}
@@ -758,6 +792,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     </Text>
                   ) : undefined}
                   <DateCalendarPicker
+                    key={recurrence}
                     header={
                       recurrence === Recurrence.CUSTOM &&
                       props.selectedDays.length !== 0

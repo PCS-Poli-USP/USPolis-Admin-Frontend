@@ -44,7 +44,7 @@ export const secondFormFields = {
           return true;
         },
       ),
-    defaultValue: undefined,
+    defaultValue: false,
   },
   classroom_id: {
     validator: yup
@@ -113,7 +113,7 @@ export const secondFormFields = {
           return true;
         },
       ),
-    defaultValue: undefined,
+    defaultValue: false,
   },
   start_time: {
     validator: yup

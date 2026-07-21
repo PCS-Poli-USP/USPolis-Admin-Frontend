@@ -13,7 +13,7 @@ type SolicitationData = XORN<
 >;
 
 export interface CreateSolicitation {
-  capacity: number;
+  capacity: number | null;
   required_classroom: boolean;
   building_id: number;
   reservation_data: SolicitationData;
@@ -24,7 +24,13 @@ export interface ApproveSolicitation {
   classroom_name: string;
 }
 
-export interface UpdateSolicitation extends ApproveSolicitation {}
+export interface UpdateSolicitation {
+  capacity: number;
+  required_classroom: boolean;
+  building_id: number;
+  reservation_data: SolicitationData;
+  classroom_id?: number;
+}
 
 export interface DeleteSolicitation extends CreateSolicitation {}
 

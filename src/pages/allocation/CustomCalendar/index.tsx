@@ -20,6 +20,13 @@ import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { TourGuideEvents, TourGuideResources } from './utils';
 import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
 import './styles.css';
+import { ReservationResponse } from '../../../models/http/responses/reservation.response.models';
+import useBuildings from '../../../hooks/useBuildings';
+import useSubjects from '../../../hooks/useSubjetcts';
+import useClassrooms from '../../../hooks/classrooms/useClassrooms';
+import useReservations from '../../../hooks/reservations/useReservations';
+import ReservationModal from '../../reservations/ReservationModal/reservation.modal';
+import Dialog from '../../../components/common/Dialog/dialog.component';
 
 type ViewOption = {
   value: string;
@@ -74,10 +81,21 @@ function CustomCalendar({
 
   // const calendarRef = useRef<FullCalendar>(null!);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [selectedReservation, setSelectedReservation] = useState<ReservationResponse>();
+  const [reservationToDelete, setReservationToDelete] = useState<number>();
+  const [reservationTitleToDelete, setReservationTitleToDelete] = useState<string>();
   const [resourcesExpanded, setResourcesExpanded] = useState(
     hasBuildingFilter || true,
   );
   const [isGuideMode, setIsGuideMode] = useState(false);
+  const { buildings } = useBuildings();
+  const { classrooms } = useClassrooms();
+  const { subjects, loading: loadingSubjects } = useSubjects();
+  const {
+      deleteReservation,
+      getReservation,
+  } = useReservations(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -89,6 +107,18 @@ function CustomCalendar({
     isOpen: isOpenModal,
     onOpen: onOpenModal,
     onClose: onCloseModal,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenReservationModal,
+    onOpen: onOpenReservationModal,
+    onClose: onCloseReservationModal,
+  } = useDisclosure();
+
+  const {
+      isOpen: isOpenDeleteDialog,
+      onOpen: onOpenDeleteDialog,
+      onClose: onCloseDeleteDialog,
   } = useDisclosure();
 
   function setCalendarDate(ISOdate: string) {
@@ -114,6 +144,37 @@ function CustomCalendar({
       await update(newStart, newEnd);
     }
   };
+
+  async function handleEditReservation() {
+    if (!selectedEvent) return;
+    const reservation = selectedEvent.extendedProps.reservation_data;
+    if (!reservation) return;
+    const data = await getReservation(reservation.reservation_id);
+    if (!data) return;
+    setSelectedReservation(data);
+    setIsUpdate(true);
+    onCloseModal();
+    onOpenReservationModal();
+  }
+
+  function handleDeleteReservation() {
+    if (!selectedEvent) return;
+    const reservation = selectedEvent.extendedProps.reservation_data;
+    if (!reservation) return;
+    setReservationToDelete(reservation.reservation_id);
+    setReservationTitleToDelete(reservation.title);
+    onCloseModal();
+    onOpenDeleteDialog();
+  }
+
+  async function handleDeleteConfirm() {
+    if (!reservationToDelete) return;
+    await deleteReservation(reservationToDelete);
+    await update(start, end);
+    setReservationToDelete(undefined);
+    setReservationTitleToDelete(undefined);
+    onCloseDeleteDialog();
+  }
 
   const goNext = () => {
     if (calendarRef.current) {
@@ -217,10 +278,38 @@ function CustomCalendar({
         }}
       />
       <EventModal
-        isOpen={isOpenModal}
-        onClose={onCloseModal}
-        event={selectedEvent}
-      />
+      isOpen={isOpenModal}
+      onClose={onCloseModal}
+      event={selectedEvent}
+      onEdit={handleEditReservation}
+      onDelete={handleDeleteReservation}
+    />
+    <ReservationModal
+      isOpen={isOpenReservationModal}
+      onClose={() => {
+          onCloseReservationModal();
+          setSelectedReservation(undefined);
+          setIsUpdate(false);
+      }}
+      isUpdate={isUpdate}
+      isSolicitation={false}
+      classrooms={classrooms}
+      buildings={buildings}
+      selectedReservation={selectedReservation}
+      refetch={() => update(start, end)}
+      subjects={subjects}
+      loading={loadingSubjects}
+    />
+    <Dialog
+      isOpen={isOpenDeleteDialog}
+      onClose={() => {
+          onCloseDeleteDialog();
+          setReservationToDelete(undefined);
+      }}
+      title={`Excluir reserva ${reservationTitleToDelete ?? ''}`}
+      warningText="Essa ação é irreversível!"
+      onConfirm={handleDeleteConfirm}
+    />
       {loading && <Progress size='sm' mb={'10px'} isIndeterminate />}
 
       <FullCalendar

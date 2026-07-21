@@ -72,7 +72,15 @@ const MySolicitations = () => {
     onOpenDialog();
   }
 
-  const columns = getMySolicitationsColumns({ handleCancelClick });
+  function handleEditClick(data: SolicitationResponse) {
+    setSelectedSolicitation(data);
+    onOpenSolicitation();
+  }
+
+  const columns = getMySolicitationsColumns({
+    handleCancelClick,
+    handleEditClick,
+  });
 
   useEffect(() => {
     getAllBuildings();
@@ -143,16 +151,19 @@ const MySolicitations = () => {
       /> */}
       <ReservationModal
         onClose={() => {
+          setSelectedSolicitation(undefined);
           onCloseSolicitation();
         }}
         isOpen={isOpenSolicitation}
-        isUpdate={false}
+        isUpdate={!!selectedSolicitation}
         isSolicitation={true}
         classrooms={classrooms}
         buildings={buildings}
-        selectedReservation={undefined}
+        selectedReservation={selectedSolicitation?.reservation}
+        selectedSolicitation={selectedSolicitation}
         refetch={async () => {
           await getSolicitations();
+          setSelectedSolicitation(undefined);
         }}
         subjects={subjects}
         loading={loadingSubjects || loadingClassrooms || loadingBuildings}

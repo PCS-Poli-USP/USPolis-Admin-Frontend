@@ -23,6 +23,7 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
   const reservationType = watch('type');
   const is_solicitation = watch('is_solicitation');
   const subjectId = watch('subject_id');
+  const isEditingSolicitation = props.isUpdate && !!props.selectedReservation?.solicitation_id;
 
   useEffect(() => {
     if (reservationType == ReservationType.EXAM && subjectId) {
@@ -41,6 +42,7 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
             color={'orange'}
             hidden={
               !(
+                props.openedFromReservations &&
                 props.isUpdate &&
                 props.selectedReservation &&
                 props.selectedReservation.solicitation_id
@@ -68,26 +70,19 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
               value: value,
               label: ReservationType.translate(value),
             }))}
+            disabled={isEditingSolicitation}
             onChange={(option) => {
               if (!option) {
                 resetField('subject_id');
                 resetField('class_ids');
                 resetField('link');
-                resetField('event_type');
+                props.form.setValue('event_type', undefined);
               }
-              props.setDates([]);
-              props.setSelectedDays([]);
-              props.secondForm.reset({
-                ...secondDefaultValues,
-                is_solicitation: props.isSolicitation,
-                required_classroom: props.isSolicitation ? false : undefined,
-                optional_classroom: props.isSolicitation ? false : undefined,
-              });
 
               if (option) {
                 props.secondForm.setValue(
                   'type',
-                  option.value as ReservationType,
+                  option.value as ReservationType,  
                 );
                 if (option.value !== ReservationType.EXAM) {
                   resetField('subject_id');
@@ -95,7 +90,7 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
                 }
                 if (option.value === ReservationType.EXAM) resetField('link');
                 if (option.value !== ReservationType.EVENT)
-                  resetField('event_type');
+                  props.form.setValue('event_type', undefined);
               }
             }}
             onFocus={(el) =>
@@ -109,6 +104,7 @@ function ReservationModalFirstStep(props: ReservationModalFirstStepProps) {
               label='Quantidade de pessoas'
               name='capacity'
               mt={'10px'}
+              placeholder='0'
               onFocus={(el) =>
                 props.focusMobile.onFocusInput(el, props.container)
               }

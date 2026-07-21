@@ -10,6 +10,7 @@ import {
   VStack,
   Box,
   useColorMode,
+  Button,
 } from '@chakra-ui/react';
 import { ModalProps } from '../../../../models/interfaces';
 import { EventApi } from '@fullcalendar/core';
@@ -20,9 +21,11 @@ import { EventExtendedProps } from '../../../../models/http/responses/allocation
 
 interface EventModalProps extends ModalProps {
   event?: EventApi;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-function EventModal({ isOpen, onClose, event }: EventModalProps) {
+function EventModal({ isOpen, onClose, event, onEdit, onDelete}: EventModalProps) {
   const extendedProps: EventExtendedProps | undefined = event
     ? event?.extendedProps
     : undefined;
@@ -194,7 +197,26 @@ function EventModal({ isOpen, onClose, event }: EventModalProps) {
           </VStack>
         </ModalBody>
 
-        <ModalFooter></ModalFooter>
+        <ModalFooter>
+          {reservationData && (
+              <>
+                  <Button
+                      colorScheme="blue"
+                      mr={3}
+                      onClick={onEdit}
+                  >
+                      Editar
+                  </Button>
+
+                  <Button
+                      colorScheme="red"
+                      onClick={onDelete}
+                  >
+                      Excluir
+                  </Button>
+              </>
+          )}
+      </ModalFooter>
       </ModalContent>
     </Modal>
   );
