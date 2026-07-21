@@ -80,7 +80,7 @@ function MobileHeader() {
             cursor: 'pointer',
           }}
           onClick={() => {
-            navigate('/allocation', {
+            navigate('/public/allocations', {
               replace: true,
               state: { from: location },
             });
