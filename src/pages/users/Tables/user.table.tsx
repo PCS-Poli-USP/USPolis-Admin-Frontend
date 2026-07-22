@@ -2,7 +2,7 @@ import { Box, HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { UserCoreResponse } from '../../../models/http/responses/user.response.models';
 import moment from 'moment';
-import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+import { BsFillPenFill } from 'react-icons/bs';
 import {
   FilterBoolean,
   FilterNumber,
@@ -11,7 +11,6 @@ import {
 
 interface UsersColumnsProps {
   handleEditClick: (data: UserCoreResponse) => void;
-  handleDeleteClick: (data: UserCoreResponse) => void;
   isLoading: boolean;
 }
 
@@ -131,19 +130,6 @@ export const getUsersColumns = (
             disabled={props.isLoading}
             icon={<BsFillPenFill />}
             onClick={() => props.handleEditClick(row.original)}
-          />
-        </Tooltip>
-
-        <Tooltip label='Deletar'>
-          <IconButton
-            colorScheme='red'
-            size='xs'
-            variant='ghost'
-            aria-label='deletar-usuario'
-            icon={<BsFillTrashFill />}
-            isLoading={props.isLoading}
-            disabled={props.isLoading}
-            onClick={() => props.handleDeleteClick(row.original)}
           />
         </Tooltip>
       </HStack>

@@ -23,7 +23,6 @@ import { Flex } from '@chakra-ui/react';
 import { PermissionAction } from '../../../utils/enums/actions.enums';
 import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import useCourses from '../../../hooks/courses/useCourses';
-import { UserPermissionResponse } from '../../../models/http/responses/user.response.models';
 import { RoleResponse } from '../../../models/http/responses/role.response.models';
 import useBuildings from '../../../hooks/useBuildings';
 
@@ -42,22 +41,15 @@ export interface PermisionFormRef {
 }
 
 interface PermissionFormProps {
-  users?: UserPermissionResponse[];
   roles?: RoleResponse[];
-  showUserRoleSelects?: boolean;
+  showRoleSelect?: boolean;
   batchMode?: boolean;
   initialValues?: IPermissionForm | null;
 }
 
 const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
   (
-    {
-      users = [],
-      roles = [],
-      showUserRoleSelects = false,
-      batchMode = false,
-      initialValues = null,
-    },
+    { roles = [], showRoleSelect = false, batchMode = false, initialValues = null },
     ref,
   ) => {
     const formRef = useRef<HTMLDivElement | null>(null);
@@ -112,14 +104,11 @@ const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
     useImperativeHandle(ref, () => ({
       async validate() {
         const valid = await trigger();
-        if (showUserRoleSelects) {
+        if (showRoleSelect) {
           const values = getValues();
-          if (!values.user_id && !values.role_id) {
-            form.setError('user_id', {
-              message: 'Selecione um usuário e/ou um cargo para esta permissão',
-            });
+          if (!values.role_id) {
             form.setError('role_id', {
-              message: 'Selecione um usuário e/ou um cargo para esta permissão',
+              message: 'Selecione um cargo para esta permissão',
             });
             return null;
           }
@@ -291,6 +280,10 @@ const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
                           selectedResource as Resource,
                         ),
                         value: value,
+                        tooltip: PermissionAction.describe(
+                          value,
+                          selectedResource as Resource,
+                        ),
                       }))
                   : []
               }
@@ -302,7 +295,7 @@ const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
               disabled={!selectedResource}
             />
           </Flex>
-          {showUserRoleSelects && (
+          {showRoleSelect && (
             <Flex w={'full'} direction={'column'} gap={'10px'}>
               <SelectInput
                 name='role_id'
@@ -311,15 +304,6 @@ const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
                 options={roles.map((role) => ({
                   label: role.name,
                   value: role.id,
-                }))}
-              />
-              <SelectInput
-                name='user_id'
-                label='Usuário'
-                placeholder='Selecione um usuário para esta permissão'
-                options={users.map((user) => ({
-                  label: `${user.name} (${user.email})`,
-                  value: user.id,
                 }))}
               />
             </Flex>

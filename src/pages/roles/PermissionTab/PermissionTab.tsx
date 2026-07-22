@@ -26,7 +26,6 @@ import { Resource } from '../../../utils/enums/resources.enums';
 import { PermissionAction } from '../../../utils/enums/actions.enums';
 import { CreatePermission } from '../../../models/http/requests/permission.request.models';
 import { RoleResponse } from '../../../models/http/responses/role.response.models';
-import { UserPermissionResponse } from '../../../models/http/responses/user.response.models';
 import { PermissionResponse } from '../../../models/http/responses/permissions.response.models';
 import { IoFileTrayFull } from 'react-icons/io5';
 import ResourceTab from '../ResourceTab/ResourceTab';
@@ -37,7 +36,6 @@ import { FaSearch } from 'react-icons/fa';
 
 interface PermissionTabProps {
   roles: RoleResponse[];
-  users: UserPermissionResponse[];
   permissions: PermissionResponse[];
   resetPermissions: () => Promise<void>;
   viewOnly: boolean;
@@ -48,7 +46,6 @@ interface PermissionTabProps {
 
 function PermissionTab({
   roles,
-  users,
   permissions,
   resetPermissions,
   setViewOnly,
@@ -205,8 +202,7 @@ function PermissionTab({
       actions: permissionData.actions,
       resource_id:
         resourceId === -1 ? -1 : resourceId > 0 ? resourceId : undefined,
-      user_id: permissionData.user_id,
-      role_id: permissionData.role_id,
+      role_id: permissionData.role_id as number,
     };
 
     if (editingPermission) {
@@ -233,8 +229,7 @@ function PermissionTab({
         resource: permissionData.resource,
         actions: permissionData.actions,
         resource_id: resourceId,
-        user_id: permissionData.user_id,
-        role_id: permissionData.role_id,
+        role_id: permissionData.role_id as number,
       }),
     );
 
@@ -389,7 +384,6 @@ function PermissionTab({
         editingPermission={editingPermission}
         permissionFormRef={permissionFormRef}
         roles={roles}
-        users={users}
         onClose={handleCloseModal}
         onCloseBatch={handleCloseBatchModal}
         onSubmitPermission={handleCreatePermission}

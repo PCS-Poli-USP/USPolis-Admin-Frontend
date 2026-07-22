@@ -116,7 +116,6 @@ function Roles() {
           onClose();
         }}
         handleSave={() => {}}
-        permissions={permissions}
         loading={loadingData}
         refetch={getAllRoles}
         selectedRole={selectedRole}
@@ -156,7 +155,6 @@ function Roles() {
           <TabPanel>
             <PermissionTab
               roles={roles}
-              users={usersWithPermissions}
               permissions={permissions}
               resetPermissions={fetchData}
               viewOnly={permissionsViewOnlyActive}

@@ -6,7 +6,6 @@ export interface CreateRole {
   resources: Resource[];
   description?: string;
 
-  permission_ids?: [number, Resource][];
   permissions: CreatePermission[];
 }
 

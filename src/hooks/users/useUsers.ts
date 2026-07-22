@@ -144,27 +144,6 @@ const useUsers = (initialFetch: boolean = true) => {
     [showToast, service, parser],
   );
 
-  const deleteUser = useCallback(
-    async (id: number) => {
-      setLoading(true);
-      await service
-        .deleteById(id)
-        .then(() => {
-          showToast('Sucesso!', 'Sucesso ao remover usuário', 'success');
-
-          getUsers();
-        })
-        .catch((error) => {
-          showToast('Erro!', 'Erro ao remover usuário', 'error');
-          console.log(error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    },
-    [getUsers, showToast, service],
-  );
-
   useEffect(() => {
     if (initialFetch) getUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -179,7 +158,6 @@ const useUsers = (initialFetch: boolean = true) => {
     createUser,
     updateUser,
     updateUserEmailNotifications,
-    deleteUser,
   };
 };
 

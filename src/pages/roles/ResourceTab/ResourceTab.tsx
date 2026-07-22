@@ -20,7 +20,7 @@ import { PermissionAction } from '../../../utils/enums/actions.enums';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { FaUserGear } from 'react-icons/fa6';
-import { FaUnlock, FaUser } from 'react-icons/fa';
+import { FaUnlock } from 'react-icons/fa';
 import { LuPen, LuTrash } from 'react-icons/lu';
 
 interface ResourceTabProps {
@@ -256,11 +256,7 @@ function ResourceTab({
                         >
                           <Flex align={'center'} gap={'5px'}>
                             <Icon as={FaUserGear} />
-                            {` ${perm.role_name || 'Nenhum associado'}`}
-                          </Flex>
-                          <Flex align={'center'} gap={'5px'}>
-                            <Icon as={FaUser} />
-                            {` ${perm.user_name || 'Nenhum associado'}`}
+                            {` ${perm.role_name}`}
                           </Flex>
                           <Flex fontSize={'sm'} gap={'5px'} align={'center'}>
                             <Icon as={FaUnlock} />

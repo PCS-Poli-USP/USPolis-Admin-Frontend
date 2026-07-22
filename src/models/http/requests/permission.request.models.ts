@@ -5,8 +5,7 @@ export interface CreatePermission {
   resource: Resource;
   resource_id?: number;
   actions: PermissionAction[];
-  user_id?: number;
-  role_id?: number;
+  role_id: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

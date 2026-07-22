@@ -13,7 +13,6 @@ import PermissionForm, {
   PermisionFormRef,
 } from '../PermissionForm/PermissionForm';
 import { RoleResponse } from '../../../models/http/responses/role.response.models';
-import { UserPermissionResponse } from '../../../models/http/responses/user.response.models';
 import { PermissionResponse } from '../../../models/http/responses/permissions.response.models';
 import { IPermissionForm } from '../PermissionForm/permission.form.interface';
 
@@ -27,7 +26,6 @@ function mapPermissionToFormValues(
     resource_ids: [],
     resource_name: permission.resource_name ?? '',
     all_resources: permission.resource_id === -1,
-    user_id: permission.user_id,
     role_id: permission.role_id,
   };
 }
@@ -39,7 +37,6 @@ interface PermissionModalProps {
   editingPermission: PermissionResponse | null;
   permissionFormRef: RefObject<PermisionFormRef | null>;
   roles: RoleResponse[];
-  users: UserPermissionResponse[];
   onClose: () => void;
   onCloseBatch: () => void;
   onSubmitPermission: () => void;
@@ -53,7 +50,6 @@ function PermissionModal({
   editingPermission,
   permissionFormRef,
   roles,
-  users,
   onClose,
   onCloseBatch,
   onSubmitPermission,
@@ -80,9 +76,8 @@ function PermissionModal({
           <ModalBody>
             <PermissionForm
               ref={permissionFormRef}
-              showUserRoleSelects={true}
+              showRoleSelect={true}
               roles={roles}
-              users={users}
               initialValues={initialValues}
             />
           </ModalBody>
@@ -111,9 +106,8 @@ function PermissionModal({
             <PermissionForm
               ref={permissionFormRef}
               batchMode={true}
-              showUserRoleSelects={true}
+              showRoleSelect={true}
               roles={roles}
-              users={users}
             />
           </ModalBody>
           <ModalFooter>

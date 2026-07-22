@@ -12,6 +12,7 @@ interface PermissionCardProps {
   update?: boolean;
   selectable?: boolean;
   isSelected?: boolean;
+  readOnly?: boolean;
   onEdit?: (permission: PermissionResponse | IPermissionForm) => void;
   onRemove?: (permission: PermissionResponse | IPermissionForm) => void;
   onSelectChange?: (checked: boolean) => void;
@@ -24,13 +25,12 @@ function PermissionCard({
   update = false,
   selectable = false,
   isSelected = false,
+  readOnly = false,
   onEdit,
   onRemove,
   onSelectChange,
   maxW = '400px',
 }: PermissionCardProps) {
-  const userName = (permission as any).user_name as string | undefined;
-  const userEmail = (permission as any).user_email as string | undefined;
   const roleName = (permission as any).role_name as string | undefined;
   const parentName = (permission as any).parent_name as string | undefined;
   return (
@@ -70,15 +70,6 @@ function PermissionCard({
         <Text>
           <b>Relacionado: </b> {`${parentName || 'Desconhecido'}`}
         </Text>
-        {userName ? (
-          <Text
-            borderRadius={'1rem'}
-            // padding={'0.1rem 0.5rem'}
-          >
-            <b>Usuário: </b>{' '}
-            {`${userName}${userEmail ? ` (${userEmail})` : ''}`}
-          </Text>
-        ) : null}
         {roleName ? (
           <Text
             borderRadius={'1rem'}
@@ -89,33 +80,35 @@ function PermissionCard({
           </Text>
         ) : null}
       </Flex>
-      <Flex gap={'5px'}>
-        {selectable && (
-          <Checkbox
-            isChecked={isSelected}
-            size={'lg'}
-            onChange={(event) => onSelectChange?.(event.target.checked)}
-          />
-        )}
-        {!selectable && (update || create) && (
-          <IconButton
-            aria-label='edit'
-            variant={'outline'}
-            icon={<LuPen />}
-            colorScheme='yellow'
-            onClick={() => onEdit?.(permission)}
-          />
-        )}
-        {!selectable && (
-          <IconButton
-            aria-label='remove'
-            colorScheme='red'
-            variant={'outline'}
-            icon={<LuTrash />}
-            onClick={() => onRemove?.(permission)}
-          />
-        )}
-      </Flex>
+      {!readOnly && (
+        <Flex gap={'5px'}>
+          {selectable && (
+            <Checkbox
+              isChecked={isSelected}
+              size={'lg'}
+              onChange={(event) => onSelectChange?.(event.target.checked)}
+            />
+          )}
+          {!selectable && (update || create) && (
+            <IconButton
+              aria-label='edit'
+              variant={'outline'}
+              icon={<LuPen />}
+              colorScheme='yellow'
+              onClick={() => onEdit?.(permission)}
+            />
+          )}
+          {!selectable && (
+            <IconButton
+              aria-label='remove'
+              colorScheme='red'
+              variant={'outline'}
+              icon={<LuTrash />}
+              onClick={() => onRemove?.(permission)}
+            />
+          )}
+        </Flex>
+      )}
     </Flex>
   );
 }

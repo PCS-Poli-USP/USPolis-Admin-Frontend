@@ -9,7 +9,6 @@ import {
   UserPermissionResponse,
   UserResponse,
 } from '../../../models/http/responses/user.response.models';
-import { JSONResponse } from '../../../models/http/responses/common.response.models';
 
 const useUsersService = () => {
   const PREFIX = '/admin/users';
@@ -36,12 +35,6 @@ const useUsersService = () => {
     return axios.put(`${PREFIX}/${user_id}`, data);
   };
 
-  const deleteById = (
-    user_id: number,
-  ): Promise<AxiosResponse<JSONResponse>> => {
-    return axios.delete(`${PREFIX}/${user_id}`);
-  };
-
   const updateEmailNotifications = (
     receive_emails: boolean,
   ): Promise<AxiosResponse<UserResponse>> => {
@@ -55,7 +48,6 @@ const useUsersService = () => {
     list,
     listWithPermissions,
     update,
-    deleteById,
     updateEmailNotifications,
   };
 };

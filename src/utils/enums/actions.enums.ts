@@ -27,6 +27,8 @@ export type CourseAction = (typeof CourseAction)[keyof typeof CourseAction];
 
 export const BuildingAction = {
   ...BaseAction,
+  ALLOCATE: 'allocate',
+  RESERVE: 'reserve',
 } as const;
 
 export type BuildingAction =
@@ -79,7 +81,14 @@ export namespace PermissionAction {
   }
 
   export function translateBuildingAction(action: BuildingAction): string {
-    return translateBaseAction(action as BaseAction);
+    switch (action) {
+      case BuildingAction.ALLOCATE:
+        return 'Alocar';
+      case BuildingAction.RESERVE:
+        return 'Reservar';
+      default:
+        return translateBaseAction(action as BaseAction);
+    }
   }
 
   export function translate(
@@ -96,6 +105,19 @@ export namespace PermissionAction {
       default:
         return 'Desconhecido';
     }
+  }
+
+  export function describe(
+    action: PermissionAction,
+    resource: Resource,
+  ): string | undefined {
+    if (action === 'reserve') {
+      return 'Reservar/cancelar reservas, reuniões, eventos e provas; aprovar/negar solicitações';
+    }
+    if (action === BaseAction.UPDATE && resource === Resource.COURSE) {
+      return 'Também permite excluir turmas e disciplinas';
+    }
+    return undefined;
   }
 
   export function canHaveAllResources(

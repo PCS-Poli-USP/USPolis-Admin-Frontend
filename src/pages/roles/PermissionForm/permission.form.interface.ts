@@ -11,7 +11,6 @@ export interface IPermissionForm {
   resource_ids?: number[];
   resource_name?: string;
   all_resources: boolean;
-  user_id?: number;
   role_id?: number;
 }
 
@@ -141,13 +140,6 @@ export const schema = yup.object<IPermissionForm>().shape({
     }),
   resource_name: yup.string().optional(),
   all_resources: yup.boolean().required(),
-  user_id: yup
-    .number()
-    .optional()
-    .test('is-positive', 'Deve ser uma opção válida', (value) => {
-      if (value === undefined) return true; // Permite que o campo seja opcional
-      return value >= 0;
-    }),
   role_id: yup
     .number()
     .optional()
@@ -164,6 +156,5 @@ export const defaultValues: IPermissionForm = {
   resource_ids: [],
   resource_name: '',
   actions: [],
-  user_id: undefined,
   role_id: undefined,
 };

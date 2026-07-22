@@ -12,12 +12,8 @@ export interface PermissionResponse {
   parent_name?: string;
   parent_resource?: Resource;
 
-  user_id?: number;
-  user_name?: string;
-  user_email?: string;
-
-  role_id?: number;
-  role_name?: string;
+  role_id: number;
+  role_name: string;
 
   granted_by_id: number;
   granted_by: string;
