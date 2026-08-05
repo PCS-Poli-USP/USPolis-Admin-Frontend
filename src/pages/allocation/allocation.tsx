@@ -88,10 +88,10 @@ function Allocation() {
   const [classSearchValue, setClassSearchValue] = useState('');
 
   const [currentStartDate, setCurrentStartDate] = useState<string>(
-    moment().startOf('isoWeek').format('YYYY-MM-DD'),
+    moment().format('YYYY-MM-DD'),
   );
   const [currentEndDate, setCurrentEndDate] = useState<string>(
-    moment().endOf('isoWeek').format('YYYY-MM-DD'),
+    moment().format('YYYY-MM-DD'),
   );
 
   const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[0]);
