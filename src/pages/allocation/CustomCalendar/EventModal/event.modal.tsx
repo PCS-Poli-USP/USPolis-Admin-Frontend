@@ -21,11 +21,19 @@ import { EventExtendedProps } from '../../../../models/http/responses/allocation
 
 interface EventModalProps extends ModalProps {
   event?: EventApi;
+  canManage?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
 }
 
-function EventModal({ isOpen, onClose, event, onEdit, onDelete}: EventModalProps) {
+function EventModal({
+  isOpen,
+  onClose,
+  event,
+  canManage = false,
+  onEdit,
+  onDelete,
+}: EventModalProps) {
   const extendedProps: EventExtendedProps | undefined = event
     ? event?.extendedProps
     : undefined;
@@ -198,7 +206,7 @@ function EventModal({ isOpen, onClose, event, onEdit, onDelete}: EventModalProps
         </ModalBody>
 
         <ModalFooter>
-          {reservationData && (
+          {reservationData && canManage && (
               <>
                   <Button
                       colorScheme="blue"

@@ -1,5 +1,5 @@
 import { Box, Progress, useColorMode, useDisclosure } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import { EventApi, DatesSetArg, EventDropArg } from '@fullcalendar/core';
@@ -27,6 +27,8 @@ import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import useReservations from '../../../hooks/reservations/useReservations';
 import ReservationModal from '../../reservations/ReservationModal/reservation.modal';
 import Dialog from '../../../components/common/Dialog/dialog.component';
+import { appContext } from '../../../context/AppContext';
+import { canManageReservationInBuilding } from '../utils/allocation.utils';
 
 type ViewOption = {
   value: string;
@@ -78,6 +80,7 @@ function CustomCalendar({
 }: CustomCalendarProps) {
   const { registerControlFn, state } = useFeatureGuideContext();
   const { colorMode } = useColorMode();
+  const { loggedUser } = useContext(appContext);
 
   // const calendarRef = useRef<FullCalendar>(null!);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
@@ -89,9 +92,13 @@ function CustomCalendar({
     hasBuildingFilter || true,
   );
   const [isGuideMode, setIsGuideMode] = useState(false);
-  const { buildings } = useBuildings();
-  const { classrooms } = useClassrooms();
-  const { subjects, loading: loadingSubjects } = useSubjects();
+  const { buildings, getBuildings } = useBuildings(false);
+  const { classrooms, getClassrooms } = useClassrooms(false);
+  const {
+    subjects,
+    loading: loadingSubjects,
+    getSubjects,
+  } = useSubjects(false);
   const {
       deleteReservation,
       getReservation,
@@ -145,22 +152,31 @@ function CustomCalendar({
     }
   };
 
+  function canManageReservationEvent(event?: EventApi): boolean {
+    const reservation = event?.extendedProps.reservation_data;
+    if (!reservation) return false;
+    return canManageReservationInBuilding(loggedUser, reservation.building);
+  }
+
   async function handleEditReservation() {
     if (!selectedEvent) return;
     const reservation = selectedEvent.extendedProps.reservation_data;
-    if (!reservation) return;
+    if (!reservation || !canManageReservationEvent(selectedEvent)) return;
     const data = await getReservation(reservation.reservation_id);
     if (!data) return;
     setSelectedReservation(data);
     setIsUpdate(true);
     onCloseModal();
+    getBuildings();
+    getClassrooms();
+    getSubjects();
     onOpenReservationModal();
   }
 
   function handleDeleteReservation() {
     if (!selectedEvent) return;
     const reservation = selectedEvent.extendedProps.reservation_data;
-    if (!reservation) return;
+    if (!reservation || !canManageReservationEvent(selectedEvent)) return;
     setReservationToDelete(reservation.reservation_id);
     setReservationTitleToDelete(reservation.title);
     onCloseModal();
@@ -281,6 +297,7 @@ function CustomCalendar({
       isOpen={isOpenModal}
       onClose={onCloseModal}
       event={selectedEvent}
+      canManage={canManageReservationEvent(selectedEvent)}
       onEdit={handleEditReservation}
       onDelete={handleDeleteReservation}
     />
