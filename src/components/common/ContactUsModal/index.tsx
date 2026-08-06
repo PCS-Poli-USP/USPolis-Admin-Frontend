@@ -14,7 +14,7 @@ import {
   useMediaQuery,
 } from '@chakra-ui/react';
 import { ModalProps } from '../../../models/interfaces';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FeedbackContent from './FeedbackContent/feedback.content';
 import BugReportContent from './BugReportContent/bug.report.content';
 import { RadioButton } from '../form/RadioButton';
@@ -32,12 +32,14 @@ import useFeedbacks from '../../../hooks/feedbacks/useFeedbacks';
 import useBugReports from '../../../hooks/bugReports/useBugReports';
 import { CreateBugReport } from '../../../models/http/requests/bugReport.request.models';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface ContactUsModalProps extends ModalProps {}
-
-enum ViewType {
+export enum ViewType {
   FEEDBACK = 'feedback',
   BUG_REPORT = 'bug_report',
+}
+
+interface ContactUsModalProps extends ModalProps {
+  initialView?: ViewType;
+  initialBugReport?: Partial<BugReportForm>;
 }
 
 const ViewTypeTranslation = {
@@ -45,9 +47,15 @@ const ViewTypeTranslation = {
   [ViewType.FEEDBACK]: 'Sugestões/Comentários',
 };
 
-function ContactUsModal({ isOpen, onClose }: ContactUsModalProps) {
+function ContactUsModal({
+  isOpen,
+  onClose,
+  initialView,
+  initialBugReport,
+}: ContactUsModalProps) {
   const {
     isOpen: isOpenSlide,
+    onOpen: onOpenSlide,
     onClose: onCloseSlide,
     onToggle,
   } = useDisclosure();
@@ -66,6 +74,16 @@ function ContactUsModal({ isOpen, onClose }: ContactUsModalProps) {
     defaultValues: reportDefaultValues,
     resolver: yupResolver(reportSchema),
   });
+
+  useEffect(() => {
+    if (!isOpen || !initialView) return;
+    setSelectedVIew(initialView);
+    onOpenSlide();
+    if (initialView === ViewType.BUG_REPORT && initialBugReport) {
+      bugReportForm.reset({ ...reportDefaultValues, ...initialBugReport });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, initialView]);
 
   async function handleConfirm() {
     if (selectedView == ViewType.FEEDBACK) {
@@ -132,6 +150,7 @@ function ContactUsModal({ isOpen, onClose }: ContactUsModalProps) {
             >
               <RadioButton
                 name='view'
+                value={selectedView}
                 options={[
                   {
                     value: ViewType.FEEDBACK,
