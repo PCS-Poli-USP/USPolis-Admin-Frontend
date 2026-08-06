@@ -9,6 +9,7 @@ import { classNumberFromClassCode } from '../../../utils/classes/classes.formatt
 import { AllocationEnum } from '../../../utils/enums/allocation.enum';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
 import { sortScheduleResponse } from '../../../utils/schedules/schedules.sorter';
+import { timeRangesConflict } from '../../../utils/common/common.conflict';
 
 type ScheduleMap = [string, string, string, ScheduleResponseBase];
 
@@ -87,22 +88,16 @@ function insertScheduleInOccupationMap(
   schedule: ScheduleResponse,
   map: OccupationMap,
 ) {
-  const start = moment(schedule.start_time, 'HH:mm');
-  const end = moment(schedule.end_time, 'HH:mm');
   const timeRanges = Array.from(map.keys());
   timeRanges.forEach((timeRange) => {
-    const rangeStart = moment(timeRange[0], 'HH:mm');
-    const rangeEnd = moment(timeRange[1], 'HH:mm');
-    if (rangeStart.isSameOrBefore(start) && rangeEnd.isSameOrAfter(start)) {
-      map.set(timeRange, text);
-    }
-    if (rangeStart.isAfter(start) && rangeEnd.isSameOrBefore(end)) {
-      map.set(timeRange, text);
-    }
-    if (rangeStart.isBefore(end) && rangeEnd.isSameOrAfter(end)) {
-      map.set(timeRange, text);
-    }
-    if (rangeStart.isBefore(start) && rangeEnd.isAfter(end)) {
+    if (
+      timeRangesConflict(
+        timeRange[0],
+        timeRange[1],
+        schedule.start_time,
+        schedule.end_time,
+      )
+    ) {
       map.set(timeRange, text);
     }
   });
@@ -216,7 +211,8 @@ export function getReservationClassroomMap(
 ): ReservationClassroomMap {
   const map = new Map<string, ReservationResponse[]>();
   reservations.forEach((reservation) => {
-    const classroom = reservation.classroom || AllocationEnum.UNALLOCATED;
+    const classroom =
+      reservation.classroom_name || AllocationEnum.UNALLOCATED;
     const reservationList = map.get(classroom);
     if (reservationList) {
       reservationList.push(reservation);
@@ -299,7 +295,7 @@ function getScheduleMap(
   reservations.forEach((reservation) =>
     schedulesMap.push([
       reservation.building_name,
-      reservation.classroom || AllocationEnum.UNALLOCATED,
+      reservation.classroom_name || AllocationEnum.UNALLOCATED,
       `${reservation.title}`,
       reservation.schedule,
     ]),
