@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Button,
   Flex,
   Grid,
@@ -13,8 +15,9 @@ import { LuCalendarSync, LuUpload } from 'react-icons/lu';
 import TimetableCrawlModal from './TimetableCrawlModal/TimetableCrawlModal.tsx';
 import { TimetableCrawlForm } from './TimetableCrawlModal/TimetableCrawlModal.form.ts';
 import TimetableCrawlResultModal from './TimetableCrawlResultModal/TimetableCrawlResultModal.tsx';
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import useClasses from '../../hooks/classes/useClasses.ts';
+import { appContext } from '../../context/AppContext.tsx';
 import ClassStack from './ClassStack/ClassStack.tsx';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -31,6 +34,7 @@ import { CreateUserSchedule } from '../../models/http/requests/userSchedule.requ
 import { CrawlStatus } from '../../utils/enums/crawlStatus.enum.ts';
 
 function Timetable() {
+  const { backendUnavailable } = useContext(appContext);
   const [showWelcome, setShowWelcome] = useState(
     window.localStorage.getItem('timetableWelcomeSeen') !== 'true',
   );
@@ -190,6 +194,11 @@ function Timetable() {
     setShowWelcome(false);
   }
 
+  function handleOpenCrawlModal() {
+    if (backendUnavailable) return;
+    onOpen();
+  }
+
   function checkHasChanges() {
     if (!userSchedule) {
       setHasChanges(events.length > 0);
@@ -276,13 +285,22 @@ function Timetable() {
 
       {showWelcome && (
         <TimetableWelcome
-          handleImportClick={onOpen}
+          handleImportClick={handleOpenCrawlModal}
           handleManualClick={handleManualClick}
+          importDisabled={backendUnavailable}
         />
       )}
 
       {!showWelcome && (
         <>
+          {backendUnavailable && (
+            <Alert status='warning' borderRadius={'10px'} mb={'10px'}>
+              <AlertIcon />
+              Serviço de importação pelo JupiterWeb temporariamente
+              desabilitado por motivos de segurança. Tente novamente mais
+              tarde.
+            </Alert>
+          )}
           <Flex align={'center'}>
             <PageHeader
               title='Minha Grade Horária'
@@ -305,10 +323,19 @@ function Timetable() {
             </Button>
             <Button
               leftIcon={<LuCalendarSync />}
-              onClick={() => onOpen()}
-              disabled={isCrawling || loadingUserSchedule || loadingClasses}
+              onClick={handleOpenCrawlModal}
+              disabled={
+                isCrawling ||
+                loadingUserSchedule ||
+                loadingClasses ||
+                backendUnavailable
+              }
             >
-              {isCrawling ? 'Sincronizando...' : 'Sincronizar pelo JupiterWeb'}
+              {backendUnavailable
+                ? 'Serviço indisponível'
+                : isCrawling
+                  ? 'Sincronizando...'
+                  : 'Sincronizar pelo JupiterWeb'}
             </Button>
           </Flex>
           <Grid
