@@ -1,4 +1,13 @@
-import { Box, Button, Flex, Heading, Icon, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Icon,
+  Text,
+} from '@chakra-ui/react';
 import { useContext } from 'react';
 import { LuCalendarDays, LuDownload, LuSquarePen } from 'react-icons/lu';
 import { appContext } from '../../../context/AppContext';
@@ -6,11 +15,13 @@ import { appContext } from '../../../context/AppContext';
 interface TimetableWelcomeProps {
   handleImportClick: () => void;
   handleManualClick: () => void;
+  importDisabled?: boolean;
 }
 
 function TimetableWelcome({
   handleImportClick,
   handleManualClick,
+  importDisabled = false,
 }: TimetableWelcomeProps) {
   const { isMobile } = useContext(appContext);
 
@@ -77,7 +88,17 @@ function TimetableWelcome({
             Importe sua grade através do JúpiterWeb. Sua grade será
             automaticamente carregada e ficará disponível para você.
           </Text>
-          <Button mt={'10px'} onClick={handleImportClick}>
+          {importDisabled && (
+            <Alert status='warning' borderRadius={'10px'}>
+              <AlertIcon />
+              Serviço temporariamente desabilitado por motivos de segurança.
+            </Alert>
+          )}
+          <Button
+            mt={'10px'}
+            onClick={handleImportClick}
+            isDisabled={importDisabled}
+          >
             Importar do JúpiterWeb
           </Button>
         </Flex>
