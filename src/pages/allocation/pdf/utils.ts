@@ -266,6 +266,7 @@ export function getSchedulesGroupedByClassroom(
   const schedulesByClassroom: ClassroomSchedules[] = [];
   schedulesGroup.forEach((classroomMap, building) => {
     const classroomData = Array.from(classroomMap);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     classroomData.forEach((data: any) => {
       schedulesByClassroom.push([
         building,

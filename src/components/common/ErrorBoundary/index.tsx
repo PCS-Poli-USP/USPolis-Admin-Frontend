@@ -9,11 +9,14 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
-// Catches render-time exceptions anywhere in the app (e.g. reading a field
-// that doesn't exist) and replaces the crashed tree with a full "Erro" page
-// instead of leaving the user on a blank white screen. Only render-phase
-// errors are caught - errors thrown inside event handlers or async
-// callbacks (promises, setTimeout, etc) do NOT reach this boundary.
+// Catches render-time exceptions in its subtree (e.g. reading a field that
+// doesn't exist) and replaces just that subtree with the "Erro" page instead
+// of leaving the user on a blank white screen. Used both around <Outlet />
+// in EmptyPage (so header/sidebar stay mounted on page-content errors) and
+// around the whole app in main.tsx as a fallback for errors outside that
+// layout. Only render-phase errors are caught - errors thrown inside event
+// handlers or async callbacks (promises, setTimeout, etc) do NOT reach this
+// boundary.
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = { error: null };
 

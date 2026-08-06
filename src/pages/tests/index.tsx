@@ -5,9 +5,11 @@ import PageContent from '../../components/common/PageContent';
 function TestsPage() {
   const [throwError, setThrowError] = useState(false);
 
-  // Thrown during render (not inside the onClick handler) so the global
-  // ErrorBoundary in main.tsx actually catches it - error boundaries only
-  // catch errors raised while rendering, not inside event handlers.
+  // Thrown during render (not inside the onClick handler) so the
+  // ErrorBoundary around <Outlet /> in EmptyPage actually catches it -
+  // error boundaries only catch errors raised while rendering, not inside
+  // event handlers. Since that boundary sits inside the layout, the
+  // header/sidebar stay visible and only this page's content is replaced.
   if (throwError) {
     throw new Error(
       'Erro de teste disparado manualmente na página /admin/tests',
