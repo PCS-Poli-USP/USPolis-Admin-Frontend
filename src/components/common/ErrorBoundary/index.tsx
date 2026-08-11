@@ -1,4 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import PageError from '../../../pages/pageError';
 
 interface ErrorBoundaryProps {
@@ -17,7 +18,7 @@ interface ErrorBoundaryState {
 // layout. Only render-phase errors are caught - errors thrown inside event
 // handlers or async callbacks (promises, setTimeout, etc) do NOT reach this
 // boundary.
-class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundaryImpl extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   state: ErrorBoundaryState = { error: null };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
@@ -34,6 +35,16 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     }
     return this.props.children;
   }
+}
+
+// Remounts the boundary (via the pathname key) on every route change. Without
+// this, navigating away from a caught error using still-mounted UI outside
+// the boundary (e.g. the sidebar around <Outlet />) swaps the route but the
+// class instance's state.error is never cleared, so PageError keeps
+// rendering instead of the new page.
+function ErrorBoundary(props: ErrorBoundaryProps) {
+  const { pathname } = useLocation();
+  return <ErrorBoundaryImpl key={pathname}>{props.children}</ErrorBoundaryImpl>;
 }
 
 export default ErrorBoundary;
