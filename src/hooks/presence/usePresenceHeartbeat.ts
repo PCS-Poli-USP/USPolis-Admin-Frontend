@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs */
 import { useContext, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { appContext } from '../../context/AppContext';
@@ -66,7 +67,6 @@ function usePresenceHeartbeat() {
     // Connects once for the whole app session - reconnects are handled
     // internally, and page changes are pushed via the effect below instead
     // of tearing the socket down and reopening it.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
