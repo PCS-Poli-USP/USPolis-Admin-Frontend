@@ -42,7 +42,11 @@ function OnlineUsers() {
           spacing={'8px'}
         >
           <PulseDot />
-          <Text fontSize={'sm'} fontWeight={'medium'} color={'uspolis.darkBlue'}>
+          <Text
+            fontSize={'sm'}
+            fontWeight={'medium'}
+            color={'uspolis.darkBlue'}
+          >
             {`${connections.length} conectado${connections.length === 1 ? '' : 's'}`}
           </Text>
         </HStack>

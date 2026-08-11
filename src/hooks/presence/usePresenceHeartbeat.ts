@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/refs */
 import { useContext, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { appContext } from '../../context/AppContext';
@@ -18,8 +17,10 @@ function usePresenceHeartbeat() {
   const pageRef = useRef(pathname);
   const tokenRef = useRef(accessToken);
   const wsRef = useRef<WebSocket | null>(null);
-  pageRef.current = pathname;
-  tokenRef.current = accessToken;
+
+  useEffect(() => {
+    tokenRef.current = accessToken;
+  }, [accessToken]);
 
   useEffect(() => {
     let heartbeatInterval: ReturnType<typeof setInterval> | undefined;
@@ -35,9 +36,7 @@ function usePresenceHeartbeat() {
 
     function connect() {
       const base = getWsUrl('/api/online/ws');
-      const url = tokenRef.current
-        ? `${base}?token=${tokenRef.current}`
-        : base;
+      const url = tokenRef.current ? `${base}?token=${tokenRef.current}` : base;
       const ws = new WebSocket(url);
       wsRef.current = ws;
 
@@ -70,6 +69,7 @@ function usePresenceHeartbeat() {
   }, []);
 
   useEffect(() => {
+    pageRef.current = pathname;
     const ws = wsRef.current;
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ page: pathname }));
