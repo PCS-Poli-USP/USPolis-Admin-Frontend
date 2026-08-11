@@ -50,8 +50,13 @@ function Reservations() {
     listOneFull,
   } = useClassrooms();
   const { subjects, loading: loadingSubjects } = useSubjects();
-  const { loading, reservations, getReservations, deleteReservation } =
-    useReservations();
+  const {
+    loading,
+    reservations,
+    getReservations,
+    getReservation,
+    deleteReservation,
+  } = useReservations();
   const { getPendingBuildingSolicitations } = useSolicitations(false);
   const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
 
@@ -77,14 +82,16 @@ function Reservations() {
     setClassroom(cls);
   }
 
-  function handleDuplicateClick(data: ReservationResponse) {
-    setSelectedReservation(data);
+  async function handleDuplicateClick(data: ReservationResponse) {
+    const fullReservation = await getReservation(data.id);
+    setSelectedReservation(fullReservation ?? data);
     setIsUpdate(false);
     onOpenModal();
   }
 
-  function handleEditClick(data: ReservationResponse) {
-    setSelectedReservation(data);
+  async function handleEditClick(data: ReservationResponse) {
+    const fullReservation = await getReservation(data.id);
+    setSelectedReservation(fullReservation ?? data);
     setIsUpdate(true);
     onOpenModal();
   }
