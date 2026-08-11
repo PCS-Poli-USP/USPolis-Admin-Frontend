@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/static-components */
 import {
   Box,
   Button,
@@ -36,6 +37,7 @@ function ClassroomTimeGrid({
   preview,
   scheduleDetails,
   loading = false,
+  excludeScheduleId,
 }: ClassroomTimeGridProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const [showWeekends, setShowWeekends] = useState(false);
@@ -43,6 +45,10 @@ function ClassroomTimeGrid({
   function handleCloseModal() {
     onClose();
   }
+
+  // Anchor on the Monday of the current week, since Saturday/Sunday fall on
+  // a hidden weekend column (weekends are hidden by default).
+  const initialDate = moment().startOf('isoWeek').format('YYYY-MM-DD');
   const year = new Date().getFullYear(); // Obtém o ano atual
   const events: ClassroomEvent[] = preview.dates.map((date, idx) => ({
     title: classroom ? classroom.name : '',
@@ -59,6 +65,7 @@ function ClassroomTimeGrid({
   }));
   if (classroom) {
     classroom.schedules.forEach((schedule) => {
+      if (schedule.id === excludeScheduleId) return;
       if (schedule.allocated) {
         schedule.occurrences.forEach((occurrence) =>
           events.push({
@@ -158,11 +165,10 @@ function ClassroomTimeGrid({
             </Flex>
             <Skeleton isLoaded={!loading} w={'full'} h={'full'}>
               <FullCalendar
+                key={initialDate}
                 plugins={[timeGridPlugin]}
                 initialView='timeGridWeek'
-                initialDate={
-                  preview.dates.length > 0 ? preview.dates[0] : undefined
-                }
+                initialDate={initialDate}
                 locale={'pt-br'}
                 height={'auto'}
                 firstDay={1}

@@ -327,6 +327,7 @@ function SolicitationPanel({
               isOpen={isOpen}
               onClose={onClose}
               classroom={classroomFull}
+              excludeScheduleId={solicitation.reservation.schedule.id}
               preview={{
                 title: solicitation.reservation.title,
                 dates: solicitation.reservation.schedule.occurrences

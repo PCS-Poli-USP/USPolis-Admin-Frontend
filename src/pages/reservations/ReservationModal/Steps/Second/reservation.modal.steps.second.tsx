@@ -14,7 +14,7 @@ import { FormProvider } from 'react-hook-form';
 import { CheckBox, Input, SelectInput } from '../../../../../components/common';
 import { ReservationModalSecondStepProps } from './reservation.modal.steps.second.interface';
 
-import DateCalendarPicker, { useDateCalendarPicker } from '../../../../../components/common/DateCalendarPicker';
+import DateCalendarPicker from '../../../../../components/common/DateCalendarPicker';
 import { useEffect, useState } from 'react';
 import { BuildingResponse } from '../../../../../models/http/responses/building.response.models';
 import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
@@ -26,6 +26,7 @@ import {
   ClassroomWithConflictCount,
 } from '../../../../../models/http/responses/classroom.response.models';
 import useClassrooms from '../../../../../hooks/classrooms/useClassrooms';
+import useOccurrences from '../../../../../hooks/useOccurrences';
 import { sortDates } from '../../../../../utils/holidays/holidays.sorter';
 import ClassroomTimeGrid from '../../../../../components/common/ClassroomTimeGrid/classroom.time.grid';
 import { generateRecurrenceDates } from '../../../../../utils/common/common.generator';
@@ -43,6 +44,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   } = useDisclosure();
 
   const { listOneFull, getClassroomsWithConflict } = useClassrooms(false);
+  const { getScheduleFull } = useOccurrences();
 
   const [selectedBuilding, setSelectedBuilding] = useState<
     BuildingResponse | undefined
@@ -53,6 +55,10 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     ClassroomWithConflictCount[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [excludeOccurrenceIds, setExcludeOccurrenceIds] = useState<number[]>(
+    [],
+  );
+  const [excludeIdsReady, setExcludeIdsReady] = useState(false);
 
   const [datesForTimeGrid, setDatesForTimeGrid] = useState<string[]>([]);
   const [isSelecting, setIsSelecting] = useState(false);
@@ -82,12 +88,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
 
   const isExam = reservation_type === ReservationType.EXAM;
   const showWeekDay =
-  recurrence === Recurrence.WEEKLY ||
-  recurrence === Recurrence.BIWEEKLY ||
-  recurrence === Recurrence.MONTHLY;
-
-  const showMonthWeek =
+    recurrence === Recurrence.WEEKLY ||
+    recurrence === Recurrence.BIWEEKLY ||
     recurrence === Recurrence.MONTHLY;
+
+  const showMonthWeek = recurrence === Recurrence.MONTHLY;
 
   const showAgendaDates =
     recurrence === Recurrence.WEEKLY ||
@@ -116,6 +121,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
       handleSelectClassroom(classroom_id);
     }
     setDatesForTimeGrid(props.selectedDays);
+    fetchExcludeOccurrenceIds();
 
     if (reservation_type === ReservationType.EXAM) {
       setValue('recurrence', Recurrence.CUSTOM);
@@ -140,16 +146,33 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // schedule.occurrences on the reservation itself only comes populated for
+  // CUSTOM recurrence - for weekly/biweekly/monthly/daily schedules the API
+  // returns it as null, so GET /occurrences/schedule/full/:id (which always
+  // includes occurrences) is the reliable source of this schedule's own
+  // occurrence ids to exclude from the conflict check.
+  async function fetchExcludeOccurrenceIds() {
+    const reservation = props.selectedReservation;
+    if (!reservation) {
+      setExcludeOccurrenceIds([]);
+      setExcludeIdsReady(true);
+      return;
+    }
+    if (reservation.schedule.recurrence === Recurrence.CUSTOM) {
+      setExcludeOccurrenceIds(
+        reservation.schedule.occurrences?.map((o) => o.id) ?? [],
+      );
+      setExcludeIdsReady(true);
+      return;
+    }
+    const schedule = await getScheduleFull(reservation.schedule.id);
+    setExcludeOccurrenceIds(schedule?.occurrences.map((o) => o.id) ?? []);
+    setExcludeIdsReady(true);
+  }
+
   async function fetchClassroomWithConflict(dates: string[]) {
     if (selectedBuilding && start && end) {
       setIsLoading(true);
-      const ids: number[] = [];
-      if (props.selectedReservation)
-        ids.push(
-          ...(props.selectedReservation.schedule.occurrences?.map(
-            (o) => o.id || 0,
-          ) || []),
-        );
       const filteredTimes = Array(...timeMap.values()).filter(
         (val) => val[0] && val[1],
       );
@@ -163,7 +186,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
             filteredTimes && filteredTimes.length == dates.length
               ? filteredTimes
               : undefined,
-          exclude_ids: ids,
+          exclude_ids: excludeOccurrenceIds,
         },
         selectedBuilding.id,
       );
@@ -186,6 +209,11 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   ]);
 
   useEffect(() => {
+    // Wait for the reservation's own occurrence ids to finish loading first -
+    // otherwise the conflict check would fire with an empty exclude list and
+    // briefly flag the reservation's own occurrences as a conflict with
+    // itself.
+    if (!excludeIdsReady) return;
     if (datesForTimeGrid.length > 0) {
       fetchClassroomWithConflict(datesForTimeGrid);
     } else {
@@ -199,6 +227,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     props.selectedReservation,
     props.selectedDates,
     timeMap,
+    excludeOccurrenceIds,
+    excludeIdsReady,
   ]);
 
   useEffect(() => {
@@ -264,6 +294,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
         isOpen={isOpenCGrid}
         onClose={onCloseCGrid}
         classroom={selectedClassroom}
+        excludeScheduleId={props.selectedReservation?.schedule.id}
         preview={{
           title: props.selectedReservation
             ? props.selectedReservation.title
@@ -350,7 +381,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
               <SelectInput
                 label={'Sala de Aula'}
                 w={isMobile ? '360px' : '390px'}
-                disabled={!selectedBuilding || !!optional_classroom} 
+                disabled={!selectedBuilding || !!optional_classroom}
                 placeholder={
                   !selectedBuilding
                     ? 'Selecione um prédio primeiro'
@@ -466,17 +497,17 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     recurrence === Recurrence.CUSTOM &&
                     props.selectedDays.length === 0 && (
                       <Text
-                        display="block"
-                        w="100%"
+                        display='block'
+                        w='100%'
                         mt={1}
-                        color="red.500"
-                        fontSize="sm"
-                        fontWeight="bold"
+                        color='red.500'
+                        fontSize='sm'
+                        fontWeight='bold'
                       >
                         Selecione um ou mais dias no calendário ao lado
                       </Text>
-                  )}
-                  
+                    )}
+
                   <Flex
                     direction={isMobile ? 'column' : 'row'}
                     gap={'5px'}
@@ -484,7 +515,6 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     w={'full'}
                     mt={4}
                   >
-                    
                     <SelectInput
                       hidden={isExam}
                       label={'Recorrência'}
@@ -568,11 +598,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                     />
                   </HStack>
 
-                  <HStack
-                    w={'full'}
-                    mt={4}
-                    hidden={isExam || !showTimeFields}
-                  >
+                  <HStack w={'full'} mt={4} hidden={isExam || !showTimeFields}>
                     <Input
                       label={'Horário de início'}
                       name={'start_time'}

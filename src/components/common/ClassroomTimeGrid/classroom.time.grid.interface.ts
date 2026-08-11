@@ -15,6 +15,10 @@ export interface ClassroomTimeGridProps extends ModalProps {
   preview: ClassroomPreview;
   scheduleDetails: ScheduleDetails;
   loading?: boolean;
+  // Schedule already represented by `preview` (e.g. the reservation being
+  // edited) - its own occurrences are skipped from classroom.schedules so
+  // they aren't rendered twice.
+  excludeScheduleId?: number;
 }
 
 export interface ClassroomEventExtendedProps {
