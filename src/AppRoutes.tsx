@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 
 import 'moment/locale/pt-br';
 import EmptyPage from './components/common/EmptyPage';
+import PresenceHeartbeat from './components/common/PresenceHeartbeat';
 import Solicitations from './pages/solicitations/solicitations';
 import MySolicitations from './pages/mySolicitations/mySolicitations';
 import RestrictedRoute from './routes/restricted.route';
@@ -37,6 +38,7 @@ import Reports from './pages/reports';
 import Feedbacks from './pages/feedbacks';
 import ReportsPage from './pages/occupationReports/reports';
 import UserSessions from './pages/userSessions/userSessions';
+import OnlineUsers from './pages/onlineUsers/onlineUsers';
 import CoursesPage from './pages/courses/courses';
 import Curriculums from './pages/curriculums/curriculums';
 import CurriculumSubjects from './pages/curriculumSubjects/curriculumSubjects';
@@ -50,92 +52,96 @@ import TestsPage from './pages/tests';
 
 function AppRoutes() {
   return (
-    <Routes>
-      <Route path='/auth' element={<AuthPage />} />
-      <Route path='auth-callback' element={<AuthCallbackPage />} />
-      <Route path='/loading-page' element={<LoadingPage />} />
-      <Route element={<AxiosInterceptorRoute />}>
-        <Route element={<PersistLogin />}>
-          <Route
-            path='/print/classroom-calendar'
-            element={<ClassroomCalendarPrintPage />}
-          />
-          <Route path='/' element={<Navigate to='/index' />} />
-          <Route path='/index' element={<Home />} />
-          <Route path='/' element={<EmptyPage />}>
-            {/* Not found */}
-            <Route path='*' element={<Page404 />} />
+    <>
+      <PresenceHeartbeat />
+      <Routes>
+        <Route path='/auth' element={<AuthPage />} />
+        <Route path='auth-callback' element={<AuthCallbackPage />} />
+        <Route path='/loading-page' element={<LoadingPage />} />
+        <Route element={<AxiosInterceptorRoute />}>
+          <Route element={<PersistLogin />}>
+            <Route
+              path='/print/classroom-calendar'
+              element={<ClassroomCalendarPrintPage />}
+            />
+            <Route path='/' element={<Navigate to='/index' />} />
+            <Route path='/index' element={<Home />} />
+            <Route path='/' element={<EmptyPage />}>
+              {/* Not found */}
+              <Route path='*' element={<Page404 />} />
 
-            {/* Public routes */}
-            <Route path='public'>
-              <Route path='' element={<PublicHub />} />
-              <Route path='allocations' element={<Allocation />} />
-              <Route path='find-classes' element={<FindClasses />} />
-              <Route path='find-exams' element={<FindExams />} />
-            </Route>
-
-            {/* Private routes */}
-            <Route element={<PrivateRoute />}>
-              <Route path='profile' element={<Profile />} />
-              <Route path='profile/timetable' element={<Timetable />} />
-              <Route
-                path='profile/solicitations'
-                element={<MySolicitations />}
-              />
-
-              {/* Restricted routes */}
-              <Route element={<RestrictedRoute />}>
-                // Oferings subpages
-                <Route path='oferings'>
-                  <Route path='' element={<OferingsHub />} />
-                  <Route path='classrooms' element={<Classrooms />} />
-                  <Route path='subjects' element={<Subjects />} />
-                  <Route path='classes' element={<Classes />} />
-                  <Route path='calendars' element={<Calendars />} />
-                  <Route path='conflicts' element={<ConflictsPage />} />
-                  <Route path='reports' element={<ReportsPage />} />
-                </Route>
-                // Date subpages
-                <Route path='dates'>
-                  <Route path='' element={<DateHub />} />
-                </Route>
-                // Scheduling subpages
-                <Route path='scheduling'>
-                  <Route path='' element={<SchedulingHub />} />
-                  <Route path='reservations' element={<Reservations />} />
-                  <Route path='solicitations' element={<Solicitations />} />
-                </Route>
+              {/* Public routes */}
+              <Route path='public'>
+                <Route path='' element={<PublicHub />} />
+                <Route path='allocations' element={<Allocation />} />
+                <Route path='find-classes' element={<FindClasses />} />
+                <Route path='find-exams' element={<FindExams />} />
               </Route>
 
-              {/* Admin routes */}
-              <Route path='admin' element={<AdminRoute />}>
-                <Route path='' element={<AdminHub />} />
-                <Route path='users' element={<Users />} />
-                <Route path='sessions' element={<UserSessions />} />
-                <Route path='groups' element={<Groups />} />
-                <Route path='buildings' element={<Buildings />} />
-                <Route path='bug-reports' element={<Reports />} />
-                <Route path='feedbacks' element={<Feedbacks />} />
+              {/* Private routes */}
+              <Route element={<PrivateRoute />}>
+                <Route path='profile' element={<Profile />} />
+                <Route path='profile/timetable' element={<Timetable />} />
                 <Route
-                  path='institutional-events'
-                  element={<InstitutionalEvents />}
+                  path='profile/solicitations'
+                  element={<MySolicitations />}
                 />
-                <Route path='courses' element={<CoursesPage />} />
-                <Route
-                  path='courses/:courseId/curriculums'
-                  element={<Curriculums />}
-                />
-                <Route
-                  path='courses/:courseId/curriculums/:curriculumId/subjects'
-                  element={<CurriculumSubjects />}
-                />
-                <Route path='tests' element={<TestsPage />} />
+
+                {/* Restricted routes */}
+                <Route element={<RestrictedRoute />}>
+                  // Oferings subpages
+                  <Route path='oferings'>
+                    <Route path='' element={<OferingsHub />} />
+                    <Route path='classrooms' element={<Classrooms />} />
+                    <Route path='subjects' element={<Subjects />} />
+                    <Route path='classes' element={<Classes />} />
+                    <Route path='calendars' element={<Calendars />} />
+                    <Route path='conflicts' element={<ConflictsPage />} />
+                    <Route path='reports' element={<ReportsPage />} />
+                  </Route>
+                  // Date subpages
+                  <Route path='dates'>
+                    <Route path='' element={<DateHub />} />
+                  </Route>
+                  // Scheduling subpages
+                  <Route path='scheduling'>
+                    <Route path='' element={<SchedulingHub />} />
+                    <Route path='reservations' element={<Reservations />} />
+                    <Route path='solicitations' element={<Solicitations />} />
+                  </Route>
+                </Route>
+
+                {/* Admin routes */}
+                <Route path='admin' element={<AdminRoute />}>
+                  <Route path='' element={<AdminHub />} />
+                  <Route path='users' element={<Users />} />
+                  <Route path='sessions' element={<UserSessions />} />
+                  <Route path='online-users' element={<OnlineUsers />} />
+                  <Route path='groups' element={<Groups />} />
+                  <Route path='buildings' element={<Buildings />} />
+                  <Route path='bug-reports' element={<Reports />} />
+                  <Route path='feedbacks' element={<Feedbacks />} />
+                  <Route
+                    path='institutional-events'
+                    element={<InstitutionalEvents />}
+                  />
+                  <Route path='courses' element={<CoursesPage />} />
+                  <Route
+                    path='courses/:courseId/curriculums'
+                    element={<Curriculums />}
+                  />
+                  <Route
+                    path='courses/:courseId/curriculums/:curriculumId/subjects'
+                    element={<CurriculumSubjects />}
+                  />
+                  <Route path='tests' element={<TestsPage />} />
+                </Route>
               </Route>
             </Route>
           </Route>
         </Route>
-      </Route>
-    </Routes>
+      </Routes>
+    </>
   );
 }
 

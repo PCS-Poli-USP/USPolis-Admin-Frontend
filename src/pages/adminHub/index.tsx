@@ -5,7 +5,7 @@ import HubPageGrid, {
 } from '../../components/common/HubPageGrid';
 import { LiaBuilding } from 'react-icons/lia';
 import { FaRegUser } from 'react-icons/fa';
-import { MdDevices, MdEvent } from 'react-icons/md';
+import { MdDevices, MdEvent, MdOnlinePrediction } from 'react-icons/md';
 import { HiUserGroup } from 'react-icons/hi';
 import { GiGraduateCap } from 'react-icons/gi';
 import { VscFeedback, VscReport } from 'react-icons/vsc';
@@ -38,6 +38,14 @@ function AdminHub() {
       description: 'Gerencie as sessões de usuários do USPolis',
       onClick: () => {
         navigate('/admin/sessions');
+      },
+    },
+    {
+      icon: <MdOnlinePrediction size={'64px'} />,
+      title: 'Usuários Online',
+      description: 'Veja quem está online agora em tempo real',
+      onClick: () => {
+        navigate('/admin/online-users');
       },
     },
     {
