@@ -3,7 +3,7 @@ import {
   CreateReservation,
   UpdateReservation,
 } from '../../models/http/requests/reservation.request.models';
-import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
+import { ReservationResponse, ReservationFullResponse } from '../../models/http/responses/reservation.response.models';
 import { useCallback, useEffect, useState } from 'react';
 import { sortReservationsResponse } from '../../utils/reservations/reservations.sorter';
 import useReservationsService from './../API/services/useReservationsService';
@@ -62,6 +62,27 @@ const useReservations = (initialFetch = true) => {
 
       try {
         const response = await service.getById(id);
+        return response.data;
+      } catch (error) {
+        showToast(
+          'Erro',
+          'Erro ao carregar reserva',
+          'error',
+        );
+        return undefined;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [service, showToast],
+  );
+
+  const getReservationFull = useCallback(
+    async (id: number): Promise<ReservationFullResponse | undefined> => {
+      setLoading(true);
+
+      try {
+        const response = await service.getFullById(id);
         return response.data;
       } catch (error) {
         showToast(
@@ -178,6 +199,7 @@ const useReservations = (initialFetch = true) => {
     getAllReservations,
     getReservations,
     getReservation,
+    getReservationFull,
     getReservationsByBuildingName,
     createReservation,
     updateReservation,

@@ -27,6 +27,8 @@ import useClassrooms from '../../../hooks/classrooms/useClassrooms';
 import useReservations from '../../../hooks/reservations/useReservations';
 import ReservationModal from '../../reservations/ReservationModal/reservation.modal';
 import Dialog from '../../../components/common/Dialog/dialog.component';
+import useAllowedBuildings from '../../../hooks/useAllowedBuildings';
+import useReservationOccurrences from '../../../hooks/useReservationOccurrences';
 
 type ViewOption = {
   value: string;
@@ -78,7 +80,8 @@ function CustomCalendar({
 }: CustomCalendarProps) {
   const { registerControlFn, state } = useFeatureGuideContext();
   const { colorMode } = useColorMode();
-
+  const { updateOccurrences } = useReservationOccurrences();
+  const { getReservationFull } = useReservations();
   // const calendarRef = useRef<FullCalendar>(null!);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
   const [isUpdate, setIsUpdate] = useState(false);
@@ -90,6 +93,11 @@ function CustomCalendar({
   );
   const [isGuideMode, setIsGuideMode] = useState(false);
   const { buildings } = useBuildings();
+  const { allowedBuildings } = useAllowedBuildings();
+  const reservationData = selectedEvent?.extendedProps?.reservation_data;
+  const canManageReservation = !!reservationData && allowedBuildings.some(
+    (building) => building.name === reservationData.building,);
+  const [deleteMode, setDeleteMode] = useState<'reservation' | 'occurrence'>();
   const { classrooms } = useClassrooms();
   const { subjects, loading: loadingSubjects } = useSubjects();
   const {
@@ -161,18 +169,55 @@ function CustomCalendar({
     if (!selectedEvent) return;
     const reservation = selectedEvent.extendedProps.reservation_data;
     if (!reservation) return;
+    setDeleteMode('reservation');
     setReservationToDelete(reservation.reservation_id);
     setReservationTitleToDelete(reservation.title);
     onCloseModal();
     onOpenDeleteDialog();
   }
 
+  function handleDeleteOccurrence() {
+    if (!selectedEvent) return;
+
+    const reservation = selectedEvent.extendedProps.reservation_data;
+
+    if (!reservation) return;
+
+    setDeleteMode('occurrence');
+    setReservationToDelete(reservation.reservation_id);
+    setReservationTitleToDelete(reservation.title);
+
+    onCloseModal();
+    onOpenDeleteDialog();
+  }
+
   async function handleDeleteConfirm() {
     if (!reservationToDelete) return;
-    await deleteReservation(reservationToDelete);
+
+    if (deleteMode === 'reservation') {
+      await deleteReservation(reservationToDelete);
+    } else {
+      const reservation = await getReservationFull(reservationToDelete);
+
+      if (!reservation || !selectedEvent) return;
+
+      const occurrenceDate = moment(selectedEvent.start!).format('YYYY-MM-DD');
+
+      const dates = reservation.schedule.occurrences
+        .map((occurrence) => moment(occurrence.date).format('YYYY-MM-DD'))
+        .filter((date: string) => date !== occurrenceDate);
+
+      await updateOccurrences(reservationToDelete, {
+        dates,
+      });
+    }
+
     await update(start, end);
+
     setReservationToDelete(undefined);
     setReservationTitleToDelete(undefined);
+    setDeleteMode(undefined);
+
     onCloseDeleteDialog();
   }
 
@@ -278,12 +323,14 @@ function CustomCalendar({
         }}
       />
       <EventModal
-      isOpen={isOpenModal}
-      onClose={onCloseModal}
-      event={selectedEvent}
-      onEdit={handleEditReservation}
-      onDelete={handleDeleteReservation}
-    />
+        isOpen={isOpenModal}
+        onClose={onCloseModal}
+        event={selectedEvent}
+        canManage={canManageReservation}
+        onEdit={handleEditReservation}
+        onDeleteReservation={handleDeleteReservation}
+        onDeleteOccurrence={handleDeleteOccurrence}
+      />
     <ReservationModal
       isOpen={isOpenReservationModal}
       onClose={() => {
@@ -303,10 +350,16 @@ function CustomCalendar({
     <Dialog
       isOpen={isOpenDeleteDialog}
       onClose={() => {
-          onCloseDeleteDialog();
-          setReservationToDelete(undefined);
-      }}
-      title={`Excluir reserva ${reservationTitleToDelete ?? ''}`}
+        onCloseDeleteDialog();
+        setReservationToDelete(undefined);
+        setReservationTitleToDelete(undefined);
+        setDeleteMode(undefined);
+    }}
+      title={
+        deleteMode === 'occurrence'
+          ? `Excluir ocorrência de ${reservationTitleToDelete ?? ''}`
+          : `Excluir reserva ${reservationTitleToDelete ?? ''}`
+      }
       warningText="Essa ação é irreversível!"
       onConfirm={handleDeleteConfirm}
     />

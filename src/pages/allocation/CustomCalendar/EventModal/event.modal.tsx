@@ -11,6 +11,10 @@ import {
   Box,
   useColorMode,
   Button,
+  MenuButton,
+  Menu,
+  MenuItem,
+  MenuList,
 } from '@chakra-ui/react';
 import { ModalProps } from '../../../../models/interfaces';
 import { EventApi } from '@fullcalendar/core';
@@ -22,10 +26,12 @@ import { EventExtendedProps } from '../../../../models/http/responses/allocation
 interface EventModalProps extends ModalProps {
   event?: EventApi;
   onEdit?: () => void;
-  onDelete?: () => void;
+  onDeleteReservation?: () => void;
+  onDeleteOccurrence?: () => void;
+  canManage?: boolean;
 }
 
-function EventModal({ isOpen, onClose, event, onEdit, onDelete}: EventModalProps) {
+function EventModal({ isOpen, onClose, event, onEdit, onDeleteReservation, onDeleteOccurrence, canManage}: EventModalProps) {
   const extendedProps: EventExtendedProps | undefined = event
     ? event?.extendedProps
     : undefined;
@@ -198,7 +204,7 @@ function EventModal({ isOpen, onClose, event, onEdit, onDelete}: EventModalProps
         </ModalBody>
 
         <ModalFooter>
-          {reservationData && (
+          {reservationData && (canManage && (
               <>
                   <Button
                       colorScheme="blue"
@@ -208,13 +214,24 @@ function EventModal({ isOpen, onClose, event, onEdit, onDelete}: EventModalProps
                       Editar
                   </Button>
 
-                  <Button
-                      colorScheme="red"
-                      onClick={onDelete}
-                  >
-                      Excluir
-                  </Button>
+                  <Menu>
+                    <MenuButton
+                        as={Button}
+                        colorScheme="red"
+                    >
+                        Excluir
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem onClick={onDeleteOccurrence}>
+                            Remover apenas esta ocorrência
+                        </MenuItem>
+                        <MenuItem onClick={onDeleteReservation}>
+                            Remover toda a reserva
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
               </>
+            )
           )}
       </ModalFooter>
       </ModalContent>

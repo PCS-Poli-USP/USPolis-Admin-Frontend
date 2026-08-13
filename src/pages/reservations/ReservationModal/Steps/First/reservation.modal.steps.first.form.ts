@@ -33,10 +33,16 @@ export const formFields = {
           if (is_solicitation && !value) return false;
           return true;
         },
-      ),
-    defaultValue: undefined,
-  },
-  title: {
+      )
+      .when('is_solicitation', {
+        is: true,
+        then: schema =>
+            schema.required('Campo obrigatório'),
+        otherwise: schema => schema.strip(),
+      }),
+      defaultValue: undefined,
+    },
+    title: {
     validator: yup
       .string()
       .required('Campo obrigatório')

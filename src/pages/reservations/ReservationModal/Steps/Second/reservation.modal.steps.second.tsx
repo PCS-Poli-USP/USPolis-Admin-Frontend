@@ -15,7 +15,7 @@ import { CheckBox, Input, SelectInput } from '../../../../../components/common';
 import { ReservationModalSecondStepProps } from './reservation.modal.steps.second.interface';
 
 import DateCalendarPicker, { useDateCalendarPicker } from '../../../../../components/common/DateCalendarPicker';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BuildingResponse } from '../../../../../models/http/responses/building.response.models';
 import { Recurrence } from '../../../../../utils/enums/recurrence.enum';
 import { WeekDay } from '../../../../../utils/enums/weekDays.enum';
@@ -53,6 +53,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     ClassroomWithConflictCount[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
+  const previousBuildingId = useRef<number | undefined>(undefined);
 
   const [datesForTimeGrid, setDatesForTimeGrid] = useState<string[]>([]);
   const [isSelecting, setIsSelecting] = useState(false);
@@ -79,6 +80,27 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   const optional_classroom = watch('optional_classroom');
   const required_classroom = watch('required_classroom');
   const classroom_id = watch('classroom_id');
+  const building_id = watch('building_id');
+
+  useEffect(() => {
+    const id = Number(building_id);
+
+    const building = props.buildings.find(
+      (building) => building.id === id,
+    );
+
+    setSelectedBuilding(building);
+    if (
+      previousBuildingId.current !== undefined &&
+      previousBuildingId.current !== id
+    ) {
+      setSelectedClassroom(undefined);
+      setValue('classroom_id', undefined);
+      setConflictedClassrooms([]);
+    }
+
+    previousBuildingId.current = id;
+  }, [building_id, props.buildings, setValue]);
 
   const isExam = reservation_type === ReservationType.EXAM;
   const showWeekDay =
@@ -104,16 +126,17 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
 
   useEffect(() => {
     const { getValues } = props.form;
-    const building_id = Number(getValues('building_id'));
-    if (building_id > 0) {
-      setSelectedBuilding(
-        props.buildings.find((building) => building.id === building_id),
-      );
-    }
+    const buildingId = Number(getValues('building_id'));
+    const classroomId = Number(getValues('classroom_id'));
 
-    const classroom_id = Number(getValues('classroom_id'));
-    if (classroom_id > 0) {
-      handleSelectClassroom(classroom_id);
+    if (buildingId > 0) {
+      const building = props.buildings.find(
+        (building) => building.id === buildingId,
+      );
+      setSelectedBuilding(building);
+    }
+    if (classroomId > 0) {
+      handleSelectClassroom(classroomId);
     }
     setDatesForTimeGrid(props.selectedDays);
 
@@ -186,7 +209,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   ]);
 
   useEffect(() => {
-    if (datesForTimeGrid.length > 0) {
+    if (datesForTimeGrid.length > 0 && selectedBuilding) {
       fetchClassroomWithConflict(datesForTimeGrid);
     } else {
       setConflictedClassrooms([]);
@@ -196,6 +219,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
     datesForTimeGrid,
     start,
     end,
+    selectedBuilding,
     props.selectedReservation,
     props.selectedDates,
     timeMap,
@@ -316,15 +340,8 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
                   value: building.id,
                   label: building.name,
                 }))}
-                onChange={(event) => {
+                onChange={() => {
                   props.focusMobile.markIgnoreNextBlur();
-                  if (event) {
-                    setSelectedBuilding(
-                      props.buildings.find(
-                        (building) => building.id === Number(event.value),
-                      ),
-                    );
-                  } else setSelectedBuilding(undefined);
                 }}
                 onFocus={(el) =>
                   props.focusMobile.onFocusInput(el, props.container)
