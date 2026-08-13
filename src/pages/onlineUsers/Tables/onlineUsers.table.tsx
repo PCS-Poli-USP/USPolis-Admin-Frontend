@@ -1,9 +1,12 @@
 import { Box, HStack, Text } from '@chakra-ui/react';
 import { ColumnDef } from '@tanstack/react-table';
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
+import 'moment/locale/pt-br';
 import { OnlineConnection } from '../../../models/http/responses/onlineConnection.response.models';
 import { FilterString } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 import PulseDot from '../PulseDot';
+
+moment.locale('pt-br');
 
 export const getOnlineUsersColumns = (): ColumnDef<OnlineConnection>[] => [
   {
@@ -49,6 +52,9 @@ export const getOnlineUsersColumns = (): ColumnDef<OnlineConnection>[] => [
   {
     id: 'status',
     header: 'Status',
+    meta: {
+      isCenter: true,
+    },
     cell: () => (
       <HStack
         justify={'center'}
@@ -61,7 +67,6 @@ export const getOnlineUsersColumns = (): ColumnDef<OnlineConnection>[] => [
         py={'3px'}
         borderRadius={'12px'}
         w={'fit-content'}
-        mx={'auto'}
       >
         <PulseDot size={'6px'} />
         <Text>AO VIVO</Text>

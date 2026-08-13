@@ -24,7 +24,7 @@ function OnlineUsers() {
           <Text
             fontSize={isMobile ? '2xl' : '4xl'}
             fontWeight={'bold'}
-            color={'uspolis.black'}
+            color={'uspolis.blue'}
           >
             Usuários online
           </Text>

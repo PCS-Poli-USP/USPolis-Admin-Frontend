@@ -1,7 +1,10 @@
 import { Box, Flex, Text, VStack } from '@chakra-ui/react';
-import moment from 'moment';
+import moment from 'moment/min/moment-with-locales';
+import 'moment/locale/pt-br';
 import { OnlineConnection } from '../../../models/http/responses/onlineConnection.response.models';
 import PulseDot from '../PulseDot';
+
+moment.locale('pt-br');
 
 interface OnlineUsersStackProps {
   connections: OnlineConnection[];

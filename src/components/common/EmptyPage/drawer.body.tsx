@@ -36,6 +36,7 @@ import {
   MdAddChart,
   MdDevices,
   MdEvent,
+  MdOnlinePrediction,
   MdOutlinePendingActions,
 } from 'react-icons/md';
 import { LuCalendarDays } from 'react-icons/lu';
@@ -286,6 +287,14 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   replace_location={false}
                   onClose={onClose}
                   highlighted={currentPath === '/admin/sessions'}
+                />
+                <DrawerButton
+                  icon={<MdOnlinePrediction />}
+                  to='/admin/online-users'
+                  text='Usuários Online'
+                  replace_location={false}
+                  onClose={onClose}
+                  highlighted={currentPath === '/admin/online-users'}
                 />
                 <DrawerButton
                   icon={<HiUserGroup />}
