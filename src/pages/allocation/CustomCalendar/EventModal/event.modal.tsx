@@ -213,34 +213,27 @@ function EventModal({
 
         <ModalFooter>
           {reservationData && canManage && (
-              <>
-                  <Button
-                      colorScheme="blue"
-                      mr={3}
-                      onClick={onEdit}
-                  >
-                      Editar
-                  </Button>
+            <>
+              <Button colorScheme='blue' mr={3} onClick={onEdit}>
+                Editar
+              </Button>
 
-                  <Menu>
-                    <MenuButton
-                        as={Button}
-                        colorScheme="red"
-                    >
-                        Excluir
-                    </MenuButton>
-                    <MenuList>
-                        <MenuItem onClick={onDeleteOccurrence}>
-                            Remover apenas esta ocorrência
-                        </MenuItem>
-                        <MenuItem onClick={onDeleteReservation}>
-                            Remover toda a reserva
-                        </MenuItem>
-                    </MenuList>
-                </Menu>
-              </>
+              <Menu>
+                <MenuButton as={Button} colorScheme='red'>
+                  Excluir
+                </MenuButton>
+                <MenuList>
+                  <MenuItem onClick={onDeleteOccurrence}>
+                    Remover apenas esta ocorrência
+                  </MenuItem>
+                  <MenuItem onClick={onDeleteReservation}>
+                    Remover toda a reserva
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </>
           )}
-      </ModalFooter>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );

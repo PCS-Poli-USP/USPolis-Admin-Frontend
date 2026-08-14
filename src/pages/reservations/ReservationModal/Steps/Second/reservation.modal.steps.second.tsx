@@ -91,9 +91,7 @@ function ReservationModalSecondStep(props: ReservationModalSecondStepProps) {
   useEffect(() => {
     const id = Number(building_id);
 
-    const building = props.buildings.find(
-      (building) => building.id === id,
-    );
+    const building = props.buildings.find((building) => building.id === id);
 
     setSelectedBuilding(building);
     if (
