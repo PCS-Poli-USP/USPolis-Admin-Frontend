@@ -11,6 +11,10 @@ import {
   Box,
   useColorMode,
   Button,
+  MenuButton,
+  Menu,
+  MenuItem,
+  MenuList,
 } from '@chakra-ui/react';
 import { ModalProps } from '../../../../models/interfaces';
 import { EventApi } from '@fullcalendar/core';
@@ -23,7 +27,8 @@ interface EventModalProps extends ModalProps {
   event?: EventApi;
   canManage?: boolean;
   onEdit?: () => void;
-  onDelete?: () => void;
+  onDeleteReservation?: () => void;
+  onDeleteOccurrence?: () => void;
 }
 
 function EventModal({
@@ -32,7 +37,8 @@ function EventModal({
   event,
   canManage = false,
   onEdit,
-  onDelete,
+  onDeleteReservation,
+  onDeleteOccurrence,
 }: EventModalProps) {
   const extendedProps: EventExtendedProps | undefined = event
     ? event?.extendedProps
@@ -216,12 +222,22 @@ function EventModal({
                       Editar
                   </Button>
 
-                  <Button
-                      colorScheme="red"
-                      onClick={onDelete}
-                  >
-                      Excluir
-                  </Button>
+                  <Menu>
+                    <MenuButton
+                        as={Button}
+                        colorScheme="red"
+                    >
+                        Excluir
+                    </MenuButton>
+                    <MenuList>
+                        <MenuItem onClick={onDeleteOccurrence}>
+                            Remover apenas esta ocorrência
+                        </MenuItem>
+                        <MenuItem onClick={onDeleteReservation}>
+                            Remover toda a reserva
+                        </MenuItem>
+                    </MenuList>
+                </Menu>
               </>
           )}
       </ModalFooter>

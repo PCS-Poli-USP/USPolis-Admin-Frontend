@@ -43,7 +43,13 @@ export const secondFormFields = {
           if (is_solicitation && value == undefined) return false;
           return true;
         },
-      ),
+      )
+      .when('is_solicitation', {
+        is: true,
+        then: schema =>
+            schema.required('Campo obrigatório'),
+        otherwise: schema => schema.strip(),
+      }),
     defaultValue: false,
   },
   classroom_id: {
@@ -112,8 +118,14 @@ export const secondFormFields = {
           if (!!optional_classroom && !!value) return false;
           return true;
         },
-      ),
-    defaultValue: false,
+      )
+      .when('is_solicitation', {
+        is: true,
+        then: schema =>
+            schema.required('Campo obrigatório'),
+        otherwise: schema => schema.strip(),
+      }),
+      defaultValue: false,
   },
   start_time: {
     validator: yup

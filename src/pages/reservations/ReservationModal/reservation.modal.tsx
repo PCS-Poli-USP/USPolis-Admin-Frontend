@@ -389,7 +389,7 @@ function ReservationModal(props: ReservationModalProps) {
           : undefined,
 
         optional_classroom: props.isSolicitation
-          ? !(props.selectedSolicitation?.required_classroom ?? false)
+          ? !props.selectedReservation.classroom_id
           : undefined,
 
         start_time: props.selectedReservation.schedule.start_time,

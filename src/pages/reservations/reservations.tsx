@@ -15,6 +15,7 @@ import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import useBuildings from '../../hooks/useBuildings';
 import useReservations from '../../hooks/reservations/useReservations';
 import ReservationModal from './ReservationModal/reservation.modal';
+import ReservationOccurrencesModal from './ReservationOccurrencesModal';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import PageContent from '../../components/common/PageContent';
 import useSolicitations from '../../hooks/solicitations/useSolicitations';
@@ -41,6 +42,11 @@ function Reservations() {
     onClose: onCloseGrid,
     onOpen: onOpenGrid,
     isOpen: isOpenGrid,
+  } = useDisclosure();
+  const {
+    onClose: onCloseOccurrencesModal,
+    onOpen: onOpenOccurrencesModal,
+    isOpen: isOpenOccurrencesModal,
   } = useDisclosure();
 
   const { buildings } = useBuildings();
@@ -71,6 +77,7 @@ function Reservations() {
     handleDuplicateClick: handleDuplicateClick,
     handleEditClick: handleEditClick,
     handleDeleteClick: handleDeleteClick,
+    handleEditOccurrencesClick: handleEditOccurrencesClick,
     darkMode: colorMode === 'dark',
   });
 
@@ -99,6 +106,11 @@ function Reservations() {
   function handleDeleteClick(data: ReservationResponse) {
     setSelectedReservation(data);
     onOpenDialog();
+  }
+
+  function handleEditOccurrencesClick(data: ReservationResponse) {
+    setSelectedReservation(data);
+    onOpenOccurrencesModal();
   }
 
   function handleRegisterClick() {
@@ -165,6 +177,17 @@ function Reservations() {
         subjects={subjects}
         loading={loadingSubjects}
       />
+      {selectedReservation && (
+        <ReservationOccurrencesModal
+          selectedReservation={selectedReservation}
+          isOpen={isOpenOccurrencesModal}
+          refetch={() => getReservations()}
+          onClose={() => {
+            onCloseOccurrencesModal();
+            setSelectedReservation(undefined);
+          }}
+        />
+      )}
       <DataTable
         loading={loading}
         data={reservations}
