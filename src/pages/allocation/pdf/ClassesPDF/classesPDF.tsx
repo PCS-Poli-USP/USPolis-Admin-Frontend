@@ -30,6 +30,9 @@ const ClassesPDF = ({ classes }: ClassesPDFProps) => {
               <View style={styles.tableColClass}>
                 <Text style={styles.tableCellHeader}>Turma</Text>
               </View>
+              <View style={styles.tableColBuilding}>
+                <Text style={styles.tableCellHeader}>Prédio</Text>
+              </View>
               <View style={styles.tableColClassroom}>
                 <Text style={styles.tableCellHeader}>Sala</Text>
               </View>
@@ -46,6 +49,15 @@ const ClassesPDF = ({ classes }: ClassesPDFProps) => {
                   <Text style={styles.tableCell}>
                     {classNumberFromClassCode(cl.code)}
                   </Text>
+                </View>
+                <View style={styles.tableColBuilding}>
+                  {cl.schedules.map((schedule, index) => (
+                    <Text style={styles.tableCell} key={index}>
+                      {schedule.building
+                        ? schedule.building
+                        : AllocationEnum.UNALLOCATED}
+                    </Text>
+                  ))}
                 </View>
                 <View style={styles.tableColClassroom}>
                   {cl.schedules.map((schedule, index) => (

@@ -614,6 +614,13 @@ function Allocation() {
                 sx={{
                   width: '240px',
                   height: '290px',
+                  // YearCalendar hardcodes its own width to MUI's dialog
+                  // width (320px) regardless of the parent's sx, which
+                  // overflows this 240px box and gets clipped by the
+                  // Collapse wrapper - force it to size to its container.
+                  '& .MuiYearCalendar-root': {
+                    width: '100%',
+                  },
                 }}
                 value={moment(currentStartDate)}
                 onChange={(val: Moment) => {

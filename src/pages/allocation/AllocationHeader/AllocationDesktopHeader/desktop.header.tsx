@@ -96,6 +96,7 @@ function AllocationDesktopHeader({
               <MenuItem
                 as={Button}
                 bgColor={'uspolis.white'}
+                _hover={{ color: 'uspolis.white' }}
                 justifyContent={'flex-start'}
                 onClick={onOpenClassesPDF}
                 leftIcon={<TbReportAnalytics />}
@@ -106,6 +107,7 @@ function AllocationDesktopHeader({
               <MenuItem
                 as={Button}
                 bgColor={'uspolis.white'}
+                _hover={{ color: 'uspolis.white' }}
                 justifyContent={'flex-start'}
                 onClick={onOpenClassroomsPDF}
                 leftIcon={<BsCalendar3 />}
@@ -124,6 +126,7 @@ function AllocationDesktopHeader({
                 as={Button}
                 justifyContent={'flex-start'}
                 bgColor={'uspolis.white'}
+                _hover={{ color: 'uspolis.white' }}
                 onClick={onOpenSubjectReport}
                 leftIcon={<FaHandPointer />}
               >
@@ -137,6 +140,7 @@ function AllocationDesktopHeader({
                 as={Button}
                 justifyContent={'flex-start'}
                 bgColor={'uspolis.white'}
+                _hover={{ color: 'uspolis.white' }}
                 onClick={onOpenEmptyClassroomsReport}
                 leftIcon={<MdCalendarToday />}
               >
