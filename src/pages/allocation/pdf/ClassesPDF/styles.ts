@@ -43,8 +43,15 @@ export const classStyles = StyleSheet.create({
     borderLeftWidth: 0,
     borderTopWidth: 0,
   },
+  tableColBuilding: {
+    width: '15%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+  },
   tableColClassroom: {
-    width: '20%',
+    width: '15%',
     borderStyle: 'solid',
     borderWidth: 1,
     borderLeftWidth: 0,
@@ -65,7 +72,7 @@ export const classStyles = StyleSheet.create({
     borderTopWidth: 0,
   },
   tableColProfessor: {
-    width: '40%',
+    width: '30%',
     borderStyle: 'solid',
     borderWidth: 1,
     borderLeftWidth: 0,
