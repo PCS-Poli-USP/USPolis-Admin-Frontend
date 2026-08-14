@@ -192,7 +192,7 @@ function CustomCalendar({
 
     const reservation = selectedEvent.extendedProps.reservation_data;
 
-    if (!reservation) return;
+    if (!reservation || !canManageReservationEvent(selectedEvent)) return;
 
     setDeleteMode('occurrence');
     setReservationToDelete(reservation.reservation_id);
@@ -203,7 +203,7 @@ function CustomCalendar({
   }
 
   async function handleDeleteConfirm() {
-    if (!reservationToDelete) return;
+    if (!reservationToDelete || !deleteMode) return;
 
     if (deleteMode === 'reservation') {
       await deleteReservation(reservationToDelete);
