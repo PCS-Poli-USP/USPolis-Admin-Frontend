@@ -85,6 +85,10 @@ const ClassesPDF = ({ classes }: ClassesPDFProps) => {
               </View>
             ))}
           </View>
+          <Text style={styles.footer} fixed>
+            Feito por <Text style={styles.footerBrand}>USPolis</Text> ·
+            uspolis.com.br
+          </Text>
         </Page>
       ))}
     </Document>

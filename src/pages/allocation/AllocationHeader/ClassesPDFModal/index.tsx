@@ -201,6 +201,9 @@ function ClassesPDFModal({ isOpen, onClose, buildings }: ClassesPDFModalProps) {
                 <Box
                   bg={'uspolis.white'}
                   w={'360px'}
+                  sx={{ aspectRatio: '595 / 842' }}
+                  display={'flex'}
+                  flexDirection={'column'}
                   boxShadow={'0 1px 6px rgba(0,0,0,0.15)'}
                   borderRadius={'2px'}
                   p={'20px'}
@@ -267,6 +270,23 @@ function ClassesPDFModal({ isOpen, onClose, buildings }: ClassesPDFModalProps) {
                       </>
                     ))}
                   </Grid>
+                  <Text
+                    mt={'auto'}
+                    pt={'10px'}
+                    textAlign={'center'}
+                    fontSize={'7px'}
+                    color={'uspolis.lightGray'}
+                  >
+                    Feito por{' '}
+                    <Text
+                      as={'span'}
+                      color={'uspolis.blue'}
+                      fontWeight={'bold'}
+                    >
+                      USPolis
+                    </Text>{' '}
+                    · uspolis.com.br
+                  </Text>
                 </Box>
               ) : (
                 <Text color={'uspolis.gray'} mt={'40px'}>

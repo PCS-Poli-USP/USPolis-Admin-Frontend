@@ -88,4 +88,17 @@ export const classStyles = StyleSheet.create({
     fontSize: 10,
     paddingVertical: 12,
   },
+  footer: {
+    position: 'absolute',
+    bottom: 16,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    fontSize: 8,
+    color: '#a5a4a8',
+  },
+  footerBrand: {
+    color: '#408080',
+    fontWeight: 'bold',
+  },
 });
