@@ -47,6 +47,7 @@ import PublicHub from './pages/publicHub';
 import DateHub from './pages/dateHub';
 import SchedulingHub from './pages/schedulingHub';
 import TestsPage from './pages/tests';
+import ServerDocs from './pages/serverDocs';
 
 function AppRoutes() {
   return (
@@ -130,6 +131,7 @@ function AppRoutes() {
                   element={<CurriculumSubjects />}
                 />
                 <Route path='tests' element={<TestsPage />} />
+                <Route path='server-docs' element={<ServerDocs />} />
               </Route>
             </Route>
           </Route>

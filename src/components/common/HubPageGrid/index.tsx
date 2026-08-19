@@ -8,6 +8,7 @@ export interface HubPageGridItem {
   pageCount?: number;
   disabled?: boolean;
   onClick: () => void;
+  borderColor?: string;
 }
 
 export interface HubPageGridProps {

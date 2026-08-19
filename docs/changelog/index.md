@@ -6,6 +6,55 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 ## 2026
 
+### Documentação interna do servidor movida para área administrativa - 18/08/2026
+
+<span style="color: green">FEATURE</span>
+
+PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+
+**Descrição:**
+
+- Nova página `/admin/server-docs`, restrita a administradores, com a documentação de infraestrutura (arquitetura, arquivos do servidor, deploy e CI/CD), incluindo árvores de diretório colapsáveis com botão de copiar caminho
+- Remoção da seção "Servidor" da documentação pública, que continha informações sensíveis do servidor de produção (caminhos de arquivos, serviços, segredos de deploy)
+- Novas páginas de documentação técnica sobre a organização do código do Backend e do Frontend
+
+### Pré-visualização de PDF de alocação de disciplinas - 13/08/2026
+
+<span style="color: green">FEATURE</span>, <span style="color: #408080">IMPROVEMENT</span>
+
+PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+
+**Descrição:**
+
+- O modal de PDF de "Alocação das Disciplinas" agora mostra uma pré-visualização ao vivo do conteúdo, com navegação entre as páginas
+- Nova coluna "Prédio" na tabela de alocação de disciplinas do PDF
+- Rodapé com a marca do USPolis adicionado ao PDF e à pré-visualização
+- Correção de contraste no menu de download de PDFs (texto ficava ilegível ao passar o mouse)
+- Ajustes de layout no modal de PDF (largura, campos de data que ficavam cortados)
+
+### Correção de conflito de horário ao editar reserva - 13/08/2026
+
+<span style="color: orange">BUGFIX</span>, <span style="color: #408080">IMPROVEMENT</span>
+
+PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+
+**Descrição:**
+
+- Corrigido bug onde editar uma reserva já alocada mostrava um conflito de horário com ela mesma
+- Calendário de disponibilidade de sala não duplica mais os eventos da própria reserva sendo editada, e agora abre sempre na semana atual
+- Datas e horários solicitados agora aparecem como cartões agrupados por mês (com o dia da semana em destaque) no calendário de disponibilidade, em vez de uma única linha de texto
+- Correção do calendário de seleção de data na tela de Alocação, que cortava os anos ímpares ao abrir a seleção de ano
+
+### Persistência de sessão entre abas do navegador - 13/08/2026
+
+<span style="color: orange">BUGFIX</span>
+
+PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+
+**Descrição:**
+
+- Corrigido bug onde abrir uma nova aba do navegador (já logado) pedia login novamente, mesmo com uma sessão válida
+
 ### Correções na alocação, conflitos de horário e importação da grade - XX/XX/2026
 
 <span style="color: orange">BUGFIX</span>

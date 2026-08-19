@@ -1,4 +1,5 @@
 import { Flex, Heading, Text } from '@chakra-ui/react';
+import { LockIcon } from '@chakra-ui/icons';
 import PageContent from '../../components/common/PageContent';
 import HubPageGrid, {
   HubPageGridItem,
@@ -86,6 +87,16 @@ function AdminHub() {
       description: 'Ferramentas para testar comportamentos do sistema',
       onClick: () => {
         navigate('/admin/tests');
+      },
+    },
+    {
+      icon: <LockIcon boxSize={'56px'} color={'uspolis.red'} />,
+      title: 'Infraestrutura & Servidor',
+      description:
+        'Arquitetura, ambiente, arquivos do servidor e deploy — acesso restrito',
+      borderColor: '#E53E3E',
+      onClick: () => {
+        navigate('/admin/server-docs');
       },
     },
   ];
