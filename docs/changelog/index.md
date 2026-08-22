@@ -10,7 +10,7 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 <span style="color: green">FEATURE</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
@@ -22,7 +22,7 @@ PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
 
 <span style="color: green">FEATURE</span>, <span style="color: #408080">IMPROVEMENT</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
@@ -36,7 +36,7 @@ PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
 
 <span style="color: orange">BUGFIX</span>, <span style="color: #408080">IMPROVEMENT</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
@@ -49,17 +49,17 @@ PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
 
 <span style="color: orange">BUGFIX</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
 - Corrigido bug onde abrir uma nova aba do navegador (já logado) pedia login novamente, mesmo com uma sessão válida
 
-### Correções na alocação, conflitos de horário e importação da grade - XX/XX/2026
+### Correções na alocação, conflitos de horário e importação da grade - 22/08/2026
 
 <span style="color: orange">BUGFIX</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
@@ -68,11 +68,11 @@ PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
 - Correção na verificação de conflito de horário das salas (evita falsos conflitos/negativos ao comparar horários que apenas se tocam nas bordas)
 - Detecção de indisponibilidade do backend (ex: certificado expirado) na tela de Grade Horária, desabilitando temporariamente a importação pelo JúpiterWeb com um aviso ao usuário, ao invés de falhar silenciosamente
 
-### Página de erro e tratamento de falhas inesperadas - XX/XX/2026
+### Página de erro e tratamento de falhas inesperadas - 22/08/2026
 
 <span style="color: green">FEATURE</span>, <span style="color: #408080">IMPROVEMENT</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
@@ -81,11 +81,11 @@ PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
 - O `ErrorBoundary` agora envolve apenas a área de conteúdo das páginas (dentro do layout principal), então um erro numa página mantém o cabeçalho e o menu lateral visíveis, ao invés de substituir a tela inteira
 - Adição de uma página de testes (`/admin/tests`) para disparar erros manualmente e validar o comportamento da página de erro
 
-### Fluxo de edição e exclusão de reservas pelo calendário - XX/XX/2026
+### Fluxo de edição e exclusão de reservas pelo calendário - 22/08/2026
 
 <span style="color: #408080">IMPROVEMENT</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
@@ -93,31 +93,31 @@ PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
 - Possibilidade de atualizar uma solicitação já existente
 - Correção no campo numérico dos formulários (ex: capacidade de sala), que não atualizava corretamente ao trocar de registro selecionado
 
-### Reorganização da rota de alocação pública - XX/XX/2026
+### Reorganização da rota de alocação pública - 22/08/2026
 
 <span style="color: #408080">IMPROVEMENT</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
 - Página de alocação pública movida para `/public/allocations`, com atualização dos links no menu lateral, no tour guiado e no cabeçalho mobile
 
-### Correção de links na documentação de Perfil - XX/XX/2026
+### Correção de links na documentação de Perfil - 22/08/2026
 
 <span style="color: orange">BUGFIX</span>, <span style="color: #347aeb">DOCS</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
 - Correção de link quebrado e de formatação na página de documentação de Perfil
 
-### Melhorias em Cursos e Grades Curriculares - XX/XX/2026
+### Melhorias em Cursos e Grades Curriculares - 22/08/2026
 
 <span style="color: #408080">IMPROVEMENT</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
@@ -125,44 +125,44 @@ PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
 - Mensagens de confirmação ao criar ou atualizar um curso
 - Correções de detalhes nas páginas de grades curriculares e disciplinas da grade
 
-### Revamp do relatório de ocupação - XX/XX/2026
+### Revamp do relatório de ocupação - 22/08/2026
 
 <span style="color: #408080">IMPROVEMENT</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
 - Reformulação visual da página de Relatórios de Ocupação, com novo filtro de período
 - Correção na atualização dos dados exibidos após editar uma alocação pelo relatório
 
-### Cards de turmas e provas na busca pública - XX/XX/2026
+### Cards de turmas e provas na busca pública - 22/08/2026
 
 <span style="color: green">FEATURE</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
 - Novo layout em cards (com efeito hover) para exibir turmas na página "Buscar Turmas"
 - Novo layout em cards para exibir provas na página "Buscar Provas"
 
-### Documentação de grade horária, reservas e solicitações - XX/XX/2026
+### Documentação de grade horária, reservas e solicitações - 22/08/2026
 
 <span style="color: #347aeb">DOCS</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
 - Nova página de documentação sobre como salvar e gerenciar a grade horária pessoal
 - Nova página de documentação sobre reservas aprovadas (por sala/período) e sobre solicitações de reserva pendentes de aprovação
 
-### Navegação, trilha de páginas (breadcrumb) e páginas "hub" - XX/XX/2026
+### Navegação, trilha de páginas (breadcrumb) e páginas "hub" - 22/08/2026
 
 <span style="color: green">FEATURE</span>, <span style="color: #408080">IMPROVEMENT</span>
 
-PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
+PR's: [#149](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/149), [#164](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/164)
 
 **Descrição:**
 
@@ -172,7 +172,7 @@ PR's: [#TBD](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pulls)
 - Páginas de erro 401 e 404 com ícones e mensagens mais claras
 - Ajustes de responsividade mobile em "Buscar Provas" e "Minhas Solicitações"
 
-### Adição de cursos e grade horária - XX/XX/2026 
+### Adição de cursos e grade horária - XX/XX/2026
 
 <span style="color: green">FEATURE</span>
 
@@ -183,7 +183,7 @@ PR's: [#145](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/145), [
 - Funcionalidade de cursos e grade curriculares
 - Funcionalidade de grade horária para o usuário
 
-### Correção do Janus Crawler - XX/XX/2026 
+### Correção do Janus Crawler - XX/XX/2026
 
 <span style="color: orange">BUGFIX</span>
 
@@ -194,7 +194,7 @@ PR's: [#145](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/145), [
 - Agora o Janus Crawler coleta o código das turmas no formato correto de ano + semestre + turma
 - Correção de erros de conflitos por código de turma
 
-### Melhorias na página inicial - XX/XX/2026 
+### Melhorias na página inicial - XX/XX/2026
 
 <span style="color: #408080">IMPROVEMENT</span>
 
@@ -206,8 +206,7 @@ PR's: [#145](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/145), [
 - Reformulação visual da página "Sobre"
 - Adição da Júlia como um dos desenvolvedores!
 
-
-### Correções no cache, envio de e-mails e melhorias - 28/02/2026 
+### Correções no cache, envio de e-mails e melhorias - 28/02/2026
 
 <span style="color: red">HOTFIX</span>, <span style="color: #408080">IMPROVEMENT</span>
 
