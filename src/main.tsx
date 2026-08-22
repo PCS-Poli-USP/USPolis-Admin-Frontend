@@ -16,6 +16,7 @@ import MenuContextProvider from './context/MenuContext';
 
 import AppRoutes from './AppRoutes';
 import { BrowserRouter } from 'react-router-dom';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
 
@@ -32,7 +33,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             >
               <FeatureGuideProvider>
                 <BrowserRouter>
-                  <AppRoutes />
+                  <ErrorBoundary>
+                    <AppRoutes />
+                  </ErrorBoundary>
                 </BrowserRouter>
               </FeatureGuideProvider>
             </LocalizationProvider>

@@ -3,6 +3,9 @@
 # vscode
 /.vscode
 
+# Claude Code
+CLAUDE.md
+
 # dev
 /certs
 

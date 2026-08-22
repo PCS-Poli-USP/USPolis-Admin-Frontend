@@ -1,4 +1,5 @@
 import { Flex, Heading, Text } from '@chakra-ui/react';
+import { LockIcon } from '@chakra-ui/icons';
 import PageContent from '../../components/common/PageContent';
 import HubPageGrid, {
   HubPageGridItem,
@@ -9,6 +10,7 @@ import { MdDevices, MdEvent } from 'react-icons/md';
 import { HiUserGroup } from 'react-icons/hi';
 import { GiGraduateCap } from 'react-icons/gi';
 import { VscFeedback, VscReport } from 'react-icons/vsc';
+import { MdBugReport } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 function AdminHub() {
@@ -77,6 +79,24 @@ function AdminHub() {
       description: 'Acesse o feedback dos usuários do USPolis',
       onClick: () => {
         navigate('/admin/feedbacks', { replace: true });
+      },
+    },
+    {
+      icon: <MdBugReport size={'64px'} />,
+      title: 'Testes',
+      description: 'Ferramentas para testar comportamentos do sistema',
+      onClick: () => {
+        navigate('/admin/tests');
+      },
+    },
+    {
+      icon: <LockIcon boxSize={'56px'} color={'uspolis.red'} />,
+      title: 'Infraestrutura & Servidor',
+      description:
+        'Arquitetura, ambiente, arquivos do servidor e deploy — acesso restrito',
+      borderColor: '#E53E3E',
+      onClick: () => {
+        navigate('/admin/server-docs');
       },
     },
   ];

@@ -9,10 +9,12 @@ import {
   FilterString,
 } from '../../../utils/tanstackTableHelpers/tableFiltersFns';
 import { ReservationStatus } from '../../../utils/enums/reservations.enum';
-import { TbCalendarCancel } from 'react-icons/tb';
+import { TbCalendarCancel} from 'react-icons/tb';
+import { BsFillPenFill } from 'react-icons/bs';
 
 interface MySolicitationsColumnsProps {
   handleCancelClick: (data: SolicitationResponse) => void;
+  handleEditClick: (data: SolicitationResponse) => void;
 }
 
 export const getMySolicitationsColumns = (
@@ -48,8 +50,8 @@ export const getMySolicitationsColumns = (
     header: 'Sala',
     cell: ({ row }) => (
       <Text>
-        {row.original.reservation.classroom
-          ? row.original.reservation.classroom
+        {row.original.reservation.classroom_name
+          ? row.original.reservation.classroom_name
           : 'Não informada'}
       </Text>
     ),
@@ -136,6 +138,20 @@ export const getMySolicitationsColumns = (
     header: 'Opções',
     cell: ({ row }) => (
       <HStack spacing='0px'>
+        <Tooltip label='Editar Solicitação'>
+          <IconButton
+            colorScheme='yellow'
+            size='lg'
+            variant='ghost'
+            aria-label='editar-solicitacao'
+            icon={<BsFillPenFill />}
+            disabled={row.original.status !== ReservationStatus.PENDING}
+            onClick={() => {
+              props.handleEditClick(row.original);
+            }}
+          />
+        </Tooltip>
+
         <Tooltip label='Cancelar Solicitação'>
           <IconButton
             colorScheme='red'

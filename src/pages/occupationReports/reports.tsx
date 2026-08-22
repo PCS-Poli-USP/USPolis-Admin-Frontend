@@ -376,7 +376,7 @@ const ReportsPage = () => {
                               alignItems='center'
                               gap={2}
                             >
-                              <Box>
+                              <Box maxW='500px'>
                                 <Text fontWeight='semibold'>
                                   {WeekDay.translate(c.week_day)} |{' '}
                                   {c.start_time.slice(0, 5)} -{' '}
@@ -384,7 +384,9 @@ const ReportsPage = () => {
                                 </Text>
                                 <Text>Capacidade: {c.capacity}</Text>
                                 <Text>Alunos alocados: {c.students}</Text>
-                                <Text>Turmas: {c.classes.join(', ')}</Text>
+                                <Text wordBreak='break-word'>
+                                  Turmas: {c.classes.join(', ')}
+                                </Text>
                               </Box>
 
                               <VStack align='stretch' spacing={2}>

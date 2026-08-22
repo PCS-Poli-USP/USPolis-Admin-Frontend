@@ -13,6 +13,7 @@ interface RadioButtonProps {
   options: { value: string; label: string }[];
   name: string;
   colors?: string[];
+  value?: string;
   defaultValue?: string;
   isInvalid?: boolean;
   onChange?: (nextValue: string) => void;
@@ -60,6 +61,7 @@ function RadioCard(props: any) {
 export function RadioButton(props: RadioButtonProps) {
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: props.name,
+    value: props.value,
     defaultValue: props.defaultValue,
     onChange: props.onChange,
   });

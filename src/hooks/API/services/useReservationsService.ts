@@ -7,6 +7,7 @@ import {
   CreateReservation,
   UpdateReservation,
 } from '../../../models/http/requests/reservation.request.models';
+import { ScheduleUpdateOccurences } from '../../../models/http/requests/schedule.request.models';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 import axios from '../../../services/api/axios';
 
@@ -35,6 +36,12 @@ const useReservationsService = () => {
     AxiosResponse<Array<ReservationFullResponse>>
   > => {
     return axiosPrivate.get(`${PREFIX}}/full/`);
+  };
+
+  const getFullById = (
+    id: number,
+  ): Promise<AxiosResponse<ReservationFullResponse>> => {
+    return axiosPrivate.get(`${PREFIX}/${id}/full`);
   };
 
   const getByBuildingName = (
@@ -68,14 +75,30 @@ const useReservationsService = () => {
     return axiosPrivate.put(`${PREFIX}/${id}`, data);
   };
 
+  const getById = (
+    id: number,
+  ): Promise<AxiosResponse<ReservationResponse>> => {
+    return axiosPrivate.get(`${PREFIX}/${id}`);
+  };
+
+  const updateOccurrences = (
+    id: number,
+    data: ScheduleUpdateOccurences,
+  ): Promise<AxiosResponse<ReservationFullResponse>> => {
+    return axiosPrivate.patch(`${PREFIX}/${id}/edit-occurrences`, data);
+  };
+
   return {
     getMine,
     get,
     getFull,
+    getFullById,
     getByBuildingName,
     create,
     deleteById,
     update,
+    getById,
+    updateOccurrences,
   };
 };
 

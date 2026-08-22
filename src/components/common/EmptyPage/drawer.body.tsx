@@ -21,6 +21,7 @@ import {
   FaChevronUp,
   FaUser,
   FaUserCircle,
+  FaServer,
 } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 import { appContext } from '../../../context/AppContext';
@@ -326,6 +327,14 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   replace_location={false}
                   onClose={onClose}
                   highlighted={currentPath === '/admin/feedbacks'}
+                />
+                <DrawerButton
+                  icon={<FaServer />}
+                  to='/admin/server-docs'
+                  text='Documentação do Servidor'
+                  replace_location={false}
+                  onClose={onClose}
+                  highlighted={currentPath === '/admin/server-docs'}
                 />
               </ScaleFade>
             </VStack>

@@ -51,7 +51,12 @@ function SubjectReportModal({
   const [showClassError, setShowClassError] = useState<boolean>(false);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size={'6xl'}
+      scrollBehavior={'inside'}
+    >
       <ModalOverlay />
 
       <ModalContent maxW={'800px'} w={'800px'} h={'800px'} bg={'uspolis.white'}>

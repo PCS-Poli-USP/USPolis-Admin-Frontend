@@ -23,6 +23,7 @@ import ContactUsModal from '../ContactUsModal';
 import { appContext } from '../../../context/AppContext';
 import DocsNews from '../NewsJoyride/DocsNews';
 import Logo from '../../../assets/uspolis.logo.png';
+import ErrorBoundary from '../ErrorBoundary';
 
 const drawerWidth = 300;
 
@@ -332,7 +333,9 @@ export default function EmptyPage() {
         bgcolor={colorMode === 'dark' ? '#262626' : '#FFFFFF'}
       >
         <Main open={isOpen} isMobile={isMobile}>
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </Main>
       </Box>
     </Box>

@@ -2,6 +2,7 @@
 
 import useCustomToast from '../hooks/useCustomToast';
 import { OccurrenceResponse } from '../models/http/responses/occurrence.response.models';
+import { ScheduleFullResponse } from '../models/http/responses/schedule.response.models';
 import { useCallback, useState } from 'react';
 
 import { sortOccurrenceResponse } from '../utils/occurrences/occurrences.sorter';
@@ -60,11 +61,26 @@ const useOccurrences = () => {
     [showToast, service],
   );
 
+  const getScheduleFull = useCallback(
+    async (schedule_id: number) => {
+      let schedule: ScheduleFullResponse | undefined = undefined;
+      try {
+        const response = await service.getFullBySchedule(schedule_id);
+        schedule = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+      return schedule;
+    },
+    [service],
+  );
+
   return {
     loading,
     occurrences,
     getOccurrences,
     allocateManySchedules,
+    getScheduleFull,
   };
 };
 

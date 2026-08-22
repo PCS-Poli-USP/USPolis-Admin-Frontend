@@ -65,6 +65,14 @@ const map: Record<string, Crumb[]> = {
     ...mainMap['/admin'],
     { label: 'Feedbacks', href: '/admin/feedbacks', current: false },
   ],
+  '/admin/server-docs': [
+    ...mainMap['/admin'],
+    {
+      label: 'Documentação do Servidor',
+      href: '/admin/server-docs',
+      current: false,
+    },
+  ],
 
   // Profile subpages
   '/profile/timetable': [

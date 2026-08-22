@@ -25,7 +25,10 @@ import useBuildings from '../../hooks/useBuildings';
 import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import ReservationModal from '../../pages/reservations/ReservationModal/reservation.modal';
 import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
-import { loadReservationForDataClick } from './utils/allocation.utils';
+import {
+  canManageReservationInBuilding,
+  loadReservationForDataClick,
+} from './utils/allocation.utils';
 import { EventDropArg } from '@fullcalendar/core';
 import EventDragModal from './EventDragModal';
 import { EventDef } from '@fullcalendar/core/internal';
@@ -88,10 +91,10 @@ function Allocation() {
   const [classSearchValue, setClassSearchValue] = useState('');
 
   const [currentStartDate, setCurrentStartDate] = useState<string>(
-    moment().startOf('isoWeek').format('YYYY-MM-DD'),
+    moment().format('YYYY-MM-DD'),
   );
   const [currentEndDate, setCurrentEndDate] = useState<string>(
-    moment().endOf('isoWeek').format('YYYY-MM-DD'),
+    moment().format('YYYY-MM-DD'),
   );
 
   const [currentView, setCurrentView] = useState<ViewOption>(viewOptions[0]);
@@ -205,12 +208,7 @@ function Allocation() {
     const building = info.resource?._resource.parentId;
     const classroom = info.resource?._resource.title;
     if (building) {
-      if (
-        !loggedUser.is_admin &&
-        loggedUser.buildings &&
-        !loggedUser.buildings.map((value) => value.name).includes(building)
-      )
-        return;
+      if (!canManageReservationInBuilding(loggedUser, building)) return;
       if (classroom) {
         setReservation(
           loadReservationForDataClick(
@@ -227,22 +225,13 @@ function Allocation() {
   }
 
   function checkUserAuthorization(event: EventDef) {
-    if (!loggedUser) return false;
-    if (!loggedUser.buildings && !loggedUser.is_admin) return false;
     if (!event.resourceIds) return false;
     const values = event.resourceIds;
     if (values.length === 0) return false;
     const splited = values[0].split('-');
     if (splited.length === 1) return false;
     const building = splited[0];
-    if (!loggedUser.is_admin) {
-      if (
-        loggedUser.buildings &&
-        !loggedUser.buildings.find((val) => val.name === building)
-      )
-        return false;
-    }
-    return true;
+    return canManageReservationInBuilding(loggedUser, building);
   }
 
   function handleEventDrop(arg: EventDropArg) {
@@ -625,6 +614,13 @@ function Allocation() {
                 sx={{
                   width: '240px',
                   height: '290px',
+                  // YearCalendar hardcodes its own width to MUI's dialog
+                  // width (320px) regardless of the parent's sx, which
+                  // overflows this 240px box and gets clipped by the
+                  // Collapse wrapper - force it to size to its container.
+                  '& .MuiYearCalendar-root': {
+                    width: '100%',
+                  },
                 }}
                 value={moment(currentStartDate)}
                 onChange={(val: Moment) => {

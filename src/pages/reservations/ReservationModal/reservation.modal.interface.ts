@@ -18,6 +18,7 @@ export interface ReservationModalProps extends ModalProps {
   loading: boolean;
   refetch: () => void;
   isSolicitation: boolean;
+  openedFromReservations?: boolean;
   initialDate?: string;
 }
 
