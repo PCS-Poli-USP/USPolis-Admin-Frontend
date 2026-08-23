@@ -6,6 +6,7 @@ import {
   Badge,
   Box,
   Divider,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
@@ -24,6 +25,8 @@ import { CrawlStatus } from '../../../utils/enums/crawlStatus.enum';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
 import moment from 'moment';
 
+const SUPPORT_EMAIL = 'uspolis@usp.br';
+
 interface TimetableCrawlResultModalProps extends ModalProps {
   crawling: boolean;
   result: UserScheduleCrawlResponse | undefined;
@@ -37,14 +40,28 @@ function TimetableCrawlResultModal({
 }: TimetableCrawlResultModalProps) {
   const isErrorResult = !result || CrawlStatus.isError(result.status);
   const status = result?.status ?? CrawlStatus.ERROR;
+  const isUnmatchedFailure = result?.status === CrawlStatus.FAILURE;
 
   const statusTitle = isErrorResult
     ? 'Erro na importacao da grade'
     : `${CrawlStatus.translate(status)}`;
 
-  const statusDescription = isErrorResult
-    ? 'Nao foi possivel concluir a importacao da grade horaria. Tente novamente e, se o problema persistir, entre em contato com o suporte.'
-    : result.message || 'Importacao processada com sucesso.';
+  const statusDescription = isUnmatchedFailure ? (
+    <>
+      Sua grade foi obtida do JupiterWeb, mas nenhuma das disciplinas
+      encontradas esta cadastrada no sistema do USPolis ainda. Peca para a
+      secretaria do seu departamento ou para o suporte (
+      <Link href={`mailto:${SUPPORT_EMAIL}`} textDecoration={'underline'}>
+        {SUPPORT_EMAIL}
+      </Link>
+      ) cadastrarem essas disciplinas no sistema. Veja os itens nao encontrados
+      abaixo.
+    </>
+  ) : isErrorResult ? (
+    'Nao foi possivel concluir a importacao da grade horaria. Tente novamente e, se o problema persistir, entre em contato com o suporte.'
+  ) : (
+    result.message || 'Importacao processada com sucesso.'
+  );
 
   const missingItems = result?.missing_items ?? [];
 
@@ -118,14 +135,25 @@ function TimetableCrawlResultModal({
                     <Text>Nenhum item faltante foi identificado.</Text>
                   )}
                   {missingItems.length > 0 && (
-                    <Flex direction={'column'} gap={'6px'}>
+                    <Flex direction={'column'} gap={'12px'}>
                       {missingItems.map((item, index) => (
-                        <Text
-                          key={`${item.week_day}-${item.start_time}-${index}`}
-                        >
-                          {WeekDay.translate(item.week_day)}: {item.start_time}{' '}
-                          - {item.end_time}
-                        </Text>
+                        <Box key={`${item.code}-${item.class_code}-${index}`}>
+                          <Text fontWeight={'semibold'}>
+                            {item.code} - {item.name} (Turma {item.class_code})
+                          </Text>
+                          {item.available_days.map((slot, slotIndex) => (
+                            <Text key={slotIndex} fontSize={'sm'}>
+                              {WeekDay.translate(slot.week_day)}:{' '}
+                              {slot.start_time.slice(0, 5)} -{' '}
+                              {slot.end_time.slice(0, 5)}
+                            </Text>
+                          ))}
+                          {item.observations && (
+                            <Text fontSize={'sm'} fontStyle={'italic'}>
+                              {item.observations}
+                            </Text>
+                          )}
+                        </Box>
                       ))}
                     </Flex>
                   )}
