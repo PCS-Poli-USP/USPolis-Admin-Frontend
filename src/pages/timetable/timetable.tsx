@@ -78,7 +78,7 @@ function Timetable() {
       password: data.password,
     });
     setCrawlResult(result);
-    if (result && result.user_schedule && result.status != CrawlStatus.ERROR) {
+    if (result && result.user_schedule && !CrawlStatus.isError(result.status)) {
       loadUserScheduleInCalendar(result.user_schedule);
     }
     setIsCrawling(false);
@@ -296,9 +296,8 @@ function Timetable() {
           {backendUnavailable && (
             <Alert status='warning' borderRadius={'10px'} mb={'10px'}>
               <AlertIcon />
-              Serviço de importação pelo JupiterWeb temporariamente
-              desabilitado por motivos de segurança. Tente novamente mais
-              tarde.
+              Serviço de importação pelo JupiterWeb temporariamente desabilitado
+              por motivos de segurança. Tente novamente mais tarde.
             </Alert>
           )}
           <Flex align={'center'}>
