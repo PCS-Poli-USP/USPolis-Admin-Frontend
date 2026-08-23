@@ -42,6 +42,6 @@ export interface UserScheduleCrawlResponse {
   updated: boolean;
   user_schedule: UserScheduleResponse | null;
   user_schedule_crawled: JupiterStudentScheduleResponse | null;
-  missing_items: JupiterScheduleSlot[];
+  missing_items: JupiterStudentSubject[];
   message?: string;
 }
