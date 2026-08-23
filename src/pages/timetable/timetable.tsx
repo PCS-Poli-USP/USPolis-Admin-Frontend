@@ -6,9 +6,12 @@ import {
   Grid,
   GridItem,
   Skeleton,
-  Spacer,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
   useDisclosure,
 } from '@chakra-ui/react';
+import { WarningTwoIcon } from '@chakra-ui/icons';
 import PageContent from '../../components/common/PageContent';
 import PageHeader from '../../components/common/PageHeader';
 import { LuCalendarSync, LuUpload } from 'react-icons/lu';
@@ -78,7 +81,7 @@ function Timetable() {
       password: data.password,
     });
     setCrawlResult(result);
-    if (result && result.user_schedule && result.status != CrawlStatus.ERROR) {
+    if (result && result.user_schedule && !CrawlStatus.isError(result.status)) {
       loadUserScheduleInCalendar(result.user_schedule);
     }
     setIsCrawling(false);
@@ -296,9 +299,8 @@ function Timetable() {
           {backendUnavailable && (
             <Alert status='warning' borderRadius={'10px'} mb={'10px'}>
               <AlertIcon />
-              Serviço de importação pelo JupiterWeb temporariamente
-              desabilitado por motivos de segurança. Tente novamente mais
-              tarde.
+              Serviço de importação pelo JupiterWeb temporariamente desabilitado
+              por motivos de segurança. Tente novamente mais tarde.
             </Alert>
           )}
           <Flex align={'center'}>
@@ -309,7 +311,15 @@ function Timetable() {
               fontSize='2xl'
               subtitleFontSize='md'
             />
-            <Spacer />
+            <Flex flex={1} justify={'center'}>
+              <Tag colorScheme='orange' variant='subtle' size='md'>
+                <TagLeftIcon as={WarningTwoIcon} />
+                <TagLabel>
+                  Apenas para sua organização pessoal — não é a aqui que você faz a sua grade horária
+                  oficial da universidade
+                </TagLabel>
+              </Tag>
+            </Flex>
             <Button
               leftIcon={<LuUpload />}
               onClick={async () => {

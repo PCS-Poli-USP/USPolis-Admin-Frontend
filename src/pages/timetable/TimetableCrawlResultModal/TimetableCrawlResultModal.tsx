@@ -35,7 +35,7 @@ function TimetableCrawlResultModal({
   crawling,
   result,
 }: TimetableCrawlResultModalProps) {
-  const isErrorResult = !result || result.status === CrawlStatus.ERROR;
+  const isErrorResult = !result || CrawlStatus.isError(result.status);
   const status = result?.status ?? CrawlStatus.ERROR;
 
   const statusTitle = isErrorResult
@@ -75,7 +75,10 @@ function TimetableCrawlResultModal({
 
             {!crawling && (
               <Flex direction={'column'} gap={'16px'}>
-                <Alert status={status} borderRadius={'10px'}>
+                <Alert
+                  status={CrawlStatus.toAlertStatus(status)}
+                  borderRadius={'10px'}
+                >
                   <AlertIcon />
                   <Box>
                     <AlertTitle>{statusTitle}</AlertTitle>
@@ -94,8 +97,15 @@ function TimetableCrawlResultModal({
                       no sistema.
                     </Text>
                     <Text>
-                      Periodo: {moment(result.user_schedule.start_date).format('DD/MM/YYYY') || '-'} ate{' '}
-                      {moment(result.user_schedule.end_date).format('DD/MM/YYYY') || '-'}.
+                      Periodo:{' '}
+                      {moment(result.user_schedule.start_date).format(
+                        'DD/MM/YYYY',
+                      ) || '-'}{' '}
+                      ate{' '}
+                      {moment(result.user_schedule.end_date).format(
+                        'DD/MM/YYYY',
+                      ) || '-'}
+                      .
                     </Text>
                   </Flex>
                 )}
