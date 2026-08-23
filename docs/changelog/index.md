@@ -6,6 +6,19 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 ## 2026
 
+### Correção de sessões duplicadas em VPN e redes universitárias - 23/08/2026
+
+<span style="color: orange">BUGFIX</span>
+
+PR's: [#151](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/151), [#165](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/165)
+
+**Descrição:**
+
+- Reutilização de sessão não depende mais do endereço IP, já que VPNs e redes de campus trocam de IP constantemente, o que causava sessões duplicadas
+- Login agora verifica primeiro se já existe um cookie de sessão válido, e só recorre à checagem por usuário + user-agent caso necessário
+- Correção na captura do IP para usar o helper compatível com proxy reverso, em vez do IP bruto do socket
+- Correção apenas no backend, sem mudanças de contrato de API ou no frontend — menos relogins inesperados e sessões duplicadas ao usar VPN, wifi universitário ou trocar de rede
+
 ### Documentação interna do servidor movida para área administrativa - 18/08/2026
 
 <span style="color: green">FEATURE</span>
