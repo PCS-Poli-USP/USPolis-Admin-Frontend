@@ -30,7 +30,7 @@ const override: ThemeOverride = {
       'uspolis.blue': { default: '#408080', _dark: '#1a535c' },
       'uspolis.red': { default: '#E53E3E', _dark: '#E53E3E' },
       'uspolis.gray': { default: '#717075', _dark: '#58575b' },
-      'uspolis.lightGray': { default: '#a5a4a8', _dark: '#d8d8da' },
+      'uspolis.lightGray': { default: '#EDF2F7', _dark: '#4A5568' },
       'uspolis.white': { default: '#FFFFFF', _dark: '#262626' },
       'uspolis.black': { default: '#262626', _dark: '#FFFFFF' },
       'uspolis.text': { default: '#408080', _dark: '#FFFFFF' },
@@ -105,6 +105,16 @@ const override: ThemeOverride = {
         },
       }),
     },
+    Tabs: {
+      baseStyle: () => ({
+        tab: {
+          _selected: {
+            color: 'uspolis.blue',
+            borderColor: 'uspolis.blue',
+          },
+        },
+      }),
+    },
     Popover: {
       baseStyle: () => ({
         content: {
@@ -150,7 +160,7 @@ const muiTheme = createTheme({
           backgroundColor:
             theme.palette.mode === 'dark'
               ? '#262626' // COR PARA DARK MODE
-              : "#FFFFFF", // mantém padrão no light
+              : '#FFFFFF', // mantém padrão no light
         }),
       },
     },

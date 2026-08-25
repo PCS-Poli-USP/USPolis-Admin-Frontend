@@ -33,7 +33,7 @@ import { EventDropArg } from '@fullcalendar/core';
 import EventDragModal from './EventDragModal';
 import { EventDef } from '@fullcalendar/core/internal';
 import useSubjects from '../../hooks/useSubjetcts';
-import { menuContext } from '../../context/MenuContext';
+import { uiContext } from '../../context/UIContext';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { DateCalendar } from '@mui/x-date-pickers';
 import FullCalendar from '@fullcalendar/react';
@@ -54,7 +54,7 @@ const viewOptions: ViewOption[] = [
 function Allocation() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const { loading, setLoading, loggedUser } = useContext(appContext);
-  const { isOpen: isOpenMenu } = useContext(menuContext);
+  const { isOpenMenu } = useContext(uiContext);
 
   const {
     isOpen: isOpenSolicitation,

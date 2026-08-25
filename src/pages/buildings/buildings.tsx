@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import {
   CreateBuilding,
@@ -54,10 +54,7 @@ const Buildings = () => {
 
   return (
     <PageContent>
-      <Flex justifyContent={'space-between'} alignItems={'center'}>
-        <Text fontSize='4xl' mb={4}>
-          Prédios
-        </Text>
+      <Flex justify={'flex-end'} mb={'10px'} w={'full'}>
         <Button onClick={handleCreateButton} colorScheme={'blue'}>
           Cadastrar
         </Button>

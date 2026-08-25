@@ -1,4 +1,4 @@
-import { Flex, Heading, Text, useMediaQuery } from '@chakra-ui/react';
+import { Flex, Heading, Text } from '@chakra-ui/react';
 import PageContent from '../../components/common/PageContent';
 import HubPageGrid, {
   HubPageGridItem,
@@ -8,9 +8,11 @@ import { GiBookCover, GiTeacher } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 import { PiChair } from 'react-icons/pi';
 import { CalendarIcon } from '@chakra-ui/icons';
+import { useContext } from 'react';
+import { uiContext } from '../../context/UIContext';
 
 function OferingsHub() {
-  const [isMobile] = useMediaQuery('(max-width: 800px)');
+  const { isMobile, isOpenMenu } = useContext(uiContext);
   const navigate = useNavigate();
 
   const items: HubPageGridItem[] = [
@@ -69,7 +71,7 @@ function OferingsHub() {
       <Flex
         direction={'column'}
         alignItems='center'
-        padding={isMobile ? '0rem' : '0rem 10rem'}
+        padding={isMobile ? '0rem' : isOpenMenu ? '0rem 0rem' : '0rem 10rem'}
       >
         <Heading>Portal de Oferecimentos</Heading>
         <Text size='lg' mb={'20px'} textAlign={'center'}>

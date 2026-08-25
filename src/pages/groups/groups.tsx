@@ -6,7 +6,6 @@ import {
   InputLeftElement,
   Skeleton,
   Spacer,
-  Text,
   useDisclosure,
 } from '@chakra-ui/react';
 import PageContent from '../../components/common/PageContent';
@@ -108,8 +107,7 @@ export default function Groups() {
         }}
       />
       <Flex align={'center'}>
-        <Text fontSize={'4xl'}>Grupos</Text>
-        <InputGroup ml={'40px'} w={'fit-content'}>
+        <InputGroup w={'fit-content'}>
           <InputLeftElement pointerEvents='none'>
             <BsSearch color='gray.300' />
           </InputLeftElement>

@@ -5,9 +5,16 @@ import {
   UpdateUser,
 } from '../../models/http/requests/user.request.models';
 
-import { UserCoreResponse, UserResponse } from '../../models/http/responses/user.response.models';
+import {
+  UserCoreResponse,
+  UserPermissionResponse,
+  UserResponse,
+} from '../../models/http/responses/user.response.models';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { sortUsersResponse } from '../../utils/users/users.sorter';
+import {
+  sortUsersPermissions,
+  sortUsersResponse,
+} from '../../utils/users/users.sorter';
 import useUsersService from './../API/services/useUsersService';
 import useSelfService from './../API/services/useSelfService';
 import { UserErrorParser } from './userErrorParser';
@@ -51,6 +58,21 @@ const useUsers = (initialFetch: boolean = true) => {
         setLoading(false);
       });
   }, [showToast, service]);
+
+  const getUsersWithPermissions = useCallback(async () => {
+    setLoading(true);
+    let usersWithPermissions: UserPermissionResponse[] = [];
+    try {
+      const response = await service.listWithPermissions();
+      usersWithPermissions = response.data;
+    } catch (error) {
+      showToast('Erro', parser.parseListWithPermissionsError(error), 'error');
+      usersWithPermissions = [];
+    } finally {
+      setLoading(false);
+    }
+    return usersWithPermissions.sort(sortUsersPermissions);
+  }, [service, showToast, parser]);
 
   const createUser = useCallback(
     async (data: CreateUser) => {
@@ -122,27 +144,6 @@ const useUsers = (initialFetch: boolean = true) => {
     [showToast, service, parser],
   );
 
-  const deleteUser = useCallback(
-    async (id: number) => {
-      setLoading(true);
-      await service
-        .deleteById(id)
-        .then(() => {
-          showToast('Sucesso!', 'Sucesso ao remover usuário', 'success');
-
-          getUsers();
-        })
-        .catch((error) => {
-          showToast('Erro!', 'Erro ao remover usuário', 'error');
-          console.log(error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    },
-    [getUsers, showToast, service],
-  );
-
   useEffect(() => {
     if (initialFetch) getUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,11 +153,11 @@ const useUsers = (initialFetch: boolean = true) => {
     loading,
     users,
     getSelf,
+    getUsersWithPermissions,
     getUsers,
     createUser,
     updateUser,
     updateUserEmailNotifications,
-    deleteUser,
   };
 };
 

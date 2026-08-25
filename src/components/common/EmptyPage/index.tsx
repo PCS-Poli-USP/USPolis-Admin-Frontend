@@ -18,7 +18,7 @@ import Joyride, { CallBackProps, EVENTS, STATUS } from 'react-joyride';
 import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { FeatureTourGuideStepData } from '../../../context/FeatureGuideContext/steps';
 import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
-import { menuContext } from '../../../context/MenuContext';
+import { uiContext } from '../../../context/UIContext';
 import ContactUsModal from '../ContactUsModal';
 import { appContext } from '../../../context/AppContext';
 import DocsNews from '../NewsJoyride/DocsNews';
@@ -88,7 +88,7 @@ export default function EmptyPage() {
   const { state, setState, triggerControl, pathBeforeGuide } =
     useFeatureGuideContext();
   const { isMobile, isAuthenticated } = React.useContext(appContext);
-  const { isOpen, onOpen, onClose } = React.useContext(menuContext);
+  const { isOpenMenu, onOpenMenu, onCloseMenu } = React.useContext(uiContext);
   const {
     isOpen: isOpenContactModal,
     onClose: onCloseContactModal,
@@ -98,11 +98,11 @@ export default function EmptyPage() {
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
-    onOpen();
+    onOpenMenu();
   };
 
   const handleDrawerClose = () => {
-    onClose();
+    onCloseMenu();
   };
 
   const handleGuidePreviousClick = (
@@ -213,12 +213,12 @@ export default function EmptyPage() {
     >
       <AppBar
         position='fixed'
-        open={isOpen}
+        open={isOpenMenu}
         isMobile={isMobile}
         colorMode={colorMode}
       >
         <DrawerNavBar
-          open={isOpen}
+          open={isOpenMenu}
           handleDrawerOpen={handleDrawerOpen}
           handleDrawerClose={handleDrawerClose}
           isMobile={isMobile}
@@ -242,7 +242,7 @@ export default function EmptyPage() {
         }}
         variant='persistent'
         anchor='left'
-        open={isOpen}
+        open={isOpenMenu}
       >
         <DrawerHeader colorMode={colorMode}>
           <Flex
@@ -332,7 +332,7 @@ export default function EmptyPage() {
         width={isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`}
         bgcolor={colorMode === 'dark' ? '#262626' : '#FFFFFF'}
       >
-        <Main open={isOpen} isMobile={isMobile}>
+        <Main open={isOpenMenu} isMobile={isMobile}>
           <ErrorBoundary>
             <Outlet />
           </ErrorBoundary>

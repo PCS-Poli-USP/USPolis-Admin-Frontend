@@ -13,6 +13,7 @@ import { VscFeedback, VscReport } from 'react-icons/vsc';
 import { MdBugReport } from 'react-icons/md';
 import { LuActivity } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
+import { FaUsersGear } from 'react-icons/fa6';
 
 function AdminHub() {
   const navigate = useNavigate();
@@ -40,6 +41,14 @@ function AdminHub() {
       description: 'Gerencie as sessões de usuários do USPolis',
       onClick: () => {
         navigate('/admin/sessions');
+      },
+    },
+    {
+      icon: <FaUsersGear size={'64px'} />,
+      title: 'Papéis',
+      description: 'Gerencie os papéis dos usuários do USPolis',
+      onClick: () => {
+        navigate('/admin/roles');
       },
     },
     {
