@@ -48,6 +48,7 @@ import DateHub from './pages/dateHub';
 import SchedulingHub from './pages/schedulingHub';
 import TestsPage from './pages/tests';
 import ServerDocs from './pages/serverDocs';
+import ApiStatus from './pages/apiStatus';
 
 function AppRoutes() {
   return (
@@ -132,6 +133,7 @@ function AppRoutes() {
                 />
                 <Route path='tests' element={<TestsPage />} />
                 <Route path='server-docs' element={<ServerDocs />} />
+                <Route path='api-status' element={<ApiStatus />} />
               </Route>
             </Route>
           </Route>

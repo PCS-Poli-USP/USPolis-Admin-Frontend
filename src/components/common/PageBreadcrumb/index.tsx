@@ -73,6 +73,10 @@ const map: Record<string, Crumb[]> = {
       current: false,
     },
   ],
+  '/admin/api-status': [
+    ...mainMap['/admin'],
+    { label: 'Status da API', href: '/admin/api-status', current: false },
+  ],
 
   // Profile subpages
   '/profile/timetable': [

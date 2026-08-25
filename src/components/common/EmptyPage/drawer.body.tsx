@@ -23,6 +23,7 @@ import {
   FaUserCircle,
   FaServer,
 } from 'react-icons/fa';
+import { LuActivity } from 'react-icons/lu';
 import { useLocation } from 'react-router-dom';
 import { appContext } from '../../../context/AppContext';
 import {
@@ -335,6 +336,14 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   replace_location={false}
                   onClose={onClose}
                   highlighted={currentPath === '/admin/server-docs'}
+                />
+                <DrawerButton
+                  icon={<LuActivity />}
+                  to='/admin/api-status'
+                  text='Status da API'
+                  replace_location={false}
+                  onClose={onClose}
+                  highlighted={currentPath === '/admin/api-status'}
                 />
               </ScaleFade>
             </VStack>

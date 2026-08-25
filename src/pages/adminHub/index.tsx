@@ -11,6 +11,7 @@ import { HiUserGroup } from 'react-icons/hi';
 import { GiGraduateCap } from 'react-icons/gi';
 import { VscFeedback, VscReport } from 'react-icons/vsc';
 import { MdBugReport } from 'react-icons/md';
+import { LuActivity } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
 function AdminHub() {
@@ -97,6 +98,14 @@ function AdminHub() {
       borderColor: '#E53E3E',
       onClick: () => {
         navigate('/admin/server-docs');
+      },
+    },
+    {
+      icon: <LuActivity size={'64px'} />,
+      title: 'Status da API',
+      description: 'Logs de acesso, erros e incidentes da API do USPolis',
+      onClick: () => {
+        navigate('/admin/api-status');
       },
     },
   ];
