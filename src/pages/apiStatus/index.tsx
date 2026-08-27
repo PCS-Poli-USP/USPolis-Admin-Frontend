@@ -23,7 +23,7 @@ import { statusCodeColorScheme } from './apiStatus.utils';
 import AccessLogsTab from './AccessLogsTab';
 import IncidentsTab from './IncidentsTab';
 
-const DAY_OPTIONS = [7, 14, 30, 90];
+const DAY_OPTIONS = [1, 7, 15, 31];
 
 function SummaryCard() {
   const { summary, loadingSummary, getSummary } = useApiAccessLogs();
@@ -102,7 +102,7 @@ function SummaryCard() {
             <Text fontSize={'13px'} color={'uspolis.gray'}>
               requisições com erro
             </Text>
-            <Text fontSize={'12px'} color={'uspolis.lightGray'}>
+            <Text fontSize={'12px'} color={'uspolis.gray'}>
               últimos {summary?.since_days ?? days} dias
             </Text>
           </Flex>
@@ -135,7 +135,7 @@ function SummaryCard() {
               </Flex>
             ))}
             {bars.length === 0 && (
-              <Text fontSize={'13px'} color={'uspolis.lightGray'}>
+              <Text fontSize={'13px'} color={'uspolis.gray'}>
                 Nenhum erro no período selecionado.
               </Text>
             )}

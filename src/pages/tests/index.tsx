@@ -1,9 +1,27 @@
 import { Button, Flex, Heading, Text, VStack } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import PageContent from '../../components/common/PageContent';
+import useDevService from '../../hooks/API/services/useDevService';
+import { ErrorParser } from '../../hooks/errorParser';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function TestsPage() {
   const [throwError, setThrowError] = useState(false);
+  const [triggeringBackendError, setTriggeringBackendError] = useState(false);
+  const devService = useDevService();
+  const showToast = useCustomToast();
+  const parser = useMemo(() => new ErrorParser('Requisição de teste'), []);
+
+  async function handleTriggerBackendError() {
+    setTriggeringBackendError(true);
+    try {
+      await devService.raiseUncaughtError();
+    } catch (error) {
+      showToast('Erro', parser.parseGetError(error), 'error');
+    } finally {
+      setTriggeringBackendError(false);
+    }
+  }
 
   // Thrown during render (not inside the onClick handler) so the
   // ErrorBoundary around <Outlet /> in EmptyPage actually catches it -
@@ -24,6 +42,14 @@ function TestsPage() {
         <VStack align={'stretch'} gap={'10px'}>
           <Button colorScheme={'red'} onClick={() => setThrowError(true)}>
             Disparar erro (testar página de erro)
+          </Button>
+          <Button
+            colorScheme={'red'}
+            variant={'outline'}
+            isLoading={triggeringBackendError}
+            onClick={handleTriggerBackendError}
+          >
+            Disparar erro 500 no backend (testar tratamento de erro da API)
           </Button>
         </VStack>
       </Flex>

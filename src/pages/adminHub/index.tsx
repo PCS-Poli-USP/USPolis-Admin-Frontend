@@ -10,7 +10,6 @@ import { MdDevices, MdEvent } from 'react-icons/md';
 import { HiUserGroup } from 'react-icons/hi';
 import { GiGraduateCap } from 'react-icons/gi';
 import { VscFeedback, VscReport } from 'react-icons/vsc';
-import { MdBugReport } from 'react-icons/md';
 import { LuActivity } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { FaUsersGear } from 'react-icons/fa6';
@@ -89,14 +88,6 @@ function AdminHub() {
       description: 'Acesse o feedback dos usuários do USPolis',
       onClick: () => {
         navigate('/admin/feedbacks', { replace: true });
-      },
-    },
-    {
-      icon: <MdBugReport size={'64px'} />,
-      title: 'Testes',
-      description: 'Ferramentas para testar comportamentos do sistema',
-      onClick: () => {
-        navigate('/admin/tests');
       },
     },
     {

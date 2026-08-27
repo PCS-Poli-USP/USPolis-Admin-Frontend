@@ -210,10 +210,28 @@ export function DrawerNavBar({
                   Tutorial
                 </Button>
               )}
+              <IconButton
+                aria-label='Toggle color mode'
+                icon={colorMode == 'dark' ? <SunIcon /> : <MoonIcon />}
+                onClick={() => {
+                  toggleColorMode();
+                  setMode(colorMode === 'light' ? 'dark' : 'light');
+                }}
+                variant={'ghost'}
+              />
               <ProfileButton />
             </>
           ) : (
             <HStack>
+              <IconButton
+                aria-label='Toggle color mode'
+                icon={colorMode == 'dark' ? <SunIcon /> : <MoonIcon />}
+                onClick={() => {
+                  toggleColorMode();
+                  setMode(colorMode === 'light' ? 'dark' : 'light');
+                }}
+                variant={'ghost'}
+              />
               <Button
                 variant={'ghost'}
                 onClick={() =>
@@ -227,15 +245,6 @@ export function DrawerNavBar({
               </Button>
             </HStack>
           )}
-          <IconButton
-            aria-label='Toggle color mode'
-            icon={colorMode == 'dark' ? <SunIcon /> : <MoonIcon />}
-            onClick={() => {
-              toggleColorMode();
-              setMode(colorMode === 'light' ? 'dark' : 'light');
-            }}
-            variant={'ghost'}
-          />
         </Flex>
       </Flex>
     </Box>

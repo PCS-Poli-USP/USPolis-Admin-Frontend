@@ -39,7 +39,7 @@ function DetailField({ label, value }: { label: string; value: string }) {
     <GridItem>
       <Text
         fontSize={'11px'}
-        color={'uspolis.lightGray'}
+        color={'uspolis.gray'}
         textTransform={'uppercase'}
       >
         {label}
@@ -131,7 +131,7 @@ function AccessLogDetailDrawer({
               <Text
                 fontFamily={'monospace'}
                 fontSize={'13px'}
-                color={'uspolis.lightGray'}
+                color={'uspolis.gray'}
               >
                 log #{log.id}
               </Text>
@@ -182,7 +182,7 @@ function AccessLogDetailDrawer({
                 <Box>
                   <Text
                     fontSize={'11px'}
-                    color={'uspolis.lightGray'}
+                    color={'uspolis.gray'}
                     textTransform={'uppercase'}
                     mb={'6px'}
                   >
@@ -206,7 +206,7 @@ function AccessLogDetailDrawer({
                 <Box>
                   <Text
                     fontSize={'11px'}
-                    color={'uspolis.lightGray'}
+                    color={'uspolis.gray'}
                     textTransform={'uppercase'}
                     mb={'6px'}
                   >
@@ -231,7 +231,7 @@ function AccessLogDetailDrawer({
               <Box>
                 <Text
                   fontSize={'11px'}
-                  color={'uspolis.lightGray'}
+                  color={'uspolis.gray'}
                   textTransform={'uppercase'}
                   mb={'10px'}
                 >
@@ -263,7 +263,7 @@ function AccessLogDetailDrawer({
                         >
                           {IncidentReportStatus.translate(incident.status)}
                         </Badge>
-                        <Text fontSize={'12px'} color={'uspolis.lightGray'}>
+                        <Text fontSize={'12px'} color={'uspolis.gray'}>
                           #{incident.id}
                         </Text>
                       </Flex>
