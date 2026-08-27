@@ -3,10 +3,14 @@ import {
   CreateReservation,
   UpdateReservation,
 } from '../../models/http/requests/reservation.request.models';
-import { ReservationResponse, ReservationFullResponse } from '../../models/http/responses/reservation.response.models';
-import { useCallback, useEffect, useState } from 'react';
+import {
+  ReservationResponse,
+  ReservationFullResponse,
+} from '../../models/http/responses/reservation.response.models';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { sortReservationsResponse } from '../../utils/reservations/reservations.sorter';
 import useReservationsService from './../API/services/useReservationsService';
+import ReservationErrorParser from './reservationErrorParser';
 
 const useReservations = (initialFetch = true) => {
   const service = useReservationsService();
@@ -14,6 +18,7 @@ const useReservations = (initialFetch = true) => {
   const [reservations, setReservations] = useState<ReservationResponse[]>([]);
 
   const showToast = useCustomToast();
+  const parser = useMemo(() => new ReservationErrorParser(), []);
 
   const getAllReservations = useCallback(async () => {
     setLoading(true);
@@ -23,16 +28,12 @@ const useReservations = (initialFetch = true) => {
         setReservations(response.data.sort(sortReservationsResponse));
       })
       .catch((error) => {
-        showToast(
-          'Erro',
-          `Erro ao carregar todas reservas: ${error.response.detail}`,
-          'error',
-        );
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast, service]);
+  }, [showToast, service, parser]);
 
   const getReservations = useCallback(
     async (start?: string, end?: string) => {
@@ -43,17 +44,13 @@ const useReservations = (initialFetch = true) => {
           setReservations(response.data.sort(sortReservationsResponse));
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao carregar suas reservas: ${error.response.detail}`,
-            'error',
-          );
+          showToast('Erro', parser.parseGetError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [showToast, service],
+    [showToast, service, parser],
   );
 
   const getReservation = useCallback(
@@ -64,17 +61,13 @@ const useReservations = (initialFetch = true) => {
         const response = await service.getById(id);
         return response.data;
       } catch (error) {
-        showToast(
-          'Erro',
-          'Erro ao carregar reserva',
-          'error',
-        );
+        showToast('Erro', parser.parseGetError(error), 'error');
         return undefined;
       } finally {
         setLoading(false);
       }
     },
-    [service, showToast],
+    [service, showToast, parser],
   );
 
   const getReservationFull = useCallback(
@@ -85,17 +78,13 @@ const useReservations = (initialFetch = true) => {
         const response = await service.getFullById(id);
         return response.data;
       } catch (error) {
-        showToast(
-          'Erro',
-          'Erro ao carregar reserva',
-          'error',
-        );
+        showToast('Erro', parser.parseGetError(error), 'error');
         return undefined;
       } finally {
         setLoading(false);
       }
     },
-    [service, showToast],
+    [service, showToast, parser],
   );
 
   const getReservationsByBuildingName = useCallback(
@@ -107,17 +96,13 @@ const useReservations = (initialFetch = true) => {
           setReservations(response.data.sort(sortReservationsResponse));
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao carregar reservas do prédio ${building_name}: ${error.response.detail}`,
-            'error',
-          );
+          showToast('Erro', parser.parseGetError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [showToast, service],
+    [showToast, service, parser],
   );
 
   const createReservation = useCallback(
@@ -134,14 +119,13 @@ const useReservations = (initialFetch = true) => {
           getReservations();
         })
         .catch((error) => {
-          console.log(error);
-          showToast('Erro', `Erro ao criar reserva: ${error}`, 'error');
+          showToast('Erro', parser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getReservations, showToast, service],
+    [getReservations, showToast, service, parser],
   );
 
   const updateReservation = useCallback(
@@ -154,17 +138,13 @@ const useReservations = (initialFetch = true) => {
           getReservations();
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao atualizar o reserva ${data.title}: ${error}`,
-            'error',
-          );
+          showToast('Erro', parser.parseUpdateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getReservations, showToast, service],
+    [getReservations, showToast, service, parser],
   );
 
   const deleteReservation = useCallback(
@@ -178,14 +158,13 @@ const useReservations = (initialFetch = true) => {
           getReservations();
         })
         .catch((error) => {
-          showToast('Erro!', 'Erro ao remover reserva', 'error');
-          console.log(error);
+          showToast('Erro!', parser.parseDeleteError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getReservations, showToast, service],
+    [getReservations, showToast, service, parser],
   );
 
   useEffect(() => {

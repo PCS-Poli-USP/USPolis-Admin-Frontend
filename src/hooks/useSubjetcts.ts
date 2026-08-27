@@ -7,9 +7,10 @@ import {
   SubjectResponse,
   SubjectResponseBase,
 } from '../models/http/responses/subject.response.models';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { sortSubjectsResponse } from '../utils/subjects/subjects.sorter';
 import useSubjectsService from './API/services/useSubjectsService';
+import SubjectErrorParser from './subjectErrorParser';
 
 const useSubjects = (initialFetch = true) => {
   const service = useSubjectsService();
@@ -18,6 +19,7 @@ const useSubjects = (initialFetch = true) => {
   const [subjectsCore, setSubjectsCore] = useState<SubjectResponseBase[]>([]);
 
   const showToast = useCustomToast();
+  const parser = useMemo(() => new SubjectErrorParser(), []);
 
   const getAllSubjects = useCallback(async () => {
     setLoading(true);
@@ -26,13 +28,13 @@ const useSubjects = (initialFetch = true) => {
       .then((response) => {
         setSubjects(response.data.sort(sortSubjectsResponse));
       })
-      .catch(() => {
-        showToast('Erro', 'Erro ao carregar todas disciplinas', 'error');
+      .catch((error) => {
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast, service]);
+  }, [showToast, service, parser]);
 
   const getAllSubjectsCore = useCallback(async () => {
     setLoading(true);
@@ -41,13 +43,13 @@ const useSubjects = (initialFetch = true) => {
       .then((response) => {
         setSubjectsCore(response.data.sort(sortSubjectsResponse));
       })
-      .catch(() => {
-        showToast('Erro', 'Erro ao carregar todas disciplinas', 'error');
+      .catch((error) => {
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast, service]);
+  }, [showToast, service, parser]);
 
   const getAllSubjectsActives = useCallback(
     async (start?: string, end?: string) => {
@@ -57,14 +59,14 @@ const useSubjects = (initialFetch = true) => {
         .then((response) => {
           setSubjects(response.data.sort(sortSubjectsResponse));
         })
-        .catch(() => {
-          showToast('Erro', 'Erro ao carregar todas disciplinas', 'error');
+        .catch((error) => {
+          showToast('Erro', parser.parseGetError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [showToast, service],
+    [showToast, service, parser],
   );
 
   const getSubjects = useCallback(async () => {
@@ -74,13 +76,13 @@ const useSubjects = (initialFetch = true) => {
       .then((response) => {
         setSubjects(response.data.sort(sortSubjectsResponse));
       })
-      .catch(() => {
-        showToast('Erro', 'Erro ao carregar suas disciplinas', 'error');
+      .catch((error) => {
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast, service]);
+  }, [showToast, service, parser]);
 
   const createSubject = useCallback(
     async (data: CreateSubject) => {
@@ -96,13 +98,13 @@ const useSubjects = (initialFetch = true) => {
           getSubjects();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao criar disciplina: ${error}`, 'error');
+          showToast('Erro', parser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getSubjects, showToast, service],
+    [getSubjects, showToast, service, parser],
   );
 
   const updateSubject = useCallback(
@@ -115,17 +117,13 @@ const useSubjects = (initialFetch = true) => {
           getSubjects();
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao atualizar a disciplina ${data.name}: ${error}`,
-            'error',
-          );
+          showToast('Erro', parser.parseUpdateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getSubjects, showToast, service],
+    [getSubjects, showToast, service, parser],
   );
 
   const deleteSubject = useCallback(
@@ -139,14 +137,13 @@ const useSubjects = (initialFetch = true) => {
           getSubjects();
         })
         .catch((error) => {
-          showToast('Erro!', 'Erro ao remover disciplina', 'error');
-          console.log(error);
+          showToast('Erro!', parser.parseDeleteError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getSubjects, showToast, service],
+    [getSubjects, showToast, service, parser],
   );
 
   useEffect(() => {

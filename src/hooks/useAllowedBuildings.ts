@@ -3,6 +3,8 @@ import { BuildingResponse } from '../models/http/responses/building.response.mod
 import { useContext, useEffect, useState } from 'react';
 import { sortBuildingsResponse } from '../utils/buildings/building.sorter';
 import useBuildingsService from './API/services/useBuildingsService';
+import useCustomToast from './useCustomToast';
+import BuildingErrorParser from './buildingErrorParser';
 
 const useAllowedBuildings = () => {
   const buildingsService = useBuildingsService();
@@ -11,15 +13,20 @@ const useAllowedBuildings = () => {
     Array<BuildingResponse>
   >([]);
   const { loggedUser } = useContext(appContext);
+  const showToast = useCustomToast();
+  const parser = new BuildingErrorParser();
 
   useEffect(() => {
     const getAllowedBuildings = async () => {
       setLoading(true);
       if (loggedUser) {
         if (loggedUser.is_admin) {
-          await buildingsService.getMyBuildings().then((response) => {
+          try {
+            const response = await buildingsService.getMyBuildings();
             setAllowedBuildings(response.data.sort(sortBuildingsResponse));
-          });
+          } catch (error) {
+            showToast('Erro', parser.parseGetError(error), 'error');
+          }
         } else {
           const buildings = loggedUser.buildings || [];
           setAllowedBuildings(buildings.sort(sortBuildingsResponse));

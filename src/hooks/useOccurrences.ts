@@ -10,6 +10,7 @@ import useOcurrencesService, {
   AllocateManySchedulesData,
 } from './API/services/useOccurrencesService';
 import { ScheduleErrorParser } from './schedules/scheduleErrorParser';
+import { OccurrenceErrorParser } from './occurrences/occurrenceErrorParser';
 
 const useOccurrences = () => {
   const service = useOcurrencesService();
@@ -18,6 +19,7 @@ const useOccurrences = () => {
 
   const showToast = useCustomToast();
   const scheduleParser = new ScheduleErrorParser();
+  const occurrenceParser = new OccurrenceErrorParser();
 
   const getOccurrences = useCallback(async () => {
     setLoading(true);
@@ -29,8 +31,7 @@ const useOccurrences = () => {
         setOccurrences(newOccurrences);
       })
       .catch((error) => {
-        showToast('Erro', 'Erro ao carregar ocorrencias', 'error');
-        console.log(error);
+        showToast('Erro', occurrenceParser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);

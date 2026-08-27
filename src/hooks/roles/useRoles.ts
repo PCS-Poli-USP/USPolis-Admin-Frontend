@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useCustomToast from '../useCustomToast';
 import useRolesService from '../API/services/useRolesService';
 import { RoleResponse } from '../../models/http/responses/role.response.models';
@@ -7,6 +7,7 @@ import {
   CreateRole,
   UpdateRole,
 } from '../../models/http/requests/role.request.models';
+import RoleErrorParser from './roleErrorParser';
 
 const useRoles = (initialFetch: boolean = true) => {
   const service = useRolesService();
@@ -14,6 +15,7 @@ const useRoles = (initialFetch: boolean = true) => {
   const [roles, setRoles] = useState<RoleResponse[]>([]);
 
   const showToast = useCustomToast();
+  const parser = useMemo(() => new RoleErrorParser(), []);
 
   const getAllRoles = useCallback(async () => {
     setLoading(true);
@@ -23,13 +25,12 @@ const useRoles = (initialFetch: boolean = true) => {
         setRoles(response.data);
       })
       .catch((error) => {
-        showToast('Erro', 'Erro ao carregar cargos', 'error');
-        console.log(error);
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast, service]);
+  }, [showToast, service, parser]);
 
   const getRoleById = useCallback(
     async (id: number) => {
@@ -41,8 +42,7 @@ const useRoles = (initialFetch: boolean = true) => {
           role = response.data;
         })
         .catch((error) => {
-          showToast('Erro', 'Erro ao carregar cargo', 'error');
-          console.log(error);
+          showToast('Erro', parser.parseGetError(error), 'error');
           role = undefined;
         })
         .finally(() => {
@@ -50,7 +50,7 @@ const useRoles = (initialFetch: boolean = true) => {
         });
       return role;
     },
-    [showToast, service],
+    [showToast, service, parser],
   );
 
   const createRole = useCallback(
@@ -63,14 +63,13 @@ const useRoles = (initialFetch: boolean = true) => {
           getAllRoles();
         })
         .catch((error) => {
-          showToast('Erro', 'Erro ao criar cargo', 'error');
-          console.log(error);
+          showToast('Erro', parser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getAllRoles, showToast, service],
+    [getAllRoles, showToast, service, parser],
   );
 
   const updateRole = useCallback(
@@ -83,14 +82,13 @@ const useRoles = (initialFetch: boolean = true) => {
           getAllRoles();
         })
         .catch((error) => {
-          showToast('Erro', 'Erro ao atualizar cargo', 'error');
-          console.log(error);
+          showToast('Erro', parser.parseUpdateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getAllRoles, showToast, service],
+    [getAllRoles, showToast, service, parser],
   );
 
   const deleteRole = useCallback(
@@ -103,14 +101,13 @@ const useRoles = (initialFetch: boolean = true) => {
           getAllRoles();
         })
         .catch((error) => {
-          showToast('Erro', 'Erro ao remover cargo', 'error');
-          console.log(error);
+          showToast('Erro', parser.parseDeleteError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getAllRoles, showToast, service],
+    [getAllRoles, showToast, service, parser],
   );
 
   useEffect(() => {

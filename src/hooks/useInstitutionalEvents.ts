@@ -4,8 +4,9 @@ import {
   UpdateInstitutionalEvent,
 } from '../models/http/requests/institutionalEvent.request.models';
 import { InstitutionalEventResponse } from '../models/http/responses/instituionalEvent.response.models';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useInstitutionalEventsService from './API/services/useInstitutionalEventsService';
+import InstitutionalEventErrorParser from './institutionalEventErrorParser';
 
 const useInstitutionalEvents = () => {
   const service = useInstitutionalEventsService();
@@ -13,6 +14,7 @@ const useInstitutionalEvents = () => {
   const [events, setEvents] = useState<InstitutionalEventResponse[]>([]);
 
   const showToast = useCustomToast();
+  const parser = useMemo(() => new InstitutionalEventErrorParser(), []);
 
   const getEvents = useCallback(async () => {
     setLoading(true);
@@ -21,13 +23,13 @@ const useInstitutionalEvents = () => {
       .then((response) => {
         setEvents(response.data);
       })
-      .catch(() => {
-        showToast('Erro', 'Erro ao carregar eventos institucionais', 'error');
+      .catch((error) => {
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast, service]);
+  }, [showToast, service, parser]);
 
   const createEvent = useCallback(
     async (data: CreateInstitutionalEvent) => {
@@ -43,17 +45,13 @@ const useInstitutionalEvents = () => {
           getEvents();
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao criar o evento ${data.title}: ${error}`,
-            'error',
-          );
+          showToast('Erro', parser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getEvents, showToast, service],
+    [getEvents, showToast, service, parser],
   );
 
   const updateEvent = useCallback(
@@ -70,17 +68,13 @@ const useInstitutionalEvents = () => {
           getEvents();
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao atualizar o evento institucional ${data.title}: ${error}`,
-            'error',
-          );
+          showToast('Erro', parser.parseUpdateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getEvents, showToast, service],
+    [getEvents, showToast, service, parser],
   );
 
   const deleteEvent = useCallback(
@@ -98,14 +92,13 @@ const useInstitutionalEvents = () => {
           getEvents();
         })
         .catch((error) => {
-          showToast('Erro!', 'Erro ao remover evento institucional', 'error');
-          console.log(error);
+          showToast('Erro!', parser.parseDeleteError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getEvents, showToast, service],
+    [getEvents, showToast, service, parser],
   );
 
   useEffect(() => {
