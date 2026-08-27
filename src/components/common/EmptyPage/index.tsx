@@ -207,7 +207,7 @@ export default function EmptyPage() {
   return (
     <Box
       sx={{ display: 'flex' }}
-      width={'calc(100vw - 20px)'}
+      width={'calc(100vw)'}
       height={'100vh'}
       bgcolor={colorMode === 'dark' ? '#262626' : '#FFFFFF'}
     >

@@ -11,3 +11,11 @@ export function formatLogDateTime(iso: string): string {
     date.getHours(),
   )}:${pad(date.getMinutes())}`;
 }
+
+export function prettyPrintJson(raw: string): string {
+  try {
+    return JSON.stringify(JSON.parse(raw), null, 2);
+  } catch {
+    return raw;
+  }
+}

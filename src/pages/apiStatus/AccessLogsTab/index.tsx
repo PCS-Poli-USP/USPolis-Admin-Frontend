@@ -17,6 +17,7 @@ import {
   Th,
   Thead,
   Tr,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -50,6 +51,10 @@ function AccessLogsTab({ selectedLog, onSelectLog }: AccessLogsTabProps) {
   const [page, setPage] = useState(1);
   const [pageSize] = useState<PageSize>(PageSize.SIZE_10);
   const [filters, setFilters] = useState<ApiAccessLogFilters>({});
+  const rowHoverBg = useColorModeValue(
+    'uspolis.lightBlue',
+    'rgba(180,244,244,0.12)',
+  );
 
   useEffect(() => {
     getAccessLogs(page, pageSize, filters);
@@ -172,7 +177,7 @@ function AccessLogsTab({ selectedLog, onSelectLog }: AccessLogsTabProps) {
                 <Tr
                   key={row.id}
                   cursor={'pointer'}
-                  _hover={{ bg: 'uspolis.lightBlue' }}
+                  _hover={{ bg: rowHoverBg }}
                   onClick={() => onSelectLog(row)}
                 >
                   <Td

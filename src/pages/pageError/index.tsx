@@ -73,18 +73,18 @@ function PageError({ error }: PageErrorProps) {
         <MdErrorOutline size={'96px'} />
         <Heading size={'2xl'}>Ocorreu um erro inesperado</Heading>
         <Text fontSize={'lg'}>
-          Algo deu errado ao carregar esta página. Tente recarregar a página
-          e, se o problema persistir, entre em contato com o suporte
-          informando o que você estava fazendo.
+          Algo deu errado ao carregar esta página. Tente recarregar a página e,
+          se o problema persistir, entre em contato com o suporte informando o
+          que você estava fazendo.
         </Text>
         <HStack>
-          <Button
-            colorScheme={'teal'}
-            onClick={() => window.location.reload()}
-          >
+          <Button colorScheme={'teal'} onClick={() => window.location.reload()}>
             Recarregar página
           </Button>
-          <Button variant={'outline'} onClick={() => (window.location.href = '/')}>
+          <Button
+            variant={'outline'}
+            onClick={() => (window.location.href = '/')}
+          >
             Voltar para o início
           </Button>
         </HStack>
@@ -109,7 +109,9 @@ function PageError({ error }: PageErrorProps) {
         {error && (
           <Box w={'full'}>
             <Button size={'sm'} variant={'link'} onClick={onToggle}>
-              {isOpen ? 'Ocultar detalhes técnicos' : 'Mostrar detalhes técnicos'}
+              {isOpen
+                ? 'Ocultar detalhes técnicos'
+                : 'Mostrar detalhes técnicos'}
             </Button>
             <Collapse in={isOpen}>
               <Box
@@ -120,7 +122,11 @@ function PageError({ error }: PageErrorProps) {
                 textAlign={'left'}
                 overflowX={'auto'}
               >
-                <Code whiteSpace={'pre-wrap'} background={'transparent'}>
+                <Code
+                  whiteSpace={'pre-wrap'}
+                  background={'transparent'}
+                  color={'#262626'}
+                >
                   {`${error.name}: ${error.message}`}
                 </Code>
               </Box>

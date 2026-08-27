@@ -14,19 +14,22 @@ import {
   Flex,
   Grid,
   GridItem,
+  IconButton,
   Skeleton,
   Text,
   Textarea,
+  Tooltip,
   Wrap,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
+import { useEffect, useRef, useState } from 'react';
 import { ApiAccessLogResponse } from '../../../models/http/responses/apiAccessLog.response.models';
 import { ApiIncidentReportResponse } from '../../../models/http/responses/apiIncidentReport.response.models';
 import { ApiSecurityLevel } from '../../../utils/enums/apiSecurityLevel.enum';
 import { IncidentReportLevel } from '../../../utils/enums/incidentReportLevel.enum';
 import { IncidentReportStatus } from '../../../utils/enums/incidentReportStatus.enum';
 import useApiIncidentReports from '../../../hooks/apiIncidentReports/useApiIncidentReports';
-import { statusCodeColorScheme } from '../apiStatus.utils';
+import { statusCodeColorScheme, prettyPrintJson } from '../apiStatus.utils';
 
 interface AccessLogDetailDrawerProps {
   isOpen: boolean;
@@ -72,6 +75,21 @@ function AccessLogDetailDrawer({
   );
   const [description, setDescription] = useState('');
   const [descriptionError, setDescriptionError] = useState(false);
+  const [bodyCopied, setBodyCopied] = useState(false);
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
+
+  useEffect(() => {
+    return () => clearTimeout(copyTimeoutRef.current);
+  }, []);
+
+  async function handleCopyBody(body: string) {
+    await navigator.clipboard.writeText(body);
+    setBodyCopied(true);
+    clearTimeout(copyTimeoutRef.current);
+    copyTimeoutRef.current = setTimeout(() => setBodyCopied(false), 1300);
+  }
 
   useEffect(() => {
     if (!isOpen || !log) {
@@ -114,7 +132,7 @@ function AccessLogDetailDrawer({
   return (
     <Drawer isOpen={isOpen} onClose={onClose} placement={'right'} size={'md'}>
       <DrawerOverlay />
-      <DrawerContent>
+      <DrawerContent bg={'uspolis.white'}>
         <DrawerCloseButton />
         <DrawerHeader
           borderBottom={'1px solid'}
@@ -204,14 +222,27 @@ function AccessLogDetailDrawer({
 
               {log.request_body && (
                 <Box>
-                  <Text
-                    fontSize={'11px'}
-                    color={'uspolis.gray'}
-                    textTransform={'uppercase'}
-                    mb={'6px'}
-                  >
-                    Corpo da requisição
-                  </Text>
+                  <Flex align={'center'} justify={'space-between'} mb={'6px'}>
+                    <Text
+                      fontSize={'11px'}
+                      color={'uspolis.gray'}
+                      textTransform={'uppercase'}
+                    >
+                      Corpo da requisição
+                    </Text>
+                    <Tooltip label={bodyCopied ? 'Copiado!' : 'Copiar corpo'}>
+                      <IconButton
+                        aria-label='Copiar corpo da requisição'
+                        icon={bodyCopied ? <CheckIcon /> : <CopyIcon />}
+                        onClick={() =>
+                          handleCopyBody(prettyPrintJson(log.request_body!))
+                        }
+                        size={'xs'}
+                        variant={'ghost'}
+                        color={bodyCopied ? '#2F9E6E' : '#717075'}
+                      />
+                    </Tooltip>
+                  </Flex>
                   <Code
                     display={'block'}
                     whiteSpace={'pre-wrap'}
@@ -221,7 +252,7 @@ function AccessLogDetailDrawer({
                     maxH={'220px'}
                     overflowY={'auto'}
                   >
-                    {log.request_body}
+                    {prettyPrintJson(log.request_body)}
                   </Code>
                 </Box>
               )}

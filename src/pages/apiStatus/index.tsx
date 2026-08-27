@@ -4,6 +4,7 @@ import {
   Button,
   ButtonGroup,
   Flex,
+  Image,
   Progress,
   Skeleton,
   Tab,
@@ -12,22 +13,40 @@ import {
   TabPanels,
   Tabs,
   Text,
+  useColorMode,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { LuActivity } from 'react-icons/lu';
-import PageContent from '../../components/common/PageContent';
 import PageHeader from '../../components/common/PageHeader';
 import useApiAccessLogs from '../../hooks/apiAccessLogs/useApiAccessLogs';
 import { ApiAccessLogResponse } from '../../models/http/responses/apiAccessLog.response.models';
 import { statusCodeColorScheme } from './apiStatus.utils';
 import AccessLogsTab from './AccessLogsTab';
 import IncidentsTab from './IncidentsTab';
+import Logo from '../../assets/uspolis.logo.png';
+import ApiStatusPageContent from './ApiStatusPageContent';
 
 const DAY_OPTIONS = [1, 7, 15, 31];
+
+// TESTE: tratamento de fundo "Aurora" (opção 1C do design de explorações de
+// fundo) aplicado só nesta página para avaliação visual — não é definitivo.
+const AURORA_BACKGROUND_LIGHT =
+  'radial-gradient(820px 660px at -10% -24%, rgba(64,128,128,.24), rgba(64,128,128,.09) 46%, transparent 78%), ' +
+  'radial-gradient(620px 520px at 96% 6%, rgba(180,244,244,.55), rgba(180,244,244,.22) 40%, transparent 85%), ' +
+  'radial-gradient(640px 460px at 62% 114%, rgba(26,83,92,.14), transparent 74%), #F7FBFB';
+
+// Contraparte escura: mesmo layout de camadas, tons mais contidos (o brilho
+// ciano vira sutil em vez de neon) sobre uma base escura com tonalidade teal.
+const AURORA_BACKGROUND_DARK =
+  'radial-gradient(820px 660px at -10% -24%, rgba(64,128,128,.38), rgba(64,128,128,.12) 46%, transparent 78%), ' +
+  'radial-gradient(620px 520px at 96% 6%, rgba(180,244,244,.16), rgba(180,244,244,.05) 40%, transparent 85%), ' +
+  'radial-gradient(640px 460px at 62% 114%, rgba(26,83,92,.45), transparent 74%), #16201f';
 
 function SummaryCard() {
   const { summary, loadingSummary, getSummary } = useApiAccessLogs();
   const [days, setDays] = useState(7);
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
 
   useEffect(() => {
     getSummary(days);
@@ -42,9 +61,15 @@ function SummaryCard() {
 
   return (
     <Box
-      border={'1px solid'}
-      borderColor={'uspolis.lightGray'}
-      borderRadius={'8px'}
+      bg={isDark ? 'rgba(38,38,38,.55)' : 'rgba(255,255,255,.7)'}
+      backdropFilter={'blur(10px)'}
+      border={
+        isDark
+          ? '1px solid rgba(255,255,255,.12)'
+          : '1px solid rgba(255,255,255,.85)'
+      }
+      boxShadow={'0 6px 20px rgba(26,83,92,.1)'}
+      borderRadius={'12px'}
       overflow={'hidden'}
     >
       <Flex
@@ -53,7 +78,7 @@ function SummaryCard() {
         px={'20px'}
         py={'14px'}
         borderBottom={'1px solid'}
-        borderColor={'uspolis.lightGray'}
+        borderColor={isDark ? 'rgba(255,255,255,.12)' : 'rgba(38,38,38,.1)'}
       >
         <Text
           fontSize={'13px'}
@@ -88,7 +113,7 @@ function SummaryCard() {
             justify={'center'}
             borderRight={{ md: '1px solid' }}
             borderBottom={{ base: '1px solid', md: 'none' }}
-            borderColor={'uspolis.lightGray'}
+            borderColor={isDark ? 'rgba(255,255,255,.12)' : 'rgba(38,38,38,.1)'}
           >
             <Text
               fontFamily={'monospace'}
@@ -152,6 +177,9 @@ function ApiStatus() {
     null,
   );
   const { getAccessLogById } = useApiAccessLogs();
+  const { colorMode } = useColorMode();
+  const background =
+    colorMode === 'dark' ? AURORA_BACKGROUND_DARK : AURORA_BACKGROUND_LIGHT;
 
   async function handleOpenLogFromIncident(accessLogId: number) {
     setTabIndex(0);
@@ -160,8 +188,36 @@ function ApiStatus() {
   }
 
   return (
-    <PageContent>
-      <Flex direction={'column'} gap={'20px'} maxW={'1280px'} mx={'auto'}>
+    <ApiStatusPageContent background={background}>
+      <Flex
+        direction={'column'}
+        align={'center'}
+        position={'absolute'}
+        left={'50%'}
+        top={'50%'}
+        transform={'translate(-50%, -50%)'}
+        opacity={0.07}
+        pointerEvents={'none'}
+      >
+        <Image src={Logo} alt={''} w={'260px'} />
+        <Text
+          fontSize={'40px'}
+          fontWeight={'bold'}
+          letterSpacing={'0.04em'}
+          color={'uspolis.blue'}
+          mt={'8px'}
+        >
+          USPolis
+        </Text>
+      </Flex>
+
+      <Flex
+        direction={'column'}
+        gap={'20px'}
+        maxW={'1280px'}
+        mx={'auto'}
+        position={'relative'}
+      >
         <PageHeader
           title={'Status da API'}
           subtitle={'Logs de acesso, erros e incidentes da API do USPolis'}
@@ -193,7 +249,7 @@ function ApiStatus() {
           </TabPanels>
         </Tabs>
       </Flex>
-    </PageContent>
+    </ApiStatusPageContent>
   );
 }
 
