@@ -71,4 +71,22 @@ export namespace ReservationStatus {
         return 'gray.500';
     }
   }
+
+  // Chakra colorScheme (used by Badge/Tag/etc, e.g. `<Tag colorScheme={ReservationStatus.getColorScheme(status)} />`)
+  export function getColorScheme(status: ReservationStatus): string {
+    switch (status) {
+      case ReservationStatus.PENDING:
+        return 'yellow';
+      case ReservationStatus.APPROVED:
+        return 'green';
+      case ReservationStatus.DENIED:
+        return 'red';
+      case ReservationStatus.CANCELLED:
+        return 'orange';
+      case ReservationStatus.DELETED:
+        return 'gray';
+      default:
+        return 'gray';
+    }
+  }
 }

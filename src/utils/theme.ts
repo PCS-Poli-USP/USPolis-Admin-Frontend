@@ -35,6 +35,17 @@ const override: ThemeOverride = {
       'uspolis.black': { default: '#262626', _dark: '#FFFFFF' },
       'uspolis.text': { default: '#408080', _dark: '#FFFFFF' },
       'uspolis.yellow': { default: '#dcb709', _dark: '#f6d123' },
+      // Texto secundario legivel nos dois modos. Diferente de 'uspolis.gray',
+      // que escurece no modo escuro e por isso nao serve para texto sobre
+      // superficies escuras.
+      'uspolis.textMuted': { default: '#66666A', _dark: '#A0AEC0' },
+      // Bordas de cards, listas e divisores.
+      'uspolis.border': { default: '#E2E8F0', _dark: '#2D3748' },
+      // Preenchimentos sutis: cabecalhos de grupo, container do seletor de
+      // abas e linhas selecionadas.
+      'uspolis.surfaceSubtle': { default: '#E7EEEE', _dark: '#2D3748' },
+      // Realce de hover sobre superficies neutras.
+      'uspolis.hover': { default: '#EEF5F5', _dark: '#374151' },
     },
   },
   components: {
