@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">USPolis</string>
+    <string name="title_activity_main">USPolis</string>
+    <string name="package_name">br.com.uspolis</string>
+    <string name="custom_url_scheme">br.com.uspolis</string>
+</resources>

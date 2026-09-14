@@ -1,4 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+} from 'axios';
+
 import { JSONResponse } from '../../models/http/responses/common.response.models';
 
 const USPOLIS_SERVER_URL = import.meta.env.VITE_USPOLIS_API_ENDPOINT;
@@ -17,14 +22,21 @@ class AuthHttpService {
 
   constructor(options: AxiosRequestConfig = {}) {
     const baseURL = `${USPOLIS_SERVER_URL}/auth`;
-    this.http = axios.create({ baseURL, ...options });
+
+    this.http = axios.create({
+      baseURL,
+      ...options,
+    });
   }
 
-  async getTokens(authCode: string): Promise<AxiosResponse<GetTokensReponse>> {
+  async getTokens(
+    authCode: string,
+  ): Promise<AxiosResponse<GetTokensReponse>> {
     const response = await this.http.get(
       `/get-tokens?auth_code=${encodeURIComponent(authCode)}`,
       { withCredentials: true },
     );
+
     return response;
   }
 
@@ -35,11 +47,33 @@ class AuthHttpService {
       `/refresh-token?refresh_token=${encodeURIComponent(refresh_token)}`,
       { withCredentials: true },
     );
+
     return response;
   }
 
   async logout(): Promise<AxiosResponse<JSONResponse>> {
-    return await this.http.post('/logout', null, { withCredentials: true });
+    return await this.http.post(
+      '/logout',
+      null,
+      { withCredentials: true },
+    );
+  }
+
+  async mobileLogin(
+    idToken: string,
+    serverAuthCode: string,
+  ): Promise<AxiosResponse<GetTokensReponse>> {
+    return await axios.post(
+      `${USPOLIS_SERVER_URL}/mobile/authentication/login`,
+      null,
+      {
+        headers: {
+          idToken,
+          serverAuthCode,
+        },
+        withCredentials: true,
+      },
+    );
   }
 }
 
