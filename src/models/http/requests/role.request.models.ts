@@ -7,6 +7,7 @@ export interface CreateRole {
   description?: string;
 
   permissions: CreatePermission[];
+  user_ids?: number[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

@@ -1,6 +1,6 @@
 import { Flex, Heading, Text } from '@chakra-ui/react';
 import PageContent from '../../components/common/PageContent';
-import { RiForbid2Line } from 'react-icons/ri';
+import { FaLock } from 'react-icons/fa';
 
 function Page401() {
   return (
@@ -13,8 +13,8 @@ function Page401() {
         align={'center'}
         margin={'0 auto 0 auto'}
       >
-        <RiForbid2Line size={'128px'} />
-        <Heading size={'3xl'}>Erro 401</Heading>
+        <FaLock size={'128px'} />
+        <Heading size={'3xl'}>Usuário não autorizado</Heading>
         <Text fontSize={'2xl'} textAlign={'center'}>
           Você não tem permissão para acessar essa página.
         </Text>

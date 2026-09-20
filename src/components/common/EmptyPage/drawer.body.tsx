@@ -183,7 +183,10 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
       align={'start'}
       p={'10px'}
       spacing={2}
-      h={'full'}
+      w={'full'}
+      flex={1}
+      minH={0}
+      overflowY={'auto'}
       backgroundColor={'uspolis.white'}
     >
       {loggedUser ? (

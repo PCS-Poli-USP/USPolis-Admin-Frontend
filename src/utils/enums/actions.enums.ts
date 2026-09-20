@@ -14,6 +14,7 @@ export const ClassroomAction = {
   ...BaseAction,
   ALLOCATE: 'allocate',
   RESERVE: 'reserve',
+  REQUEST: 'request',
 } as const;
 
 export type ClassroomAction =
@@ -71,6 +72,8 @@ export namespace PermissionAction {
         return 'Alocar';
       case ClassroomAction.RESERVE:
         return 'Reservar';
+      case ClassroomAction.REQUEST:
+        return 'Solicitar';
       default:
         return translateBaseAction(action as BaseAction);
     }
@@ -114,6 +117,9 @@ export namespace PermissionAction {
     if (action === 'reserve') {
       return 'Reservar/cancelar reservas, reuniões, eventos e provas; aprovar/negar solicitações';
     }
+    if (action === ClassroomAction.REQUEST && resource === Resource.CLASSROOM) {
+      return 'Solicitar o uso da sala; a solicitação passa por aprovação';
+    }
     if (action === BaseAction.UPDATE && resource === Resource.COURSE) {
       return 'Também permite excluir turmas e disciplinas';
     }
@@ -129,7 +135,8 @@ export namespace PermissionAction {
         return (
           action === ClassroomAction.CREATE ||
           action === ClassroomAction.READ ||
-          action === ClassroomAction.RESERVE
+          action === ClassroomAction.RESERVE ||
+          action === ClassroomAction.REQUEST
         );
       case Resource.COURSE:
         return true; // Todas as ações de curso podem ser aplicadas a todos os cursos

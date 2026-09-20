@@ -14,7 +14,7 @@ export interface CreateClassroom {
   accessibility: boolean;
   observation: string;
   reservable: boolean;
-  remote: boolean;
+  restricted: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

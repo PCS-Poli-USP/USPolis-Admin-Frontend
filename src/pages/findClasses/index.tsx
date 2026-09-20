@@ -128,12 +128,14 @@ function FindClasses() {
             </Alert>
           )}
 
-          {commingClasses.length === 0 && !subjectOption && (
-            <Alert status='warning' w={'100%'}>
-              <AlertIcon />
-              Selecione uma disciplina
-            </Alert>
-          )}
+          {subjects.length != 0 &&
+            commingClasses.length === 0 &&
+            !subjectOption && (
+              <Alert status='warning' w={'100%'}>
+                <AlertIcon />
+                Selecione uma disciplina
+              </Alert>
+            )}
 
           {subjects.length > 0 &&
             !subjectOption &&

@@ -22,7 +22,7 @@ const useRoles = (initialFetch: boolean = true) => {
     await service
       .getAll()
       .then((response) => {
-        setRoles(response.data);
+        setRoles(response.data.sort((a, b) => a.name.localeCompare(b.name)));
       })
       .catch((error) => {
         showToast('Erro', parser.parseGetError(error), 'error');
@@ -59,7 +59,7 @@ const useRoles = (initialFetch: boolean = true) => {
       await service
         .create(data)
         .then(() => {
-          showToast('Sucesso', 'Cargo criado com sucesso!', 'success');
+          showToast('Sucesso', 'Papel criado com sucesso!', 'success');
           getAllRoles();
         })
         .catch((error) => {
@@ -78,7 +78,7 @@ const useRoles = (initialFetch: boolean = true) => {
       await service
         .update(id, data)
         .then(() => {
-          showToast('Sucesso', 'Cargo atualizado com sucesso!', 'success');
+          showToast('Sucesso', 'Papel atualizado com sucesso!', 'success');
           getAllRoles();
         })
         .catch((error) => {
@@ -97,11 +97,49 @@ const useRoles = (initialFetch: boolean = true) => {
       await service
         .delete(id)
         .then(() => {
-          showToast('Sucesso', 'Cargo removido com sucesso!', 'success');
+          showToast('Sucesso', 'Papel removido com sucesso!', 'success');
           getAllRoles();
         })
         .catch((error) => {
           showToast('Erro', parser.parseDeleteError(error), 'error');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [getAllRoles, showToast, service, parser],
+  );
+
+  const addUserToRole = useCallback(
+    async (role_id: number, user_id: number) => {
+      setLoading(true);
+      await service
+        .addUser(role_id, user_id)
+        .then(() => {
+          showToast('Sucesso', 'Usuário adicionado ao papel!', 'success');
+          getAllRoles();
+        })
+        .catch((error) => {
+          showToast('Erro', parser.parseAddUserError(error), 'error');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    },
+    [getAllRoles, showToast, service, parser],
+  );
+
+  const removeUserFromRole = useCallback(
+    async (role_id: number, user_id: number) => {
+      setLoading(true);
+      await service
+        .removeUser(role_id, user_id)
+        .then(() => {
+          showToast('Sucesso', 'Usuário removido do papel!', 'success');
+          getAllRoles();
+        })
+        .catch((error) => {
+          showToast('Erro', parser.parseRemoveUserError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
@@ -122,6 +160,8 @@ const useRoles = (initialFetch: boolean = true) => {
     createRole,
     updateRole,
     deleteRole,
+    addUserToRole,
+    removeUserFromRole,
   };
 };
 

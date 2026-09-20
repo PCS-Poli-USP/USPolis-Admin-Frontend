@@ -34,12 +34,28 @@ const useRolesService = () => {
     return axios.delete(`${PREFIX}/${id}`);
   };
 
+  const addUser = (
+    role_id: number,
+    user_id: number,
+  ): Promise<AxiosResponse<JSONResponse>> => {
+    return axios.post(`${PREFIX}/${role_id}/users/${user_id}`);
+  };
+
+  const removeUser = (
+    role_id: number,
+    user_id: number,
+  ): Promise<AxiosResponse<JSONResponse>> => {
+    return axios.delete(`${PREFIX}/${role_id}/users/${user_id}`);
+  };
+
   return {
     getAll,
     getById,
     create,
     update,
     delete: deleteRole,
+    addUser,
+    removeUser,
   };
 };
 

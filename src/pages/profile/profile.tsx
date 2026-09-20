@@ -1,341 +1,59 @@
-import {
-  Accordion,
-  AccordionButton,
-  AccordionItem,
-  AccordionPanel,
-  Alert,
-  AlertIcon,
-  Badge,
-  Box,
-  Center,
-  Flex,
-  FormControl,
-  FormLabel,
-  Grid,
-  GridItem,
-  Icon,
-  SimpleGrid,
-  Switch,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Flex, HStack, Text } from '@chakra-ui/react';
 import PageContent from '../../components/common/PageContent';
 import { appContext } from '../../context/AppContext';
 import { useContext, useEffect } from 'react';
-import {
-  getUserBuildings,
-  getUserBuildingsBadgeColor,
-  getUserRole,
-  getUserRoleBadgeColor,
-} from '../../utils/users/users.formatter';
-import { AddIcon, EmailIcon, MinusIcon } from '@chakra-ui/icons';
-import { LiaBuilding } from 'react-icons/lia';
-import moment from 'moment';
 import { HiUserGroup } from 'react-icons/hi';
-import UserImage from '../../components/common/UserImage/user.image';
-import { PiChair, PiStudentFill } from 'react-icons/pi';
 import LoadingPage from '../../components/common/LoadingPage';
 import Page401 from '../page401';
-import GroupFormatter from '../../utils/groups/group.formatter';
-import { LuCalendarDays, LuMail, LuMailX } from 'react-icons/lu';
-import useUsers from '../../hooks/users/useUsers';
-import HelpPopover from '../../components/common/HelpPopover';
+import ProfileHeader from './ProfileHeader/profile.header';
+import ProfileStatusRow from './ProfileStatusRow/profile.statusrow';
+import ProfileRoles from './ProfileRoles/profile.roles';
+import ProfileLegacyGroups from './ProfileLegacyGroups/profile.legacygroups';
 
 function Profile() {
   const { loggedUser, loading, isAuthenticated, getSelfFromBackend } =
     useContext(appContext);
-  const userInfo = loggedUser?.user_info;
-  const { updateUserEmailNotifications } = useUsers(false);
 
   useEffect(() => {
     getSelfFromBackend();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(loggedUser);
-
   return (
-    <PageContent>
+    <PageContent center>
       {!loading && loggedUser ? (
-        <>
-          <Center>
-            <Grid
-              id='profile-grid'
-              w={'1000px'}
-              h={'auto'}
-              templateColumns='repeat(1, 1fr)'
-              border={'2px'}
-              borderRadius={'10px'}
-              padding={'20px'}
-            >
-              <GridItem
-                colSpan={1}
-                h={'330px'}
-                mb={'30px'}
-                id='profile-info-grid'
-              >
-                <Flex
-                  align={'center'}
-                  justify={'center'}
-                  direction={'column'}
-                  p={'20px'}
-                  w={'full'}
-                  gap={'20px'}
-                >
-                  <Flex
-                    direction={'column'}
-                    justify={'center'}
-                    align={'center'}
-                    w={'300px'}
-                    gap={'10px'}
-                  >
-                    <UserImage boxSize='120px' />
+        <Box
+          w={'full'}
+          maxW={'1000px'}
+          border={'2px solid'}
+          borderColor={'uspolis.blue'}
+          borderRadius={'10px'}
+          p={{ base: '16px', md: '24px' }}
+        >
+          <ProfileHeader />
+          <ProfileStatusRow />
+          <ProfileRoles />
+          <ProfileLegacyGroups />
 
-                    <Text fontSize={'2xl'} fontWeight={'bold'}>
-                      {userInfo ? userInfo.name : 'Usuário não encontrado'}
-                    </Text>
-                    <Text fontSize={'xl'} fontWeight={'bold'}>
-                      <Badge colorScheme={getUserRoleBadgeColor(loggedUser)} fontSize={'lg'}>
-                        {getUserRole(loggedUser)}
-                      </Badge>
-                    </Text>
-                  </Flex>
-                  <Flex
-                    direction={'column'}
-                    gap={'10px'}
-                    justify={'center'}
-                    align={'center'}
-                  >
-                    <Box>
-                      <EmailIcon />{' '}
-                      {userInfo ? userInfo.email : 'Email não encontrado'}
-                    </Box>
-                    <Flex
-                      justify={'center'}
-                      align={'center'}
-                      gap={'10px'}
-                      fontSize={'lg'}
-                    >
-                      <PiStudentFill />
-                      <Text>
-                        {loggedUser.curriculum ? (
-                          <Badge colorScheme='green'>
-                            {loggedUser.curriculum.description}
-                          </Badge>
-                        ) : (
-                          <Badge colorScheme='gray'>Curso não registrado</Badge>
-                        )}
-                      </Text>
-                    </Flex>
-                    <Box>
-                      {`Último acesso em ${moment(
-                        loggedUser.last_visited,
-                      ).format('DD/MM/YYYY [às] HH:mm:ss')}`}
-                    </Box>
-                  </Flex>
-                </Flex>
-              </GridItem>
-
-              <GridItem
-                colSpan={1}
-                h={'50px'}
-                id='profile-notifications-grid'
-                hidden={
-                  (!loggedUser.buildings ||
-                    loggedUser.buildings.length === 0) &&
-                  !loggedUser.is_admin
-                }
-              >
-                <Flex
-                  direction='row'
-                  justify={'flex-start'}
-                  align={'flex-start'}
-                  gap={'40px'}
-                >
-                  <FormControl
-                    display='flex'
-                    alignItems='center'
-                    w={'fit-content'}
-                  >
-                    {loggedUser.receive_emails ? (
-                      <LuMail size={'25px'} />
-                    ) : (
-                      <LuMailX size={'25px'} />
-                    )}
-                    <FormLabel
-                      htmlFor='email-alerts'
-                      fontSize={'xl'}
-                      fontWeight={'bold'}
-                      ml='10px'
-                      mb='0'
-                    >
-                      Notificações por email?
-                    </FormLabel>
-                    <Switch
-                      id='email-alerts'
-                      isChecked={loggedUser.receive_emails}
-                      mr={'5px'}
-                      onChange={async (e) => {
-                        await updateUserEmailNotifications(e.target.checked);
-                        await getSelfFromBackend();
-                      }}
-                    />
-                    <HelpPopover title='O que é notificado?'>
-                      <Flex direction={'column'} gap={'5px'}>
-                        <Text fontWeight={'bold'}>
-                          Para responsáveis por prédios:
-                        </Text>
-                        <Text fontSize={'sm'}>
-                          Uma reserva foi criada/cancelada e ela estiver no seu
-                          prédio ou for em uma sala que você tem permissão.
-                        </Text>
-                      </Flex>
-                    </HelpPopover>
-                  </FormControl>
-                  <Flex justify={'center'} align={'center'} gap={'10px'}>
-                    <LuCalendarDays size={'25px'} />
-                    <Text fontWeight={'bold'} fontSize={'xl'}>
-                      Grade Horária:{' '}
-                    </Text>
-
-                    {loggedUser.current_schedule_id ? (
-                      <Badge colorScheme='green' mt={'5px'}>
-                        Cadastrada
-                      </Badge>
-                    ) : (
-                      <Badge colorScheme='red' mt={'5px'}>
-                        Não registrada
-                      </Badge>
-                    )}
-                  </Flex>
-                </Flex>
-              </GridItem>
-
-              <GridItem colSpan={1} h={'50px'} id='profile-buildings-grid'>
-                <Flex dir='row' justify={'start'} align={'center'} gap={'10px'}>
-                  <LiaBuilding size={'25px'} />
-                  <Text fontSize={'xl'} fontWeight={'bold'}>
-                    Prédios:
-                  </Text>
-                  <Text
-                    h={'100%'}
-                    fontSize={'xl'}
-                    alignSelf={'center'}
-                    justifySelf={'center'}
-                  >
-                    <Badge colorScheme={getUserBuildingsBadgeColor(loggedUser)}>
-                      {getUserBuildings(loggedUser)}
-                    </Badge>
-                  </Text>
-                </Flex>
-              </GridItem>
-
-              <GridItem colSpan={1} h={'auto'} id='profile-groups-grid'>
-                <Flex
-                  dir='row'
-                  justify={'start'}
-                  align={'center'}
-                  gap={'10px'}
-                  mb={'20px'}
-                >
-                  <HiUserGroup size={'25px'} />
-                  <Text fontSize={'xl'} fontWeight={'bold'}>
-                    Grupos e salas
-                  </Text>
-                </Flex>
-
-                {loggedUser.groups.length === 0 ? (
-                  <Alert
-                    status={'warning'}
-                    fontSize={'sm'}
-                    mb={4}
-                    borderRadius={'10px'}
-                  >
-                    <AlertIcon />
-                    Não pertence a nenhum grupo nem possui salas, se você for um
-                    responsável por prédio entre em contato por{' '}
-                    <strong>uspolis@usp.br</strong>.
-                  </Alert>
-                ) : (
-                  <Accordion
-                    allowMultiple
-                    defaultIndex={[0]}
-                    borderColor={'uspolis.blue'}
-                    border={'1px'}
-                  >
-                    {loggedUser.groups.map((group, index) => (
-                      <AccordionItem key={index}>
-                        {({ isExpanded }) => (
-                          <>
-                            <AccordionButton>
-                              <Box as='span' flex='1' textAlign='left'>
-                                <Text as={'b'}>{`${GroupFormatter.getGroupName(
-                                  group,
-                                )} (${
-                                  group.classroom_strs.length
-                                } salas)`}</Text>
-                              </Box>
-                              {isExpanded ? (
-                                <MinusIcon fontSize='12px' />
-                              ) : (
-                                <AddIcon fontSize='12px' />
-                              )}
-                            </AccordionButton>
-                            <AccordionPanel>
-                              <Flex
-                                key={index}
-                                direction={'column'}
-                                gap={'10px'}
-                              >
-                                <SimpleGrid
-                                  w={'full'}
-                                  minChildWidth={'160px'}
-                                  spacing={'15px'}
-                                  alignItems={'flex-end'}
-                                >
-                                  {group.classroom_strs.length === 0 ? (
-                                    <Alert
-                                      status={'warning'}
-                                      fontSize={'sm'}
-                                      borderRadius={'10px'}
-                                      mb={4}
-                                    >
-                                      <AlertIcon />
-                                      Esse grupo não possui salas
-                                    </Alert>
-                                  ) : undefined}
-                                  {group.classroom_strs.map(
-                                    (classroom, index) => (
-                                      <Flex
-                                        key={index}
-                                        justify={'flex-start'}
-                                        align={'center'}
-                                        gap={'5px'}
-                                        w={'160px'}
-                                      >
-                                        <Icon boxSize={'20px'} as={PiChair} />
-                                        <Text
-                                          w={'160px'}
-                                          overflowX={'hidden'}
-                                          textOverflow={'ellipsis'}
-                                          alignContent={'center'}
-                                          h={'50px'}
-                                        >{`${classroom}`}</Text>
-                                      </Flex>
-                                    ),
-                                  )}
-                                </SimpleGrid>
-                              </Flex>
-                            </AccordionPanel>
-                          </>
-                        )}
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                )}
-              </GridItem>
-            </Grid>
-          </Center>
-        </>
+          <Flex
+            align={'center'}
+            justify={'space-between'}
+            gap={'16px'}
+            wrap={'wrap'}
+            mt={'22px'}
+            pt={'18px'}
+            borderTop={'1px solid'}
+            borderColor={'uspolis.border'}
+          >
+            <HStack spacing={'10px'} color={'uspolis.textMuted'}>
+              <HiUserGroup size={18} />
+              <Text fontSize={'13.5px'} maxW={'60ch'}>
+                Falta um acesso que você deveria ter? Peça ao responsável pelo prédio ou escreva
+                para <Text as={'b'} color={'uspolis.text'}>uspolis@usp.br</Text>.
+              </Text>
+            </HStack>
+          </Flex>
+        </Box>
       ) : undefined}
       {isAuthenticated && loading && <LoadingPage />}
       {!isAuthenticated && !loading ? <Page401 /> : undefined}

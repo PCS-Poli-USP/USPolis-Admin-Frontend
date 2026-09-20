@@ -12,9 +12,8 @@ export interface ClassroomResponse {
   air_conditioning: boolean;
   observation: string;
   reservable: boolean;
-  remote: boolean;
+  restricted: boolean;
   // laboratory: boolean;
-  // restricted: boolean;
   updated_at: string;
   created_by_id: number;
   created_by: string;

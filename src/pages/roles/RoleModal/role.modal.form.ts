@@ -14,4 +14,3 @@ export const defaultValues: RoleForm = {
   name: '',
   description: '',
 };
-

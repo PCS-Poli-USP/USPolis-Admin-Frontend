@@ -8,6 +8,9 @@ export interface RoleResponse {
   resources: Resource[];
   permissions: PermissionResponse[];
 
+  user_ids: number[];
+  user_strs: string[];
+
   created_at: string;
   updated_at: string;
 }

@@ -122,7 +122,7 @@ export function getClassroomColumns(
     },
     {
       id: 'restricted',
-      accessorKey: 'remote',
+      accessorKey: 'restricted',
       header: 'Restrito',
       maxSize: 120,
       meta: { isBoolean: true, isSelectable: true, isCenter: true },

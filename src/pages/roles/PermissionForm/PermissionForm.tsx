@@ -49,7 +49,12 @@ interface PermissionFormProps {
 
 const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
   (
-    { roles = [], showRoleSelect = false, batchMode = false, initialValues = null },
+    {
+      roles = [],
+      showRoleSelect = false,
+      batchMode = false,
+      initialValues = null,
+    },
     ref,
   ) => {
     const formRef = useRef<HTMLDivElement | null>(null);
@@ -108,7 +113,7 @@ const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
           const values = getValues();
           if (!values.role_id) {
             form.setError('role_id', {
-              message: 'Selecione um cargo para esta permissão',
+              message: 'Selecione um papel para esta permissão',
             });
             return null;
           }
@@ -299,8 +304,8 @@ const PermissionForm = forwardRef<PermisionFormRef, PermissionFormProps>(
             <Flex w={'full'} direction={'column'} gap={'10px'}>
               <SelectInput
                 name='role_id'
-                label='Cargo'
-                placeholder='Selecione um cargo para esta permissão'
+                label='Papel'
+                placeholder='Selecione um papel para esta permissão'
                 options={roles.map((role) => ({
                   label: role.name,
                   value: role.id,

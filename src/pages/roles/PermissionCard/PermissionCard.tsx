@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Badge, Checkbox, Flex, IconButton, Text } from '@chakra-ui/react';
+import {
+  Badge,
+  Checkbox,
+  Flex,
+  IconButton,
+  Text,
+  Tooltip,
+} from '@chakra-ui/react';
 import { PermissionResponse } from '../../../models/http/responses/permissions.response.models';
 import { PermissionAction } from '../../../utils/enums/actions.enums';
 import { Resource } from '../../../utils/enums/resources.enums';
@@ -33,65 +40,79 @@ function PermissionCard({
 }: PermissionCardProps) {
   const roleName = (permission as any).role_name as string | undefined;
   const parentName = (permission as any).parent_name as string | undefined;
+  const resourceLabel =
+    permission.resource_id === -1
+      ? `Todos: ${Resource.translate(permission.resource)}`
+      : permission.resource_name || 'Desconhecido';
+
   return (
     <Flex
-      border={'1px solid'}
-      padding={'1rem'}
-      borderRadius={'0.5rem'}
       justify={'space-between'}
-      alignSelf={'center'}
+      align={'center'}
       w={'full'}
       maxW={maxW}
-      boxShadow={'lg'}
-      _hover={{
-        boxShadow: 'lg',
-        transform: 'scale(1.02)',
-        transition: 'all 0.2s ease-in-out',
-        opacity: 0.7,
-      }}
+      border={'1px solid'}
+      borderColor={'uspolis.border'}
+      borderRadius={'9px'}
+      p={'9px 12px'}
+      gap={'10px'}
+      wrap={'wrap'}
     >
-      <Flex direction={'column'} gap={'5px'}>
-        <Flex align={'center'} gap={'10px'}>
-          <Text fontWeight={'bold'}>
-            {Resource.translate(permission.resource)}:{' '}
-          </Text>
-          {create && <Badge colorScheme='green'>Nova</Badge>}
-        </Flex>
-        <Flex gap={'5px'} flexWrap={'wrap'}>
+      <Flex align={'center'} gap={'8px'} wrap={'wrap'} minW={0}>
+        <Badge
+          colorScheme={'blue'}
+          fontSize={'10px'}
+          letterSpacing={'0.03em'}
+          textTransform={'uppercase'}
+        >
+          {Resource.translate(permission.resource)}
+        </Badge>
+        {create && (
+          <Badge colorScheme={'green'} fontSize={'10px'}>
+            Nova
+          </Badge>
+        )}
+        <Text fontSize={'13.5px'} fontWeight={'semibold'}>
+          {resourceLabel}
+          {parentName && parentName !== resourceLabel && (
+            <Text as={'span'} color={'uspolis.gray'} fontWeight={'normal'}>
+              {` · ${parentName}`}
+            </Text>
+          )}
+        </Text>
+        <Flex gap={'4px'} wrap={'wrap'}>
           {permission.actions.map((action, index) => (
-            <Badge key={index} color={'blue.500'}>
-              {PermissionAction.translate(action, permission.resource)}
-            </Badge>
+            <Tooltip
+              key={index}
+              label={PermissionAction.describe(action, permission.resource)}
+              isDisabled={
+                !PermissionAction.describe(action, permission.resource)
+              }
+            >
+              <Badge colorScheme={'gray'} fontSize={'10px'}>
+                {PermissionAction.translate(action, permission.resource)}
+              </Badge>
+            </Tooltip>
           ))}
         </Flex>
-        <Text>
-          <b>Recurso: </b> {`${permission.resource_name || 'Desconhecido'}`}
-        </Text>
-        <Text>
-          <b>Relacionado: </b> {`${parentName || 'Desconhecido'}`}
-        </Text>
-        {roleName ? (
-          <Text
-            borderRadius={'1rem'}
-            // padding={'0.1rem 0.5rem'}
-          >
-            <b>Cargo: </b>
-            {`${roleName}`}
+        {roleName && (
+          <Text fontSize={'12px'} color={'uspolis.gray'}>
+            {`via ${roleName}`}
           </Text>
-        ) : null}
+        )}
       </Flex>
       {!readOnly && (
-        <Flex gap={'5px'}>
+        <Flex gap={'4px'} flexShrink={0}>
           {selectable && (
             <Checkbox
               isChecked={isSelected}
-              size={'lg'}
               onChange={(event) => onSelectChange?.(event.target.checked)}
             />
           )}
           {!selectable && (update || create) && (
             <IconButton
               aria-label='edit'
+              size={'xs'}
               variant={'outline'}
               icon={<LuPen />}
               colorScheme='yellow'
@@ -101,6 +122,7 @@ function PermissionCard({
           {!selectable && (
             <IconButton
               aria-label='remove'
+              size={'xs'}
               colorScheme='red'
               variant={'outline'}
               icon={<LuTrash />}

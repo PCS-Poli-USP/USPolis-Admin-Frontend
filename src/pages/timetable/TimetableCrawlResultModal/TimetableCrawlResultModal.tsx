@@ -49,12 +49,12 @@ function TimetableCrawlResultModal({
   const statusDescription = isUnmatchedFailure ? (
     <>
       Sua grade foi obtida do JupiterWeb, mas nenhuma das disciplinas
-      encontradas esta cadastrada no sistema do USPolis ainda. Peca para a
+      encontradas estão cadastradas no sistema do USPolis ainda. Peça para a
       secretaria do seu departamento ou para o suporte (
       <Link href={`mailto:${SUPPORT_EMAIL}`} textDecoration={'underline'}>
         {SUPPORT_EMAIL}
       </Link>
-      ) cadastrarem essas disciplinas no sistema. Veja os itens nao encontrados
+      ) cadastrarem essas disciplinas no sistema. Veja os itens não encontrados
       abaixo.
     </>
   ) : isErrorResult ? (

@@ -80,6 +80,7 @@ const DrawerHeader = styled('div')<{ colorMode?: string }>(
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
+    flexShrink: 0,
   }),
 );
 
@@ -238,6 +239,9 @@ export default function EmptyPage() {
             backgroundColor: colorMode === 'dark' ? '#262626' : '#FFFFFF',
             boxShadow: '5px 5px 10px rgba(0,0,0,0.3);',
             scrollbarWidth: 'thin',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
           },
         }}
         variant='persistent'
