@@ -38,6 +38,13 @@ Esse script sobe o `uvicorn` apontando para `server.app:app`, usando os certific
 
 A documentação interativa do Swagger fica em `/api/docs` (`redoc` em `/api/redoc`), já que a API é montada com `root_path="/api"`.
 
+Em `server/app.py`, além dos routers, também são registrados:
+
+- `CORSMiddleware`, com as origens permitidas vindas de `CONFIG.allowed_origins` (`ALLOWED_ORIGINS`, CSV)
+- `LoggerMiddleware` (`server/middlewares.py`) — loga toda requisição/resposta (veja `LOGGING.md` no repositório do backend para o formato exato)
+- Handlers de exceção (`server/exception_handlers.py`): `IntegrityError` → 409, `NoResultFound` → 404, `GoogleAuthError` → 403
+- Um `lifespan` (`server/services/cron/scheduler.py`) que, ao subir a aplicação, dispara duas tasks assíncronas em loop: uma limpeza de cache a cada hora (`periodic_cache_cleanup`) e uma rotina diária à meia-noite (horário de Brasília) que roda tarefas de manutenção (`periodic_daily_tasks` → `run_daily_tasks`, ex: expurgo de métricas de erro antigas). Ambas são canceladas no shutdown.
+
 ## Camadas de acesso (tiers)
 
 As rotas são organizadas por **nível de acesso**, cada uma com sua própria dependência de autenticação aplicada no roteador inteiro (não em cada handler individualmente):
@@ -119,8 +126,13 @@ tests/
 ├── integration/{repositories,services}/           # testes com banco, sem HTTP
 ├── unit/{models,services,utils}/                    # testes puros, sem banco
 ├── factories/{model,request,response,base}/          # factories (SQLModel/Faker) e builders de payload
-└── conftest.py                                          # fixtures, aplica as migrações e limpa as tabelas a cada teste
+└── conftest.py                                          # fixtures, aplica as migrações e isola cada teste numa transação
 ```
+
+O isolamento entre testes **não** é feito truncando tabelas: a fixture de sessão (`tests/conftest.py`) abre uma transação e uma `SAVEPOINT`, entrega essa sessão pro teste, e ao final dá `rollback()` — nenhum dado escrito durante o teste sobrevive, sem precisar limpar tabela por tabela. As migrações de verdade (`alembic upgrade head`) são aplicadas uma única vez por sessão de testes (fixture `autouse`, `scope="session"`) contra o banco apontado por `TEST_ALEMBIC_URL`.
+
+> [!WARNING]
+> O `TESTS.md` do repositório do backend descreve um mecanismo antigo (truncar tabelas via uma função `truncate_tables`) que não é mais o que o código faz — o `README.md` do backend já está atualizado com a descrição correta (SAVEPOINT + rollback). Em caso de dúvida, confie no `conftest.py` e no `README.md`, não no `TESTS.md`.
 
 Rodar os testes:
 
@@ -139,3 +151,15 @@ mypy server
 ruff check server
 ruff format server
 ```
+
+O `mypy` roda em modo bem estrito (`disallow_untyped_defs`, `disallow_incomplete_defs`, `warn_return_any`, `strict_equality`, entre outras flags em `[tool.mypy]` no `pyproject.toml`) — funções sem type hints ou com `Any` implícito não passam. O `ruff` usa `line-length = 88` e tem a regra `UP` (pyupgrade) habilitada.
+
+## Documentação adicional no repositório do backend
+
+Além desta página, o próprio repositório do backend tem alguns markdowns na raiz com detalhes que não duplicamos aqui:
+
+- **`README.md`** — setup rápido, comandos de desenvolvimento e teste
+- **`SESSION_MANAGEMENT.md`** — o ciclo de vida completo do cookie de sessão (criação, renovação deslizante de 30 dias, teto absoluto de 90 dias, limitações conhecidas como a ausência de um job de limpeza de sessões expiradas)
+- **`LOGGING.md`** — os dois loggers (`app_logger` e `loki_access`), o que cada um registra e as regras de rotação de arquivo
+- **`PERMISSIONS.md`** — o modelo de permissões baseado em `Role` (veja o aviso sobre isso na seção [Autenticação](#autenticação) acima) e o histórico de migração do modelo antigo baseado em `Group`
+- **`TESTS.md`** — parcialmente desatualizado (veja o aviso na seção [Testes](#testes))

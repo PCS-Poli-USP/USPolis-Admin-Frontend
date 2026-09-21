@@ -12,6 +12,15 @@ next:
 
 Para a lista de tecnologias utilizadas veja [Tecnologias Utilizadas](/dev/stack#frontend). Aqui vamos focar em como o código está organizado e nas convenções que seguimos.
 
+## Configuração do Vite
+
+`vite.config.ts` na raiz do projeto:
+
+- `server.port = 3000` e `server.host = true` (escuta em todas as interfaces, não só `localhost`)
+- HTTPS é ligado **apenas quando `VITE_ENVIROMENT=development`**, lendo os certificados de `certs/cert.pem` e `certs/key.pem` (os mesmos gerados na etapa de [Configurando seu Ambiente](/dev/enviroment#backend) para o backend) — em outros valores de `VITE_ENVIROMENT` o servidor sobe em HTTP puro
+- `build.outDir = 'build'` — é essa pasta que o workflow de CI/CD copia para o servidor (veja [Configurando seu Ambiente › CI/CD](/dev/enviroment#o-que-o-ci-cd-faz-de-verdade))
+- O plugin `vite-plugin-eslint` roda o ESLint durante o dev server com `failOnError: false` e `failOnWarning: false` — ou seja, erros de lint aparecem no terminal/overlay mas **nunca** derrubam o servidor de desenvolvimento nem o build
+
 ## Roteamento e controle de acesso
 
 As rotas ficam centralizadas em `src/AppRoutes.tsx`, e são organizadas em uma cadeia de rotas de layout/guarda:
