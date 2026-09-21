@@ -10,7 +10,7 @@ prev:
 
 # Relatórios em PDF
 
-É possível baixar PDF's com alguns tipos de relatórios, cada relatório tem uma informação distinta e um formato diferente, para ver as opções disponíveis basta clicar no botão "+Baixar", conforme a imagem abaixo.
+É possível baixar PDF's com alguns tipos de relatórios, cada relatório tem uma informação distinta e um formato diferente, para ver as opções disponíveis basta clicar no botão "+ Baixar", conforme a imagem abaixo.
 
 <div style="
   display: flex;
@@ -30,7 +30,7 @@ prev:
   />
 </div>
 
-Um menu irá abrir com todas as opções disponíveis, vamos entrar em detalhes sobre cada um em seguida.
+Um menu irá abrir com todas as opções disponíveis, organizadas em três grupos — **Alocações gerais** (relatórios de alocação de todas as disciplinas de um prédio), **Alocações específicas** (relatório apenas das disciplinas que você escolher) e **Relatórios** (disponibilidade de salas) — vamos entrar em detalhes sobre cada um em seguida.
 
 <div style="
   display: flex;
@@ -56,7 +56,7 @@ para um início de 21/07/2025 até 31/12/2025, serão consideras todas as discip
 
 ## Alocação das disciplinas (PDF)
 
-Esse relatório mostra todas as alocações de determinado prédio no formato de tabela, ao clicar no botão o seguinte formulário irá aparecer:
+Esse relatório mostra todas as alocações de determinado prédio no formato de tabela (fica no grupo **Alocações gerais**). Ao clicar no botão o seguinte formulário irá aparecer:
 
 <div style="
   display: flex;
@@ -70,13 +70,13 @@ Esse relatório mostra todas as alocações de determinado prédio no formato de
     style="
       border-radius: 8px;
       max-width: 100%;
-      height: 300px;
+      height: auto;
       box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     "
   />
 </div>
 
-Basta escolher o prédio que o botão para baixar o pdf irá ser desbloqueado, ao clicar no botão o relatório será baixado. Um exemplo do formato desse relatório pode ser visto a seguir:
+Basta escolher o **Prédio** que uma **pré-visualização** do relatório aparece do lado direito, já com a contagem de disciplinas e páginas que o PDF vai ter. Revise a prévia e clique em **"Baixar disciplinas.pdf"** para baixar o relatório completo.
 
 <div style="
   display: flex;
@@ -98,9 +98,9 @@ Basta escolher o prédio que o botão para baixar o pdf irá ser desbloqueado, a
 
 ## Mapa de Salas (PDF)
 
-Esse opção gera um relatório das alocações no formato de calendário, cada página do PDF é uma sala de aula com o calendário da semana com os horários ocupados, exatamente igual a visualização Geral, porém, cada página é de uma sala.
+Esse opção gera um relatório das alocações no formato de calendário, cada página do PDF é uma sala de aula com o calendário da semana com os horários ocupados, exatamente igual a visualização Geral, porém, cada página é de uma sala. Fica no grupo **Alocações gerais**.
 
-O formulário é igual ao da alocação das disciplinas, você escolhe um prédio. A diferença é que ele não baixa um PDF imediatamente, ele vai te mostrar uma tela onde você salva em formato PDF, conforme as imagens abaixo.
+O formulário é igual ao da alocação das disciplinas, você escolhe um prédio. A diferença é que ele não tem pré-visualização nem baixa um PDF imediatamente — o botão fica com o nome **"Mapa de salas"** e, ao clicar, ele vai te mostrar uma tela onde você salva em formato PDF, conforme as imagens abaixo.
 
 <div style="
   display: flex;
@@ -114,7 +114,7 @@ O formulário é igual ao da alocação das disciplinas, você escolhe um prédi
     style="
       border-radius: 8px;
       max-width: 100%;
-      height: 300px;
+      height: auto;
       box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     "
   />
@@ -162,7 +162,30 @@ Aqui um exemplo de cada página do relatório.
 
 ## Disciplinas escolhidas (PDF)
 
-Esse relatório é igual ao [Alocação das Disciplinas](#alocação-das-disciplinas-pdf) com a diferença de que você que escolhe quais disciplinas serão consideras, sem estar limitado a um mesmo prédio. A seguir, está a imagem do menu com algumas disciplinas já selecionadas.
+Esse relatório é igual ao [Alocação das Disciplinas](#alocação-das-disciplinas-pdf) com a diferença de que você que escolhe quais disciplinas serão consideradas, sem estar limitado a um mesmo prédio — fica no grupo **Alocações específicas**. Ao abrir, o formulário tem duas formas de escolher as disciplinas:
+
+<div style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+">
+  <img 
+    src="/allocations/image-18.png" 
+    alt="Descrição"
+    style="
+      border-radius: 8px;
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    "
+  />
+</div>
+
+- **Escolher com base em um prédio**: adiciona de uma vez todas as disciplinas oferecidas em um prédio escolhido.
+- **Seleção manual**: busca e adiciona disciplinas específicas, uma a uma.
+
+Você pode combinar as duas formas — por exemplo, adicionar todas as disciplinas de um prédio e depois remover ou incluir mais alguma manualmente (clique no "x" de uma etiqueta para removê-la). A seguir, um exemplo já com disciplinas selecionadas:
 
 <div style="
   display: flex;
@@ -176,17 +199,17 @@ Esse relatório é igual ao [Alocação das Disciplinas](#alocação-das-discipl
     style="
       border-radius: 8px;
       max-width: 100%;
-      height: 300px;
+      height: auto;
       box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     "
   />
 </div>
 
-Basta então clicar em confirmar que o botão de baixar será liberado.
+Depois de escolher as disciplinas, clique em **Confirmar** que o botão **Baixar** será liberado.
 
 ## Disponibilidade de salas (PDF)
 
-Esse relatório funciona igual ao relatório [Mapa de Salas](#mapa-de-salas-pdf), com a diferença de que ao invés de mostrar as alocações, mostra o inverso, ou seja, os horários disponíveis.
+Esse relatório funciona igual ao relatório [Mapa de Salas](#mapa-de-salas-pdf) (mesmo comportamento de abrir a tela de salvar em PDF em vez de baixar direto), com a diferença de que ao invés de mostrar as alocações, mostra o inverso, ou seja, os horários disponíveis. Fica no grupo **Relatórios**.
 
 <div style="
   display: flex;
@@ -200,7 +223,7 @@ Esse relatório funciona igual ao relatório [Mapa de Salas](#mapa-de-salas-pdf)
     style="
       border-radius: 8px;
       max-width: 100%;
-      height: 300px;
+      height: auto;
       box-shadow: 0 4px 16px rgba(0,0,0,0.1);
     "
   />
