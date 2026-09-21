@@ -6,6 +6,54 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 ## 2026
 
+### Documentação técnica de ambiente, backend, frontend e banco de dados - 21/09/2026
+
+<span style="color: #347aeb">DOCS</span>
+
+**Descrição:**
+
+- Preenchida a seção "Banco de dados" de [Configurando seu Ambiente](/dev/enviroment), antes vazia: criação do banco local, variáveis de conexão/Alembic, e o atalho `OVERRIDE_AUTH`/`MOCK_EMAIL` para pular o login OAuth em desenvolvimento
+- Detalhado o passo a passo real do workflow de CI/CD (`.github/workflows/ci_cd.yml`) na mesma página
+- [Backend](/dev/backend): documentados os middlewares/handlers de `server/app.py`, as cron tasks do `lifespan`, o mecanismo real de isolamento dos testes (SAVEPOINT + rollback) e um aviso sobre o `TESTS.md` do backend estar desatualizado nesse ponto
+- [Frontend](/dev/frontend): nova seção sobre a configuração do `vite.config.ts` (HTTPS condicional, porta, `outDir`)
+- Reescritas as páginas [Banco de Dados](/dev/database), [Tabelas, Modelos e Relacionamentos](/dev/database/models) (as 50 tabelas do sistema, agrupadas por domínio), [Migrações](/dev/database/migrations) e [Backup](/dev/database/backup), antes todas marcadas como "em construção"
+
+### Documentação de uso do Agendamento, Oferecimentos e Administração - 21/09/2026
+
+<span style="color: #347aeb">DOCS</span>
+
+**Descrição:**
+
+- Reescritas com prints reais do sistema e explicação de cada botão/seletor: [Calendários](/oferings/calendars), [Salas](/oferings/classrooms), [Disciplinas](/oferings/subjects), [Turmas](/oferings/classes), [Conflitos](/oferings/conflicts), [Relatórios e Métricas](/oferings/reports), [Reservas](/scheduling/reservations), [Solicitações](/scheduling/solicitations) e [Administração](/admin/) — antes eram todas texto genérico sem acentuação e sem nenhuma imagem
+- Atualizadas [Minha Conta](/profile/), [Minhas Solicitações](/profile/solicitations/), [Relatórios em PDF](/allocations/pdfs), [Encontre suas aulas](/find-classes/) e [Encontre suas provas](/find-exams/) para refletir o redesign recente dessas telas (nova tela de perfil com papéis e permissões, solicitações com linha do tempo e filtro por situação, menu de PDF reorganizado em grupos com pré-visualização, e as novas telas de aulas/provas com status em tempo real)
+
+### Correção da constraint de prédio principal não aplicada no banco - 21/09/2026
+
+<span style="color: orange">BUGFIX</span>
+
+**Descrição:**
+
+- Corrigido typo em `Building` (`__table__args__` em vez de `__table_args__`) que fazia o SQLAlchemy ignorar silenciosamente a constraint de unicidade de `main_group_id` — um prédio já podia, sem essa correção, ser referenciado como grupo principal de mais de um prédio ao mesmo tempo
+- Migração adicionada para aplicar essa constraint nos bancos já existentes
+
+### Correções no formulário de disciplinas e no bypass de autenticação local - 21/09/2026
+
+<span style="color: orange">BUGFIX</span>
+
+**Descrição:**
+
+- Corrigido o placeholder do campo "Nome da Disciplina" no cadastro de disciplinas, que mostrava por engano o texto de "Código da Disciplina"
+- Corrigido o nome da variável de ambiente lida por `PrivateRoute` (`VITE_OVERRIDE_AUTH`), que estava com um underscore a mais e por isso nunca funcionava
+
+### Ordenação por coluna na tabela de usuários - 21/09/2026
+
+<span style="color: #408080">IMPROVEMENT</span>
+
+**Descrição:**
+
+- Adicionada ordenação por coluna (clicável, com indicador de direção) na tabela de usuários da área administrativa
+- Removido o filtro/cartão de estatística "Notificações desativadas" dessa mesma tela
+
 ### Correção de sessões duplicadas em VPN e redes universitárias - 23/08/2026
 
 <span style="color: orange">BUGFIX</span>
