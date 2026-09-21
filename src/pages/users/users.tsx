@@ -39,7 +39,6 @@ const Users = () => {
   const [buildingFilter, setBuildingFilter] = useState('');
   const [adminOnly, setAdminOnly] = useState(false);
   const [hasGroupOnly, setHasGroupOnly] = useState(false);
-  const [notifOffOnly, setNotifOffOnly] = useState(false);
   const [selected, setSelected] = useState<Record<number, boolean>>({});
   const [editingUser, setEditingUser] = useState<
     UserCoreResponse | undefined
@@ -69,18 +68,9 @@ const Users = () => {
         return false;
       if (adminOnly && !user.is_admin) return false;
       if (hasGroupOnly && user.group_ids.length === 0) return false;
-      if (notifOffOnly && user.receive_emails) return false;
       return true;
     });
-  }, [
-    users,
-    q,
-    roleFilter,
-    buildingFilter,
-    adminOnly,
-    hasGroupOnly,
-    notifOffOnly,
-  ]);
+  }, [users, q, roleFilter, buildingFilter, adminOnly, hasGroupOnly]);
 
   const selectedIds = useMemo(
     () =>
@@ -96,7 +86,6 @@ const Users = () => {
     setBuildingFilter('');
     setAdminOnly(false);
     setHasGroupOnly(false);
-    setNotifOffOnly(false);
   }
 
   function openDrawer(user: UserCoreResponse) {
@@ -160,14 +149,6 @@ const Users = () => {
       active: hasGroupOnly,
       onClick: () => setHasGroupOnly((v) => !v),
     },
-    {
-      key: 'notifOff',
-      label: 'Notificações desativadas',
-      value: users.filter((u) => !u.receive_emails).length,
-      colorScheme: 'gray',
-      active: notifOffOnly,
-      onClick: () => setNotifOffOnly((v) => !v),
-    },
   ];
 
   const chips = [
@@ -180,11 +161,6 @@ const Users = () => {
       label: 'Com papel',
       active: hasGroupOnly,
       toggle: () => setHasGroupOnly((v) => !v),
-    },
-    {
-      label: 'Notif. desativadas',
-      active: notifOffOnly,
-      toggle: () => setNotifOffOnly((v) => !v),
     },
   ];
 

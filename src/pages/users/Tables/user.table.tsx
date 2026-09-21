@@ -21,10 +21,13 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   FaFastBackward,
   FaFastForward,
+  FaSort,
+  FaSortDown,
+  FaSortUp,
   FaStepBackward,
   FaStepForward,
 } from 'react-icons/fa';
@@ -48,6 +51,14 @@ interface UserTableProps {
 const MAX_VISIBLE_GROUPS = 2;
 const PAGE_SIZES = [10, 20, 30, 40, 50];
 
+type SortKey =
+  | 'name'
+  | 'role'
+  | 'groups'
+  | 'buildings'
+  | 'notif'
+  | 'lastVisited';
+
 function UserTable({
   users,
   selected,
@@ -64,9 +75,60 @@ function UserTable({
     setPageIndex(0);
   }
 
-  const pageCount = Math.max(1, Math.ceil(users.length / pageSize));
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+
+  function toggleSort(key: SortKey) {
+    if (sortKey !== key) {
+      setSortKey(key);
+      setSortDir('asc');
+    } else if (sortDir === 'asc') {
+      setSortDir('desc');
+    } else {
+      setSortKey(null);
+      setSortDir('asc');
+    }
+  }
+
+  function sortIcon(key: SortKey) {
+    if (sortKey !== key) return <FaSort opacity={0.4} size={10} />;
+    return sortDir === 'asc' ? (
+      <FaSortUp size={10} />
+    ) : (
+      <FaSortDown size={10} />
+    );
+  }
+
+  const sortedUsers = useMemo(() => {
+    if (!sortKey) return users;
+    const dir = sortDir === 'asc' ? 1 : -1;
+    return [...users].sort((a, b) => {
+      switch (sortKey) {
+        case 'name':
+          return dir * a.name.localeCompare(b.name);
+        case 'role':
+          return dir * getUserCoreRole(a).localeCompare(getUserCoreRole(b));
+        case 'groups':
+          return dir * (a.group_names.length - b.group_names.length);
+        case 'buildings':
+          return dir * (a.building_names.length - b.building_names.length);
+        case 'notif':
+          return dir * (Number(a.receive_emails) - Number(b.receive_emails));
+        case 'lastVisited':
+          return (
+            dir *
+            ((a.last_visited ? new Date(a.last_visited).getTime() : 0) -
+              (b.last_visited ? new Date(b.last_visited).getTime() : 0))
+          );
+        default:
+          return 0;
+      }
+    });
+  }, [users, sortKey, sortDir]);
+
+  const pageCount = Math.max(1, Math.ceil(sortedUsers.length / pageSize));
   const safePageIndex = Math.min(pageIndex, pageCount - 1);
-  const pagedUsers = users.slice(
+  const pagedUsers = sortedUsers.slice(
     safePageIndex * pageSize,
     safePageIndex * pageSize + pageSize,
   );
@@ -94,23 +156,77 @@ function UserTable({
                   }}
                 />
               </Th>
-              <Th color={'uspolis.white'} borderColor={'uspolis.blue'}>
-                Usuário
+              <Th
+                color={'uspolis.white'}
+                borderColor={'uspolis.blue'}
+                cursor={'pointer'}
+                userSelect={'none'}
+                onClick={() => toggleSort('name')}
+              >
+                <Flex align={'center'} gap={'6px'}>
+                  Usuário
+                  {sortIcon('name')}
+                </Flex>
               </Th>
-              <Th color={'uspolis.white'} borderColor={'uspolis.blue'}>
-                Vínculo
+              <Th
+                color={'uspolis.white'}
+                borderColor={'uspolis.blue'}
+                cursor={'pointer'}
+                userSelect={'none'}
+                onClick={() => toggleSort('role')}
+              >
+                <Flex align={'center'} gap={'6px'}>
+                  Vínculo
+                  {sortIcon('role')}
+                </Flex>
               </Th>
-              <Th color={'uspolis.white'} borderColor={'uspolis.blue'}>
-                Papéis
+              <Th
+                color={'uspolis.white'}
+                borderColor={'uspolis.blue'}
+                cursor={'pointer'}
+                userSelect={'none'}
+                onClick={() => toggleSort('groups')}
+              >
+                <Flex align={'center'} gap={'6px'}>
+                  Papéis
+                  {sortIcon('groups')}
+                </Flex>
               </Th>
-              <Th color={'uspolis.white'} borderColor={'uspolis.blue'}>
-                Prédios
+              <Th
+                color={'uspolis.white'}
+                borderColor={'uspolis.blue'}
+                cursor={'pointer'}
+                userSelect={'none'}
+                onClick={() => toggleSort('buildings')}
+              >
+                <Flex align={'center'} gap={'6px'}>
+                  Prédios
+                  {sortIcon('buildings')}
+                </Flex>
               </Th>
-              <Th color={'uspolis.white'} borderColor={'uspolis.blue'}>
-                Notif.
+              <Th
+                color={'uspolis.white'}
+                borderColor={'uspolis.blue'}
+                cursor={'pointer'}
+                userSelect={'none'}
+                onClick={() => toggleSort('notif')}
+              >
+                <Flex align={'center'} gap={'6px'}>
+                  Notif.
+                  {sortIcon('notif')}
+                </Flex>
               </Th>
-              <Th color={'uspolis.white'} borderColor={'uspolis.blue'}>
-                Último acesso
+              <Th
+                color={'uspolis.white'}
+                borderColor={'uspolis.blue'}
+                cursor={'pointer'}
+                userSelect={'none'}
+                onClick={() => toggleSort('lastVisited')}
+              >
+                <Flex align={'center'} gap={'6px'}>
+                  Último acesso
+                  {sortIcon('lastVisited')}
+                </Flex>
               </Th>
               <Th color={'uspolis.white'} borderColor={'uspolis.blue'}>
                 Ações
