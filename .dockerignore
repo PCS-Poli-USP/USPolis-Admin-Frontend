@@ -1,0 +1,12 @@
+.git/
+node_modules/
+build/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+certs/
+.env
+.env.development
+.env.production
+*.md
+.claude/
+.dockerignore
