@@ -32,6 +32,7 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
     display='flex'
     alignItems='center'
+    gap={2}
     px={2}
     py={1}
     textColor={'white'}

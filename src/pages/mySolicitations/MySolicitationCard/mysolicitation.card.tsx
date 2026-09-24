@@ -97,11 +97,16 @@ function MySolicitationCard({
           </Text>
           <Box flex={1} minW={'8px'} />
           {canAct && (
-            <HStack spacing={'6px'} onClick={(e) => e.stopPropagation()}>
+            <HStack
+              spacing={'6px'}
+              flexWrap={'wrap'}
+              rowGap={'6px'}
+              onClick={(e) => e.stopPropagation()}
+            >
               <Tag
                 as={'button'}
                 onClick={() => onEditClick(solicitation)}
-                size={'md'}
+                size={'lg'}
                 variant={'outline'}
                 colorScheme={'blue'}
                 cursor={'pointer'}
@@ -113,7 +118,7 @@ function MySolicitationCard({
               <Tag
                 as={'button'}
                 onClick={() => onCancelClick(solicitation)}
-                size={'md'}
+                size={'lg'}
                 variant={'outline'}
                 colorScheme={'red'}
                 cursor={'pointer'}

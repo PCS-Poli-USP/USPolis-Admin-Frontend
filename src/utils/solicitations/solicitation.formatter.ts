@@ -163,3 +163,63 @@ export function getSolicitationNotice(
   }
   return null;
 }
+
+export function getSolicitationAdminTimeline(
+  solicitation: SolicitationResponse,
+): SolicitationTimelineStep[] {
+  const created = moment(solicitation.created_at).format(
+    'DD/MM/YYYY [às] HH:mm',
+  );
+  const updated = moment(solicitation.updated_at).format(
+    'DD/MM/YYYY [às] HH:mm',
+  );
+  const steps: SolicitationTimelineStep[] = [
+    {
+      label: 'Solicitação criada',
+      sub: `${solicitation.user} · ${created}`,
+      state: 'done',
+    },
+  ];
+
+  if (solicitation.status === ReservationStatus.PENDING) {
+    steps.push({
+      label: 'Aguardando análise',
+      sub: `Responsáveis pelo prédio ${solicitation.building}`,
+      state: 'active',
+    });
+    return steps;
+  }
+
+  const label = ReservationStatus.translate(solicitation.status);
+  if (solicitation.closed_by) {
+    steps.push({
+      label: `${label} por ${solicitation.closed_by}`,
+      sub: updated,
+      state:
+        solicitation.status === ReservationStatus.APPROVED ? 'ok' : 'bad',
+    });
+  } else {
+    steps.push({
+      label: `${label} pelo solicitante`,
+      sub: updated,
+      state: 'warn',
+    });
+  }
+  return steps;
+}
+
+export function getSolicitationAdminFootnote(
+  solicitation: SolicitationResponse,
+) {
+  if (solicitation.status === ReservationStatus.PENDING) {
+    return `Enviada em ${moment(solicitation.created_at).format(
+      'DD/MM/YYYY [às] HH:mm',
+    )}`;
+  }
+  const label = ReservationStatus.translate(solicitation.status);
+  const closer = solicitation.closed_by || solicitation.deleted_by;
+  const updated = moment(solicitation.updated_at).format(
+    'DD/MM/YYYY [às] HH:mm',
+  );
+  return closer ? `${label} por ${closer} · ${updated}` : `${label} · ${updated}`;
+}

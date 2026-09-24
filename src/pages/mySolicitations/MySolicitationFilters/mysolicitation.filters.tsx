@@ -38,13 +38,7 @@ function MySolicitationFilters({
 }: MySolicitationFiltersProps) {
   return (
     <Stack direction={{ base: 'column', md: 'row' }} spacing={'10px'} align={{ base: 'stretch', md: 'center' }}>
-      <HStack
-        spacing={'6px'}
-        overflowX={'auto'}
-        flexWrap={'nowrap'}
-        py={'2px'}
-        sx={{ '::-webkit-scrollbar': { display: 'none' }, scrollbarWidth: 'none' }}
-      >
+      <HStack spacing={'6px'} rowGap={'6px'} flexWrap={'wrap'} py={'2px'}>
         {FILTER_OPTIONS.map((option) => {
           const active = filter === option.key;
           const scheme =

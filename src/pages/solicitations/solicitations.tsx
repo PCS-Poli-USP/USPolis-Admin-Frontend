@@ -1,13 +1,16 @@
-import { Grid, GridItem } from '@chakra-ui/react';
+import { Box, Text, VStack } from '@chakra-ui/react';
+import { useContext, useEffect, useState } from 'react';
+
 import PageContent from '../../components/common/PageContent';
 import SolicitationStack from './SolicitationStack/solicitation.stack';
 import SolicitationPanel from './SolicitationPanel/solicitation.panel';
 import useClassroomsSolicitations from '../../hooks/solicitations/useSolicitations';
-import { useEffect, useState } from 'react';
 import { SolicitationResponse } from '../../models/http/responses/solicitation.response.models';
 import { PageSize } from '../../utils/enums/pageSize.enum';
+import { appContext } from '../../context/AppContext';
 
 function Solicitations() {
+  const { isMobile } = useContext(appContext);
   const {
     loading,
     solicitations,
@@ -17,18 +20,14 @@ function Solicitations() {
     approveSolicitation,
     denySolicitation,
   } = useClassroomsSolicitations(false);
-  const [fetchPages, setFetchPages] = useState(false);
   const [selectedSolicitation, setSelectedSolicitation] = useState<
     SolicitationResponse | undefined
   >(undefined);
-  const [selectedIndex, setSelectedIndex] = useState<number | undefined>(
-    undefined,
-  );
   const [solicitationsPaginated, setSolicitationsPaginated] = useState<
     Array<SolicitationResponse>
   >([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(PageSize.SIZE_5);
+  const [pageSize] = useState(PageSize.SIZE_5);
 
   async function fetchData() {
     await getPendingBuildingSolicitations();
@@ -41,76 +40,70 @@ function Solicitations() {
   }, []);
 
   useEffect(() => {
-    if (fetchPages) {
-      if (pageResponse.data) {
-        setSolicitationsPaginated((prev) => [...prev, ...pageResponse.data]);
-      }
-    }
-    if (!fetchPages && pageResponse.data) {
-      setSolicitationsPaginated(pageResponse.data);
-      setFetchPages(true);
-    }
-  }, [pageResponse, fetchPages]);
+    setSolicitationsPaginated((prev) => {
+      if (pageResponse.page <= 1) return pageResponse.data;
+      const seen = new Set(prev.map((s) => s.id));
+      const newItems = pageResponse.data.filter((s) => !seen.has(s.id));
+      return newItems.length > 0 ? [...prev, ...newItems] : prev;
+    });
+  }, [pageResponse]);
 
   return (
     <PageContent>
-      <Grid gridTemplateColumns={'40% 60%'} h={'calc(100vh - 120px)'} gap={4}>
-        <GridItem
-          borderRight={'2px'}
-          h={'100%'}
-          border={'2px'}
-          borderRadius={'10px'}
-          borderColor={'lightgray'}
-          p={'10px'}
-          overflowY={'hidden'}
-        >
-          <SolicitationStack
-            selectedSolicitation={selectedSolicitation}
-            selectedIndex={selectedIndex}
-            setSelectedIndex={setSelectedIndex}
-            pendingSolicitations={solicitations}
-            solicitationsPaginated={solicitationsPaginated}
-            handleOnClick={setSelectedSolicitation}
-            reset={() => setSelectedSolicitation(undefined)}
-            loading={loading}
-            currentPage={currentPage}
-            setCurrentPage={setCurrentPage}
-            pageSize={pageSize}
-            setPageSize={setPageSize}
-            totalPages={pageResponse.total_pages}
-            totalItems={pageResponse.total_items}
-            handleShowMore={async (page) => {
-              await getAllBuildingSolicitations(page, pageSize);
-            }}
-          />
-        </GridItem>
-        <GridItem
-          overflow={'auto'}
-          w={'100%'}
-          h={'100%'}
-          p={'0px 20px 0px 0px'}
-        >
-          <SolicitationPanel
-            handleClose={() => {
-              setSelectedIndex(undefined);
-              setSelectedSolicitation(undefined);
-            }}
-            solicitation={selectedSolicitation}
-            approve={async (id, data) => {
-              await approveSolicitation(id, data);
-              setSelectedSolicitation(undefined);
-            }}
-            deny={async (id, data) => {
-              await denySolicitation(id, data);
-              setSelectedSolicitation(undefined);
-            }}
-            refetch={async () => {
-              await fetchData();
-            }}
-            loading={loading}
-          />
-        </GridItem>
-      </Grid>
+      <VStack
+        align={'stretch'}
+        spacing={{ base: '12px', md: '16px' }}
+        maxW={'1040px'}
+        mx={'auto'}
+        w={'full'}
+        h={isMobile ? 'auto' : 'full'}
+        minH={0}
+        overflow={isMobile ? 'visible' : 'hidden'}
+      >
+        <Box flexShrink={0}>
+          <Text
+            fontSize={{ base: '26px', md: '32px' }}
+            fontWeight={'normal'}
+            color={'uspolis.text'}
+            lineHeight={1.15}
+          >
+            Solicitações
+          </Text>
+          <Text fontSize={'15px'} color={'uspolis.textMuted'}>
+            Analise e responda os pedidos de reserva de sala dos seus prédios.
+          </Text>
+        </Box>
+
+        <SolicitationStack
+          pendingSolicitations={solicitations}
+          solicitationsPaginated={solicitationsPaginated}
+          handleOnClick={setSelectedSolicitation}
+          loading={loading}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={pageResponse.total_pages}
+          handleShowMore={async (page) => {
+            await getAllBuildingSolicitations(page, pageSize);
+          }}
+        />
+      </VStack>
+
+      <SolicitationPanel
+        handleClose={() => setSelectedSolicitation(undefined)}
+        solicitation={selectedSolicitation}
+        approve={async (id, data) => {
+          await approveSolicitation(id, data);
+          setSelectedSolicitation(undefined);
+        }}
+        deny={async (id, data) => {
+          await denySolicitation(id, data);
+          setSelectedSolicitation(undefined);
+        }}
+        refetch={async () => {
+          await fetchData();
+        }}
+        loading={loading}
+      />
     </PageContent>
   );
 }

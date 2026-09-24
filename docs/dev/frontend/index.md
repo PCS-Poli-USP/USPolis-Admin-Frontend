@@ -14,12 +14,13 @@ Para a lista de tecnologias utilizadas veja [Tecnologias Utilizadas](/dev/stack#
 
 ## Configuração do Vite
 
-`vite.config.ts` na raiz do projeto:
+`vite.config.mts` na raiz do projeto (extensão `.mts` para forçar carregamento ESM nativo — necessário porque o Vitest depende de pacotes ESM-only, e o `package.json` não define `"type": "module"`):
 
 - `server.port = 3000` e `server.host = true` (escuta em todas as interfaces, não só `localhost`)
 - HTTPS é ligado **apenas quando `VITE_ENVIROMENT=development`**, lendo os certificados de `certs/cert.pem` e `certs/key.pem` (os mesmos gerados na etapa de [Configurando seu Ambiente](/dev/enviroment#backend) para o backend) — em outros valores de `VITE_ENVIROMENT` o servidor sobe em HTTP puro
 - `build.outDir = 'build'` — é essa pasta que o workflow de CI/CD copia para o servidor (veja [Configurando seu Ambiente › CI/CD](/dev/enviroment#o-que-o-ci-cd-faz-de-verdade))
-- O plugin `vite-plugin-eslint` roda o ESLint durante o dev server com `failOnError: false` e `failOnWarning: false` — ou seja, erros de lint aparecem no terminal/overlay mas **nunca** derrubam o servidor de desenvolvimento nem o build
+- O plugin `vite-plugin-eslint` roda o ESLint durante o dev server com `failOnError: false` e `failOnWarning: false` — ou seja, erros de lint aparecem no terminal/overlay mas **nunca** derrubam o servidor de desenvolvimento nem o build. Ele é desativado quando `process.env.VITEST` está setado, para não poluir a saída dos testes
+- O bloco `test` (usado pelo Vitest) reaproveita os mesmos `plugins`/env desse arquivo — veja [TEST.md](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/blob/main/TEST.md) na raiz do repo para a infraestrutura de testes
 
 ## Roteamento e controle de acesso
 
