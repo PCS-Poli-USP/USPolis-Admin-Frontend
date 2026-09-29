@@ -21,7 +21,7 @@ import { useState } from 'react';
 import { ClassroomPermissionType } from '../../../../utils/enums/classroomPermissionType.enum';
 import { CloseIcon } from '@chakra-ui/icons';
 import { ClassroomPermissionByUserResponse } from '../../../../models/http/responses/classroomPermission.response.models';
-import useClassroomPermissions from '../../../../hooks/classroomPermissions/useClassroomPermissions';
+import useClassroomPermissions from '../../../../hooks/permissions/usePermissions';
 import { LuPen, LuTrash } from 'react-icons/lu';
 import { Tooltip } from '@mui/material';
 import { ClassroomResponse } from '../../../../models/http/responses/classroom.response.models';

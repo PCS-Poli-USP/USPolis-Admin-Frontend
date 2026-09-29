@@ -17,6 +17,8 @@ interface AppContext {
   persist: boolean;
   setPersist: (value: boolean) => void;
   isMobile: boolean;
+  backendUnavailable: boolean;
+  setBackendUnavailable: (value: boolean) => void;
 }
 
 const DEFAULT_VALUE = {
@@ -32,6 +34,8 @@ const DEFAULT_VALUE = {
   persist: false,
   setPersist: () => {},
   isMobile: false,
+  backendUnavailable: false,
+  setBackendUnavailable: () => {},
 };
 
 export const appContext = createContext<AppContext>(DEFAULT_VALUE);
@@ -46,6 +50,7 @@ export default function AppContextProvider({
   const [accessToken, setAccessToken] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [persist, setPersist] = useState<boolean>(true);
+  const [backendUnavailable, setBackendUnavailable] = useState<boolean>(false);
 
   const selfService = useSelfService();
   const authHttpService = new AuthHttpService();
@@ -122,6 +127,8 @@ export default function AppContextProvider({
         persist,
         setPersist,
         isMobile,
+        backendUnavailable,
+        setBackendUnavailable,
       }}
     >
       {children}

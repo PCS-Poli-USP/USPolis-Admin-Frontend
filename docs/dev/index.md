@@ -20,4 +20,3 @@ Todos os principais assuntos referente a detalhes técnicos do USPolis estão li
 - [Backend](./backend/)
 - [Frontend](./frontend/)
 - [Banco de Dados](./database/)
-- [Servidor](./server/)

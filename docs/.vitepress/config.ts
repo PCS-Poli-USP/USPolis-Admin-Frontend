@@ -204,15 +204,6 @@ export default {
             { text: 'Backup', link: '/dev/database/backup' },
           ],
         },
-        {
-          text: 'Servidor',
-          collapsed: false,
-          items: [
-            { text: 'Introdução', link: '/dev/server' },
-            { text: 'Arquivos principais', link: '/dev/server/files' },
-            { text: 'Deploy', link: '/dev/server/deploy' },
-          ],
-        },
       ],
     },
   },

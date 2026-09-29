@@ -1,5 +1,5 @@
 import { Box, Progress, useColorMode, useDisclosure } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import { EventApi, DatesSetArg, EventDropArg } from '@fullcalendar/core';
@@ -20,6 +20,16 @@ import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { TourGuideEvents, TourGuideResources } from './utils';
 import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
 import './styles.css';
+import { ReservationResponse } from '../../../models/http/responses/reservation.response.models';
+import useBuildings from '../../../hooks/useBuildings';
+import useSubjects from '../../../hooks/useSubjetcts';
+import useClassrooms from '../../../hooks/classrooms/useClassrooms';
+import useReservations from '../../../hooks/reservations/useReservations';
+import ReservationModal from '../../reservations/ReservationModal/reservation.modal';
+import Dialog from '../../../components/common/Dialog/dialog.component';
+import { appContext } from '../../../context/AppContext';
+import { canManageReservationInBuilding } from '../utils/allocation.utils';
+import useReservationOccurrences from '../../../hooks/useReservationOccurrences';
 
 type ViewOption = {
   value: string;
@@ -71,13 +81,31 @@ function CustomCalendar({
 }: CustomCalendarProps) {
   const { registerControlFn, state } = useFeatureGuideContext();
   const { colorMode } = useColorMode();
+  const { loggedUser } = useContext(appContext);
+  const { updateOccurrences } = useReservationOccurrences();
 
   // const calendarRef = useRef<FullCalendar>(null!);
   const [selectedEvent, setSelectedEvent] = useState<EventApi>();
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [selectedReservation, setSelectedReservation] =
+    useState<ReservationResponse>();
+  const [reservationToDelete, setReservationToDelete] = useState<number>();
+  const [reservationTitleToDelete, setReservationTitleToDelete] =
+    useState<string>();
   const [resourcesExpanded, setResourcesExpanded] = useState(
     hasBuildingFilter || true,
   );
   const [isGuideMode, setIsGuideMode] = useState(false);
+  const { buildings, getBuildings } = useBuildings(false);
+  const { classrooms, getClassrooms } = useClassrooms(false);
+  const {
+    subjects,
+    loading: loadingSubjects,
+    getSubjects,
+  } = useSubjects(false);
+  const [deleteMode, setDeleteMode] = useState<'reservation' | 'occurrence'>();
+  const { deleteReservation, getReservation, getReservationFull } =
+    useReservations(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -89,6 +117,18 @@ function CustomCalendar({
     isOpen: isOpenModal,
     onOpen: onOpenModal,
     onClose: onCloseModal,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenReservationModal,
+    onOpen: onOpenReservationModal,
+    onClose: onCloseReservationModal,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenDeleteDialog,
+    onOpen: onOpenDeleteDialog,
+    onClose: onCloseDeleteDialog,
   } = useDisclosure();
 
   function setCalendarDate(ISOdate: string) {
@@ -114,6 +154,83 @@ function CustomCalendar({
       await update(newStart, newEnd);
     }
   };
+
+  function canManageReservationEvent(event?: EventApi): boolean {
+    const reservation = event?.extendedProps.reservation_data;
+    if (!reservation) return false;
+    return canManageReservationInBuilding(loggedUser, reservation.building);
+  }
+
+  async function handleEditReservation() {
+    if (!selectedEvent) return;
+    const reservation = selectedEvent.extendedProps.reservation_data;
+    if (!reservation || !canManageReservationEvent(selectedEvent)) return;
+    const data = await getReservation(reservation.reservation_id);
+    if (!data) return;
+    setSelectedReservation(data);
+    setIsUpdate(true);
+    onCloseModal();
+    getBuildings();
+    getClassrooms();
+    getSubjects();
+    onOpenReservationModal();
+  }
+
+  function handleDeleteReservation() {
+    if (!selectedEvent) return;
+    const reservation = selectedEvent.extendedProps.reservation_data;
+    if (!reservation || !canManageReservationEvent(selectedEvent)) return;
+    setDeleteMode('reservation');
+    setReservationToDelete(reservation.reservation_id);
+    setReservationTitleToDelete(reservation.title);
+    onCloseModal();
+    onOpenDeleteDialog();
+  }
+
+  function handleDeleteOccurrence() {
+    if (!selectedEvent) return;
+
+    const reservation = selectedEvent.extendedProps.reservation_data;
+
+    if (!reservation || !canManageReservationEvent(selectedEvent)) return;
+
+    setDeleteMode('occurrence');
+    setReservationToDelete(reservation.reservation_id);
+    setReservationTitleToDelete(reservation.title);
+
+    onCloseModal();
+    onOpenDeleteDialog();
+  }
+
+  async function handleDeleteConfirm() {
+    if (!reservationToDelete || !deleteMode) return;
+
+    if (deleteMode === 'reservation') {
+      await deleteReservation(reservationToDelete);
+    } else {
+      const reservation = await getReservationFull(reservationToDelete);
+
+      if (!reservation || !selectedEvent) return;
+
+      const occurrenceDate = moment(selectedEvent.start!).format('YYYY-MM-DD');
+
+      const dates = reservation.schedule.occurrences
+        .map((occurrence) => moment(occurrence.date).format('YYYY-MM-DD'))
+        .filter((date: string) => date !== occurrenceDate);
+
+      await updateOccurrences(reservationToDelete, {
+        dates,
+      });
+    }
+
+    await update(start, end);
+
+    setReservationToDelete(undefined);
+    setReservationTitleToDelete(undefined);
+    setDeleteMode(undefined);
+
+    onCloseDeleteDialog();
+  }
 
   const goNext = () => {
     if (calendarRef.current) {
@@ -220,6 +337,42 @@ function CustomCalendar({
         isOpen={isOpenModal}
         onClose={onCloseModal}
         event={selectedEvent}
+        canManage={canManageReservationEvent(selectedEvent)}
+        onEdit={handleEditReservation}
+        onDeleteReservation={handleDeleteReservation}
+        onDeleteOccurrence={handleDeleteOccurrence}
+      />
+      <ReservationModal
+        isOpen={isOpenReservationModal}
+        onClose={() => {
+          onCloseReservationModal();
+          setSelectedReservation(undefined);
+          setIsUpdate(false);
+        }}
+        isUpdate={isUpdate}
+        isSolicitation={false}
+        classrooms={classrooms}
+        buildings={buildings}
+        selectedReservation={selectedReservation}
+        refetch={() => update(start, end)}
+        subjects={subjects}
+        loading={loadingSubjects}
+      />
+      <Dialog
+        isOpen={isOpenDeleteDialog}
+        onClose={() => {
+          onCloseDeleteDialog();
+          setReservationToDelete(undefined);
+          setReservationTitleToDelete(undefined);
+          setDeleteMode(undefined);
+        }}
+        title={
+          deleteMode === 'occurrence'
+            ? `Excluir ocorrência de ${reservationTitleToDelete ?? ''}`
+            : `Excluir reserva ${reservationTitleToDelete ?? ''}`
+        }
+        warningText='Essa ação é irreversível!'
+        onConfirm={handleDeleteConfirm}
       />
       {loading && <Progress size='sm' mb={'10px'} isIndeterminate />}
 

@@ -37,6 +37,10 @@ const map: Record<string, Crumb[]> = {
     ...mainMap['/admin'],
     { label: 'Sessões de Usuários', href: '/admin/sessions', current: false },
   ],
+  '/admin/roles': [
+    ...mainMap['/admin'],
+    { label: 'Papeis', href: '/admin/roles', current: false },
+  ],
   '/admin/groups': [
     ...mainMap['/admin'],
     { label: 'Grupos', href: '/admin/groups', current: false },
@@ -64,6 +68,18 @@ const map: Record<string, Crumb[]> = {
   '/admin/feedbacks': [
     ...mainMap['/admin'],
     { label: 'Feedbacks', href: '/admin/feedbacks', current: false },
+  ],
+  '/admin/server-docs': [
+    ...mainMap['/admin'],
+    {
+      label: 'Documentação do Servidor',
+      href: '/admin/server-docs',
+      current: false,
+    },
+  ],
+  '/admin/api-status': [
+    ...mainMap['/admin'],
+    { label: 'Status da API', href: '/admin/api-status', current: false },
   ],
 
   // Profile subpages

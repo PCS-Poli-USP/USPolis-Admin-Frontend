@@ -113,7 +113,7 @@ export default function SubjectModal(props: SubjectModalProps) {
                   label={'Nome da Disciplina'}
                   name={'name'}
                   type={'text'}
-                  placeholder='Código da disciplina'
+                  placeholder='Nome da disciplina'
                 />
 
                 <SelectInput

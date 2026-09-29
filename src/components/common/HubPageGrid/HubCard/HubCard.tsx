@@ -8,6 +8,7 @@ function HubCard({
   pageCount,
   onClick,
   disabled = false,
+  borderColor = '#408080',
 }: HubPageGridItem) {
   return (
     <Flex
@@ -17,7 +18,7 @@ function HubCard({
       bg='uspolis.white'
       rounded='md'
       boxShadow='md'
-      border='1px solid #408080'
+      border={`1px solid ${borderColor}`}
       cursor='pointer'
       onClick={() => {
         if (disabled) return;

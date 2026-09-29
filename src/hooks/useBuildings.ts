@@ -4,9 +4,10 @@ import {
   UpdateBuilding,
 } from '../models/http/requests/building.request.models';
 import { BuildingResponse } from '../models/http/responses/building.response.models';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { sortBuildingsResponse } from '../utils/buildings/building.sorter';
 import useBuildingsService from './API/services/useBuildingsService';
+import BuildingErrorParser from './buildingErrorParser';
 
 const useBuildings = (initialFetch = true) => {
   const service = useBuildingsService();
@@ -14,6 +15,7 @@ const useBuildings = (initialFetch = true) => {
   const [buildings, setBuildings] = useState<BuildingResponse[]>([]);
 
   const showToast = useCustomToast();
+  const parser = useMemo(() => new BuildingErrorParser(), []);
 
   const getAllBuildings = useCallback(async () => {
     setLoading(true);
@@ -22,13 +24,13 @@ const useBuildings = (initialFetch = true) => {
       .then((response) => {
         setBuildings(response.data.sort(sortBuildingsResponse));
       })
-      .catch(() => {
-        showToast('Erro', 'Erro ao carregar prédios', 'error');
+      .catch((error) => {
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast, service]);
+  }, [showToast, service, parser]);
 
   const getBuildings = useCallback(async () => {
     setLoading(true);
@@ -37,13 +39,13 @@ const useBuildings = (initialFetch = true) => {
       .then((response) => {
         setBuildings(response.data.sort(sortBuildingsResponse));
       })
-      .catch(() => {
-        showToast('Erro', 'Erro ao carregar seus prédios', 'error');
+      .catch((error) => {
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast, service]);
+  }, [showToast, service, parser]);
 
   const createBuilding = useCallback(
     async (data: CreateBuilding) => {
@@ -59,13 +61,13 @@ const useBuildings = (initialFetch = true) => {
           getBuildings();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao criar prédio: ${error}`, 'error');
+          showToast('Erro', parser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getBuildings, showToast, service],
+    [getBuildings, showToast, service, parser],
   );
 
   const updateBuilding = useCallback(
@@ -78,17 +80,13 @@ const useBuildings = (initialFetch = true) => {
           getBuildings();
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao atualizar o prédio ${data.name}: ${error}`,
-            'error',
-          );
+          showToast('Erro', parser.parseUpdateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getBuildings, showToast, service],
+    [getBuildings, showToast, service, parser],
   );
 
   const deleteBuilding = useCallback(
@@ -102,14 +100,13 @@ const useBuildings = (initialFetch = true) => {
           getBuildings();
         })
         .catch((error) => {
-          showToast('Erro!', 'Erro ao remover prédio', 'error');
-          console.log(error);
+          showToast('Erro!', parser.parseDeleteError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getBuildings, showToast, service],
+    [getBuildings, showToast, service, parser],
   );
 
   useEffect(() => {

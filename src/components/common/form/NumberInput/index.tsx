@@ -9,7 +9,7 @@ import {
   NumberDecrementStepper,
 } from '@chakra-ui/react';
 import { FieldProps } from '../form.interface';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 interface NumberInputProps extends FieldProps {
@@ -44,7 +44,16 @@ export function NumberInput({
     formState: { errors },
   } = useFormContext();
 
-  const [inputValue, setInputValue] = useState(value);
+  const [inputValue, setInputValue] = useState<string | number | undefined>(
+    value,
+  );
+
+  useEffect(() => {
+    const formValue = getValues(name);
+    const normalizedValue =
+      formValue === undefined || Number.isNaN(formValue) ? '' : formValue;
+    setInputValue(normalizedValue ?? value ?? undefined);
+  }, [getValues, name, value]);
 
   return (
     <Controller
@@ -61,16 +70,20 @@ export function NumberInput({
         >
           <FormLabel alignSelf='flex-start'>{label}</FormLabel>
           <ChakraNumberInput
-            value={
-              inputValue ? inputValue : getValues(name) ? getValues(name) : 0
-            }
+            value={inputValue ?? getValues(name) ?? ''}
             hidden={hidden}
             min={min}
             max={max}
-            onChange={(valueAsNumber) => {
-              field.onChange(valueAsNumber);
-              if (onChange) onChange(Number(valueAsNumber));
-              setInputValue(valueAsNumber);
+            onChange={(_, valueAsNumber) => {
+              const normalizedValue = Number.isNaN(valueAsNumber)
+                ? undefined
+                : valueAsNumber;
+
+              field.onChange(normalizedValue);
+              if (onChange && normalizedValue !== undefined) {
+                onChange(normalizedValue);
+              }
+              setInputValue(normalizedValue ?? '');
             }}
             onFocus={onFocus}
             onBlur={onBlur}

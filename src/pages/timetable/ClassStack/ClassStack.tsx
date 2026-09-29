@@ -199,8 +199,11 @@ function ClassStack({
                           </Flex>
                           {/* </Tooltip> */}
                           {c.schedules.map((s, index) => (
-                            <Flex direction={'column'}>
-                              <Text key={`C${c.id}-S${index}`} fontSize={'sm'}>
+                            <Flex
+                              key={`C${c.id}-S${index}`}
+                              direction={'column'}
+                            >
+                              <Text fontSize={'sm'}>
                                 {getScheduleWithTimeString(s)}
                               </Text>
                               <Flex align={'center'} fontWeight={'bold'}>

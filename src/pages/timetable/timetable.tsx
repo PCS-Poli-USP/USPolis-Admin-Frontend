@@ -1,20 +1,26 @@
 import {
+  Alert,
+  AlertIcon,
   Button,
   Flex,
   Grid,
   GridItem,
   Skeleton,
-  Spacer,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
   useDisclosure,
 } from '@chakra-ui/react';
+import { WarningTwoIcon } from '@chakra-ui/icons';
 import PageContent from '../../components/common/PageContent';
 import PageHeader from '../../components/common/PageHeader';
 import { LuCalendarSync, LuUpload } from 'react-icons/lu';
 import TimetableCrawlModal from './TimetableCrawlModal/TimetableCrawlModal.tsx';
 import { TimetableCrawlForm } from './TimetableCrawlModal/TimetableCrawlModal.form.ts';
 import TimetableCrawlResultModal from './TimetableCrawlResultModal/TimetableCrawlResultModal.tsx';
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import useClasses from '../../hooks/classes/useClasses.ts';
+import { appContext } from '../../context/AppContext.tsx';
 import ClassStack from './ClassStack/ClassStack.tsx';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -31,6 +37,7 @@ import { CreateUserSchedule } from '../../models/http/requests/userSchedule.requ
 import { CrawlStatus } from '../../utils/enums/crawlStatus.enum.ts';
 
 function Timetable() {
+  const { backendUnavailable } = useContext(appContext);
   const [showWelcome, setShowWelcome] = useState(
     window.localStorage.getItem('timetableWelcomeSeen') !== 'true',
   );
@@ -74,7 +81,7 @@ function Timetable() {
       password: data.password,
     });
     setCrawlResult(result);
-    if (result && result.user_schedule && result.status != CrawlStatus.ERROR) {
+    if (result && result.user_schedule && !CrawlStatus.isError(result.status)) {
       loadUserScheduleInCalendar(result.user_schedule);
     }
     setIsCrawling(false);
@@ -190,6 +197,11 @@ function Timetable() {
     setShowWelcome(false);
   }
 
+  function handleOpenCrawlModal() {
+    if (backendUnavailable) return;
+    onOpen();
+  }
+
   function checkHasChanges() {
     if (!userSchedule) {
       setHasChanges(events.length > 0);
@@ -276,13 +288,21 @@ function Timetable() {
 
       {showWelcome && (
         <TimetableWelcome
-          handleImportClick={onOpen}
+          handleImportClick={handleOpenCrawlModal}
           handleManualClick={handleManualClick}
+          importDisabled={backendUnavailable}
         />
       )}
 
       {!showWelcome && (
         <>
+          {backendUnavailable && (
+            <Alert status='warning' borderRadius={'10px'} mb={'10px'}>
+              <AlertIcon />
+              Serviço de importação pelo JupiterWeb temporariamente desabilitado
+              por motivos de segurança. Tente novamente mais tarde.
+            </Alert>
+          )}
           <Flex align={'center'}>
             <PageHeader
               title='Minha Grade Horária'
@@ -291,7 +311,15 @@ function Timetable() {
               fontSize='2xl'
               subtitleFontSize='md'
             />
-            <Spacer />
+            <Flex flex={1} justify={'center'}>
+              <Tag colorScheme='orange' variant='subtle' size='md'>
+                <TagLeftIcon as={WarningTwoIcon} />
+                <TagLabel>
+                  Apenas para sua organização pessoal — não é a aqui que você faz a sua grade horária
+                  oficial da universidade
+                </TagLabel>
+              </Tag>
+            </Flex>
             <Button
               leftIcon={<LuUpload />}
               onClick={async () => {
@@ -305,10 +333,19 @@ function Timetable() {
             </Button>
             <Button
               leftIcon={<LuCalendarSync />}
-              onClick={() => onOpen()}
-              disabled={isCrawling || loadingUserSchedule || loadingClasses}
+              onClick={handleOpenCrawlModal}
+              disabled={
+                isCrawling ||
+                loadingUserSchedule ||
+                loadingClasses ||
+                backendUnavailable
+              }
             >
-              {isCrawling ? 'Sincronizando...' : 'Sincronizar pelo JupiterWeb'}
+              {backendUnavailable
+                ? 'Serviço indisponível'
+                : isCrawling
+                  ? 'Sincronizando...'
+                  : 'Sincronizar pelo JupiterWeb'}
             </Button>
           </Flex>
           <Grid

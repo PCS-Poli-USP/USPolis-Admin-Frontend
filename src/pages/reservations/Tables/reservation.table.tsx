@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ReservationResponse } from '../../../models/http/responses/reservation.response.models';
 import moment from 'moment';
 import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
+import { BiSolidCalendarEdit } from 'react-icons/bi';
 import { ReservationType } from '../../../utils/enums/reservations.enum';
 import { getScheduleString } from '../../../utils/schedules/schedule.formatter';
 import {
@@ -21,6 +22,7 @@ interface ReservationsColumnsProps {
   handleDuplicateClick: (data: ReservationResponse) => void;
   handleEditClick: (data: ReservationResponse) => void;
   handleDeleteClick: (data: ReservationResponse) => void;
+  handleEditOccurrencesClick: (data: ReservationResponse) => void;
   darkMode: boolean;
 }
 
@@ -191,6 +193,18 @@ export const getReservationsColumns = (
               aria-label='editar-reserva'
               icon={<BsFillPenFill />}
               onClick={() => props.handleEditClick(row.original)}
+            />
+          </Tooltip>
+          <Tooltip label='Editar Ocorrências'>
+            <IconButton
+              colorScheme='yellow'
+              size='sm'
+              variant='ghost'
+              aria-label='editar-ocorrencias'
+              icon={<BiSolidCalendarEdit />}
+              onClick={() =>
+                props.handleEditOccurrencesClick(row.original)
+              }
             />
           </Tooltip>
 

@@ -2,6 +2,8 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import reactPlugin from 'eslint-plugin-react';
 import hooksPlugin from 'eslint-plugin-react-hooks';
+import testingLibraryPlugin from 'eslint-plugin-testing-library';
+import jestDomPlugin from 'eslint-plugin-jest-dom';
 
 // Função que transforma "error" → "warn"
 function downgradeErrors(config) {
@@ -41,6 +43,15 @@ const baseConfig = [
     settings: {
       react: { version: 'detect' },
     },
+  },
+
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx'],
+    ...testingLibraryPlugin.configs['flat/react'],
+  },
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx'],
+    ...jestDomPlugin.configs['flat/recommended'],
   },
 ];
 

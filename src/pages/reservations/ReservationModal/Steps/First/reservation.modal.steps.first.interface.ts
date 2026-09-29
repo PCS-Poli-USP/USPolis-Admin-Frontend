@@ -10,6 +10,7 @@ import { FocusMobileReturn } from '../../../../../hooks/useOnFocusMobile/useOnFo
 export interface ReservationModalFirstStepProps {
   isUpdate: boolean;
   isSolicitation: boolean;
+  openedFromReservations?: boolean;
   form: UseFormReturn<ReservationFirstForm, any, ReservationFirstForm>;
   secondForm: UseFormReturn<ReservationSecondForm, any, ReservationSecondForm>;
   selectedReservation?: ReservationResponse;

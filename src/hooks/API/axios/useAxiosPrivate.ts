@@ -8,6 +8,10 @@ import { AxiosErrorResponse } from '../../../models/http/responses/common.respon
 
 const authHttpService = new AuthHttpService();
 
+// Self-signed dev certs make every request look like a network-level
+// failure, so this check only makes sense in production.
+const isDev = import.meta.env.VITE_ENVIROMENT === 'development';
+
 const useAxiosPrivate = () => {
   const context = useContext(appContext);
   const showToast = useCustomToast();
@@ -37,10 +41,22 @@ const useAxiosPrivate = () => {
 
     const responseIntercept = axiosPrivate.interceptors.response.use(
       (response) => {
+        context.setBackendUnavailable(false);
         return response;
       },
       async (error: any) => {
         const originalRequest = error.config;
+
+        // No HTTP response at all means the request never completed the
+        // TLS handshake with the backend (invalid/expired cert, DNS
+        // failure, connection refused, etc) - flag the backend as
+        // untrustworthy so credential-collecting features can disable
+        // themselves instead of silently sending data over a broken
+        // connection.
+        if (!error.response && !isDev) {
+          context.setBackendUnavailable(true);
+        }
+
         if (
           error.response &&
           error.response.status === 401 &&

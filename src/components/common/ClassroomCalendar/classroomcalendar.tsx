@@ -20,6 +20,7 @@ import moment, { Moment } from 'moment';
 import { CloseIcon } from '@chakra-ui/icons';
 import { OccurrenceResponse } from '../../../models/http/responses/occurrence.response.models';
 import { BsCalendarFill } from 'react-icons/bs';
+import { timeRangesConflict } from '../../../utils/common/common.conflict';
 
 function ClassroomCalendar({
   classroom,
@@ -65,37 +66,17 @@ function ClassroomCalendar({
     const newOccurencesByTime: [string, string, OccurrenceResponse[]][] = [];
     let newConflicts = 0;
     for (let i = 0; i < defaultOccurrencesByTime.length; i++) {
-      const startTime = moment(defaultOccurrencesByTime[i][0], 'HH:mm');
-      const endTime = moment(defaultOccurrencesByTime[i][1], 'HH:mm');
-      const filteredOccurrences = occurrences.filter((occur) => {
-        const occurrenceStartTime = moment(occur.start_time, 'HH:mm');
-        const occurrenceEndTime = moment(occur.end_time, 'HH:mm');
-        if (
-          startTime.isSameOrBefore(occurrenceStartTime) &&
-          endTime.isSameOrAfter(occurrenceStartTime)
-        ) {
-          return true;
-        }
-        if (
-          startTime.isAfter(occurrenceStartTime) &&
-          endTime.isSameOrBefore(occurrenceEndTime)
-        ) {
-          return true;
-        }
-        if (
-          startTime.isBefore(occurrenceEndTime) &&
-          endTime.isSameOrAfter(occurrenceEndTime)
-        ) {
-          return true;
-        }
-        if (
-          startTime.isBefore(occurrenceStartTime) &&
-          endTime.isAfter(occurrenceEndTime)
-        ) {
-          return true;
-        }
-        return false;
-      });
+      const [slotStart, slotEnd] = defaultOccurrencesByTime[i];
+      const startTime = moment(slotStart, 'HH:mm');
+      const endTime = moment(slotEnd, 'HH:mm');
+      const filteredOccurrences = occurrences.filter((occur) =>
+        timeRangesConflict(
+          slotStart,
+          slotEnd,
+          occur.start_time,
+          occur.end_time,
+        ),
+      );
       if (filteredOccurrences.length > 0) {
         newConflicts += 1;
       }

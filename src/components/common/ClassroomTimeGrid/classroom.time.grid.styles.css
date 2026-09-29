@@ -1,0 +1,18 @@
+/* CustomCalendar/styles.css leaks globally (plain CSS import, not scoped) and
+   pins .fc-header-toolbar/.fc-col-header at top: 60px, calibrated for the
+   Allocation page's fixed navbar. This modal scrolls inside ModalContent,
+   not the page, so that offset is wrong here - override it back to the
+   modal's own top with higher specificity. */
+.classroom-time-grid-calendar .fc .fc-header-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--chakra-colors-uspolis-white);
+}
+
+.classroom-time-grid-calendar .fc-col-header {
+  position: sticky;
+  top: 48px;
+  z-index: 9;
+  background: var(--chakra-colors-uspolis-white);
+}

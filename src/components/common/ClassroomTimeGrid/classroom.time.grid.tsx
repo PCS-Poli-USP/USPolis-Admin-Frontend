@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/static-components */
 import {
   Box,
   Button,
@@ -21,8 +22,10 @@ import {
 } from './classroom.time.grid.interface';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import ClassroomTimeGridEventContent from './classroom.time.grid.event.content';
+import ClassroomTimeGridDates from './classroom.time.grid.dates';
+import './classroom.time.grid.styles.css';
 import moment from 'moment';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
@@ -36,13 +39,25 @@ function ClassroomTimeGrid({
   preview,
   scheduleDetails,
   loading = false,
+  excludeScheduleId,
 }: ClassroomTimeGridProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const [showWeekends, setShowWeekends] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string>();
+  const calendarRef = useRef<FullCalendar>(null);
 
   function handleCloseModal() {
     onClose();
   }
+
+  function handleSelectDate(date: string) {
+    setSelectedDate(date);
+    calendarRef.current?.getApi().gotoDate(date);
+  }
+
+  // Anchor on the Monday of the current week, since Saturday/Sunday fall on
+  // a hidden weekend column (weekends are hidden by default).
+  const initialDate = moment().startOf('isoWeek').format('YYYY-MM-DD');
   const year = new Date().getFullYear(); // Obtém o ano atual
   const events: ClassroomEvent[] = preview.dates.map((date, idx) => ({
     title: classroom ? classroom.name : '',
@@ -59,6 +74,7 @@ function ClassroomTimeGrid({
   }));
   if (classroom) {
     classroom.schedules.forEach((schedule) => {
+      if (schedule.id === excludeScheduleId) return;
       if (schedule.allocated) {
         schedule.occurrences.forEach((occurrence) =>
           events.push({
@@ -156,13 +172,18 @@ function ClassroomTimeGrid({
                 {showWeekends ? 'Ocultar' : 'Exibir'} finais de semana
               </Button>
             </Flex>
-            <Skeleton isLoaded={!loading} w={'full'} h={'full'}>
+            <Skeleton
+              isLoaded={!loading}
+              w={'full'}
+              h={'full'}
+              className='classroom-time-grid-calendar'
+            >
               <FullCalendar
+                ref={calendarRef}
+                key={initialDate}
                 plugins={[timeGridPlugin]}
                 initialView='timeGridWeek'
-                initialDate={
-                  preview.dates.length > 0 ? preview.dates[0] : undefined
-                }
+                initialDate={initialDate}
                 locale={'pt-br'}
                 height={'auto'}
                 firstDay={1}
@@ -186,19 +207,17 @@ function ClassroomTimeGrid({
                 hiddenDays={showWeekends ? [1, 2, 3, 4, 5] : [0, 6]}
               />
             </Skeleton>
-            <HStack>
-              <Text fontWeight={'bold'}>Datas: </Text>
-              <Text>
-                {preview.dates.length > 0
-                  ? preview.dates
-                      .map(
-                        (date, idx) =>
-                          `${moment(date).format('DD/MM/YYYY')} [${preview.start_times[idx] || preview.start_time} - ${preview.end_times[idx] || preview.end_time}]`,
-                      )
-                      .join(' - ')
-                  : 'Nenhuma data, verifique a agenda'}
-              </Text>
-            </HStack>
+            <Box mt={'14px'}>
+              <ClassroomTimeGridDates
+                dates={preview.dates}
+                startTimes={preview.start_times}
+                endTimes={preview.end_times}
+                fallbackStart={preview.start_time}
+                fallbackEnd={preview.end_time}
+                selectedDate={selectedDate}
+                onSelectDate={handleSelectDate}
+              />
+            </Box>
           </Box>
         </ModalBody>
       </ModalContent>

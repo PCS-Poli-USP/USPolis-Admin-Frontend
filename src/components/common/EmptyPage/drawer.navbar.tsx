@@ -32,6 +32,7 @@ const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
   <Link
     display='flex'
     alignItems='center'
+    gap={2}
     px={2}
     py={1}
     textColor={'white'}
@@ -210,10 +211,28 @@ export function DrawerNavBar({
                   Tutorial
                 </Button>
               )}
+              <IconButton
+                aria-label='Toggle color mode'
+                icon={colorMode == 'dark' ? <SunIcon /> : <MoonIcon />}
+                onClick={() => {
+                  toggleColorMode();
+                  setMode(colorMode === 'light' ? 'dark' : 'light');
+                }}
+                variant={'ghost'}
+              />
               <ProfileButton />
             </>
           ) : (
             <HStack>
+              <IconButton
+                aria-label='Toggle color mode'
+                icon={colorMode == 'dark' ? <SunIcon /> : <MoonIcon />}
+                onClick={() => {
+                  toggleColorMode();
+                  setMode(colorMode === 'light' ? 'dark' : 'light');
+                }}
+                variant={'ghost'}
+              />
               <Button
                 variant={'ghost'}
                 onClick={() =>
@@ -227,15 +246,6 @@ export function DrawerNavBar({
               </Button>
             </HStack>
           )}
-          <IconButton
-            aria-label='Toggle color mode'
-            icon={colorMode == 'dark' ? <SunIcon /> : <MoonIcon />}
-            onClick={() => {
-              toggleColorMode();
-              setMode(colorMode === 'light' ? 'dark' : 'light');
-            }}
-            variant={'ghost'}
-          />
         </Flex>
       </Flex>
     </Box>

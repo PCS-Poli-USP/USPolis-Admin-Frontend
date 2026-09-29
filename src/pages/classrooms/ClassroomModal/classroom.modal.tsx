@@ -55,7 +55,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
       reset({
         ...props.selectedClassroom,
         reservable: props.selectedClassroom.reservable,
-        restricted: props.selectedClassroom.remote,
+        restricted: props.selectedClassroom.restricted,
       });
     }
     if (props.buildings.length === 1) {
@@ -75,13 +75,13 @@ export default function ClassroomModal(props: ClassroomModalProps) {
       await updateClassroom(props.selectedClassroom.id, {
         ...values,
         reservable: values.reservable,
-        remote: values.restricted,
+        restricted: values.restricted,
       });
     } else {
       await createClassroom({
         ...values,
         reservable: values.reservable,
-        remote: values.restricted,
+        restricted: values.restricted,
       });
     }
     props.refetch();

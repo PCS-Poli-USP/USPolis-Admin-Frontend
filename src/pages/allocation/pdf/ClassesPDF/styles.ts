@@ -43,8 +43,15 @@ export const classStyles = StyleSheet.create({
     borderLeftWidth: 0,
     borderTopWidth: 0,
   },
+  tableColBuilding: {
+    width: '15%',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    borderLeftWidth: 0,
+    borderTopWidth: 0,
+  },
   tableColClassroom: {
-    width: '20%',
+    width: '15%',
     borderStyle: 'solid',
     borderWidth: 1,
     borderLeftWidth: 0,
@@ -65,7 +72,7 @@ export const classStyles = StyleSheet.create({
     borderTopWidth: 0,
   },
   tableColProfessor: {
-    width: '40%',
+    width: '30%',
     borderStyle: 'solid',
     borderWidth: 1,
     borderLeftWidth: 0,
@@ -80,5 +87,18 @@ export const classStyles = StyleSheet.create({
     margin: 'auto',
     fontSize: 10,
     paddingVertical: 12,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 16,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    fontSize: 8,
+    color: '#a5a4a8',
+  },
+  footerBrand: {
+    color: '#408080',
+    fontWeight: 'bold',
   },
 });

@@ -4,8 +4,9 @@ import {
   UpdateCalendar,
 } from '../models/http/requests/calendar.request.models';
 import { CalendarResponse } from '../models/http/responses/calendar.responde.models';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useCalendarsService from './API/services/useCalendarsService';
+import CalendarErrorParser from './calendarErrorParser';
 
 const useCalendars = (initialFetch = true, initialYear?: string) => {
   const service = useCalendarsService();
@@ -13,6 +14,7 @@ const useCalendars = (initialFetch = true, initialYear?: string) => {
   const [calendars, setCalendars] = useState<CalendarResponse[]>([]);
 
   const showToast = useCustomToast();
+  const parser = useMemo(() => new CalendarErrorParser(), []);
 
   const getCalendars = useCallback(async () => {
     setLoading(true);
@@ -22,13 +24,12 @@ const useCalendars = (initialFetch = true, initialYear?: string) => {
         setCalendars(response.data);
       })
       .catch((error) => {
-        console.log(error);
-        showToast('Erro', 'Erro ao carregar calendários', 'error');
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast, service]);
+  }, [showToast, service, parser]);
 
   const getCalendarsByYear = useCallback(
     async (year?: string) => {
@@ -39,14 +40,13 @@ const useCalendars = (initialFetch = true, initialYear?: string) => {
           setCalendars(response.data);
         })
         .catch((error) => {
-          console.log(error);
-          showToast('Erro', 'Erro ao carregar calendários', 'error');
+          showToast('Erro', parser.parseGetError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [showToast, service],
+    [showToast, service, parser],
   );
 
   const createCalendar = useCallback(
@@ -63,14 +63,13 @@ const useCalendars = (initialFetch = true, initialYear?: string) => {
           getCalendars();
         })
         .catch((error) => {
-          console.log(error);
-          showToast('Erro', `Erro ao criar calendário: ${error}`, 'error');
+          showToast('Erro', parser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getCalendars, showToast, service],
+    [getCalendars, showToast, service, parser],
   );
 
   const updateCalendar = useCallback(
@@ -83,18 +82,13 @@ const useCalendars = (initialFetch = true, initialYear?: string) => {
           getCalendars();
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao atualizar o calendário ${data.name}: ${error}`,
-            'error',
-          );
-          console.log(error);
+          showToast('Erro', parser.parseUpdateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getCalendars, showToast, service],
+    [getCalendars, showToast, service, parser],
   );
 
   const deleteCalendar = useCallback(
@@ -108,14 +102,13 @@ const useCalendars = (initialFetch = true, initialYear?: string) => {
           getCalendars();
         })
         .catch((error) => {
-          showToast('Erro!', 'Erro ao remover calendário', 'error');
-          console.log(error);
+          showToast('Erro!', parser.parseDeleteError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getCalendars, showToast, service],
+    [getCalendars, showToast, service, parser],
   );
 
   useEffect(() => {

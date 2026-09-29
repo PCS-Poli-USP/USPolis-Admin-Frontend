@@ -10,4 +10,9 @@ export class ScheduleErrorParser extends ErrorParser {
     const detail = this.getDetailFromError(error);
     return `Erro ao buscar ${this.model_name}: ${detail}`;
   }
+
+  parseUpdateOccurrencesError(error: any): string {
+    const detail = this.getDetailFromError(error);
+    return `Erro ao editar ocorrências: ${detail}`;
+  }
 }

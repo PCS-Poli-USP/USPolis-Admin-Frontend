@@ -10,6 +10,19 @@ import { BuildingResponse } from '../../../models/http/responses/building.respon
 import { RecurrenceRule } from '../../../models/http/responses/allocation.response.models';
 import { ScheduleResponse } from '../../../models/http/responses/schedule.response.models';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
+import { UserResponse } from '../../../models/http/responses/user.response.models';
+
+// Same rule enforced by the backend: admins can manage any building,
+// everyone else only the buildings assigned to them.
+export function canManageReservationInBuilding(
+  user: UserResponse | null,
+  building: string,
+): boolean {
+  if (!user) return false;
+  if (user.is_admin) return true;
+  if (!user.buildings) return false;
+  return user.buildings.some((userBuilding) => userBuilding.name === building);
+}
 
 export function scheduleToRRule(schedule: ScheduleResponse): RecurrenceRule {
   const byweekday: string[] = [];

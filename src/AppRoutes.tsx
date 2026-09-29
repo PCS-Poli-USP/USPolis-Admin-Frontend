@@ -46,6 +46,10 @@ import OferingsHub from './pages/oferingsHub';
 import PublicHub from './pages/publicHub';
 import DateHub from './pages/dateHub';
 import SchedulingHub from './pages/schedulingHub';
+import TestsPage from './pages/tests';
+import ServerDocs from './pages/serverDocs';
+import ApiStatus from './pages/apiStatus';
+import Roles from './pages/roles';
 
 function AppRoutes() {
   return (
@@ -111,6 +115,7 @@ function AppRoutes() {
                 <Route path='' element={<AdminHub />} />
                 <Route path='users' element={<Users />} />
                 <Route path='sessions' element={<UserSessions />} />
+                <Route path='roles' element={<Roles />} />
                 <Route path='groups' element={<Groups />} />
                 <Route path='buildings' element={<Buildings />} />
                 <Route path='bug-reports' element={<Reports />} />
@@ -128,6 +133,9 @@ function AppRoutes() {
                   path='courses/:courseId/curriculums/:curriculumId/subjects'
                   element={<CurriculumSubjects />}
                 />
+                <Route path='tests' element={<TestsPage />} />
+                <Route path='server-docs' element={<ServerDocs />} />
+                <Route path='api-status' element={<ApiStatus />} />
               </Route>
             </Route>
           </Route>

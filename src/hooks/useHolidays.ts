@@ -6,9 +6,10 @@ import {
 } from '../models/http/requests/holiday.request.models';
 import { HolidayResponse } from '../models/http/responses/holiday.response.models';
 import moment from 'moment';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { sortHolidaysResponse } from '../utils/holidays/holidays.sorter';
 import useHolidaysService from './API/services/useHolidayService';
+import HolidayErrorParser from './holidayErrorParser';
 
 const useHolidays = (initialFetch = true) => {
   const service = useHolidaysService();
@@ -16,6 +17,7 @@ const useHolidays = (initialFetch = true) => {
   const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
 
   const showToast = useCustomToast();
+  const parser = useMemo(() => new HolidayErrorParser(), []);
 
   const getHolidays = useCallback(async () => {
     setLoading(true);
@@ -24,13 +26,13 @@ const useHolidays = (initialFetch = true) => {
       .then((response) => {
         setHolidays(response.data.sort(sortHolidaysResponse));
       })
-      .catch(() => {
-        showToast('Erro', 'Erro ao carregar feriados', 'error');
+      .catch((error) => {
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast, service]);
+  }, [showToast, service, parser]);
 
   const createHoliday = useCallback(
     async (data: CreateHoliday) => {
@@ -48,13 +50,13 @@ const useHolidays = (initialFetch = true) => {
           getHolidays();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao criar feriado: ${error}`, 'error');
+          showToast('Erro', parser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getHolidays, showToast, service],
+    [getHolidays, showToast, service, parser],
   );
 
   const createManyHolidays = useCallback(
@@ -71,13 +73,13 @@ const useHolidays = (initialFetch = true) => {
           getHolidays();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao criar feriados: ${error}`, 'error');
+          showToast('Erro', parser.parseCreateManyError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getHolidays, showToast, service],
+    [getHolidays, showToast, service, parser],
   );
 
   const updateHoliday = useCallback(
@@ -90,17 +92,13 @@ const useHolidays = (initialFetch = true) => {
           getHolidays();
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao atualizar o feriado ${data.date}: ${error}`,
-            'error',
-          );
+          showToast('Erro', parser.parseUpdateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getHolidays, showToast, service],
+    [getHolidays, showToast, service, parser],
   );
 
   const deleteHoliday = useCallback(
@@ -113,14 +111,13 @@ const useHolidays = (initialFetch = true) => {
           getHolidays();
         })
         .catch((error) => {
-          showToast('Erro!', 'Erro ao remover feriado', 'error');
-          console.log(error);
+          showToast('Erro!', parser.parseDeleteError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getHolidays, showToast, service],
+    [getHolidays, showToast, service, parser],
   );
 
   useEffect(() => {

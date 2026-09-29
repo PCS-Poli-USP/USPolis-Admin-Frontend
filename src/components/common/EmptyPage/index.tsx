@@ -18,11 +18,12 @@ import Joyride, { CallBackProps, EVENTS, STATUS } from 'react-joyride';
 import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { FeatureTourGuideStepData } from '../../../context/FeatureGuideContext/steps';
 import { FG_STEP_INDEXES } from '../../../context/FeatureGuideContext/utils';
-import { menuContext } from '../../../context/MenuContext';
+import { uiContext } from '../../../context/UIContext';
 import ContactUsModal from '../ContactUsModal';
 import { appContext } from '../../../context/AppContext';
 import DocsNews from '../NewsJoyride/DocsNews';
 import Logo from '../../../assets/uspolis.logo.png';
+import ErrorBoundary from '../ErrorBoundary';
 
 const drawerWidth = 300;
 
@@ -79,6 +80,7 @@ const DrawerHeader = styled('div')<{ colorMode?: string }>(
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
+    flexShrink: 0,
   }),
 );
 
@@ -87,7 +89,7 @@ export default function EmptyPage() {
   const { state, setState, triggerControl, pathBeforeGuide } =
     useFeatureGuideContext();
   const { isMobile, isAuthenticated } = React.useContext(appContext);
-  const { isOpen, onOpen, onClose } = React.useContext(menuContext);
+  const { isOpenMenu, onOpenMenu, onCloseMenu } = React.useContext(uiContext);
   const {
     isOpen: isOpenContactModal,
     onClose: onCloseContactModal,
@@ -97,11 +99,11 @@ export default function EmptyPage() {
   const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
-    onOpen();
+    onOpenMenu();
   };
 
   const handleDrawerClose = () => {
-    onClose();
+    onCloseMenu();
   };
 
   const handleGuidePreviousClick = (
@@ -206,18 +208,18 @@ export default function EmptyPage() {
   return (
     <Box
       sx={{ display: 'flex' }}
-      width={'calc(100vw - 20px)'}
+      width={'calc(100vw)'}
       height={'100vh'}
       bgcolor={colorMode === 'dark' ? '#262626' : '#FFFFFF'}
     >
       <AppBar
         position='fixed'
-        open={isOpen}
+        open={isOpenMenu}
         isMobile={isMobile}
         colorMode={colorMode}
       >
         <DrawerNavBar
-          open={isOpen}
+          open={isOpenMenu}
           handleDrawerOpen={handleDrawerOpen}
           handleDrawerClose={handleDrawerClose}
           isMobile={isMobile}
@@ -237,11 +239,14 @@ export default function EmptyPage() {
             backgroundColor: colorMode === 'dark' ? '#262626' : '#FFFFFF',
             boxShadow: '5px 5px 10px rgba(0,0,0,0.3);',
             scrollbarWidth: 'thin',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
           },
         }}
         variant='persistent'
         anchor='left'
-        open={isOpen}
+        open={isOpenMenu}
       >
         <DrawerHeader colorMode={colorMode}>
           <Flex
@@ -331,8 +336,10 @@ export default function EmptyPage() {
         width={isMobile ? '100vw' : `calc(100vw - ${drawerWidth}px)`}
         bgcolor={colorMode === 'dark' ? '#262626' : '#FFFFFF'}
       >
-        <Main open={isOpen} isMobile={isMobile}>
-          <Outlet />
+        <Main open={isOpenMenu} isMobile={isMobile}>
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </Main>
       </Box>
     </Box>

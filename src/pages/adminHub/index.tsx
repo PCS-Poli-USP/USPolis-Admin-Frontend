@@ -1,4 +1,5 @@
 import { Flex, Heading, Text } from '@chakra-ui/react';
+import { LockIcon } from '@chakra-ui/icons';
 import PageContent from '../../components/common/PageContent';
 import HubPageGrid, {
   HubPageGridItem,
@@ -9,7 +10,9 @@ import { MdDevices, MdEvent } from 'react-icons/md';
 import { HiUserGroup } from 'react-icons/hi';
 import { GiGraduateCap } from 'react-icons/gi';
 import { VscFeedback, VscReport } from 'react-icons/vsc';
+import { LuActivity } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
+import { FaUsersGear } from 'react-icons/fa6';
 
 function AdminHub() {
   const navigate = useNavigate();
@@ -37,6 +40,14 @@ function AdminHub() {
       description: 'Gerencie as sessões de usuários do USPolis',
       onClick: () => {
         navigate('/admin/sessions');
+      },
+    },
+    {
+      icon: <FaUsersGear size={'64px'} />,
+      title: 'Papéis',
+      description: 'Gerencie os papéis dos usuários do USPolis',
+      onClick: () => {
+        navigate('/admin/roles');
       },
     },
     {
@@ -77,6 +88,24 @@ function AdminHub() {
       description: 'Acesse o feedback dos usuários do USPolis',
       onClick: () => {
         navigate('/admin/feedbacks', { replace: true });
+      },
+    },
+    {
+      icon: <LockIcon boxSize={'56px'} color={'uspolis.red'} />,
+      title: 'Infraestrutura & Servidor',
+      description:
+        'Arquitetura, ambiente, arquivos do servidor e deploy — acesso restrito',
+      borderColor: '#E53E3E',
+      onClick: () => {
+        navigate('/admin/server-docs');
+      },
+    },
+    {
+      icon: <LuActivity size={'64px'} />,
+      title: 'Status da API',
+      description: 'Logs de acesso, erros e incidentes da API do USPolis',
+      onClick: () => {
+        navigate('/admin/api-status');
       },
     },
   ];

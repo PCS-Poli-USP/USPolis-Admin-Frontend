@@ -46,6 +46,7 @@ const useUserSchedule = (initialFetch: boolean = true) => {
         const crawled: UserScheduleCrawlResponse = response.data;
 
         showToast('Sucesso', 'Grade horária importada com sucesso', 'success');
+        await getMySchedule();
         return crawled;
       } catch (error) {
         showToast('Erro', parser.parseCrawlUserScheduleError(error), 'error');
@@ -54,7 +55,7 @@ const useUserSchedule = (initialFetch: boolean = true) => {
         setLoading(false);
       }
     },
-    [showToast, service, parser],
+    [showToast, service, parser, getMySchedule],
   );
 
   const createUserSchedule = useCallback(

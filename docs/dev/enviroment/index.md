@@ -10,12 +10,29 @@ next:
 
 # Configurando seu ambiente
 
-> [!WARNING]
-> Documentação em construção...
+Nessa página vamos ensinar como configurar seu ambiente para poder começar a desenvolver os códigos do USPolis. Para ter acesso a uma lista detalhada das tecnologias com links para as documentações acesse a página [Tecnologias Utilizadas](/dev/stack).
 
-Nessa página vamos ensinar como configurar seu ambiente para poder começar a desenvolver os códigos do USPolis. Para ter acesso a uma lista detalhada das tecnologias com links para as documentações acesse a página [Tecnologias Utilizadas]
+O USPolis é dividido em dois repositórios: **USPolis-Admin-Backend** e **USPolis-Admin-Frontend** (esse, inclusive, é o repositório onde essa documentação vive, dentro da pasta `docs/`). Nenhum dos dois repositórios tem um `Dockerfile` ou `docker-compose` — o setup local assume um **PostgreSQL instalado diretamente na sua máquina**.
 
 ## Banco de dados
+
+Antes de rodar o backend você precisa de um PostgreSQL rodando localmente (não existe uma versão containerizada oficial). O jeito mais simples é instalar o Postgres direto no seu sistema operacional (`apt install postgresql`, Postgres.app no Mac, etc.) — qualquer versão recente funciona.
+
+Crie **dois bancos**: um para o dia a dia do desenvolvimento e outro exclusivo para a suíte de testes (a suíte de testes roda migrações reais e não deve compartilhar dados com o banco que você usa para navegar na aplicação), por exemplo `uspolis` e `uspolis_test`.
+
+Com os bancos criados, o backend só enxerga o banco através das variáveis de ambiente — não existe nenhum script que crie o banco em si por você, apenas o schema dentro dele (isso é feito pelas migrações do Alembic, veja [Banco de Dados › Migrações](/dev/database/migrations)):
+
+- `DATABASE_URI` / `DATABASE_NAME` — conexão usada pela aplicação (SQLAlchemy/psycopg2), ex: `DATABASE_URI=postgresql://usuario:senha@localhost:5432` e `DATABASE_NAME=uspolis`
+- `ALEMBIC_URL` — conexão usada pelo Alembic para rodar as migrações (usa o driver asyncpg), ex: `postgresql+asyncpg://usuario:senha@localhost:5432/uspolis`
+- `TEST_DATABASE_URI` / `TEST_DATABASE_NAME` / `TEST_ALEMBIC_URL` — os mesmos três, mas apontando para o banco `uspolis_test`
+
+Depois de configurar essas variáveis (veja a seção [Backend](#backend) abaixo para onde elas ficam) e instalar as dependências do backend, rode as migrações para criar todas as tabelas:
+
+```bash
+poetry run alembic upgrade head
+```
+
+Isso precisa ser repetido tanto para o banco de desenvolvimento quanto para o de testes (a suíte de testes já roda isso sozinha a cada execução, usando `TEST_ALEMBIC_URL` — veja [Backend › Testes](/dev/backend#testes)). Para mais detalhes sobre os models, como criar uma migração nova e o funcionamento interno do Alembic aqui, veja [Banco de Dados](/dev/database).
 
 ## Backend
 
@@ -45,9 +62,35 @@ Para instalar as dependências de testes:
 poetry install --with test
 ```
 
-Garanta que o seu arquivo `.env`e `.env.dev` ou `.env.prod` estejam corretamente configurados, no repositório existe um arquivo chamado `.env.example` com todos as variáveis de ambiente que utilizamos no backend.
+### Arquivos de ambiente
 
-Para rodar em ambiente de desenvolvimento é necessário apenas o `.env`e `.env.dev` corretamente configurados, além disso, utilizamos cookies e para isso é necessário rodar tanto o backend como o frontend utilizando protocolo [HTTPS](https://developer.mozilla.org/pt-BR/docs/Glossary/HTTPS).
+O backend usa o [`python-decouple`](https://github.com/HBNetwork/python-decouple), e o carregamento é em duas etapas: o arquivo `.env` (que você sempre precisa ter) só define uma variável, `ENVIRONMENT`, que pode ser `DEVELOPMENT`, `PRODUCTION` ou `STAGING`. Dependendo do valor, o backend carrega um segundo arquivo com todas as outras variáveis:
+
+| `ENVIRONMENT` | arquivo carregado |
+|---|---|
+| `DEVELOPMENT` (padrão) | `.env.dev` |
+| `PRODUCTION` | `.env.prod` |
+| `STAGING` | `.env.stage` |
+
+Ou seja, para desenvolvimento local você precisa de **dois arquivos**: `.env` (com `ENVIRONMENT=DEVELOPMENT`) e `.env.dev` (com todas as demais variáveis). Use o `.env.example` do repositório como referência de quais variáveis existem — ele lista todas elas (sem valores).
+
+Algumas variáveis úteis para o dia a dia de desenvolvimento, além das de banco já citadas acima:
+
+- `OVERRIDE_AUTH=True` + `MOCK_EMAIL=<email de um usuário já existente no seu banco>` — pula completamente o login via Google OAuth e autentica toda requisição como esse usuário fixo. Extremamente útil para desenvolver localmente sem precisar configurar credenciais OAuth reais ou logar de verdade a cada refresh. **Nunca habilite isso em produção.**
+- `FIRST_SUPERUSER_EMAIL` / `FIRST_SUPERUSER_NAME` — usados pelo script de seed (veja abaixo) para criar o primeiro usuário administrador.
+- `GOOGLE_AUTH_CLIENT_ID` / `GOOGLE_AUTH_CLIENT_SECRET` / `GOOGLE_AUTH_REDIRECT_URI` / `G_AUTH_DOMAIN_NAME` — só são realmente necessárias se você for testar o fluxo de login de verdade (sem `OVERRIDE_AUTH`).
+- `MAIL_*` — credenciais SMTP; se não forem configuradas, qualquer fluxo que dispare e-mail (aprovação/negação de solicitação, notificação de reserva, etc.) vai falhar.
+
+Depois de ter o `.env`/`.env.dev` prontos e o banco criado (veja [Banco de dados](#banco-de-dados) acima), rode as migrações e, opcionalmente, crie o primeiro usuário admin:
+
+```bash
+poetry run alembic upgrade head
+poetry run python -m server.scripts.initial_data
+```
+
+O `initial_data.py` só cria o usuário se ainda não existir um com o e-mail de `FIRST_SUPERUSER_EMAIL` — rodar de novo não duplica nada.
+
+Além disso, utilizamos cookies e para isso é necessário rodar tanto o backend como o frontend utilizando protocolo [HTTPS](https://developer.mozilla.org/pt-BR/docs/Glossary/HTTPS).
 
 Para isso, execute os seguintes comandos para gerar os seus certificados:
 
@@ -199,3 +242,17 @@ Isso irá servir os arquivos de build na mesma porta que ele usa para executar o
 Após buildar a docs você tem que garantir que os arquivos de `/docs/.vitepress/dist` estejam em `/docs`, sem isso, na hora de fazer o preview a docs provavelmente não irá funcionar.
 
 Nosso script de CI/CD atualmente já gerencia esses detalhes, essa parte de mover arquivos buildados (que em produção vão para outro lugar) é necessário apenas para ver o preview final do frontend.
+
+### O que o CI/CD faz de verdade
+
+O workflow fica em `.github/workflows/ci_cd.yml` e roda a cada push na branch `main`. Em ordem, ele:
+
+1. Instala as dependências com `yarn install --frozen-lockfile`
+2. Builda a docs (`yarn docs:build`) e move `docs/.vitepress/dist` para `public/docs` — é exatamente o passo manual descrito acima, só que automatizado
+3. Builda o frontend (`yarn build`), injetando as variáveis `VITE_*` de produção a partir dos **secrets** do repositório GitHub (não de um arquivo `.env.production` commitado — ele não existe no repositório, é gerado em memória pelo próprio workflow)
+4. Via SSH, limpa `/var/www/html/docs/*` e `/diskb/home/frontend/*` no servidor
+5. Copia a pasta `build/` para `/diskb/home/frontend` no servidor (`scp`)
+6. Copia `build/docs/*` para `/var/www/html/docs/` no servidor
+7. Reinicia o serviço `uspolis-frontend.service` (systemd) via SSH
+
+Ou seja, o deploy do frontend e da docs acontece **juntos**, num único workflow, e não existe deploy manual — qualquer merge em `main` já dispara isso automaticamente.

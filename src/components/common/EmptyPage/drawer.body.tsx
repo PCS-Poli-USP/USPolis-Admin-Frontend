@@ -21,7 +21,9 @@ import {
   FaChevronUp,
   FaUser,
   FaUserCircle,
+  FaServer,
 } from 'react-icons/fa';
+import { LuActivity } from 'react-icons/lu';
 import { useLocation } from 'react-router-dom';
 import { appContext } from '../../../context/AppContext';
 import {
@@ -46,6 +48,7 @@ import { HiUserGroup } from 'react-icons/hi';
 import { IconType } from 'react-icons';
 import { VscFeedback, VscReport } from 'react-icons/vsc';
 import { GrDocumentText } from 'react-icons/gr';
+import { FaUsersGear } from 'react-icons/fa6';
 import moment from 'moment';
 
 const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
@@ -180,7 +183,10 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
       align={'start'}
       p={'10px'}
       spacing={2}
-      h={'full'}
+      w={'full'}
+      flex={1}
+      minH={0}
+      overflowY={'auto'}
       backgroundColor={'uspolis.white'}
     >
       {loggedUser ? (
@@ -288,6 +294,14 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   highlighted={currentPath === '/admin/sessions'}
                 />
                 <DrawerButton
+                  icon={<FaUsersGear />}
+                  to='/admin/roles'
+                  text='Papéis'
+                  replace_location={false}
+                  onClose={onClose}
+                  highlighted={currentPath === '/admin/roles'}
+                />
+                <DrawerButton
                   icon={<HiUserGroup />}
                   to='/admin/groups'
                   text='Grupos'
@@ -326,6 +340,22 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   replace_location={false}
                   onClose={onClose}
                   highlighted={currentPath === '/admin/feedbacks'}
+                />
+                <DrawerButton
+                  icon={<FaServer />}
+                  to='/admin/server-docs'
+                  text='Documentação do Servidor'
+                  replace_location={false}
+                  onClose={onClose}
+                  highlighted={currentPath === '/admin/server-docs'}
+                />
+                <DrawerButton
+                  icon={<LuActivity />}
+                  to='/admin/api-status'
+                  text='Status da API'
+                  replace_location={false}
+                  onClose={onClose}
+                  highlighted={currentPath === '/admin/api-status'}
                 />
               </ScaleFade>
             </VStack>

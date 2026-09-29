@@ -4,8 +4,9 @@ import {
   UpdateHolidayCategory,
 } from '../models/http/requests/holidayCategory.request.models';
 import { HolidayCategoryResponse } from '../models/http/responses/holidayCategory.response.models';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useHolidayCategoryService from './API/services/useHolidayCategoryService';
+import HolidayCategoryErrorParser from './holidayCategoryErrorParser';
 
 const useHolidaysCategories = (initialFetch = true) => {
   const service = useHolidayCategoryService();
@@ -15,6 +16,7 @@ const useHolidaysCategories = (initialFetch = true) => {
   >([]);
 
   const showToast = useCustomToast();
+  const parser = useMemo(() => new HolidayCategoryErrorParser(), []);
 
   const getHolidaysCategories = useCallback(async () => {
     setLoading(true);
@@ -24,13 +26,12 @@ const useHolidaysCategories = (initialFetch = true) => {
         setHolidaysCategories(response.data);
       })
       .catch((error) => {
-        console.log(error);
-        showToast('Erro', `Erro ao carregar categorias: ${error}`, 'error');
+        showToast('Erro', parser.parseGetError(error), 'error');
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [showToast, service]);
+  }, [showToast, service, parser]);
 
   const createHolidayCategory = useCallback(
     async (data: CreateHolidayCategory) => {
@@ -46,14 +47,13 @@ const useHolidaysCategories = (initialFetch = true) => {
           getHolidaysCategories();
         })
         .catch((error) => {
-          showToast('Erro', `Erro ao criar categoria: ${error}`, 'error');
-          console.log(error);
+          showToast('Erro', parser.parseCreateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getHolidaysCategories, showToast, service],
+    [getHolidaysCategories, showToast, service, parser],
   );
 
   const updateHolidayCategory = useCallback(
@@ -66,18 +66,13 @@ const useHolidaysCategories = (initialFetch = true) => {
           getHolidaysCategories();
         })
         .catch((error) => {
-          showToast(
-            'Erro',
-            `Erro ao atualizar categoria ${data.name}: ${error}`,
-            'error',
-          );
-          console.log(error);
+          showToast('Erro', parser.parseUpdateError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getHolidaysCategories, showToast, service],
+    [getHolidaysCategories, showToast, service, parser],
   );
 
   const deleteHolidayCategory = useCallback(
@@ -91,14 +86,13 @@ const useHolidaysCategories = (initialFetch = true) => {
           getHolidaysCategories();
         })
         .catch((error) => {
-          showToast('Erro!', 'Erro ao remover categoria', 'error');
-          console.log(error);
+          showToast('Erro!', parser.parseDeleteError(error), 'error');
         })
         .finally(() => {
           setLoading(false);
         });
     },
-    [getHolidaysCategories, showToast, service],
+    [getHolidaysCategories, showToast, service, parser],
   );
 
   useEffect(() => {

@@ -4,8 +4,11 @@ import {
   UpdateUser,
 } from '../../../models/http/requests/user.request.models';
 import { AxiosResponse } from 'axios';
-import { UserCoreResponse, UserResponse } from '../../../models/http/responses/user.response.models';
-import { JSONResponse } from '../../../models/http/responses/common.response.models';
+import {
+  UserCoreResponse,
+  UserPermissionResponse,
+  UserResponse,
+} from '../../../models/http/responses/user.response.models';
 
 const useUsersService = () => {
   const PREFIX = '/admin/users';
@@ -19,17 +22,17 @@ const useUsersService = () => {
     return axios.get(PREFIX);
   };
 
+  const listWithPermissions = (): Promise<
+    AxiosResponse<Array<UserPermissionResponse>>
+  > => {
+    return axios.get(`${PREFIX}/permissions`);
+  };
+
   const update = (
     user_id: number,
     data: UpdateUser,
   ): Promise<AxiosResponse<number>> => {
     return axios.put(`${PREFIX}/${user_id}`, data);
-  };
-
-  const deleteById = (
-    user_id: number,
-  ): Promise<AxiosResponse<JSONResponse>> => {
-    return axios.delete(`${PREFIX}/${user_id}`);
   };
 
   const updateEmailNotifications = (
@@ -40,7 +43,13 @@ const useUsersService = () => {
     });
   };
 
-  return { create, list, update, deleteById, updateEmailNotifications };
+  return {
+    create,
+    list,
+    listWithPermissions,
+    update,
+    updateEmailNotifications,
+  };
 };
 
 export default useUsersService;

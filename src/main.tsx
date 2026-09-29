@@ -12,47 +12,15 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // Providers, Contexts
 import FeatureGuideProvider from './context/FeatureGuideContext';
-import MenuContextProvider from './context/MenuContext';
+import UIContextProvider from './context/UIContext';
 
 import AppRoutes from './AppRoutes';
 import { BrowserRouter } from 'react-router-dom';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import { useEffect } from 'react';
 import { unlockOrientation } from './services/platform/screen-orientation.service';
 
 const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
-
-function App() {
-  useEffect(() => {
-    unlockOrientation();
-  }, []);
-
-  return (
-    <ThemeProvider theme={muiTheme} defaultMode="light">
-      <ChakraProvider theme={chakraTheme}>
-        <ColorModeScript
-          initialColorMode={chakraTheme.config.initialColorMode}
-        />
-
-        <GoogleOAuthProvider clientId={clientId!}>
-          <AppContextProvider>
-            <MenuContextProvider>
-              <LocalizationProvider
-                dateAdapter={AdapterMoment}
-                adapterLocale="pt-br"
-              >
-                <FeatureGuideProvider>
-                  <BrowserRouter>
-                    <AppRoutes />
-                  </BrowserRouter>
-                </FeatureGuideProvider>
-              </LocalizationProvider>
-            </MenuContextProvider>
-          </AppContextProvider>
-        </GoogleOAuthProvider>
-      </ChakraProvider>
-    </ThemeProvider>
-  );
-}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={muiTheme} defaultMode='light'>
@@ -60,18 +28,20 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <ColorModeScript initialColorMode={chakraTheme.config.initialColorMode} />
       <GoogleOAuthProvider clientId={clientId!}>
         <AppContextProvider>
-          <MenuContextProvider>
+          <UIContextProvider>
             <LocalizationProvider
               dateAdapter={AdapterMoment}
               adapterLocale='pt-br'
             >
               <FeatureGuideProvider>
                 <BrowserRouter>
-                  <AppRoutes />
+                  <ErrorBoundary>
+                    <AppRoutes />
+                  </ErrorBoundary>
                 </BrowserRouter>
               </FeatureGuideProvider>
             </LocalizationProvider>
-          </MenuContextProvider>
+          </UIContextProvider>
         </AppContextProvider>
       </GoogleOAuthProvider>
     </ChakraProvider>
