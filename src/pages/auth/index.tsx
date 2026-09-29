@@ -30,14 +30,15 @@ const AuthPage = () => {
   const authService = new AuthHttpService();
 
 
-  // Inicializa o Google Sign-In somente no aplicativo Capacitor
   useEffect(() => {
     if (isCapacitor()) {
       GoogleSignIn.initialize({
-        clientId: import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID,
-        scopes: [
-          'https://www.googleapis.com/auth/userinfo.profile',
-        ],
+      clientId: import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID,
+      scopes: [
+        'openid',
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email',
+      ],
       }).catch((error) => {
         console.error(
           'Erro ao inicializar Google Sign-In:',
@@ -47,14 +48,9 @@ const AuthPage = () => {
     }
   }, []);
 
-
-  // Login Google
-  // No Android/Capacitor: usa o plugin nativo
-  // Na Web: continua usando o fluxo antigo
   async function handleGoogleLogin() {
     if (isCapacitor()) {
       try {
-        // 1. Login nativo com Google
         const result = await GoogleSignIn.signIn();
 
         console.log(
@@ -63,7 +59,6 @@ const AuthPage = () => {
           JSON.stringify(result, null, 2),
         );
 
-        // 2. Verifica se recebemos os tokens necessários
         if (!result.idToken) {
           throw new Error(
             'Google não retornou o idToken.',
@@ -76,17 +71,14 @@ const AuthPage = () => {
           );
         }
 
-        // 3. Envia os tokens para o backend
         const response = await authService.mobileLogin(
           result.idToken,
           result.serverAuthCode,
         );
 
-        // 4. Usa o mesmo AppContext utilizado pelo site
         setAccessToken(response.data.access_token);
         setIsAuthenticated(true);
 
-        // 5. Vai para a aplicação normalmente
         navigate('/public/allocations');
       } catch (error) {
         console.error(
@@ -95,13 +87,10 @@ const AuthPage = () => {
         );
       }
     } else {
-      // Login web continua exatamente como antes
       login();
     }
   }
 
-
-  // Login Google utilizado somente na Web
   const login = useGoogleLogin({
     redirect_uri:
       REDIRECT_URL ??

@@ -14,6 +14,7 @@ import {
 } from '@chakra-ui/react';
 
 import { AddIcon } from '@chakra-ui/icons';
+import CurriculumCardList from './CurriculumCardList';
 
 import {
   useEffect,
@@ -294,9 +295,16 @@ export default function Curriculums() {
         warningText='Essa ação é irreversível.'
       />
 
-      <Box>
-        <Flex align='center' mb={4}>
-          <Text fontSize='3xl'>
+      <Box w="100%">
+        <Flex
+          direction={{ base: 'column', md: 'row' }}
+          align={{ base: 'stretch', md: 'center' }}
+          gap={{ base: 3, md: 0 }}
+          mb={4}
+        >
+          <Text
+            fontSize={{ base: '2xl', md: '3xl' }}
+          >
             Curso - {course?.name}
           </Text>
 
@@ -305,40 +313,34 @@ export default function Curriculums() {
           <Menu>
             <MenuButton
               as={Button}
-              colorScheme='blue'
+              colorScheme="blue"
               leftIcon={<AddIcon />}
-              borderRadius={'20px'}
+              borderRadius="20px"
+              w={{ base: '100%', md: 'auto' }}
             >
               Opções
             </MenuButton>
 
             <MenuList
-              w={'300px'}
-              border={'1px'}
-              bgColor={'uspolis.white'}
+              w="300px"
+              border="1px"
+              bgColor="uspolis.white"
             >
               <MenuGroup
-                title='Adição'
-                fontSize={'lg'}
-                gap={'5px'}
+                title="Adição"
+                fontSize="lg"
+                gap="5px"
               >
                 <MenuDivider />
 
                 <MenuItem
                   as={Button}
-                  bgColor={
-                    'uspolis.white'
-                  }
-                  justifyContent={
-                    'flex-start'
-                  }
-                  onClick={
-                    handleRegisterClick
-                  }
+                  bgColor="uspolis.white"
+                  justifyContent="flex-start"
+                  onClick={handleRegisterClick}
                   leftIcon={<LuHand />}
                   _hover={{
-                    textColor:
-                      'uspolis.white',
+                    textColor: 'uspolis.white',
                   }}
                 >
                   Manual
@@ -348,21 +350,12 @@ export default function Curriculums() {
 
                 <MenuItem
                   as={Button}
-                  bgColor={
-                    'uspolis.white'
-                  }
-                  justifyContent={
-                    'flex-start'
-                  }
-                  leftIcon={
-                    <LuTimer />
-                  }
-                  onClick={
-                    onOpenCrawlerJupiterModal
-                  }
+                  bgColor="uspolis.white"
+                  justifyContent="flex-start"
+                  leftIcon={<LuTimer />}
+                  onClick={onOpenCrawlerJupiterModal}
                   _hover={{
-                    textColor:
-                      'uspolis.white',
+                    textColor: 'uspolis.white',
                   }}
                 >
                   Júpiter
@@ -372,15 +365,42 @@ export default function Curriculums() {
           </Menu>
         </Flex>
 
-        <DataTable
-          loading={loading}
-          data={curriculums}
-          columns={columns}
-          columnPinning={{
-            left: ['name'],
-            right: ['options'],
+        {/* Desktop / notebook */}
+        <Box
+          display={{
+            base: 'none',
+            md: 'block',
           }}
-        />
+          w="100%"
+          overflowX="auto"
+        >
+          <DataTable
+            loading={loading}
+            data={curriculums}
+            columns={columns}
+            columnPinning={{
+              left: ['description'],
+              right: ['options'],
+            }}
+          />
+        </Box>
+
+        {/* Tablet / celular */}
+        <Box
+          display={{
+            base: 'block',
+            md: 'none',
+          }}
+          w="100%"
+        >
+          <CurriculumCardList
+            curriculums={curriculums}
+            loading={loading}
+            handleEditClick={handleEditClick}
+            handleDeleteClick={handleDeleteClick}
+            handleViewSubjects={handleViewSubjects}
+          />
+        </Box>
       </Box>
 
       {showMissingWindow &&

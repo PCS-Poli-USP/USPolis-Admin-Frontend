@@ -14,6 +14,13 @@ import { useContext } from 'react';
 import { appContext } from '../../../../context/AppContext';
 import { AllocationHeaderProps } from '../index';
 import HeaderFilter from '../HeaderFilter/header.filter';
+import { Share } from '@capacitor/share';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { Calendar } from '@capacitor/calendar';
+import ClassesPDFModal from '../ClassesPDFModal';
+import ClassroomPDFModal from '../ClassroomCalendarPDF';
+import SubjectReportModal from '../SubjectReportModal';
+import EmptyClassroomsReportModal from '../EmptyClassroomsrReportModal';
 
 function AllocationMobileHeader({
   isOpen,
@@ -43,6 +50,109 @@ function AllocationMobileHeader({
   const { isOpen: isOpenOptions, onToggle } = useDisclosure({
     defaultIsOpen: true,
   });
+
+  const {
+    isOpen: isOpenClassesPDF,
+    onClose: onCloseClassesPDF,
+    onOpen: onOpenClassesPDF,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenClassroomsPDF,
+    onClose: onCloseClassroomsPDF,
+    onOpen: onOpenClassroomsPDF,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenSubjectReport,
+    onClose: onCloseSubjectReport,
+    onOpen: onOpenSubjectReport,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenEmptyClassroomsReport,
+    onClose: onCloseEmptyClassroomsReport,
+    onOpen: onOpenEmptyClassroomsReport,
+  } = useDisclosure();
+
+  const handleShare = async () => {
+    await Share.share({
+      title: 'Mapa de Salas - USPolis',
+      text: 'Confira o Mapa de Salas do USPolis.',
+    });
+  };
+
+  const testCalendar = async () => {
+  try {
+    const permission = await Calendar.requestPermissions({
+      permissions: ['readCalendar', 'writeCalendar'],
+    });
+
+    console.log('Permissão:', permission);
+
+    if (
+      permission.readCalendar !== 'granted' ||
+      permission.writeCalendar !== 'granted'
+    ) {
+      console.log('Permissão de calendário não concedida');
+      return;
+    }
+
+    const result = await Calendar.listCalendars();
+
+    console.log(
+      'Calendários disponíveis:',
+      JSON.stringify(result, null, 2),
+    );
+
+    const calendarId = '5';
+    const startDate = Date.now() + 30 * 1000;
+    const endDate = startDate + 60 * 60 * 1000;
+
+    const event = await Calendar.createEvent({
+      calendarId,
+      title: 'Teste USPolis',
+      location: 'Sala de Teste',
+      notes: 'Evento criado pelo aplicativo USPolis.',
+      startDate,
+      endDate,
+    });
+
+    console.log('Evento criado:', event);
+  } catch (error) {
+    console.error('Erro ao criar evento:', error);
+  }
+};
+
+  
+const testNotification = async () => {
+  const permission = await LocalNotifications.requestPermissions();
+
+  if (permission.display !== 'granted') {
+    console.log('Permissão de notificação não concedida');
+    return;
+  }
+
+  const notificationTime = new Date(Date.now() +  30 * 1000);
+
+  await LocalNotifications.schedule({
+    notifications: [
+      {
+        id: 2,
+        title: 'Aula em 5 minutos',
+        body: 'Sua aula de começa em 5 minutos',
+        schedule: {
+          at: notificationTime,
+        },
+      },
+    ],
+  });
+
+  console.log(
+    'Notificação agendada para:',
+    notificationTime.toLocaleString(),
+  );
+};
 
   return (
     <Flex direction={'column'} alignItems={'flex-start'} gap={5} w={'100%'}>
@@ -78,6 +188,24 @@ function AllocationMobileHeader({
                 >
                   Solicitar Sala
                 </Button>
+                <Button
+                  colorScheme="blue"
+                  onClick={handleShare}
+                >
+                  Compartilhar
+                </Button>
+                <Button
+                  colorScheme="blue"
+                  onClick={onOpenClassroomsPDF}
+                >
+                  Baixar mapa de salas
+                </Button>
+                <Button onClick={testNotification}>
+                  Testar notificação
+                </Button>
+                <Button onClick={testCalendar}>
+                  Testar calendário
+                </Button>
               </Tooltip>
             </Flex>
 
@@ -105,6 +233,31 @@ function AllocationMobileHeader({
           </Flex>
         </Box>
       </Collapse>
+      <ClassesPDFModal
+        isOpen={isOpenClassesPDF}
+        onClose={onCloseClassesPDF}
+        buildings={buildings}
+      />
+
+      <ClassroomPDFModal
+        isOpen={isOpenClassroomsPDF}
+        onClose={onCloseClassroomsPDF}
+        buildings={buildings}
+      />
+
+      <SubjectReportModal
+        isOpen={isOpenSubjectReport}
+        onClose={onCloseSubjectReport}
+        loading={loadingSubjects || loadingBuildings}
+        subjects={subjects}
+        buildings={buildings}
+      />
+
+      <EmptyClassroomsReportModal
+        isOpen={isOpenEmptyClassroomsReport}
+        onClose={onCloseEmptyClassroomsReport}
+        buildings={buildings}
+      />
     </Flex>
   );
 }

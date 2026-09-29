@@ -1,8 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { IconButton, HStack, Tooltip } from '@chakra-ui/react';
 import { CourseResponse } from '../../../models/http/responses/course.response.models';
-import { BsBook, BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import { getCoursePeriodLabel } from '../CourseModal/coursePeriodLabel';
+import ActionButtons from '../../../components/common/ActionButtons/ActionButtons';
 
 interface Props {
   handleEditClick: (course: CourseResponse) => void;
@@ -46,39 +45,18 @@ export function getCourseColumns({
         const course = row.original;
 
         return (
-          <HStack spacing="0px">
-            <Tooltip label="Ver Currículos">
-              <IconButton
-                colorScheme="blue"
-                size="xs"
-                variant="ghost"
-                aria-label="ver-curriculos"
-                icon={<BsBook />}
-                onClick={() => handleViewCurriculums(course)}
-              />
-            </Tooltip>
-            <Tooltip label="Editar">
-              <IconButton
-                colorScheme="yellow"
-                size="xs"
-                variant="ghost"
-                aria-label="editar-curso"
-                icon={<BsFillPenFill />}
-                onClick={() => handleEditClick(course)}
-              />
-            </Tooltip>
-
-            <Tooltip label="Remover">
-              <IconButton
-                colorScheme="red"
-                size="xs"
-                variant="ghost"
-                aria-label="remover-curso"
-                icon={<BsFillTrashFill />}
-                onClick={() => handleDeleteClick(course)}
-              />
-            </Tooltip>
-          </HStack>
+          <ActionButtons
+            viewLabel="Ver Currículos"
+            onView={() =>
+              handleViewCurriculums(course)
+            }
+            onEdit={() =>
+              handleEditClick(course)
+            }
+            onDelete={() =>
+              handleDeleteClick(course)
+            }
+          />
         );
       },
     }

@@ -16,8 +16,43 @@ import MenuContextProvider from './context/MenuContext';
 
 import AppRoutes from './AppRoutes';
 import { BrowserRouter } from 'react-router-dom';
+import { useEffect } from 'react';
+import { unlockOrientation } from './services/platform/screen-orientation.service';
 
 const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
+
+function App() {
+  useEffect(() => {
+    unlockOrientation();
+  }, []);
+
+  return (
+    <ThemeProvider theme={muiTheme} defaultMode="light">
+      <ChakraProvider theme={chakraTheme}>
+        <ColorModeScript
+          initialColorMode={chakraTheme.config.initialColorMode}
+        />
+
+        <GoogleOAuthProvider clientId={clientId!}>
+          <AppContextProvider>
+            <MenuContextProvider>
+              <LocalizationProvider
+                dateAdapter={AdapterMoment}
+                adapterLocale="pt-br"
+              >
+                <FeatureGuideProvider>
+                  <BrowserRouter>
+                    <AppRoutes />
+                  </BrowserRouter>
+                </FeatureGuideProvider>
+              </LocalizationProvider>
+            </MenuContextProvider>
+          </AppContextProvider>
+        </GoogleOAuthProvider>
+      </ChakraProvider>
+    </ThemeProvider>
+  );
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={muiTheme} defaultMode='light'>

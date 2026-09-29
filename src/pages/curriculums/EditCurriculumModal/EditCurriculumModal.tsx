@@ -96,7 +96,14 @@ export function EditCurriculumModal({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
 
-      <ModalContent>
+      <ModalContent
+        maxW={{
+          base: 'calc(100vw - 24px)',
+          md: 'lg',
+        }}
+        maxH="90vh"
+        overflowY="auto"
+      >
         <ModalHeader>Editar Currículo</ModalHeader>
 
         <ModalBody>
@@ -167,14 +174,21 @@ export function EditCurriculumModal({
 
         </ModalBody>
 
-        <ModalFooter>
-          <Button mr={3} onClick={handleClose}>
+        <ModalFooter
+          flexDirection={{
+            base: 'column-reverse',
+            md: 'row',
+          }}
+          gap={3}
+        >
+          <Button w={{ base: '100%', md: 'auto' }} onClick={handleClose}>
             Cancelar
           </Button>
 
           <Button
             colorScheme="blue"
             onClick={handleSubmit}
+            w={{ base: '100%', md: 'auto' }}
             isDisabled={!curriculum}
           >
             Salvar

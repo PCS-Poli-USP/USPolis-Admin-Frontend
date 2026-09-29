@@ -110,7 +110,14 @@ export default function CourseModal(props: CourseModalProps) {
     <Modal isOpen={props.isOpen} onClose={handleClose}>
       <ModalOverlay />
 
-      <ModalContent>
+      <ModalContent
+        maxW={{
+          base: 'calc(100vw - 24px)',
+          md: 'lg',
+        }}
+        maxH="90vh"
+        overflowY="auto"
+      >
         <ModalHeader>
           {props.isUpdate
             ? 'Editar Curso'
@@ -188,18 +195,22 @@ export default function CourseModal(props: CourseModalProps) {
           </FormProvider>
         </ModalBody>
 
-        <ModalFooter>
+        <ModalFooter
+          flexDirection={{ base: 'column-reverse', md: 'row' }}
+          gap={3}
+        >
           <Button
-            mr={3}
-            colorScheme='red'
+            colorScheme="red"
             onClick={handleClose}
+            w={{ base: '100%', md: 'auto' }}
           >
             Cancelar
           </Button>
 
           <Button
-            colorScheme='blue'
+            colorScheme="blue"
             onClick={handleSave}
+            w={{ base: '100%', md: 'auto' }}
           >
             {props.isUpdate
               ? 'Atualizar'

@@ -8,26 +8,22 @@ import {
   Box,
   Button,
   Flex,
-  HStack,
-  IconButton,
   Progress,
   Skeleton,
   Spacer,
   Table,
-  TableContainer,
   Tbody,
   Td,
   Text,
   Th,
   Thead,
-  Tooltip,
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
 
 import { useEffect, useMemo, useState } from 'react';
 import { AddIcon } from '@chakra-ui/icons';
-
+import CurriculumSubjectCardList from './CurriculumSubjectCardList';
 import PageContent from '../../components/common/PageContent';
 import Dialog from '../../components/common/Dialog/dialog.component';
 
@@ -37,9 +33,9 @@ import CurriculumSubjectModal from './CurriculumSubjectModal/curriculumSubject.m
 import { useLocation, useParams } from 'react-router-dom';
 import { SubjectResponseBase } from '../../models/http/responses/subject.response.models';
 import useSubjectsService from '../../hooks/API/services/useSubjectsService';
-import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 import useCustomToast from '../../hooks/useCustomToast';
 import MissingSubjectsFloatingWindow from '../../components/common/FloatingWindow/floatingWindow.component';
+import ActionButtons from '../../components/common/ActionButtons/ActionButtons';
 
 function CurriculumSubjects() {
   const showToast = useCustomToast();
@@ -290,13 +286,22 @@ function CurriculumSubjects() {
           lg: 10,
         }}
       >
-        <Text fontSize='4xl'>{course?.name} - Disciplinas</Text>
-        <Text mb={4}>
+        <Text
+          fontSize={{ base: '2xl', md: '3xl', lg: '4xl' }}
+          wordBreak="break-word"
+        >
+          {course?.name} - Disciplinas
+        </Text>
+
+        <Text
+          mb={4}
+          fontSize={{ base: 'sm', md: 'md' }}
+        >
           Gerencie as disciplinas do currículo, organizadas por períodos. Você
           pode adicionar, editar ou remover disciplinas.
         </Text>
 
-        <Skeleton isLoaded={!loading || !loadingSubjects}>
+        <Skeleton isLoaded={!loading && !loadingSubjects}>
           <Accordion allowToggle defaultIndex={[0]}>
             {periods.map((period) => (
               <AccordionItem key={period}>
@@ -308,120 +313,146 @@ function CurriculumSubjects() {
                 </AccordionButton>
 
                 <AccordionPanel>
-                  <Flex mb={3} align='center'>
+                  <Flex
+                    mb={3}
+                    direction={{ base: 'column', sm: 'row' }}
+                    align={{ base: 'stretch', sm: 'center' }}
+                    gap={3}
+                  >
                     <Spacer />
 
                     <Button
-                      colorScheme='blue'
-                      size='sm'
+                      colorScheme="blue"
+                      size="sm"
                       rightIcon={<AddIcon />}
                       onClick={() => handleCreateClick(period)}
+                      w={{ base: '100%', sm: 'auto' }}
                     >
                       Cadastrar disciplina
                     </Button>
                   </Flex>
 
-                  <Box w='100%'>
+                  <Box w="100%">
                     {(groupedByPeriod[period] ?? []).length > 0 && (
-                      <Box
-                        border='1px'
-                        borderRadius='lg'
-                        borderColor='uspolis.blue'
-                        overflowX='auto'
-                        w='100%'
-                      >
-                        {loading && <Progress size='xs' isIndeterminate />}
+                      <>
+                        <Box
+                          display={{ base: 'none', lg: 'block' }}
+                          border="1px"
+                          borderRadius="lg"
+                          borderColor="uspolis.blue"
+                          overflowX="auto"
+                          w="100%"
+                        >
+                          {loading && (
+                            <Progress
+                              size="xs"
+                              isIndeterminate
+                            />
+                          )}
 
-                        <Table 
-                          variant='simple'
-                          w='100%'
-                          sx={{
-                            tableLayout: 'fixed',
-                          }}>
-                          <Thead>
-                            <Tr>
-                              <Th color='uspolis.blue'>Disciplina</Th>
-                              <Th color='uspolis.blue'>Tipo</Th>
-                              <Th color='uspolis.blue'>Categoria</Th>
-                              <Th color='uspolis.blue' textAlign='right'>
-                                Opções
-                              </Th>
-                            </Tr>
-                          </Thead>
+                          <Table
+                            variant="simple"
+                            w="100%"
+                            sx={{
+                              tableLayout: 'fixed',
+                            }}
+                          >
+                            <Thead>
+                              <Tr>
+                                <Th color="uspolis.blue">
+                                  Disciplina
+                                </Th>
 
-                          <Tbody>
-                            {(groupedByPeriod[period] ?? []).map((item) => {
-                              const typeMap: Record<string, string> = {
-                                SEMESTRAL: 'Semestral',
-                                QUADRIMESTER: 'Quadrimestral',
-                              };
+                                <Th color="uspolis.blue">
+                                  Tipo
+                                </Th>
 
-                              const categoryMap: Record<string, string> = {
-                                mandatory: 'Obrigatória',
-                                free_elective: 'Optativa Livre',
-                                track_elective: 'Optativa Eletiva',
-                              };
+                                <Th color="uspolis.blue">
+                                  Categoria
+                                </Th>
 
-                              return (
-                                <Tr key={item.id}>
-                                  <Td
-                                    maxW='0'
-                                    overflow='hidden'
-                                    whiteSpace='normal'
-                                    wordBreak='break-word'
-                                  >{subjectMap[item.subject_id] ?? '-'}</Td>
-                                  <Td>
-                                    <Badge>
-                                      {typeMap[item.type] ?? item.type}
-                                    </Badge>
-                                  </Td>
-                                  <Td>
-                                    <Badge
-                                      colorScheme={getCategoryBadgeColor(
-                                        item.category,
-                                      )}
+                                <Th
+                                  color="uspolis.blue"
+                                  textAlign="right"
+                                >
+                                  Opções
+                                </Th>
+                              </Tr>
+                            </Thead>
+
+                            <Tbody>
+                              {(groupedByPeriod[period] ?? []).map((item) => {
+                                const typeMap: Record<string, string> = {
+                                  SEMESTRAL: 'Semestral',
+                                  QUADRIMESTER: 'Quadrimestral',
+                                };
+
+                                const categoryMap: Record<string, string> = {
+                                  mandatory: 'Obrigatória',
+                                  free_elective: 'Optativa Livre',
+                                  track_elective: 'Optativa Eletiva',
+                                };
+
+                                return (
+                                  <Tr key={item.id}>
+                                    <Td
+                                      maxW="0"
+                                      overflow="hidden"
+                                      whiteSpace="normal"
+                                      wordBreak="break-word"
                                     >
-                                      {categoryMap[item.category] ??
-                                        item.category}
-                                    </Badge>
-                                  </Td>
+                                      {subjectMap[item.subject_id] ?? '-'}
+                                    </Td>
 
-                                  <Td>
-                                    <HStack
-                                      spacing='0px'
-                                      justifyContent='flex-end'
-                                    >
-                                      <Tooltip label='Editar'>
-                                        <IconButton
-                                          colorScheme='yellow'
-                                          size='xs'
-                                          variant='ghost'
-                                          aria-label='editar'
-                                          icon={<BsFillPenFill />}
-                                          onClick={() => handleEditClick(item)}
-                                        />
-                                      </Tooltip>
+                                    <Td>
+                                      <Badge>
+                                        {typeMap[item.type] ?? item.type}
+                                      </Badge>
+                                    </Td>
 
-                                      <Tooltip label='Remover'>
-                                        <IconButton
-                                          colorScheme='red'
-                                          size='xs'
-                                          variant='ghost'
-                                          aria-label='remover'
-                                          icon={<BsFillTrashFill />}
-                                          onClick={() =>
+                                    <Td>
+                                      <Badge
+                                        colorScheme={getCategoryBadgeColor(
+                                          item.category,
+                                        )}
+                                      >
+                                        {categoryMap[item.category] ??
+                                          item.category}
+                                      </Badge>
+                                    </Td>
+
+                                    <Td>
+                                      <Flex justify="flex-end">
+                                        <ActionButtons
+                                          onEdit={() =>
+                                            handleEditClick(item)
+                                          }
+                                          onDelete={() =>
                                             handleDeleteClick(item)
                                           }
                                         />
-                                      </Tooltip>
-                                    </HStack>
-                                  </Td>
-                                </Tr>
-                              );
-                            })}
-                          </Tbody>
-                        </Table>
-                      </Box>
+                                      </Flex>
+                                    </Td>
+                                  </Tr>
+                                );
+                              })}
+                            </Tbody>
+                          </Table>
+                        </Box>
+
+                        <Box
+                          display={{ base: 'block', lg: 'none' }}
+                          w="100%"
+                        >
+                          <CurriculumSubjectCardList
+                            items={groupedByPeriod[period] ?? []}
+                            subjects={subjects}
+                            loading={loading}
+                            handleEditClick={handleEditClick}
+                            handleDeleteClick={handleDeleteClick}
+                          />
+                        </Box>
+                      </>
                     )}
                   </Box>
                 </AccordionPanel>

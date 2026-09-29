@@ -9,6 +9,7 @@ import {
 
 import { useEffect, useState } from 'react';
 import { AddIcon } from '@chakra-ui/icons';
+import CourseCardList from './CourseCardList';
 
 import PageContent from '../../components/common/PageContent';
 import DataTable from '../../components/common/DataTable/dataTable.component';
@@ -159,30 +160,57 @@ function Courses() {
         warningText="Essa ação é irreversível."
       />
 
-      <Box w="100%" overflowX="auto">
-        <Flex align="center">
-          <Text fontSize="4xl" mb={4}>
-            Cursos
-          </Text>
+      <Box w="100%">
+  <Flex
+    direction={{ base: 'column', lg: 'row' }}
+    align={{ base: 'stretch', lg: 'center' }}
+    gap={{ base: 3, lg: 0 }}
+    mb={4}
+  >
+    <Text fontSize={{ base: '2xl', lg: '4xl' }}>
+      Cursos
+    </Text>
 
-          <Spacer />
+    <Spacer />
 
-          <Button
-            colorScheme="blue"
-            rightIcon={<AddIcon />}
-            onClick={handleCreateClick}
-          >
-            Cadastrar
-          </Button>
-        </Flex>
+    <Button
+      colorScheme="blue"
+      rightIcon={<AddIcon />}
+      onClick={handleCreateClick}
+      w={{ base: '100%', lg: 'auto' }}
+    >
+      Cadastrar
+    </Button>
+  </Flex>
 
-        <DataTable
-          loading={loading}
-          data={courses}
-          columns={columns}
-          columnPinning={{ left: ['name'], right: ['options'] }}
-        />
-      </Box>
+    <Box
+      display={{ base: 'none', lg: 'block' }}
+      w="100%"
+      overflowX="auto"
+    >
+      <DataTable
+        loading={loading}
+        data={courses}
+        columns={columns}
+        columnPinning={{
+          left: ['name'],
+          right: ['options'],
+        }}
+      />
+    </Box>
+    <Box
+      display={{ base: 'block', lg: 'none' }}
+      w="100%"
+    >
+      <CourseCardList
+        courses={courses}
+        loading={loading}
+        handleEditClick={handleEditClick}
+        handleDeleteClick={handleDeleteClick}
+        handleViewCurriculums={handleViewCurriculums}
+      />
+    </Box>
+  </Box>
     </PageContent>
   );
 }

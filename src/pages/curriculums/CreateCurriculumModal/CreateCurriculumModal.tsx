@@ -89,7 +89,14 @@ export function CreateCurriculumModal({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
 
-      <ModalContent>
+      <ModalContent
+        maxW={{
+          base: 'calc(100vw - 24px)',
+          md: 'lg',
+        }}
+        maxH="90vh"
+        overflowY="auto"
+      >
         <ModalHeader>Criar Currículo</ModalHeader>
 
         <ModalBody>
@@ -163,12 +170,18 @@ export function CreateCurriculumModal({
             </FormControl>
         </ModalBody>
 
-        <ModalFooter>
-          <Button mr={3} onClick={handleClose}>
+        <ModalFooter
+          flexDirection={{
+            base: 'column-reverse',
+            md: 'row',
+          }}
+          gap={3}
+        >
+          <Button w={{ base: '100%', md: 'auto' }} onClick={handleClose}>
             Cancelar
           </Button>
 
-          <Button colorScheme="blue" onClick={handleSubmit}>
+          <Button colorScheme="blue" onClick={handleSubmit} w={{ base: '100%', md: 'auto' }}>
             Criar
           </Button>
         </ModalFooter>
