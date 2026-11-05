@@ -10,7 +10,7 @@ next:
 
 # Disciplinas
 
-Esta página organiza o cadastro das disciplinas que podem aparecer no [Mapa de Salas](/allocations/) e ser usadas para criar [Turmas](/oferings/classes).
+Esta página organiza o cadastro das disciplinas que podem aparecer no [Mapa de Salas](/allocations/) e ser usadas para criar [Turmas](/oferings/classes/).
 
 <div style="
   display: flex;
@@ -70,4 +70,4 @@ Depois de preencher os campos obrigatórios, use **Cadastrar** para salvar.
 
 ## Ações comuns
 
-Na coluna **Opções** de cada linha da tabela é possível **duplicar**, **editar** ou **excluir** a disciplina. Tenha cuidado ao excluir uma disciplina que já tenha [turmas](/oferings/classes) vinculadas.
+Na coluna **Opções** de cada linha da tabela é possível **duplicar**, **editar** ou **excluir** a disciplina. Tenha cuidado ao excluir uma disciplina que já tenha [turmas](/oferings/classes/) vinculadas.

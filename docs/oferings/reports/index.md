@@ -63,4 +63,4 @@ Depois de selecionar o prédio, a lista mostra cada sala com a quantidade de **a
 ## Ações comuns
 
 - Alterne o **Prédio** e o **Filtro** para focar em um conjunto específico de salas.
-- Use os resultados para embasar remanejamentos de sala em [Turmas](/oferings/classes) — salas hiper ocupadas geralmente precisam de uma sala maior, e salas sub ocupadas podem liberar espaço para outras turmas.
+- Use os resultados para embasar remanejamentos de sala em [Turmas](/oferings/classes/) — salas hiper ocupadas geralmente precisam de uma sala maior, e salas sub ocupadas podem liberar espaço para outras turmas.

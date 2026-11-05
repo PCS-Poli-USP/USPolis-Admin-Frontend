@@ -10,7 +10,7 @@ next:
 
 # Calendários
 
-Um calendário acadêmico define, para um determinado **ano**, quais feriados e datas especiais devem ser respeitados ao montar as alocações das turmas. Cada calendário criado aqui pode depois ser associado às turmas (veja [Turmas](/oferings/classes)), garantindo que a alocação de sala não gere aulas em cima de feriados e recessos.
+Um calendário acadêmico define, para um determinado **ano**, quais feriados e datas especiais devem ser respeitados ao montar as alocações das turmas. Cada calendário criado aqui pode depois ser associado às turmas (veja [Turmas](/oferings/classes/)), garantindo que a alocação de sala não gere aulas em cima de feriados e recessos.
 
 <div style="
   display: flex;
@@ -137,4 +137,4 @@ O fluxo recomendado é:
 1. Cadastre as **categorias** de feriados que fizerem sentido para o seu calendário (ex.: feriados nacionais, estaduais, da própria unidade).
 2. Cadastre os **feriados**, associando cada um à categoria correta.
 3. Crie o **calendário** do ano desejado e vincule as categorias de feriados a ele.
-4. Associe o calendário às turmas em [Turmas](/oferings/classes), para que as alocações de sala já considerem esses feriados automaticamente.
+4. Associe o calendário às turmas em [Turmas](/oferings/classes/), para que as alocações de sala já considerem esses feriados automaticamente.

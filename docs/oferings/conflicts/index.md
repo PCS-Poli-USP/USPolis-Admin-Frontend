@@ -63,4 +63,4 @@ Os conflitos aparecem agrupados por **sala**, com a quantidade de datas conflita
 
 ## Resolvendo um conflito
 
-Para resolver um conflito não intencional, ajuste o horário ou a sala de uma das ocupações envolvidas — em [Turmas](/oferings/classes) ou em [Reservas](/scheduling/reservations), dependendo do que estiver em conflito — até que a sobreposição deixe de aparecer nesta página.
+Para resolver um conflito não intencional, ajuste o horário ou a sala de uma das ocupações envolvidas — em [Turmas](/oferings/classes/) ou em [Reservas](/scheduling/reservations/), dependendo do que estiver em conflito — até que a sobreposição deixe de aparecer nesta página.

@@ -6,17 +6,60 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 ## 2026
 
+### API keys para parceiros - 04/11/2026
+
+<span style="color: green">FEATURE</span>
+
+**Descrição:**
+
+- Nova tela **Clientes de API** no Portal Admin: cadastro de parceiros, emissão, edição e revogação de chaves, com limites próprios por chave
+- Entrega da chave por link de uso único, que pode ser enviado por e-mail ao contato do parceiro. Quem emite a chave nunca a vê
+- Nova página pública para o parceiro revelar a chave, com opção de tema claro/escuro
+- As chaves são sempre de servidor: chaves de navegador foram removidas por segurança, e uma requisição com chave vinda de um navegador é recusada. Chaves de navegador já emitidas são revogadas na atualização
+- Veja [API Keys](/api-keys/) e [Administração](/admin/#clientes-de-api)
+
+### Novo visual dos cards das páginas de menu - 04/11/2026
+
+<span style="color: #408080">IMPROVEMENT</span>
+
+**Descrição:**
+
+- Novos cards nas páginas de menu (Portal Admin, Público, Oferecimentos, Agendamento e Datas): no computador, o card ganha cor e mostra "Abrir" ao passar o mouse; no celular, vira uma linha compacta com ícone e seta
+- Os cards agora podem ser usados pelo teclado e funcionam nos temas claro e escuro
+
+### Atualização da documentação técnica - 04/11/2026
+
+<span style="color: #347aeb">DOCS</span>
+
+**Descrição:**
+
+- [Frontend](/dev/frontend/): autenticação descrita como apenas por cookie de sessão, sem token no JavaScript, e formulários descritos com `react-hook-form` no lugar de Formik
+- [Backend](/dev/backend/): novos middlewares de API key e rate limit, proteção contra CSRF e caminhos atualizados da documentação do backend
+- [Configurando seu Ambiente](/dev/enviroment/): novas variáveis de API key, rate limit e `FRONTEND_URL`
+- [Tabelas, Modelos e Relacionamentos](/dev/database/models/): novas tabelas de API keys
+- [Administração](/admin/): nova seção sobre como atender um pedido de chave
+
+### Documentação de API keys para parceiros - 29/10/2026
+
+<span style="color: #347aeb">DOCS</span>
+
+**Descrição:**
+
+- Nova página [API Keys](/api-keys/): quando é preciso uma chave, como pedir (com modelo de e-mail), como receber pelo link de uso único, como usar com exemplos em cURL, Python e TypeScript (incluindo uma função serverless para sites sem backend, já que a chave nunca vai para o navegador), limites, erros e boas práticas
+- Nova seção "API para Parceiros" na barra lateral e item "API" no menu superior
+- [Administração](/admin/): incluído o card "Clientes de API"
+
 ### Documentação técnica de ambiente, backend, frontend e banco de dados - 21/09/2026
 
 <span style="color: #347aeb">DOCS</span>
 
 **Descrição:**
 
-- Preenchida a seção "Banco de dados" de [Configurando seu Ambiente](/dev/enviroment), antes vazia: criação do banco local, variáveis de conexão/Alembic, e o atalho `OVERRIDE_AUTH`/`MOCK_EMAIL` para pular o login OAuth em desenvolvimento
+- Preenchida a seção "Banco de dados" de [Configurando seu Ambiente](/dev/enviroment/), antes vazia: criação do banco local, variáveis de conexão/Alembic, e o atalho `OVERRIDE_AUTH`/`MOCK_EMAIL` para pular o login OAuth em desenvolvimento
 - Detalhado o passo a passo real do workflow de CI/CD (`.github/workflows/ci_cd.yml`) na mesma página
-- [Backend](/dev/backend): documentados os middlewares/handlers de `server/app.py`, as cron tasks do `lifespan`, o mecanismo real de isolamento dos testes (SAVEPOINT + rollback) e um aviso sobre o `TESTS.md` do backend estar desatualizado nesse ponto
-- [Frontend](/dev/frontend): nova seção sobre a configuração do `vite.config.ts` (HTTPS condicional, porta, `outDir`)
-- Reescritas as páginas [Banco de Dados](/dev/database), [Tabelas, Modelos e Relacionamentos](/dev/database/models) (as 50 tabelas do sistema, agrupadas por domínio), [Migrações](/dev/database/migrations) e [Backup](/dev/database/backup), antes todas marcadas como "em construção"
+- [Backend](/dev/backend/): documentados os middlewares/handlers de `server/app.py`, as cron tasks do `lifespan`, o mecanismo real de isolamento dos testes (SAVEPOINT + rollback) e um aviso sobre o `TESTS.md` do backend estar desatualizado nesse ponto
+- [Frontend](/dev/frontend/): nova seção sobre a configuração do `vite.config.ts` (HTTPS condicional, porta, `outDir`)
+- Reescritas as páginas [Banco de Dados](/dev/database/), [Tabelas, Modelos e Relacionamentos](/dev/database/models/) (as 50 tabelas do sistema, agrupadas por domínio), [Migrações](/dev/database/migrations/) e [Backup](/dev/database/backup/), antes todas marcadas como "em construção"
 
 ### Documentação de uso do Agendamento, Oferecimentos e Administração - 21/09/2026
 
@@ -24,7 +67,7 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 **Descrição:**
 
-- Reescritas com prints reais do sistema e explicação de cada botão/seletor: [Calendários](/oferings/calendars), [Salas](/oferings/classrooms), [Disciplinas](/oferings/subjects), [Turmas](/oferings/classes), [Conflitos](/oferings/conflicts), [Relatórios e Métricas](/oferings/reports), [Reservas](/scheduling/reservations), [Solicitações](/scheduling/solicitations) e [Administração](/admin/) — antes eram todas texto genérico sem acentuação e sem nenhuma imagem
+- Reescritas com prints reais do sistema e explicação de cada botão/seletor: [Calendários](/oferings/calendars/), [Salas](/oferings/classrooms/), [Disciplinas](/oferings/subjects/), [Turmas](/oferings/classes/), [Conflitos](/oferings/conflicts/), [Relatórios e Métricas](/oferings/reports/), [Reservas](/scheduling/reservations/), [Solicitações](/scheduling/solicitations/) e [Administração](/admin/) — antes eram todas texto genérico sem acentuação e sem nenhuma imagem
 - Atualizadas [Minha Conta](/profile/), [Minhas Solicitações](/profile/solicitations/), [Relatórios em PDF](/allocations/pdfs), [Encontre suas aulas](/find-classes/) e [Encontre suas provas](/find-exams/) para refletir o redesign recente dessas telas (nova tela de perfil com papéis e permissões, solicitações com linha do tempo e filtro por situação, menu de PDF reorganizado em grupos com pré-visualização, e as novas telas de aulas/provas com status em tempo real)
 
 ### Correção da constraint de prédio principal não aplicada no banco - 21/09/2026

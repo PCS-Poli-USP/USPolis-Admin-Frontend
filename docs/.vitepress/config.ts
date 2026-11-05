@@ -79,6 +79,7 @@ export default {
     nav: [
       { text: 'Guias', link: '/' },
       { text: 'Referência', link: '/dev' },
+      { text: 'API', link: '/api-keys' },
       {
         text: 'Changelog',
         link: '/changelog',
@@ -163,6 +164,11 @@ export default {
           text: 'Administração',
           collapsed: true,
           items: [{ text: 'Visão Geral', link: '/admin' }],
+        },
+        {
+          text: 'API para Parceiros',
+          collapsed: false,
+          items: [{ text: 'API Keys', link: '/api-keys' }],
         },
       ],
 

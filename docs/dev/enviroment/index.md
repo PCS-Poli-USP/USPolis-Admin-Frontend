@@ -20,7 +20,7 @@ Antes de rodar o backend você precisa de um PostgreSQL rodando localmente (não
 
 Crie **dois bancos**: um para o dia a dia do desenvolvimento e outro exclusivo para a suíte de testes (a suíte de testes roda migrações reais e não deve compartilhar dados com o banco que você usa para navegar na aplicação), por exemplo `uspolis` e `uspolis_test`.
 
-Com os bancos criados, o backend só enxerga o banco através das variáveis de ambiente — não existe nenhum script que crie o banco em si por você, apenas o schema dentro dele (isso é feito pelas migrações do Alembic, veja [Banco de Dados › Migrações](/dev/database/migrations)):
+Com os bancos criados, o backend só enxerga o banco através das variáveis de ambiente — não existe nenhum script que crie o banco em si por você, apenas o schema dentro dele (isso é feito pelas migrações do Alembic, veja [Banco de Dados › Migrações](/dev/database/migrations/)):
 
 - `DATABASE_URI` / `DATABASE_NAME` — conexão usada pela aplicação (SQLAlchemy/psycopg2), ex: `DATABASE_URI=postgresql://usuario:senha@localhost:5432` e `DATABASE_NAME=uspolis`
 - `ALEMBIC_URL` — conexão usada pelo Alembic para rodar as migrações (usa o driver asyncpg), ex: `postgresql+asyncpg://usuario:senha@localhost:5432/uspolis`
@@ -32,7 +32,7 @@ Depois de configurar essas variáveis (veja a seção [Backend](#backend) abaixo
 poetry run alembic upgrade head
 ```
 
-Isso precisa ser repetido tanto para o banco de desenvolvimento quanto para o de testes (a suíte de testes já roda isso sozinha a cada execução, usando `TEST_ALEMBIC_URL` — veja [Backend › Testes](/dev/backend#testes)). Para mais detalhes sobre os models, como criar uma migração nova e o funcionamento interno do Alembic aqui, veja [Banco de Dados](/dev/database).
+Isso precisa ser repetido tanto para o banco de desenvolvimento quanto para o de testes (a suíte de testes já roda isso sozinha a cada execução, usando `TEST_ALEMBIC_URL` — veja [Backend › Testes](/dev/backend/#testes)). Para mais detalhes sobre os models, como criar uma migração nova e o funcionamento interno do Alembic aqui, veja [Banco de Dados](/dev/database/).
 
 ## Backend
 
@@ -79,7 +79,11 @@ Algumas variáveis úteis para o dia a dia de desenvolvimento, além das de banc
 - `OVERRIDE_AUTH=True` + `MOCK_EMAIL=<email de um usuário já existente no seu banco>` — pula completamente o login via Google OAuth e autentica toda requisição como esse usuário fixo. Extremamente útil para desenvolver localmente sem precisar configurar credenciais OAuth reais ou logar de verdade a cada refresh. **Nunca habilite isso em produção.**
 - `FIRST_SUPERUSER_EMAIL` / `FIRST_SUPERUSER_NAME` — usados pelo script de seed (veja abaixo) para criar o primeiro usuário administrador.
 - `GOOGLE_AUTH_CLIENT_ID` / `GOOGLE_AUTH_CLIENT_SECRET` / `GOOGLE_AUTH_REDIRECT_URI` / `G_AUTH_DOMAIN_NAME` — só são realmente necessárias se você for testar o fluxo de login de verdade (sem `OVERRIDE_AUTH`).
-- `MAIL_*` — credenciais SMTP; se não forem configuradas, qualquer fluxo que dispare e-mail (aprovação/negação de solicitação, notificação de reserva, etc.) vai falhar.
+- `MAIL_*` — credenciais SMTP; se não forem configuradas, qualquer fluxo que dispare e-mail (aprovação/negação de solicitação, notificação de reserva, envio do link de uma API key, etc.) vai falhar.
+- `API_KEY_SECRET` — obrigatória para emitir e validar [API keys](/api-keys/): 32 ou mais bytes aleatórios, diferentes em cada ambiente. Gere com `python -c "import secrets; print(secrets.token_urlsafe(48))"`. Sem ela, requisições com chave recebem 503.
+- `API_KEY_DEFAULT_LIMITS` — limites das chaves sem limites próprios (padrão `30/10,120/60,10000/86400`, no formato `máximo/janela_em_segundos`).
+- `FRONTEND_URL` — endereço do frontend usado nos links de uso único das API keys (padrão `http://localhost:3000`). Se você acessa o frontend por outro endereço, como um IP da rede local, ajuste aqui, senão os links apontam para `localhost`.
+- `REDIS_URL` / `RATE_LIMIT_MODE` / `ANON_RATE_LIMITS` — rate limit. Sem `REDIS_URL` ele fica desligado; o modo pode ser `off` (padrão), `shadow` (só conta e registra) ou `enforce` (bloqueia). `ANON_RATE_LIMITS` define os limites por IP (padrão `40/10,150/60,5000/86400`).
 
 Depois de ter o `.env`/`.env.dev` prontos e o banco criado (veja [Banco de dados](#banco-de-dados) acima), rode as migrações e, opcionalmente, crie o primeiro usuário admin:
 

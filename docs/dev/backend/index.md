@@ -25,7 +25,7 @@ server/
 ├── db.py             # engine do SQLAlchemy + import de todos os models (necessário para o Alembic)
 ├── deps_overrides.py # troca as dependências de autenticação por mocks quando CONFIG.override_auth
 ├── exception_handlers.py
-├── middlewares.py    # LoggerMiddleware
+├── middlewares/      # um módulo por middleware: logger, API key e rate limit
 ```
 
 Para rodar em desenvolvimento (HTTPS, com reload) use:
@@ -41,7 +41,14 @@ A documentação interativa do Swagger fica em `/api/docs` (`redoc` em `/api/red
 Em `server/app.py`, além dos routers, também são registrados:
 
 - `CORSMiddleware`, com as origens permitidas vindas de `CONFIG.allowed_origins` (`ALLOWED_ORIGINS`, CSV)
-- `LoggerMiddleware` (`server/middlewares.py`) — loga toda requisição/resposta (veja `LOGGING.md` no repositório do backend para o formato exato)
+- `LoggerMiddleware` (`server/middlewares/logger_middleware.py`) — loga toda requisição/resposta (veja `LOGGING.md` no repositório do backend para o formato exato)
+- `ApiKeyMiddleware` (`server/middlewares/api_key_middleware.py`) — valida o header `X-API-Key` das [API keys de parceiros](/api-keys/). Sem o header, a requisição segue como anônima; com uma chave inválida, ela é recusada e nunca vira anônima
+- `RateLimitMiddleware` (`server/middlewares/rate_limit_middleware.py`) — limita por IP ou, com uma chave válida, pelos limites da chave. Usa Redis (sem `REDIS_URL` fica desligado) e o modo vem de `RATE_LIMIT_MODE`
+
+A ordem de execução é Logger → CORS → ApiKey → RateLimit → aplicação. ApiKey e RateLimit ficam dentro do CORS para que os erros 401/403/429 ainda levem os headers de CORS, e ApiKey vem antes de RateLimit para que uma chave válida seja contada nos próprios limites. Só as origens de `ALLOWED_ORIGINS` recebem CORS: sites de parceiros não recebem.
+
+Também são registrados:
+
 - Handlers de exceção (`server/exception_handlers.py`): `IntegrityError` → 409, `NoResultFound` → 404, `GoogleAuthError` → 403
 - Um `lifespan` (`server/services/cron/scheduler.py`) que, ao subir a aplicação, dispara duas tasks assíncronas em loop: uma limpeza de cache a cada hora (`periodic_cache_cleanup`) e uma rotina diária à meia-noite (horário de Brasília) que roda tarefas de manutenção (`periodic_daily_tasks` → `run_daily_tasks`, ex: expurgo de métricas de erro antigas). Ambas são canceladas no shutdown.
 
@@ -51,7 +58,7 @@ As rotas são organizadas por **nível de acesso**, cada uma com sua própria de
 
 ```bash
 server/routes/
-├── health/          # health-check, autenticado por API key
+├── health/          # health-check, autenticado por HEALTH_API_KEY (não é uma API key de parceiro)
 ├── public/           # sem login (ex: autenticação, dados públicos de alocação)
 ├── authenticated/     # qualquer usuário logado
 ├── restricted/         # admin OU membro de pelo menos um grupo
@@ -106,12 +113,20 @@ O backend tenta autenticar de duas formas, nessa ordem:
 1. **Token Bearer do Google OAuth**, validado via `AuthenticationClient.get_user_info()`
 2. Se não houver token válido, cai para o **cookie de sessão** httponly (`session`), resolvido contra a tabela `UserSession` no banco
 
+O frontend usa apenas o cookie. Quando uma requisição chega com o cookie, `is_trusted_cookie_request` (`server/services/security/csrf.py`) confere a origem: requisições que alteram dados vindas de uma origem fora de `ALLOWED_ORIGINS` são recusadas nas rotas autenticadas e atendidas como anônimas nas públicas.
+
 O cookie de sessão tem expiração deslizante de 30 dias, limitada a um máximo absoluto de 90 dias (só um login interativo de verdade reseta esse limite, uma renovação silenciosa não). Detalhes completos estão no `SESSION_MANAGEMENT.md` do repositório do backend.
 
 Além do nível de acesso da rota (tier), existem duas checagens adicionais:
 
 - **Por prédio**: `BuildingDep` verifica se o `building_id` (enviado via header) está entre os prédios do usuário, a não ser que ele seja admin
 - **Por recurso**: cada `*_permission_checker.py` em `server/services/security/` faz checagens mais específicas dentro do handler da rota
+
+### API keys de parceiros
+
+Parceiros acessam as rotas públicas com o header `X-API-Key`, sem representar nenhum usuário. A chave é sempre de servidor, e uma requisição com chave **e** header `Origin` recebe 403: não existem chaves de navegador. Cada chave aceita só GET/HEAD, só rotas públicas e só os seus prefixos de rota, e tem validade e limites próprios. Apenas o HMAC da chave é guardado, com `API_KEY_SECRET`.
+
+O guia para parceiros está em [API Keys](/api-keys/), e o desenho completo (formato da chave, entrega por link de uso único, cache e revogação) no `docs/API_KEYS.md` do backend.
 
 > [!WARNING]
 > Um sistema de permissões mais granular (por usuário ou por role, ligado a prédio/sala/curso) já existe no banco (`server/models/database/base_permission_db_model.py` e afins) mas ainda está em desenvolvimento — a maior parte das checagens de permissão hoje passa pelos `*_permission_checker.py`, que atualmente têm pouca cobertura de testes.
@@ -156,9 +171,11 @@ O `mypy` roda em modo bem estrito (`disallow_untyped_defs`, `disallow_incomplete
 
 ## Documentação adicional no repositório do backend
 
-Além desta página, o próprio repositório do backend tem alguns markdowns na raiz com detalhes que não duplicamos aqui:
+Além desta página, o próprio repositório do backend tem alguns markdowns com detalhes que não duplicamos aqui. O `README.md` fica na raiz, e os demais em `docs/`:
 
 - **`README.md`** — setup rápido, comandos de desenvolvimento e teste
+- **`API_KEYS.md`** — o desenho das API keys de parceiros; **`PARTNER_API.md`** é o guia entregue aos parceiros
+- **`RATE_LIMIT.md`** — limites por IP e por chave, Redis e os modos `off`, `shadow` e `enforce`
 - **`SESSION_MANAGEMENT.md`** — o ciclo de vida completo do cookie de sessão (criação, renovação deslizante de 30 dias, teto absoluto de 90 dias, limitações conhecidas como a ausência de um job de limpeza de sessões expiradas)
 - **`LOGGING.md`** — os dois loggers (`app_logger` e `loki_access`), o que cada um registra e as regras de rotação de arquivo
 - **`PERMISSIONS.md`** — o modelo de permissões baseado em `Role` (veja o aviso sobre isso na seção [Autenticação](#autenticação) acima) e o histórico de migração do modelo antigo baseado em `Group`

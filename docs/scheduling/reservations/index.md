@@ -10,7 +10,7 @@ next:
 
 # Reservas
 
-Esta página lista as reservas de sala já aprovadas e permite criá-las, editá-las ou cancelá-las diretamente (sem passar pelo fluxo de aprovação de [Solicitações](/scheduling/solicitations)).
+Esta página lista as reservas de sala já aprovadas e permite criá-las, editá-las ou cancelá-las diretamente (sem passar pelo fluxo de aprovação de [Solicitações](/scheduling/solicitations/)).
 
 <div style="
   display: flex;
@@ -88,4 +88,4 @@ Escolha o **Prédio** e a **Sala de Aula** desejados (use **Visualizar Disponibi
 
 ## Solicitações de reserva
 
-Reservas também podem chegar por meio de pedidos de outros usuários, que precisam ser aprovados antes de aparecer nesta lista — veja como analisá-los em [Solicitações](/scheduling/solicitations).
+Reservas também podem chegar por meio de pedidos de outros usuários, que precisam ser aprovados antes de aparecer nesta lista — veja como analisá-los em [Solicitações](/scheduling/solicitations/).

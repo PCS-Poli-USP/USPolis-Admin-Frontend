@@ -34,7 +34,7 @@ Aqui você gerencia as turmas vinculadas às disciplinas, define seus horários 
 
 Ao lado do título **Turmas** fica o indicador **Período: Atual** — a lista mostra as turmas do período letivo selecionado (clique nele para trocar de período).
 
-A tabela mostra, por turma, a **Disciplina**, o número da **Turma**, o **Nome da disciplina**, o **Prédio** e a **Sala** em que ela foi alocada, os **Horários** (dia da semana e faixa de horário) e o **Calendário** vinculado (ou "Sem calendário", quando nenhum foi associado — veja [Calendários](/oferings/calendars)). Role a tabela horizontalmente para ver também vagas, professores e as opções de cada linha. Assim como nas outras tabelas do sistema, cada coluna tem seu próprio filtro e a lista é paginada no rodapé.
+A tabela mostra, por turma, a **Disciplina**, o número da **Turma**, o **Nome da disciplina**, o **Prédio** e a **Sala** em que ela foi alocada, os **Horários** (dia da semana e faixa de horário) e o **Calendário** vinculado (ou "Sem calendário", quando nenhum foi associado — veja [Calendários](/oferings/calendars/)). Role a tabela horizontalmente para ver também vagas, professores e as opções de cada linha. Assim como nas outras tabelas do sistema, cada coluna tem seu próprio filtro e a lista é paginada no rodapé.
 
 A coluna **Marca**, à esquerda, tem duas caixas de seleção no cabeçalho (✓ e ✗) para marcar ou desmarcar rapidamente todas as turmas da página — útil para usar as ações em massa do menu **Opções**.
 
@@ -70,4 +70,4 @@ Na coluna de opções de cada linha da tabela ficam as ações individuais da tu
 
 ## Conflitos de horário
 
-Ao alocar sala e horário de uma turma, o sistema pode acusar sobreposição com outras turmas ou reservas na mesma sala — veja como interpretar e resolver esses casos em [Conflitos](/oferings/conflicts).
+Ao alocar sala e horário de uma turma, o sistema pode acusar sobreposição com outras turmas ou reservas na mesma sala — veja como interpretar e resolver esses casos em [Conflitos](/oferings/conflicts/).

@@ -70,7 +70,7 @@ Quando o solicitante não escolheu uma sala específica, é necessário escolher
 Ao final, use:
 
 - **Editar** para ajustar dados da solicitação antes de decidir;
-- **Aprovar** para transformar o pedido em uma reserva confirmada (que passa a aparecer em [Reservas](/scheduling/reservations));
+- **Aprovar** para transformar o pedido em uma reserva confirmada (que passa a aparecer em [Reservas](/scheduling/reservations/));
 - **Negar** para recusar o pedido.
 
-O aviso **"Esse horário gerará N conflito(s)"** avisa, antes da decisão, se aprovar aquela solicitação vai gerar sobreposição de horário com outra ocupação da sala — veja [Conflitos](/oferings/conflicts) para mais detalhes sobre esse tipo de situação.
+O aviso **"Esse horário gerará N conflito(s)"** avisa, antes da decisão, se aprovar aquela solicitação vai gerar sobreposição de horário com outra ocupação da sala — veja [Conflitos](/oferings/conflicts/) para mais detalhes sobre esse tipo de situação.

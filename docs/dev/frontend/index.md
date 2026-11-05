@@ -17,8 +17,8 @@ Para a lista de tecnologias utilizadas veja [Tecnologias Utilizadas](/dev/stack#
 `vite.config.mts` na raiz do projeto (extensão `.mts` para forçar carregamento ESM nativo — necessário porque o Vitest depende de pacotes ESM-only, e o `package.json` não define `"type": "module"`):
 
 - `server.port = 3000` e `server.host = true` (escuta em todas as interfaces, não só `localhost`)
-- HTTPS é ligado **apenas quando `VITE_ENVIROMENT=development`**, lendo os certificados de `certs/cert.pem` e `certs/key.pem` (os mesmos gerados na etapa de [Configurando seu Ambiente](/dev/enviroment#backend) para o backend) — em outros valores de `VITE_ENVIROMENT` o servidor sobe em HTTP puro
-- `build.outDir = 'build'` — é essa pasta que o workflow de CI/CD copia para o servidor (veja [Configurando seu Ambiente › CI/CD](/dev/enviroment#o-que-o-ci-cd-faz-de-verdade))
+- HTTPS é ligado **apenas quando `VITE_ENVIROMENT=development`**, lendo os certificados de `certs/cert.pem` e `certs/key.pem` (os mesmos gerados na etapa de [Configurando seu Ambiente](/dev/enviroment/#backend) para o backend) — em outros valores de `VITE_ENVIROMENT` o servidor sobe em HTTP puro
+- `build.outDir = 'build'` — é essa pasta que o workflow de CI/CD copia para o servidor (veja [Configurando seu Ambiente › CI/CD](/dev/enviroment/#o-que-o-ci-cd-faz-de-verdade))
 - O plugin `vite-plugin-eslint` roda o ESLint durante o dev server com `failOnError: false` e `failOnWarning: false` — ou seja, erros de lint aparecem no terminal/overlay mas **nunca** derrubam o servidor de desenvolvimento nem o build. Ele é desativado quando `process.env.VITEST` está setado, para não poluir a saída dos testes
 - O bloco `test` (usado pelo Vitest) reaproveita os mesmos `plugins`/env desse arquivo — veja [TEST.md](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/blob/main/TEST.md) na raiz do repo para a infraestrutura de testes
 
@@ -27,17 +27,19 @@ Para a lista de tecnologias utilizadas veja [Tecnologias Utilizadas](/dev/stack#
 As rotas ficam centralizadas em `src/AppRoutes.tsx`, e são organizadas em uma cadeia de rotas de layout/guarda:
 
 - `AxiosInterceptorRoute` — conecta o interceptor do axios para a sessão atual
-- `PersistLogin` — tenta restaurar a sessão de login ao carregar a página (via cookie de sessão e/ou refresh token)
+- `PersistLogin` — tenta restaurar a sessão de login ao carregar a página, consultando o usuário no backend com o cookie de sessão
 - `PrivateRoute` — exige que o usuário esteja autenticado
 - `RestrictedRoute` / `AdminRoute` — exigem permissões adicionais (funcionário/admin)
 
 Os grupos principais de rotas são: `public/*` (sem autenticação), `profile/*` (autenticado), `oferings/*` + `dates/*` + `scheduling/*` (restrito) e `admin/*` (apenas admin).
 
+A rota `/api-key/:linkId`, a página em que o parceiro revela a [API key](/api-keys/), fica fora dessa cadeia: é pública e não passa por `AxiosInterceptorRoute` nem por `PersistLogin`.
+
 ## Estado global
 
 Não usamos Redux nem Zustand, apenas Context API do próprio React (`src/context/`):
 
-- `AppContext` — estado de autenticação (`loggedUser`, `accessToken`, `isAuthenticated`), loading global, `logout` e `isMobile`
+- `AppContext` — estado de autenticação (`loggedUser`, `isAuthenticated`), loading global, `logout` e `isMobile`
 - `MenuContext` — estado da UI do menu lateral
 - `FeatureGuideContext` — tours guiados de onboarding (usa a lib `react-joyride`)
 
@@ -51,7 +53,7 @@ Os componentes nunca chamam o axios diretamente. O padrão para cada recurso do 
 
 Ao adicionar um novo recurso do backend, siga sempre esse mesmo padrão (modelos → hook de serviço → página consumidora) em vez de chamar o axios diretamente.
 
-`src/services/auth/auth.service.ts` cuida do login/logout/refresh de token; `src/routes/axiosInterceptor.route.tsx` e `src/routes/persistLogin.route.tsx` conectam a renovação de token ao axios.
+A autenticação usa apenas o cookie httpOnly `session` do backend: nenhum token fica no JavaScript nem no `localStorage`, e as requisições não levam o header `Authorization`. `src/services/auth/auth.service.ts` cuida do login (`/auth/get-tokens`, que define o cookie) e do logout; `src/routes/persistLogin.route.tsx` restaura a sessão ao carregar a página; e o interceptor de `src/hooks/API/axios/useAxiosPrivate.ts` desloga o usuário ao receber um 401. Requisições que não são GET vindas de uma página fora de `ALLOWED_ORIGINS` são recusadas pelo backend (proteção contra CSRF), então o frontend precisa ser servido de uma origem permitida.
 
 ## Páginas e módulos de funcionalidades
 
@@ -59,14 +61,14 @@ Cada rota mapeia para uma pasta em `src/pages/<funcionalidade>/`. As funcionalid
 
 - `<funcionalidade>.tsx` / `index.tsx` — página principal (tabela + toolbar + modais)
 - `Tables/` — definições de tabela usando `@tanstack/react-table`
-- `<Nome>Modal/` — um modal de criar/editar, geralmente dividido em um wizard com Formik em `Steps/First`, `Steps/Second`, etc., onde cada passo tem seu próprio `.form.ts` (schema Yup + valores padrão), `.interface.ts` (tipos do formulário) e `.tsx` (campos)
+- `<Nome>Modal/` — um modal de criar/editar, geralmente dividido em um wizard com `react-hook-form` em `Steps/First`, `Steps/Second`, etc., onde cada passo tem seu próprio `.form.ts` (schema Yup + valores padrão), `.interface.ts` (tipos do formulário) e `.tsx` (campos)
 - Validações de domínio ficam em `src/utils/<funcionalidade>/<funcionalidade>.validator.ts` e são reaproveitadas tanto pelos schemas Yup quanto por checagens inline
 
 As páginas "hub" (`adminHub`, `oferingsHub`, `dateHub`, `schedulingHub`, `publicHub`) são páginas de entrada/menu que linkam para um grupo de páginas relacionadas.
 
 ## Blocos compartilhados
 
-- `src/components/common/` — UI reaproveitável, com destaque para o kit de formulário reexportado em `form/` (`Input`, `SelectInput`, `MultiSelectInput`, `CheckBox`, `ListInput`, `NumberInput`, `SwitchInput`, `RadioButton`, `TextareaInput`), feito para ser usado dentro de formulários Formik
+- `src/components/common/` — UI reaproveitável, com destaque para o kit de formulário reexportado em `form/` (`Input`, `SelectInput`, `MultiSelectInput`, `CheckBox`, `ListInput`, `NumberInput`, `SwitchInput`, `RadioButton`, `TextareaInput`), feito para ser usado dentro de formulários `react-hook-form` (os campos leem o formulário com `useFormContext`, então precisam estar dentro de um `FormProvider`)
 - `src/components/allocation/` — widgets de alocação/calendário compartilhados entre as páginas relacionadas a alocação
 - `src/utils/enums/` — enums em TS que espelham os enums do backend (tipos de turma, dias da semana, recorrência, tipos de conflito, tipos de permissão, etc.) — prefira esses enums a strings soltas
 - `src/utils/<domínio>/` — helpers e validadores por domínio (espelha as pastas de `pages/`/`hooks/`: prédios, turmas, salas, reservas, solicitações, calendários, disciplinas, usuários, etc.)

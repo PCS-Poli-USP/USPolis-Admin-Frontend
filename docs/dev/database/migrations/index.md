@@ -17,12 +17,12 @@ Usamos o **Alembic** para versionar o schema do banco. Toda mudança na estrutur
 ## Onde tudo fica
 
 - `alembic.ini` (raiz do repositório do backend) — configuração principal. `script_location = migrations` aponta pra pasta de migrações; a `sqlalchemy.url` que está escrita nesse arquivo é só um placeholder e **nunca é usada de fato**, porque `migrations/env.py` sempre sobrescreve essa URL na hora de rodar.
-- `migrations/env.py` — o "cérebro" da configuração. A função `get_url()` decide qual banco usar: primeiro olha se existe uma variável de ambiente `ALEMBIC_URL` já setada no processo (é assim que os testes apontam para o banco de teste, veja [Backend › Testes](/dev/backend#testes)), e se não existir cai para `CONFIG.alembic_url` (a variável `ALEMBIC_URL` do seu `.env.dev`/`.env.prod`/`.env.stage`). Também importa `server.db` só para garantir que **todos** os models estejam registrados em `SQLModel.metadata` antes de qualquer autogenerate — sem esse import, o Alembic não enxergaria tabelas que não tenham sido importadas ainda.
+- `migrations/env.py` — o "cérebro" da configuração. A função `get_url()` decide qual banco usar: primeiro olha se existe uma variável de ambiente `ALEMBIC_URL` já setada no processo (é assim que os testes apontam para o banco de teste, veja [Backend › Testes](/dev/backend/#testes)), e se não existir cai para `CONFIG.alembic_url` (a variável `ALEMBIC_URL` do seu `.env.dev`/`.env.prod`/`.env.stage`). Também importa `server.db` só para garantir que **todos** os models estejam registrados em `SQLModel.metadata` antes de qualquer autogenerate — sem esse import, o Alembic não enxergaria tabelas que não tenham sido importadas ainda.
 - `migrations/versions/` — uma migração por arquivo, hoje já são mais de 70. Cada uma tem um `revision` (hash) e um `down_revision` (o hash da migração anterior), formando uma lista encadeada — é assim que o Alembic sabe a ordem de aplicação.
 
 ## Comandos do dia a dia
 
-Depois de mudar um model em `server/models/database/` (e garantir que ele está importado, direta ou indiretamente, em `server/db.py` — veja [Banco de Dados › Onde os models vivem](/dev/database#onde-os-models-vivem)), gere a migração automaticamente:
+Depois de mudar um model em `server/models/database/` (e garantir que ele está importado, direta ou indiretamente, em `server/db.py` — veja [Banco de Dados › Onde os models vivem](/dev/database/#onde-os-models-vivem)), gere a migração automaticamente:
 
 ```bash
 poetry run alembic revision --autogenerate -m "mensagem descrevendo a mudança"

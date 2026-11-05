@@ -35,7 +35,7 @@ Aqui você gerencia o cadastro das salas de aula de um prédio: capacidade, recu
 A tabela lista todas as salas com as colunas **Nome**, **Prédio**, **Observação**, **Andar**, **Capacidade**, **Ar Cond.**, **Audiovisual**, **Acessibilidade**, **Reservável**, **Restrito** e **Atualizado em**:
 
 - As colunas **Ar Cond.** e **Acessibilidade** mostram apenas ✓ ou ✗, indicando se a sala tem ou não o recurso.
-- **Reservável** indica se a sala aparece como opção para solicitações de reserva (veja [Reservas](/scheduling/reservations)); salas não reserváveis só são usadas para alocação de turmas.
+- **Reservável** indica se a sala aparece como opção para solicitações de reserva (veja [Reservas](/scheduling/reservations/)); salas não reserváveis só são usadas para alocação de turmas.
 - **Restrito** indica se o acesso à sala é restrito a determinados grupos de usuários.
 
 Cada coluna tem seu próprio campo de filtro logo abaixo do cabeçalho (texto livre ou seletor, dependendo da coluna), e a tabela é paginada — use os controles no rodapé para navegar entre as páginas ou trocar quantas linhas são exibidas por página.
