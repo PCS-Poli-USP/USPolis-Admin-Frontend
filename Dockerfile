@@ -13,6 +13,12 @@ RUN yarn install --immutable
 # ---- dev: source mounted over this in compose, hot-reload via `yarn dev` ----
 FROM base AS dev
 
+# docker/entrypoint.sh generates the self-signed dev cert with openssl, which
+# node:20-slim doesn't ship.
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y openssl \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY . .
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
@@ -23,6 +29,13 @@ CMD ["yarn", "dev"]
 
 # ---- build: static app bundle + built docs, mirrors .github/workflows/ci_cd.yml ----
 FROM base AS build
+
+# VitePress's lastUpdated spawns `git log` for every page and fails the whole
+# build if the binary is missing, which node:20-slim doesn't ship. .git/ stays
+# out of the build context, so pages just won't show a last-updated date.
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y git \
+    && rm -rf /var/lib/apt/lists/*
 
 # Vite bakes these into the static bundle at build time — supplying them as
 # `environment:` on a running `prod` container has no effect, they must be

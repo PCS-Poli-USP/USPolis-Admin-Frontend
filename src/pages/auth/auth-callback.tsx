@@ -15,7 +15,7 @@ const AuthCallbackPage = () => {
   const [error, setError] = useState<string | null>(null);
   const query = useQuery();
   const [code] = useState<string | null>(query.get('code'));
-  const { setAccessToken, setIsAuthenticated } = useContext(appContext);
+  const { getSelfFromBackend } = useContext(appContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,18 +34,21 @@ const AuthCallbackPage = () => {
     if (!loading) {
       try {
         setLoading(true);
-        const response = await authService.getTokens(code);
-        const { access_token, refresh_token } = response.data;
-        setAccessToken(access_token);
-        setIsAuthenticated(true);
-        localStorage.setItem('refresh_token', refresh_token);
-        // await getSelfFromBackend(); // Not use like this, let useEffect in appContext fetch the user (axios interceptor isn`t fast enough to get the token)
+        // Sets the httpOnly session cookie; the Google tokens in the body
+        // are deliberately not kept anywhere.
+        await authService.getTokens(code);
+        // The cookie now authenticates every request (withCredentials).
+        await getSelfFromBackend();
         navigate('/public/allocations');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.log(error);
         if (error.response == null) {
-          setError('Erro de rede, tente novamente mais tarde.');
+          setError(
+            error.message && error.message !== 'Network Error'
+              ? error.message
+              : 'Erro de rede, tente novamente mais tarde.',
+          );
           return;
         }
         const detail =

@@ -81,6 +81,10 @@ const map: Record<string, Crumb[]> = {
     ...mainMap['/admin'],
     { label: 'Status da API', href: '/admin/api-status', current: false },
   ],
+  '/admin/api-clients': [
+    ...mainMap['/admin'],
+    { label: 'Clientes de API', href: '/admin/api-clients', current: false },
+  ],
 
   // Profile subpages
   '/profile/timetable': [
@@ -167,6 +171,25 @@ const dynamicRoutes: Array<{
   pattern: RegExp;
   build: (pathname: string) => Crumb[];
 }> = [
+  {
+    pattern: /^\/admin\/api-clients\/\d+$/,
+    build: (pathname) => [
+      ...map['/admin/api-clients'].map((crumb) => ({ ...crumb })),
+      { label: 'Cliente', href: pathname, current: false },
+    ],
+  },
+  {
+    pattern: /^\/admin\/api-clients\/\d+\/keys\/\d+$/,
+    build: (pathname) => [
+      ...map['/admin/api-clients'].map((crumb) => ({ ...crumb })),
+      {
+        label: 'Cliente',
+        href: `/admin/api-clients/${pathname.split('/')[3]}`,
+        current: false,
+      },
+      { label: 'Chave', href: pathname, current: false },
+    ],
+  },
   {
     pattern: /^\/admin\/courses\/\d+\/curriculums$/,
     build: (pathname) => [

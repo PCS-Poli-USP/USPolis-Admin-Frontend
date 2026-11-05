@@ -50,6 +50,10 @@ import TestsPage from './pages/tests';
 import ServerDocs from './pages/serverDocs';
 import ApiStatus from './pages/apiStatus';
 import Roles from './pages/roles';
+import ApiClients from './pages/apiClients/apiClients';
+import ApiClientDetail from './pages/apiClients/apiClientDetail';
+import ApiKeyDetail from './pages/apiClients/apiKeyDetail';
+import ApiKeyLinkPage from './pages/apiKeyLink';
 
 function AppRoutes() {
   return (
@@ -57,6 +61,9 @@ function AppRoutes() {
       <Route path='/auth' element={<AuthPage />} />
       <Route path='auth-callback' element={<AuthCallbackPage />} />
       <Route path='/loading-page' element={<LoadingPage />} />
+      {/* One-time API key delivery, opened by partners without an account */}
+      {/* Path built by the backend: <FRONTEND_URL>/api-key/<link_id>#<token> */}
+      <Route path='/api-key/:linkId' element={<ApiKeyLinkPage />} />
       <Route element={<AxiosInterceptorRoute />}>
         <Route element={<PersistLogin />}>
           <Route
@@ -136,6 +143,15 @@ function AppRoutes() {
                 <Route path='tests' element={<TestsPage />} />
                 <Route path='server-docs' element={<ServerDocs />} />
                 <Route path='api-status' element={<ApiStatus />} />
+                <Route path='api-clients' element={<ApiClients />} />
+                <Route
+                  path='api-clients/:clientId'
+                  element={<ApiClientDetail />}
+                />
+                <Route
+                  path='api-clients/:clientId/keys/:keyId'
+                  element={<ApiKeyDetail />}
+                />
               </Route>
             </Route>
           </Route>

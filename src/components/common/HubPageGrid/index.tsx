@@ -35,7 +35,7 @@ function HubPageGrid({ columns = 4, items }: HubPageGridProps) {
   }
 
   function getSpacing() {
-    return isMobile ? '1rem' : '2rem';
+    return isMobile ? '1rem' : '1.5rem';
   }
 
   return (

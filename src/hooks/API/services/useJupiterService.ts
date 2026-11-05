@@ -19,7 +19,7 @@ const useJupiterService = () => {
   const syncCourseOptions = (
     codcg: number = 3
   ): Promise<AxiosResponse<CourseOptionResponse[]>> => {
-    return axios.post(`/courses/options/sync?codcg=${codcg}`);
+    return axios.post(`/admin/courses/options/sync?codcg=${codcg}`);
   };
 
   return {

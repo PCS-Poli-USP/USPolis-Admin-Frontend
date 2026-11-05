@@ -9,8 +9,6 @@ interface AppContext {
   setLoading: (value: boolean) => void;
   loggedUser: UserResponse | null;
   logout: () => Promise<void>;
-  accessToken: string;
-  setAccessToken: (value: string) => void;
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
   getSelfFromBackend: () => Promise<void>;
@@ -25,8 +23,6 @@ const DEFAULT_VALUE = {
   loading: false,
   setLoading: () => {},
   loggedUser: null,
-  accessToken: '',
-  setAccessToken: () => {},
   isAuthenticated: false,
   setIsAuthenticated: () => {},
   logout: async () => {},
@@ -47,7 +43,6 @@ export default function AppContextProvider({
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const [loading, setLoading] = useState(false);
   const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
-  const [accessToken, setAccessToken] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [persist, setPersist] = useState<boolean>(true);
   const [backendUnavailable, setBackendUnavailable] = useState<boolean>(false);
@@ -76,13 +71,10 @@ export default function AppContextProvider({
         logout();
       }
 
-      if (e.response.status === 403) {
+      if (e.response?.status === 403) {
         throw new Error('User with this email not registered');
       }
-      if (e.response.status === 401 && e.response.detail === 'Token expired') {
-        console.log('Token expired, logging out... (from getSelf)');
-        logout();
-      }
+      // 401: no valid session cookie - simply not logged in.
     } finally {
       setLoading(false);
     }
@@ -97,20 +89,21 @@ export default function AppContextProvider({
       console.error(e);
     }
 
-    localStorage.removeItem('refresh_token');
     setLoggedUser(null);
-    setAccessToken('');
     setIsAuthenticated(false);
     setLoading(false);
-    setIsAuthenticated(false);
   }
 
+  // Authentication is the httpOnly `session` cookie alone. Older versions
+  // kept the Google refresh token in localStorage (readable by any XSS):
+  // drop whatever is left of it.
   useEffect(() => {
-    if (accessToken && !loggedUser && !loading) {
-      getSelfFromBackend();
+    try {
+      localStorage.removeItem('refresh_token');
+    } catch {
+      // storage unavailable (private mode, blocked site data): nothing to clean
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken, loggedUser, loading]);
+  }, []);
 
   return (
     <appContext.Provider
@@ -118,8 +111,6 @@ export default function AppContextProvider({
         loading,
         setLoading,
         loggedUser,
-        accessToken,
-        setAccessToken,
         isAuthenticated,
         setIsAuthenticated,
         logout,

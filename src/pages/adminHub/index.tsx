@@ -10,7 +10,7 @@ import { MdDevices, MdEvent } from 'react-icons/md';
 import { HiUserGroup } from 'react-icons/hi';
 import { GiGraduateCap } from 'react-icons/gi';
 import { VscFeedback, VscReport } from 'react-icons/vsc';
-import { LuActivity } from 'react-icons/lu';
+import { LuActivity, LuKeyRound } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { FaUsersGear } from 'react-icons/fa6';
 
@@ -91,7 +91,7 @@ function AdminHub() {
       },
     },
     {
-      icon: <LockIcon boxSize={'56px'} color={'uspolis.red'} />,
+      icon: <LockIcon boxSize={'56px'} />,
       title: 'Infraestrutura & Servidor',
       description:
         'Arquitetura, ambiente, arquivos do servidor e deploy — acesso restrito',
@@ -106,6 +106,14 @@ function AdminHub() {
       description: 'Logs de acesso, erros e incidentes da API do USPolis',
       onClick: () => {
         navigate('/admin/api-status');
+      },
+    },
+    {
+      icon: <LuKeyRound size={'64px'} />,
+      title: 'Clientes de API',
+      description: 'Gerencie parceiros externos e suas chaves de acesso à API',
+      onClick: () => {
+        navigate('/admin/api-clients');
       },
     },
   ];

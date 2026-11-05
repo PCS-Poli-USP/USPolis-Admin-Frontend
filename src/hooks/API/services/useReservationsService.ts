@@ -53,9 +53,12 @@ const useReservationsService = () => {
       const params = new URLSearchParams();
       params.append('start', start);
       params.append('end', end);
-      return axios.get(`${PREFIX}/building/${building_name}`, { params });
+      return axios.get(
+        `${PREFIX}/building/${encodeURIComponent(building_name)}`,
+        { params },
+      );
     }
-    return axios.get(`${PREFIX}/building/${building_name}`);
+    return axios.get(`${PREFIX}/building/${encodeURIComponent(building_name)}`);
   };
 
   const create = (
@@ -75,9 +78,7 @@ const useReservationsService = () => {
     return axiosPrivate.put(`${PREFIX}/${id}`, data);
   };
 
-  const getById = (
-    id: number,
-  ): Promise<AxiosResponse<ReservationResponse>> => {
+  const getById = (id: number): Promise<AxiosResponse<ReservationResponse>> => {
     return axiosPrivate.get(`${PREFIX}/${id}`);
   };
 

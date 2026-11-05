@@ -3,13 +3,11 @@ import { JSONResponse } from '../../models/http/responses/common.response.models
 
 const USPOLIS_SERVER_URL = import.meta.env.VITE_USPOLIS_API_ENDPOINT;
 
+// The session lives in the httpOnly `session` cookie set by /auth/get-tokens;
+// the tokens in the body are ignored and never stored.
 interface GetTokensReponse {
   access_token: string;
   refresh_token: string;
-}
-
-interface RefreshTokenResponse {
-  access_token: string;
 }
 
 class AuthHttpService {
@@ -23,16 +21,6 @@ class AuthHttpService {
   async getTokens(authCode: string): Promise<AxiosResponse<GetTokensReponse>> {
     const response = await this.http.get(
       `/get-tokens?auth_code=${encodeURIComponent(authCode)}`,
-      { withCredentials: true },
-    );
-    return response;
-  }
-
-  async refreshToken(
-    refresh_token: string,
-  ): Promise<AxiosResponse<RefreshTokenResponse>> {
-    const response = await this.http.get(
-      `/refresh-token?refresh_token=${encodeURIComponent(refresh_token)}`,
       { withCredentials: true },
     );
     return response;

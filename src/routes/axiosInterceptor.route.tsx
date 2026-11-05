@@ -1,7 +1,7 @@
 import useAxiosPrivate from '../hooks/API/axios/useAxiosPrivate';
 import { Outlet } from 'react-router-dom';
 
-// Para garantir que o interceptor carregue PRIMEIRO que o access_token (em PersistLogin)
+// Instala o interceptor (sessão expirada / backend indisponível) antes do PersistLogin
 function AxiosInterceptorRoute() {
   useAxiosPrivate();
 
