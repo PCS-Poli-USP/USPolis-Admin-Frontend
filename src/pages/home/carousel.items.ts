@@ -7,6 +7,7 @@ import USPolisClassrooms from './Images/USPolisClassrooms.png';
 import USPolisSubjects from './Images/USPolisSubjects.png';
 import USPolisClasses from './Images/USPolisClasses.png';
 import USPolisConflicts from './Images/USPolisConflicts.png';
+import USPolisReports from './Images/USPolisReports.png';
 
 import { VerticalCarouselItem, CarouselIconProps } from './VerticalCarousel';
 import { BsCalendar3 } from 'react-icons/bs';
@@ -114,7 +115,7 @@ export const items: VerticalCarouselItem[] = [
     title: 'Relatórios',
     description:
       'Obtenha relatórios detalhados sobre as disciplinas com suas turmas, horários  e salas. Obtenha também relatórios por sala, onde é possível visualizar todo o cronograma por sala.',
-    image: USPolisAllocation,
-    alt: 'USPolisAllocation',
+    image: USPolisReports,
+    alt: 'USPolisReports',
   },
 ];

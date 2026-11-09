@@ -167,100 +167,101 @@ const Users = () => {
   return (
     <PageContent>
       <Flex direction={'column'} h={'full'} minH={0}>
-        <SimpleGrid
-          columns={{ base: 2, md: 4 }}
-          spacing={'12px'}
-          flexShrink={0}
-        >
-          {stats.map((stat) => (
-            <StatCard
-              key={stat.key}
-              label={stat.label}
-              value={stat.value}
-              colorScheme={stat.colorScheme}
-              active={stat.active}
-              onClick={stat.onClick}
-            />
-          ))}
-        </SimpleGrid>
-
-        <Flex
-          wrap={'wrap'}
-          align={'center'}
-          gap={'10px'}
-          mt={'20px'}
-          p={'14px 16px'}
-          border={'1px solid'}
-          borderColor={'uspolis.border'}
-          borderRadius={'10px'}
-          flexShrink={0}
-        >
-          <Input
-            flex={'1'}
-            minW={'220px'}
-            placeholder={'Buscar por nome ou email'}
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-          <Box w={'220px'}>
-            <TooltipSelect
-              isClearable
-              menuPortalTarget={document.body}
-              styles={{ menuPortal: (base) => ({ ...base, zIndex: 1000 }) }}
-              placeholder={'Todos os papéis'}
-              value={
-                roleFilter ? { label: roleFilter, value: roleFilter } : null
-              }
-              options={roleOptions.map((name) => ({
-                label: name,
-                value: name,
-              }))}
-              onChange={(option) =>
-                setRoleFilter(option ? String(option.value) : '')
-              }
-            />
-          </Box>
-          <Box w={'220px'}>
-            <TooltipSelect
-              isClearable
-              menuPortalTarget={document.body}
-              styles={{ menuPortal: (base) => ({ ...base, zIndex: 1000 }) }}
-              placeholder={'Todos os prédios'}
-              value={
-                buildingFilter
-                  ? { label: buildingFilter, value: buildingFilter }
-                  : null
-              }
-              options={buildingOptions.map((name) => ({
-                label: name,
-                value: name,
-              }))}
-              onChange={(option) =>
-                setBuildingFilter(option ? String(option.value) : '')
-              }
-            />
-          </Box>
-          <Flex gap={'6px'} wrap={'wrap'}>
-            {chips.map((chip) => (
-              <Button
-                key={chip.label}
-                size={'sm'}
-                variant={chip.active ? 'solid' : 'outline'}
-                colorScheme={'blue'}
-                onClick={chip.toggle}
-              >
-                {chip.label}
-              </Button>
-            ))}
-          </Flex>
-          <Button
-            variant={'link'}
-            colorScheme={'gray'}
-            size={'sm'}
-            onClick={clearFilters}
+        <Flex align={'center'}>
+          <SimpleGrid
+            columns={{ base: 2, md: 4 }}
+            spacing={'12px'}
+            flexShrink={1}
           >
-            Limpar filtros
-          </Button>
+            {stats.map((stat) => (
+              <StatCard
+                key={stat.key}
+                label={stat.label}
+                value={stat.value}
+                colorScheme={stat.colorScheme}
+                active={stat.active}
+                onClick={stat.onClick}
+              />
+            ))}
+          </SimpleGrid>
+
+          <Flex
+            wrap={'wrap'}
+            align={'center'}
+            gap={'10px'}
+            p={'14px 16px'}
+            border={'1px solid'}
+            borderColor={'uspolis.border'}
+            borderRadius={'10px'}
+            flexShrink={1}
+          >
+            <Input
+              flex={'1'}
+              minW={'220px'}
+              placeholder={'Buscar por nome ou email'}
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+            />
+            <Box w={'220px'}>
+              <TooltipSelect
+                isClearable
+                menuPortalTarget={document.body}
+                styles={{ menuPortal: (base) => ({ ...base, zIndex: 1000 }) }}
+                placeholder={'Todos os papéis'}
+                value={
+                  roleFilter ? { label: roleFilter, value: roleFilter } : null
+                }
+                options={roleOptions.map((name) => ({
+                  label: name,
+                  value: name,
+                }))}
+                onChange={(option) =>
+                  setRoleFilter(option ? String(option.value) : '')
+                }
+              />
+            </Box>
+            <Box w={'220px'}>
+              <TooltipSelect
+                isClearable
+                menuPortalTarget={document.body}
+                styles={{ menuPortal: (base) => ({ ...base, zIndex: 1000 }) }}
+                placeholder={'Todos os prédios'}
+                value={
+                  buildingFilter
+                    ? { label: buildingFilter, value: buildingFilter }
+                    : null
+                }
+                options={buildingOptions.map((name) => ({
+                  label: name,
+                  value: name,
+                }))}
+                onChange={(option) =>
+                  setBuildingFilter(option ? String(option.value) : '')
+                }
+              />
+            </Box>
+            <Flex gap={'6px'} wrap={'wrap'}>
+              {chips.map((chip) => (
+                <Button
+                  key={chip.label}
+                  size={'sm'}
+                  variant={chip.active ? 'solid' : 'outline'}
+                  colorScheme={'blue'}
+                  onClick={chip.toggle}
+                >
+                  {chip.label}
+                </Button>
+              ))}
+            </Flex>
+            <Button
+              variant={'link'}
+              colorScheme={'gray'}
+              size={'sm'}
+              onClick={clearFilters}
+            >
+              Limpar filtros
+            </Button>
+          </Flex>
         </Flex>
 
         {selectedIds.length > 0 && (
