@@ -23,7 +23,7 @@ import {
   FaUserCircle,
   FaServer,
 } from 'react-icons/fa';
-import { LuActivity } from 'react-icons/lu';
+import { LuActivity, LuKeyRound } from 'react-icons/lu';
 import { useLocation } from 'react-router-dom';
 import { appContext } from '../../../context/AppContext';
 import {
@@ -356,6 +356,14 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   replace_location={false}
                   onClose={onClose}
                   highlighted={currentPath === '/admin/api-status'}
+                />
+                <DrawerButton
+                  icon={<LuKeyRound />}
+                  to='/admin/api-clients'
+                  text='Clientes de API'
+                  replace_location={false}
+                  onClose={onClose}
+                  highlighted={currentPath.startsWith('/admin/api-clients')}
                 />
               </ScaleFade>
             </VStack>

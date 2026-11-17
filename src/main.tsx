@@ -17,8 +17,11 @@ import UIContextProvider from './context/UIContext';
 import AppRoutes from './AppRoutes';
 import { BrowserRouter } from 'react-router-dom';
 import ErrorBoundary from './components/common/ErrorBoundary';
+import { initClarity } from './services/analytics/clarity';
 
 const clientId = import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID;
+
+initClarity();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={muiTheme} defaultMode='light'>

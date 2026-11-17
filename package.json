@@ -21,6 +21,7 @@
     "@fullcalendar/rrule": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
     "@hookform/resolvers": "2.9.11",
+    "@microsoft/clarity": "1.0.2",
     "@mui/icons-material": "^5.16.7",
     "@mui/material": "^7.3.2",
     "@mui/x-date-pickers": "^7.6.1",

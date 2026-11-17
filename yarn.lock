@@ -1975,6 +1975,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@microsoft/clarity@npm:1.0.2":
+  version: 1.0.2
+  resolution: "@microsoft/clarity@npm:1.0.2"
+  checksum: 10c0/43986711a39115097348b38f8203f02e86ebc251d79a1673f05b0e1b562513e21045892e889551d271d6c2186cd6bd84f69a968fd46c3e563ebed5153c262a4e
+  languageName: node
+  linkType: hard
+
 "@modelcontextprotocol/sdk@npm:^1.8.0":
   version: 1.11.2
   resolution: "@modelcontextprotocol/sdk@npm:1.11.2"
@@ -12350,6 +12357,7 @@ __metadata:
     "@fullcalendar/rrule": "npm:^6.1.15"
     "@fullcalendar/timegrid": "npm:^6.1.15"
     "@hookform/resolvers": "npm:2.9.11"
+    "@microsoft/clarity": "npm:1.0.2"
     "@mui/icons-material": "npm:^5.16.7"
     "@mui/material": "npm:^7.3.2"
     "@mui/x-date-pickers": "npm:^7.6.1"

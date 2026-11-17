@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import DrawerBody from './drawer.body';
 import { DrawerNavBar } from './drawer.navbar';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, Link as RouterLink, useNavigate } from 'react-router-dom';
 import Joyride, { CallBackProps, EVENTS, STATUS } from 'react-joyride';
 import { useFeatureGuideContext } from '../../../context/FeatureGuideContext';
 import { FeatureTourGuideStepData } from '../../../context/FeatureGuideContext/steps';
@@ -249,23 +249,30 @@ export default function EmptyPage() {
         open={isOpenMenu}
       >
         <DrawerHeader colorMode={colorMode}>
-          <Flex
-            w={'full'}
-            textColor={'white'}
-            justify={'flex-start'}
-            align={'center'}
-            ml={'5px'}
-            fontSize={'xl'}
-            fontWeight={'bold'}
-          >
-            <Image
-              src={Logo}
-              alt='USPolis'
-              objectFit='contain'
-              boxSize='40px'
-              mr={2}
-            />
-            USPolis
+          <Flex w={'full'} justify={'flex-start'} align={'center'} ml={'5px'}>
+            <Flex
+              as={RouterLink}
+              to='/index'
+              aria-label='Ir para a página inicial'
+              textColor={'white'}
+              align={'center'}
+              fontSize={'xl'}
+              fontWeight={'bold'}
+              rounded={'md'}
+              _hover={{ opacity: 0.8 }}
+              onClick={() => {
+                if (isMobile) handleDrawerClose();
+              }}
+            >
+              <Image
+                src={Logo}
+                alt='USPolis'
+                objectFit='contain'
+                boxSize='40px'
+                mr={2}
+              />
+              USPolis
+            </Flex>
           </Flex>
           <IconButton
             size={'md'}

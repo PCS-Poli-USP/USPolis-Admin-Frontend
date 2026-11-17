@@ -3,6 +3,7 @@ import { UserResponse } from '../models/http/responses/user.response.models';
 import React, { createContext, useEffect, useState } from 'react';
 import { AuthHttpService } from '../services/auth/auth.service';
 import { useMediaQuery } from '@chakra-ui/react';
+import { identifyClarityUser } from '../services/analytics/clarity';
 
 interface AppContext {
   loading: boolean;
@@ -61,6 +62,7 @@ export default function AppContextProvider({
           : [],
       });
       setIsAuthenticated(true);
+      identifyClarityUser(self.data);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.error('Error getting self from backend:', e);
