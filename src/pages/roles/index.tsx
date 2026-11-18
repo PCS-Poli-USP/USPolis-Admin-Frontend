@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Button,
@@ -31,8 +31,10 @@ import useBuildings from '../../hooks/useBuildings';
 import { RoleResponse } from '../../models/http/responses/role.response.models';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import { Resource } from '../../utils/enums/resources.enums';
+import { appContext } from '../../context/AppContext';
 
 function Roles() {
+  const { isMobile } = useContext(appContext);
   const {
     roles,
     loading: loadingRoles,
@@ -147,11 +149,18 @@ function Roles() {
 
       <Flex
         direction={'column'}
-        h={'full'}
+        // Desktop: fills the screen and each tab's list scrolls inside it.
+        // Phones: follows the content and the page scrolls, instead of a short
+        // box that cut the cards off.
+        h={isMobile ? 'auto' : 'full'}
         minH={0}
+        minW={0}
         maxW={'1100px'}
         w={'100%'}
         mx={'auto'}
+        // Keeps wide content (badge rows, the tab bars) from widening the page
+        // past the screen; see the users page.
+        sx={{ contain: 'inline-size' }}
       >
         <Flex
           justify={'space-between'}
@@ -166,7 +175,7 @@ function Roles() {
               fontWeight={'medium'}
               letterSpacing={'0.06em'}
               textTransform={'uppercase'}
-              color={'uspolis.blue'}
+              color={'uspolis.text'}
               opacity={0.75}
               mb={'4px'}
             >
@@ -174,7 +183,7 @@ function Roles() {
             </Text>
             <Flex align={'center'} gap={'8px'}>
               <Text
-                fontSize={'26px'}
+                fontSize={isMobile ? '22px' : '26px'}
                 fontWeight={'bold'}
                 color={'uspolis.black'}
               >
@@ -182,9 +191,9 @@ function Roles() {
               </Text>
               <Tooltip label={'O que significa cada permissão?'}>
                 <IconButton
-                  aria-label='ajuda'
+                  aria-label='O que significa cada permissão?'
                   icon={<QuestionIcon />}
-                  size={'xs'}
+                  size={isMobile ? 'sm' : 'xs'}
                   borderRadius={'full'}
                   variant={'outline'}
                   onClick={onHelpOpen}
@@ -193,7 +202,7 @@ function Roles() {
             </Flex>
             <Text
               fontSize={'14px'}
-              color={'uspolis.gray'}
+              color={'uspolis.textMuted'}
               mt={'6px'}
               maxW={'560px'}
             >
@@ -202,35 +211,46 @@ function Roles() {
             </Text>
           </Box>
 
-          <SimpleGrid columns={3} spacing={'20px'} pt={'4px'}>
-            <Box textAlign={'right'}>
-              <Text fontSize={'22px'} fontWeight={'bold'}>
-                {stats.roleCount}
-              </Text>
-              <Text fontSize={'11.5px'} color={'uspolis.gray'}>
-                papéis
-              </Text>
-            </Box>
-            <Box textAlign={'right'}>
-              <Text fontSize={'22px'} fontWeight={'bold'}>
-                {stats.permissionCount}
-              </Text>
-              <Text fontSize={'11.5px'} color={'uspolis.gray'}>
-                permissões
-              </Text>
-            </Box>
-            <Box textAlign={'right'}>
-              <Text fontSize={'22px'} fontWeight={'bold'}>
-                {stats.userWithRoleCount}
-              </Text>
-              <Text fontSize={'11.5px'} color={'uspolis.gray'}>
-                usuários com papel
-              </Text>
-            </Box>
+          {/* Phones: a full-width row of three centered cards; right-aligned
+              numbers only make sense next to the title on wide screens. */}
+          <SimpleGrid
+            columns={3}
+            spacing={isMobile ? '8px' : '20px'}
+            pt={'4px'}
+            w={isMobile ? 'full' : undefined}
+          >
+            {[
+              { value: stats.roleCount, label: 'papéis' },
+              { value: stats.permissionCount, label: 'permissões' },
+              { value: stats.userWithRoleCount, label: 'usuários com papel' },
+            ].map((kpi) => (
+              <Box
+                key={kpi.label}
+                textAlign={isMobile ? 'center' : 'right'}
+                {...(isMobile && {
+                  border: '1px solid',
+                  borderColor: 'uspolis.border',
+                  borderRadius: '10px',
+                  py: '8px',
+                  px: '4px',
+                })}
+              >
+                <Text fontSize={'22px'} fontWeight={'bold'} lineHeight={1.2}>
+                  {kpi.value}
+                </Text>
+                <Text
+                  fontSize={'11.5px'}
+                  color={'uspolis.textMuted'}
+                  lineHeight={1.3}
+                >
+                  {kpi.label}
+                </Text>
+              </Box>
+            ))}
           </SimpleGrid>
         </Flex>
 
-        <Divider my={'20px'} flexShrink={0} />
+        <Divider my={isMobile ? '16px' : '20px'} flexShrink={0} />
 
         <Tabs
           index={topTab}
@@ -249,22 +269,25 @@ function Roles() {
             gap={'12px'}
             flexShrink={0}
           >
+            {/* Phones: the bar spans the width and the tabs share it. */}
             <TabList
               bg={'uspolis.hover'}
               borderRadius={'12px'}
               p={'4px'}
               gap={'4px'}
-              w={'fit-content'}
+              w={isMobile ? 'full' : 'fit-content'}
             >
               {['Papéis', 'Permissões', 'Usuários'].map((label) => (
                 <Tab
                   key={label}
+                  flex={isMobile ? 1 : undefined}
+                  minH={'40px'}
                   borderRadius={'9px'}
-                  px={'22px'}
+                  px={isMobile ? '8px' : '22px'}
                   py={'9px'}
                   fontSize={'13.5px'}
                   fontWeight={'semibold'}
-                  color={'uspolis.gray'}
+                  color={'uspolis.textMuted'}
                   _selected={{
                     bg: 'uspolis.white',
                     color: 'uspolis.text',
@@ -276,11 +299,18 @@ function Roles() {
               ))}
             </TabList>
 
-            <Flex align={'center'} gap={'10px'} wrap={'wrap'}>
+            <Flex
+              align={'center'}
+              gap={'10px'}
+              wrap={'wrap'}
+              w={isMobile ? 'full' : undefined}
+            >
               {topTab === 0 && (
                 <>
                   <Input
-                    w={'240px'}
+                    w={isMobile ? 'auto' : '240px'}
+                    flex={isMobile ? 1 : undefined}
+                    minW={0}
                     placeholder={'Filtrar por papel'}
                     value={roleSearch}
                     onChange={(e) => setRoleSearch(e.target.value)}
@@ -288,6 +318,7 @@ function Roles() {
                   <Button
                     leftIcon={<AddIcon />}
                     colorScheme={'blue'}
+                    flexShrink={0}
                     onClick={() => {
                       setSelectedRole(undefined);
                       onOpen();
@@ -298,7 +329,7 @@ function Roles() {
                 </>
               )}
               {topTab === 1 && (
-                <Box flexShrink={0}>
+                <Box flexShrink={0} w={isMobile ? 'full' : undefined}>
                   <Tabs
                     index={subTabIndex}
                     onChange={setSubTabIndex}
@@ -315,17 +346,19 @@ function Roles() {
                         borderRadius={'12px'}
                         p={'4px'}
                         gap={'4px'}
-                        w={'fit-content'}
+                        w={isMobile ? 'full' : 'fit-content'}
                       >
                         {SUB_TABS.map((resource) => (
                           <Tab
                             key={resource}
+                            flex={isMobile ? 1 : undefined}
+                            minH={'40px'}
                             borderRadius={'9px'}
-                            px={'20px'}
+                            px={isMobile ? '6px' : '20px'}
                             py={'8px'}
-                            fontSize={'13.5px'}
+                            fontSize={isMobile ? '13px' : '13.5px'}
                             fontWeight={'semibold'}
-                            color={'uspolis.gray'}
+                            color={'uspolis.textMuted'}
                             _selected={{
                               bg: 'uspolis.white',
                               color: 'uspolis.text',
@@ -338,7 +371,7 @@ function Roles() {
                       </TabList>
 
                       <Input
-                        w={'240px'}
+                        w={isMobile ? 'full' : '240px'}
                         placeholder={'Filtrar recurso'}
                         value={permSearch}
                         onChange={(e) => setPermSearch(e.target.value)}
@@ -362,7 +395,7 @@ function Roles() {
               )}
               {topTab === 2 && (
                 <Input
-                  w={'240px'}
+                  w={isMobile ? 'full' : '240px'}
                   placeholder={'Filtrar por nome ou email'}
                   value={userSearch}
                   onChange={(e) => setUserSearch(e.target.value)}
@@ -371,7 +404,7 @@ function Roles() {
             </Flex>
           </Flex>
 
-          <TabPanels mt={'20px'} minH={0} flex={'1'}>
+          <TabPanels mt={isMobile ? '16px' : '20px'} minH={0} flex={'1'}>
             <TabPanel
               p={0}
               h={'full'}

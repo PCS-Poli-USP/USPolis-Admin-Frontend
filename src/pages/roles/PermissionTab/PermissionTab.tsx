@@ -195,11 +195,13 @@ function PermissionTab({
                             )}
                             <Flex
                               flex={'1'}
+                              minW={0}
                               justify={'space-between'}
                               align={'center'}
+                              gap={'10px'}
                               ml={'10px'}
                             >
-                              <Box textAlign={'left'}>
+                              <Box textAlign={'left'} minW={0}>
                                 <Text fontWeight={'bold'} fontSize={'14.5px'}>
                                   {item.name}
                                 </Text>
@@ -213,6 +215,7 @@ function PermissionTab({
                                 )}
                               </Box>
                               <Badge
+                                flexShrink={0}
                                 colorScheme={
                                   matchingRoles.length > 0 ? 'blue' : 'gray'
                                 }
@@ -263,6 +266,8 @@ function PermissionTab({
                                             key={role.id}
                                             justify={'space-between'}
                                             align={'center'}
+                                            wrap={'wrap'}
+                                            gap={'6px 10px'}
                                             border={'1px solid'}
                                             borderColor={'uspolis.border'}
                                             borderRadius={'8px'}

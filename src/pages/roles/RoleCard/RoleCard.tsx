@@ -179,26 +179,45 @@ function RoleCard({
           <>
             <AccordionButton
               py={'14px'}
-              px={'18px'}
+              px={{ base: '12px', md: '18px' }}
+              alignItems={{ base: 'flex-start', md: 'center' }}
               _hover={{ bg: 'uspolis.hover' }}
             >
-              {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
+              <Box as={'span'} mt={{ base: '3px', md: 0 }} flexShrink={0}>
+                {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
+              </Box>
+              {/* Wraps when the name and the actions don't fit side by side
+                  (phones): name and description on top, then the badges and
+                  the buttons. Side by side, a long name broke word by word. */}
               <Flex
                 flex={'1'}
+                minW={0}
                 justify={'space-between'}
                 align={'center'}
-                ml={'12px'}
-                gap={'12px'}
+                wrap={'wrap'}
+                ml={{ base: '8px', md: '12px' }}
+                gap={'8px 12px'}
               >
-                <Box textAlign={'left'} minW={0}>
+                <Box textAlign={'left'} minW={0} flex={'1 1 220px'}>
                   <Text fontSize={'15px'} fontWeight={'bold'}>
                     {role.name}
                   </Text>
-                  <Text fontSize={'13px'} color={'uspolis.gray'} noOfLines={1}>
+                  <Text
+                    fontSize={'13px'}
+                    color={'uspolis.textMuted'}
+                    noOfLines={{ base: 2, md: 1 }}
+                  >
                     {role.description || 'Nenhuma descrição disponível'}
                   </Text>
                 </Box>
-                <Flex align={'center'} gap={'10px'} flexShrink={0}>
+                <Flex
+                  align={'center'}
+                  gap={'8px'}
+                  flexShrink={0}
+                  ml={'auto'}
+                  wrap={'wrap'}
+                  justify={'flex-end'}
+                >
                   <Badge colorScheme={'blue'}>
                     {`${role.permissions.length} permiss${role.permissions.length === 1 ? 'ão' : 'ões'}`}
                   </Badge>
@@ -206,9 +225,9 @@ function RoleCard({
                     {`${role.user_ids.length} usuário${role.user_ids.length === 1 ? '' : 's'}`}
                   </Badge>
                   <IconButton
-                    aria-label='editar-papel'
+                    aria-label={`Editar papel ${role.name}`}
                     variant={'outline'}
-                    size={'sm'}
+                    size={{ base: 'md', md: 'sm' }}
                     colorScheme={'yellow'}
                     icon={<LuPen />}
                     onClick={(e) => {
@@ -217,9 +236,9 @@ function RoleCard({
                     }}
                   />
                   <IconButton
-                    aria-label='remover-papel'
+                    aria-label={`Remover papel ${role.name}`}
                     variant={'outline'}
-                    size={'sm'}
+                    size={{ base: 'md', md: 'sm' }}
                     colorScheme={'red'}
                     icon={<LuTrash />}
                     onClick={(e) => {
@@ -295,24 +314,33 @@ function RoleCard({
                             py={'4px'}
                           >
                             {label}
-                            <CloseIcon
-                              boxSize={'8px'}
-                              cursor={'pointer'}
+                            {/* The 8px icon alone was too small to tap. */}
+                            <Box
+                              as={'button'}
+                              type={'button'}
+                              aria-label={`Remover ${label} do papel`}
+                              display={'inline-flex'}
+                              p={'8px'}
+                              m={'-8px'}
+                              borderRadius={'full'}
+                              _hover={{ bg: 'blackAlpha.100' }}
                               onClick={() =>
                                 handleRemoveUser(role.user_ids[index])
                               }
-                            />
+                            >
+                              <CloseIcon boxSize={'8px'} />
+                            </Box>
                           </Badge>
                         </WrapItem>
                       ))}
                       {role.user_ids.length === 0 && (
-                        <Text fontSize={'13px'} color={'uspolis.gray'}>
+                        <Text fontSize={'13px'} color={'uspolis.textMuted'}>
                           Nenhum usuário com este papel.
                         </Text>
                       )}
                     </Wrap>
                     <Flex gap={'8px'} align={'center'}>
-                      <Box w={'320px'}>
+                      <Box flex={'1 1 auto'} minW={0} maxW={'320px'}>
                         <TooltipSelect
                           {...selectMenuProps}
                           isClearable
@@ -339,6 +367,8 @@ function RoleCard({
                       </Box>
                       <Button
                         size={'sm'}
+                        h={'40px'}
+                        flexShrink={0}
                         colorScheme={'blue'}
                         isDisabled={!pendingUserId}
                         onClick={handleAddUser}

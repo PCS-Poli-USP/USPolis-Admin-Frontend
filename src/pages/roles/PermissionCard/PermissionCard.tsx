@@ -111,8 +111,8 @@ function PermissionCard({
           )}
           {!selectable && (update || create) && (
             <IconButton
-              aria-label='edit'
-              size={'xs'}
+              aria-label='Editar permissão'
+              size={{ base: 'sm', md: 'xs' }}
               variant={'outline'}
               icon={<LuPen />}
               colorScheme='yellow'
@@ -121,8 +121,8 @@ function PermissionCard({
           )}
           {!selectable && (
             <IconButton
-              aria-label='remove'
-              size={'xs'}
+              aria-label='Remover permissão'
+              size={{ base: 'sm', md: 'xs' }}
               colorScheme='red'
               variant={'outline'}
               icon={<LuTrash />}

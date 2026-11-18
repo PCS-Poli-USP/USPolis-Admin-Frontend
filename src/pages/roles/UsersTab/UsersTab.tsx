@@ -154,6 +154,7 @@ function UsersTab({
                           )}
                           <Flex
                             flex={'1'}
+                            minW={0}
                             align={'center'}
                             gap={'12px'}
                             ml={'10px'}
@@ -188,6 +189,7 @@ function UsersTab({
                               </Text>
                             </Box>
                             <Badge
+                              flexShrink={0}
                               colorScheme={
                                 assignedRoles.length > 0 ? 'blue' : 'gray'
                               }
@@ -225,13 +227,21 @@ function UsersTab({
                                         py={'4px'}
                                       >
                                         {role.name}
-                                        <CloseIcon
-                                          boxSize={'8px'}
-                                          cursor={'pointer'}
+                                        <Box
+                                          as={'button'}
+                                          type={'button'}
+                                          aria-label={`Remover papel ${role.name}`}
+                                          display={'inline-flex'}
+                                          p={'8px'}
+                                          m={'-8px'}
+                                          borderRadius={'full'}
+                                          _hover={{ bg: 'blackAlpha.100' }}
                                           onClick={() =>
                                             handleRemoveRole(user.id, role)
                                           }
-                                        />
+                                        >
+                                          <CloseIcon boxSize={'8px'} />
+                                        </Box>
                                       </Badge>
                                     </WrapItem>
                                   ))}
@@ -245,7 +255,11 @@ function UsersTab({
                                   )}
                                 </Wrap>
                                 <Flex gap={'8px'} align={'center'}>
-                                  <Box w={'320px'}>
+                                  <Box
+                                    flex={'1 1 auto'}
+                                    minW={0}
+                                    maxW={'320px'}
+                                  >
                                     <TooltipSelect
                                       {...selectMenuProps}
                                       isClearable
@@ -283,6 +297,8 @@ function UsersTab({
                                   </Box>
                                   <Button
                                     size={'sm'}
+                                    h={'40px'}
+                                    flexShrink={0}
                                     colorScheme={'blue'}
                                     isDisabled={!pendingRoleId[user.id]}
                                     isLoading={loading}
