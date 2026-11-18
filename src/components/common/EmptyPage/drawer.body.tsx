@@ -23,7 +23,9 @@ import {
   FaUserCircle,
   FaServer,
 } from 'react-icons/fa';
-import { LuActivity, LuKeyRound } from 'react-icons/lu';
+import { LuActivity, LuExternalLink, LuKeyRound } from 'react-icons/lu';
+import { SiGrafana } from 'react-icons/si';
+import { GRAFANA_DASHBOARD_URL } from '../../../services/analytics/grafana';
 import { useLocation } from 'react-router-dom';
 import { appContext } from '../../../context/AppContext';
 import {
@@ -100,6 +102,37 @@ function DrawerButton({
       }}
       opacity={highlighted ? '0.9' : undefined}
       _hover={highlighted ? { opacity: '0.7' } : undefined}
+    >
+      {text}
+    </Button>
+  );
+}
+
+// A link out of the app (new tab), styled like DrawerButton.
+function DrawerExternalButton({
+  text,
+  href,
+  icon,
+}: {
+  text: string;
+  href: string;
+  icon: React.ReactElement<IconType>;
+}) {
+  return (
+    <Button
+      as={'a'}
+      href={href}
+      target={'_blank'}
+      rel={'noopener noreferrer'}
+      leftIcon={icon}
+      rightIcon={<LuExternalLink aria-hidden />}
+      aria-label={`${text} (abre em nova aba)`}
+      variant={'ghost'}
+      w={'full'}
+      justifyContent={'flex-start'}
+      backgroundColor={'uspolis.white'}
+      textColor={'uspolis.black'}
+      fontWeight={'normal'}
     >
       {text}
     </Button>
@@ -364,6 +397,11 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   replace_location={false}
                   onClose={onClose}
                   highlighted={currentPath.startsWith('/admin/api-clients')}
+                />
+                <DrawerExternalButton
+                  icon={<SiGrafana />}
+                  href={GRAFANA_DASHBOARD_URL}
+                  text='Analytics (Grafana)'
                 />
               </ScaleFade>
             </VStack>

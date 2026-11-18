@@ -18,14 +18,18 @@ How the frontend image is built and served. The image is meant to be run from
 ```mermaid
 flowchart LR
     n["node:20-slim"] --> base["base<br/>yarn install --immutable<br/>(Yarn 4 vendored in .yarn/)"]
-    base --> dev["dev<br/>+ openssl<br/>yarn dev"]
+    base --> dev["dev<br/>+ openssl, git<br/>yarn dev / yarn docs"]
     base --> build["build<br/>+ git<br/>ARG VITE_*<br/>yarn docs:build → public/docs<br/>yarn build → build/"]
     build -->|"only build/"| prod["prod<br/>node:20-slim + serve<br/>serve -s build -l 3000"]
 ```
 
 - **`dev`** runs the Vite dev server. In Compose, the source is mounted over
   the image, and `node_modules` stays the image's own (an anonymous volume), so
-  edits apply without a rebuild.
+  edits apply without a rebuild. The `docs` service runs `yarn docs` on this
+  same image, which is why it has `git`: VitePress's "last updated" runs
+  `git log` for each page and fails with `spawn git ENOENT` without the
+  binary. The mounted folder is marked as a git `safe.directory`, since it
+  belongs to the host user and not root.
 - **`build`** compiles the VitePress docs first and moves them to
   `public/docs`, so the React build copies them into `build/docs`. `git` is
   installed only because VitePress's "last updated" runs `git log` and fails

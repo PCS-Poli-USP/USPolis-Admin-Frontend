@@ -86,3 +86,19 @@ Prettier é um formator de código, focado em desenvolvimento web.
 
 [![Static Badge](https://img.shields.io/badge/VitePress-8A2BE2)](https://vitepress.dev/)
 Um gerador de site estáticos (SSG), utilizamos ele para gerar nossa docs através de arquivos markdown.
+
+## Analytics
+
+Ferramentas para entender como o sistema é usado e encontrar problemas. Como elas se encaixam está em [Logs, Grafana e Loki](/dev/observability/).
+
+[![Static Badge](https://img.shields.io/badge/Grafana-f46800)](https://grafana.com/docs/grafana/latest/)
+Plataforma de dashboards, onde ficam os painéis de acessos à API (requisições, erros, latência, rotas e usuários mais ativos), em `/analytics/`.
+
+[![Static Badge](https://img.shields.io/badge/Loki-f2cc0c)](https://grafana.com/docs/loki/latest/)
+Banco de logs da Grafana Labs, que guarda o log de acesso do backend por 30 dias e é consultado pelo Grafana com a linguagem LogQL.
+
+[![Static Badge](https://img.shields.io/badge/Grafana%20Alloy-e5562a)](https://grafana.com/docs/alloy/latest/)
+Coletor que lê o arquivo de log de acesso do backend, extrai os campos e envia ao Loki. Substituiu o Promtail.
+
+[![Static Badge](https://img.shields.io/badge/Microsoft%20Clarity-0078d4)](https://learn.microsoft.com/clarity/)
+Mapas de calor e gravações de sessão no frontend, para ver como as pessoas usam as telas. Só é ativado com `VITE_CLARITY_PROJECT_ID` configurado.

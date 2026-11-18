@@ -12,11 +12,46 @@ next:
 
 Nessa página vamos ensinar como configurar seu ambiente para poder começar a desenvolver os códigos do USPolis. Para ter acesso a uma lista detalhada das tecnologias com links para as documentações acesse a página [Tecnologias Utilizadas](/dev/stack).
 
-O USPolis é dividido em dois repositórios: **USPolis-Admin-Backend** e **USPolis-Admin-Frontend** (esse, inclusive, é o repositório onde essa documentação vive, dentro da pasta `docs/`). Nenhum dos dois repositórios tem um `Dockerfile` ou `docker-compose` — o setup local assume um **PostgreSQL instalado diretamente na sua máquina**.
+O USPolis é dividido em dois repositórios: **USPolis-Admin-Backend** e **USPolis-Admin-Frontend** (esse, inclusive, é o repositório onde essa documentação vive, dentro da pasta `docs/`). Um terceiro repositório, **[USPolis-Admin](https://github.com/PCS-Poli-USP/USPolis-Admin)**, junta os dois como submódulos e tem o `docker-compose.yml` que sobe o sistema inteiro.
+
+Há duas formas de montar o ambiente:
+
+- **Com Docker** (recomendado): um comando sobe banco, Redis, backend, frontend e docs, sem instalar Python, Node ou PostgreSQL na sua máquina. Veja a seção [Com Docker](#com-docker) logo abaixo.
+- **Manual**: cada parte instalada direto na sua máquina, descrita nas seções [Banco de dados](#banco-de-dados), [Backend](#backend) e [Frontend](#frontend).
+
+## Com Docker
+
+Cada repositório tem seu `Dockerfile`, com um estágio `dev` (hot-reload) e um `prod`. O compose do USPolis-Admin usa esses dois e acrescenta PostgreSQL, Redis e a docs. Você só precisa do Docker com o Compose:
+
+```bash
+git clone --recurse-submodules https://github.com/PCS-Poli-USP/USPolis-Admin.git
+cd USPolis-Admin
+cp .env.example .env
+docker compose up
+```
+
+Na ordem, isso sobe `postgres` e `redis`, depois o `backend` (que espera o banco, roda `alembic upgrade head` e cria um admin de desenvolvimento), depois o `frontend` e a `docs`. O `.env.example` já vem pronto para desenvolvimento, com `OVERRIDE_AUTH` ligado, então não é preciso configurar o login do Google.
+
+| O quê | Endereço |
+|---|---|
+| Frontend | `https://localhost:3000` |
+| Swagger do backend | `https://localhost:5000/api/docs` |
+| Documentação | `http://localhost:3001/docs/` |
+
+- **Certificados:** os dois certificados HTTPS são autoassinados e gerados na primeira subida. Abra o Swagger uma vez e aceite o aviso do navegador: enquanto o navegador não confiar no certificado do backend, toda chamada do frontend falha com um `Network Error` sem detalhes.
+- **Código:** as pastas `USPolis-Admin-Backend` e `USPolis-Admin-Frontend` do USPolis-Admin são montadas nos containers, então editar o código ali reflete na hora. Só é preciso reconstruir a imagem quando as dependências mudam.
+- **Submódulos:** cada submódulo aponta para um commit fixo do seu repositório. Depois de um `git pull` no USPolis-Admin, rode `git submodule update --init --recursive`.
+- **Porta ocupada:** mude só o lado do host no `.env` (`FRONTEND_PUBLISHED_PORT`, `BACKEND_PUBLISHED_PORT`, `POSTGRES_PUBLISHED_PORT`, `DOCS_PUBLISHED_PORT`). Se mudar a porta do frontend, ajuste também `ALLOWED_ORIGINS` e `FRONTEND_URL`.
+- **Já tem Postgres ou os repositórios clonados em outro lugar?** Dá para reaproveitar: tire o `db` de `COMPOSE_PROFILES`, aponte `POSTGRES_HOST` para `host.docker.internal` e use `BACKEND_DIR` / `FRONTEND_DIR` para as suas pastas.
+- **Grafana, Loki e Alloy:** ficam no profile opcional `analytics`, veja [Logs, Grafana e Loki](/dev/observability/).
+
+O passo a passo completo (comandos do dia a dia, logs, testar a configuração de produção localmente, backups) está no `README.md` e em `docs/DOCKER.md` do USPolis-Admin.
 
 ## Banco de dados
 
-Antes de rodar o backend você precisa de um PostgreSQL rodando localmente (não existe uma versão containerizada oficial). O jeito mais simples é instalar o Postgres direto no seu sistema operacional (`apt install postgresql`, Postgres.app no Mac, etc.) — qualquer versão recente funciona.
+Esta seção e as próximas descrevem o ambiente **manual**. Se você usa o Docker, o banco já vem pronto e pode pular para [Extensões e comandos para desenvolvimento](#extensoes-e-comandos-para-desenvolvimento).
+
+Antes de rodar o backend você precisa de um PostgreSQL rodando localmente. O jeito mais simples é instalar o Postgres direto no seu sistema operacional (`apt install postgresql`, Postgres.app no Mac, etc.) — qualquer versão recente funciona. Para o rate limit funcionar, você também precisa de um Redis (veja `REDIS_URL` em [Arquivos de ambiente](#arquivos-de-ambiente)); sem ele, o rate limit só fica desligado.
 
 Crie **dois bancos**: um para o dia a dia do desenvolvimento e outro exclusivo para a suíte de testes (a suíte de testes roda migrações reais e não deve compartilhar dados com o banco que você usa para navegar na aplicação), por exemplo `uspolis` e `uspolis_test`.
 

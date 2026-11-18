@@ -21,7 +21,7 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import moment from 'moment';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import {
   FaFastBackward,
   FaFastForward,
@@ -38,6 +38,8 @@ import {
   getUserCoreRole,
   getUserCoreRoleBadgeColor,
 } from '../../../utils/users/users.formatter';
+import { appContext } from '../../../context/AppContext';
+import UserCardList, { UserSortKey } from './user.card.list';
 
 interface UserTableProps {
   users: UserCoreResponse[];
@@ -51,13 +53,7 @@ interface UserTableProps {
 const MAX_VISIBLE_GROUPS = 2;
 const PAGE_SIZES = [10, 20, 30, 40, 50];
 
-type SortKey =
-  | 'name'
-  | 'role'
-  | 'groups'
-  | 'buildings'
-  | 'notif'
-  | 'lastVisited';
+type SortKey = UserSortKey;
 
 function UserTable({
   users,
@@ -67,6 +63,7 @@ function UserTable({
   onToggleSelect,
   onRowClick,
 }: UserTableProps) {
+  const { isMobile } = useContext(appContext);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
   const [prevUsers, setPrevUsers] = useState(users);
@@ -132,6 +129,101 @@ function UserTable({
     safePageIndex * pageSize,
     safePageIndex * pageSize + pageSize,
   );
+
+  if (isMobile) {
+    return (
+      <Flex direction={'column'} gap={'10px'} minH={0}>
+        <UserCardList
+          users={pagedUsers}
+          totalCount={users.length}
+          selected={selected}
+          allSelected={allSelected}
+          onToggleSelectAll={onToggleSelectAll}
+          onToggleSelect={onToggleSelect}
+          onOpen={onRowClick}
+          sortKey={sortKey}
+          sortDir={sortDir}
+          onSortKeyChange={(key) => {
+            setSortKey(key);
+            if (!key) setSortDir('asc');
+          }}
+          onToggleSortDir={() =>
+            setSortDir((dir) => (dir === 'asc' ? 'desc' : 'asc'))
+          }
+        />
+
+        {users.length > 0 && (
+          <Flex direction={'column'} gap={'8px'} pb={'8px'}>
+            <Flex align={'center'} justify={'space-between'} gap={'6px'}>
+              <IconButton
+                aria-label='Primeira página'
+                icon={<FaFastBackward />}
+                minW={'40px'}
+                h={'40px'}
+                onClick={() => setPageIndex(0)}
+                isDisabled={safePageIndex === 0}
+              />
+              <IconButton
+                aria-label='Página anterior'
+                icon={<FaStepBackward />}
+                minW={'40px'}
+                h={'40px'}
+                onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
+                isDisabled={safePageIndex === 0}
+              />
+              <Text fontSize={'13px'} textAlign={'center'} flex={1}>
+                Página{' '}
+                <strong>
+                  {safePageIndex + 1} de {pageCount}
+                </strong>
+              </Text>
+              <IconButton
+                aria-label='Próxima página'
+                icon={<FaStepForward />}
+                minW={'40px'}
+                h={'40px'}
+                onClick={() =>
+                  setPageIndex((p) => Math.min(pageCount - 1, p + 1))
+                }
+                isDisabled={safePageIndex >= pageCount - 1}
+              />
+              <IconButton
+                aria-label='Última página'
+                icon={<FaFastForward />}
+                minW={'40px'}
+                h={'40px'}
+                onClick={() => setPageIndex(pageCount - 1)}
+                isDisabled={safePageIndex >= pageCount - 1}
+              />
+            </Flex>
+            <Flex align={'center'} justify={'space-between'} gap={'8px'}>
+              <Select
+                w={'auto'}
+                h={'40px'}
+                size={'sm'}
+                borderRadius={'md'}
+                aria-label={'Usuários por página'}
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setPageIndex(0);
+                }}
+              >
+                {PAGE_SIZES.map((size) => (
+                  <option key={size} value={size}>
+                    {`${size} por página`}
+                  </option>
+                ))}
+              </Select>
+              <Text fontSize={'12.5px'} color={'uspolis.textMuted'}>
+                {`${pagedUsers.length} de ${users.length} usuários`}
+              </Text>
+            </Flex>
+          </Flex>
+        )}
+      </Flex>
+    );
+  }
 
   return (
     <Flex direction={'column'} gap={'5px'} mt={'18px'} minH={0}>
@@ -266,7 +358,9 @@ function UserTable({
                     <Flex align={'center'} gap={'10px'} minW={0}>
                       <UserImage
                         boxSize={'34px'}
-                        url={user.user_info?.picture}
+                        url={
+                          user.picture_url ?? user.user_info?.picture ?? null
+                        }
                       />
                       <Box minW={0}>
                         <Text

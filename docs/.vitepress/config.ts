@@ -82,7 +82,8 @@ export default {
       { text: 'API', link: '/api-keys' },
       {
         text: 'Changelog',
-        link: '/changelog',
+        link: '/changelog/',
+        activeMatch: '/changelog/',
       },
     ],
 
@@ -172,6 +173,21 @@ export default {
         },
       ],
 
+      // Uma página por ano. Num ano novo, crie docs/changelog/<ano>.md e
+      // adicione o item no topo da lista (veja o comentário em
+      // docs/changelog/index.md).
+      '/changelog/': [
+        {
+          text: 'Changelog',
+          collapsed: false,
+          items: [
+            { text: 'Visão geral', link: '/changelog/' },
+            { text: '2026', link: '/changelog/2026' },
+            { text: '2025', link: '/changelog/2025' },
+          ],
+        },
+      ],
+
       '/dev/': [
         {
           text: 'Guia para Desenvolvedores',
@@ -208,6 +224,13 @@ export default {
             },
             { text: 'Migrações', link: '/dev/database/migrations' },
             { text: 'Backup', link: '/dev/database/backup' },
+          ],
+        },
+        {
+          text: 'Observabilidade',
+          collapsed: false,
+          items: [
+            { text: 'Logs, Grafana e Loki', link: '/dev/observability' },
           ],
         },
       ],

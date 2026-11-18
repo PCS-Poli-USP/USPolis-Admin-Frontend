@@ -63,6 +63,9 @@ export function DrawerNavBar({
   onOpenContactModal,
 }: DrawerNavBarProps) {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
+  // Below ~400px (360px phones) the "USPolis" text next to the logo pushes the
+  // bar past the screen and gets cut; the logo alone carries the brand there.
+  const [isNarrow] = useMediaQuery('(max-width: 400px)');
   const { isAuthenticated, loggedUser } = useContext(appContext);
   const { state, setState, setPathBeforeGuide } =
     useContext(FeatureGuideContext);
@@ -115,7 +118,7 @@ export function DrawerNavBar({
               boxSize='40px'
               hidden={open && !isMobile}
             />
-            {isMobile && 'USPolis'}
+            {isMobile && !isNarrow && 'USPolis'}
           </NavLink>
 
           {!isMobile && <PageBreadcrumb pathname={location.pathname} />}

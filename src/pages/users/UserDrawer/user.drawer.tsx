@@ -105,7 +105,14 @@ export default function UserDrawer(props: UserDrawerProps) {
         <DrawerHeader borderBottom={'1px solid'} borderColor={'uspolis.lightGray'}>
           {props.user && (
             <Flex align={'flex-start'} gap={'12px'}>
-              <UserImage boxSize={'52px'} url={props.user.user_info?.picture} />
+              <UserImage
+                boxSize={'52px'}
+                url={
+                  props.user.picture_url ??
+                  props.user.user_info?.picture ??
+                  null
+                }
+              />
               <Box minW={0}>
                 <Text fontSize={'17px'} fontWeight={'bold'} noOfLines={1}>
                   {props.user.name}
@@ -155,9 +162,9 @@ export default function UserDrawer(props: UserDrawerProps) {
                         </Text>
                       </Box>
                       <IconButton
-                        aria-label='remover-papel'
+                        aria-label={`Remover papel ${GroupFormatter.getGroupName(group)}`}
                         icon={<CloseIcon boxSize={'10px'} />}
-                        size={'xs'}
+                        size={'sm'}
                         variant={'ghost'}
                         colorScheme={'red'}
                         onClick={() => handleRemoveGroup(group.id)}

@@ -31,6 +31,9 @@ export interface UserCoreResponse {
   name: string;
   created_by: string;
   updated_at: string;
+  // Google profile picture, stored by the backend on every login. The avatar's
+  // source of truth: user_info only comes in the legacy Bearer-token flow.
+  picture_url?: string | null;
   user_info?: UserInfoResponse;
   last_visited: string;
 

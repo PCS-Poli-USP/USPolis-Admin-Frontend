@@ -13,6 +13,8 @@ import { VscFeedback, VscReport } from 'react-icons/vsc';
 import { LuActivity, LuKeyRound } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 import { FaUsersGear } from 'react-icons/fa6';
+import { SiGrafana } from 'react-icons/si';
+import { openGrafana } from '../../services/analytics/grafana';
 
 function AdminHub() {
   const navigate = useNavigate();
@@ -115,6 +117,13 @@ function AdminHub() {
       onClick: () => {
         navigate('/admin/api-clients');
       },
+    },
+    {
+      icon: <SiGrafana size={'64px'} />,
+      title: 'Analytics (Grafana)',
+      description:
+        'Dashboards de acesso à API: requisições, erros, latência e usuários. Abre em nova aba',
+      onClick: openGrafana,
     },
   ];
   return (

@@ -14,10 +14,17 @@ RUN yarn install --immutable
 FROM base AS dev
 
 # docker/entrypoint.sh generates the self-signed dev cert with openssl, which
-# node:20-slim doesn't ship.
+# node:20-slim doesn't ship. git: the `docs` service (`yarn docs`) runs on this
+# image too, and VitePress's lastUpdated spawns `git log` for every page it
+# renders; without the binary each page fails with `spawn git ENOENT`. A git
+# that errors (no .git in the mount, e.g. a submodule checkout) only leaves the
+# date out. The mounted source belongs to the host user, not root, so it's
+# marked safe, otherwise git refuses it ("dubious ownership") and no page shows
+# a date.
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y openssl \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get install --no-install-recommends -y openssl git \
+    && rm -rf /var/lib/apt/lists/* \
+    && git config --system --add safe.directory /app/frontend
 
 COPY . .
 COPY docker/entrypoint.sh /entrypoint.sh
@@ -48,6 +55,7 @@ ARG VITE_USPOLIS_DOCS_URL
 ARG VITE_ENVIROMENT
 ARG VITE_OVERRIDE_AUTH
 ARG VITE_CLARITY_PROJECT_ID
+ARG VITE_GRAFANA_URL
 
 COPY . .
 RUN yarn docs:build \

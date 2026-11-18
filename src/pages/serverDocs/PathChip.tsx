@@ -1,57 +1,67 @@
 import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
-import { HStack, IconButton, Text, Tooltip } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import {
+  Box,
+  HStack,
+  Text,
+  Tooltip,
+  useColorModeValue,
+  useMediaQuery,
+} from '@chakra-ui/react';
+import { useCopyToClipboard } from './useCopyToClipboard';
 
 interface PathChipProps {
   path: string;
 }
 
+// The whole chip is the copy button: the 24px icon button it used to have was
+// too small to tap on a phone.
 function PathChip({ path }: PathChipProps) {
-  const [copied, setCopied] = useState(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
-
-  useEffect(() => {
-    return () => clearTimeout(timeoutRef.current);
-  }, []);
-
-  async function handleCopy() {
-    await navigator.clipboard.writeText(path);
-    setCopied(true);
-    clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => setCopied(false), 1300);
-  }
+  const [isMobile] = useMediaQuery('(max-width: 800px)', { ssr: false });
+  const { copied, copy } = useCopyToClipboard();
+  const copiedBg = useColorModeValue('#E3F5F0', 'rgba(47, 158, 110, 0.2)');
 
   return (
-    <HStack
-      spacing={1}
-      bg={copied ? '#E3F5F0' : '#F4F4F5'}
-      border={'1px solid'}
-      borderColor={'uspolis.lightGray'}
-      borderRadius={'4px'}
-      pl={'10px'}
-      pr={'3px'}
-      py={'4px'}
+    <Tooltip
+      label={copied ? 'Copiado!' : 'Copiar caminho'}
+      isDisabled={isMobile}
     >
-      <Text
-        fontFamily={'ui-monospace, monospace'}
-        fontSize={'12.5px'}
-        color={'#262626'}
+      <HStack
+        as={'button'}
+        type={'button'}
+        onClick={() => copy(path)}
+        aria-label={`Copiar caminho ${path}`}
+        spacing={'8px'}
+        maxW={'100%'}
+        minH={isMobile ? '40px' : '32px'}
+        textAlign={'left'}
+        bg={copied ? copiedBg : 'uspolis.surfaceSubtle'}
+        border={'1px solid'}
+        borderColor={'uspolis.border'}
+        borderRadius={'4px'}
+        pl={'10px'}
+        pr={'10px'}
+        py={'4px'}
+        _hover={{ borderColor: 'uspolis.text' }}
+        _focusVisible={{ outline: '2px solid', outlineColor: 'uspolis.blue' }}
       >
-        {path}
-      </Text>
-      <Tooltip label={copied ? 'Copiado!' : 'Copiar caminho'}>
-        <IconButton
-          aria-label='Copiar caminho'
-          icon={copied ? <CheckIcon /> : <CopyIcon />}
-          onClick={handleCopy}
-          size={'xs'}
-          variant={'ghost'}
-          color={copied ? '#2F9E6E' : '#717075'}
+        <Text
+          fontFamily={'ui-monospace, monospace'}
+          fontSize={'12.5px'}
+          color={'uspolis.black'}
+          minW={0}
+          wordBreak={'break-all'}
+        >
+          {path}
+        </Text>
+        <Box
+          as={copied ? CheckIcon : CopyIcon}
+          aria-hidden
+          flexShrink={0}
+          boxSize={'14px'}
+          color={copied ? '#2F9E6E' : 'uspolis.textMuted'}
         />
-      </Tooltip>
-    </HStack>
+      </HStack>
+    </Tooltip>
   );
 }
 

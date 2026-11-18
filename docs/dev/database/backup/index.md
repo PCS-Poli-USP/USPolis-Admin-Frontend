@@ -2,6 +2,10 @@
 prev:
   text: 'Migrações'
   link: '/dev/database/migrations'
+
+next:
+  text: 'Logs, Grafana e Loki'
+  link: '/dev/observability'
 ---
 
 # Backup
