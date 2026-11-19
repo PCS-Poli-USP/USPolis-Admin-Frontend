@@ -1,5 +1,6 @@
 import DataTable from '../../components/common/DataTable/dataTable.component';
-import { Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, Spacer, Text, useDisclosure } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
 import { useContext, useState } from 'react';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import { SubjectResponse } from '../../models/http/responses/subject.response.models';
@@ -10,6 +11,7 @@ import useBuildings from '../../hooks/useBuildings';
 import PageContent from '../../components/common/PageContent';
 import { UsersValidator } from '../../utils/users/users.validator';
 import { appContext } from '../../context/AppContext';
+import SubjectCardList from './SubjectCardList';
 
 function Subjects() {
   const context = useContext(appContext);
@@ -75,22 +77,56 @@ function Subjects() {
   }
 
   return (
-    <PageContent>
-      <Flex align='center'>
-        <Text fontSize={'4xl'} mb={4}>
-          Disciplinas
-        </Text>
-        <Spacer />
-        <Button onClick={handleCreateSubjectButton} colorScheme={'blue'}>
-          Cadastrar
-        </Button>
-      </Flex>
-      <DataTable
-        loading={loading}
-        data={subjects}
-        columns={columns}
-        columnPinning={{ left: ['id', 'code'], right: ['options'] }}
-      />
+    <PageContent horizontalScroll>
+      <Box w="100%" minW="344px">
+        <Flex
+          direction={{ base: 'column', md: 'row' }}
+          align={{ base: 'stretch', md: 'center' }}
+          gap={3}
+          mb={4}
+          w="full"
+        >
+          <Text fontSize={{ base: '24px', md: '4xl' }} color="uspolis.text">
+            Disciplinas
+          </Text>
+          <Spacer />
+          <Button
+            display={{ base: 'none', md: 'inline-flex' }}
+            onClick={handleCreateSubjectButton}
+            colorScheme="blue"
+          >
+            Cadastrar
+          </Button>
+        </Flex>
+        <Box display={{ base: 'none', md: 'block' }} w="100%" overflowX="auto">
+          <DataTable
+            loading={loading}
+            data={subjects}
+            columns={columns}
+            columnPinning={{ left: ['id', 'code'], right: ['options'] }}
+          />
+        </Box>
+        <Box display={{ base: 'block', md: 'none' }} w="100%">
+          <SubjectCardList
+            subjects={subjects}
+            loading={loading}
+            onEdit={handleEditSubjectButton}
+            onDelete={handleDeleteSubjectButton}
+            onDuplicate={handleDuplicateClick}
+            disableMap={disableMap}
+            toolbarAction={
+              <Button
+                colorScheme="blue"
+                leftIcon={<AddIcon />}
+                onClick={handleCreateSubjectButton}
+                w="full"
+              >
+                Cadastrar
+              </Button>
+            }
+          />
+        </Box>
+      </Box>
       <SubjectModal
         buildings={buildings}
         isOpen={isOpenRegisterSubjectModal}

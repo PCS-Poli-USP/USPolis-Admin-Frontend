@@ -25,7 +25,7 @@ interface ScheduleListProps {
 
 function ScheduleList(props: ScheduleListProps) {
   return (
-    <VStack align={'strech'}>
+    <VStack align={'stretch'} w={'full'}>
       <Text fontSize={'lg'} fontWeight={'bold'}>
         Agendas adicionadas
       </Text>
@@ -33,7 +33,7 @@ function ScheduleList(props: ScheduleListProps) {
         <List spacing={3}>
           {props.schedules.map((val, index) => (
             <ListItem key={index}>
-              <HStack>
+              <HStack align={'flex-start'} flexWrap={'wrap'}>
                 <BsCalendar2WeekFill />
                 <Text>{getScheduleFullString(val)}</Text>
 
@@ -70,7 +70,7 @@ function ScheduleList(props: ScheduleListProps) {
         </List>
       ) : undefined}
       {props.schedules.length === 0 ? (
-        <Alert status='error' fontSize='sm' mt={4} w={450}>
+        <Alert status='error' fontSize='sm' mt={4} w={'full'}>
           <AlertIcon />
           Nenhuma agenda foi adicionada
         </Alert>

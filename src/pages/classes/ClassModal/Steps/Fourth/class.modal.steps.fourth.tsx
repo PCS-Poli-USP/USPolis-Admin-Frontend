@@ -27,7 +27,7 @@ function ClassModalFourthStep(props: ClassModalFourthStepProps) {
             <SelectInput
               name='audiovisual'
               label='Recurso audiovisual'
-              w={'250px'}
+              w={{ base: 'full', md: '250px' }}
               options={AudiovisualType.values().map((type) => ({
                 label: AudiovisualType.translate(type),
                 value: type,

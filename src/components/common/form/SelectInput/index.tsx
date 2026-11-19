@@ -72,6 +72,10 @@ export function SelectInput({
             {...field}
             id={name}
             value={selectedOption}
+            menuPortalTarget={
+              typeof document !== 'undefined' ? document.body : undefined
+            }
+            menuPosition='fixed'
             isLoading={isLoading}
             isDisabled={disabled || isLoading}
             placeholder={placeholder ? placeholder : 'Selecione uma opção'}

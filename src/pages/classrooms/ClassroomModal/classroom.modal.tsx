@@ -102,14 +102,19 @@ export default function ClassroomModal(props: ClassroomModalProps) {
       closeOnOverlayClick={false}
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        w="calc(100vw - 16px)"
+        maxW={{ base: 'calc(100vw - 16px)', md: '3xl' }}
+        minW={0}
+        maxH="90vh"
+      >
         <ModalHeader>
           {props.isUpdate ? 'Editar Sala' : 'Cadastrar Sala'}
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody pb={6}>
+        <ModalBody pb={6} px={{ base: 4, md: 6 }} overflowY="auto">
           <FormProvider {...form}>
-            <form>
+            <form style={{ minWidth: 0 }}>
               <SelectInput
                 mb={4}
                 label={'Prédio'}
@@ -126,7 +131,6 @@ export default function ClassroomModal(props: ClassroomModalProps) {
               <Input label={'Nome'} name={'name'} placeholder='Nome da sala' />
 
               <Flex
-                direction={'row'}
                 justify={'center'}
                 align={'center'}
                 w={'full'}
@@ -134,6 +138,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
               >
                 <NumberInput
                   mt={4}
+                  w="calc(50% - 3px)"
                   min={0}
                   label={'Andar'}
                   name={'floor'}
@@ -143,16 +148,23 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 <NumberInput
                   min={0}
                   mt={4}
+                  w="calc(50% - 3px)"
                   label={'Capacidade'}
                   name={'capacity'}
                   placeholder={'Capacidade da sala'}
                 />
               </Flex>
 
-              <Flex mt={'20px'} mb={'20px'}>
-                <VStack w={'full'} alignItems={'start'} gap={'10px'}>
-                  <Flex justify={'space-between'} w={'full'}>
-                    <Flex direction={'column'} gap={'10px'} mr={'20px'}>
+              <Flex
+                mt="20px"
+                mb="20px"
+                direction={{ base: 'column', md: 'row' }}
+                gap={{ base: 5, md: 3 }}
+                w="full"
+              >
+                <VStack w="full" minW={0} alignItems="start" gap="10px">
+                  <Flex justify="space-between" w="full">
+                    <Flex direction="column" gap="10px" mr={{ base: 0, md: '20px' }}>
                       <Text fontWeight={'bold'}>Recursos</Text>
                       <CheckBox
                         text={'Ar condicionado'}
@@ -168,7 +180,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                   <SelectInput
                     name='audiovisual'
                     label='Recurso audiovisual'
-                    w={'250px'}
+                    w="full"
                     options={AudiovisualType.values().map((type) => ({
                       label: AudiovisualType.translate(type),
                       value: type,
@@ -176,7 +188,7 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                   />
                 </VStack>
 
-                <Flex direction={'column'} gap={'10px'}>
+                <Flex direction="column" gap="10px" w="full" minW={0}>
                   <HStack
                     w={'full'}
                     align={'center'}
@@ -288,15 +300,19 @@ export default function ClassroomModal(props: ClassroomModalProps) {
           </FormProvider>
         </ModalBody>
 
-        <ModalFooter>
+        <ModalFooter
+          direction={{ base: 'column-reverse', sm: 'row' }}
+          gap={2}
+        >
           <Button
             onClick={() => handleCloseModal()}
-            mr={'10px'}
+            mr={{ base: 0, sm: '10px' }}
             colorScheme='red'
+            w={{ base: 'full', sm: 'auto' }}
           >
             Cancelar
           </Button>
-          <Button colorScheme='blue' onClick={handleSaveClick}>
+          <Button colorScheme='blue' onClick={handleSaveClick} w={{ base: 'full', sm: 'auto' }}>
             {props.isUpdate ? 'Atualizar' : 'Cadastrar'}
           </Button>
         </ModalFooter>

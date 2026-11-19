@@ -1,15 +1,15 @@
 import {
-  Badge,
   Box,
   Divider,
   Flex,
-  SimpleGrid,
+  HStack,
+  Tag,
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { BsFillPenFill, BsFillTrashFill } from 'react-icons/bs';
 
 import CardList from '../../components/common/CardList/CardList';
-import ActionButtons from '../../components/common/ActionButtons/ActionButtons';
 
 import { CurriculumSubjectResponse } from '../../models/http/responses/curriculumSubject.response.models';
 import { SubjectResponseBase } from '../../models/http/responses/subject.response.models';
@@ -47,31 +47,19 @@ export default function CurriculumSubjectCardList({
     track_elective: 'Optativa Eletiva',
   };
 
-  const getCategoryBadgeColor = (category: string) => {
-    switch (category) {
-      case 'mandatory':
-        return 'green';
-      case 'free_elective':
-        return 'green';
-      case 'track_elective':
-        return 'blue';
-      default:
-        return 'gray';
-    }
-  };
-
   return (
     <CardList
       items={items}
       loading={loading}
       emptyMessage="Nenhuma disciplina cadastrada neste período."
+      columns={{ base: 1 }}
       renderCard={(item) => (
         <Box
           key={item.id}
           borderWidth="1px"
           borderRadius="lg"
           p={4}
-          bg="white"
+          bg="uspolis.white"
           shadow="sm"
         >
           <VStack align="stretch" spacing={3}>
@@ -85,38 +73,62 @@ export default function CurriculumSubjectCardList({
 
             <Divider />
 
-            <SimpleGrid columns={2} spacing={3}>
-              <Box>
-                <Text fontSize="xs" color="gray.500">
-                  Tipo
-                </Text>
-
-                <Badge>
-                  {typeMap[item.type] ?? item.type}
-                </Badge>
-              </Box>
-
-              <Box>
-                <Text fontSize="xs" color="gray.500">
-                  Categoria
-                </Text>
-
-                <Badge
-                  colorScheme={getCategoryBadgeColor(item.category)}
-                >
-                  {categoryMap[item.category] ?? item.category}
-                </Badge>
-              </Box>
-            </SimpleGrid>
+            <Flex
+              wrap="wrap"
+              columnGap="18px"
+              rowGap="6px"
+              fontSize="13.5px"
+              color="uspolis.textMuted"
+            >
+              {[
+                { label: 'Tipo', value: typeMap[item.type] ?? item.type },
+                {
+                  label: 'Categoria',
+                  value: categoryMap[item.category] ?? item.category,
+                },
+              ].map(({ label, value }) => (
+                <HStack key={label} spacing="7px">
+                  <Text fontWeight="medium" color="uspolis.text">
+                    {label}
+                  </Text>
+                  <Text>{value}</Text>
+                </HStack>
+              ))}
+            </Flex>
 
             <Divider />
 
-            <Flex justify="flex-end">
-              <ActionButtons
-                onEdit={() => handleEditClick(item)}
-                onDelete={() => handleDeleteClick(item)}
-              />
-            </Flex>
+            <HStack
+              spacing="6px"
+              flexWrap="wrap"
+              rowGap="6px"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <Tag
+                as="button"
+                onClick={() => handleEditClick(item)}
+                size="lg"
+                variant="outline"
+                colorScheme="yellow"
+                cursor="pointer"
+                gap="6px"
+              >
+                <BsFillPenFill size={11} />
+                Editar
+              </Tag>
+              <Tag
+                as="button"
+                onClick={() => handleDeleteClick(item)}
+                size="lg"
+                variant="outline"
+                colorScheme="red"
+                cursor="pointer"
+                gap="6px"
+              >
+                <BsFillTrashFill size={11} />
+                Excluir
+              </Tag>
+            </HStack>
           </VStack>
         </Box>
       )}

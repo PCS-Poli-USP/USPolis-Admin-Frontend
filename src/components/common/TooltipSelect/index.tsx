@@ -135,6 +135,10 @@ function TooltipSelect<IsMulti extends boolean = false>(
       backgroundColor: isDark ? uspolis.black : uspolis.white,
       color: isDark ? uspolis.white : uspolis.blue,
     }),
+    menuPortal: (base) => ({
+      ...base,
+      zIndex: 1500,
+    }),
     option: (base, state) => ({
       ...base,
       backgroundColor: state.isDisabled

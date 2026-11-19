@@ -380,7 +380,11 @@ function ClassModal(props: ClassModalProps) {
       scrollBehavior='outside'
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        maxW={{ base: 'calc(100vw - 24px)', md: '5xl' }}
+        maxH={'90vh'}
+        overflowY={'auto'}
+      >
         <ModalHeader>
           {props.isUpdate
             ? `Editar Turma - ${steps[activeStep].description}`
@@ -388,9 +392,16 @@ function ClassModal(props: ClassModalProps) {
         </ModalHeader>
         <ModalCloseButton />
 
-        <ModalBody pb={10}>
+        <ModalBody pb={{ base: 4, md: 10 }} px={{ base: 4, md: 6 }}>
           <VStack w={'full'}>
-            <Stepper size='lg' index={activeStep} alignItems={'center'}>
+            <Stepper
+              size={{ base: 'sm', md: 'lg' }}
+              index={activeStep}
+              alignItems={'center'}
+              w={'full'}
+              overflowX={'auto'}
+              px={1}
+            >
               {steps.map((step, index) => (
                 <Step key={index} onClick={() => setActiveStep(index)}>
                   <StepIndicator>
@@ -401,7 +412,10 @@ function ClassModal(props: ClassModalProps) {
                     />
                   </StepIndicator>
 
-                  <Box flexShrink='0'>
+                  <Box
+                    flexShrink='0'
+                    display={{ base: 'none', sm: 'block' }}
+                  >
                     <StepTitle>{step.title}</StepTitle>
                     <StepDescription>{step.description}</StepDescription>
                     <Text
@@ -430,11 +444,17 @@ function ClassModal(props: ClassModalProps) {
 
         <ModalFooter>
           <VStack width={'full'}>
-            <HStack spacing='10px' alignSelf={'flex-end'}>
+            <HStack
+              spacing='10px'
+              w={'full'}
+              justify={{ base: 'stretch', md: 'flex-end' }}
+              flexDirection={{ base: 'column-reverse', md: 'row' }}
+            >
               <Button
                 colorScheme={'red'}
                 onClick={handleCloseModal}
                 rightIcon={<SmallCloseIcon />}
+                w={{ base: 'full', md: 'auto' }}
               >
                 Cancelar
               </Button>
@@ -443,6 +463,7 @@ function ClassModal(props: ClassModalProps) {
                 isDisabled={activeStep === 0}
                 leftIcon={<ArrowBackIcon />}
                 onClick={handlePreviousClick}
+                w={{ base: 'full', md: 'auto' }}
               >
                 Anterior
               </Button>
@@ -453,6 +474,7 @@ function ClassModal(props: ClassModalProps) {
                   onClick={handleSaveClick}
                   rightIcon={<DownloadIcon />}
                   isDisabled={stepsIsValid.filter((value) => !value).length > 0}
+                  w={{ base: 'full', md: 'auto' }}
                 >
                   Finalizar
                 </Button>
@@ -461,6 +483,7 @@ function ClassModal(props: ClassModalProps) {
                   colorScheme={'blue'}
                   rightIcon={<ArrowForwardIcon />}
                   onClick={handleNextClick}
+                  w={{ base: 'full', md: 'auto' }}
                 >
                   Próximo
                 </Button>

@@ -1,7 +1,10 @@
+import { AddIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Box,
   Flex,
   Spacer,
+  Text,
   useColorMode,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -24,6 +27,7 @@ import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilte
 import useSubjects from '../../hooks/useSubjetcts';
 import { ClassroomFullResponse } from '../../models/http/responses/classroom.response.models';
 import ClassroomTimeGrid from '../../components/common/ClassroomTimeGrid/classroom.time.grid';
+import ReservationCardList from './ReservationCardList';
 
 function Reservations() {
   const { colorMode } = useColorMode();
@@ -131,35 +135,93 @@ function Reservations() {
   }, []);
 
   return (
-    <PageContent>
+    <PageContent horizontalScroll>
       <Loading
         isOpen={false}
         onClose={() => {
           return;
         }}
       />
-      <Flex align='center' direction={'row'}>
-        <PageHeaderWithFilter
-          {...header}
-          title='Reservas'
-          start={start}
-          end={end}
-          setStart={setStart}
-          setEnd={setEnd}
-          onConfirm={(start, end) => {
-            getReservations(start, end);
-          }}
-        />
-        <Spacer />
-        <Button
-          mr={2}
-          colorScheme={'blue'}
-          onClick={handleRegisterClick}
-          borderRadius={'10px'}
+      <Box w="100%" minW="344px">
+        <Flex
+          direction={{ base: 'column', lg: 'row' }}
+          align={{ base: 'stretch', lg: 'center' }}
+          gap={{ base: 3, lg: 0 }}
+          mb={4}
         >
-          Adicionar Reserva
-        </Button>
-      </Flex>
+          <Flex
+            direction={{ base: 'column', lg: 'row' }}
+            align={{ base: 'stretch', lg: 'center' }}
+            gap={{ base: 2, lg: '20px' }}
+            flex={1}
+            minW={0}
+          >
+            <Text
+              fontSize={{ base: '24px', lg: '4xl' }}
+              color="uspolis.text"
+              lineHeight={1.1}
+            >
+              Reservas
+            </Text>
+            <PageHeaderWithFilter
+              {...header}
+              title=""
+              tooltip="Ver reservas anteriores"
+              size="compact"
+              start={start}
+              end={end}
+              setStart={setStart}
+              setEnd={setEnd}
+              onConfirm={(start, end) => {
+                getReservations(start, end);
+              }}
+            />
+          </Flex>
+          <Spacer display={{ base: 'none', lg: 'block' }} />
+          <Button
+            display={{ base: 'none', lg: 'inline-flex' }}
+            mr={{ base: 0, lg: 2 }}
+            colorScheme="blue"
+            leftIcon={<AddIcon />}
+            onClick={handleRegisterClick}
+            borderRadius="10px"
+          >
+            Adicionar Reserva
+          </Button>
+        </Flex>
+        <Box display={{ base: 'none', lg: 'block' }} w="100%" overflowX="auto">
+          <DataTable
+            loading={loading}
+            data={reservations}
+            columns={columns}
+            columnPinning={{
+              left: [],
+              right: ['options'],
+            }}
+          />
+        </Box>
+        <Box display={{ base: 'block', lg: 'none' }} w="100%">
+          <ReservationCardList
+            reservations={reservations}
+            loading={loading}
+            handleViewClick={handleViewClick}
+            handleDuplicateClick={handleDuplicateClick}
+            handleEditClick={handleEditClick}
+            handleDeleteClick={handleDeleteClick}
+            handleEditOccurrencesClick={handleEditOccurrencesClick}
+            toolbarAction={
+              <Button
+                colorScheme="blue"
+                leftIcon={<AddIcon />}
+                onClick={handleRegisterClick}
+                w="full"
+              >
+                Adicionar
+              </Button>
+            }
+          />
+        </Box>
+      </Box>
       <ReservationModal
         onClose={() => {
           onCloseModal();
@@ -188,15 +250,6 @@ function Reservations() {
           }}
         />
       )}
-      <DataTable
-        loading={loading}
-        data={reservations}
-        columns={columns}
-        columnPinning={{
-          left: [],
-          right: ['options'],
-        }}
-      />
       <Dialog
         isOpen={isOpenDialog}
         onClose={() => {

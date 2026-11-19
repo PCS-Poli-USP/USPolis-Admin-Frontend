@@ -1,5 +1,6 @@
-import { Button, Flex } from '@chakra-ui/react';
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { useState } from 'react';
+import { AddIcon } from '@chakra-ui/icons';
 import {
   CreateBuilding,
   UpdateBuilding,
@@ -11,6 +12,7 @@ import { BuildingResponse } from '../../models/http/responses/building.response.
 import { getBuildingsColumns } from './Tables/building.tables';
 import useBuildings from '../../hooks/useBuildings';
 import PageContent from '../../components/common/PageContent';
+import BuildingCardList from './BuildingCardList';
 
 const Buildings = () => {
   const [contextBuilding, setContextBuilding] = useState<
@@ -53,13 +55,49 @@ const Buildings = () => {
   }
 
   return (
-    <PageContent>
-      <Flex justify={'flex-end'} mb={'10px'} w={'full'}>
-        <Button onClick={handleCreateButton} colorScheme={'blue'}>
-          Cadastrar
-        </Button>
-      </Flex>
-      <DataTable loading={loading} columns={columns} data={buildings} />
+    <PageContent horizontalScroll>
+      <Box w="100%" minW="344px">
+        <Flex
+          direction={{ base: 'column', md: 'row' }}
+          align={{ base: 'stretch', md: 'center' }}
+          gap={3}
+          mb={4}
+          w="full"
+        >
+          <Text fontSize={{ base: '24px', md: '4xl' }} color="uspolis.text">
+            Prédios
+          </Text>
+          <Box flex={1} display={{ base: 'none', md: 'block' }} />
+          <Button
+            display={{ base: 'none', md: 'inline-flex' }}
+            onClick={handleCreateButton}
+            colorScheme="blue"
+          >
+            Cadastrar
+          </Button>
+        </Flex>
+        <Box display={{ base: 'none', md: 'block' }} w="100%">
+          <DataTable loading={loading} columns={columns} data={buildings} />
+        </Box>
+        <Box display={{ base: 'block', md: 'none' }} w="100%">
+          <BuildingCardList
+            buildings={buildings}
+            loading={loading}
+            onEdit={handleEditButton}
+            onDelete={handleDeleteButton}
+            toolbarAction={
+              <Button
+                colorScheme="blue"
+                leftIcon={<AddIcon />}
+                onClick={handleCreateButton}
+                w="full"
+              >
+                Cadastrar
+              </Button>
+            }
+          />
+        </Box>
+      </Box>
       <BuildingModal
         isOpen={registerModalOpen}
         onClose={() => {

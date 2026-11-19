@@ -45,7 +45,11 @@ export default function ClassOccurrencesModal({
   return (
     <Modal size={'xl'} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        maxW={{ base: 'calc(100vw - 24px)', md: 'xl' }}
+        maxH={'90vh'}
+        overflowY={'auto'}
+      >
         <ModalHeader>{`Editar Ocorrências ${
           selectedClass.subject_code
         } - ${classNumberFromClassCode(selectedClass.code)}`}</ModalHeader>

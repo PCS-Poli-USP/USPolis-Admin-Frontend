@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import {
+  Box,
   Button,
   Flex,
   HStack,
@@ -10,6 +11,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import DataTable from '../../components/common/DataTable/dataTable.component';
+import InstitutionalEventCardList from './InstitutionalEventCardList';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import { GoSync } from 'react-icons/go';
 import { useEffect, useState } from 'react';
@@ -63,7 +65,7 @@ function InstitutionalEvents() {
   }
 
   return (
-    <PageContent>
+    <PageContent horizontalScroll>
       <InstitutionalEventModal
         isOpen={isOpenEventForm}
         onClose={onCloseEventForm}
@@ -83,6 +85,7 @@ function InstitutionalEvents() {
         title='Remover evento'
         warningText={`Tem certeza que deseja remover o evento "${selectedEvent?.title}"?`}
       />
+      <Box w="100%" minW="344px">
       <Flex h='100%' direction={'column'}>
         {loading && (
           <Spinner
@@ -95,24 +98,51 @@ function InstitutionalEvents() {
             color='uspolis.blue'
           />
         )}
-        <HStack gap={1}>
-          <Text fontSize='4xl' mb={4}>
+        <Flex
+          direction={{ base: 'column', md: 'row' }}
+          align={{ base: 'stretch', md: 'center' }}
+          gap={3}
+          mb={4}
+        >
+          <Text fontSize={{ base: '24px', md: '4xl' }} mb={{ base: 0, md: 4 }}>
             Eventos
           </Text>
           <Spacer />
-          <IconButton
-            colorScheme='blue'
-            icon={<GoSync />}
-            aria-label='Get events'
-            onClick={getEvents}
-          />
-          <Button colorScheme='blue' onClick={onOpenEventForm}>
-            Cadastrar evento
-          </Button>
-        </HStack>
+          <HStack display={{ base: 'none', md: 'flex' }}>
+            <IconButton
+              colorScheme='blue'
+              icon={<GoSync />}
+              aria-label='Get events'
+              onClick={getEvents}
+            />
+            <Button colorScheme='blue' onClick={onOpenEventForm}>
+              Cadastrar evento
+            </Button>
+          </HStack>
+        </Flex>
 
-        <DataTable loading={loading} data={events} columns={columns} />
+        <Box display={{ base: 'none', md: 'block' }} w="100%">
+          <DataTable loading={loading} data={events} columns={columns} />
+        </Box>
+        <Box display={{ base: 'block', md: 'none' }} w="100%">
+          <InstitutionalEventCardList
+            events={events}
+            loading={loading}
+            onEdit={handleEditInstitutionalEvent}
+            onDelete={handleDeleteInstitutionalEvent}
+            toolbarAction={
+              <Button
+                colorScheme="blue"
+                onClick={onOpenEventForm}
+                w="full"
+              >
+                Cadastrar evento
+              </Button>
+            }
+          />
+        </Box>
       </Flex>
+      </Box>
     </PageContent>
   );
 }

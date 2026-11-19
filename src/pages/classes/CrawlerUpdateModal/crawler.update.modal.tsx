@@ -59,7 +59,11 @@ function CrawlerUpdateModal({
       size={'xl'}
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        maxW={{ base: 'calc(100vw - 24px)', md: 'xl' }}
+        maxH={'90vh'}
+        overflowY={'auto'}
+      >
         <ModalHeader>Atualizar Disciplinas e Turmas</ModalHeader>
         <ModalCloseButton />
         <ModalBody>

@@ -10,6 +10,7 @@ export interface AllocationHeaderProps {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
+  onAllocationClick?: (eventId: string) => void;
 
   buildingSearchValue: string;
   setBuildingSearchValue: (value: string) => void;
@@ -39,6 +40,7 @@ function AllocationHeader({
   isOpen,
   onOpen,
   onClose,
+  onAllocationClick,
   buildingSearchValue,
   setBuildingSearchValue,
   classroomSearchValue,
@@ -63,6 +65,7 @@ function AllocationHeader({
       isOpen={isOpen}
       onOpen={onOpen}
       onClose={onClose}
+      onAllocationClick={onAllocationClick}
       buildingSearchValue={buildingSearchValue}
       setBuildingSearchValue={setBuildingSearchValue}
       classroomSearchValue={classroomSearchValue}

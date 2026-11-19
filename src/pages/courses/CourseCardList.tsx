@@ -1,17 +1,23 @@
 import {
-  Box,
   Divider,
   Flex,
   Heading,
+  HStack,
+  Tag,
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { ReactNode } from 'react';
+import {
+  BsBook,
+  BsFillPenFill,
+  BsFillTrashFill,
+} from 'react-icons/bs';
 
 import CardList from '../../components/common/CardList/CardList';
 import {
   CardFilter,
 } from '../../components/common/CardList/CardFilters';
-import ActionButtons from '../../components/common/ActionButtons/ActionButtons';
 
 import { CourseResponse } from '../../models/http/responses/course.response.models';
 import { getCoursePeriodLabel } from './CourseModal/coursePeriodLabel';
@@ -22,6 +28,7 @@ interface Props {
   handleEditClick: (course: CourseResponse) => void;
   handleDeleteClick: (course: CourseResponse) => void;
   handleViewCurriculums: (course: CourseResponse) => void;
+  toolbarAction: ReactNode;
 }
 
 export default function CourseCardList({
@@ -30,6 +37,7 @@ export default function CourseCardList({
   handleEditClick,
   handleDeleteClick,
   handleViewCurriculums,
+  toolbarAction,
 }: Props) {
   const filters: CardFilter<CourseResponse>[] = [
     {
@@ -78,59 +86,116 @@ export default function CourseCardList({
       loading={loading}
       emptyMessage="Nenhum curso cadastrado."
       filters={filters}
+      columns={{ base: 1 }}
+      toolbarAction={toolbarAction}
       renderCard={(course) => (
-        <Box
+        <Flex
           key={course.id}
-          borderWidth="1px"
-          borderRadius="lg"
-          p={4}
+          bg="uspolis.white"
+          border="1px solid"
+          borderColor="uspolis.border"
+          borderRadius="10px"
+          overflow="hidden"
           w="100%"
         >
-          <Flex
-            justify="space-between"
-            align="flex-start"
-            gap={3}
-          >
-            <VStack
-              align="start"
-              spacing={1}
-              flex={1}
+          <VStack align="stretch" spacing="12px" flex={1} minW={0} p="14px">
+            <Flex
+              align="flex-start"
+              justify="space-between"
+              gap={3}
+              wrap="wrap"
             >
-              <Heading size="md">
+              <Heading
+                size="md"
+                color="uspolis.black"
+                flex={1}
+                minW={0}
+                overflowWrap="anywhere"
+              >
                 {course.name}
               </Heading>
-
-              <Text>
-                <strong>Duração ideal:</strong>{' '}
-                {course.ideal_duration}
-              </Text>
-
-              <Text>
-                <strong>Duração mínima:</strong>{' '}
-                {course.minimal_duration}
-              </Text>
-
-              <Text>
-                <strong>Duração máxima:</strong>{' '}
-                {course.maximal_duration}
-              </Text>
-
-              <Text>
-                <strong>Período:</strong>{' '}
+              <Tag
+                flex="none"
+                borderRadius="20px"
+                colorScheme="blue"
+                fontSize="12.5px"
+                fontWeight="bold"
+              >
                 {getCoursePeriodLabel(course.period)}
-              </Text>
-            </VStack>
+              </Tag>
+            </Flex>
 
-            <ActionButtons
-              viewLabel="Ver Currículos"
-              onView={() => handleViewCurriculums(course)}
-              onEdit={() => handleEditClick(course)}
-              onDelete={() => handleDeleteClick(course)}
-            />
-          </Flex>
+            <Flex
+              wrap="wrap"
+              columnGap="18px"
+              rowGap="6px"
+              fontSize="13.5px"
+              color="uspolis.textMuted"
+            >
+              {[
+                { label: 'Duração ideal', value: course.ideal_duration },
+                { label: 'Duração mínima', value: course.minimal_duration },
+                { label: 'Duração máxima', value: course.maximal_duration },
+              ].map(({ label, value }) => (
+                <HStack
+                  key={label}
+                  spacing="7px"
+                >
+                  <Text fontWeight="medium" color="uspolis.text">
+                    {label}
+                  </Text>
+                  <Text>{value}</Text>
+                </HStack>
+              ))}
+            </Flex>
 
-          <Divider mt={4} />
-        </Box>
+            <Divider borderColor="uspolis.border" />
+
+            <HStack
+              spacing="6px"
+              flexWrap="wrap"
+              rowGap="6px"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <Tag
+                as="button"
+                onClick={() => handleViewCurriculums(course)}
+                size="lg"
+                variant="outline"
+                colorScheme="blue"
+                cursor="pointer"
+                gap="6px"
+              >
+                <BsBook size={12} />
+                Ver currículos
+              </Tag>
+              <Tag
+                as="button"
+                onClick={() => handleEditClick(course)}
+                size="lg"
+                variant="outline"
+                colorScheme="yellow"
+                cursor="pointer"
+                gap="6px"
+              >
+                <BsFillPenFill size={11} />
+                Editar
+              </Tag>
+              <Tag
+                as="button"
+                onClick={() => handleDeleteClick(course)}
+                size="lg"
+                variant="outline"
+                colorScheme="red"
+                cursor="pointer"
+                gap="6px"
+              >
+                <BsFillTrashFill size={11} />
+                Remover
+              </Tag>
+            </HStack>
+          </VStack>
+        </Flex>
       )}
     />
   );

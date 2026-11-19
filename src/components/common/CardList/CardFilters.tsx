@@ -4,16 +4,18 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  Box,
   Button,
-  Flex,
+  FormControl,
+  FormLabel,
   Input,
+  Radio,
+  RadioGroup,
+  Select,
+  SimpleGrid,
+  Stack,
   Text,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
-import { useMemo } from 'react';
-
-import TooltipSelect, { Option } from '../TooltipSelect';
 
 export interface CardFilterOption {
   value: string;
@@ -27,6 +29,7 @@ export interface CardFilter<T> {
   placeholder?: string;
   options?: CardFilterOption[];
   getValue?: (item: T) => string;
+  getSortValue?: (item: T) => string;
 }
 
 interface Props<T> {
@@ -34,6 +37,10 @@ interface Props<T> {
   values: Record<string, string>;
   onChange: (key: string, value: string) => void;
   onClear: () => void;
+  sortKey: string;
+  sortDirection: 'asc' | 'desc';
+  onSortKeyChange: (key: string) => void;
+  onSortDirectionChange: (direction: 'asc' | 'desc') => void;
 }
 
 export default function CardFilters<T>({
@@ -41,183 +48,141 @@ export default function CardFilters<T>({
   values,
   onChange,
   onClear,
+  sortKey,
+  sortDirection,
+  onSortKeyChange,
+  onSortDirectionChange,
 }: Props<T>) {
-  const activeFilterCount = useMemo(
-    () =>
-      Object.values(values).filter(
-        (value) => value !== '',
-      ).length,
-    [values],
-  );
-
-  const hasActiveFilters = activeFilterCount > 0;
-
-  const renderFilter = (filter: CardFilter<T>) => {
-    if (filter.type === 'select') {
-      const options: Option[] =
-        filter.options?.map((option) => ({
-          value: option.value,
-          label: option.label,
-        })) ?? [];
-
-      const selectedOption =
-        options.find(
-          (option) =>
-            option.value === values[filter.key],
-        ) ?? null;
-
-      return (
-        <Box
-          key={filter.key}
-          w="100%"
-        >
-          <TooltipSelect
-            placeholder={filter.label}
-            options={options}
-            value={selectedOption}
-            onChange={(option) =>
-              onChange(
-                filter.key,
-                option?.value?.toString() ?? '',
-              )
-            }
-            isClearable
-            isSearchable={false}
-            styles={{
-              control: (base, state) => ({
-                ...base,
-                minHeight: '32px',
-                height: '32px',
-                boxSizing: 'border-box',
-                borderRadius: '0',
-                borderColor: state.isFocused
-                  ? '#3182CE'
-                  : '#CBD5E0',
-                boxShadow: state.isFocused
-                  ? '0 0 0 1px #3182CE'
-                  : 'none',
-                '&:hover': {
-                  borderColor: '#3182CE',
-                },
-              }),
-
-              valueContainer: (base) => ({
-                ...base,
-                height: '30px',
-                minHeight: '0',
-                padding: '0 12px',
-              }),
-
-              input: (base) => ({
-                ...base,
-                margin: '0',
-                padding: '0',
-              }),
-
-              placeholder: (base) => ({
-                ...base,
-                color: '#718096',
-                fontSize: '16px',
-                margin: '0',
-              }),
-
-              singleValue: (base) => ({
-                ...base,
-                fontSize: '16px',
-                margin: '0',
-              }),
-
-              indicatorsContainer: (base) => ({
-                ...base,
-                height: '30px',
-              }),
-
-              dropdownIndicator: (base) => ({
-                ...base,
-                padding: '4px 10px',
-              }),
-
-              clearIndicator: (base) => ({
-                ...base,
-                padding: '4px 6px',
-              }),
-
-              menu: (base) => ({
-                ...base,
-                zIndex: 10,
-              }),
-            }}
-          />
-        </Box>
-      );
-    }
-
-    return (
-      <Input
-        key={filter.key}
-        value={values[filter.key] ?? ''}
-        onChange={(event) =>
-          onChange(
-            filter.key,
-            event.target.value,
-          )
-        }
-        placeholder={
-          filter.placeholder ?? filter.label
-        }
-        size="sm"
-        w="100%"
-      />
-    );
-  };
+  const hasActiveTools =
+    !!sortKey ||
+    Object.values(values).some((value) => value !== '');
 
   return (
-    <Box mb={4} w="100%">
-      <Accordion allowToggle>
-        <AccordionItem
-          border="1px solid"
-          borderColor="gray.200"
-          borderRadius="md"
-        >
-          <AccordionButton>
-            <Box flex="1" textAlign="left">
-              <Text fontWeight="medium">
-                Filtros
-                {hasActiveFilters &&
-                  ` (${activeFilterCount})`}
+    <Stack spacing={5} w="100%">
+      {filters.length > 0 && (
+        <Accordion allowToggle>
+          <AccordionItem bg="uspolis.white" border="1px solid" borderColor="uspolis.border" borderRadius="md">
+            <AccordionButton>
+              <Text flex={1} textAlign="left" fontWeight="semibold">
+                Filtrar por
               </Text>
-            </Box>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel pb={4}>
+              <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={3}>
+                {filters.map((filter) => (
+                  <FormControl key={filter.key}>
+                    <FormLabel fontSize="sm" mb={1}>
+                      {filter.label}
+                    </FormLabel>
+                    {filter.type === 'select' ? (
+                      <Select
+                        value={values[filter.key] ?? ''}
+                        onChange={(event) =>
+                          onChange(filter.key, event.target.value)
+                        }
+                        placeholder="Todos"
+                        bg="uspolis.white"
+                        color="uspolis.black"
+                        sx={{
+                          '& option': {
+                            bg: 'uspolis.white',
+                            color: 'uspolis.black',
+                          },
+                        }}
+                      >
+                        {(filter.options ?? []).map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </Select>
+                    ) : (
+                      <Input
+                        value={values[filter.key] ?? ''}
+                        onChange={(event) =>
+                          onChange(filter.key, event.target.value)
+                        }
+                        placeholder={filter.placeholder ?? filter.label}
+                      />
+                    )}
+                  </FormControl>
+                ))}
+              </SimpleGrid>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      )}
 
+      <Accordion allowToggle>
+        <AccordionItem bg="uspolis.white" border="1px solid" borderColor="uspolis.border" borderRadius="md">
+          <AccordionButton>
+            <Text flex={1} textAlign="left" fontWeight="semibold">
+              Ordenar por
+            </Text>
             <AccordionIcon />
           </AccordionButton>
-
           <AccordionPanel pb={4}>
-            <Flex
-              direction={{ base: 'column', sm: 'row' }}
-              wrap="wrap"
-              gap={3}
-              w="100%"
-            >
-              {filters.map(renderFilter)}
-
-              {hasActiveFilters && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  leftIcon={<CloseIcon />}
-                  onClick={onClear}
-                  w={{
-                    base: '100%',
-                    sm: 'auto',
+            <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={3}>
+              <FormControl>
+                <FormLabel fontSize="sm" mb={1}>
+                  Campo
+                </FormLabel>
+                <Select
+                  value={sortKey}
+                  onChange={(event) => onSortKeyChange(event.target.value)}
+                  bg="uspolis.white"
+                  color="uspolis.black"
+                  sx={{
+                    '& option': {
+                      bg: 'uspolis.white',
+                      color: 'uspolis.black',
+                    },
                   }}
                 >
-                  Limpar filtros
-                </Button>
-              )}
-            </Flex>
+                  <option value="">Ordem original</option>
+                  {filters.map((filter) => (
+                    <option key={filter.key} value={filter.key}>
+                      {filter.label}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl isDisabled={!sortKey}>
+                <FormLabel fontSize="sm" mb={1}>
+                  Direção
+                </FormLabel>
+                <RadioGroup
+                  value={sortDirection}
+                  onChange={(value) =>
+                    onSortDirectionChange(value as 'asc' | 'desc')
+                  }
+                >
+                  <Stack direction="row" spacing={4} minH="40px">
+                    <Radio value="asc" isDisabled={!sortKey}>
+                      Crescente
+                    </Radio>
+                    <Radio value="desc" isDisabled={!sortKey}>
+                      Decrescente
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+              </FormControl>
+            </SimpleGrid>
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
-    </Box>
+
+      {hasActiveTools && (
+        <Button
+          alignSelf="flex-start"
+          variant="outline"
+          leftIcon={<CloseIcon />}
+          onClick={onClear}
+        >
+          Limpar filtros e ordenação
+        </Button>
+      )}
+    </Stack>
   );
 }

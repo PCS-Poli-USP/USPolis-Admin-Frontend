@@ -84,8 +84,9 @@ export function DrawerNavBar({
     <Box
       bg='uspolis.blue'
       color='uspolis.text'
-      px={4}
-      w={open && !isMobile ? 'auto' : '100vw'}
+      px={{ base: 2, sm: 4 }}
+      w={open && !isMobile ? 'auto' : '100%'}
+      minW={0}
     >
       <Flex
         h={'60px'}
@@ -115,23 +116,16 @@ export function DrawerNavBar({
               boxSize='40px'
               hidden={open && !isMobile}
             />
-            {isMobile && 'USPolis'}
           </NavLink>
 
           {!isMobile && <PageBreadcrumb pathname={location.pathname} />}
         </HStack>
-        <Flex alignItems={'center'} gap={'10px'}>
-          {isMobile ? (
-            <IconButton
-              id='docs-button'
-              as={'a'}
-              href={getDocsLocalPath()}
-              rel='noopener noreferrer'
-              target='_blank'
-              aria-label='docs'
-              icon={<GrDocumentText />}
-            />
-          ) : (
+        <Flex
+          alignItems={'center'}
+          gap={{ base: '4px', sm: '10px' }}
+          minW={0}
+        >
+          {!isMobile && (
             <Button
               id='docs-button'
               as={'a'}

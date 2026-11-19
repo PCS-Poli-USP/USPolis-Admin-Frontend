@@ -18,6 +18,7 @@ import { getClassroomColumns } from './Tables/classroom.tables';
 import PageContent from '../../components/common/PageContent';
 import useGroups from '../../hooks/groups/useGroups';
 import { AddIcon } from '@chakra-ui/icons';
+import ClassroomCardList from './ClassroomCardList';
 // import { FaUserLock } from 'react-icons/fa';
 // import ClassroomPermissions from './ClassroomPermission/classroom.permission';
 // import useUsers from '../../hooks/users/useUsers';
@@ -120,7 +121,7 @@ function Classrooms() {
   // }, []);
 
   return (
-    <PageContent>
+    <PageContent horizontalScroll>
       <ClassroomModal
         isOpen={isOpenModal}
         onClose={() => {
@@ -153,13 +154,18 @@ function Classrooms() {
           'Essa ação é irreversível e irá desalocar todas turmas e apagará todas reservas que usam essa sala'
         }
       />
-      <Box p={0} w='100%' overflowX='auto'>
-        <Flex align='center'>
-          <Text fontSize='4xl' mb={4}>
+      <Box w="100%" minW="344px">
+        <Flex
+          direction={{ base: 'column', lg: 'row' }}
+          align={{ base: 'stretch', lg: 'center' }}
+          gap={{ base: 3, lg: 0 }}
+          mb={4}
+        >
+          <Text fontSize={{ base: '24px', lg: '4xl' }} color="uspolis.text">
             Salas de aula
           </Text>
           <Spacer />
-          <Flex gap={'5px'}>
+          <Flex gap="5px" display={{ base: 'none', lg: 'flex' }}>
             {/* <Button
               rightIcon={<FaUserLock />}
               onClick={() => onOpenPermissions()}
@@ -176,12 +182,37 @@ function Classrooms() {
             </Button>
           </Flex>
         </Flex>
-        <DataTable
-          loading={loading || loadingBuildings || loadingGroups}
-          data={classrooms}
-          columns={columns}
-          columnPinning={{ left: ['name'], right: ['options'] }}
-        />
+        <Box
+          display={{ base: 'none', lg: 'block' }}
+          w="100%"
+          overflowX="auto"
+        >
+          <DataTable
+            loading={loading || loadingBuildings || loadingGroups}
+            data={classrooms}
+            columns={columns}
+            columnPinning={{ left: ['name'], right: ['options'] }}
+          />
+        </Box>
+        <Box display={{ base: 'block', lg: 'none' }} w="100%">
+          <ClassroomCardList
+            classrooms={classrooms}
+            loading={loading || loadingBuildings || loadingGroups}
+            onDuplicate={handleDuplicateClick}
+            onEdit={handleEditClick}
+            onDelete={handleDeleteClick}
+            toolbarAction={
+              <Button
+                colorScheme="blue"
+                leftIcon={<AddIcon />}
+                onClick={handleCreateClick}
+                w="full"
+              >
+                Cadastrar
+              </Button>
+            }
+          />
+        </Box>
       </Box>
     </PageContent>
   );

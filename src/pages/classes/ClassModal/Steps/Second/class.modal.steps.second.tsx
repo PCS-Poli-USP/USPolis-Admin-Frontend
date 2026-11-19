@@ -1,4 +1,4 @@
-import { HStack, Text, VStack } from '@chakra-ui/react';
+import { Stack, Text, VStack } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
 import { Input } from '../../../../../components/common';
 import { ClassModalSecondStepProps } from './class.modal.steps.second.interface';
@@ -23,7 +23,13 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
           <Text as={'b'} fontSize={'lg'}>
             Datas e Calendários da Disciplina
           </Text>
-          <HStack spacing='5px' mt={4} w={'full'} mb={4}>
+          <Stack
+            direction={{ base: 'column', md: 'row' }}
+            spacing='5px'
+            mt={4}
+            w={'full'}
+            mb={4}
+          >
             <Input
               label={'Data de início da turma'}
               name={'start_date'}
@@ -42,7 +48,7 @@ function ClassModalSecondStep(props: ClassModalSecondStepProps) {
                 handleSelectClassDate(event.target.value, false)
               }
             />
-          </HStack>
+          </Stack>
           <MultiSelectInput
             label={'Calendários (Opcional)'}
             name={'calendar_ids'}

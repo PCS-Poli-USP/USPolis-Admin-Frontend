@@ -116,6 +116,14 @@ const override: ThemeOverride = {
         },
       }),
     },
+    Drawer: {
+      baseStyle: () => ({
+        dialog: {
+          bg: 'uspolis.white',
+          color: 'uspolis.text',
+        },
+      }),
+    },
     Tabs: {
       baseStyle: () => ({
         tab: {

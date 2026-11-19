@@ -118,18 +118,22 @@ function InstitutionalEventModal({
       onClose={onClose}
       isOpen={isOpen}
       closeOnOverlayClick={false}
-      size='3xl'
+      size={'3xl'}
       isCentered
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        maxW={{ base: 'calc(100vw - 24px)', md: '3xl' }}
+        maxH={'90vh'}
+        overflowY={'auto'}
+      >
         <ModalHeader>
           {!!selectedEvent ? 'Atualizar Evento' : 'Cadastrar Evento'}
         </ModalHeader>
         <ModalCloseButton />
         <FormProvider {...form}>
           <form>
-            <ModalBody>
+            <ModalBody overflowY='auto'>
               <VStack gap={4}>
                 <Box w='100%' alignSelf='start'>
                   <Input label='Título' name='title' />
@@ -150,7 +154,11 @@ function InstitutionalEventModal({
                 {fullDayEvent ? (
                   <Input label='Data' name='start' type='date' />
                 ) : (
-                  <Flex w='100%' gap={3}>
+                  <Flex
+                    w='100%'
+                    gap={3}
+                    direction={{ base: 'column', sm: 'row' }}
+                  >
                     <Input label='Início' name='start' type='datetime-local' />
                     <Input label='Fim' name='end' type='datetime-local' />
                   </Flex>
@@ -161,7 +169,11 @@ function InstitutionalEventModal({
                   disabled={buildingWatcher ? true : false}
                 />
                 <Text color='gray.500'>ou</Text>
-                <Flex w='100%' gap={3}>
+                <Flex
+                  w='100%'
+                  gap={3}
+                  direction={{ base: 'column', sm: 'row' }}
+                >
                   <SelectInput
                     label='Prédio'
                     name='building'
@@ -177,7 +189,11 @@ function InstitutionalEventModal({
                     disabled={!!locationWatcher}
                   />
                 </Flex>
-                <Flex w='100%' gap={3}>
+                <Flex
+                  w='100%'
+                  gap={3}
+                  direction={{ base: 'column', sm: 'row' }}
+                >
                   <SelectInput
                     label='Categoria'
                     name='category'
@@ -190,8 +206,16 @@ function InstitutionalEventModal({
                 </Flex>
               </VStack>
             </ModalBody>
-            <ModalFooter>
-              <Button onClick={onClose} colorScheme='red' mr={'10px'}>
+            <ModalFooter
+              flexDirection={{ base: 'column-reverse', md: 'row' }}
+              gap={3}
+            >
+              <Button
+                onClick={onClose}
+                colorScheme='red'
+                mr={{ base: 0, md: '10px' }}
+                w={{ base: '100%', md: 'auto' }}
+              >
                 Cancelar
               </Button>
               <Button
@@ -200,6 +224,7 @@ function InstitutionalEventModal({
                 }
                 colorScheme='blue'
                 isLoading={loading}
+                w={{ base: '100%', md: 'auto' }}
               >
                 Confirmar
               </Button>

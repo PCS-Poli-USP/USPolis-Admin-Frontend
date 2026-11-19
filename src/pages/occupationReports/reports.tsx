@@ -243,7 +243,12 @@ const ReportsPage = () => {
             salas sub ocupadas, com poucos alunos para muita capacidade.
           </Text>
         </Flex>
-        <Flex direction='row' gap={4} mb={4} justify={'center'}>
+        <Flex
+          direction={{ base: 'column', md: 'row' }}
+          gap={4}
+          mb={4}
+          justify={'center'}
+        >
           <PageHeaderWithFilter
             title=''
             start={start}

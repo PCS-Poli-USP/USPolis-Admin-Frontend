@@ -4,11 +4,13 @@ import { Box, Center, Flex, useMediaQuery } from '@chakra-ui/react';
 interface PageContentProps {
   children?: ReactNode;
   center?: boolean;
+  horizontalScroll?: boolean;
 }
 
 const PageContent: React.FC<PageContentProps> = ({
   children,
   center = false,
+  horizontalScroll = false,
 }) => {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   return (
@@ -19,7 +21,12 @@ const PageContent: React.FC<PageContentProps> = ({
       // overflow={'auto'}
       mt={'60px'}
     >
-      <Box p={isMobile ? '8px' : '16px'} w={'100%'} h={'100%'}>
+      <Box
+        p={isMobile ? '8px' : '16px'}
+        w={'100%'}
+        h={'100%'}
+        overflowX={horizontalScroll ? 'auto' : undefined}
+      >
         {center && <Center>{children}</Center>}
         {!center && children}
       </Box>

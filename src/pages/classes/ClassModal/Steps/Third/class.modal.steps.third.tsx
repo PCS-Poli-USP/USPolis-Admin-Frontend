@@ -3,7 +3,7 @@ import {
   AlertIcon,
   Button,
   HStack,
-  Spacer,
+  Stack,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -280,7 +280,12 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
     <VStack mt={5} width={'100%'} align={'stretch'} spacing={4}>
       <FormProvider {...props.form}>
         <form>
-          <HStack align={'center'} mt={4}>
+          <Stack
+            direction={{ base: 'column', md: 'row' }}
+            align={'stretch'}
+            mt={4}
+            spacing={3}
+          >
             <SelectInput
               label={'Recorrência'}
               name={'recurrence'}
@@ -319,9 +324,14 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
                 value: value,
               }))}
             />
-          </HStack>
+          </Stack>
 
-          <HStack spacing='5px' mt={4} alignItems={'stretch'}>
+          <Stack
+            direction={{ base: 'column', md: 'row' }}
+            spacing='5px'
+            mt={4}
+            alignItems={'stretch'}
+          >
             <Input
               label={'Início da agenda'}
               name={'schedule_start_date'}
@@ -334,9 +344,14 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
               placeholder='Data de fim  da agenda'
               type='date'
             />
-          </HStack>
+          </Stack>
 
-          <HStack mt={4}>
+          <Stack
+            direction={{ base: 'column', sm: 'row' }}
+            mt={4}
+            spacing={3}
+            align={{ base: 'stretch', sm: 'flex-end' }}
+          >
             <Input
               label={'Horário de início'}
               name={'start_time'}
@@ -351,23 +366,27 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
             />
             <Button
               colorScheme='teal'
-              mt={8}
-              w={240}
+              mt={{ base: 0, sm: 8 }}
+              w={{ base: 'full', sm: 240 }}
               onClick={handleScheduleButton}
               disabled={selectedDays.length === 0 && isSelecting}
             >
               {isUpdatingSchedule ? 'Atualizar' : 'Adicionar'}
             </Button>
-          </HStack>
+          </Stack>
 
-          <HStack mt={4} align={'stretch'}>
+          <Stack
+            direction={{ base: 'column', lg: 'row' }}
+            mt={4}
+            spacing={4}
+            align={'stretch'}
+          >
             <ScheduleList
               schedules={props.schedules}
               handleUpdateScheduleClick={handleUpdateScheduleClick}
               handleDeleteScheduleClick={handleDeleteScheduleClick}
             />
-            <Spacer />
-            <VStack alignContent={'strech'} maxH={320} mb={'30px'}>
+            <VStack align={'stretch'} maxH={{ base: 'none', lg: 320 }} mb={'30px'} w={'full'}>
               <Text fontSize={'md'} fontWeight={'bold'}>
                 {isSelecting
                   ? 'Selecione as datas'
@@ -387,7 +406,7 @@ function ClassModalThirdStep(props: ClassModalThirdStepProps) {
                 readOnly={!isSelecting}
               />
             </VStack>
-          </HStack>
+          </Stack>
         </form>
       </FormProvider>
     </VStack>

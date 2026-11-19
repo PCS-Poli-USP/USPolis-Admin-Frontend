@@ -6,6 +6,7 @@ import { getUserSessionsColumns } from './Tables/userSession.table';
 import Dialog from '../../components/common/Dialog/dialog.component';
 import { useState } from 'react';
 import { UserSessionResponse } from '../../models/http/responses/userSession.response.models';
+import PageHeader from '../../components/common/PageHeader';
 
 function UserSessions() {
   const { loading, sessions, deleteUserSession } = useUsersSessions();
@@ -36,7 +37,7 @@ function UserSessions() {
           }
         }}
       />
-      {/* <PageHeader title='Sessões de Usuários' /> */}
+      <PageHeader title='Sessões de Usuários' />
       <Skeleton isLoaded={!loading} w='100%'>
         <DataTable data={sessions} columns={columns} />
       </Skeleton>

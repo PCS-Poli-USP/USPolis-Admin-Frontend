@@ -119,7 +119,11 @@ export default function CrawlerJupiterModal({
       scrollBehavior='outside'
     >
       <ModalOverlay />
-      <ModalContent h={'full'} maxH={'85vh'} overflowY={'auto'}>
+      <ModalContent
+        maxW={{ base: 'calc(100vw - 24px)', md: '4xl' }}
+        maxH={'90vh'}
+        overflowY={'auto'}
+      >
         <ModalHeader>Disciplinas e Turmas</ModalHeader>
         <ModalCloseButton />
         <ModalBody>

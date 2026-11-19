@@ -5,6 +5,15 @@ import {
   Button,
   Spacer,
   useDisclosure,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  VStack,
+  useMediaQuery,
   Menu,
   MenuButton,
   MenuList,
@@ -28,6 +37,7 @@ import {
 } from 'react-router-dom';
 
 import PageContent from '../../components/common/PageContent';
+import PageBreadcrumb from '../../components/common/PageBreadcrumb';
 
 import DataTable from '../../components/common/DataTable/dataTable.component';
 
@@ -63,6 +73,7 @@ export default function Curriculums() {
   const { courseId } = useParams();
 
   const location = useLocation() as {
+    pathname: string;
     state?: {
       course?: CourseResponse;
     };
@@ -70,6 +81,7 @@ export default function Curriculums() {
 
   const navigate = useNavigate();
   const showToast = useCustomToast();
+  const [isResponsive] = useMediaQuery('(max-width: 1024px)');
 
   const { getAll, deleteById } =
     useCurriculumsService();
@@ -127,6 +139,12 @@ export default function Curriculums() {
     isOpen: isOpenCrawlerJupiterModal,
     onOpen: onOpenCrawlerJupiterModal,
     onClose: onCloseCrawlerJupiterModal,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenOptionsDrawer,
+    onOpen: onOpenOptionsDrawer,
+    onClose: onCloseOptionsDrawer,
   } = useDisclosure();
 
   async function fetchData() {
@@ -251,9 +269,80 @@ export default function Curriculums() {
       handleDeleteClick,
       handleViewSubjects,
     });
+  const optionsButtonBg = 'uspolis.blue';
+  const optionsButtonColor = 'white';
+  const renderOptionsMenu = () => (
+    <Menu>
+      <MenuButton
+        as={Button}
+        bg={optionsButtonBg}
+        color={optionsButtonColor}
+        _hover={{ opacity: 0.88 }}
+        leftIcon={<AddIcon />}
+        borderRadius="8px"
+      >
+        Opções
+      </MenuButton>
+
+      <MenuList
+        w="300px"
+        border="1px"
+        bgColor="uspolis.white"
+      >
+        <MenuGroup
+          title="Adição"
+          fontSize="lg"
+          gap="5px"
+        >
+          <MenuDivider />
+
+          <MenuItem
+            as={Button}
+            bgColor="uspolis.white"
+            justifyContent="flex-start"
+            onClick={handleRegisterClick}
+            leftIcon={<LuHand />}
+            _hover={{
+              textColor: 'uspolis.white',
+            }}
+          >
+            Manual
+          </MenuItem>
+
+          <MenuDivider />
+
+          <MenuItem
+            as={Button}
+            bgColor="uspolis.white"
+            justifyContent="flex-start"
+            leftIcon={<LuTimer />}
+            onClick={onOpenCrawlerJupiterModal}
+            _hover={{
+              textColor: 'uspolis.white',
+            }}
+          >
+            Júpiter
+          </MenuItem>
+        </MenuGroup>
+      </MenuList>
+    </Menu>
+  );
+  const renderOptionsDrawerTrigger = () => (
+    <Button
+      bg={optionsButtonBg}
+      color={optionsButtonColor}
+      _hover={{ opacity: 0.88 }}
+      leftIcon={<AddIcon />}
+      borderRadius="8px"
+      w="full"
+      onClick={onOpenOptionsDrawer}
+    >
+      Opções
+    </Button>
+  );
 
   return (
-    <PageContent>
+    <PageContent horizontalScroll>
       <CreateCurriculumModal
         isOpen={isOpenCreate}
         onClose={onCloseCreate}
@@ -295,7 +384,73 @@ export default function Curriculums() {
         warningText='Essa ação é irreversível.'
       />
 
-      <Box w="100%">
+      <Drawer
+        isOpen={isOpenOptionsDrawer}
+        onClose={onCloseOptionsDrawer}
+        placement="bottom"
+        size="full"
+      >
+        <DrawerOverlay />
+        <DrawerContent
+          h="80vh"
+          maxH="80vh"
+          bg="uspolis.white"
+          borderTopRadius="16px"
+          overflow="hidden"
+        >
+          <DrawerCloseButton />
+          <DrawerHeader borderBottomWidth="1px">Opções</DrawerHeader>
+          <DrawerBody overflowY="auto" py={5}>
+            <VStack align="stretch" spacing={3}>
+              <Text fontWeight="semibold">Adição</Text>
+              <Button
+                variant="outline"
+                bg="uspolis.white"
+                color="uspolis.text"
+                borderColor="uspolis.border"
+                _hover={{ bg: 'uspolis.hover' }}
+                justifyContent="flex-start"
+                leftIcon={<LuHand />}
+                onClick={() => {
+                  onCloseOptionsDrawer();
+                  handleRegisterClick();
+                }}
+              >
+                Manual
+              </Button>
+              <Button
+                variant="outline"
+                bg="uspolis.white"
+                color="uspolis.text"
+                borderColor="uspolis.border"
+                _hover={{ bg: 'uspolis.hover' }}
+                justifyContent="flex-start"
+                leftIcon={<LuTimer />}
+                onClick={() => {
+                  onCloseOptionsDrawer();
+                  onOpenCrawlerJupiterModal();
+                }}
+              >
+                Júpiter
+              </Button>
+            </VStack>
+          </DrawerBody>
+          <DrawerFooter borderTopWidth="1px">
+            <Button colorScheme="blue" w="full" onClick={onCloseOptionsDrawer}>
+              Fechar
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+
+      <Box w="100%" minW="344px">
+        <Box display={{ base: 'block', md: 'none' }} mb={2}>
+          <PageBreadcrumb
+            pathname={location.pathname}
+            color="uspolis.textMuted"
+            wrap
+          />
+        </Box>
         <Flex
           direction={{ base: 'column', md: 'row' }}
           align={{ base: 'stretch', md: 'center' }}
@@ -310,59 +465,11 @@ export default function Curriculums() {
 
           <Spacer />
 
-          <Menu>
-            <MenuButton
-              as={Button}
-              colorScheme="blue"
-              leftIcon={<AddIcon />}
-              borderRadius="20px"
-              w={{ base: '100%', md: 'auto' }}
-            >
-              Opções
-            </MenuButton>
-
-            <MenuList
-              w="300px"
-              border="1px"
-              bgColor="uspolis.white"
-            >
-              <MenuGroup
-                title="Adição"
-                fontSize="lg"
-                gap="5px"
-              >
-                <MenuDivider />
-
-                <MenuItem
-                  as={Button}
-                  bgColor="uspolis.white"
-                  justifyContent="flex-start"
-                  onClick={handleRegisterClick}
-                  leftIcon={<LuHand />}
-                  _hover={{
-                    textColor: 'uspolis.white',
-                  }}
-                >
-                  Manual
-                </MenuItem>
-
-                <MenuDivider />
-
-                <MenuItem
-                  as={Button}
-                  bgColor="uspolis.white"
-                  justifyContent="flex-start"
-                  leftIcon={<LuTimer />}
-                  onClick={onOpenCrawlerJupiterModal}
-                  _hover={{
-                    textColor: 'uspolis.white',
-                  }}
-                >
-                  Júpiter
-                </MenuItem>
-              </MenuGroup>
-            </MenuList>
-          </Menu>
+          <Box display={{ base: 'none', md: 'block' }}>
+            {isResponsive
+              ? renderOptionsDrawerTrigger()
+              : renderOptionsMenu()}
+          </Box>
         </Flex>
 
         {/* Desktop / notebook */}
@@ -399,6 +506,7 @@ export default function Curriculums() {
             handleEditClick={handleEditClick}
             handleDeleteClick={handleDeleteClick}
             handleViewSubjects={handleViewSubjects}
+            toolbarAction={renderOptionsDrawerTrigger()}
           />
         </Box>
       </Box>

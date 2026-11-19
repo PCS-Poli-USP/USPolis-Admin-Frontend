@@ -26,7 +26,7 @@ const useInstitutionalEventsService = () => {
     id: number,
     data: UpdateInstitutionalEvent,
   ): Promise<AxiosResponse<InstitutionalEventResponse>> => {
-    return axios.patch(`${PREFIX}/${id}`, data);
+    return axios.put(`${PREFIX}/${id}`, data);
   };
 
   const deleteById = (id: number): Promise<AxiosResponse<undefined>> => {

@@ -45,6 +45,8 @@ function Courses() {
 
   const [courses, setCourses] = useState<CourseResponse[]>([]);
   const [loading, setLoading] = useState(false);
+  const mobileActionBg = 'uspolis.blue';
+  const mobileActionColor = 'white';
 
   async function fetchCourses() {
     setLoading(true);
@@ -139,7 +141,7 @@ function Courses() {
     });
 
   return (
-    <PageContent>
+    <PageContent horizontalScroll>
       <CourseModal
         isOpen={isOpenModal}
         onClose={() => {
@@ -160,57 +162,75 @@ function Courses() {
         warningText="Essa ação é irreversível."
       />
 
-      <Box w="100%">
-  <Flex
-    direction={{ base: 'column', lg: 'row' }}
-    align={{ base: 'stretch', lg: 'center' }}
-    gap={{ base: 3, lg: 0 }}
-    mb={4}
-  >
-    <Text fontSize={{ base: '2xl', lg: '4xl' }}>
-      Cursos
-    </Text>
+      <Box w="100%" minW="344px">
+        <Flex
+          direction={{ base: 'column', lg: 'row' }}
+          align={{ base: 'stretch', lg: 'center' }}
+          gap={{ base: 3, lg: 0 }}
+          mb={4}
+        >
+          <Text
+            fontSize={{ base: '24px', lg: '4xl' }}
+            color="uspolis.text"
+            lineHeight={1.1}
+          >
+            Cursos
+          </Text>
 
-    <Spacer />
+          <Spacer />
 
-    <Button
-      colorScheme="blue"
-      rightIcon={<AddIcon />}
-      onClick={handleCreateClick}
-      w={{ base: '100%', lg: 'auto' }}
-    >
-      Cadastrar
-    </Button>
-  </Flex>
+          <Button
+            display={{ base: 'none', lg: 'inline-flex' }}
+            borderRadius="8px"
+            colorScheme="blue"
+            leftIcon={<AddIcon boxSize="10px" />}
+            onClick={handleCreateClick}
+            whiteSpace="nowrap"
+            w={{ base: '100%', lg: 'auto' }}
+          >
+            Cadastrar
+          </Button>
+        </Flex>
 
-    <Box
-      display={{ base: 'none', lg: 'block' }}
-      w="100%"
-      overflowX="auto"
-    >
-      <DataTable
-        loading={loading}
-        data={courses}
-        columns={columns}
-        columnPinning={{
-          left: ['name'],
-          right: ['options'],
-        }}
-      />
-    </Box>
-    <Box
-      display={{ base: 'block', lg: 'none' }}
-      w="100%"
-    >
-      <CourseCardList
-        courses={courses}
-        loading={loading}
-        handleEditClick={handleEditClick}
-        handleDeleteClick={handleDeleteClick}
-        handleViewCurriculums={handleViewCurriculums}
-      />
-    </Box>
-  </Box>
+        <Box
+          display={{ base: 'none', lg: 'block' }}
+          w="100%"
+          overflowX="auto"
+        >
+          <DataTable
+            loading={loading}
+            data={courses}
+            columns={columns}
+            columnPinning={{
+              left: ['name'],
+              right: ['options'],
+            }}
+          />
+        </Box>
+        <Box display={{ base: 'block', lg: 'none' }} w="100%">
+          <CourseCardList
+            courses={courses}
+            loading={loading}
+            handleEditClick={handleEditClick}
+            handleDeleteClick={handleDeleteClick}
+            handleViewCurriculums={handleViewCurriculums}
+            toolbarAction={
+              <Button
+                borderRadius="8px"
+                bg={mobileActionBg}
+                color={mobileActionColor}
+                _hover={{ opacity: 0.88 }}
+                leftIcon={<AddIcon boxSize="10px" />}
+                onClick={handleCreateClick}
+                whiteSpace="nowrap"
+                w="full"
+              >
+                Cadastrar
+              </Button>
+            }
+          />
+        </Box>
+      </Box>
     </PageContent>
   );
 }

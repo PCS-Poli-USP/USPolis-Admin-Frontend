@@ -59,7 +59,9 @@ function MobileHeader() {
             objectFit={'contain'}
             boxSize={'50px'}
           />
-          <Text fontSize={'2xl'}>USPolis</Text>
+          <Text fontSize={'2xl'} display={{ base: 'none', sm: 'block' }}>
+            USPolis
+          </Text>
         </HStack>
       </Link>
 
@@ -86,7 +88,7 @@ function MobileHeader() {
             });
           }}
         >
-          Salas
+          Mapa de Salas
         </Button>
         <Text fontSize={'3xl'}>|</Text>
         {context.loggedUser ? (

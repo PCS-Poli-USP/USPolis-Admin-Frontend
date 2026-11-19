@@ -58,6 +58,8 @@ interface CustomCalendarProps {
   view: ViewOption;
   setView: (view: ViewOption) => void;
   isMobile: boolean;
+  mobileEventRequest?: { eventId: string; sequence: number } | null;
+  onMobileEventRequestHandled?: () => void;
   loading?: boolean;
 }
 
@@ -77,6 +79,8 @@ function CustomCalendar({
   isMobile,
   view,
   setView,
+  mobileEventRequest,
+  onMobileEventRequestHandled,
   loading = false,
 }: CustomCalendarProps) {
   const { registerControlFn, state } = useFeatureGuideContext();
@@ -118,6 +122,24 @@ function CustomCalendar({
     onOpen: onOpenModal,
     onClose: onCloseModal,
   } = useDisclosure();
+
+  useEffect(() => {
+    if (!mobileEventRequest) return;
+
+    const event = calendarRef.current
+      ?.getApi()
+      .getEventById(mobileEventRequest.eventId);
+    if (!event) return;
+
+    setSelectedEvent(event);
+    onOpenModal();
+    onMobileEventRequestHandled?.();
+  }, [
+    calendarRef,
+    mobileEventRequest,
+    onMobileEventRequestHandled,
+    onOpenModal,
+  ]);
 
   const {
     isOpen: isOpenReservationModal,
@@ -317,7 +339,12 @@ function CustomCalendar({
   }, [calendarRef, view.value, isMobile]);
 
   return (
-    <Box paddingBottom={4} zIndex={-1} w={'100%'}>
+    <Box
+      paddingBottom={4}
+      zIndex={-1}
+      w={'100%'}
+      display={isMobile ? 'none' : undefined}
+    >
       <DatePickerModal
         isOpen={isOpen}
         onClose={onClose}

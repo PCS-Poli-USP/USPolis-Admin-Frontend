@@ -33,8 +33,8 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
   const calendarsNames = calendars.map((calendar) => calendar.name);
 
   return (
-    <VStack mt={5} ml={5} mb={5} width={'100%'} align={'stretch'}>
-      <HStack align={'center'}>
+    <VStack mt={5} ml={{ base: 0, md: 5 }} mb={5} width={'100%'} align={'stretch'}>
+      <HStack align={'center'} wrap={'wrap'}>
         <Heading size={'md'}>Informações da Turma</Heading>
         <Button
           size={'sm'}
@@ -46,23 +46,23 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
         </Button>
       </HStack>
 
-      <HStack>
+      <HStack wrap={'wrap'}>
         <Text as={'b'}>{`Disciplina: `}</Text>
         <Text color={subject ? undefined : 'red'}>
           {subject ? subject.name : 'Não encontrada'}
         </Text>
       </HStack>
-      <HStack>
+      <HStack wrap={'wrap'}>
         <Text as={'b'}>{`Código: `}</Text>
         <Text color={subject ? undefined : 'red'}>
           {firstForm.code ? firstForm.code : 'Não informada'}
         </Text>
       </HStack>
-      <HStack>
+      <HStack wrap={'wrap'}>
         <Text as={'b'}>Oferecimento: </Text>
         <Text>{`Vagas - ${firstForm.vacancies}`}</Text>
       </HStack>
-      <HStack>
+      <HStack wrap={'wrap'}>
         <Text as={'b'}>{`Tipo: `}</Text>
         <Text color={firstForm.type ? undefined : 'red'}>
           {firstForm.type
@@ -70,7 +70,7 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
             : 'Não informado'}
         </Text>
       </HStack>
-      <HStack>
+      <HStack wrap={'wrap'}>
         <Text as={'b'}>Professores: </Text>
         <Text color={firstForm.professors.length > 0 ? undefined : 'red'}>
           {firstForm.professors.length > 0
@@ -81,7 +81,7 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
 
       <Divider />
 
-      <HStack align={'center'} mt={2}>
+      <HStack align={'center'} mt={2} wrap={'wrap'}>
         <Heading size={'md'}>Datas da Turma</Heading>
         <Button
           size={'sm'}
@@ -93,7 +93,7 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
         </Button>
       </HStack>
 
-      <HStack>
+      <HStack wrap={'wrap'}>
         <Text as={'b'}>{`Datas: `}</Text>
         <Text>{`Início - ${moment(secondForm.start_date).format(
           'DD/MM/YYYY',
@@ -102,7 +102,7 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
           'DD/MM/YYYY',
         )}`}</Text>
       </HStack>
-      <HStack>
+      <HStack wrap={'wrap'}>
         <Text as={'b'}>{`Calendários: `}</Text>
         <Text
           // fontWeight={calendarsNames.length === 0 ? 'bold' : undefined}
@@ -116,7 +116,7 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
 
       <Divider />
 
-      <HStack align={'center'} mt={2}>
+      <HStack align={'center'} mt={2} wrap={'wrap'}>
         <Heading size={'md'}>Horários da Turma</Heading>
         <Button
           size={'sm'}
@@ -132,7 +132,7 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
       <List>
         {props.schedules.map((schedule, index) => (
           <ListItem key={index}>
-            <HStack>
+            <HStack wrap={'wrap'}>
               <ListIcon as={BsCalendar2WeekFill} />
               <Text>{getScheduleFullString(schedule)}</Text>
               <Text ml={4} fontWeight={'bold'} textColor={'red.500'}>
@@ -151,7 +151,7 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
 
       <Divider />
 
-      <HStack align={'center'} mt={2}>
+      <HStack align={'center'} mt={2} wrap={'wrap'}>
         <Heading size={'md'}>Preferências da Turma</Heading>
         <Button
           size={'sm'}
@@ -163,15 +163,15 @@ function ClassModalFifthStep(props: ClassModalFifthStepProps) {
         </Button>
       </HStack>
 
-      <HStack>
+      <HStack wrap={'wrap'}>
         <Text as={'b'}>{`Ignorar para alocação: `}</Text>
         <Text>{fourthForm.ignore_to_allocate ? 'Sim' : 'Não'}</Text>
       </HStack>
-      <HStack>
+      <HStack wrap={'wrap'}>
         <Text as={'b'}>{`Ar Condicionado: `}</Text>
         <Text>{fourthForm.air_conditionating ? 'Sim' : 'Não'}</Text>
       </HStack>
-      <HStack>
+      <HStack wrap={'wrap'}>
         <Text as={'b'}>{`Acessibilidade: `}</Text>
         <Text>{fourthForm.accessibility ? 'Sim' : 'Não'}</Text>
       </HStack>

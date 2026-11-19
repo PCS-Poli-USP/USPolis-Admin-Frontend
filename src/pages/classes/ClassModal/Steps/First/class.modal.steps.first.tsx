@@ -1,4 +1,4 @@
-import { HStack, Text, VStack } from '@chakra-ui/react';
+import { Stack, Text, VStack } from '@chakra-ui/react';
 import { FormProvider } from 'react-hook-form';
 import { Input, SelectInput } from '../../../../../components/common';
 import { ClassType } from '../../../../../utils/enums/classes.enum';
@@ -74,7 +74,11 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
             mt={4}
           />
 
-          <HStack spacing='8px' mt={4}>
+          <Stack
+            direction={{ base: 'column', md: 'row' }}
+            spacing='8px'
+            mt={4}
+          >
             <SelectInput
               label={'Tipo de turma'}
               name={'type'}
@@ -91,7 +95,7 @@ function ClassModalFirstStep(props: ClassModalFirstStepProps) {
               min={0}
               max={99999}
             />
-          </HStack>
+          </Stack>
 
           <MultiSelectInput
             label={'Professores'}

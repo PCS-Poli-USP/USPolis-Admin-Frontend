@@ -85,6 +85,10 @@ function Allocation() {
   const [setupInitialFilters, setSetupInitialFilters] = useState(false);
 
   const [reservation, setReservation] = useState<ReservationResponse>();
+  const [mobileEventRequest, setMobileEventRequest] = useState<{
+    eventId: string;
+    sequence: number;
+  } | null>(null);
   const [buildingSearchValue, setBuildingSearchValue] = useState('');
   const [classroomSearchValue, setClassroomSearchValue] = useState('');
   const [nameSearchValue, setNameSearchValue] = useState('');
@@ -111,6 +115,13 @@ function Allocation() {
   );
   const [showEmptyLines, setShowEmptyLines] = useState(true);
   const [calendarKey, setCalendarKey] = useState(0);
+
+  function handleMobileEventClick(eventId: string) {
+    setMobileEventRequest((current) => ({
+      eventId,
+      sequence: (current?.sequence ?? 0) + 1,
+    }));
+  }
 
   const {
     loading: loadingAllocation,
@@ -393,6 +404,15 @@ function Allocation() {
     setCalendarKey((prev) => prev + 1);
   }, [showEmptyLines, currentView, events, resources, filteredResources]);
 
+  const calendarEvents = isMobile
+    ? events
+    : buildingSearchValue ||
+        classroomSearchValue ||
+        nameSearchValue ||
+        classSearchValue
+      ? filteredEvents.filter((event) => showEventTypeMap.get(event.type))
+      : events.filter((event) => showEventTypeMap.get(event.type));
+
   return (
     <PageContent>
       <Loading
@@ -422,6 +442,7 @@ function Allocation() {
             isOpen={isOpenSolicitation}
             onOpen={onOpenSolicitation}
             onClose={onCloseSolicitation}
+            onAllocationClick={handleMobileEventClick}
             buildingSearchValue={buildingSearchValue}
             setBuildingSearchValue={setBuildingSearchValue}
             classroomSearchValue={classroomSearchValue}
@@ -768,16 +789,7 @@ function Allocation() {
           <CustomCalendar
             key={calendarKey}
             calendarRef={calendarRef}
-            events={
-              !!buildingSearchValue ||
-              !!classroomSearchValue ||
-              !!nameSearchValue ||
-              !!classSearchValue
-                ? filteredEvents.filter((event) =>
-                    showEventTypeMap.get(event.type),
-                  )
-                : events.filter((event) => showEventTypeMap.get(event.type))
-            }
+            events={calendarEvents}
             resources={getResources()}
             handleDateClick={handleDateClick}
             handleEventDrop={handleEventDrop}
@@ -794,6 +806,8 @@ function Allocation() {
             view={currentView}
             setView={setCurrentView}
             isMobile={isMobile}
+            mobileEventRequest={mobileEventRequest}
+            onMobileEventRequestHandled={() => setMobileEventRequest(null)}
             loading={loadingAllocation || loading || loadingE || loadingR}
           />
         </GridItem>

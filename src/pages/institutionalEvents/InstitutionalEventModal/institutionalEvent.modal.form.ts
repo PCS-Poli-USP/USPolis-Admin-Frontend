@@ -27,7 +27,7 @@ export const formFields = {
       .string()
       .required('Campo obrigatório')
       .test('is-valid-option', 'Campo obrigatório', (value) =>
-        Object.keys(EventType).includes(value),
+        EventType.values().some((eventType) => eventType === value),
       ),
     defaultValue: '',
   },
@@ -36,7 +36,12 @@ export const formFields = {
     defaultValue: '',
   },
   external_link: {
-    validator: yup.string().url('Link inválido'),
+    validator: yup
+      .string()
+      .transform((value, originalValue) =>
+        originalValue == null || originalValue === '' ? undefined : value,
+      )
+      .url('Link inválido'),
     defaultValue: '',
   },
   location: {

@@ -85,6 +85,11 @@ export function Input({
               }}
               onFocus={onFocus}
               onBlur={onBlur}
+              onClick={(event) => {
+                if (type === 'date' || type === 'datetime-local') {
+                  event.currentTarget.showPicker?.();
+                }
+              }}
             />
             {icon && iconPosition === 'right' && (
               <InputRightElement>{icon}</InputRightElement>

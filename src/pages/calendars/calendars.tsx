@@ -268,7 +268,10 @@ function Calendars() {
 
   return (
     <PageContent>
-      <VStack align={'stretch'} spacing={'18px'}>
+      <VStack
+        align={'stretch'}
+        spacing={'18px'}
+      >
         <Flex align={'center'} gap={5} wrap={'wrap'}>
           <Heading size={'lg'} color={'uspolis.text'} fontWeight={'normal'}>
             Calendários
@@ -329,7 +332,7 @@ function Calendars() {
             <TabPanel px={0}>
               <Skeleton isLoaded={!loadingCalendars}>
                 <SimpleGrid
-                  minChildWidth={'360px'}
+                  minChildWidth={'344px'}
                   spacing={4}
                   alignItems={'stretch'}
                 >

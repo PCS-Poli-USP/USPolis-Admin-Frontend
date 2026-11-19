@@ -30,6 +30,7 @@ export function NumberInput({
   value = undefined,
   min = undefined,
   max = undefined,
+  w = undefined,
   mt = undefined,
   mb = undefined,
   mr = undefined,
@@ -67,6 +68,7 @@ export function NumberInput({
           mb={mb}
           ml={ml}
           mr={mr}
+          w={w}
         >
           <FormLabel alignSelf='flex-start'>{label}</FormLabel>
           <ChakraNumberInput

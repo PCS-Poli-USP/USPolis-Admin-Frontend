@@ -25,6 +25,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AddIcon } from '@chakra-ui/icons';
 import CurriculumSubjectCardList from './CurriculumSubjectCardList';
 import PageContent from '../../components/common/PageContent';
+import PageBreadcrumb from '../../components/common/PageBreadcrumb';
 import Dialog from '../../components/common/Dialog/dialog.component';
 
 import useCurriculumSubjectsService from '../../hooks/API/services/useCurriculumSubjectsService';
@@ -55,6 +56,7 @@ function CurriculumSubjects() {
   const { curriculumId } = useParams();
 
   const location = useLocation() as {
+    pathname: string;
     state?: {
       curriculum?: any;
       course?: any;
@@ -251,7 +253,7 @@ function CurriculumSubjects() {
   };
 
   return (
-    <PageContent>
+    <PageContent horizontalScroll>
       <CurriculumSubjectModal
         isOpen={isOpenModal}
         onClose={handleModalClose}
@@ -278,6 +280,7 @@ function CurriculumSubjects() {
 
       <Box
         w='100%'
+        minW="344px"
         maxW='1600px'
         mx='auto'
         px={{
@@ -286,6 +289,13 @@ function CurriculumSubjects() {
           lg: 10,
         }}
       >
+        <Box display={{ base: 'block', md: 'none' }} mb={2}>
+          <PageBreadcrumb
+            pathname={location.pathname}
+            color="uspolis.textMuted"
+            wrap
+          />
+        </Box>
         <Text
           fontSize={{ base: '2xl', md: '3xl', lg: '4xl' }}
           wordBreak="break-word"

@@ -11,6 +11,8 @@ interface Crumb {
 interface PageBreadcrumbProps {
   pathname: string;
   items?: Crumb[];
+  color?: string;
+  wrap?: boolean;
 }
 
 const mainMap: Record<string, Crumb[]> = {
@@ -215,14 +217,28 @@ export function getBreadcrumbsFromPath(pathname: string): Crumb[] {
   return [{ label: 'Página Não Encontrada', href: '/404', current: false }];
 }
 
-function PageBreadcrumb({ items, pathname }: PageBreadcrumbProps) {
+function PageBreadcrumb({
+  items,
+  pathname,
+  color = 'white',
+  wrap = false,
+}: PageBreadcrumbProps) {
   const navigate = useNavigate();
   const itemsToRender: Crumb[] = items ?? getBreadcrumbsFromPath(pathname);
 
   if (!itemsToRender || itemsToRender.length === 0) return null;
 
   return (
-    <Breadcrumb color={'white'} separator={<ChevronRightIcon color='white' />}>
+    <Breadcrumb
+      color={color}
+      separator={<ChevronRightIcon color={color} />}
+      sx={{
+        '& ol': {
+          flexWrap: wrap ? 'wrap' : 'nowrap',
+          whiteSpace: wrap ? 'normal' : 'nowrap',
+        },
+      }}
+    >
       {itemsToRender.map((item, index) => (
         <BreadcrumbItem key={index}>
           <BreadcrumbLink

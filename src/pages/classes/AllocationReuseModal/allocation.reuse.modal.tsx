@@ -265,7 +265,11 @@ function AllocationReuseModal({
       size={'4xl'}
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        maxW={{ base: 'calc(100vw - 24px)', md: '4xl' }}
+        maxH={'90vh'}
+        overflowY={'auto'}
+      >
         <ModalHeader>Reaproveitamento de Alocações</ModalHeader>
         <ModalCloseButton />
         <ModalBody>

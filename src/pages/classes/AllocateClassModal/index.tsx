@@ -98,7 +98,11 @@ export function AllocateClassModal({
       closeOnOverlayClick={false}
     >
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        maxW={{ base: 'calc(100vw - 24px)', md: 'xl' }}
+        maxH={'90vh'}
+        overflowY={'auto'}
+      >
         {loggedUser ? (
           <>
             {inputClass ? (

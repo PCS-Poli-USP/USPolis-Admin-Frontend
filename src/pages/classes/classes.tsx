@@ -1,5 +1,13 @@
 import {
+  Box,
   Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
   Flex,
   Menu,
   MenuButton,
@@ -8,6 +16,8 @@ import {
   MenuItem,
   MenuList,
   Spacer,
+  Text,
+  VStack,
   useDisclosure,
 } from '@chakra-ui/react';
 import DataTable from '../../components/common/DataTable/dataTable.component';
@@ -39,6 +49,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import AllocationReuseModal from './AllocationReuseModal/allocation.reuse.modal';
 import useBuildings from '../../hooks/useBuildings';
+import ClassCardList from './ClassCardList';
 
 function Classes() {
   const context = useContext(appContext);
@@ -87,6 +98,11 @@ function Classes() {
     isOpen: isOpenAllocationReuseModal,
     onOpen: onOpenAllocationReuseModal,
     onClose: onCloseAllocationReuseModal,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenOptionsDrawer,
+    onOpen: onOpenOptionsDrawer,
+    onClose: onCloseOptionsDrawer,
   } = useDisclosure();
 
   const { start, setStart, end, setEnd } = usePageHeaderWithFilter();
@@ -237,7 +253,7 @@ function Classes() {
   }, [classes]);
 
   return (
-    <PageContent>
+    <PageContent horizontalScroll>
       <Loading isOpen={isCrawling} onClose={() => {}} />
       <ClassModal
         isOpen={isOpenClassModal}
@@ -313,7 +329,108 @@ function Classes() {
         }
         refetch={() => getClasses()}
       />
-      <Flex align='center'>
+      <Drawer
+        isOpen={isOpenOptionsDrawer}
+        onClose={onCloseOptionsDrawer}
+        placement="bottom"
+        size="full"
+      >
+        <DrawerOverlay />
+        <DrawerContent
+          h="80vh"
+          maxH="80vh"
+          bg="uspolis.white"
+          borderTopRadius="16px"
+          overflow="hidden"
+        >
+          <DrawerCloseButton />
+          <DrawerHeader borderBottomWidth="1px">Opções</DrawerHeader>
+          <DrawerBody overflowY="auto" py={5}>
+            <VStack align="stretch" spacing={5}>
+              <VStack align="stretch" spacing={3}>
+                <Text fontWeight="semibold">Adição</Text>
+                <Button
+                  variant="outline"
+                  justifyContent="flex-start"
+                  leftIcon={<LuHand />}
+                  onClick={() => {
+                    onCloseOptionsDrawer();
+                    handleRegisterClick();
+                  }}
+                >
+                  Manual
+                </Button>
+                <Button
+                  variant="outline"
+                  justifyContent="flex-start"
+                  leftIcon={<LuTimer />}
+                  onClick={() => {
+                    onCloseOptionsDrawer();
+                    onOpenCrawlerJupiterModal();
+                  }}
+                >
+                  Júpiter/Janus
+                </Button>
+              </VStack>
+              <VStack align="stretch" spacing={3}>
+                <Text fontWeight="semibold">Atualizar</Text>
+                <Button
+                  variant="outline"
+                  justifyContent="flex-start"
+                  leftIcon={<LuTimer />}
+                  onClick={() => {
+                    onCloseOptionsDrawer();
+                    onOpenJupiterUpdateModal();
+                  }}
+                >
+                  Júpiter/Janus
+                </Button>
+              </VStack>
+              <VStack align="stretch" spacing={3}>
+                <Text fontWeight="semibold">Remover</Text>
+                <Button
+                  variant="outline"
+                  justifyContent="flex-start"
+                  leftIcon={<IoTrashBinOutline />}
+                  onClick={() => {
+                    onCloseOptionsDrawer();
+                    handleDeleteSelectedClassesClick();
+                  }}
+                >
+                  Selecionados
+                </Button>
+              </VStack>
+              <VStack align="stretch" spacing={3}>
+                <Text fontWeight="semibold">Alocações</Text>
+                <Button
+                  variant="outline"
+                  justifyContent="flex-start"
+                  leftIcon={<LuDownload />}
+                  isLoading={
+                    loading ||
+                    loadingSubjects ||
+                    loadingBuildings ||
+                    context.loading
+                  }
+                  onClick={() => {
+                    onCloseOptionsDrawer();
+                    onOpenAllocationReuseModal();
+                  }}
+                >
+                  Reaproveitar
+                </Button>
+              </VStack>
+            </VStack>
+          </DrawerBody>
+          <DrawerFooter borderTopWidth="1px">
+            <Button colorScheme="blue" w="full" onClick={onCloseOptionsDrawer}>
+              Fechar
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+      <Box w="100%" minW="344px">
+      <Flex align='center' direction={{ base: 'column', md: 'row' }} gap={{ base: 3, md: 0 }}>
         <PageHeaderWithFilter
           title='Turmas'
           start={start}
@@ -325,16 +442,17 @@ function Classes() {
           }}
         />
         <Spacer />
-        <Menu>
-          <MenuButton
-            as={Button}
-            colorScheme='blue'
-            leftIcon={<AddIcon />}
-            borderRadius={'20px'}
-          >
-            Opções
-          </MenuButton>
-          <MenuList w={'300px'} border={'1px'} bgColor={'uspolis.white'}>
+        <Box display={{ base: 'none', md: 'block' }}>
+          <Menu>
+            <MenuButton
+              as={Button}
+              colorScheme='blue'
+              leftIcon={<AddIcon />}
+              borderRadius={'20px'}
+            >
+              Opções
+            </MenuButton>
+            <MenuList w={'300px'} border={'1px'} bgColor={'uspolis.white'}>
             <MenuGroup title='Adição' fontSize={'lg'} gap={'5px'}>
               <MenuDivider />
               <MenuItem
@@ -409,8 +527,19 @@ function Classes() {
                 Reaproveitar
               </MenuItem>
             </MenuGroup>
-          </MenuList>
-        </Menu>
+            </MenuList>
+          </Menu>
+        </Box>
+        <Button
+          display="none"
+          colorScheme="blue"
+          leftIcon={<AddIcon />}
+          borderRadius="20px"
+          w={{ base: 'full', md: 'auto' }}
+          onClick={onOpenOptionsDrawer}
+        >
+          Opções
+        </Button>
       </Flex>
       <Dialog
         isOpen={isOpenDeleteClass}
@@ -430,15 +559,40 @@ function Classes() {
           checkMap.filter((val) => val).length
         } TURMAS SERÃO REMOVIDAS!`}
       />
-      <DataTable
-        loading={loading}
-        data={classes.map((cls, index) => ({ ...cls, index: index }))}
-        columns={columns}
-        columnPinning={{
-          left: ['id', 'mark', 'subject_code', 'code'],
-          right: ['options'],
-        }}
-      />
+        <Box display={{ base: 'none', md: 'block' }} w="100%">
+          <DataTable
+            loading={loading}
+            data={classes.map((cls, index) => ({ ...cls, index: index }))}
+            columns={columns}
+            columnPinning={{
+              left: ['id', 'mark', 'subject_code', 'code'],
+              right: ['options'],
+            }}
+          />
+        </Box>
+        <Box display={{ base: 'block', md: 'none' }} w="100%">
+          <ClassCardList
+            classes={classes}
+            loading={loading}
+            disableMap={disableMap}
+            onDuplicate={handleDuplicateClick}
+            onEdit={handleEditClick}
+            onAllocationEdit={handleAllocationEditClick}
+            onDelete={handleDeleteClassClick}
+            onEditOccurrences={handleEditOccurrencesClick}
+            toolbarAction={
+              <Button
+                colorScheme="blue"
+                leftIcon={<AddIcon />}
+                onClick={onOpenOptionsDrawer}
+                w="full"
+              >
+                Opções
+              </Button>
+            }
+          />
+        </Box>
+      </Box>
     </PageContent>
   );
 }
