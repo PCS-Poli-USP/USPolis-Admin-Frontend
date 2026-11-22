@@ -1,6 +1,7 @@
 import { ClassResponse } from '../../models/http/responses/class.response.models';
 import { UserResponse } from '../../models/http/responses/user.response.models';
 import CommonValidator from '../../utils/common/common.validator';
+import { hasRestrictedAccess } from './users.formatter';
 
 export class UsersValidator extends CommonValidator {
   user: UserResponse | null;
@@ -79,9 +80,6 @@ export class UsersValidator extends CommonValidator {
   }
 
   checkUserRestrictedPermission() {
-    if (!this.user) return false;
-    if (this.user.is_admin) return true;
-    if (!this.user.buildings) return false;
-    return true;
+    return hasRestrictedAccess(this.user);
   }
 }

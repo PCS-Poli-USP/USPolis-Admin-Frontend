@@ -32,6 +32,18 @@ export function hasElevatedAccess(user: UserResponse) {
   return !!user.is_admin || !!(user.buildings && user.buildings.length > 0);
 }
 
+// Same gate as the backend's restricted tier (restricted_authenticate): admin,
+// or a building (from a group) or a role. Each page still gets per-object
+// permissions from the API.
+export function hasRestrictedAccess(user: UserResponse | null | undefined) {
+  if (!user) return false;
+  return (
+    !!user.is_admin ||
+    !!(user.buildings && user.buildings.length > 0) ||
+    !!(user.role_ids && user.role_ids.length > 0)
+  );
+}
+
 export function getUserCoreRole(user: UserCoreResponse) {
   if (user.is_admin) return 'Administrador';
   if (user.building_names.length > 0) return 'Responsável por prédio';

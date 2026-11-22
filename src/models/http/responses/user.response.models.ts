@@ -50,6 +50,7 @@ export interface UserResponse extends UserCoreResponse {
   groups: Array<UserGroupResponse>;
   curriculum?: CurriculumResponse;
   current_schedule_id?: number;
+  role_ids?: number[];
 }
 
 export interface UserGroupResponse {

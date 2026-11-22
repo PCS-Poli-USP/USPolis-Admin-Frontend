@@ -53,6 +53,7 @@ import { VscFeedback, VscReport } from 'react-icons/vsc';
 import { GrDocumentText } from 'react-icons/gr';
 import { FaUsersGear } from 'react-icons/fa6';
 import moment from 'moment';
+import { hasRestrictedAccess } from '../../../utils/users/users.formatter';
 
 const DOCS_URL = import.meta.env.VITE_USPOLIS_DOCS_URL;
 
@@ -470,8 +471,7 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
             </ScaleFade>
           </VStack>
 
-          {loggedUser.is_admin ||
-          (loggedUser.buildings && loggedUser.buildings.length > 0) ? (
+          {hasRestrictedAccess(loggedUser) ? (
             <>
               <VStack
                 w={'full'}
