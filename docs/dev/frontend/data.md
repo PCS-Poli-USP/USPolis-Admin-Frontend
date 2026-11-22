@@ -21,15 +21,35 @@ O frontend não usa Redux, Zustand nem React Query. O estado global é só a Con
 | Membro | Para que serve |
 |---|---|
 | `loggedUser` | O usuário logado (`UserResponse`, com `is_admin`, `buildings`, grupos, papéis...), ou `null` |
+| `access` | O que o usuário pode ver e fazer (`GET /users/my-access`), ou `null`. Leia sempre por `src/utils/access/access.ts` (veja abaixo) |
 | `isAuthenticated` / `setIsAuthenticated` | Se existe uma sessão válida |
-| `getSelfFromBackend()` | Faz `GET /users` com o cookie e preenche `loggedUser`. É o que o `PersistLogin` e o `auth-callback` chamam |
-| `logout()` | Chama `POST /auth/logout` e limpa o usuário |
+| `getSelfFromBackend()` | Faz `GET /users` e `GET /users/my-access` com o cookie e preenche `loggedUser` e `access`. É o que o `PersistLogin` e o `auth-callback` chamam |
+| `logout()` | Chama `POST /auth/logout` e limpa o usuário e o `access` |
 | `loading` / `setLoading` | Carregamento do usuário (as guardas mostram a `LoadingPage` enquanto ele é `true`) |
 | `persist` / `setPersist` | Se o `PersistLogin` deve tentar restaurar a sessão (padrão `true`) |
 | `backendUnavailable` / `setBackendUnavailable` | Ligado pelo interceptor quando uma requisição nem chega a ter resposta (veja abaixo) |
 | `isMobile` | `true` abaixo de 800 px (`useMediaQuery` do Chakra) |
 
 Ao montar, o contexto apaga o `refresh_token` que versões antigas guardavam no `localStorage`. Quando o usuário é carregado, `getSelfFromBackend()` também o identifica no Clarity (só o id e o tipo de usuário).
+
+#### O que o usuário pode fazer (`access`)
+
+O backend resolve o acesso do usuário e o entrega pronto em `GET /users/my-access`: papéis, implicações entre ações, cascata do prédio para as salas, curingas e grupos antigos já aplicados (veja [Backend › Regras de permissão](/dev/backend/permissions#get-users-my-access)). O frontend só consulta essa resposta, pelas funções de `src/utils/access/access.ts`:
+
+| Função | Responde |
+|---|---|
+| `canOnBuilding(access, ação, buildingId)` | a ação no prédio em si |
+| `canOnClassroom(access, ação, classroomId)` | a ação na sala (direta ou pelo prédio) |
+| `canInBuilding(access, ação, buildingId)` | a ação no prédio ou em alguma sala dele |
+| `belongsTo(access, buildingId)`, `belongsToAnyBuilding(access)` | se o usuário pertence ao prédio (lê o prédio ou uma sala dele) |
+| `filterBuildings(access, ação, prédios)` | os prédios da lista em que ele pode fazer a ação |
+| `canManageSubject(access, buildingIds)` | a regra do backend para disciplina: `UPDATE` em algum prédio dela |
+| `canManageClass(access, turma)` | a regra do backend para turma: a ação na sala de um horário alocado, ou num prédio da disciplina para horário sem sala |
+
+> [!WARNING]
+> **Nunca decida acesso por `loggedUser.buildings` ou `loggedUser.groups`.** Eles só refletem os grupos antigos: para quem só tem papel, ficam vazios. As listas de prédios vêm do `GET /users/my-buildings` (já resolvido por papel), filtradas por ação com `filterBuildings` quando precisa.
+
+A exceção é o gate do tier restrito, `hasRestrictedAccess` (veja [Rotas e controle de acesso](/dev/frontend/routing#o-criterio-do-restrictedroute)), que espelha o gate do backend e já aceita papéis.
 
 ### `uiContext` (`src/context/UIContext.tsx`)
 
@@ -149,7 +169,7 @@ A autenticação é feita **só pelo cookie httpOnly `session`** que o backend d
 1. O usuário clica em "Entrar" na página `/auth`, que chama `useGoogleLogin({ flow: 'auth-code' })` do `@react-oauth/google`.
 2. O Google redireciona para `/auth-callback?code=...` (o `VITE_REDIRECT_URI`).
 3. O `auth-callback` chama `GET /auth/get-tokens?auth_code=...` com `withCredentials`. O backend troca o código no Google e responde com `Set-Cookie: session` (httpOnly).
-4. O `auth-callback` chama `getSelfFromBackend()` (`GET /users`), que preenche o `loggedUser`.
+4. O `auth-callback` chama `getSelfFromBackend()` (`GET /users` e `GET /users/my-access`), que preenche o `loggedUser` e o `access`.
 5. O usuário é levado para `/public/allocations`.
 
 Ao recarregar a página, o `PersistLogin` chama `getSelfFromBackend()` de novo: como o cookie é enviado automaticamente, isso funciona até numa aba nova. O ciclo de vida do cookie (renovação deslizante de 30 dias, teto de 90) está em [Backend › Autenticação e permissões](/dev/backend/auth).

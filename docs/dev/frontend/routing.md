@@ -55,7 +55,9 @@ Depois do login, o `auth-callback` sempre leva o usuário para `/public/allocati
 
 ### O critério do `RestrictedRoute`
 
-O critério fica num lugar só, `hasRestrictedAccess` (`src/utils/users/users.formatter.ts`), usado pelo `RestrictedRoute`, pela seção restrita do menu lateral (`drawer.body.tsx`) e pelo `UsersValidator.checkUserRestrictedPermission`. Ele espelha o gate do tier `restricted` do backend, que aceita quem é admin, pertence a um **grupo** ou tem um **papel** (veja [Backend › Autenticação e permissões](/dev/backend/auth#os-gates-de-cada-tier)). Do lado do frontend, o grupo aparece como os prédios do usuário, e o papel como `role_ids`. Se você mexer no critério, mude os dois lados juntos.
+O critério fica num lugar só, `hasRestrictedAccess` (`src/utils/users/users.formatter.ts`), usado pelo `RestrictedRoute` e pelo menu (`drawer.body.tsx` e `drawer.navbar.tsx`). Ele espelha o gate do tier `restricted` do backend, que aceita quem é admin, pertence a um **grupo** ou tem um **papel** (veja [Backend › Autenticação e permissões](/dev/backend/auth#os-gates-de-cada-tier)). Do lado do frontend, o grupo aparece como os prédios do usuário, e o papel como `role_ids`. Se você mexer no critério, mude os dois lados juntos.
+
+O gate só decide quem entra nas páginas restritas. Dentro delas, o que o usuário pode fazer em cada prédio, sala, disciplina ou turma vem do `access` do `appContext` (veja [Estado global › O que o usuário pode fazer](/dev/frontend/data#o-que-o-usuario-pode-fazer-access)).
 
 ## Pulando o login em desenvolvimento
 

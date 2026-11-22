@@ -53,7 +53,7 @@ Ao lado do código que testam, com o sufixo `.test.ts` ou `.test.tsx`:
 Componentes do app esperam o Chakra, o MUI, o router e o `appContext` em volta. `src/test/renderWithProviders.tsx` monta essa árvore (um `MemoryRouter` + `ChakraProvider` + `ThemeProvider` do MUI + `appContext.Provider`) e aceita:
 
 - `route`: a URL inicial do `MemoryRouter` (caminho e query string);
-- `appContextValue`: valores do `appContext` que o teste quer sobrescrever (por exemplo, um `loggedUser`);
+- `appContextValue`: valores do `appContext` que o teste quer sobrescrever (por exemplo, um `loggedUser` ou um `access`). Para o `access`, use `makeAccess({...})` e `adminAccess()` de `src/test/access.fixtures.ts`, que montam uma resposta de `GET /users/my-access` com só o que o teste concede;
 - `formDefaultValues`: envolve o componente num `FormProvider` do react-hook-form com esses valores iniciais, para testar campos do kit de formulário, que leem o contexto com `useFormContext`.
 
 ```tsx
