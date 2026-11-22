@@ -2,6 +2,9 @@
 prev:
   text: 'Backup'
   link: '/dev/database/backup'
+next:
+  text: 'Busca geral'
+  link: '/dev/search'
 ---
 
 # Logs, Grafana e Loki

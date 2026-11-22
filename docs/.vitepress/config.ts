@@ -233,6 +233,11 @@ export default {
             { text: 'Logs, Grafana e Loki', link: '/dev/observability' },
           ],
         },
+        {
+          text: 'Busca',
+          collapsed: false,
+          items: [{ text: 'Busca geral', link: '/dev/search' }],
+        },
       ],
     },
   },
