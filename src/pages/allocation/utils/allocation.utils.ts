@@ -10,18 +10,42 @@ import { BuildingResponse } from '../../../models/http/responses/building.respon
 import { RecurrenceRule } from '../../../models/http/responses/allocation.response.models';
 import { ScheduleResponse } from '../../../models/http/responses/schedule.response.models';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
-import { UserResponse } from '../../../models/http/responses/user.response.models';
+import { UserAccessResponse } from '../../../models/http/responses/access.response.models';
+import {
+  AccessAction,
+  canOnBuilding,
+  canOnClassroom,
+} from '../../../utils/access/access';
 
-// Same rule enforced by the backend: admins can manage any building,
-// everyone else only the buildings assigned to them.
-export function canManageReservationInBuilding(
-  user: UserResponse | null,
-  building: string,
+interface NamedClassroom {
+  id: number;
+  name: string;
+  building: string;
+  building_id: number;
+}
+
+/**
+ * Whether the user can do `action` (RESERVE to book, ALLOCATE to move an
+ * occurrence) at a place of the calendar, given by names as the calendar has
+ * them: on the classroom, or on the building when there is no classroom. Same
+ * rule as the backend (the access comes from GET /users/my-access).
+ */
+export function canActAt(
+  access: UserAccessResponse | null,
+  action: AccessAction,
+  classrooms: NamedClassroom[],
+  buildingName: string,
+  classroomName?: string,
 ): boolean {
-  if (!user) return false;
-  if (user.is_admin) return true;
-  if (!user.buildings) return false;
-  return user.buildings.some((userBuilding) => userBuilding.name === building);
+  if (!access) return false;
+  if (access.is_admin) return true;
+  const inBuilding = classrooms.filter((c) => c.building === buildingName);
+  if (classroomName) {
+    const classroom = inBuilding.find((c) => c.name === classroomName);
+    return !!classroom && canOnClassroom(access, action, classroom.id);
+  }
+  const buildingId = inBuilding[0]?.building_id;
+  return buildingId !== undefined && canOnBuilding(access, action, buildingId);
 }
 
 export function scheduleToRRule(schedule: ScheduleResponse): RecurrenceRule {

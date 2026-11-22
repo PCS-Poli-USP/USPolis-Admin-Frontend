@@ -22,11 +22,13 @@ import TooltipSelect from '../../components/common/TooltipSelect';
 import { appContext } from '../../context/AppContext';
 import { BuildingResponse } from '../../models/http/responses/building.response.models';
 import useBuildings from '../../hooks/useBuildings';
+import { filterBuildings } from '../../utils/access/access';
+import { ClassroomAction } from '../../utils/enums/actions.enums';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
 import usePageHeaderWithFilter from '../../components/common/PageHeaderWithFilter/usePageHeaderWithFilter';
 
 const ConflictsPage = () => {
-  const { loading: loadingUser, loggedUser } = useContext(appContext);
+  const { loading: loadingUser, loggedUser, access } = useContext(appContext);
   const { loading: loadingBuildings, buildings } = useBuildings();
 
   const { start, end, setStart, setEnd } = usePageHeaderWithFilter();
@@ -47,15 +49,14 @@ const ConflictsPage = () => {
   const [isOpenAllocate, setIsOpenAllocate] = useState<boolean>(false);
   const [selectedClassId, setSelectedClassId] = useState<number>(0);
 
+  // The conflicts of a building are open to whoever belongs to it.
   useEffect(() => {
-    if (loggedUser && !loggedUser.is_admin) {
-      setBuildingOptions(loggedUser.buildings || []);
+    if (loggedUser && buildings) {
+      setBuildingOptions(
+        filterBuildings(access, ClassroomAction.READ, buildings),
+      );
     }
-
-    if (loggedUser && loggedUser.is_admin && buildings) {
-      setBuildingOptions(buildings);
-    }
-  }, [loggedUser, buildings, loadingUser, loadingBuildings]);
+  }, [loggedUser, access, buildings, loadingUser, loadingBuildings]);
 
   useEffect(() => {
     if (!initialLoad && buildingOptions.length === 1) {

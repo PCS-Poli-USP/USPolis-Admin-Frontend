@@ -53,8 +53,10 @@ function filterSolicitations(
   return list.filter((solicitation) => {
     if (building && solicitation.building !== building) return false;
     if (!q) return true;
-    const classroom = solicitation.reservation.classroom_name || 'não especificada';
-    const haystack = `${solicitation.reservation.title} ${solicitation.user} ${solicitation.building} ${classroom}`.toLowerCase();
+    const classroom =
+      solicitation.reservation.classroom_name || 'não especificada';
+    const haystack =
+      `${solicitation.reservation.title} ${solicitation.user} ${solicitation.building} ${classroom}`.toLowerCase();
     return haystack.includes(q);
   });
 }
@@ -69,9 +71,11 @@ function SolicitationStack({
   totalPages,
   handleShowMore,
 }: SolicitationStackProps) {
-  const { loggedUser, isMobile } = useContext(appContext);
-  const userBuildings = loggedUser ? loggedUser.buildings || [] : [];
-  const hideBuildingFilter = userBuildings.length === 1 && !loggedUser?.is_admin;
+  const { access, isMobile } = useContext(appContext);
+  // The inbox shows the buildings where the user can reserve (the building or
+  // one of its classrooms): with a single one, there is nothing to filter.
+  const inbox = access?.scopes.reserve?.visible_buildings;
+  const hideBuildingFilter = !!inbox && !inbox.all && inbox.ids.length === 1;
 
   const [tab, setTab] = useState<TabKey>('pending');
   const [query, setQuery] = useState('');
@@ -141,7 +145,12 @@ function SolicitationStack({
   const activeIndex = TAB_DEFS.findIndex((t) => t.key === tab);
 
   return (
-    <Flex direction={'column'} w={'full'} flex={isMobile ? undefined : 1} minH={0}>
+    <Flex
+      direction={'column'}
+      w={'full'}
+      flex={isMobile ? undefined : 1}
+      minH={0}
+    >
       <Box flexShrink={0}>
         <Tabs
           index={activeIndex}
@@ -149,9 +158,18 @@ function SolicitationStack({
           variant={'line'}
           mb={'12px'}
         >
-          <TabList flexWrap={'wrap'} rowGap={'6px'} borderColor={'uspolis.border'}>
+          <TabList
+            flexWrap={'wrap'}
+            rowGap={'6px'}
+            borderColor={'uspolis.border'}
+          >
             {TAB_DEFS.map((t) => (
-              <Tab key={t.key} whiteSpace={'nowrap'} gap={'8px'} fontWeight={'medium'}>
+              <Tab
+                key={t.key}
+                whiteSpace={'nowrap'}
+                gap={'8px'}
+                fontWeight={'medium'}
+              >
                 <Text>{t.label}</Text>
                 <Tag
                   borderRadius={'999px'}
@@ -183,8 +201,13 @@ function SolicitationStack({
                 isClearable
                 placeholder={'Todos os prédios'}
                 value={building ? { label: building, value: building } : null}
-                options={buildingOptions.map((name) => ({ label: name, value: name }))}
-                onChange={(option) => setBuilding(option ? String(option.value) : '')}
+                options={buildingOptions.map((name) => ({
+                  label: name,
+                  value: name,
+                }))}
+                onChange={(option) =>
+                  setBuilding(option ? String(option.value) : '')
+                }
               />
             </Box>
           )}

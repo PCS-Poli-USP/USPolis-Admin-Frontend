@@ -18,7 +18,7 @@ import { appContext } from '../../../context/AppContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { PiHandPointingFill } from 'react-icons/pi';
 import { FeatureGuideContext } from '../../../context/FeatureGuideContext';
-import { UsersValidator } from '../../../utils/users/users.validator';
+import { hasRestrictedAccess } from '../../../utils/users/users.formatter';
 import { useColorScheme } from '@mui/material';
 import { LuMessageCircleMore } from 'react-icons/lu';
 import { GrDocumentText } from 'react-icons/gr';
@@ -71,7 +71,6 @@ export function DrawerNavBar({
     useContext(FeatureGuideContext);
   const location = useLocation();
   const navigate = useNavigate();
-  const validator = new UsersValidator(loggedUser);
   const { colorMode, toggleColorMode } = useColorMode();
   const { setMode } = useColorScheme();
 
@@ -177,7 +176,7 @@ export function DrawerNavBar({
                 </Button>
               )}
 
-              {validator.checkUserRestrictedPermission() && (
+              {hasRestrictedAccess(loggedUser) && (
                 <Button
                   variant={'ghost'}
                   mr={'5px'}

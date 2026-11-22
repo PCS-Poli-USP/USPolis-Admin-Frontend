@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
 import { UserResponse } from '../../../models/http/responses/user.response.models';
+import { UserAccessResponse } from '../../../models/http/responses/access.response.models';
 
 const useSelfService = () => {
   const PREFIX = '/users';
@@ -10,7 +11,12 @@ const useSelfService = () => {
     return axios.get(PREFIX);
   };
 
-  return { getSelf };
+  // What the user can see and do, already resolved by the backend.
+  const getMyAccess = (): Promise<AxiosResponse<UserAccessResponse>> => {
+    return axios.get(`${PREFIX}/my-access`);
+  };
+
+  return { getSelf, getMyAccess };
 };
 
 export default useSelfService;

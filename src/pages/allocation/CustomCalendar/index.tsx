@@ -28,7 +28,8 @@ import useReservations from '../../../hooks/reservations/useReservations';
 import ReservationModal from '../../reservations/ReservationModal/reservation.modal';
 import Dialog from '../../../components/common/Dialog/dialog.component';
 import { appContext } from '../../../context/AppContext';
-import { canManageReservationInBuilding } from '../utils/allocation.utils';
+import { canOnClassroom } from '../../../utils/access/access';
+import { ClassroomAction } from '../../../utils/enums/actions.enums';
 import useReservationOccurrences from '../../../hooks/useReservationOccurrences';
 
 type ViewOption = {
@@ -81,7 +82,7 @@ function CustomCalendar({
 }: CustomCalendarProps) {
   const { registerControlFn, state } = useFeatureGuideContext();
   const { colorMode } = useColorMode();
-  const { loggedUser } = useContext(appContext);
+  const { access } = useContext(appContext);
   const { updateOccurrences } = useReservationOccurrences();
 
   // const calendarRef = useRef<FullCalendar>(null!);
@@ -155,10 +156,13 @@ function CustomCalendar({
     }
   };
 
+  // Editing a booking takes RESERVE on its classroom (the event carries the
+  // classroom id). A booking with no classroom yet: admins only, here.
   function canManageReservationEvent(event?: EventApi): boolean {
-    const reservation = event?.extendedProps.reservation_data;
-    if (!reservation) return false;
-    return canManageReservationInBuilding(loggedUser, reservation.building);
+    if (!event?.extendedProps.reservation_data) return false;
+    const classroomId: number | undefined = event.extendedProps.classroom_id;
+    if (classroomId === undefined) return !!access?.is_admin;
+    return canOnClassroom(access, ClassroomAction.RESERVE, classroomId);
   }
 
   async function handleEditReservation() {

@@ -26,12 +26,17 @@ import useClassrooms from '../../hooks/classrooms/useClassrooms';
 import ReservationModal from '../../pages/reservations/ReservationModal/reservation.modal';
 import { ReservationResponse } from '../../models/http/responses/reservation.response.models';
 import {
-  canManageReservationInBuilding,
+  canActAt,
   loadReservationForDataClick,
 } from './utils/allocation.utils';
+import {
+  belongsTo,
+  belongsToAnyBuilding,
+  canOnClassroom,
+} from '../../utils/access/access';
+import { ClassroomAction } from '../../utils/enums/actions.enums';
 import { EventDropArg } from '@fullcalendar/core';
 import EventDragModal from './EventDragModal';
-import { EventDef } from '@fullcalendar/core/internal';
 import useSubjects from '../../hooks/useSubjetcts';
 import { uiContext } from '../../context/UIContext';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
@@ -53,7 +58,7 @@ const viewOptions: ViewOption[] = [
 
 function Allocation() {
   const [isMobile] = useMediaQuery('(max-width: 800px)');
-  const { loading, setLoading, loggedUser } = useContext(appContext);
+  const { loading, setLoading, loggedUser, access } = useContext(appContext);
   const { isOpenMenu } = useContext(uiContext);
 
   const {
@@ -202,36 +207,54 @@ function Allocation() {
 
   function handleDateClick(info: DateClickArg) {
     if (!loggedUser) return;
-    if (!loggedUser.buildings && !loggedUser.is_admin) return;
     const date = info.dateStr;
     setClickedDate(moment(date).format('YYYY-MM-DD'));
     const building = info.resource?._resource.parentId;
     const classroom = info.resource?._resource.title;
-    if (building) {
-      if (!canManageReservationInBuilding(loggedUser, building)) return;
-      if (classroom) {
-        setReservation(
-          loadReservationForDataClick(
-            classroom,
-            building,
-            date,
-            classrooms,
-            buildings,
-          ),
-        );
-        onOpenReservation();
-      }
-    }
+    if (!building || !classroom) return;
+    // Booking the clicked classroom takes RESERVE on it.
+    if (
+      !canActAt(
+        access,
+        ClassroomAction.RESERVE,
+        classrooms,
+        building,
+        classroom,
+      )
+    )
+      return;
+    setReservation(
+      loadReservationForDataClick(
+        classroom,
+        building,
+        date,
+        classrooms,
+        buildings,
+      ),
+    );
+    onOpenReservation();
   }
 
-  function checkUserAuthorization(event: EventDef) {
-    if (!event.resourceIds) return false;
-    const values = event.resourceIds;
-    if (values.length === 0) return false;
-    const splited = values[0].split('-');
-    if (splited.length === 1) return false;
-    const building = splited[0];
-    return canManageReservationInBuilding(loggedUser, building);
+  // Moving an occurrence takes ALLOCATE on the classroom it leaves and on
+  // the one it goes to (backend check_can_allocate).
+  function canMoveEvent(arg: EventDropArg) {
+    const originId: number | undefined =
+      arg.oldEvent.extendedProps.classroom_id;
+    if (
+      originId !== undefined &&
+      !canOnClassroom(access, ClassroomAction.ALLOCATE, originId)
+    )
+      return false;
+    // Dropped on another row: its classroom is the target.
+    const target = arg.newResource?._resource;
+    if (!target || !target.parentId) return true;
+    return canActAt(
+      access,
+      ClassroomAction.ALLOCATE,
+      classrooms,
+      target.parentId,
+      target.title,
+    );
   }
 
   function handleEventDrop(arg: EventDropArg) {
@@ -242,7 +265,7 @@ function Allocation() {
       arg.revert();
       return;
     }
-    if (!checkUserAuthorization(arg.event._def)) {
+    if (!canMoveEvent(arg)) {
       arg.revert();
       return;
     }
@@ -372,9 +395,12 @@ function Allocation() {
       .sort((a, b) => a.title.localeCompare(b.title));
 
     if (buildingResources.length > 0) {
+      // The first building the user belongs to (admins: the default).
       const initialBuilding =
-        loggedUser && loggedUser.buildings
-          ? loggedUser.buildings[0] || null
+        access && !access.is_admin
+          ? [...buildings]
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .find((building) => belongsTo(access, building.id)) || null
           : null;
       const defaultBuilding = initialBuilding
         ? buildingResources.find(
@@ -387,7 +413,7 @@ function Allocation() {
         setSetupInitialFilters(true);
       }
     }
-  }, [setupInitialFilters, resources, loggedUser]);
+  }, [setupInitialFilters, resources, access, buildings]);
 
   useEffect(() => {
     setCalendarKey((prev) => prev + 1);
@@ -751,7 +777,7 @@ function Allocation() {
               classrooms={classrooms}
               buildings={buildings}
               refetch={async () => {
-                if (loggedUser.is_admin || loggedUser.buildings) {
+                if (belongsToAnyBuilding(access)) {
                   await getEvents(currentStartDate, currentEndDate);
                 }
               }}

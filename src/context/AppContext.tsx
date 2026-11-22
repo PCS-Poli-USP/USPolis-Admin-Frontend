@@ -1,5 +1,6 @@
 import useSelfService from '../hooks/API/services/useSelfService';
 import { UserResponse } from '../models/http/responses/user.response.models';
+import { UserAccessResponse } from '../models/http/responses/access.response.models';
 import React, { createContext, useEffect, useState } from 'react';
 import { AuthHttpService } from '../services/auth/auth.service';
 import { useMediaQuery } from '@chakra-ui/react';
@@ -9,6 +10,9 @@ interface AppContext {
   loading: boolean;
   setLoading: (value: boolean) => void;
   loggedUser: UserResponse | null;
+  /** What the logged user can see and do (GET /users/my-access). Read it
+   * through src/utils/access/access.ts. */
+  access: UserAccessResponse | null;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
@@ -24,6 +28,7 @@ const DEFAULT_VALUE = {
   loading: false,
   setLoading: () => {},
   loggedUser: null,
+  access: null,
   isAuthenticated: false,
   setIsAuthenticated: () => {},
   logout: async () => {},
@@ -44,6 +49,7 @@ export default function AppContextProvider({
   const [isMobile] = useMediaQuery('(max-width: 800px)');
   const [loading, setLoading] = useState(false);
   const [loggedUser, setLoggedUser] = useState<UserResponse | null>(null);
+  const [access, setAccess] = useState<UserAccessResponse | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [persist, setPersist] = useState<boolean>(true);
   const [backendUnavailable, setBackendUnavailable] = useState<boolean>(false);
@@ -54,7 +60,11 @@ export default function AppContextProvider({
   async function getSelfFromBackend() {
     try {
       setLoading(true);
-      const self = await selfService.getSelf();
+      const [self, myAccess] = await Promise.all([
+        selfService.getSelf(),
+        selfService.getMyAccess(),
+      ]);
+      setAccess(myAccess.data);
       setLoggedUser({
         ...self.data,
         buildings: self.data.buildings
@@ -92,6 +102,7 @@ export default function AppContextProvider({
     }
 
     setLoggedUser(null);
+    setAccess(null);
     setIsAuthenticated(false);
     setLoading(false);
   }
@@ -113,6 +124,7 @@ export default function AppContextProvider({
         loading,
         setLoading,
         loggedUser,
+        access,
         isAuthenticated,
         setIsAuthenticated,
         logout,

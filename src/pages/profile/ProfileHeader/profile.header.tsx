@@ -10,7 +10,7 @@ import {
 } from '../../../utils/users/users.formatter';
 
 function ProfileHeader() {
-  const { loggedUser } = useContext(appContext);
+  const { loggedUser, access } = useContext(appContext);
   if (!loggedUser) return null;
 
   return (
@@ -25,13 +25,28 @@ function ProfileHeader() {
     >
       <UserImage boxSize='104px' />
 
-      <VStack align={{ base: 'center', sm: 'flex-start' }} spacing={'10px'} flex={1} minW={0} w={'full'}>
-        <Text fontSize={{ base: '22px', md: '26px' }} fontWeight={'bold'} color={'uspolis.text'} lineHeight={1.2}>
+      <VStack
+        align={{ base: 'center', sm: 'flex-start' }}
+        spacing={'10px'}
+        flex={1}
+        minW={0}
+        w={'full'}
+      >
+        <Text
+          fontSize={{ base: '22px', md: '26px' }}
+          fontWeight={'bold'}
+          color={'uspolis.text'}
+          lineHeight={1.2}
+        >
           {loggedUser.name}
         </Text>
 
-        <HStack spacing={'8px'} wrap={'wrap'} justify={{ base: 'center', sm: 'flex-start' }}>
-          {hasElevatedAccess(loggedUser) && (
+        <HStack
+          spacing={'8px'}
+          wrap={'wrap'}
+          justify={{ base: 'center', sm: 'flex-start' }}
+        >
+          {hasElevatedAccess(loggedUser, access) && (
             <Tag
               colorScheme={getUserRoleBadgeColor(loggedUser)}
               fontSize={'11.5px'}
@@ -50,7 +65,12 @@ function ProfileHeader() {
           )}
         </HStack>
 
-        <Wrap spacing={'6px 28px'} fontSize={'14px'} color={'uspolis.text'} justify={{ base: 'center', sm: 'flex-start' }}>
+        <Wrap
+          spacing={'6px 28px'}
+          fontSize={'14px'}
+          color={'uspolis.text'}
+          justify={{ base: 'center', sm: 'flex-start' }}
+        >
           <Text>
             <Text as={'b'}>Email:</Text> {loggedUser.email}
           </Text>

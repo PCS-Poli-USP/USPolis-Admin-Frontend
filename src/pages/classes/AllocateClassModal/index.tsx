@@ -25,7 +25,8 @@ import { AllocateManySchedulesData } from '../../../hooks/API/services/useOccurr
 import { classNumberFromClassCode } from '../../../utils/classes/classes.formatter';
 import useAllowedBuildings from '../../../hooks/useAllowedBuildings';
 import { appContext } from '../../../context/AppContext';
-import { UsersValidator } from '../../../utils/users/users.validator';
+import { canOnClassroom } from '../../../utils/access/access';
+import { ClassroomAction } from '../../../utils/enums/actions.enums';
 
 interface props {
   isOpen: boolean;
@@ -42,8 +43,7 @@ export function AllocateClassModal({
   class_,
   class_id,
 }: props) {
-  const { loggedUser } = useContext(appContext);
-  const validator = new UsersValidator(loggedUser);
+  const { loggedUser, access } = useContext(appContext);
 
   const classesService = useClassesService();
   const [inputClass, setInputClass] = useState<ClassResponse>();
@@ -104,14 +104,14 @@ export function AllocateClassModal({
             {inputClass ? (
               <>
                 <ModalHeader>
-                  Alocar Turma: {classNumberFromClassCode(inputClass.code)} - {' '}
-                  {inputClass.subject_code}{' ('}{inputClass.subject_name}{')'}
-                <Text>
-                  Vagas:{' '}
-                  <strong>
-                    {inputClass?.vacancies}
-                  </strong>
-                </Text>
+                  Alocar Turma: {classNumberFromClassCode(inputClass.code)} -{' '}
+                  {inputClass.subject_code}
+                  {' ('}
+                  {inputClass.subject_name}
+                  {')'}
+                  <Text>
+                    Vagas: <strong>{inputClass?.vacancies}</strong>
+                  </Text>
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
@@ -127,16 +127,20 @@ export function AllocateClassModal({
                               return 0;
                             })
                             .map((schedule, index) => {
+                              // Moving a schedule out of a classroom takes
+                              // ALLOCATE on it (backend check_can_allocate).
                               const readonly = schedule.classroom_id
-                                ? !validator.checkUserClassroomPermission([
+                                ? !canOnClassroom(
+                                    access,
+                                    ClassroomAction.ALLOCATE,
                                     schedule.classroom_id,
-                                  ])
+                                  )
                                 : false;
                               return (
                                 <Box key={index}>
                                   <AllocateSingleScheduleSection
                                     key={schedule.id}
-                                    user={loggedUser}
+                                    access={access}
                                     ref={(ref) => {
                                       if (readonly) {
                                         sectionsRefs.current[index] = null;
@@ -148,11 +152,8 @@ export function AllocateClassModal({
                                     allowedBuildings={allowedBuildings}
                                     loadingBuildings={loading}
                                     initialBuildingId={
-                                      loggedUser
-                                        ? loggedUser.buildings &&
-                                          loggedUser.buildings.length === 1
-                                          ? loggedUser.buildings[0].id
-                                          : undefined
+                                      allowedBuildings.length === 1
+                                        ? allowedBuildings[0].id
                                         : undefined
                                     }
                                     readonly={readonly}

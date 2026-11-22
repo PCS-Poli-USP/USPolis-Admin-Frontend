@@ -28,7 +28,7 @@ import PageContent from '../../components/common/PageContent';
 import CrawlerUpdateModal from './CrawlerUpdateModal/crawler.update.modal';
 import useCrawler from '../../hooks/useCrawler';
 import { appContext } from '../../context/AppContext';
-import { UsersValidator } from '../../utils/users/users.validator';
+import { canManageClass } from '../../utils/access/access';
 import CrawlerResultModal from './CrawlerModal/crawler.result.modal';
 import { CrawlerType } from '../../utils/enums/subjects.enum';
 import PageHeaderWithFilter from '../../components/common/PageHeaderWithFilter';
@@ -112,10 +112,7 @@ function Classes() {
   const { loading: isCrawling, result, create, update } = useCrawler();
 
   const [checkMap, setCheckMap] = useState<boolean[]>(classes.map(() => false));
-  const validator = new UsersValidator(context.loggedUser);
-  const disableMap = classes.map((cls) => {
-    return !validator.checkUserClassPermission(cls);
-  });
+  const disableMap = classes.map((cls) => !canManageClass(context.access, cls));
 
   const columns = getClassesColumns({
     handleCheckAllClick,
@@ -304,13 +301,8 @@ function Classes() {
         subjects={subjects}
         // eslint-disable-next-line react-hooks/refs
         classes={originalClasses.current}
-        buildings={
-          context.loggedUser
-            ? context.loggedUser.is_admin
-              ? buildings
-              : context.loggedUser.buildings || []
-            : []
-        }
+        // GET /users/my-buildings: the buildings the user belongs to.
+        buildings={buildings}
         refetch={() => getClasses()}
       />
       <Flex align='center'>

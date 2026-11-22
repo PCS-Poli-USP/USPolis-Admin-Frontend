@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { UserResponse } from '../../models/http/responses/user.response.models';
 import { BuildingResponse } from '../../models/http/responses/building.response.models';
-import { hasRestrictedAccess } from './users.formatter';
+import { hasElevatedAccess, hasRestrictedAccess } from './users.formatter';
+import { grant, makeAccess } from '../../test/access.fixtures';
 
 function makeUser(overrides: Partial<UserResponse> = {}): UserResponse {
   return {
@@ -43,5 +44,17 @@ describe('hasRestrictedAccess', () => {
     expect(hasRestrictedAccess(makeUser({ buildings: [], role_ids: [] }))).toBe(
       false,
     );
+  });
+});
+
+describe('hasElevatedAccess', () => {
+  it('counts a role-only user who belongs to a building', () => {
+    const access = makeAccess({ read: { visible_buildings: grant(1) } });
+    expect(hasElevatedAccess(makeUser(), access)).toBe(true);
+  });
+
+  it('is false without any building, and true for an admin', () => {
+    expect(hasElevatedAccess(makeUser(), makeAccess())).toBe(false);
+    expect(hasElevatedAccess(makeUser({ is_admin: true }), null)).toBe(true);
   });
 });

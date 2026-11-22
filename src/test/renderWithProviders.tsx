@@ -13,6 +13,7 @@ const defaultAppContext: AppContextValue = {
   loading: false,
   setLoading: () => {},
   loggedUser: null,
+  access: null,
   isAuthenticated: false,
   setIsAuthenticated: () => {},
   logout: async () => {},

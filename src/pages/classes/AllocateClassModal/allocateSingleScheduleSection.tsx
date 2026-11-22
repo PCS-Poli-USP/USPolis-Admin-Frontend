@@ -10,8 +10,9 @@ import { sortClassroomResponse } from '../../../utils/classrooms/classrooms.sort
 import { Recurrence } from '../../../utils/enums/recurrence.enum';
 import { WeekDay } from '../../../utils/enums/weekDays.enum';
 import AllocationLogHistory from './allocationLog.history';
-import { UserResponse } from '../../../models/http/responses/user.response.models';
-import { UsersValidator } from '../../../utils/users/users.validator';
+import { UserAccessResponse } from '../../../models/http/responses/access.response.models';
+import { canOnClassroom } from '../../../utils/access/access';
+import { ClassroomAction } from '../../../utils/enums/actions.enums';
 import IntentionalConflictPopover from './IntentionalConflictPopover';
 import TooltipSelect, {
   Option,
@@ -30,7 +31,7 @@ export interface AllocateSingleScheduleSectionRef {
 
 interface props {
   schedule: ScheduleResponse;
-  user: UserResponse;
+  access: UserAccessResponse | null;
   allowedBuildings: BuildingResponse[];
   loadingBuildings: boolean;
   readonly: boolean;
@@ -50,7 +51,7 @@ const AllocateSingleScheduleSection = forwardRef<
   (
     {
       schedule,
-      user,
+      access,
       allowedBuildings,
       loadingBuildings,
       readonly,
@@ -183,13 +184,16 @@ const AllocateSingleScheduleSection = forwardRef<
       classroomsService
         .getWithConflictCountForSchedule(selectedBuilding.id, schedule.id)
         .then((response) => {
-          const validator = new UsersValidator(user);
           setClassrooms(
             response.data
               .filter(
                 (value) =>
                   readonly ||
-                  validator.checkUserClassroomPermission([Number(value.id)]),
+                  canOnClassroom(
+                    access,
+                    ClassroomAction.ALLOCATE,
+                    Number(value.id),
+                  ),
               )
               .sort(sortClassroomResponse),
           );

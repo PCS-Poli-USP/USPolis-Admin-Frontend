@@ -21,11 +21,11 @@ import {
 } from '../../../utils/users/users.formatter';
 
 function ProfileStatusRow() {
-  const { loggedUser, getSelfFromBackend } = useContext(appContext);
+  const { loggedUser, access, getSelfFromBackend } = useContext(appContext);
   const { updateUserEmailNotifications } = useUsers(false);
   if (!loggedUser) return null;
 
-  const showElevatedStatus = hasElevatedAccess(loggedUser);
+  const showElevatedStatus = hasElevatedAccess(loggedUser, access);
 
   return (
     <Wrap
@@ -38,7 +38,11 @@ function ProfileStatusRow() {
       {showElevatedStatus && (
         <>
           <FormControl display={'flex'} alignItems={'center'} w={'fit-content'}>
-            {loggedUser.receive_emails ? <LuMail size={18} /> : <LuMailX size={18} />}
+            {loggedUser.receive_emails ? (
+              <LuMail size={18} />
+            ) : (
+              <LuMailX size={18} />
+            )}
             <FormLabel
               htmlFor='email-alerts'
               fontSize={'15px'}
@@ -62,8 +66,8 @@ function ProfileStatusRow() {
               <Flex direction={'column'} gap={'5px'}>
                 <Text fontWeight={'bold'}>Para responsáveis por prédios:</Text>
                 <Text fontSize={'sm'}>
-                  Uma reserva foi criada/cancelada e ela estiver no seu prédio ou for em uma sala
-                  que você tem permissão.
+                  Uma reserva foi criada/cancelada e ela estiver no seu prédio
+                  ou for em uma sala que você tem permissão.
                 </Text>
               </Flex>
             </HelpPopover>

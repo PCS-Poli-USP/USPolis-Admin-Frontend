@@ -27,6 +27,8 @@ import useBuildingsService from '../../hooks/API/services/useBuildingsService';
 import useOccupanceReportsService from '../../hooks/API/services/useOccupanceReportsService';
 import { BuildingResponse } from '../../models/http/responses/building.response.models';
 import OccupanceReports from '../../models/http/responses/occupanceReports.response.models';
+import { canOnBuilding } from '../../utils/access/access';
+import { ClassroomAction } from '../../utils/enums/actions.enums';
 import { appContext } from '../../context/AppContext';
 import { WeekDay } from '../../utils/enums/weekDays.enum';
 import { AllocateClassModal } from '../classes/AllocateClassModal';
@@ -68,24 +70,17 @@ const ReportsPage = () => {
   const showToast = useCustomToast();
   const buildingsService = useBuildingsService();
   const occupanceReportsService = useOccupanceReportsService();
-  const { loggedUser } = useContext(appContext);
-  const userBuildingIds =
-    loggedUser && loggedUser.buildings
-      ? loggedUser.buildings.map((building) => building.id)
-      : [];
+  const { access } = useContext(appContext);
+  // The occupation report of a building takes READ on the building itself.
+  const readableIds = access?.scopes.read?.buildings;
+  const canReport = (buildingId: number) =>
+    canOnBuilding(access, ClassroomAction.READ, buildingId);
 
-  const initialBuildingId = (() => {
-    if (!loggedUser) return null;
-    if (loggedUser.is_admin) return null;
-
-    const buildings = loggedUser.buildings || [];
-
-    if (buildings.length === 1) {
-      return buildings[0].id;
-    }
-
-    return null; // nenhum prédio ou mais de um prédio
-  })();
+  // A user with a single building (not admin) starts on it.
+  const initialBuildingId =
+    readableIds && !readableIds.all && readableIds.ids.length === 1
+      ? readableIds.ids[0]
+      : null;
 
   const [buildings, setBuildings] = useState<BuildingResponse[]>([]);
   const [selectedBuildingId, setSelectedBuildingId] = useState<number | null>(
@@ -263,10 +258,7 @@ const ReportsPage = () => {
             <TooltipSelect
               placeholder='Selecione o prédio'
               options={buildings
-                .filter(
-                  (value) =>
-                    loggedUser?.is_admin || userBuildingIds.includes(value.id),
-                )
+                .filter((value) => canReport(value.id))
                 .map((b) => ({
                   label: b.name,
                   value: b.id,

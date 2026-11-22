@@ -1,3 +1,5 @@
+import { UserAccessResponse } from '../../models/http/responses/access.response.models';
+import { belongsToAnyBuilding } from '../access/access';
 import {
   UserCoreResponse,
   UserResponse,
@@ -27,9 +29,13 @@ export function getUserBuildingsBadgeColor(user: UserResponse) {
   return 'gray';
 }
 
-// Whether the user has anything beyond "common user": admin, or responsible for a building.
-export function hasElevatedAccess(user: UserResponse) {
-  return !!user.is_admin || !!(user.buildings && user.buildings.length > 0);
+// Whether the user has anything beyond "common user": admin, or belongs to a
+// building (a role or a group gives them something in it, GET /users/my-access).
+export function hasElevatedAccess(
+  user: UserResponse,
+  access: UserAccessResponse | null,
+) {
+  return !!user.is_admin || belongsToAnyBuilding(access);
 }
 
 // Same gate as the backend's restricted tier (restricted_authenticate): admin,
