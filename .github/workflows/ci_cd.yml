@@ -38,6 +38,8 @@ jobs:
           VITE_GOOGLE_AUTH_CLIENT_ID: ${{ secrets.VITE_GOOGLE_AUTH_CLIENT_ID }}
           VITE_USPOLIS_DOCS_URL: ${{ secrets.VITE_USPOLIS_DOCS_URL }}
           VITE_ENVIROMENT: ${{ secrets.VITE_ENVIROMENT }}
+          VITE_CLARITY_PROJECT_ID: ${{ secrets.VITE_CLARITY_PROJECT_ID }}
+          VITE_GRAFANA_URL: ${{ secrets.VITE_GRAFANA_URL }}
 
       - name: Clean old docs
         uses: appleboy/ssh-action@v1.0.3
