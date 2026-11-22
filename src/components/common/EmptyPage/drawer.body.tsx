@@ -40,6 +40,7 @@ import {
   MdAddChart,
   MdDevices,
   MdEvent,
+  MdManageSearch,
   MdOutlinePendingActions,
 } from 'react-icons/md';
 import { LuCalendarDays } from 'react-icons/lu';
@@ -389,6 +390,14 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
                   replace_location={false}
                   onClose={onClose}
                   highlighted={currentPath === '/admin/api-status'}
+                />
+                <DrawerButton
+                  icon={<MdManageSearch />}
+                  to='/admin/search-logs'
+                  text='Registro de Buscas'
+                  replace_location={false}
+                  onClose={onClose}
+                  highlighted={currentPath === '/admin/search-logs'}
                 />
                 <DrawerButton
                   icon={<LuKeyRound />}

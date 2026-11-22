@@ -49,6 +49,7 @@ import SchedulingHub from './pages/schedulingHub';
 import TestsPage from './pages/tests';
 import ServerDocs from './pages/serverDocs';
 import ApiStatus from './pages/apiStatus';
+import SearchLogs from './pages/searchLogs';
 import Roles from './pages/roles';
 import ApiClients from './pages/apiClients/apiClients';
 import ApiClientDetail from './pages/apiClients/apiClientDetail';
@@ -143,6 +144,7 @@ function AppRoutes() {
                 <Route path='tests' element={<TestsPage />} />
                 <Route path='server-docs' element={<ServerDocs />} />
                 <Route path='api-status' element={<ApiStatus />} />
+                <Route path='search-logs' element={<SearchLogs />} />
                 <Route path='api-clients' element={<ApiClients />} />
                 <Route
                   path='api-clients/:clientId'

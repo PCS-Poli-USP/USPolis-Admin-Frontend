@@ -6,7 +6,7 @@ import HubPageGrid, {
 } from '../../components/common/HubPageGrid';
 import { LiaBuilding } from 'react-icons/lia';
 import { FaRegUser } from 'react-icons/fa';
-import { MdDevices, MdEvent } from 'react-icons/md';
+import { MdDevices, MdEvent, MdManageSearch } from 'react-icons/md';
 import { HiUserGroup } from 'react-icons/hi';
 import { GiGraduateCap } from 'react-icons/gi';
 import { VscFeedback, VscReport } from 'react-icons/vsc';
@@ -108,6 +108,14 @@ function AdminHub() {
       description: 'Logs de acesso, erros e incidentes da API do USPolis',
       onClick: () => {
         navigate('/admin/api-status');
+      },
+    },
+    {
+      icon: <MdManageSearch size={'64px'} />,
+      title: 'Registro de Buscas',
+      description: 'O que as pessoas procuram na busca geral e não encontram',
+      onClick: () => {
+        navigate('/admin/search-logs');
       },
     },
     {

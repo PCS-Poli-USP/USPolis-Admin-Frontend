@@ -86,6 +86,11 @@ const map: Record<string, Crumb[]> = {
     { label: 'Clientes de API', href: '/admin/api-clients', current: false },
   ],
 
+  '/admin/search-logs': [
+    ...mainMap['/admin'],
+    { label: 'Registros de Busca', href: '/admin/search-logs', current: false },
+  ],
+
   // Profile subpages
   '/profile/timetable': [
     ...mainMap['/profile'],
