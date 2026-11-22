@@ -206,12 +206,48 @@ export default {
         {
           text: 'Backend',
           collapsed: false,
-          items: [{ text: 'Introdução', link: '/dev/backend' }],
+          items: [
+            { text: 'Visão geral', link: '/dev/backend/' },
+            { text: 'Estrutura de arquivos', link: '/dev/backend/structure' },
+            { text: 'Rotas e tiers', link: '/dev/backend/routes' },
+            {
+              text: 'Fluxo de uma requisição',
+              link: '/dev/backend/request-flow',
+            },
+            { text: 'Autenticação e permissões', link: '/dev/backend/auth' },
+            { text: 'Serviços e integrações', link: '/dev/backend/services' },
+            { text: 'Configuração', link: '/dev/backend/config' },
+            { text: 'Testes, lint e tipos', link: '/dev/backend/testing' },
+            {
+              text: 'Como adicionar um recurso',
+              link: '/dev/backend/new-resource',
+            },
+          ],
         },
         {
           text: 'Frontend',
           collapsed: false,
-          items: [{ text: 'Introdução', link: '/dev/frontend' }],
+          items: [
+            { text: 'Visão geral', link: '/dev/frontend/' },
+            { text: 'Estrutura de arquivos', link: '/dev/frontend/structure' },
+            {
+              text: 'Rotas e controle de acesso',
+              link: '/dev/frontend/routing',
+            },
+            {
+              text: 'Estado global e camada de API',
+              link: '/dev/frontend/data',
+            },
+            {
+              text: 'Formulários, componentes e tema',
+              link: '/dev/frontend/forms-ui',
+            },
+            { text: 'Testes', link: '/dev/frontend/testing' },
+            {
+              text: 'Como adicionar uma funcionalidade',
+              link: '/dev/frontend/new-feature',
+            },
+          ],
         },
         {
           text: 'Banco de Dados',

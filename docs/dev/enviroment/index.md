@@ -4,8 +4,8 @@ prev:
   link: '/dev/architecture'
 
 next:
-  text: 'Backend'
-  link: '/dev/backend'
+  text: 'Backend › Visão geral'
+  link: '/dev/backend/'
 ---
 
 # Configurando seu ambiente
@@ -51,13 +51,13 @@ O passo a passo completo (comandos do dia a dia, logs, testar a configuração d
 
 Esta seção e as próximas descrevem o ambiente **manual**. Se você usa o Docker, o banco já vem pronto e pode pular para [Extensões e comandos para desenvolvimento](#extensoes-e-comandos-para-desenvolvimento).
 
-Antes de rodar o backend você precisa de um PostgreSQL rodando localmente. O jeito mais simples é instalar o Postgres direto no seu sistema operacional (`apt install postgresql`, Postgres.app no Mac, etc.) — qualquer versão recente funciona. Para o rate limit funcionar, você também precisa de um Redis (veja `REDIS_URL` em [Arquivos de ambiente](#arquivos-de-ambiente)); sem ele, o rate limit só fica desligado.
+Antes de rodar o backend você precisa de um PostgreSQL rodando localmente. O jeito mais simples é instalar o Postgres direto no seu sistema operacional (`apt install postgresql`, Postgres.app no Mac, etc.). Use o **PostgreSQL 13 ou superior**: a migração da busca geral cria as extensões `unaccent` e `pg_trgm`, e só a partir do 13 o dono do banco consegue criá-las sem ser superusuário. Para o rate limit funcionar, você também precisa de um Redis (veja `REDIS_URL` em [Arquivos de ambiente](#arquivos-de-ambiente)); sem ele, o rate limit só fica desligado.
 
 Crie **dois bancos**: um para o dia a dia do desenvolvimento e outro exclusivo para a suíte de testes (a suíte de testes roda migrações reais e não deve compartilhar dados com o banco que você usa para navegar na aplicação), por exemplo `uspolis` e `uspolis_test`.
 
-Com os bancos criados, o backend só enxerga o banco através das variáveis de ambiente — não existe nenhum script que crie o banco em si por você, apenas o schema dentro dele (isso é feito pelas migrações do Alembic, veja [Banco de Dados › Migrações](/dev/database/migrations/)):
+Com os bancos criados, o backend só enxerga o banco através das variáveis de ambiente. Nenhum script cria o banco em si: o schema dentro dele é criado pelas migrações do Alembic (veja [Banco de Dados › Migrações](/dev/database/migrations/)). A lista completa de variáveis está em [Backend › Configuração](/dev/backend/config); as do banco são:
 
-- `DATABASE_URI` / `DATABASE_NAME` — conexão usada pela aplicação (SQLAlchemy/psycopg2), ex: `DATABASE_URI=postgresql://usuario:senha@localhost:5432` e `DATABASE_NAME=uspolis`
+- `DATABASE_URI` / `DATABASE_NAME` — conexão usada pela aplicação (SQLAlchemy/psycopg2), ex: `DATABASE_URI=postgresql://usuario:senha@localhost:5432` (**sem** o nome do banco) e `DATABASE_NAME=uspolis`
 - `ALEMBIC_URL` — conexão usada pelo Alembic para rodar as migrações (usa o driver asyncpg), ex: `postgresql+asyncpg://usuario:senha@localhost:5432/uspolis`
 - `TEST_DATABASE_URI` / `TEST_DATABASE_NAME` / `TEST_ALEMBIC_URL` — os mesmos três, mas apontando para o banco `uspolis_test`
 
@@ -67,7 +67,7 @@ Depois de configurar essas variáveis (veja a seção [Backend](#backend) abaixo
 poetry run alembic upgrade head
 ```
 
-Isso precisa ser repetido tanto para o banco de desenvolvimento quanto para o de testes (a suíte de testes já roda isso sozinha a cada execução, usando `TEST_ALEMBIC_URL` — veja [Backend › Testes](/dev/backend/#testes)). Para mais detalhes sobre os models, como criar uma migração nova e o funcionamento interno do Alembic aqui, veja [Banco de Dados](/dev/database/).
+Isso precisa ser repetido tanto para o banco de desenvolvimento quanto para o de testes (a suíte de testes já roda isso sozinha a cada execução, usando `TEST_ALEMBIC_URL` — veja [Backend › Testes](/dev/backend/testing)). Para mais detalhes sobre os models, como criar uma migração nova e o funcionamento interno do Alembic aqui, veja [Banco de Dados](/dev/database/).
 
 ## Backend
 
@@ -107,18 +107,18 @@ O backend usa o [`python-decouple`](https://github.com/HBNetwork/python-decouple
 | `PRODUCTION` | `.env.prod` |
 | `STAGING` | `.env.stage` |
 
-Ou seja, para desenvolvimento local você precisa de **dois arquivos**: `.env` (com `ENVIRONMENT=DEVELOPMENT`) e `.env.dev` (com todas as demais variáveis). Use o `.env.example` do repositório como referência de quais variáveis existem — ele lista todas elas (sem valores).
+Ou seja, para desenvolvimento local você precisa de **dois arquivos**: `.env` (com `ENVIRONMENT=development`) e `.env.dev` (com todas as demais variáveis, inclusive `ENVIRONMENT=development` de novo, porque o valor usado pelo código é o do segundo arquivo). Os dois precisam existir, mesmo que vazios. Use o `.env.example` do repositório como referência: ele lista todas as variáveis, com comentários e sem valores. Os detalhes do carregamento estão em [Backend › Configuração](/dev/backend/config).
 
-Algumas variáveis úteis para o dia a dia de desenvolvimento, além das de banco já citadas acima:
+Algumas variáveis importam logo no primeiro dia:
 
-- `OVERRIDE_AUTH=True` + `MOCK_EMAIL=<email de um usuário já existente no seu banco>` — pula completamente o login via Google OAuth e autentica toda requisição como esse usuário fixo. Extremamente útil para desenvolver localmente sem precisar configurar credenciais OAuth reais ou logar de verdade a cada refresh. **Nunca habilite isso em produção.**
-- `FIRST_SUPERUSER_EMAIL` / `FIRST_SUPERUSER_NAME` — usados pelo script de seed (veja abaixo) para criar o primeiro usuário administrador.
-- `GOOGLE_AUTH_CLIENT_ID` / `GOOGLE_AUTH_CLIENT_SECRET` / `GOOGLE_AUTH_REDIRECT_URI` / `G_AUTH_DOMAIN_NAME` — só são realmente necessárias se você for testar o fluxo de login de verdade (sem `OVERRIDE_AUTH`).
-- `MAIL_*` — credenciais SMTP; se não forem configuradas, qualquer fluxo que dispare e-mail (aprovação/negação de solicitação, notificação de reserva, envio do link de uma API key, etc.) vai falhar.
-- `API_KEY_SECRET` — obrigatória para emitir e validar [API keys](/api-keys/): 32 ou mais bytes aleatórios, diferentes em cada ambiente. Gere com `python -c "import secrets; print(secrets.token_urlsafe(48))"`. Sem ela, requisições com chave recebem 503.
-- `API_KEY_DEFAULT_LIMITS` — limites das chaves sem limites próprios (padrão `30/10,120/60,10000/86400`, no formato `máximo/janela_em_segundos`).
-- `FRONTEND_URL` — endereço do frontend usado nos links de uso único das API keys (padrão `http://localhost:3000`). Se você acessa o frontend por outro endereço, como um IP da rede local, ajuste aqui, senão os links apontam para `localhost`.
-- `REDIS_URL` / `RATE_LIMIT_MODE` / `ANON_RATE_LIMITS` — rate limit. Sem `REDIS_URL` ele fica desligado; o modo pode ser `off` (padrão), `shadow` (só conta e registra) ou `enforce` (bloqueia). `ANON_RATE_LIMITS` define os limites por IP (padrão `40/10,150/60,5000/86400`).
+- Estas **não têm valor padrão** e precisam existir no `.env.dev`, nem que vazias, senão nenhum comando do backend roda: `DATABASE_URI`, `DATABASE_NAME`, `ALEMBIC_URL`, `MAIL_ADDRESS`, `MAIL_PASSWORD`, `GOOGLE_AUTH_CLIENT_ID`, `GOOGLE_AUTH_CLIENT_SECRET`, `GOOGLE_AUTH_REDIRECT_URI`, `G_AUTH_DOMAIN_NAME` e `G_AUTH_CLIENT_ID`.
+- `OVERRIDE_AUTH=True` + `MOCK_EMAIL=<email de um usuário já existente no seu banco>` — pula o login via Google e autentica toda requisição como esse usuário. Assim você desenvolve sem configurar credenciais OAuth. **Nunca habilite isso em produção.**
+- `FIRST_SUPERUSER_EMAIL` / `FIRST_SUPERUSER_NAME` — usados pelo script de seed (veja abaixo) para criar o primeiro admin. Um bom valor para o `MOCK_EMAIL`.
+- `ALLOWED_GMAILS_DOMAINS` (ex: `usp.br`) — só para testar o login de verdade: vazio, ninguém entra pelo Google.
+- `MAIL_*` — sem credenciais SMTP, qualquer fluxo que envia e-mail (solicitações, link de API key, etc.) falha.
+- `API_KEY_SECRET` — necessária para testar as [API keys](/api-keys/). Gere com `python -c "import secrets; print(secrets.token_urlsafe(48))"`.
+- `REDIS_URL` / `RATE_LIMIT_MODE` — sem `REDIS_URL` o rate limit fica desligado. Com Redis, o modo padrão é `enforce` (bloqueia); use `shadow` ou `off` se ele atrapalhar o desenvolvimento.
+- `FRONTEND_URL` — se você acessa o frontend por outro endereço que não `http://localhost:3000` (um IP da rede local, por exemplo), ajuste aqui e em `ALLOWED_ORIGINS`.
 
 Depois de ter o `.env`/`.env.dev` prontos e o banco criado (veja [Banco de dados](#banco-de-dados) acima), rode as migrações e, opcionalmente, crie o primeiro usuário admin:
 
@@ -137,7 +137,7 @@ Para isso, execute os seguintes comandos para gerar os seus certificados:
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
 ```
 
-Isso vai gerar um certificado [SSL](https://developer.mozilla.org/pt-BR/docs/Glossary/SSL) autoassinado e uma chave privada, com duração de 365 dias. Garanta que exista uma pasta `/certs` e coloque os arquivos `key.pem` e `cert.pem` nessa pasta.
+Isso vai gerar um certificado [SSL](https://developer.mozilla.org/pt-BR/docs/Glossary/SSL) autoassinado e uma chave privada, com duração de 365 dias. Crie uma pasta `certs/` na raiz do repositório do backend e coloque os arquivos `key.pem` e `cert.pem` nela. O `wsgi.py` só liga o HTTPS (e o reload) com `ENVIRONMENT` em `development` ou `staging`.
 
 Para rodar o servidor em um ambiente de desenvolvimento (sem otimizações):
 
@@ -178,19 +178,36 @@ Executar os testes:
 pytest
 ```
 
+### CI/CD do backend
+
+O workflow `.github/workflows/ci_cd.yml` do backend roda a cada push na `main`. O job de CI só prepara o Python 3.12 (não roda testes, mypy nem ruff). O job de deploy entra no servidor por SSH e, em `/diskb/home/backend`, faz `git pull origin main`, `poetry install --without test,dev`, instala o Chromium do Playwright e reinicia o serviço `uspolis-backend.service` (systemd). O script de inicialização desse serviço, que fica no servidor e não no repositório, roda `alembic upgrade head` antes de subir o gunicorn: as migrações são aplicadas no próprio restart.
+
 ## Frontend
 
-Para o frontend garanta que você possui Node.js 20 ou superior antes de fazer as próximas etapas. Para gerenciar as dependências usamos o Yarn, após instalar ele execute o seguinte comando:
+Garanta que você tem o **Node.js 20** (a versão usada no Docker e no CI). O gerenciador de pacotes é o **Yarn 4**, cujo binário fica versionado no próprio repositório (`.yarn/releases/`, apontado pelo `.yarnrc.yml`): qualquer `yarn` instalado globalmente, ou o `corepack enable`, delega para essa versão. Instale as dependências com:
 
 ```bash
 yarn install
 ```
 
-Após todas as dependências terem sido instaladas garanta que você configurou o seu `.env` e `.env.development` ou `.env.production` corretamente, siga como base o `.env.example`. 
+As variáveis de ambiente seguem o padrão do Vite (`VITE_*`) e ficam em arquivos locais, fora do git: o `.env` e o `.env.development` para desenvolvimento, e o `.env.production` para um build de produção local. Use como base o arquivo **`env.example`** (sem ponto no nome) da raiz do repositório.
 
-Para o desenvolvimento é necessário apenas o ```.env``` e ```.env.development```. Já para produção crie o seu `.env.production`, que o vite na hora de buildar vai usar ele.
+| Variável | Para que serve |
+|---|---|
+| `VITE_USPOLIS_API_ENDPOINT` | URL base da API, ex: `https://localhost:5000/api` |
+| `VITE_GOOGLE_AUTH_CLIENT_ID` | Client id do Google para o login |
+| `VITE_REDIRECT_URI` | Para onde o Google volta depois do login (padrão `http://localhost:3000/auth-callback`) |
+| `VITE_ENVIROMENT` | `development` liga o HTTPS do dev server e desliga o aviso de "backend indisponível" |
+| `VITE_USPOLIS_DOCS_URL` | Endereço desta documentação, usado nos links do menu e da home |
+| `VITE_OVERRIDE_AUTH` | `'true'` deixa passar o `PrivateRoute` sem login (não afeta as páginas restritas e de admin; veja [Frontend › Rotas](/dev/frontend/routing#pulando-o-login-em-desenvolvimento)) |
+| `VITE_OVERRIDE_PERSIST_LOGIN` | `'true'` não tenta restaurar a sessão ao carregar a página |
+| `VITE_DEBUG` | Mostra colunas extras de depuração em algumas tabelas |
+| `VITE_CLARITY_PROJECT_ID` | Liga o Microsoft Clarity (vazio = desligado) |
+| `VITE_GRAFANA_URL` | Link do card "Analytics" do admin (vazio = `/analytics/` no mesmo domínio) |
 
-Da mesma forma que foi feito no backend, precisamos adicionar uma pasta `certs` e adicionar os arquivos `key.pem` e `cert.pem` nessa pasta. **UTILIZE OS MESMOS QUE VOCÊ GEROU NA ETAPA DO BACKEND**.
+O `env.example` ainda não lista `VITE_USPOLIS_DOCS_URL`, `VITE_OVERRIDE_PERSIST_LOGIN` e `VITE_DEBUG`, e o `VITE_APP_NAME` que ele lista não é lido por nenhum código.
+
+Com `VITE_ENVIROMENT=development`, o dev server sobe em HTTPS e **exige** os arquivos `certs/key.pem` e `certs/cert.pem` na raiz do repositório do frontend. **Use os mesmos que você gerou na etapa do backend**, para o navegador só precisar confiar num certificado.
 
 Para rodar o projeto em ambiente de desenvolvimento execute:
 
@@ -206,7 +223,7 @@ Conforme já detalhado na página [Tecnologias Utilizadas](/dev/stack#frontend),
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 - [Test Explorer UI](https://marketplace.visualstudio.com/items?itemName=hbenl.vscode-test-explorer) e [Test Adapter Converter](https://marketplace.visualstudio.com/items?itemName=ms-vscode.test-adapter-converter)
 
-Garanta que nas configurações do VSCode o formatter seja o Prettier e deixe marcado o format on save. Voceê deve estar se perguntando, como eu posso usar esse formatter se para o backend eu já uso o ruff? Recomendo a utilização de perfis no VSCode, um para o backend e outro para o frontend, uma documentação de como criar seus perfis pode ser acessada [aqui](https://code.visualstudio.com/docs/configure/profiles).
+Garanta que nas configurações do VSCode o formatter seja o Prettier e deixe marcado o format on save. Você deve estar se perguntando, como eu posso usar esse formatter se para o backend eu já uso o ruff? Recomendo a utilização de perfis no VSCode, um para o backend e outro para o frontend, uma documentação de como criar seus perfis pode ser acessada [aqui](https://code.visualstudio.com/docs/configure/profiles).
 
 No diretório principal do frontend você vai encontrar os seguintes arquivos:
 - `eslint.config.mjs`
@@ -229,10 +246,16 @@ yarn format
 ```
 
 
-### Build, Preview e Deploy
+Rodar os testes e checar os tipos:
 
-> [!IMPORTANT]
-> Se estiver fazendo um deploy da docs veja a próxima sessão antes de continuar
+```bash
+yarn test
+npx tsc --noEmit
+```
+
+Nenhum desses comandos roda no build nem no CI: o `yarn build` não falha por erro de lint ou de tipo. Rode-os antes de abrir um PR. Veja [Frontend › Testes](/dev/frontend/testing).
+
+### Build e preview
 
 Para fazer o build do frontend use:
 
@@ -240,58 +263,51 @@ Para fazer o build do frontend use:
 yarn build
 ```
 
-Para ver uma prévia de como irá ficar o seu frontend após o build use:
+Os arquivos vão para `build/`. Para servir esse build localmente:
 
 ```bash
 yarn preview
 ```
 
-Esse comando pega os arquivos do diretório `build`e serve eles, no terminal você verá algo como:
+No terminal você verá algo como `http://localhost:4173/`. Esse servidor é HTTP, e o cookie de sessão exige HTTPS (`secure`), então o login não funciona no preview: ele serve para conferir o build, não para navegar logado.
+
+### Docs: rodar, buildar e ver o preview
+
+A documentação é um projeto VitePress separado, em `docs/`, e roda numa porta própria:
 
 ```bash
-http://localhost:4173/
+yarn docs            # servidor de desenvolvimento em http://localhost:3001/docs/
+yarn docs:build      # build em docs/.vitepress/dist
+yarn docs:preview    # serve o build (porta padrão do VitePress, 4173)
 ```
 
-Que é onde ele está rodando os arquivos, uma coisa importante é que **cookies** não irão funcionar em http, por isso eles ficam limitados a dev ou em produção.
+O `docs:build` **falha se houver link interno quebrado**, então rode-o antes de abrir um PR que mexe na docs. Os arquivos ficam em `docs/.vitepress/dist`.
 
-### Como testar, ver o preview e fazer deploy da docs?
-
-A documentação roda em outra porta, não roda na mesma que o frontend em si. Por isso, para rodar a docs em ambiente de desenvolvimento faça:
-
-```bash
-yarn docs
-```
-
-Para fazer o build execute:
+Em produção, a docs é servida pelo mesmo domínio do frontend, em `/docs/`. Para isso, o CI (e o estágio `build` do Dockerfile) move `docs/.vitepress/dist` para `public/docs` **antes** do `yarn build`, e o Vite copia a pasta para `build/docs`. Para reproduzir isso localmente:
 
 ```bash
 yarn docs:build
+rm -rf public/docs && mv docs/.vitepress/dist public/docs
+yarn build && yarn preview   # a docs fica em http://localhost:4173/docs/
 ```
 
-Os arquivos finais estarão em `/docs/.vitepress/dist`, tenha isso em mente.
-
-Para o preview faça:
-
-```bash
-yarn docs:preview
-```
-
-Isso irá servir os arquivos de build na mesma porta que ele usa para executar o ambiente da docs em desenvolvimento.
-
-Após buildar a docs você tem que garantir que os arquivos de `/docs/.vitepress/dist` estejam em `/docs`, sem isso, na hora de fazer o preview a docs provavelmente não irá funcionar.
-
-Nosso script de CI/CD atualmente já gerencia esses detalhes, essa parte de mover arquivos buildados (que em produção vão para outro lugar) é necessário apenas para ver o preview final do frontend.
+A pasta `public/docs` está no `.gitignore`.
 
 ### O que o CI/CD faz de verdade
 
-O workflow fica em `.github/workflows/ci_cd.yml` e roda a cada push na branch `main`. Em ordem, ele:
+O workflow `.github/workflows/ci_cd.yml` ("Deploy Frontend") roda a cada push na `main`, num job só. Em ordem, ele:
 
-1. Instala as dependências com `yarn install --frozen-lockfile`
-2. Builda a docs (`yarn docs:build`) e move `docs/.vitepress/dist` para `public/docs` — é exatamente o passo manual descrito acima, só que automatizado
-3. Builda o frontend (`yarn build`), injetando as variáveis `VITE_*` de produção a partir dos **secrets** do repositório GitHub (não de um arquivo `.env.production` commitado — ele não existe no repositório, é gerado em memória pelo próprio workflow)
-4. Via SSH, limpa `/var/www/html/docs/*` e `/diskb/home/frontend/*` no servidor
-5. Copia a pasta `build/` para `/diskb/home/frontend` no servidor (`scp`)
-6. Copia `build/docs/*` para `/var/www/html/docs/` no servidor
-7. Reinicia o serviço `uspolis-frontend.service` (systemd) via SSH
+1. Faz o checkout e configura o Node 20 com cache do Yarn
+2. Instala as dependências (`yarn install --frozen-lockfile`)
+3. Builda a docs (`yarn docs:build`) e move `docs/.vitepress/dist` para `public/docs`
+4. Builda o frontend (`yarn build`), passando como variáveis de ambiente do passo, a partir dos **secrets** do repositório, apenas `VITE_USPOLIS_API_ENDPOINT`, `VITE_REDIRECT_URI`, `VITE_GOOGLE_AUTH_CLIENT_ID`, `VITE_USPOLIS_DOCS_URL` e `VITE_ENVIROMENT`. Nenhum arquivo `.env.production` é usado ou gerado
+5. Via SSH, limpa `/var/www/html/docs/*` e `/diskb/home/frontend/*` no servidor
+6. Copia a pasta `build/` para `/diskb/home/frontend` no servidor (`scp`)
+7. Via SSH, copia `build/docs/*` para `/var/www/html/docs/` e apaga `build/docs` da cópia do frontend
+8. Reinicia o serviço `uspolis-frontend.service` (systemd)
 
-Ou seja, o deploy do frontend e da docs acontece **juntos**, num único workflow, e não existe deploy manual — qualquer merge em `main` já dispara isso automaticamente.
+Ou seja, frontend e docs são publicados **juntos**, num único workflow, a cada merge na `main`. Observações:
+
+- O CI **não roda** lint, testes nem checagem de tipos.
+- O passo de build lê as variáveis `VITE_*` dos secrets do repositório, inclusive `VITE_CLARITY_PROJECT_ID` e `VITE_GRAFANA_URL`. Um secret que não existe chega vazio: sem `VITE_CLARITY_PROJECT_ID`, o Clarity fica desligado, e sem `VITE_GRAFANA_URL`, o card do Grafana aponta para `/analytics/`.
+- Existem dois outros caminhos de deploy, fora do CI: o `deploy.sh` (legado, build local + `scp`) e o alvo `prod` do `Dockerfile`, usado pelo compose do USPolis-Admin.

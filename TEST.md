@@ -123,23 +123,40 @@ Como esses validators também alimentam os schemas Yup usados nos formulários (
 
 ### 4.2 Componentes isolados (`src/components/common/`)
 
-Os componentes de `src/components/common/form/` (`Input`, `SelectInput`, `MultiSelectInput`, `CheckBox`, `ListInput`, `NumberInput`, `SwitchInput`, `RadioButton`, `TextareaInput`) são o kit reutilizado em todos os formulários Formik do sistema — o melhor ponto de alavancagem: testar bem esses componentes uma vez cobre indiretamente dezenas de telas.
+Os componentes de `src/components/common/form/` (`Input`, `SelectInput`, `MultiSelectInput`, `CheckBox`, `ListInput`, `NumberInput`, `SwitchInput`, `TextareaInput`) são o kit reutilizado em todos os formulários **react-hook-form** do sistema — o melhor ponto de alavancagem: testar bem esses componentes uma vez cobre indiretamente dezenas de telas. (`RadioButton` e `ImageDropzone` também ficam ali, mas são controlados por props e não leem o formulário.)
 
-Como eles dependem de Chakra UI e, em alguns casos, do contexto do Formik, use um `render` utilitário próprio (ver seção 5) em vez do `render` puro do RTL.
+Os campos leem o formulário com `useFormContext()`, então precisam estar dentro de um `FormProvider`. Crie o formulário no próprio teste com um pequeno wrapper e renderize com o `renderWithProviders` (seção 5), que traz Chakra, MUI, router e `appContext`:
 
 ```tsx
 // src/components/common/form/Input/Input.test.tsx
 import { describe, it, expect } from 'vitest';
+import { ReactNode } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from 'src/test/renderWithProviders';
+import { renderWithProviders } from '../../../../test/renderWithProviders';
 import { Input } from './index';
+
+const schema = yup.object({ email: yup.string().required('Campo obrigatório') });
+
+function WithForm({ children }: { children: ReactNode }) {
+  const form = useForm({
+    defaultValues: { email: '' },
+    resolver: yupResolver(schema),
+    mode: 'onTouched',
+  });
+  return <FormProvider {...form}>{children}</FormProvider>;
+}
 
 describe('Input', () => {
   it('exibe a mensagem de erro quando o campo é tocado e inválido', async () => {
-    renderWithProviders(<Input name="email" label="E-mail" />, {
-      formikInitialValues: { email: '' },
-    });
+    renderWithProviders(
+      <WithForm>
+        <Input name='email' label='E-mail' />
+      </WithForm>,
+    );
 
     await userEvent.click(screen.getByLabelText('E-mail'));
     await userEvent.tab();
@@ -168,22 +185,22 @@ export const handlers = [
 // src/hooks/API/services/useClassroomsService.test.ts
 import { describe, it, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { useClassroomsService } from './useClassroomsService';
+import useClassroomsService from './useClassroomsService';
 
 it('busca as salas cadastradas', async () => {
   const { result } = renderHook(() => useClassroomsService());
-  const classrooms = await result.current.get();
-  expect(classrooms).toHaveLength(1);
+  const response = await result.current.get();
+  expect(response.data).toHaveLength(1);
 });
 ```
 
-Configure o servidor MSW uma vez em `src/setupTests.ts` (`beforeAll`/`afterEach`/`afterAll`).
+Configure o servidor MSW uma vez em `src/setupTests.ts` (`beforeAll`/`afterEach`/`afterAll`). O MSW ainda não está instalado: hoje os testes existentes mockam o hook de serviço com `vi.mock` (veja `src/pages/findClasses/findClasses.test.tsx`). Os hooks de serviço usam `useAxiosPrivate`, que lê o `appContext`, então o `renderHook` precisa do mesmo wrapper de providers.
 
-### 4.4 Páginas / fluxos com Formik (`src/pages/<feature>/`)
+### 4.4 Páginas / fluxos com formulário (`src/pages/<feature>/`)
 
-Aqui o objetivo é testar o comportamento visível: abrir modal, preencher passos do wizard (`Steps/First`, `Steps/Second`, ...), submeter e verificar que a chamada de API certa foi feita e o feedback (toast/mensagem) apareceu. Não teste estado interno do Formik diretamente — interaja como um usuário faria, via `userEvent` e queries de `screen`.
+Aqui o objetivo é testar o comportamento visível: abrir modal, preencher passos do wizard (`Steps/First`, `Steps/Second`, ...), submeter e verificar que a chamada de API certa foi feita e o feedback (toast/mensagem) apareceu. Não teste o estado interno do react-hook-form diretamente — interaja como um usuário faria, via `userEvent` e queries de `screen`.
 
-Para páginas que dependem de `AppContext` (usuário autenticado, `isMobile`) ou de rotas (`react-router`), sempre use o `renderWithProviders` da seção 5 — nunca o `render` cru do Testing Library, senão cada teste reimplementa os mesmos providers manualmente.
+Para páginas que dependem do `appContext` (usuário autenticado, `isMobile`) ou de rotas (`react-router`), sempre use o `renderWithProviders` da seção 5 — nunca o `render` cru do Testing Library, senão cada teste reimplementa os mesmos providers manualmente.
 
 ### 4.5 E2E (Playwright)
 
@@ -196,46 +213,22 @@ Poucos testes, alto valor — não tente cobrir cada tela em E2E; isso é papel 
 
 ## 5. Utilitário de render compartilhado
 
-Como `ChakraProvider` e o `ThemeProvider` do MUI envolvem o app inteiro em `src/main.tsx` (ver `CLAUDE.md`), e várias páginas dependem de `AppContext`/`MenuContext`/rotas, crie um `render` próprio em vez de importar `render` do RTL em cada teste:
+Como `ChakraProvider` e o `ThemeProvider` do MUI envolvem o app inteiro em `src/main.tsx`, e várias páginas dependem do `appContext` e de rotas, use o `render` próprio em `src/test/renderWithProviders.tsx` em vez de importar `render` do RTL em cada teste. Ele monta `MemoryRouter` + `ChakraProvider` + `ThemeProvider` do MUI + `appContext.Provider` e aceita:
+
+- `route`: a URL inicial do `MemoryRouter`;
+- `appContextValue`: valores do `appContext` a sobrescrever (ex: um `loggedUser`).
 
 ```tsx
-// src/test/renderWithProviders.tsx
-import { ReactElement } from 'react';
-import { render } from '@testing-library/react';
-import { ChakraProvider } from '@chakra-ui/react';
-import { ThemeProvider } from '@mui/material/styles';
-import { MemoryRouter } from 'react-router-dom';
-import { Formik } from 'formik';
-import { chakraTheme, muiTheme } from 'src/utils/theme';
-import { AppContext } from 'src/context/AppContext';
+import { renderWithProviders } from '../../test/renderWithProviders';
 
-export function renderWithProviders(
-  ui: ReactElement,
-  { formikInitialValues, route = '/', ...contextOverrides }: RenderOptions = {},
-) {
-  const wrapped = formikInitialValues ? (
-    <Formik initialValues={formikInitialValues} onSubmit={() => {}}>
-      {ui}
-    </Formik>
-  ) : (
-    ui
-  );
-
-  return render(
-    <MemoryRouter initialEntries={[route]}>
-      <ChakraProvider theme={chakraTheme}>
-        <ThemeProvider theme={muiTheme}>
-          <AppContext.Provider value={{ ...defaultAppContext, ...contextOverrides }}>
-            {wrapped}
-          </AppContext.Provider>
-        </ThemeProvider>
-      </ChakraProvider>
-    </MemoryRouter>,
-  );
-}
+renderWithProviders(<FindClasses />, { route: '/public/find-classes' });
 ```
 
-Isso mantém cada teste focado no comportamento, sem repetir a árvore de providers.
+O projeto não tem aliases de import (`src/...` não resolve): use caminhos relativos.
+
+Para um campo do kit de formulário, a opção `formDefaultValues` envolve o componente num `FormProvider` do react-hook-form com esses valores iniciais (`renderWithProviders(<Input name='name' label='Nome' />, { formDefaultValues: { name: 'Sala 1' } })`). Quando o teste precisa do objeto do formulário, crie o `useForm` no próprio teste, como na seção 4.2.
+
+Isso mantém cada teste focado no comportamento, sem repetir a árvore de providers. A referência na documentação está em [Frontend › Testes](https://www.uspolis.com.br/docs/dev/frontend/testing).
 
 ## 6. Boas práticas específicas de React/RTL
 
@@ -274,8 +267,8 @@ Isso mantém cada teste focado no comportamento, sem repetir a árvore de provid
 - [Mock Service Worker (MSW) — documentação](https://mswjs.io/docs/)
 - [MSW + React Testing Library](https://mswjs.io/docs/integrations/node)
 
-**Formik / formulários**
-- [Formik — Testing](https://formik.org/docs/guides/testing)
+**Formulários**
+- [React Hook Form — Testing](https://react-hook-form.com/advanced-usage)
 
 **E2E**
 - [Playwright — documentação oficial](https://playwright.dev/docs/intro)

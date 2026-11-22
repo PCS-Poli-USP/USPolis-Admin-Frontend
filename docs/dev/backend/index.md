@@ -1,182 +1,125 @@
 ---
 prev:
-  text: 'Configurando seu ambiente'
+  text: 'Configurando seu Ambiente'
   link: '/dev/enviroment'
 
 next:
-  text: 'Frontend'
-  link: '/dev/frontend'
+  text: 'Backend › Estrutura de arquivos'
+  link: '/dev/backend/structure'
 ---
 
 # Backend
 
-Para a lista de tecnologias utilizadas veja [Tecnologias Utilizadas](/dev/stack#backend). Aqui vamos focar em como o código está organizado e nas convenções que seguimos.
+O backend do USPolis é uma API em **FastAPI** (Python 3.12), com **SQLModel/SQLAlchemy** sobre **PostgreSQL**, migrações com **Alembic** e dependências gerenciadas pelo **Poetry**. O código fica no repositório [USPolis-Admin-Backend](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend), todo dentro da pasta `server/`: não existe `app/` ou `src/` separado, e o Poetry roda com `package-mode = false`.
 
-Todo o código da aplicação fica dentro da pasta `server/` (não existe `app/` ou `src/` separado, o Poetry roda em `package-mode = false`).
+Para a lista completa de bibliotecas veja [Tecnologias Utilizadas](/dev/stack#backend). Para subir o projeto, veja [Configurando seu Ambiente](/dev/enviroment/#backend).
 
-## Ponto de entrada
+## Mapa desta seção
 
-A instância do FastAPI é criada em `server/app.py`:
+| Página | O que você encontra |
+|---|---|
+| [Estrutura de arquivos](/dev/backend/structure) | A árvore completa do repositório e de `server/`, a tabela de camadas e as convenções de nome |
+| [Rotas e tiers](/dev/backend/routes) | Os níveis de acesso e a lista de todos os módulos de rota com seus prefixos |
+| [Fluxo de uma requisição](/dev/backend/request-flow) | O caminho de uma requisição: middlewares, dependências, adapter, checker, repositório e model |
+| [Autenticação e permissões](/dev/backend/auth) | Login, cookie de sessão, CSRF, os gates de cada tier, o sistema de papéis e as API keys |
+| [Serviços e integrações](/dev/backend/services) | Crawlers do Júpiter e do Janus, e-mail, cache, Redis, tarefas agendadas e busca |
+| [Configuração](/dev/backend/config) | Como o `.env` é carregado e a tabela de todas as variáveis de ambiente |
+| [Testes, lint e tipos](/dev/backend/testing) | Estrutura de `tests/`, isolamento por transação, factories, comandos, mypy e ruff |
+| [Como adicionar um recurso](/dev/backend/new-resource) | O passo a passo de ponta a ponta, do model à rota e aos testes |
 
-```bash
-server/
-├── app.py          # instancia o FastAPI, middlewares e monta as rotas
-├── config.py        # objeto CONFIG, lê o .env / .env.<ambiente>
-├── db.py             # engine do SQLAlchemy + import de todos os models (necessário para o Alembic)
-├── deps_overrides.py # troca as dependências de autenticação por mocks quando CONFIG.override_auth
-├── exception_handlers.py
-├── middlewares/      # um módulo por middleware: logger, API key e rate limit
-```
+As tabelas do banco têm uma seção própria: [Banco de Dados](/dev/database/).
 
-Para rodar em desenvolvimento (HTTPS, com reload) use:
+## Pontos de entrada
 
-```bash
-python wsgi.py
-```
+| Arquivo | Uso |
+|---|---|
+| `server/app.py` | Cria a instância do FastAPI, registra middlewares, routers, overrides de dependência e handlers de exceção |
+| `wsgi.py` | **Desenvolvimento.** `python wsgi.py` sobe o `uvicorn` em `server.app:app`, na porta `PORT` (padrão 5000). Em `development` ou `staging` liga o reload e o HTTPS, lendo `certs/key.pem` e `certs/cert.pem` da raiz do repositório do backend |
+| `asgi.py` | **Produção.** Só faz `from server.app import app`. O processo de produção é `gunicorn asgi:app` com workers `uvicorn.workers.UvicornWorker` (veja `docker/entrypoint.sh`) |
 
-Esse script sobe o `uvicorn` apontando para `server.app:app`, usando os certificados de `/certs` (veja [Configurando seu Ambiente](../enviroment/#backend)). Em produção, o processo ASGI (gunicorn/uvicorn workers) aponta para `asgi:app` (`asgi.py` só faz `from server.app import app`).
+A API é montada com `root_path="/api"`. Em produção, um proxy encaminha `/api/*` para o processo, então todas as rotas aparecem com o prefixo `/api` para quem consome. O Swagger fica em `/api/docs`, o ReDoc em `/api/redoc` e o schema em `/api/openapi.json`.
 
-A documentação interativa do Swagger fica em `/api/docs` (`redoc` em `/api/redoc`), já que a API é montada com `root_path="/api"`.
+## O que o `app.py` registra
 
-Em `server/app.py`, além dos routers, também são registrados:
-
-- `CORSMiddleware`, com as origens permitidas vindas de `CONFIG.allowed_origins` (`ALLOWED_ORIGINS`, CSV)
-- `LoggerMiddleware` (`server/middlewares/logger_middleware.py`) — loga toda requisição/resposta (veja `LOGGING.md` no repositório do backend para o formato exato)
-- `ApiKeyMiddleware` (`server/middlewares/api_key_middleware.py`) — valida o header `X-API-Key` das [API keys de parceiros](/api-keys/). Sem o header, a requisição segue como anônima; com uma chave inválida, ela é recusada e nunca vira anônima
-- `RateLimitMiddleware` (`server/middlewares/rate_limit_middleware.py`) — limita por IP ou, com uma chave válida, pelos limites da chave. Usa Redis (sem `REDIS_URL` fica desligado) e o modo vem de `RATE_LIMIT_MODE`
-
-A ordem de execução é Logger → CORS → ApiKey → RateLimit → aplicação. ApiKey e RateLimit ficam dentro do CORS para que os erros 401/403/429 ainda levem os headers de CORS, e ApiKey vem antes de RateLimit para que uma chave válida seja contada nos próprios limites. Só as origens de `ALLOWED_ORIGINS` recebem CORS: sites de parceiros não recebem.
-
-Também são registrados:
-
-- Handlers de exceção (`server/exception_handlers.py`): `IntegrityError` → 409, `NoResultFound` → 404, `GoogleAuthError` → 403
-- Um `lifespan` (`server/services/cron/scheduler.py`) que, ao subir a aplicação, dispara duas tasks assíncronas em loop: uma limpeza de cache a cada hora (`periodic_cache_cleanup`) e uma rotina diária à meia-noite (horário de Brasília) que roda tarefas de manutenção (`periodic_daily_tasks` → `run_daily_tasks`, ex: expurgo de métricas de erro antigas). Ambas são canceladas no shutdown.
-
-## Camadas de acesso (tiers)
-
-As rotas são organizadas por **nível de acesso**, cada uma com sua própria dependência de autenticação aplicada no roteador inteiro (não em cada handler individualmente):
-
-```bash
-server/routes/
-├── health/          # health-check, autenticado por HEALTH_API_KEY (não é uma API key de parceiro)
-├── public/           # sem login (ex: autenticação, dados públicos de alocação)
-├── authenticated/     # qualquer usuário logado
-├── restricted/         # admin OU membro de pelo menos um grupo
-├── admin/               # apenas admin
-└── dev/                   # só existe quando CONFIG.environment == "development"
-```
-
-Cada pasta tem um `__init__.py` que aplica a dependência da camada e inclui os roteadores de cada recurso, por exemplo:
+### Middlewares
 
 ```python
-router = APIRouter(dependencies=[Depends(restricted_authenticate)], tags=["Restricted"])
-router.include_router(BuildingRouter)
-router.include_router(ClassroomRouter)
+app.add_middleware(RateLimitMiddleware)
+app.add_middleware(ApiKeyMiddleware)
+app.add_middleware(CORSMiddleware, ...)
+app.add_middleware(LoggerMiddleware)
 ```
 
-Alguns recursos têm rotas em mais de uma camada (ex: salas têm rotas em `public`, `authenticated` e `restricted`, com níveis de detalhe diferentes), e recursos que são "especializações" de outro (exame, evento e reunião são todos tipos de reserva) têm seus roteadores montados como sub-rota do recurso pai.
+No Starlette, o último middleware adicionado é o mais externo. A ordem de execução de uma requisição é, portanto:
 
-## Organização por camada (não por funcionalidade)
+```text
+requisição → LoggerMiddleware → CORSMiddleware → ApiKeyMiddleware → RateLimitMiddleware → rotas
+```
 
-Diferente do frontend (que organiza por funcionalidade), o backend organiza os arquivos **por tipo/camada**, com o nome do recurso no arquivo. Não existe uma pasta `reservations/` com tudo daquele domínio dentro — em vez disso:
-
-| Camada | Pasta | Exemplo (reserva) |
+| Middleware | Arquivo | O que faz |
 |---|---|---|
-| Rota (por tier) | `server/routes/<tier>/` | `reservation_routes.py` |
-| Model do banco | `server/models/database/` | `reservation_db_model.py` |
-| Schema de request | `server/models/http/requests/` | `reservation_request_models.py` |
-| Schema de response | `server/models/http/responses/` | `reservation_response_models.py` |
-| Repositório | `server/repositories/` | `reservation_repository.py` |
-| Checagem de permissão | `server/services/security/` | `reservation_permission_checker.py` |
-| Adapter repositório → rota | `server/deps/repository_adapters/` | `reservation_repository_adapter.py` |
+| `LoggerMiddleware` | `server/middlewares/logger_middleware.py` | Registra toda requisição e resposta nos logs e grava as respostas de erro em `ApiAccessLog` (veja `LOGGING.md` no backend e [Observabilidade](/dev/observability/)) |
+| `CORSMiddleware` | Starlette | Libera só as origens de `ALLOWED_ORIGINS`, com credenciais. Expõe os headers `Retry-After` e `X-RateLimit-*` para o navegador |
+| `ApiKeyMiddleware` | `server/middlewares/api_key_middleware.py` | Valida o header `X-API-Key` das [API keys de parceiros](/api-keys/). Sem o header, a requisição segue anônima; com uma chave inválida, é recusada e nunca vira anônima |
+| `RateLimitMiddleware` | `server/middlewares/rate_limit_middleware.py` | Limita por IP ou, com uma chave válida, pelos limites da chave. Usa Redis; sem `REDIS_URL`, fica desligado |
 
-A convenção de nome é sempre `<recurso>_<camada>.py`. Ao criar um recurso novo, siga esse mesmo padrão nas pastas correspondentes.
+O ApiKey e o RateLimit ficam **dentro** do CORS para que as respostas 401/403/429 ainda levem os headers de CORS (senão o navegador mostraria um erro de CORS no lugar do erro real). O ApiKey vem antes do RateLimit para que uma chave válida seja contada nos próprios limites. Sites de parceiros não recebem CORS: as chaves são só de servidor.
 
-## Banco de dados
+### Routers
 
-Os models do banco (SQLModel, `table=True`) ficam em `server/models/database/`, um arquivo por entidade (ou tabela de ligação, ex: `group_classroom_link.py`). Eles são **completamente separados** dos schemas Pydantic de request/response — o SQLModel não unifica as duas coisas aqui.
+`HealthRouter`, `PublicRouter`, `AuthenticatedRouter`, `RestrictedRouter` e `AdminRouter`, um por tier de acesso. O `DevRouter` só é incluído quando `CONFIG.environment == "development"`. Veja [Rotas e tiers](/dev/backend/routes).
 
-> [!IMPORTANT]
-> Toda vez que criar um model novo, adicione o import dele em `server/db.py` — é essa lista de imports que faz o Alembic conseguir detectar o model na hora de gerar uma migração automaticamente (`--autogenerate`).
+### Overrides de dependência
 
-As migrações (Alembic) ficam em `migrations/`, configuradas em `alembic.ini`. Não existe script auxiliar, os comandos são os padrões do Alembic:
+`server/deps_overrides.py`: quando `OVERRIDE_AUTH=True`, troca a dependência `authenticate` por um mock (`server/mocks/deps/authenticate_mock.py`) que autentica toda requisição como o usuário de `MOCK_EMAIL`. Serve para desenvolver sem configurar o Google. **Nunca ligue isso em produção.**
 
-```bash
-alembic revision --autogenerate -m "mensagem da migração"
-alembic upgrade head
-```
+### Handlers de exceção
 
-## Autenticação
+`server/exception_handlers.py` converte exceções que escapam das rotas:
 
-O backend tenta autenticar de duas formas, nessa ordem:
+| Exceção | Status |
+|---|---|
+| `sqlalchemy.exc.IntegrityError` | 409 |
+| `sqlalchemy.exc.NoResultFound` | 404 |
+| `google.auth.exceptions.GoogleAuthError` | 403 |
 
-1. **Token Bearer do Google OAuth**, validado via `AuthenticationClient.get_user_info()`
-2. Se não houver token válido, cai para o **cookie de sessão** httponly (`session`), resolvido contra a tabela `UserSession` no banco
+Os erros de domínio (recurso não encontrado, nome repetido, sem permissão) são subclasses de `HTTPException` definidas no fim de cada repositório, adapter ou checker, com a mensagem em português no `detail`.
 
-O frontend usa apenas o cookie. Quando uma requisição chega com o cookie, `is_trusted_cookie_request` (`server/services/security/csrf.py`) confere a origem: requisições que alteram dados vindas de uma origem fora de `ALLOWED_ORIGINS` são recusadas nas rotas autenticadas e atendidas como anônimas nas públicas.
+### Lifespan (`server/services/cron/scheduler.py`)
 
-O cookie de sessão tem expiração deslizante de 30 dias, limitada a um máximo absoluto de 90 dias (só um login interativo de verdade reseta esse limite, uma renovação silenciosa não). Detalhes completos estão no `SESSION_MANAGEMENT.md` do repositório do backend.
+Ao subir, cada worker:
 
-Além do nível de acesso da rota (tier), existem duas checagens adicionais:
+1. imprime a situação do rate limit (`check_rate_limit_setup`) e das API keys (`check_api_key_setup`);
+2. inicia quatro tarefas assíncronas em loop:
 
-- **Por prédio**: `BuildingDep` verifica se o `building_id` (enviado via header) está entre os prédios do usuário, a não ser que ele seja admin
-- **Por recurso**: cada `*_permission_checker.py` em `server/services/security/` faz checagens mais específicas dentro do handler da rota
+| Tarefa | Frequência | O que faz |
+|---|---|---|
+| `periodic_cache_cleanup` | a cada hora | Remove as entradas expiradas do cache em memória (`server/cache.py`) |
+| `periodic_daily_tasks` | à meia-noite (horário de Brasília) | Roda `run_daily_tasks` numa thread: apaga logs de erro mais antigos que `ERROR_METRICS_RETENTION_DAYS` (`purge_old_access_logs`), apaga o [registro de buscas](/dev/search/#registro-de-buscas) mais antigo que `SEARCH_LOG_RETENTION_DAYS` (`purge_old_search_logs`), expira links de entrega de API key vencidos (`expire_api_key_links`) e avisa por e-mail as chaves perto de expirar (`warn_expiring_api_keys`) |
+| `periodic_search_index_refresh` | a cada `SEARCH_INDEX_REFRESH_SECONDS` (10 min) | Atualiza a view materializada da [busca geral](/dev/search/) |
+| `ACCESS_LOG_WRITER.run_periodic_flush` | a cada `ACCESS_LOG_FLUSH_SECONDS` (2 s) | Grava em lote as linhas de `ApiAccessLog` acumuladas pelo logger |
 
-### API keys de parceiros
+No shutdown, as tarefas são canceladas, e o access log é descarregado uma última vez para não perder os erros das últimas requisições.
 
-Parceiros acessam as rotas públicas com o header `X-API-Key`, sem representar nenhum usuário. A chave é sempre de servidor, e uma requisição com chave **e** header `Origin` recebe 403: não existem chaves de navegador. Cada chave aceita só GET/HEAD, só rotas públicas e só os seus prefixos de rota, e tem validade e limites próprios. Apenas o HMAC da chave é guardado, com `API_KEY_SECRET`.
-
-O guia para parceiros está em [API Keys](/api-keys/), e o desenho completo (formato da chave, entrega por link de uso único, cache e revogação) no `docs/API_KEYS.md` do backend.
-
-> [!WARNING]
-> Um sistema de permissões mais granular (por usuário ou por role, ligado a prédio/sala/curso) já existe no banco (`server/models/database/base_permission_db_model.py` e afins) mas ainda está em desenvolvimento — a maior parte das checagens de permissão hoje passa pelos `*_permission_checker.py`, que atualmente têm pouca cobertura de testes.
-
-## Testes
-
-A estrutura de `tests/` espelha os tiers de rotas:
-
-```bash
-tests/
-├── api/{public,authenticated,restricted,admin}/  # testes HTTP completos via TestClient
-├── integration/{repositories,services}/           # testes com banco, sem HTTP
-├── unit/{models,services,utils}/                    # testes puros, sem banco
-├── factories/{model,request,response,base}/          # factories (SQLModel/Faker) e builders de payload
-└── conftest.py                                          # fixtures, aplica as migrações e isola cada teste numa transação
-```
-
-O isolamento entre testes **não** é feito truncando tabelas: a fixture de sessão (`tests/conftest.py`) abre uma transação e uma `SAVEPOINT`, entrega essa sessão pro teste, e ao final dá `rollback()` — nenhum dado escrito durante o teste sobrevive, sem precisar limpar tabela por tabela. As migrações de verdade (`alembic upgrade head`) são aplicadas uma única vez por sessão de testes (fixture `autouse`, `scope="session"`) contra o banco apontado por `TEST_ALEMBIC_URL`.
-
-> [!WARNING]
-> O `TESTS.md` do repositório do backend descreve um mecanismo antigo (truncar tabelas via uma função `truncate_tables`) que não é mais o que o código faz — o `README.md` do backend já está atualizado com a descrição correta (SAVEPOINT + rollback). Em caso de dúvida, confie no `conftest.py` e no `README.md`, não no `TESTS.md`.
-
-Rodar os testes:
-
-```bash
-pytest                                    # suite completa
-pytest tests/api/public/test_x.py          # um arquivo
-pytest tests/api/public/test_x.py::test_x   # um teste específico
-```
-
-Requer `TEST_DATABASE_URI`, `TEST_DATABASE_NAME` e `TEST_ALEMBIC_URL` configurados no seu `.env`.
-
-## Lint e checagem de tipos
-
-```bash
-mypy server
-ruff check server
-ruff format server
-```
-
-O `mypy` roda em modo bem estrito (`disallow_untyped_defs`, `disallow_incomplete_defs`, `warn_return_any`, `strict_equality`, entre outras flags em `[tool.mypy]` no `pyproject.toml`) — funções sem type hints ou com `Any` implícito não passam. O `ruff` usa `line-length = 88` e tem a regra `UP` (pyupgrade) habilitada.
+> [!NOTE]
+> Com vários workers do gunicorn, **cada worker** roda as próprias tarefas. As que tocam o banco se protegem disso (por exemplo, a atualização do índice de busca usa um advisory lock do Postgres). Se você criar uma tarefa nova, pense no que acontece quando ela roda em paralelo em todos os workers.
 
 ## Documentação adicional no repositório do backend
 
-Além desta página, o próprio repositório do backend tem alguns markdowns com detalhes que não duplicamos aqui. O `README.md` fica na raiz, e os demais em `docs/`:
+Esta seção é a referência geral. Os desenhos detalhados de cada subsistema ficam em markdowns no próprio repositório do backend: o `README.md` na raiz e os demais em `docs/`.
 
-- **`README.md`** — setup rápido, comandos de desenvolvimento e teste
-- **`API_KEYS.md`** — o desenho das API keys de parceiros; **`PARTNER_API.md`** é o guia entregue aos parceiros
-- **`RATE_LIMIT.md`** — limites por IP e por chave, Redis e os modos `off`, `shadow` e `enforce`
-- **`SESSION_MANAGEMENT.md`** — o ciclo de vida completo do cookie de sessão (criação, renovação deslizante de 30 dias, teto absoluto de 90 dias, limitações conhecidas como a ausência de um job de limpeza de sessões expiradas)
-- **`LOGGING.md`** — os dois loggers (`app_logger` e `loki_access`), o que cada um registra e as regras de rotação de arquivo
-- **`PERMISSIONS.md`** — o modelo de permissões baseado em `Role` (veja o aviso sobre isso na seção [Autenticação](#autenticação) acima) e o histórico de migração do modelo antigo baseado em `Group`
-- **`TESTS.md`** — parcialmente desatualizado (veja o aviso na seção [Testes](#testes))
+| Arquivo | Assunto |
+|---|---|
+| `README.md` | Setup rápido e comandos do dia a dia |
+| `docker/README.md` | Estágios da imagem Docker e o que o `entrypoint.sh` faz |
+| `docs/API_KEYS.md` | Desenho das API keys de parceiros (formato, entrega por link de uso único, cache, revogação) |
+| `docs/PARTNER_API.md` | Guia entregue aos parceiros |
+| `docs/RATE_LIMIT.md` | Limites por IP e por chave, Redis e os modos `off`, `shadow` e `enforce` |
+| `docs/SESSION_MANAGEMENT.md` | Ciclo de vida do cookie de sessão |
+| `docs/LOGGING.md` | Os loggers, o que cada um registra, rotação e o access log em banco |
+| `docs/PERMISSIONS.md` | O modelo de permissões baseado em papéis (`Role`) e a migração a partir dos grupos |
+| `docs/SEARCH.md` | Desenho da busca geral (view materializada, ranking, extensões) |
+| `docs/TESTS.md` | Infraestrutura de testes, factories e convenções |
+| `docs/BUGS_FOUND.md` | Bugs encontrados e corrigidos, com a causa de cada um |
+| `docs/BACKLOG.md` | Pendências conhecidas |
+| `docs/CHANGELOG_FRONTEND.md` | Mudanças do backend que afetam o frontend |

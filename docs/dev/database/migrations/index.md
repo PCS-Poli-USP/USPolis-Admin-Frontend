@@ -17,8 +17,8 @@ Usamos o **Alembic** para versionar o schema do banco. Toda mudança na estrutur
 ## Onde tudo fica
 
 - `alembic.ini` (raiz do repositório do backend) — configuração principal. `script_location = migrations` aponta pra pasta de migrações; a `sqlalchemy.url` que está escrita nesse arquivo é só um placeholder e **nunca é usada de fato**, porque `migrations/env.py` sempre sobrescreve essa URL na hora de rodar.
-- `migrations/env.py` — o "cérebro" da configuração. A função `get_url()` decide qual banco usar: primeiro olha se existe uma variável de ambiente `ALEMBIC_URL` já setada no processo (é assim que os testes apontam para o banco de teste, veja [Backend › Testes](/dev/backend/#testes)), e se não existir cai para `CONFIG.alembic_url` (a variável `ALEMBIC_URL` do seu `.env.dev`/`.env.prod`/`.env.stage`). Também importa `server.db` só para garantir que **todos** os models estejam registrados em `SQLModel.metadata` antes de qualquer autogenerate — sem esse import, o Alembic não enxergaria tabelas que não tenham sido importadas ainda.
-- `migrations/versions/` — uma migração por arquivo, hoje já são mais de 70. Cada uma tem um `revision` (hash) e um `down_revision` (o hash da migração anterior), formando uma lista encadeada — é assim que o Alembic sabe a ordem de aplicação.
+- `migrations/env.py` — o "cérebro" da configuração. A função `get_url()` decide qual banco usar: primeiro olha se existe uma variável de ambiente `ALEMBIC_URL` já setada no processo (é assim que os testes apontam para o banco de teste, veja [Backend › Testes](/dev/backend/testing)), e se não existir cai para `CONFIG.alembic_url` (a variável `ALEMBIC_URL` do seu `.env.dev`/`.env.prod`/`.env.stage`). Também importa `server.db` só para garantir que **todos** os models estejam registrados em `SQLModel.metadata` antes de qualquer autogenerate — sem esse import, o Alembic não enxergaria tabelas que não tenham sido importadas ainda.
+- `migrations/versions/` — uma migração por arquivo, hoje já são mais de 80. Cada uma tem um `revision` (hash) e um `down_revision` (o hash da migração anterior), formando uma lista encadeada — é assim que o Alembic sabe a ordem de aplicação.
 
 ## Comandos do dia a dia
 
@@ -53,6 +53,25 @@ poetry run alembic history        # lista todas as migrações em ordem
 poetry run alembic downgrade -1    # desfaz a última migração aplicada
 poetry run alembic downgrade base   # desfaz TODAS as migrações (cuidado)
 ```
+
+## O que o autogenerate não enxerga
+
+Além de renomeações e dados, o autogenerate ignora tudo o que não é tabela, coluna, índice ou constraint declarado nos models: **views, extensões, configurações de busca textual, funções e triggers**. Esses objetos precisam ser criados com `op.execute(...)` numa migração escrita à mão, com o `downgrade()` correspondente. O exemplo do projeto é a migração da busca geral (`5c8e1f2a9b47_create_search_document_view.py`), que cria as extensões `unaccent` e `pg_trgm`, a configuração `pt_unaccent` e a view materializada `search_document` (veja [Banco de Dados › Busca](/dev/database/#busca-a-view-search-document)).
+
+Se você muda uma tabela que a view `search_document` lê (disciplinas, turmas, salas, prédios, reservas), confira se a view continua válida: pode ser preciso recriá-la na mesma migração.
+
+## Transações
+
+O `migrations/env.py` roda com `transaction_per_migration=True`: cada migração roda na própria transação. Se uma migração falha no meio de um `upgrade head`, as anteriores continuam aplicadas e o banco fica na última que deu certo (`alembic current` mostra qual).
+
+## Bancos novos e o `pre_start.py`
+
+Num banco **vazio**, `alembic upgrade head` monta o schema inteiro a partir da primeira migração. É o que a suíte de testes faz a cada execução e o que a [configuração manual](/dev/enviroment/#banco-de-dados) recomenda.
+
+O ambiente Docker passa antes pelo `server/scripts/pre_start.py`, chamado pelo `docker/entrypoint.sh`. Ele espera o banco aceitar conexões e, **se o banco ainda não tem a tabela `alembic_version`**, cria as tabelas direto dos models (`SQLModel.metadata.create_all()`) e marca todas as migrações como aplicadas (`alembic stamp head`), sem rodá-las. Num banco que já tem `alembic_version`, ele não faz nada e deixa o `alembic upgrade head` seguinte trabalhar.
+
+> [!WARNING]
+> O caminho do `create_all()` só cria o que está nos models. O que as migrações criam à mão, como a view `search_document`, as extensões e a configuração `pt_unaccent`, **não é criado**, e o `stamp head` impede que as migrações rodem depois. Um banco novo montado pelo Docker fica sem a busca geral. Testamos: o histórico de migrações sobe sem erro num banco vazio, então o atalho do `create_all()` não é necessário, apesar do comentário no `pre_start.py` dizer o contrário. Até o script ser corrigido, a busca só funciona em bancos montados pelas migrações.
 
 ## Async vs. sync
 
