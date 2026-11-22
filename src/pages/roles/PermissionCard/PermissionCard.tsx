@@ -81,19 +81,27 @@ function PermissionCard({
           )}
         </Text>
         <Flex gap={'4px'} wrap={'wrap'}>
-          {permission.actions.map((action, index) => (
-            <Tooltip
-              key={index}
-              label={PermissionAction.describe(action, permission.resource)}
-              isDisabled={
-                !PermissionAction.describe(action, permission.resource)
-              }
-            >
-              <Badge colorScheme={'gray'} fontSize={'10px'}>
-                {PermissionAction.translate(action, permission.resource)}
-              </Badge>
-            </Tooltip>
-          ))}
+          {/* The implied actions count as granted (the backend applies
+              them), so older roles show them too, outlined. */}
+          {PermissionAction.withImplied(permission.actions).map((action) => {
+            const impliedBy = permission.actions.includes(action)
+              ? undefined
+              : PermissionAction.impliedBy(action, permission.actions);
+            const label = impliedBy
+              ? `Incluída por "${PermissionAction.translate(impliedBy, permission.resource)}"`
+              : PermissionAction.describe(action, permission.resource);
+            return (
+              <Tooltip key={action} label={label} isDisabled={!label}>
+                <Badge
+                  colorScheme={'gray'}
+                  variant={impliedBy ? 'outline' : 'subtle'}
+                  fontSize={'10px'}
+                >
+                  {PermissionAction.translate(action, permission.resource)}
+                </Badge>
+              </Tooltip>
+            );
+          })}
         </Flex>
         {roleName && (
           <Text fontSize={'12px'} color={'uspolis.gray'}>

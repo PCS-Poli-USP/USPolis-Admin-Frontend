@@ -171,12 +171,16 @@ const PermissionPicker = forwardRef<PermissionPickerRef, PermissionPickerProps>(
       );
     }
 
+    // Marking an action marks the ones it implies (PermissionAction.implied,
+    // as the backend applies them); an implied action stays marked, locked,
+    // while the action that implies it is.
     function toggleAction(action: PermissionAction) {
-      setActions((prev) =>
-        prev.includes(action)
-          ? prev.filter((a) => a !== action)
-          : [...prev, action],
-      );
+      setActions((prev) => {
+        if (!prev.includes(action))
+          return PermissionAction.withImplied([...prev, action]);
+        if (PermissionAction.impliedBy(action, prev)) return prev;
+        return prev.filter((a) => a !== action);
+      });
     }
 
     function toggleAllResources() {
@@ -309,17 +313,22 @@ const PermissionPicker = forwardRef<PermissionPickerRef, PermissionPickerProps>(
             <Flex gap={'6px'} wrap={'wrap'}>
               {availableActions.map((action) => {
                 const selected = actions.includes(action);
+                const lockedBy = selected
+                  ? PermissionAction.impliedBy(action, actions)
+                  : undefined;
+                const label = lockedBy
+                  ? `Incluída por "${PermissionAction.translate(lockedBy, resType)}"`
+                  : PermissionAction.describe(action, resType);
                 return (
-                  <Tooltip
-                    key={action}
-                    label={PermissionAction.describe(action, resType)}
-                    isDisabled={!PermissionAction.describe(action, resType)}
-                  >
+                  <Tooltip key={action} label={label} isDisabled={!label}>
                     <Button
                       size={'xs'}
                       borderRadius={'full'}
                       variant={selected ? 'solid' : 'outline'}
                       colorScheme={'blue'}
+                      opacity={lockedBy ? 0.7 : 1}
+                      cursor={lockedBy ? 'not-allowed' : 'pointer'}
+                      aria-disabled={!!lockedBy}
                       onClick={() => toggleAction(action)}
                     >
                       {PermissionAction.translate(action, resType)}

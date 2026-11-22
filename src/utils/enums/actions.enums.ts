@@ -126,6 +126,42 @@ export namespace PermissionAction {
     return undefined;
   }
 
+  // Same as the backend's IMPLIED_ACTIONS (role_permission_evaluator.py): an
+  // action that makes no sense alone grants the actions it depends on.
+  const IMPLIED: Record<string, PermissionAction[]> = {
+    [BaseAction.CREATE]: [BaseAction.READ],
+    [BaseAction.UPDATE]: [BaseAction.READ],
+    [BaseAction.DELETE]: [BaseAction.UPDATE, BaseAction.READ],
+    [ClassroomAction.ALLOCATE]: [BaseAction.READ],
+    [ClassroomAction.RESERVE]: [BaseAction.READ],
+    [ClassroomAction.REQUEST]: [BaseAction.READ],
+  };
+
+  /** The actions `action` implies. */
+  export function implied(action: PermissionAction): PermissionAction[] {
+    return IMPLIED[action] ?? [];
+  }
+
+  /** `actions` plus every action they imply, without repeats. */
+  export function withImplied(actions: PermissionAction[]): PermissionAction[] {
+    const result: PermissionAction[] = [];
+    for (const action of [...actions, ...actions.flatMap(implied)]) {
+      if (!result.includes(action)) result.push(action);
+    }
+    return result;
+  }
+
+  /** The action of `selected` that implies `action`, if any (so `action`
+   * cannot be removed while it is there). */
+  export function impliedBy(
+    action: PermissionAction,
+    selected: PermissionAction[],
+  ): PermissionAction | undefined {
+    return selected.find(
+      (other) => other !== action && implied(other).includes(action),
+    );
+  }
+
   export function canHaveAllResources(
     action: PermissionAction,
     resource: Resource,
