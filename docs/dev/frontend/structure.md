@@ -140,8 +140,8 @@ Cada pasta em `src/pages/` corresponde a uma ou mais rotas de `src/AppRoutes.tsx
 | `print/` | `/print/classroom-calendar` | sessão restaurada, fora do layout |
 | `publicHub/` | `/public` | público |
 | `allocation/` | `/public/allocations` (Mapa de Salas) | público |
-| `findClasses/` | `/public/find-classes` | público |
-| `findExams/` | `/public/find-exams` | público |
+| `search/` | `/public/search` (Busque no USPolis; `/public/find-classes` redireciona para cá mantendo a query) | público |
+| `findExams/` | `/public/find-exams` | público, sem link no menu nem no hub (oculta desde a busca geral) |
 | `profile/` | `/profile` | `PrivateRoute` |
 | `timetable/` | `/profile/timetable` | `PrivateRoute` |
 | `mySolicitations/` | `/profile/solicitations` | `PrivateRoute` |

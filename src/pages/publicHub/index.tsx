@@ -4,7 +4,6 @@ import HubPageGrid, {
   HubPageGridItem,
 } from '../../components/common/HubPageGrid';
 import { useNavigate } from 'react-router-dom';
-import { PiExamLight } from 'react-icons/pi';
 import { BsCalendar3 } from 'react-icons/bs';
 import { Search2Icon } from '@chakra-ui/icons';
 
@@ -13,19 +12,12 @@ function PublicHub() {
 
   const items: HubPageGridItem[] = [
     {
-      icon: <PiExamLight size={'64px'} />,
-      title: 'Encontre suas provas',
-      description: 'Busque as provas disponíveis para consulta e impressão',
-      onClick: () => {
-        navigate('/public/find-exams');
-      },
-    },
-    {
       icon: <Search2Icon boxSize={'64px'} />,
-      title: 'Encontre suas aulas',
-      description: 'Busque as disciplinas disponíveis no USPolis',
+      title: 'Busque no USPolis',
+      description:
+        'Encontre disciplinas, turmas, salas, professores, provas e monitorias',
       onClick: () => {
-        navigate('/public/find-classes');
+        navigate('/public/search');
       },
     },
     {
@@ -45,7 +37,7 @@ function PublicHub() {
           Selecione um dos módulos abaixo para acessar as funcionalidades
           disponíveis para o público geral.
         </Text>
-        <HubPageGrid items={items} columns={3} />
+        <HubPageGrid items={items} columns={2} />
       </Flex>
     </PageContent>
   );

@@ -213,7 +213,7 @@ function SearchLogs() {
                     <Tooltip label={'Ver o que a busca mostra hoje'}>
                       <IconButton
                         as={'a'}
-                        href={`/public/find-classes?q=${encodeURIComponent(q.query)}`}
+                        href={`/public/search?q=${encodeURIComponent(q.query)}`}
                         target={'_blank'}
                         rel={'noopener noreferrer'}
                         aria-label={`Abrir "${q.query}" na busca`}

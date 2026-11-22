@@ -128,8 +128,7 @@ export default {
                 },
               ],
             },
-            { text: 'Encontre suas provas', link: '/find-exams' },
-            { text: 'Encontre suas aulas', link: '/find-classes' },
+            { text: 'Busque no USPolis', link: '/search' },
           ],
         },
         {

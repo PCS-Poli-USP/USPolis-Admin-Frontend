@@ -162,11 +162,11 @@ const map: Record<string, Crumb[]> = {
       current: false,
     },
   ],
-  '/public/find-classes': [
+  '/public/search': [
     ...mainMap['/public'],
     {
-      label: 'Encontre suas aulas',
-      href: '/public/find-classes',
+      label: 'Busque no USPolis',
+      href: '/public/search',
       current: false,
     },
   ],

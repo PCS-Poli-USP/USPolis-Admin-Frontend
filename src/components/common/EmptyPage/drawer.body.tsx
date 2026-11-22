@@ -45,7 +45,7 @@ import {
 } from 'react-icons/md';
 import { LuCalendarDays } from 'react-icons/lu';
 import { GiBookCover, GiTeacher, GiGraduateCap } from 'react-icons/gi';
-import { PiChair, PiExamLight } from 'react-icons/pi';
+import { PiChair } from 'react-icons/pi';
 import { BsCalendar3, BsEnvelopeCheck } from 'react-icons/bs';
 import { HiUserGroup } from 'react-icons/hi';
 import { IconType } from 'react-icons';
@@ -445,20 +445,12 @@ export default function DrawerBody({ onClose }: DrawerBodyProps) {
               hidden={!isOpenPublicSection}
             >
               <DrawerButton
-                icon={<PiExamLight />}
-                to='/public/find-exams'
-                text='Encontre suas provas'
-                replace_location={false}
-                onClose={onClose}
-                highlighted={currentPath === '/public/find-exams'}
-              />
-              <DrawerButton
                 icon={<Search2Icon />}
-                to='/public/find-classes'
-                text='Encontre suas aulas'
+                to='/public/search'
+                text='Busque no USPolis'
                 replace_location={false}
                 onClose={onClose}
-                highlighted={currentPath === '/public/find-classes'}
+                highlighted={currentPath === '/public/search'}
               />
               <DrawerButton
                 icon={<BsCalendar3 />}

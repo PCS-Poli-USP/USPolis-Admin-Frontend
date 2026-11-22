@@ -194,7 +194,7 @@ it('busca as salas cadastradas', async () => {
 });
 ```
 
-Configure o servidor MSW uma vez em `src/setupTests.ts` (`beforeAll`/`afterEach`/`afterAll`). O MSW ainda não está instalado: hoje os testes existentes mockam o hook de serviço com `vi.mock` (veja `src/pages/findClasses/findClasses.test.tsx`). Os hooks de serviço usam `useAxiosPrivate`, que lê o `appContext`, então o `renderHook` precisa do mesmo wrapper de providers.
+Configure o servidor MSW uma vez em `src/setupTests.ts` (`beforeAll`/`afterEach`/`afterAll`). O MSW ainda não está instalado: hoje os testes existentes mockam o hook de serviço com `vi.mock` (veja `src/pages/search/search.test.tsx`). Os hooks de serviço usam `useAxiosPrivate`, que lê o `appContext`, então o `renderHook` precisa do mesmo wrapper de providers.
 
 ### 4.4 Páginas / fluxos com formulário (`src/pages/<feature>/`)
 
@@ -221,7 +221,7 @@ Como `ChakraProvider` e o `ThemeProvider` do MUI envolvem o app inteiro em `src/
 ```tsx
 import { renderWithProviders } from '../../test/renderWithProviders';
 
-renderWithProviders(<FindClasses />, { route: '/public/find-classes' });
+renderWithProviders(<GeneralSearch />, { route: '/public/search' });
 ```
 
 O projeto não tem aliases de import (`src/...` não resolve): use caminhos relativos.

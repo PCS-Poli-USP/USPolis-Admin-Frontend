@@ -22,17 +22,14 @@ import { MdClose, MdSearch } from 'react-icons/md';
 import { useSearchParams } from 'react-router-dom';
 import PageContent from '../../components/common/PageContent';
 import { appContext } from '../../context/AppContext';
-import useClasses from '../../hooks/classes/useClasses';
 import {
   SEARCH_MIN_QUERY_LENGTH,
   useGeneralSearch,
   useSearchDocument,
 } from '../../hooks/search/useGeneralSearch';
 import { useSearchLog } from '../../hooks/search/useSearchLog';
-import { ClassSchedulingResponse } from '../../models/http/responses/class.response.models';
 import { SearchItemResponse } from '../../models/http/responses/search.response.models';
 import { SearchEntityType } from '../../utils/enums/searchEntityType.enum';
-import ClassGrid from './ClassGrid';
 import SearchResultItem from './SearchResultItem';
 import SearchTopPanel from './SearchTopPanel';
 import SearchTypeFilter from './SearchTypeFilter';
@@ -44,7 +41,7 @@ type SearchUrlParam = 'q' | 'type' | 'focus';
 // Height of the app's fixed top bar (PageContent has the same margin-top).
 const APP_BAR_HEIGHT = 60;
 
-function FindClasses() {
+function GeneralSearch() {
   const { isMobile } = useContext(appContext);
 
   // The search bar + filters stick below the app bar like a header; the
@@ -81,16 +78,6 @@ function FindClasses() {
   });
   const focused = useSearchDocument(hasQuery ? focus : null);
   const { logNow } = useSearchLog({ query: urlQuery, type });
-
-  const { getCommingClasses } = useClasses(false);
-  const [commingClasses, setCommingClasses] = useState<
-    ClassSchedulingResponse[]
-  >([]);
-  useEffect(() => {
-    getCommingClasses().then((comming) => {
-      if (comming) setCommingClasses(comming);
-    });
-  }, [getCommingClasses]);
 
   function updateParams(
     changes: Partial<Record<SearchUrlParam, string | null>>,
@@ -138,16 +125,25 @@ function FindClasses() {
         maxW={'1200px'}
         mx={'auto'}
         gap={4}
-        pt={hasQuery ? 2 : isMobile ? 6 : 16}
-        pb={10}
+        // Before a search the field sits in the middle of the page (a bit
+        // above the true center, which reads better); results start at top.
+        minH={hasQuery ? undefined : '100%'}
+        justify={hasQuery ? 'flex-start' : 'center'}
+        pt={hasQuery ? 2 : 0}
+        pb={hasQuery ? 10 : '12vh'}
       >
         {!hasQuery && (
           <Box textAlign={'center'}>
-            <Heading as='h1' size={isMobile ? 'lg' : 'xl'}>
-              Encontre no USPolis
+            <Heading as='h1' size={isMobile ? '2xl' : '3xl'}>
+              Busque no USPolis
             </Heading>
-            <Text color={'uspolis.textMuted'} mt={2}>
-              Disciplinas, turmas, salas, prédios e professores em um só lugar
+            <Text
+              color={'uspolis.textMuted'}
+              fontSize={isMobile ? 'lg' : 'xl'}
+              mt={3}
+            >
+              Disciplinas, turmas, salas, prédios, professores, provas e
+              monitorias em um só lugar
             </Text>
           </Box>
         )}
@@ -171,12 +167,13 @@ function FindClasses() {
             as='form'
             role='search'
             w={'full'}
-            maxW={'720px'}
+            // Wider than the subtitle line above it
+            maxW={'880px'}
             onSubmit={(e: React.FormEvent) => e.preventDefault()}
           >
             <InputGroup size={'lg'}>
-              <InputLeftElement pointerEvents={'none'}>
-                <Icon as={MdSearch} boxSize={6} color={'uspolis.textMuted'} />
+              <InputLeftElement pointerEvents={'none'} h={'56px'} w={'56px'}>
+                <Icon as={MdSearch} boxSize={7} color={'uspolis.textMuted'} />
               </InputLeftElement>
               <Input
                 autoFocus
@@ -185,11 +182,14 @@ function FindClasses() {
                 placeholder={'Pesquise o que você precisa'}
                 aria-label={'Pesquisar no USPolis'}
                 borderRadius={'full'}
+                h={'56px'}
+                pl={'56px'}
+                fontSize={isMobile ? 'lg' : 'xl'}
                 autoComplete={'off'}
                 enterKeyHint={'search'}
               />
               {input && (
-                <InputRightElement>
+                <InputRightElement h={'56px'} w={'56px'}>
                   <IconButton
                     aria-label={'Limpar busca'}
                     icon={<MdClose />}
@@ -203,13 +203,13 @@ function FindClasses() {
             </InputGroup>
             {!hasQuery && (
               <Text
-                fontSize={'sm'}
+                fontSize={isMobile ? 'sm' : 'md'}
                 color={'uspolis.textMuted'}
                 textAlign={'center'}
                 mt={2}
               >
-                Ex.: “cálculo”, “MAC0110”, “B2-04”, “Biênio” ou o nome de um(a)
-                professor(a)
+                Ex.: “cálculo”, “MAC0110”, “B2-04”, “prova de cálculo”,
+                “monitoria” ou o nome de um(a) professor(a)
               </Text>
             )}
           </Box>
@@ -349,18 +349,9 @@ function FindClasses() {
             </Stack>
           </Flex>
         )}
-
-        {!hasQuery && commingClasses.length > 0 && (
-          <Flex direction={'column'} gap={'10px'} w={'full'} mt={8}>
-            <Text fontWeight={'bold'} fontSize={'xl'}>
-              Próximas aulas
-            </Text>
-            <ClassGrid classes={commingClasses} columns={isMobile ? 1 : 3} />
-          </Flex>
-        )}
       </Flex>
     </PageContent>
   );
 }
 
-export default FindClasses;
+export default GeneralSearch;

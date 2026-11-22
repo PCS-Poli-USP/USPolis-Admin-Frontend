@@ -72,7 +72,7 @@ As páginas hub são páginas de entrada que mostram uma grade de cards (`compon
 
 | Hub | Rota | Cards |
 |---|---|---|
-| `publicHub` | `/public` | Mapa de Salas, Encontre suas aulas, Encontre suas provas |
+| `publicHub` | `/public` | Busque no USPolis, Mapa de Salas |
 | `oferingsHub` | `/oferings` | Salas, Disciplinas, Turmas, Calendários, Conflitos, Relatórios |
 | `schedulingHub` | `/scheduling` | Reservas, Solicitações |
 | `adminHub` | `/admin` | as páginas de admin, mais um card "Analytics (Grafana)" que abre o Grafana em outra aba (veja [Observabilidade](/dev/observability/)) |

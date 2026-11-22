@@ -6,7 +6,7 @@ prev:
 
 # Busca geral
 
-A página **Encontre suas aulas** (`/public/find-classes`) é uma busca de campo único: a pessoa digita qualquer coisa ("cálculo", "MAC0110", "B2-04", "Biênio", "monitoria", o nome de um professor) e recebe tudo o que o USPolis tem de público sobre aquilo, agrupado por tipo, com um **resultado em destaque** e os itens ligados a ele.
+A página **Busque no USPolis** (`/public/search`) é uma busca de campo único: a pessoa digita qualquer coisa ("cálculo", "MAC0110", "B2-04", "Biênio", "monitoria", o nome de um professor) e recebe tudo o que o USPolis tem de público sobre aquilo, agrupado por tipo, com um **resultado em destaque** e os itens ligados a ele.
 
 Esta página explica como isso funciona: que técnicas são usadas, a teoria por trás de cada uma e onde está cada peça no código. Não há nenhum modelo de IA envolvido: tudo roda no PostgreSQL que o USPolis já usa, com extensões que vêm na instalação padrão.
 
@@ -230,7 +230,7 @@ Para turmas, professores e disciplinas, a referência é o período (início e f
 ```
 PostgreSQL                                Backend (FastAPI)                     Frontend
 ─────────────────────────────────────     ──────────────────────────────────    ──────────────────────────────
-tabelas (subject, class, reservation…)    GET /search?q=…                       findClasses/index.tsx
+tabelas (subject, class, reservation…)    GET /search?q=…                       search/index.tsx
         │  REFRESH a cada 10 min            SearchRepository.search               useGeneralSearch (300 ms de
         ▼                                   SearchRepository.related                debounce, cancela a anterior)
 materialized view search_document ─────►  GET /search/documents/{doc_key}  ──►  SearchTopPanel / SearchResultItem

@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import 'moment/locale/pt-br';
 import EmptyPage from './components/common/EmptyPage';
@@ -23,7 +23,7 @@ import Classes from './pages/classes/';
 import Classrooms from './pages/classrooms/classrooms';
 import ClassroomCalendarPrintPage from './pages/print';
 import ConflictsPage from './pages/conflicts/conflicts';
-import FindClasses from './pages/findClasses';
+import GeneralSearch from './pages/search';
 import Groups from './pages/groups/groups';
 import Home from './pages/home';
 import InstitutionalEvents from './pages/institutionalEvents';
@@ -56,6 +56,12 @@ import ApiClientDetail from './pages/apiClients/apiClientDetail';
 import ApiKeyDetail from './pages/apiClients/apiKeyDetail';
 import ApiKeyLinkPage from './pages/apiKeyLink';
 
+// <Navigate> drops the query string; keep it so old ?q= links still work.
+function RedirectKeepingQuery({ to }: { to: string }) {
+  const { search } = useLocation();
+  return <Navigate to={`${to}${search}`} replace />;
+}
+
 function AppRoutes() {
   return (
     <Routes>
@@ -81,7 +87,13 @@ function AppRoutes() {
             <Route path='public'>
               <Route path='' element={<PublicHub />} />
               <Route path='allocations' element={<Allocation />} />
-              <Route path='find-classes' element={<FindClasses />} />
+              <Route path='search' element={<GeneralSearch />} />
+              {/* Old path of the search page, kept for shared links */}
+              <Route
+                path='find-classes'
+                element={<RedirectKeepingQuery to='/public/search' />}
+              />
+              {/* Hidden: no menu/hub link since the general search exists */}
               <Route path='find-exams' element={<FindExams />} />
             </Route>
 

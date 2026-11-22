@@ -4,8 +4,8 @@ prev:
   link: '/allocations/solicitate-a-classroom'
 
 next:
-  text: 'Encontre suas aulas'
-  link: '/find-classes'
+  text: 'Busque no USPolis'
+  link: '/search'
 ---
 
 # Encontre suas provas

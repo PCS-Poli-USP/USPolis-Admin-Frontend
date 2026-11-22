@@ -46,7 +46,7 @@ Ao lado do código que testam, com o sufixo `.test.ts` ou `.test.tsx`:
 |---|---|
 | `src/utils/classrooms/classrooms.validator.test.ts` | Função pura (validador) |
 | `src/utils/search/search.formatter.test.ts` | Função pura (formatador) |
-| `src/pages/findClasses/findClasses.test.tsx` | Página inteira, com o hook de serviço mockado |
+| `src/pages/search/search.test.tsx` | Página inteira, com o hook de serviço mockado |
 
 ## Renderizando com os providers
 
@@ -57,7 +57,7 @@ Componentes do app esperam o Chakra, o MUI, o router e o `appContext` em volta. 
 - `formDefaultValues`: envolve o componente num `FormProvider` do react-hook-form com esses valores iniciais, para testar campos do kit de formulário, que leem o contexto com `useFormContext`.
 
 ```tsx
-renderWithProviders(<FindClasses />, { route: '/public/find-classes?q=calculo' });
+renderWithProviders(<GeneralSearch />, { route: '/public/search?q=calculo' });
 
 renderWithProviders(<Input name='name' label='Nome' />, {
   formDefaultValues: { name: 'Sala 1' },
@@ -68,7 +68,7 @@ Quando o teste precisa do objeto do formulário (para chamar `trigger`, `setErro
 
 ## Mockando o backend
 
-Não há MSW: os testes mockam o **hook de serviço** (ou o hook de domínio) com `vi.mock`, e controlam as respostas pelas funções mockadas. Exemplo de `findClasses.test.tsx`:
+Não há MSW: os testes mockam o **hook de serviço** (ou o hook de domínio) com `vi.mock`, e controlam as respostas pelas funções mockadas. Exemplo de `search.test.tsx`:
 
 ```ts
 // Objetos estáveis: os efeitos da página dependem dessas referências.

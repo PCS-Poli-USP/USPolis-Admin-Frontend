@@ -57,7 +57,7 @@ describe('SearchLogs (registro de buscas)', () => {
     expect(within(monitoria).getByText('4 resultados')).toBeInTheDocument();
     expect(
       within(bandejao).getByRole('link', { name: 'Abrir "bandejao" na busca' }),
-    ).toHaveAttribute('href', '/public/find-classes?q=bandejao');
+    ).toHaveAttribute('href', '/public/search?q=bandejao');
   });
 
   it('troca de visão e de período refazem a consulta', async () => {

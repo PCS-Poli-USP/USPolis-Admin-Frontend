@@ -8,16 +8,12 @@ import {
 } from '../../models/http/responses/search.response.models';
 import { renderWithProviders } from '../../test/renderWithProviders';
 import { SearchEntityType } from '../../utils/enums/searchEntityType.enum';
-import FindClasses from '.';
+import GeneralSearch from '.';
 
 // Stable objects: the page's effects depend on these references.
 const service = { search: vi.fn(), getDocument: vi.fn(), log: vi.fn() };
 vi.mock('../../hooks/API/services/useSearchService', () => ({
   default: () => service,
-}));
-const classesHook = { getCommingClasses: vi.fn() };
-vi.mock('../../hooks/classes/useClasses', () => ({
-  default: () => classesHook,
 }));
 
 const subject: SearchItemResponse = {
@@ -83,20 +79,19 @@ const classroomDocument: SearchTopResponse = {
   ],
 };
 
-describe('FindClasses (busca geral)', () => {
+describe('GeneralSearch (busca geral)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    classesHook.getCommingClasses.mockResolvedValue([]);
     service.search.mockResolvedValue({ data: response });
     service.getDocument.mockResolvedValue({ data: classroomDocument });
     service.log.mockResolvedValue({});
   });
 
   it('sem busca mostra só o campo e não chama a API', () => {
-    renderWithProviders(<FindClasses />, { route: '/public/find-classes' });
+    renderWithProviders(<GeneralSearch />, { route: '/public/search' });
 
     expect(
-      screen.getByRole('heading', { name: 'Encontre no USPolis' }),
+      screen.getByRole('heading', { name: 'Busque no USPolis' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('textbox', { name: 'Pesquisar no USPolis' }),
@@ -105,8 +100,8 @@ describe('FindClasses (busca geral)', () => {
   });
 
   it('hidrata a busca a partir de ?q= na URL e mostra grupos e destaque', async () => {
-    renderWithProviders(<FindClasses />, {
-      route: '/public/find-classes?q=calculo',
+    renderWithProviders(<GeneralSearch />, {
+      route: '/public/search?q=calculo',
     });
 
     expect(
@@ -130,7 +125,7 @@ describe('FindClasses (busca geral)', () => {
 
   it('digitar dispara uma única busca com o texto final (debounce)', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<FindClasses />);
+    renderWithProviders(<GeneralSearch />);
 
     await user.type(
       screen.getByRole('textbox', { name: 'Pesquisar no USPolis' }),
@@ -143,8 +138,8 @@ describe('FindClasses (busca geral)', () => {
 
   it('clicar num resultado mostra o documento e seus relacionados', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<FindClasses />, {
-      route: '/public/find-classes?q=calculo',
+    renderWithProviders(<GeneralSearch />, {
+      route: '/public/search?q=calculo',
     });
 
     await user.click(await screen.findByRole('button', { name: /B2-04/ }));
@@ -174,8 +169,8 @@ describe('FindClasses (busca geral)', () => {
 
   it('"Ver N" filtra pelo tipo do grupo', async () => {
     const user = userEvent.setup();
-    renderWithProviders(<FindClasses />, {
-      route: '/public/find-classes?q=calculo',
+    renderWithProviders(<GeneralSearch />, {
+      route: '/public/search?q=calculo',
     });
 
     await user.click(await screen.findByRole('button', { name: 'Ver 8' }));
@@ -195,8 +190,8 @@ describe('FindClasses (busca geral)', () => {
     service.search.mockResolvedValue({
       data: { query: 'xyz', top: null, groups: [] },
     });
-    renderWithProviders(<FindClasses />, {
-      route: '/public/find-classes?q=xyz',
+    renderWithProviders(<GeneralSearch />, {
+      route: '/public/search?q=xyz',
     });
 
     expect(
@@ -206,8 +201,8 @@ describe('FindClasses (busca geral)', () => {
 
   it('erro na API mostra alerta', async () => {
     service.search.mockRejectedValue(new Error('Network Error'));
-    renderWithProviders(<FindClasses />, {
-      route: '/public/find-classes?q=calculo',
+    renderWithProviders(<GeneralSearch />, {
+      route: '/public/search?q=calculo',
     });
 
     expect(

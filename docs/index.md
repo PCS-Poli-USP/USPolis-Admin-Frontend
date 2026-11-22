@@ -6,8 +6,7 @@ Essa documentação é divida por páginas, cada seção no menu lateral esquerd
 
 - [Mapa de Salas](./allocations/)
 - [Solicitar uma Sala](./allocations/solicitate-a-classroom/)
-- [Encontre suas provas](./find-exams/)
-- [Encontre suas aulas](./find-classes/)
+- [Busque no USPolis](./search/)
 - [Minhas Solicitações](./profile/solicitations/)
 - [Minha Conta](./profile/)
 

@@ -1,7 +1,7 @@
 ---
 prev:
-  text: 'Encontre suas aulas'
-  link: '/find-classes'
+  text: 'Busque no USPolis'
+  link: '/search'
 
 next:
   text: 'Minha Conta'

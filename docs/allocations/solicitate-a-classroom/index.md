@@ -4,8 +4,8 @@ prev:
   link: '/allocations/pdfs'
 
 next:
-  text: 'Encontre suas provas'
-  link: '/find-exams'
+  text: 'Busque no USPolis'
+  link: '/search'
 ---
 
 # Solicitar uma Sala
