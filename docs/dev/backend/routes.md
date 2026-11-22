@@ -29,7 +29,7 @@ Todas as URLs abaixo são relativas a `/api` (o `root_path` da aplicação).
 | health | `routes/health/` | `health_token_authenticate` (no router de `/health`) | Quem envia `X-API-Key` igual a `HEALTH_API_KEY` |
 | public | `routes/public/` | `public_authenticate` | Todo mundo. Se houver sessão, o usuário fica disponível, mas nada é exigido |
 | authenticated | `routes/authenticated/` | `authenticate` | Qualquer usuário logado |
-| restricted | `routes/restricted/` | `restricted_authenticate` | Admin, ou usuário com pelo menos um grupo |
+| restricted | `routes/restricted/` | `restricted_authenticate` | Admin, ou usuário com pelo menos um grupo ou papel |
 | admin | `routes/admin/` | `admin_authenticate`, com prefixo `/admin` | Só admin |
 | dev | `routes/dev/` | `admin_authenticate` | Só admin, e o router só é montado em desenvolvimento |
 

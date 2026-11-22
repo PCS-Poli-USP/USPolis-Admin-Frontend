@@ -214,6 +214,7 @@ export default {
               link: '/dev/backend/request-flow',
             },
             { text: 'Autenticação e permissões', link: '/dev/backend/auth' },
+            { text: 'Regras de permissão', link: '/dev/backend/permissions' },
             { text: 'Serviços e integrações', link: '/dev/backend/services' },
             { text: 'Configuração', link: '/dev/backend/config' },
             { text: 'Testes, lint e tipos', link: '/dev/backend/testing' },

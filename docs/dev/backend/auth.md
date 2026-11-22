@@ -4,8 +4,8 @@ prev:
   link: '/dev/backend/request-flow'
 
 next:
-  text: 'Backend › Serviços e integrações'
-  link: '/dev/backend/services'
+  text: 'Backend › Regras de permissão'
+  link: '/dev/backend/permissions'
 ---
 
 # Autenticação e permissões
@@ -56,7 +56,9 @@ Variantes da mesma lógica:
 | `authenticate` | tiers `authenticated`, `restricted`, `admin` | 401 |
 | `public_authenticate` | tier `public` | segue anônimo; se houver sessão, o usuário fica em `request.state.current_user` |
 | `google_token_authenticate` | quem precisa só dos dados do Google (`GoogleAuthenticate`) | 401 |
-| `google_id_token_authenticate` | `/mobile/authentication` (ID token do app mobile) | 401 |
+| `google_id_token_authenticate` | `/mobile/authentication` (ID token do app mobile, header `idToken`) | 401 |
+| `google_authorization_authenticate` | as escritas do app mobile (ID token cru no header `Authorization`) | 401 |
+| `mobile_user_authenticate` (`MobileUserDep`) | as mesmas, quando a rota precisa do usuário do app (veja [Regras de permissão › App mobile](/dev/backend/permissions#app-mobile)) | 401; 403 se a conta Google ainda não tem usuário no app |
 | `health_token_authenticate` | `/health` | 401 |
 
 ### CSRF
@@ -98,9 +100,12 @@ Depois do tier, cada operação é checada contra o objeto específico pelos **p
 
 Admin passa em qualquer checagem.
 
+> [!IMPORTANT]
+> As regras completas ficam em [Regras de permissão](/dev/backend/permissions): implicações entre ações, cascata e curingas, o que aparece em cada listagem, a visibilidade das turmas e as regras de alocação. Esta seção só apresenta o modelo.
+
 ### Grupos (modelo antigo)
 
-Um `Group` pertence a um prédio e tem um conjunto de salas (`groupclassroomlink`) e de usuários (`groupuserlink`). Todo prédio tem um grupo principal (`Building.main_group`), que dá acesso a todas as salas do prédio. Quando um usuário entra num grupo, o prédio do grupo é adicionado a `user.buildings` (`userbuildinglink`), que é o que o frontend usa para liberar as páginas restritas e o que `OwnedBuildingIdsDep` usa para filtrar listagens.
+Um `Group` pertence a um prédio e tem um conjunto de salas (`groupclassroomlink`) e de usuários (`groupuserlink`). Todo prédio tem um grupo principal (`Building.main_group`), que dá acesso a todas as salas do prédio. Quando um usuário entra num grupo, o prédio do grupo é adicionado a `user.buildings` (`userbuildinglink`). O escopo de acesso (`AccessScope`) soma esses prédios e as salas dos grupos aos papéis, isolando a parte dos grupos nos métodos `_legacy_group_*`.
 
 ### Papéis (modelo novo)
 
@@ -112,17 +117,11 @@ Um `Role` agrupa permissões e é atribuído a usuários por `/admin/roles`. Tod
 | `ClassroomPermission` | uma sala, ou todas | `CREATE`, `READ`, `UPDATE`, `DELETE`, `ALLOCATE`, `RESERVE`, `REQUEST` |
 | `CoursePermission` | um curso, ou todos | `CREATE`, `READ`, `UPDATE`, `DELETE`. Existe no banco, mas **nenhuma rota a aplica ainda** |
 
-Algumas regras do modelo:
-
-- uma permissão curinga (sem prédio/sala específico) para `UPDATE`, `DELETE`, `ALLOCATE`, `RESERVE` ou `REQUEST` só vale para admins;
-- remover uma reserva (e prova, evento, reunião, aprovar ou negar solicitação) exige `RESERVE`, não `DELETE`;
-- remover uma turma ou disciplina exige `UPDATE`, não `DELETE`: `DELETE` fica reservado para apagar o prédio ou a sala.
-
-As permissões do usuário são achatadas num `PermissionIndex` (`server/services/security/role_permission_evaluator.py`) uma vez por requisição, via `PermissionIndexDep`, e cada checagem vira uma busca em dicionário. A tabela completa "quero fazer X → preciso da ação Y" e a história da migração de grupos para papéis estão no `docs/PERMISSIONS.md` do backend.
+As permissões do usuário são achatadas num `PermissionIndex` (`server/services/security/role_permission_evaluator.py`) uma vez por requisição, via `PermissionIndexDep`, já com as [ações implicadas](/dev/backend/permissions#implicacoes-entre-acoes), e cada checagem vira uma busca em dicionário. A tabela "quero fazer X → preciso da ação Y" está em [Regras de permissão](/dev/backend/permissions#tabela-de-operacoes-e-acoes), e a história da migração de grupos para papéis, no `docs/PERMISSIONS.md` do backend.
 
 ### `BuildingDep`
 
-`BuildingDep` (`building_authenticate`) lê o prédio do header `building-id` e recusa (403) se ele não estiver entre os prédios do usuário. É legado: hoje só é usado pelo crawl de disciplinas do JupiterWeb (`POST` e `PATCH /subjects/crawl`, no tier `restricted`). Em código novo, use os permission checkers.
+`BuildingDep` (`building_authenticate`) lê o prédio do header `building-id` e exige `CREATE` nele (por papel ou grupo), a mesma ação de criar disciplina. É legado: hoje só é usado pelo crawl de disciplinas do JupiterWeb (`POST /subjects/crawl`, no tier `restricted`). Em código novo, use os permission checkers.
 
 ## API keys de parceiros
 

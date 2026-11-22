@@ -1,7 +1,7 @@
 ---
 prev:
-  text: 'Backend › Autenticação e permissões'
-  link: '/dev/backend/auth'
+  text: 'Backend › Regras de permissão'
+  link: '/dev/backend/permissions'
 
 next:
   text: 'Backend › Configuração'
@@ -48,11 +48,15 @@ Cada Chromium consome de 200 a 500 MB. O `crawl_limiter.py` limita quantos rodam
 | `feedbacks/feedback.html`, `reports/bug-report.html` | Feedback e relato de bug enviados pelo "Fale conosco" |
 | `api_keys/api-key-link.html` | Envio do link de uso único de uma API key |
 | `api_keys/api-key-expiring.html` | Aviso diário de chaves perto de expirar |
+| `mobile/mobile-comment.html` | Mensagem enviada pelo "Fale conosco" do app (enviada pela API do Gmail, veja abaixo) |
+| `mobile/forum-post-reported.html` | Postagem do fórum do app que chegou a 10 denúncias (API do Gmail) |
 
 Todos herdam de `_layout/base_email.html`. Os endereços nunca são escritos à mão nos templates, porque vêm de duas variáveis globais do Jinja definidas no `email_service.py`:
 
 - `logo_url`: as imagens vêm de `server/static/assets/`, servidas por `/static`, num endereço montado a partir de `ROOT_URL`;
 - `frontend_url`: o `FRONTEND_URL` sem a barra final. Use-o em todo link para uma página do site, por exemplo `href="{{ frontend_url }}/admin/bug-reports"`. Assim, um e-mail enviado em desenvolvimento ou staging aponta para o frontend daquele ambiente.
+
+Os e-mails do app mobile não passam pelo SMTP. Eles saem pela **API do Gmail** (`server/services/gmail_service.py`, `gmail_login` e `gmail_send_message`), mas usam os mesmos templates: `EmailService.render_mobile_comment` e `EmailService.render_forum_post_reported` renderizam o HTML, e a rota o envia. O texto escrito pelo usuário (a mensagem, o conteúdo do post, os nomes) passa por `|e` nos templates, porque o `Environment` do Jinja não escapa HTML sozinho.
 
 Um teste (`tests/unit/services/test_email_frontend_links.py`) falha se algum template tiver um link com o domínio `uspolis.com.br` escrito à mão. Ao renomear uma rota do frontend, procure o caminho antigo em `server/templates/`: nenhum teste do backend sabe quais rotas o frontend tem.
 

@@ -60,10 +60,10 @@ O handler é curto de propósito. O FastAPI valida o corpo contra o schema `Clas
 class ClassroomRepositoryAdapter:
     def __init__(
         self,
-        owned_building_ids: OwnedBuildingIdsDep,
         session: SessionDep,
         user: UserDep,
         permission_index: PermissionIndexDep,
+        scope: AccessScopeDep,
     ):
         self.session = session
         self.user = user
@@ -161,9 +161,9 @@ Todas ficam em `server/deps/` e são aliases `Annotated[T, Depends(...)]`, pront
 |---|---|---|
 | `SessionDep` | `session_dep.py` | A `Session` da requisição |
 | `UserDep` | `authenticate.py` | O usuário autenticado (401 se não houver) |
-| `BuildingDep` | `authenticate.py` | O prédio do header `building-id`, se o usuário tiver acesso a ele |
+| `BuildingDep` | `authenticate.py` | O prédio do header `building-id`, se o usuário puder criar disciplinas nele (só o crawl usa) |
 | `PermissionIndexDep` | `permission_index_dep.py` | O índice das permissões dos papéis do usuário, montado uma vez por requisição |
-| `OwnedBuildingIdsDep` | `owned_building_ids.py` | Os ids dos prédios do usuário (todos, para admin) |
+| `AccessScopeDep` | `access_scope_dep.py` | O escopo de acesso: por ação, os prédios e salas em que o usuário pode agir. É o que as listagens usam (veja [Regras de permissão](/dev/backend/permissions#o-escopo-de-acesso-e-as-listagens)) |
 | `PaginationDep` | `pagination_dep.py` | `page` e `page_size` da query string, com limites |
 | `QueryIntervalDep` | `interval_dep.py` | Um intervalo de datas da query string (hoje, ou `start` + `end`, até 366 dias) |
 | `ConflictCheckerDep` | `conflict_checker.py` | O verificador de conflitos de horário |

@@ -63,7 +63,7 @@ server/
 │   ├── authenticate.py     #   autenticação de cada tier, UserDep, BuildingDep
 │   ├── session_dep.py      #   SessionDep
 │   ├── permission_index_dep.py  # PermissionIndexDep (índice de papéis do usuário)
-│   ├── owned_building_ids.py    # OwnedBuildingIdsDep
+│   ├── access_scope_dep.py      # AccessScopeDep (escopo de acesso por ação)
 │   ├── pagination_dep.py   #   PaginationDep (page, page_size)
 │   ├── interval_dep.py     #   QueryIntervalDep (intervalo de datas, até 366 dias)
 │   ├── google_auth_dep.py  #   ID token do Google para o app mobile
@@ -86,7 +86,7 @@ server/
 │
 ├── services/               # lógica que não é rota nem repositório (veja Serviços e integrações)
 │   ├── auth/               #   cliente do Google OAuth
-│   ├── security/           #   permission checkers, avaliador de papéis, CSRF, API keys
+│   ├── security/           #   permission checkers, avaliador de papéis, escopo de acesso (access_scope.py), CSRF, API keys
 │   ├── cron/               #   lifespan e tarefas agendadas
 │   ├── email/              #   envio de e-mails com templates Jinja2
 │   ├── jupiter_crawler/    #   scraping do JupiterWeb (disciplinas, turmas, cursos, grades, grade do aluno)
