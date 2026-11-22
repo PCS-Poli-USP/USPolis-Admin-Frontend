@@ -78,7 +78,7 @@ export function DrawerNavBar({
   function getDocsLocalPath() {
     const path = location.pathname;
     if (isAdminRoute(path)) {
-      return DOCS_URL + '/';
+      return DOCS_URL + '/admin';
     }
     return DOCS_URL + path.replace('/public', '');
   }

@@ -1,12 +1,8 @@
-export const adminRoutePrefix = [
-  '/users',
-  '/groups',
-  '/buildings',
-  '/bug-reports',
-  '/feedbacks',
-  '/institutional-events',
-];
+// Every admin page lives under /admin (see AppRoutes.tsx).
+export const adminRoutePrefix = '/admin';
 
 export function isAdminRoute(pathname: string): boolean {
-  return adminRoutePrefix.some((prefix) => pathname.startsWith(prefix));
+  return (
+    pathname === adminRoutePrefix || pathname.startsWith(adminRoutePrefix + '/')
+  );
 }

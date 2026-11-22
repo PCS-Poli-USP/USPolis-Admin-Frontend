@@ -59,8 +59,6 @@ export default function UIContextProvider({
     }
   }
 
-  console.log('Current view:', view);
-
   useEffect(() => {
     window.addEventListener('resize', handleResize);
     return () => {

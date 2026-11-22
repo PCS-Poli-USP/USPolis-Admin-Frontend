@@ -16,7 +16,7 @@ function DateHub() {
       description:
         'Defina os calendários acadêmicos do USPolis, os feriados e dias letivos',
       onClick: () => {
-        navigate('/date/calendars');
+        navigate('/oferings/calendars');
       },
     },
   ];
