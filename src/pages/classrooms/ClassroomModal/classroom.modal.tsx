@@ -248,14 +248,14 @@ export default function ClassroomModal(props: ClassroomModalProps) {
                 </Flex>
               </Flex>
               <MultiSelectInput
-                label='Grupos'
+                label='Grupos (opcional)'
                 name='group_ids'
                 hidden={props.groups.length === 1}
                 disabled={props.groups.length === 1 || !building_id}
                 placeholder={
                   !building_id
                     ? 'Selecione um prédio primeiro'
-                    : 'Selecione para quais grupos a sala vai ser adicionada'
+                    : 'Sem grupo, a sala fica coberta pelos papéis do prédio'
                 }
                 options={props.groups
                   .filter((group) => group.building_id === building_id)

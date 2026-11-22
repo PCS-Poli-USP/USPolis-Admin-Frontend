@@ -26,14 +26,13 @@ export const formFields = {
       ),
     defaultValue: 0,
   },
+  // Optional: a classroom with no group is covered by the building's roles.
   group_ids: {
     validator: yup
       .array()
       .of(yup.number().required('Campo obrigatório'))
-      .min(1, 'Selecione um grupo ou mais')
-      .test('is-valid-option', 'Selecione um grupo ou mais', function (value) {
-        if (!value) return false;
-        if (value.length === 0) return false;
+      .test('is-valid-option', 'Selecione grupos válidos', function (value) {
+        if (!value || value.length === 0) return true;
         return !ClassroomValidator.isInvalidIdArray(value);
       }),
     defaultValue: [] as number[],
