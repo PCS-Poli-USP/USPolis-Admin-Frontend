@@ -71,6 +71,7 @@ function GeneralSearch() {
   }, [urlQuery]);
 
   const hasQuery = urlQuery.trim().length >= SEARCH_MIN_QUERY_LENGTH;
+  const centered = !hasQuery && !isMobile;
   const search = useGeneralSearch({
     query: urlQuery,
     type,
@@ -125,12 +126,13 @@ function GeneralSearch() {
         maxW={'1200px'}
         mx={'auto'}
         gap={4}
-        // Before a search the field sits in the middle of the page (a bit
-        // above the true center, which reads better); results start at top.
-        minH={hasQuery ? undefined : '100%'}
-        justify={hasQuery ? 'flex-start' : 'center'}
-        pt={hasQuery ? 2 : 0}
-        pb={hasQuery ? 10 : '12vh'}
+        // Before a search, on desktop the field sits in the middle of the page
+        // (a bit above the true center, which reads better). On mobile it
+        // stays at the top, clear of the on-screen keyboard.
+        minH={centered ? '100%' : undefined}
+        justify={centered ? 'center' : 'flex-start'}
+        pt={centered ? 0 : hasQuery ? 2 : 6}
+        pb={centered ? '12vh' : 10}
       >
         {!hasQuery && (
           <Box textAlign={'center'}>
