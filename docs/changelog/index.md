@@ -6,6 +6,20 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 ## 2026
 
+### Solicitações restritas aos responsáveis pela sala - 26/11/2026
+
+<span style="color: red">HOTFIX</span>, <span style="color: #347aeb">DOCS</span>
+
+PR's: [#FRONT](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/FRONT), [#BACK](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/BACK)
+
+**Descrição:**
+
+- Corrigido bug em que o e-mail de uma nova solicitação ia para todos os grupos do prédio, mesmo quando a solicitação era para uma sala específica. Agora ele vai só para os grupos da sala pedida e para o grupo principal do prédio; solicitações sem sala notificam apenas o grupo principal
+- Aprovar ou negar uma solicitação agora exige ser responsável pela sala dela (ou pelo prédio, no caso de solicitações sem sala). Antes, um grupo com uma única sala conseguia aprovar ou negar solicitações sem sala de qualquer lugar do prédio
+- A página de Solicitações mostra apenas as solicitações das salas dos grupos do usuário, em vez de todas as do prédio
+- Corrigido bug crítico em que editar uma solicitação pendente reservava a sala antes da aprovação: a sala aparecia ocupada no calendário e continuava ocupada mesmo se a solicitação fosse negada. Agora a sala só é reservada na aprovação
+- Documentação de Solicitações reescrita, explicando quem vê, quem recebe o e-mail e quem pode aprovar cada solicitação
+
 ### Correção de sessões duplicadas em VPN e redes universitárias - 23/08/2026
 
 <span style="color: orange">BUGFIX</span>

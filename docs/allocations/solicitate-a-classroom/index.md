@@ -99,6 +99,13 @@ O botão "Visualizar" serve para você ver como ficará a sua reserva, ao clicar
   />
 </div>
 
+### Quem recebe sua solicitação
+
+- **Com sala escolhida:** os responsáveis por essa sala e o grupo principal do prédio.
+- **Sem sala:** apenas o grupo principal do prédio, que escolhe a sala na aprovação.
+
+A sala **só é reservada quando a solicitação é aprovada**. Enquanto ela está pendente, inclusive depois de você editá-la, a sala continua livre para outras reservas. Você recebe um e-mail quando sua solicitação for aprovada ou negada, e pode acompanhá-la em [Minhas Solicitações](/profile/solicitations/).
+
 Agora, vamos entrar em detalhes sobre cada tipo de reserva.
 
 ## Provas
