@@ -10,7 +10,25 @@ next:
 
 # Solicitações
 
-Esta página reúne as solicitações de reserva de sala feitas pelos usuários, as pendentes e o histórico. É aqui que os responsáveis pelas salas aprovam ou negam os pedidos.
+Esta página centraliza os pedidos de reserva de sala feitos por outros usuários (através do botão "Solicitar Sala" no [Mapa de Salas](/allocations/)) que ainda aguardam aprovação. Cada usuário vê apenas as solicitações pelas quais é responsável (veja abaixo).
+
+<div style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+">
+  <img
+    src="/scheduling/solicitations/image.png"
+    alt="Lista de solicitações pendentes"
+    style="
+      border-radius: 8px;
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    "
+  />
+</div>
 
 ## Quem é responsável por uma solicitação
 
@@ -38,16 +56,50 @@ No prédio da Elétrica, um grupo cuida só da sala B2-03. Uma solicitação par
 
 ## O que aparece na tela
 
-- Solicitações pendentes e histórico
-- Informações da solicitação: tipo, período, solicitante, sala pedida e capacidade
-- Filtros por período, status e tipo
+À esquerda fica a pilha de solicitações, cada uma mostrando o tipo do pedido (ex.: Reserva de Sala), o **Local** (prédio e sala, ou "sala não especificada", quando o solicitante não escolheu uma sala específica), o **Solicitante** e a data/hora do pedido, e a **Situação** (ex.: Pendente).
 
-## Aprovar ou negar
+Use os campos de busca no topo (**Prédio**, **Sala**, **Solicitante**, **Situação**) para filtrar a pilha, e a caixa **"Exibir aprovados/negados/antigos"** para incluir solicitações que já foram decididas.
 
-- **Aprovar:** escolha a sala onde a reserva será alocada. Se o solicitante marcou que quer **necessariamente** a sala pedida, só é possível aprovar nessa sala; caso contrário, a sala aprovada pode ser outra. O solicitante recebe um e-mail com a aprovação.
-- **Negar:** informe uma justificativa, que é enviada por e-mail ao solicitante.
+## Analisando uma solicitação
 
-Só solicitações pendentes podem ser aprovadas ou negadas.
+Clique em uma solicitação na pilha para ver seus detalhes à direita:
+
+<div style="
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+">
+  <img
+    src="/scheduling/solicitations/image-1.png"
+    alt="Detalhes de uma solicitação de reserva pendente"
+    style="
+      border-radius: 8px;
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    "
+  />
+</div>
+
+O painel de detalhes mostra:
+
+- **Solicitante e Título**: nome, e-mail e título dado à solicitação.
+- **Motivo**: a justificativa informada pelo solicitante.
+- **Requisitos**: por exemplo, a capacidade mínima de pessoas necessária.
+- **Local, Horário e Datas**: prédio, sala (ou "NÃO ESPECIFICADA"), horário e as datas solicitadas.
+
+Quando o solicitante não escolheu uma sala específica, é necessário escolher uma no seletor **Sala** (e pode usar **Visualizar disponibilidade** para conferir se ela está livre) antes de poder aprovar o pedido — repare que o botão **Aprovar** fica desabilitado até que uma sala seja definida. O botão **Alterar Sala** permite trocar a sala já vinculada à solicitação.
+
+Ao final, use:
+
+- **Editar** para ajustar dados da solicitação antes de decidir;
+- **Aprovar** para transformar o pedido em uma reserva confirmada (que passa a aparecer em [Reservas](/scheduling/reservations/));
+- **Negar** para recusar o pedido.
+
+O aviso **"Esse horário gerará N conflito(s)"** avisa, antes da decisão, se aprovar aquela solicitação vai gerar sobreposição de horário com outra ocupação da sala — veja [Conflitos](/oferings/conflicts/) para mais detalhes sobre esse tipo de situação.
+
+Só solicitações pendentes podem ser aprovadas ou negadas. O solicitante recebe um e-mail com a decisão; ao negar, informe uma justificativa, que vai junto no e-mail.
 
 ::: info A sala só é reservada na aprovação
 Enquanto a solicitação está pendente, a sala pedida **não fica ocupada**: ela não aparece no calendário de alocação nem bloqueia outras reservas. Isso vale também quando o solicitante edita a solicitação. A sala só é reservada quando um responsável aprova.

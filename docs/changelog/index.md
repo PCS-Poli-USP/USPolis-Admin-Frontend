@@ -19,6 +19,7 @@ PR's: [#FRONT](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/FRONT
 - A página de Solicitações mostra apenas as solicitações das salas dos grupos do usuário, em vez de todas as do prédio
 - Corrigido bug crítico em que editar uma solicitação pendente reservava a sala antes da aprovação: a sala aparecia ocupada no calendário e continuava ocupada mesmo se a solicitação fosse negada. Agora a sala só é reservada na aprovação
 - Documentação de Solicitações reescrita, explicando quem vê, quem recebe o e-mail e quem pode aprovar cada solicitação
+- Documentação das seções Agendamento (Reservas e Solicitações) e Oferecimentos (Calendários, Salas, Disciplinas, Turmas, Conflitos e Relatórios) ampliada, com capturas de tela da versão atual do sistema e descrição de cada campo e ação
 
 ### Correção de sessões duplicadas em VPN e redes universitárias - 23/08/2026
 
