@@ -42,6 +42,10 @@ import { appContext } from '../../../context/AppContext';
 import { getSolicitationAdminTimeline } from '../../../utils/solicitations/solicitation.formatter';
 import SolicitationConfirmSheet from './SolicitationConfirmSheet/solicitation.confirm.sheet';
 
+// Same limit as the backend (SolicitationDeny.justification,
+// SolicitationApprove.message).
+const MESSAGE_MAX_LENGTH = 256;
+
 interface SolicitationPanelProps {
   solicitation?: SolicitationResponse;
   loading: boolean;
@@ -95,6 +99,7 @@ function SolicitationPanel({
 
   const [justification, setJustification] = useState('');
   const [justificationError, setJustificationError] = useState(false);
+  const [approveMessage, setApproveMessage] = useState('');
   const [confirmMode, setConfirmMode] = useState<'approve' | 'deny' | undefined>(
     undefined,
   );
@@ -207,6 +212,7 @@ function SolicitationPanel({
     setAllDatesExpanded(false);
     setJustification('');
     setJustificationError(false);
+    setApproveMessage('');
     if (solicitation) {
       // Fetch solicitation data
       if (
@@ -303,7 +309,9 @@ function SolicitationPanel({
           : solicitation.reservation.classroom_name
             ? solicitation.reservation.classroom_name
             : 'Sem nome',
+        message: approveMessage.trim() || undefined,
       });
+      setApproveMessage('');
     }
     setConfirmMode(undefined);
   }
@@ -689,7 +697,15 @@ function SolicitationPanel({
                   setJustificationError(false);
                 }}
                 justificationError={justificationError}
-                remaining={256 - justification.length}
+                message={approveMessage}
+                onMessageChange={setApproveMessage}
+                maxLength={MESSAGE_MAX_LENGTH}
+                remaining={
+                  MESSAGE_MAX_LENGTH -
+                  (confirmMode === 'deny'
+                    ? justification.length
+                    : approveMessage.length)
+                }
                 isLoading={loading}
                 onCancel={() => setConfirmMode(undefined)}
                 onConfirm={handleConfirmAction}

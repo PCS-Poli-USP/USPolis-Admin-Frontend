@@ -25,6 +25,10 @@ interface SolicitationConfirmSheetProps {
   justification: string;
   onJustificationChange: (value: string) => void;
   justificationError: boolean;
+  /** Optional note for the approval email. */
+  message: string;
+  onMessageChange: (value: string) => void;
+  maxLength: number;
   remaining: number;
   isLoading: boolean;
   onCancel: () => void;
@@ -39,6 +43,9 @@ function SolicitationConfirmSheet({
   justification,
   onJustificationChange,
   justificationError,
+  message,
+  onMessageChange,
+  maxLength,
   remaining,
   isLoading,
   onCancel,
@@ -80,8 +87,10 @@ function SolicitationConfirmSheet({
           </Text>
           <Textarea
             value={justification}
-            onChange={(event) => onJustificationChange(event.target.value.slice(0, 256))}
-            maxLength={256}
+            onChange={(event) =>
+              onJustificationChange(event.target.value.slice(0, maxLength))
+            }
+            maxLength={maxLength}
             rows={4}
             placeholder={'Explique ao solicitante o motivo da negação'}
             borderColor={justificationError ? 'red.300' : undefined}
@@ -92,6 +101,28 @@ function SolicitationConfirmSheet({
             </Text>
             <Text color={'uspolis.textMuted'}>{`Caracteres restantes: ${remaining}`}</Text>
           </Box>
+        </VStack>
+      )}
+
+      {!isDeny && (
+        <VStack align={'stretch'} spacing={'6px'}>
+          <Text fontSize={'14px'} fontWeight={'bold'}>
+            Mensagem (opcional)
+          </Text>
+          <Textarea
+            value={message}
+            onChange={(event) =>
+              onMessageChange(event.target.value.slice(0, maxLength))
+            }
+            maxLength={maxLength}
+            rows={3}
+            placeholder={'Enviada junto ao e-mail de aprovação'}
+          />
+          <Text
+            alignSelf={'flex-end'}
+            fontSize={'13px'}
+            color={'uspolis.textMuted'}
+          >{`Caracteres restantes: ${remaining}`}</Text>
         </VStack>
       )}
 

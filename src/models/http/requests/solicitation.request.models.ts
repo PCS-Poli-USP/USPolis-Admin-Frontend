@@ -22,6 +22,8 @@ export interface CreateSolicitation {
 export interface ApproveSolicitation {
   classroom_id: number;
   classroom_name: string;
+  /** Optional note sent in the approval email (not stored). */
+  message?: string;
 }
 
 export interface UpdateSolicitation {
