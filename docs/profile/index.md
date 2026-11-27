@@ -12,7 +12,7 @@ next:
 
 É através do seu perfil que você pode visualizar suas informações, que são seu **nome**, **email**, seu **curso**, se possui uma [**grade horária**](/profile/timetable/), seus **prédios**, suas **permissões**, ou seja, quais prédios, salas e grupos você tem acesso.
 
-Além disso, se você for um **responsável por prédios** você pode dizer se quer ou não receber notificações por e-mail (que são enviados quando uma reserva é criada/alterada/cancelada em um dos seus prédios) e visualizar seus grupos de forma detalhada.
+Além disso, se você for um **responsável por salas** você pode dizer se quer ou não receber notificações por e-mail e visualizar seus grupos de forma detalhada. Os e-mails são enviados quando uma solicitação é criada ou cancelada para uma sala dos seus grupos; solicitações sem sala só notificam o grupo principal do prédio (veja [Solicitações](/scheduling/solicitations/#quem-e-responsavel-por-uma-solicitacao)).
 
 Você consegue acessar o seu perfil da seguinte forma:
 

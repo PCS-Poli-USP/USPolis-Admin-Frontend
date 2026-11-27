@@ -47,6 +47,9 @@ import useBuildings from '../../../hooks/useBuildings';
 import useSubjects from '../../../hooks/useSubjetcts';
 import ReservationModal from '../../reservations/ReservationModal/reservation.modal';
 
+// Same limit as the backend (SolicitationApprove.message).
+const MESSAGE_MAX_LENGTH = 256;
+
 interface SolicitationPanelProps {
   solicitation?: SolicitationResponse;
   loading: boolean;
@@ -83,6 +86,7 @@ function SolicitationPanel({
   const [openPopover, setOpenPopover] = useState<number | undefined>(undefined);
   const [justification, setJustification] = useState('');
   const [justificationError, setJustificationError] = useState(false);
+  const [approveMessage, setApproveMessage] = useState('');
 
   const [isLoadingWithConflict, setIsLoadingWithConflict] = useState(false);
   const [classrooms, setClassrooms] = useState<ClassroomWithConflictCount[]>(
@@ -195,6 +199,7 @@ function SolicitationPanel({
 
   useEffect(() => {
     setEditingClassroom(false);
+    setApproveMessage('');
     if (solicitation) {
       // Fetch solicitation data
       if (
@@ -609,6 +614,19 @@ function SolicitationPanel({
                         Uma vez aprovado a sala será reservada e a solicitação
                         não poderá mudar seu estado.
                       </Text>
+                      <Text fontWeight={'bold'}>Mensagem (opcional):</Text>
+                      <Textarea
+                        disabled={loading}
+                        maxLength={MESSAGE_MAX_LENGTH}
+                        placeholder='Enviada junto ao e-mail de aprovação'
+                        value={approveMessage}
+                        onChange={(event) =>
+                          setApproveMessage(event.target.value)
+                        }
+                      />
+                      <Text>{`Caracteres restantes: ${
+                        MESSAGE_MAX_LENGTH - approveMessage.length
+                      }`}</Text>
                       <Button
                         isLoading={loading || loadingClassrooms}
                         onClick={async () => {
@@ -629,7 +647,9 @@ function SolicitationPanel({
                               : solicitation.reservation.classroom_name
                                 ? solicitation.reservation.classroom_name
                                 : 'Sem nome',
+                            message: approveMessage.trim() || undefined,
                           });
+                          setApproveMessage('');
                           handleOpenPopover(2);
                         }}
                       >
