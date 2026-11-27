@@ -8,18 +8,20 @@ O changelog começou a ser registrado a partir do dia 15/11/2025.
 
 ### Solicitações restritas aos responsáveis pela sala - 26/11/2026
 
-<span style="color: red">HOTFIX</span>, <span style="color: #347aeb">DOCS</span>
+<span style="color: red">HOTFIX</span>, <span style="color: #408080">IMPROVEMENT</span>, <span style="color: #347aeb">DOCS</span>
 
 PR's: [#FRONT](https://github.com/PCS-Poli-USP/USPolis-Admin-Frontend/pull/FRONT), [#BACK](https://github.com/PCS-Poli-USP/USPolis-Admin-Backend/pull/BACK)
 
 **Descrição:**
 
-- Corrigido bug em que o e-mail de uma nova solicitação ia para todos os grupos do prédio, mesmo quando a solicitação era para uma sala específica. Agora ele vai só para os grupos da sala pedida e para o grupo principal do prédio; solicitações sem sala notificam apenas o grupo principal
-- Aprovar ou negar uma solicitação agora exige ser responsável pela sala dela (ou pelo prédio, no caso de solicitações sem sala). Antes, um grupo com uma única sala conseguia aprovar ou negar solicitações sem sala de qualquer lugar do prédio
-- A página de Solicitações mostra apenas as solicitações das salas dos grupos do usuário, em vez de todas as do prédio
-- Corrigido bug crítico em que editar uma solicitação pendente reservava a sala antes da aprovação: a sala aparecia ocupada no calendário e continuava ocupada mesmo se a solicitação fosse negada. Agora a sala só é reservada na aprovação
-- Documentação de Solicitações reescrita, explicando quem vê, quem recebe o e-mail e quem pode aprovar cada solicitação
-- Documentação das seções Agendamento (Reservas e Solicitações) e Oferecimentos (Calendários, Salas, Disciplinas, Turmas, Conflitos e Relatórios) ampliada, com capturas de tela da versão atual do sistema e descrição de cada campo e ação
+- E-mail de nova solicitação vai só para os responsáveis pela sala pedida
+- Solicitações sem sala notificam apenas o grupo principal do prédio
+- Aprovar/negar exige ser responsável pela sala
+- Página de Solicitações mostra só as salas dos grupos do usuário
+- Editar uma solicitação pendente não reserva mais a sala
+- Mensagem opcional no e-mail de aprovação
+- Logo do USPolis volta a aparecer nos e-mails
+- Documentação de Agendamento e Oferecimentos ampliada, com capturas de tela
 
 ### Correção de sessões duplicadas em VPN e redes universitárias - 23/08/2026
 

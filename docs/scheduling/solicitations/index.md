@@ -99,7 +99,12 @@ Ao final, use:
 
 O aviso **"Esse horário gerará N conflito(s)"** avisa, antes da decisão, se aprovar aquela solicitação vai gerar sobreposição de horário com outra ocupação da sala — veja [Conflitos](/oferings/conflicts/) para mais detalhes sobre esse tipo de situação.
 
-Só solicitações pendentes podem ser aprovadas ou negadas. O solicitante recebe um e-mail com a decisão; ao negar, informe uma justificativa, que vai junto no e-mail.
+Ao clicar em **Aprovar** ou **Negar**, uma caixa de confirmação se abre:
+
+- **Aprovar:** você pode escrever uma **mensagem opcional** (até 256 caracteres), por exemplo com instruções de acesso à sala. Ela é enviada junto ao e-mail de aprovação e não fica salva no sistema.
+- **Negar:** a **justificativa** é obrigatória e também vai no e-mail ao solicitante.
+
+Só solicitações pendentes podem ser aprovadas ou negadas, e a decisão não pode ser desfeita.
 
 ::: info A sala só é reservada na aprovação
 Enquanto a solicitação está pendente, a sala pedida **não fica ocupada**: ela não aparece no calendário de alocação nem bloqueia outras reservas. Isso vale também quando o solicitante edita a solicitação. A sala só é reservada quando um responsável aprova.
