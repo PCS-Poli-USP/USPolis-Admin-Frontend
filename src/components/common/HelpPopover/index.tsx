@@ -11,16 +11,21 @@ import {
   PlacementWithLogical,
   Tooltip,
   Box,
+  Portal,
 } from '@chakra-ui/react';
 import { LuBadgeHelp } from 'react-icons/lu';
 
 interface HelpPopoverProps {
   title: string;
   children?: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   placement?: PlacementWithLogical;
   tooltip?: string;
   tooltipPlacement?: PlacementWithLogical;
+  ariaLabel?: string;
+  // Renders the content in document.body, so it is not clipped or styled by
+  // its container (e.g. inside a table header)
+  inPortal?: boolean;
 }
 
 function HelpPopover({
@@ -30,8 +35,18 @@ function HelpPopover({
   placement = undefined,
   tooltip = undefined,
   tooltipPlacement = 'top',
+  ariaLabel = 'help-popover-button',
+  inPortal = false,
 }: HelpPopoverProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const content = (
+    <PopoverContent p={5}>
+      <PopoverArrow />
+      <PopoverCloseButton />
+      <PopoverHeader fontWeight='bold'>{title}</PopoverHeader>
+      <PopoverBody>{children}</PopoverBody>
+    </PopoverContent>
+  );
   return (
     <Popover
       isOpen={isOpen}
@@ -50,7 +65,7 @@ function HelpPopover({
           >
             <IconButton
               size={size}
-              aria-label={'help-popover-button'}
+              aria-label={ariaLabel}
               icon={<LuBadgeHelp />}
               variant={'ghost'}
               colorScheme='blue'
@@ -59,12 +74,7 @@ function HelpPopover({
           </Tooltip>
         </Box>
       </PopoverTrigger>
-      <PopoverContent p={5}>
-        <PopoverArrow />
-        <PopoverCloseButton />
-        <PopoverHeader fontWeight='bold'>{title}</PopoverHeader>
-        <PopoverBody>{children}</PopoverBody>
-      </PopoverContent>
+      {inPortal ? <Portal>{content}</Portal> : content}
     </Popover>
   );
 }

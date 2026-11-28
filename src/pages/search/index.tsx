@@ -29,6 +29,7 @@ import {
 } from '../../hooks/search/useGeneralSearch';
 import { useSearchLog } from '../../hooks/search/useSearchLog';
 import { SearchItemResponse } from '../../models/http/responses/search.response.models';
+import { SearchClickSource } from '../../utils/enums/searchClickSource.enum';
 import { SearchEntityType } from '../../utils/enums/searchEntityType.enum';
 import SearchResultItem from './SearchResultItem';
 import SearchTopPanel from './SearchTopPanel';
@@ -78,7 +79,7 @@ function GeneralSearch() {
     limit: type ? 20 : 5,
   });
   const focused = useSearchDocument(hasQuery ? focus : null);
-  const { logNow } = useSearchLog({ query: urlQuery, type });
+  const { logNow, logClick } = useSearchLog({ query: urlQuery, type });
 
   function updateParams(
     changes: Partial<Record<SearchUrlParam, string | null>>,
@@ -98,9 +99,11 @@ function GeneralSearch() {
     updateParams({ q: value || null, focus: null });
   }
 
-  function handleSelect(item: SearchItemResponse) {
-    // Opening a result means this is the query the user wanted.
+  function handleSelect(item: SearchItemResponse, source: SearchClickSource) {
+    // Opening a result means this is the query the user wanted, and which
+    // result they chose (what the search learns from).
     logNow();
+    logClick(item.doc_key, source);
     // push (not replace): back returns to the previous highlighted result
     updateParams({ focus: item.doc_key }, false);
     if (isMobile) window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -116,6 +119,29 @@ function GeneralSearch() {
     0,
   );
   const stacked = !isMobile && listedResults <= 3;
+
+  // Why the results may not be what the query literally says: types named in
+  // the query ("prova de cálculo") with nothing found, and results that match
+  // only some of the words. Not shown under a type filter (the user already
+  // chose what to see).
+  const missingIntentTypes =
+    search.data && !type
+      ? search.data.intent_types.filter(
+          (intent) => !groups.some((group) => group.type === intent),
+        )
+      : [];
+  const searchNotes = [
+    ...(missingIntentTypes.length > 0
+      ? [
+          `Nada encontrado em ${missingIntentTypes
+            .map((intent) => SearchEntityType.translatePlural(intent))
+            .join(', ')}. Mostrando outros resultados.`,
+        ]
+      : []),
+    ...(search.data?.partial
+      ? ['Nenhum resultado com todas as palavras. Mostrando os mais próximos.']
+      : []),
+  ];
 
   return (
     <PageContent>
@@ -242,6 +268,26 @@ function GeneralSearch() {
           </Flex>
         )}
 
+        {hasQuery &&
+          !search.loading &&
+          groups.length > 0 &&
+          searchNotes.length > 0 && (
+            <Alert
+              status='info'
+              variant={'left-accent'}
+              borderRadius={'md'}
+              py={2}
+              fontSize={'sm'}
+            >
+              <AlertIcon boxSize={4} />
+              <Stack spacing={0}>
+                {searchNotes.map((note) => (
+                  <Text key={note}>{note}</Text>
+                ))}
+              </Stack>
+            </Alert>
+          )}
+
         {hasQuery && search.error && (
           <Alert status='error' borderRadius={'lg'}>
             <AlertIcon />
@@ -298,7 +344,9 @@ function GeneralSearch() {
                 loading={!!focus && focused.loading}
                 error={!!focus && focused.error}
                 isFocused={!!focus}
-                onSelect={handleSelect}
+                onSelect={(item) =>
+                  handleSelect(item, SearchClickSource.RELATED)
+                }
                 onBack={() => updateParams({ focus: null }, false)}
               />
             </Box>
@@ -341,7 +389,9 @@ function GeneralSearch() {
                         key={item.doc_key}
                         item={item}
                         query={urlQuery}
-                        onSelect={handleSelect}
+                        onSelect={(selected) =>
+                          handleSelect(selected, SearchClickSource.RESULT)
+                        }
                         isSelected={item.doc_key === topDoc?.doc_key}
                       />
                     ))}

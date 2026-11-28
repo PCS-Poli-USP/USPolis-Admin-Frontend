@@ -2,6 +2,7 @@ import { AxiosResponse } from 'axios';
 import { useMemo } from 'react';
 import axios from '../../../services/api/axios';
 import {
+  SearchClickRequest,
   SearchLogRequest,
   SearchParams,
 } from '../../../models/http/requests/search.request.models';
@@ -40,7 +41,11 @@ const useSearchService = () => {
       return axios.post('/search/log', body);
     };
 
-    return { search, getDocument, log };
+    const click = (body: SearchClickRequest): Promise<AxiosResponse<void>> => {
+      return axios.post('/search/click', body);
+    };
+
+    return { search, getDocument, log, click };
   }, []);
 };
 

@@ -1,8 +1,14 @@
 import { AxiosResponse } from 'axios';
 import { useMemo } from 'react';
 import useAxiosPrivate from '../axios/useAxiosPrivate';
-import { SearchLogSummaryParams } from '../../../models/http/requests/search.request.models';
-import { SearchLogSummaryResponse } from '../../../models/http/responses/search.response.models';
+import {
+  SearchDocumentSummaryParams,
+  SearchLogSummaryParams,
+} from '../../../models/http/requests/search.request.models';
+import {
+  SearchDocumentSummaryResponse,
+  SearchLogSummaryResponse,
+} from '../../../models/http/responses/search.response.models';
 
 const PREFIX = '/admin/search-logs';
 
@@ -18,7 +24,13 @@ const useSearchLogService = () => {
       return axios.get(`${PREFIX}/summary`, { params });
     };
 
-    return { getSummary };
+    const getDocuments = (
+      params: SearchDocumentSummaryParams = {},
+    ): Promise<AxiosResponse<SearchDocumentSummaryResponse>> => {
+      return axios.get(`${PREFIX}/documents`, { params });
+    };
+
+    return { getSummary, getDocuments };
   }, [axios]);
 };
 

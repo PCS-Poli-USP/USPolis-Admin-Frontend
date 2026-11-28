@@ -18,7 +18,9 @@ Esta página explica como isso funciona: que técnicas são usadas, a teoria por
 | Achar rápido os documentos que contêm um termo, entre milhares | **Índice invertido** (índice GIN sobre `tsvector`) | `ix_search_document_tsv` |
 | Ordenar pelo que é mais relevante | **Ranking por densidade de cobertura** (`ts_rank_cd`) com pesos por campo | `SearchRepository.search` |
 | Erros de digitação ("calclo") e nomes pela metade | **Similaridade por trigramas** (`pg_trgm`) | `ix_search_document_search_text_trgm` |
-| Mostrar resultados enquanto a pessoa digita | **Busca por prefixo** no último termo (`termo:*`) | `build_prefix_tsquery` |
+| Mostrar resultados enquanto a pessoa digita | **Busca por prefixo** no último termo (`termo:*`) | `build_term_tsqueries` |
+| "professor levy", "prova de cálculo": palavras que dizem o **tipo** do resultado | **Palavras de tipo** viram reforço no score, não texto | `parse_query`, `INTENT_WORDS` |
+| Uma palavra sem par não pode zerar a busca | **Casamento por termo** com o melhor nível de cobertura | `_SEARCH_SQL` |
 | "Professor → disciplinas → turmas → salas" | **Grafo** guardado como lista de adjacência (coluna `edges`) | `SearchRepository.related` |
 | Desempatar: uma sala muito usada vem antes de uma pouco usada | **Importância estática** (centralidade de grau) | coluna `prior` |
 | Preferir o que está acontecendo agora | **Peso temporal** | `_TIME_BOOST` |
@@ -141,19 +143,51 @@ O índice GIN com `gin_trgm_ops` sobre a coluna `search_text` é um índice inve
 
 ### 6. Busca enquanto digita (prefixo)
 
-Quando a pessoa digitou "calc", ainda não há palavra inteira. Por isso a consulta é montada com **prefixo no último termo**: "calculo dif" vira `calculo & dif:*`, ou seja, documentos com `calcul` **e** algum termo que comece com `dif`.
+Quando a pessoa digitou "calc", ainda não há palavra inteira. Por isso o **último termo** é buscado como prefixo: "calculo dif" vira os termos `calculo` e `dif:*`, ou seja, `calcul` e algum termo que comece com `dif`.
 
-A montagem é feita em `build_prefix_tsquery` (`server/repositories/search_repository.py`). Ela mantém só caracteres `[a-z0-9]`, então nada que a pessoa digite pode virar um operador da linguagem de consulta do PostgreSQL.
+A montagem é feita em `build_term_tsqueries` (`server/repositories/search_repository.py`). Ela mantém só caracteres `[a-z0-9]`, então nada que a pessoa digite pode virar um operador da linguagem de consulta do PostgreSQL.
 
-### 7. O score final
+### 7. Várias palavras: palavras de tipo e casamento parcial
 
-Um documento entra no resultado se casar pelo índice invertido **ou** pelos trigramas. Depois, recebe um score que soma vários sinais:
+Exigir **todas** as palavras em todo documento falha em dois casos comuns, medidos no banco de dev:
+
+- **"professor levy"**: o documento do professor é só o nome, "fabio levy siqueira". Nenhum documento tem a palavra "professor", então a busca voltava vazia.
+- **"prova de cálculo"**: muitas provas se chamam só "PEA3306" ou "P1" (o nome da disciplina entra no texto, mas a palavra "prova" não). E quando não existe prova de Cálculo, uma palavra sem par zerava tudo, mesmo havendo a disciplina e as monitorias.
+
+Baixar o corte de similaridade resolveria esses casos, mas traria ruído para todas as buscas. A solução tem duas partes.
+
+**Palavras de tipo** (`parse_query` e `INTENT_WORDS`). Palavras que dizem o tipo do resultado não são buscadas como texto. São elas, com plurais: "professor", "prova", "exame", "sala", "prédio", "disciplina", "matéria", "turma", "evento", "palestra" e "reunião". Elas viram `intent_types`: **+1,0 no score** para aquele tipo, o mesmo peso de um código exato.
+
+É um reforço, **não um filtro**: "prova de cálculo" sem nenhuma prova de Cálculo ainda mostra a disciplina e as monitorias. Uma consulta feita só de palavras de tipo ("provas") é buscada como texto, como antes. Ficam de fora "monitoria", "p1" e "p2", que aparecem nos títulos e por isso são texto útil.
+
+**Casamento por termo, com o melhor nível de cobertura.** Cada palavra é procurada separadamente: pelo índice invertido (radical, sem acento) ou, se tiver 4 letras ou mais, por trigramas (erro de digitação). Stopwords ("de", "para") não contam. Depois, só ficam os documentos que casam com **o maior número de palavras que algum documento alcançou**, com um piso de metade das palavras:
+
+| Consulta | O que volta |
+|---|---|
+| "calculo diferencial" | os documentos com as duas palavras, como antes |
+| "levy calculo" (nenhum documento tem as duas) | os que têm uma delas, marcados como parciais |
+| "levy fotossintese genetica" | nada: uma palavra em três fica abaixo da metade |
+
+Assim, uma palavra a mais não zera o resultado, e resultados parciais **nunca se misturam** com completos. A resposta traz `partial` e `intent_types`, e a página avisa a pessoa:
+
+- "Nenhum resultado com todas as palavras. Mostrando os mais próximos.";
+- "Nada encontrado em Provas. Mostrando outros resultados.".
+
+Dois detalhes de implementação:
+
+- **Códigos com hífen.** O parser do PostgreSQL lê "b2-04" como `b2` e `-04` (um número negativo), então o termo "04" sozinho nunca casa. Um código exato, ou o trigrama de uma consulta de uma palavra só, conta como todas as palavras.
+- **Desempenho.** Cada termo é uma busca separada, cada uma no seu índice GIN; com tudo num `OR` só, o PostgreSQL faz varredura completa. No dev, a maioria das buscas leva menos de 10 ms, e as mais amplas ("provas", "b2-04") de 60 a 80 ms, gastos pontuando centenas de resultados.
+
+### 8. O score final
+
+Os documentos que passam pela seção anterior recebem um score que soma vários sinais. "Consulta" aqui são as palavras que contam, sem stopwords e sem palavras de tipo:
 
 ```
 score = 1,0 × ts_rank_cd(tsv, consulta)                    casamento lexical (0 a 1)
       + 0,5 × word_similarity(consulta, título)            quanto o TÍTULO se parece com a consulta
       + 0,2 × word_similarity(consulta, texto completo)    erros e casamentos parciais em qualquer campo
       + 1,0 se a consulta é exatamente um código ou nome   "MAC0110", "B2-04", "Biênio" vão para o topo
+      + 1,0 se o tipo foi pedido na consulta               "prova de cálculo" põe a prova "P1" acima da disciplina
       + 0 a 0,3 pelo tempo                                 acontecendo agora > em breve > sem data > passado
       + 0,2 × importância (prior)                          desempate estrutural (ver abaixo)
 ```
@@ -172,7 +206,7 @@ O termo do **título** existe para resolver um caso concreto: ao buscar "marcelo
 
 Os pesos foram ajustados com um conjunto de buscas de referência (sem acento, com erro, código exato, sala, prédio, nome parcial de professor), que viraram testes automatizados em `tests/api/public/test_search_routes.py`.
 
-### 8. O grafo de entidades
+### 9. O grafo de entidades
 
 As entidades do USPolis formam naturalmente um **grafo**: os **nós** são disciplinas, turmas, salas, prédios, professores e reservas, e as **arestas** são as relações entre eles. Cada documento guarda as arestas que saem dele numa coluna `edges`, que é uma **lista de adjacência**:
 
@@ -195,7 +229,7 @@ Os relacionados são ordenados pelo tempo (o que está acontecendo primeiro), de
 
 Cada documento é identificado por `doc_key = "<tipo>:<id>"` (reservas usam `reservation:<id>`), porque o id sozinho não é único: cada tabela tem sua própria sequência, e a turma 123 e a disciplina 123 existem ao mesmo tempo.
 
-### 9. Importância (prior) e PageRank
+### 10. Importância (prior) e PageRank
 
 O ranking acima mede **o quanto um documento combina com a consulta**. Existe uma segunda pergunta, independente da consulta: **o quanto esse documento é importante**. Em teoria de grafos, isso é **centralidade**.
 
@@ -219,7 +253,7 @@ com `d ≈ 0,85` (fator de amortecimento) e `N` o número de nós, repetindo at�
 O PageRank não sabe nada sobre a consulta: ele só ordena nós por importância estrutural. Por isso ele entra como **um** dos componentes do score (com peso pequeno), nunca como o critério de relevância.
 :::
 
-### 10. Peso temporal
+### 11. Peso temporal
 
 Para turmas, professores e disciplinas, a referência é o período (início e fim das turmas); para reservas, as datas reais das ocorrências. O peso é 0,3 para o que está em andamento, 0,2 para o que ainda vai começar, 0,15 para o que não tem data (salas, prédios) e 0 para o que já acabou. Assim, a monitoria deste semestre aparece antes da do ano passado.
 
@@ -280,7 +314,7 @@ A busca é pública (sem login), então o índice só contém o que já é públ
 | `limit` | 5 | resultados por tipo (1 a 20) |
 | `related_limit` | 6 | relacionados por tipo no destaque (0 a 20) |
 
-Resposta: `top` (o melhor resultado, com `related` agrupado por tipo) e `groups` (os melhores de cada tipo, com o total de cada grupo, do grupo mais relevante para o menos relevante).
+Resposta: `top` (o melhor resultado, com `related` agrupado por tipo) e `groups` (os melhores de cada tipo, com o total de cada grupo, do grupo mais relevante para o menos relevante), `partial` (nenhum resultado tem todas as palavras; cada item também traz `partial`) e `intent_types` (os tipos citados na consulta, veja [Várias palavras](#_7-varias-palavras-palavras-de-tipo-e-casamento-parcial)).
 
 `GET /search/documents/{doc_key}` devolve um documento com seus relacionados. O front usa quando a pessoa clica num resultado, sem fazer nova busca textual.
 
@@ -326,7 +360,14 @@ O que as travas **não** impedem: inflar a contagem de uma consulta que já exis
 
 **Quando o front registra.** A busca dispara 300 ms depois da última tecla, e registrar cada uma gravaria todos os prefixos ("cal", "calc", "calcu"...). Por isso o `useSearchLog` (`src/hooks/search/useSearchLog.ts`) só registra a consulta em que a pessoa **parou**: quando ela fica 2 s sem mudar (`SEARCH_LOG_IDLE_MS`) ou quando a pessoa abre um resultado, o que vier primeiro. A mesma consulta com o mesmo filtro é registrada uma vez só por visita à página. Uma falha no envio é ignorada.
 
-**Onde ver.** A página **Admin › Registro de Buscas** (`/admin/search-logs`, `src/pages/searchLogs/`) mostra o resumo do `GET /admin/search-logs/summary`: os totais do período (7, 30, 90 ou 365 dias), e a lista em duas visões, **Sem resultado** (a padrão, as consultas que voltaram vazias pelo menos uma vez) e **Mais buscadas**. A coluna "Na última busca" diz se a consulta ainda volta vazia ou se já passou a encontrar algo (por exemplo, depois de um dado novo), e o link de cada linha abre a busca pública com aquela consulta, para ver o que ela mostra hoje. A página lista até 100 consultas.
+**Onde ver.** A página **Admin › Registro de Buscas** (`/admin/search-logs`, `src/pages/searchLogs/`) tem duas abas e um seletor de período (7, 30, 90 ou 365 dias) que vale para as duas.
+
+- **Consultas** (`GET /admin/search-logs/summary`):
+  - totais do período, incluindo quantas consultas tiveram algum resultado aberto;
+  - lista em três visões: **Sem resultado** (a padrão: as consultas que voltaram vazias pelo menos uma vez), **Mais buscadas** e **Sem clique** (acharam algo, mas ninguém abriu nada; veja [Aprendendo com o histórico](#aprendendo-com-o-historico));
+  - a coluna "Na última busca" diz se a consulta ainda volta vazia ou se já passou a encontrar algo (por exemplo, depois de um dado novo), e o link de cada linha abre a busca pública com aquela consulta;
+  - lista até 100 consultas.
+- **Documentos** (`GET /admin/search-logs/documents`): os documentos mais abertos e os que estão **em alta**, com cliques, impressões, CTR, tendência, o CTR por posição e a posição média do clique. Cada métrica tem um botão de ajuda (`HelpPopover`) com o significado e a fórmula, definidos em `METRIC_HELP` no `DocumentsPanel`.
 
 Consulta útil direto no banco, fora do endpoint:
 
@@ -344,13 +385,62 @@ LIMIT 50;
 SELECT day, count(*) FROM searchquerylog GROUP BY day ORDER BY day DESC LIMIT 14;
 ```
 
+### Aprendendo com o histórico
+
+O registro de buscas mostra o que as pessoas **não encontram**. Para melhorar o ranking, é preciso saber também o que elas **escolhem**. A ideia é a do PageRank: um link é um voto num site, e aqui abrir um resultado é um voto num documento.
+
+**O sinal é o clique, não a aparição.** "Quantas vezes o documento apareceu" mede o nosso próprio ranking: o que aparece é o que o algoritmo já pôs no topo. Usar isso como popularidade cria o ciclo "o famoso fica mais famoso". A aparição (**impressão**) entra só como denominador.
+
+**Coleta** (`server/services/search_log_service.py`, `server/repositories/search_stats_repository.py`):
+
+- **Impressões.** Quando uma busca é registrada no `POST /search/log`, o servidor já refaz a busca para contar os resultados. Os 10 primeiros por score, no formato da página (5 por tipo, ou 20 com filtro de tipo), viram impressões com posição de 1 a 10. Contam uma vez por IP, consulta e dia (chave Redis `si:...`, com hash da consulta), senão repetir o POST derrubaria o CTR do que foi mostrado.
+- **Cliques.** Abrir um resultado chama `POST /search/click` com `{ q, types, doc_key, source }`. O `source` é `result` (um item da lista) ou `related` (um documento do painel de destaque).
+  - O servidor refaz a busca e **só aceita documentos que ela devolve**. No caso de `related`, aceita documentos a uma aresta de algum resultado. Assim, ninguém consegue inflar um documento qualquer.
+  - A posição é calculada no servidor.
+  - Conta uma vez por IP, documento e dia (`sc:doc:...`), com até `SEARCH_CLICK_MAX_PER_IP_PER_DAY` (padrão 300) documentos por IP e dia.
+  - Sem Redis, aceita (fail open).
+
+**Tabelas.** Todas são agregadas por dia e sem dado pessoal:
+
+| Tabela | Conteúdo |
+|---|---|
+| `searchdocumentdaily` | por (dia, documento): impressões, cliques e cliques esperados |
+| `searchclickdaily` | por (dia, consulta, filtro, documento): cliques. Consultas que parecem dado pessoal não entram, mas o clique ainda conta no documento |
+| `searchpositiondaily` | por (dia, posição 1–10): impressões e cliques, a curva de CTR medida |
+| `searchdocumentpopularity` | popularidade e tendência por documento, recalculadas (dado derivado) |
+
+O histórico fica **inteiro**: `SEARCH_STATS_RETENTION_DAYS` tem padrão 0, que significa guardar para sempre. São só as linhas dos documentos que apareceram em cada dia, então a tabela é pequena.
+
+**Envelhecimento sem perda.** O "esquecimento" é calculado na leitura, como decaimento exponencial: um clique de `idade` dias pesa `0,5^(idade / meia-vida)`. É o mesmo princípio do algoritmo *aging* de paginação de memória, em que o contador é deslocado para a direita a cada tick, só que exato, porque temos o histórico. Isso permite reajustar a meia-vida depois, testar no histórico e, no futuro, olhar a mesma época do semestre anterior.
+
+**Recálculo** (`recompute_popularity`). Roda depois de cada atualização do índice (a cada 10 min), só no worker que pegou o lock:
+
+```
+cliques_d  = Σ cliques × 0,5^(idade / 30)                 SEARCH_POPULARITY_HALF_LIFE_DAYS
+esperado_d = Σ cliques_esperados × 0,5^(idade / 30)       cliques esperados = Σ 0,3 / posição
+coec       = (cliques_d + 5) / (esperado_d + 5)           1 = neutro; poucos dados não movem
+popularity = log(1 + cliques_d) / máx. do tipo × limite(coec, 0,5 a 1,5) / 1,5
+trend      = ritmo diário com meia-vida de 7 dias / ritmo com meia-vida de 30 dias
+```
+
+**Contra o "famoso fica mais famoso":**
+
+1. **Só reordena.** A popularidade entra no score com peso `SEARCH_POPULARITY_WEIGHT`. Nunca faz um documento casar com a consulta.
+2. **COEC** (cliques sobre cliques esperados). O primeiro resultado ganha cliques só por ser o primeiro. O COEC compara os cliques com o que a posição em que o documento apareceu renderia, então um documento muito mostrado e pouco aberto **cai**. A curva `0,3 / posição` é a forma usual de buscadores, e `searchpositiondaily` mede a nossa para conferir.
+3. **Decaimento:** o que foi popular no semestre passado esfria sozinho.
+4. **Escala por tipo e teto no peso:** o documento mais clicado de cada tipo vale 1, e o peso sugerido é no máximo 0,3, abaixo do título e do código exato.
+
+**Ligado no ranking?** Ainda não: `SEARCH_POPULARITY_WEIGHT` tem padrão **0**. A ideia é juntar algumas semanas de cliques e acompanhar a posição média do clique e o CTR por posição na aba Documentos. Depois, ligar com 0,1 a 0,3 e comparar essas métricas antes e depois.
+
+**Em alta.** Na aba Documentos, são os documentos cujo ritmo recente (meia-vida de 7 dias) está acima do ritmo de costume (30 dias), com pelo menos 3 cliques nos últimos 7 dias. Como é crescimento e não volume, não mostra sempre os mesmos. Enquanto o histórico for mais curto que a meia-vida longa, as tendências tendem a sair altas.
+
 ### Frontend
 
 - **`useGeneralSearch`** (`src/hooks/search/useGeneralSearch.ts`): espera 300 ms depois da última tecla e **cancela a requisição anterior** (`AbortController`). Isso evita acumular requisições contra o limite de requisições por IP do backend, e garante que uma resposta antiga nunca sobrescreva uma nova.
 - **Estado na URL**: `?q=` (consulta), `type=` (filtro) e `focus=` (resultado clicado). A busca pode ser compartilhada por link, e o botão voltar do navegador volta ao destaque anterior.
 - **Selo de status** (`src/utils/search/search.formatter.ts`): para turmas, cruza o período com os horários do dia da semana de hoje ("Em andamento", "Hoje às 15:00", "Sem aula hoje", "Turma encerrada"); para reservas, usa as datas reais das ocorrências ("Acontecendo agora", "Próxima: 24/11", "Encerrada").
 - **Layout**: com muitos resultados, o destaque fica numa coluna lateral fixa; com até 3, vai para baixo da lista, na horizontal.
-- **Registro**: `useSearchLog` envia a consulta em que a pessoa parou para o [registro de buscas](#registro-de-buscas).
+- **Registro**: `useSearchLog` envia a consulta em que a pessoa parou para o [registro de buscas](#registro-de-buscas), e `logClick` envia o resultado aberto (`result` na lista, `related` no painel), uma vez por documento e consulta ([Aprendendo com o histórico](#aprendendo-com-o-historico)).
 
 ## Como adicionar um novo tipo
 
@@ -366,11 +456,18 @@ O ranking, os endpoints e a página não mudam: eles são genéricos por tipo.
 - O índice inclui o **histórico inteiro** de turmas e reservas. O passado só perde no peso temporal, não sai do resultado.
 - Strings com **dois professores juntos** (um problema dos dados do crawler, ex.: "Marco Antonio Gutierrez Sérgio Shiguemi Furuie") viram um único professor.
 - O radical em português junta palavras de sentidos diferentes ("monitoria" e "monitoramento").
+- Trigramas por palavra ainda trazem nomes parecidos: "professor levy" mostra "Fabio Levy Siqueira" em primeiro e "Alexandre Levine" em segundo.
+- O registro de buscas conta resultados parciais como resultados: ainda não guarda se a busca só achou parte das palavras.
+- A popularidade aprendida dos cliques está **desligada** (`SEARCH_POPULARITY_WEIGHT = 0`) até haver dados.
 - O status "acontecendo agora" usa o relógio do navegador e não considera feriados.
 
 ## Próximos passos
 
-- **PageRank** no lugar da centralidade de grau, calculado num job periódico.
+- **Ligar a popularidade** no ranking (`SEARCH_POPULARITY_WEIGHT`) depois de algumas semanas de cliques, medindo a posição média do clique antes e depois.
+- **Reforço por consulta**: se quem busca "calculo" abre quase sempre a MAT2453, ela sobe para essa consulta (`searchclickdaily`: cliques da consulta no documento ÷ buscas da consulta).
+- **PageRank personalizado** no lugar da centralidade de grau: parte da popularidade de um documento escorre para os vizinhos no grafo (disciplina → turmas → salas), o que ajuda quem é pouco clicado mas está ligado a algo procurado, e resolve o início frio de turmas novas.
+- **Sazonalidade** (a mesma época do semestre anterior), possível porque o histórico é guardado inteiro.
+- **"Em alta" na página pública**, se for decidido que isso pode ser mostrado.
 - **Busca semântica** como complemento, se o registro de buscas mostrar muitas buscas sem resultado por sinônimos: a extensão `pgvector` guarda um embedding por documento, gerado por um modelo multilíngue pequeno que roda em CPU (ex.: `multilingual-e5-small`, uns 10 a 30 ms por consulta). As duas listas (lexical e semântica) seriam combinadas por **Reciprocal Rank Fusion**: cada documento recebe `Σ 1 / (60 + posição)` somando as posições dele em cada lista, o que dispensa calibrar escalas de score diferentes.
 
 ## Referências

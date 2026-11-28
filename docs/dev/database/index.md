@@ -14,7 +14,7 @@ Usamos **PostgreSQL** como banco relacional, acessado a partir do backend via **
 
 Esta seção cobre:
 
-- [Tabelas, Modelos e Relacionamentos](/dev/database/models/) — as 54 tabelas do sistema, agrupadas por domínio
+- [Tabelas, Modelos e Relacionamentos](/dev/database/models/) — as 59 tabelas do sistema, agrupadas por domínio
 - [Migrações](/dev/database/migrations/) — como o schema evolui ao longo do tempo, via Alembic
 - [Backup](/dev/database/backup/) — como os dados são protegidos contra perda
 
@@ -60,6 +60,8 @@ A [busca geral](/dev/search/) não consulta as tabelas direto: ela lê uma **vie
 - um índice único em `doc_key`, exigido pelo `REFRESH MATERIALIZED VIEW CONCURRENTLY`.
 
 Tudo isso é criado à mão pela migração `5c8e1f2a9b47` (o autogenerate não enxerga views nem extensões). A view é atualizada pelo lifespan do backend a cada `SEARCH_INDEX_REFRESH_SECONDS` (veja [Backend › Visão geral](/dev/backend/#lifespan-server-services-cron-scheduler-py)).
+
+Ao lado da view ficam as [tabelas da busca](/dev/database/models/#busca-geral), estas comuns, com model e autogenerate: o registro de buscas (`searchquerylog`) e as estatísticas de impressões e cliques de onde sai a popularidade (`searchdocumentdaily`, `searchclickdaily`, `searchpositiondaily` e `searchdocumentpopularity`, criadas pela migração `9e3a7c5d2b61`). Elas guardam `doc_key` como texto, sem chave estrangeira para a view.
 
 > [!WARNING]
 > A view só existe se as migrações forem aplicadas. Um banco montado por `SQLModel.metadata.create_all()` (o que o `server/scripts/pre_start.py` faz num banco vazio, antes de marcar as migrações como aplicadas com `alembic stamp head`) fica **sem a view**, e o `/search` falha. Veja [Migrações](/dev/database/migrations/#bancos-novos-e-o-pre-start-py).

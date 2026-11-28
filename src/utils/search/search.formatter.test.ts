@@ -117,7 +117,7 @@ describe('getClassPeriodStatus', () => {
 });
 
 describe('describeSearchItem', () => {
-  const base = { entity_id: '1', subtitle: null, score: 1 };
+  const base = { entity_id: '1', subtitle: null, score: 1, partial: false };
 
   it('sala: prédio, andar, capacidade e recursos', () => {
     const item: SearchItemResponse = {
@@ -233,6 +233,7 @@ describe('describeSearchItem (turma)', () => {
       title: 'PCS3111 · Turma 2026202',
       subtitle: null,
       score: 1,
+      partial: false,
       payload: {
         code: '2026202',
         subject_id: 1,
@@ -269,6 +270,7 @@ describe('formatSearchItemTitle', () => {
       title: 'PCS3111 · Turma 2026202',
       subtitle: 'Laboratório de Programação Orientada a Objetos',
       score: 1,
+      partial: false,
       payload: {
         code: '2026202',
         subject_id: 1,
@@ -313,6 +315,7 @@ describe('reservas (provas, eventos, monitorias)', () => {
     title: 'Monitoria PEA3306',
     subtitle: 'B2-08 (PCS) · Elétrica',
     score: 1,
+    partial: false,
     payload,
   };
 

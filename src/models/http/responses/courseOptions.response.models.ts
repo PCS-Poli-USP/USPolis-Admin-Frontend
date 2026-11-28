@@ -1,5 +1,5 @@
-export interface CourseOptionResponse{
-    codcur: number,
-    codhab: number,
-    name: string,
+export interface CourseOptionResponse {
+  codcur: number;
+  codhab: number;
+  name: string;
 }

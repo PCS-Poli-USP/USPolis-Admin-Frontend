@@ -125,6 +125,11 @@ Em desenvolvimento com `OVERRIDE_AUTH=True`, as do Google e do e-mail podem fica
 | `SEARCH_LOG_RETENTION_DAYS` | `365` | Dias que o [registro de buscas](/dev/search/#registro-de-buscas) fica guardado antes da limpeza diária |
 | `SEARCH_LOG_MAX_NEW_QUERIES_PER_IP_PER_DAY` | `200` | Consultas novas que um IP pode adicionar ao registro de buscas por dia (contadas no Redis) |
 | `SEARCH_LOG_MAX_NEW_QUERIES_PER_DAY` | `5000` | Consultas novas adicionadas ao registro de buscas por dia, somando todo mundo (o teto do tamanho da tabela) |
+| `SEARCH_STATS_RETENTION_DAYS` | `0` | Dias que as estatísticas diárias da busca (impressões e cliques) ficam guardadas; `0` guarda para sempre ([aprendendo com o histórico](/dev/search/#aprendendo-com-o-historico)) |
+| `SEARCH_CLICK_MAX_PER_IP_PER_DAY` | `300` | Documentos diferentes que um IP pode creditar com um clique por dia |
+| `SEARCH_POPULARITY_HALF_LIFE_DAYS` | `30` | Meia-vida do envelhecimento dos cliques usados na popularidade |
+| `SEARCH_TREND_HALF_LIFE_DAYS` | `7` | Meia-vida da janela curta do "em alta" |
+| `SEARCH_POPULARITY_WEIGHT` | `0` | Peso da popularidade no score da busca; `0` desliga (no máximo 0,3) |
 | `JUPITER_CRAWL_MAX_CONCURRENT` | `2` | Crawls autenticados do JupiterWeb ao mesmo tempo no host |
 | `JUPITER_CRAWL_QUEUE_SECONDS` | `15` | Espera por uma vaga antes do 503 |
 | `JUPITER_CRAWL_TIMEOUT_SECONDS` | `60` | Tempo máximo de um crawl (504) |

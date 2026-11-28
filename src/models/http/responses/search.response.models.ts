@@ -86,6 +86,8 @@ interface SearchItemBase<T extends SearchEntityType, P> {
   subtitle: string | null;
   score: number;
   payload: P;
+  // Matches only some of the query words (see SearchResponse.partial)
+  partial: boolean;
 }
 
 export type SearchItemResponse =
@@ -112,6 +114,12 @@ export interface SearchResponse {
   query: string;
   top: SearchTopResponse | null;
   groups: SearchGroupResponse[];
+  // No result has every word of the query: these are the ones with the most
+  // words (never mixed with complete ones).
+  partial: boolean;
+  // Types named in the query ("professor levy" -> professor): ranked first,
+  // but not a filter.
+  intent_types: SearchEntityType[];
 }
 
 // GET /admin/search-logs/summary: one row per normalized query.
@@ -122,6 +130,8 @@ export interface SearchQueryStatResponse {
   empty_searches: number;
   last_result_count: number;
   last_searched_at: string;
+  // Results opened from this query
+  clicks: number;
 }
 
 export interface SearchLogSummaryResponse {
@@ -129,5 +139,41 @@ export interface SearchLogSummaryResponse {
   total_searches: number;
   distinct_queries: number;
   empty_searches: number;
+  // Distinct queries with at least one result opened
+  clicked_queries: number;
   queries: SearchQueryStatResponse[];
+}
+
+// GET /admin/search-logs/documents: one row per opened document.
+export interface SearchDocumentStatResponse {
+  doc_key: string;
+  // null when the document is no longer in the index
+  type: SearchEntityType | null;
+  title: string | null;
+  impressions: number;
+  clicks: number;
+  // clicks / impressions; null without impressions (opened only from the
+  // highlight panel)
+  ctr: number | null;
+  // Recent clicks over the long-term rate (> 1: rising)
+  trend: number | null;
+}
+
+export interface SearchPositionStatResponse {
+  position: number;
+  impressions: number;
+  clicks: number;
+  ctr: number | null;
+}
+
+export interface SearchDocumentSummaryResponse {
+  since_days: number;
+  impressions: number;
+  clicks: number;
+  // Documents opened at least once
+  distinct_documents: number;
+  // Average 1-based position of the opened results (lower is better)
+  mean_click_position: number | null;
+  positions: SearchPositionStatResponse[];
+  documents: SearchDocumentStatResponse[];
 }

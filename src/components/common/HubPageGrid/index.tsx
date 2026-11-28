@@ -43,6 +43,7 @@ function HubPageGrid({ columns = 4, items }: HubPageGridProps) {
       columns={getResponsiveColumns()}
       spacing={getSpacing()}
       padding={getPadding()}
+      mb={'40px'}
     >
       {items.map((item, index) => (
         <HubCard key={index} {...item} />

@@ -1,5 +1,5 @@
-import { CurriculumSubjectCategory } from "../../../utils/enums/curriculumSubjectCategory.enum";
-import { CurriculumSubjectType } from "../../../utils/enums/curriculumSubjectType.enum";
+import { CurriculumSubjectCategory } from '../../../utils/enums/curriculumSubjectCategory.enum';
+import { CurriculumSubjectType } from '../../../utils/enums/curriculumSubjectType.enum';
 
 export interface CreateCurriculumSubject {
   curriculum_id: number;

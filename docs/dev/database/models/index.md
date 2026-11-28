@@ -111,6 +111,20 @@ Usados pelo app USPolis Mobile (veja [Arquitetura](/dev/architecture)) — os us
 
 Veja o desenho completo no `docs/API_KEYS.md` do backend.
 
+## Busca geral
+
+Tabelas da [busca geral](/dev/search/). Nenhuma guarda dado pessoal (usuário, IP, sessão): todas são **agregadas por dia**, e a gravação é um upsert na chave única, então requisições repetidas só somam contadores. `doc_key` é o `"<tipo>:<id>"` da view `search_document` (veja [Banco de Dados](/dev/database/#busca-a-view-search-document)) e **não é chave estrangeira**: a view é reconstruída a cada poucos minutos.
+
+| Model — tabela | Campos principais | Relacionamentos |
+| --- | --- | --- |
+| `SearchQueryLog` — `searchquerylog` | `day`, `query` (normalizada), `types: list[str]` (vazio = todos), `searches`, `empty_searches`, `last_result_count`, `last_searched_at`; único por (`day`, `query`, `types`) | — [registro de buscas](/dev/search/#registro-de-buscas): o que as pessoas procuram e não encontram; apagado depois de `SEARCH_LOG_RETENTION_DAYS` |
+| `SearchDocumentDaily` — `searchdocumentdaily` | `day`, `doc_key`, `impressions`, `clicks`, `expected_clicks` (float); único por (`day`, `doc_key`) | — quantas vezes cada documento apareceu entre os 10 primeiros e foi aberto |
+| `SearchClickDaily` — `searchclickdaily` | `day`, `query`, `types: list[str]`, `doc_key`, `clicks`; único por (`day`, `query`, `types`, `doc_key`) | — qual resultado as pessoas abrem para cada consulta |
+| `SearchPositionDaily` — `searchpositiondaily` | `day`, `position` (1 a 10), `impressions`, `clicks`; único por (`day`, `position`) | — a curva de CTR por posição, medida |
+| `SearchDocumentPopularity` — `searchdocumentpopularity` | `doc_key` (único), `popularity` (0 a 1), `trend`, `clicks_recent`, `updated_at` | — dado derivado, recalculado do histórico a cada atualização do índice |
+
+As quatro últimas formam o [aprendizado com o histórico](/dev/search/#aprendendo-com-o-historico). O histórico é guardado para sempre por padrão (`SEARCH_STATS_RETENTION_DAYS = 0`), porque o envelhecimento é calculado na leitura.
+
 ## Suporte, observabilidade e institucional
 
 | Model — tabela                              | Campos principais                                                                                                                                                                                      | Relacionamentos                                                                                                                    |

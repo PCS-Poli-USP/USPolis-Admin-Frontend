@@ -7,11 +7,17 @@ import {
   SearchTopResponse,
 } from '../../models/http/responses/search.response.models';
 import { renderWithProviders } from '../../test/renderWithProviders';
+import { SearchClickSource } from '../../utils/enums/searchClickSource.enum';
 import { SearchEntityType } from '../../utils/enums/searchEntityType.enum';
 import GeneralSearch from '.';
 
 // Stable objects: the page's effects depend on these references.
-const service = { search: vi.fn(), getDocument: vi.fn(), log: vi.fn() };
+const service = {
+  search: vi.fn(),
+  getDocument: vi.fn(),
+  log: vi.fn(),
+  click: vi.fn(),
+};
 vi.mock('../../hooks/API/services/useSearchService', () => ({
   default: () => service,
 }));
@@ -23,6 +29,7 @@ const subject: SearchItemResponse = {
   title: 'MAC0110 - Cálculo I',
   subtitle: 'João da Silva',
   score: 2,
+  partial: false,
   payload: {
     code: 'MAC0110',
     name: 'Cálculo I',
@@ -38,6 +45,7 @@ const classroom: SearchItemResponse = {
   title: 'B2-04',
   subtitle: 'Biênio',
   score: 1,
+  partial: false,
   payload: {
     name: 'B2-04',
     building_id: 1,
@@ -56,6 +64,8 @@ const response: SearchResponse = {
     { type: SearchEntityType.SUBJECT, total: 1, items: [subject] },
     { type: SearchEntityType.CLASSROOM, total: 8, items: [classroom] },
   ],
+  partial: false,
+  intent_types: [],
 };
 
 const classroomDocument: SearchTopResponse = {
@@ -72,6 +82,7 @@ const classroomDocument: SearchTopResponse = {
           title: 'Biênio',
           subtitle: null,
           score: 0,
+          partial: false,
           payload: { name: 'Biênio', classroom_count: 30 },
         },
       ],
@@ -85,6 +96,7 @@ describe('GeneralSearch (busca geral)', () => {
     service.search.mockResolvedValue({ data: response });
     service.getDocument.mockResolvedValue({ data: classroomDocument });
     service.log.mockResolvedValue({});
+    service.click.mockResolvedValue({});
   });
 
   it('sem busca mostra só o campo e não chama a API', () => {
@@ -159,11 +171,26 @@ describe('GeneralSearch (busca geral)', () => {
     expect(
       within(panel).getByRole('button', { name: /Biênio/ }),
     ).toBeInTheDocument();
-    // Opening a result logs the query right away, once.
+    // Opening a result logs the query right away, once, and the result.
     expect(service.log).toHaveBeenCalledTimes(1);
     expect(service.log).toHaveBeenCalledWith({
       q: 'calculo',
       types: undefined,
+    });
+    expect(service.click).toHaveBeenCalledWith({
+      q: 'calculo',
+      types: undefined,
+      doc_key: 'classroom:7',
+      source: SearchClickSource.RESULT,
+    });
+
+    // A document of the highlight panel counts as "related".
+    await user.click(within(panel).getByRole('button', { name: /Biênio/ }));
+    expect(service.click).toHaveBeenLastCalledWith({
+      q: 'calculo',
+      types: undefined,
+      doc_key: 'building:1',
+      source: SearchClickSource.RELATED,
     });
   });
 
@@ -188,7 +215,13 @@ describe('GeneralSearch (busca geral)', () => {
 
   it('sem resultados mostra dica de busca', async () => {
     service.search.mockResolvedValue({
-      data: { query: 'xyz', top: null, groups: [] },
+      data: {
+        query: 'xyz',
+        top: null,
+        groups: [],
+        partial: false,
+        intent_types: [],
+      },
     });
     renderWithProviders(<GeneralSearch />, {
       route: '/public/search?q=xyz',
@@ -197,6 +230,59 @@ describe('GeneralSearch (busca geral)', () => {
     expect(
       await screen.findByText('Nenhum resultado para “xyz”'),
     ).toBeInTheDocument();
+  });
+
+  it('resultados parciais avisam que nem todas as palavras foram encontradas', async () => {
+    service.search.mockResolvedValue({
+      data: {
+        ...response,
+        query: 'calculo fotossintese',
+        partial: true,
+      },
+    });
+    renderWithProviders(<GeneralSearch />, {
+      route: '/public/search?q=calculo%20fotossintese',
+    });
+
+    expect(
+      await screen.findByText(
+        'Nenhum resultado com todas as palavras. Mostrando os mais próximos.',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('tipo pedido sem resultado avisa e mostra o resto', async () => {
+    service.search.mockResolvedValue({
+      data: {
+        ...response,
+        query: 'prova de calculo',
+        intent_types: [SearchEntityType.EXAM, SearchEntityType.SUBJECT],
+      },
+    });
+    renderWithProviders(<GeneralSearch />, {
+      route: '/public/search?q=prova%20de%20calculo',
+    });
+
+    // Subjects came back, exams did not: only exams are reported missing.
+    expect(
+      await screen.findByText(
+        'Nada encontrado em Provas. Mostrando outros resultados.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Nenhum resultado com todas as palavras/),
+    ).not.toBeInTheDocument();
+  });
+
+  it('resultado completo e sem tipo pedido não mostra aviso', async () => {
+    renderWithProviders(<GeneralSearch />, {
+      route: '/public/search?q=calculo',
+    });
+
+    await screen.findByRole('region', {
+      name: 'Destaque: MAC0110 - Cálculo I',
+    });
+    expect(screen.queryByText(/Mostrando/)).not.toBeInTheDocument();
   });
 
   it('erro na API mostra alerta', async () => {

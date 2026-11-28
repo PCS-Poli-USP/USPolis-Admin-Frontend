@@ -169,7 +169,7 @@ Cada pasta em `src/pages/` corresponde a uma ou mais rotas de `src/AppRoutes.tsx
 | `curriculums/` | `/admin/courses/:courseId/curriculums` | `AdminRoute` |
 | `curriculumSubjects/` | `/admin/courses/:courseId/curriculums/:curriculumId/subjects` | `AdminRoute` |
 | `apiStatus/` | `/admin/api-status` | `AdminRoute` |
-| `searchLogs/` | `/admin/search-logs` ([registro de buscas](/dev/search/#registro-de-buscas)) | `AdminRoute` |
+| `searchLogs/` | `/admin/search-logs` ([registro de buscas](/dev/search/#registro-de-buscas)): abas Consultas (`QueriesPanel/`) e Documentos (`DocumentsPanel/`, [cliques e popularidade](/dev/search/#aprendendo-com-o-historico)) | `AdminRoute` |
 | `apiClients/` | `/admin/api-clients`, `/admin/api-clients/:clientId`, `/admin/api-clients/:clientId/keys/:keyId` | `AdminRoute` |
 | `serverDocs/` | `/admin/server-docs` | `AdminRoute` |
 | `tests/` | `/admin/tests` (força erros de propósito, para testar o tratamento de erro) | `AdminRoute` |
